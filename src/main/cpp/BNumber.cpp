@@ -21,7 +21,9 @@ class BNumber : public BObject {
 
         //virtual java.math.BigInteger asBigInteger();
 
-        virtual int intValue();
+        virtual int intValue(){
+            return 0;
+        }
 
         virtual BBoolean less(BNumber o);
 
@@ -32,6 +34,8 @@ class BNumber : public BObject {
         virtual BBoolean greaterEqual(BNumber o);
 
         virtual BBoolean equal(BNumber o);
+
+        virtual BBoolean unequal(BNumber o);
 
         virtual BNumber plus(BNumber o);
 
@@ -49,11 +53,11 @@ class BNumber : public BObject {
 
         virtual BNumber previous();
 
-        virtual BNumber leftShift(BNumber o);
+        //virtual BNumber leftShift(BNumber o);
 
-        virtual BNumber rightShift(BNumber o);
+        //virtual BNumber rightShift(BNumber o);
 
-        virtual bool isCase(BNumber o);
+        //virtual bool isCase(BNumber o);
 
         virtual BNumber negative();
 

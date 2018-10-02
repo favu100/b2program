@@ -63,7 +63,6 @@ class BBoolean : public BObject {
     		value = val;
     	}
 
-
     	static string toString(bool b) {
     		return b ? "true" : "false";
     	}
@@ -122,6 +121,14 @@ class BBoolean : public BObject {
 
         BBoolean unequal(BBoolean other) {
             return new BBoolean(booleanValue() != other.booleanValue());
+        }
+
+        bool operator !=(BObject o) {
+            return true;
+        }
+
+        bool operator ==(BObject o) {
+            return true;
         }
 
 };

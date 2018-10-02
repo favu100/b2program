@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-#include "BNumber.cpp"
+#include "BBoolean.cpp"
 
 using namespace std;
 
 
-class BInteger : public BNumber {
+class BInteger : BObject {
 
     /*
 	@Override
@@ -41,36 +41,40 @@ class BInteger : public BNumber {
             value = val;
         }
 
-        /*int compareTo(BNumber o) {
+        int intValue() {
+            return value;
+        }
+
+        /*int compareTo(BInteger o) {
             return value.compareTo(o.asBigInteger());
         }*/
 
-        int compareTo(BNumber o) {
+        int compareTo(BInteger o) {
             return intValue() - o.intValue();
         }
 
-        BBoolean lessEqual(BNumber o) {
+        BBoolean lessEqual(BInteger o) {
             return new BBoolean(compareTo(o) <= 0);
         }
 
 
-        BBoolean greaterEqual(BNumber o) {
+        BBoolean greaterEqual(BInteger o) {
             return new BBoolean(compareTo(o) >= 0);
         }
 
-        BBoolean less(BNumber o) {
+        BBoolean less(BInteger o) {
             return new BBoolean(compareTo(o) < 0);
         }
 
-        BBoolean greater(BNumber o) {
+        BBoolean greater(BInteger o) {
             return new BBoolean(compareTo(o) > 0);
         }
 
-        BBoolean equal(BNumber o) {
+        BBoolean equal(BInteger o) {
             return new BBoolean(compareTo(o) == 0);
         }
 
-        BBoolean unequal(BNumber o) {
+        BBoolean unequal(BInteger o) {
             return new BBoolean(compareTo(o) != 0);
         }
 
@@ -88,10 +92,6 @@ class BInteger : public BNumber {
             return value.compareTo(oi);
         }*/
 
-        int intValue() {
-            return value;
-        }
-
         /*long longValue() {
             return value.longValue();
         }
@@ -104,7 +104,7 @@ class BInteger : public BNumber {
             return value.doubleValue();
         }*/
 
-        BNumber plus(BNumber o) {
+        BInteger plus(BInteger o) {
             return BInteger(value + o.intValue());
         }
 
@@ -116,63 +116,63 @@ class BInteger : public BNumber {
             return value.toString();
         }*/
 
-        BNumber minus(BNumber o) {
+        BInteger minus(BInteger o) {
             return BInteger(value - o.intValue());
         }
 
-        BNumber multiply(BNumber o) {
+        BInteger multiply(BInteger o) {
             return BInteger(value * o.intValue());
         }
 
-        BNumber power(BNumber o) {
+        BInteger power(BInteger o) {
             return BInteger(value^o.intValue());
         }
 
-        BNumber divide(BNumber o) {
+        BInteger divide(BInteger o) {
             return BInteger(value/o.intValue());
         }
 
-        BNumber modulo(BNumber o) {
+        BInteger modulo(BInteger o) {
             return BInteger(value % o.intValue());
         }
 
-        /*BNumber or(BNumber o) {
+        /*BInteger or(BInteger o) {
             return new BInteger(value.or(o.value));
         }
 
-        BNumber and(BNumber o) {
+        BInteger and(BInteger o) {
             return new BInteger(value.and(o.value));
         }
 
-        BNumber xor(BNumber o) {
+        BInteger xor(BInteger o) {
             return new BInteger(value.xor(o.value));
         }*/
 
-        BNumber next() {
+        BInteger next() {
             return BInteger(value + 1);
         }
 
-        BNumber previous() {
+        BInteger previous() {
             return BInteger(value - 1);
         }
 
-        /*BNumber leftShift(BNumber o) {
+        /*BInteger leftShift(BInteger o) {
             return new BInteger(value.shiftLeft(o.intValue()));
         }
 
-        BNumber rightShift(BNumber o) {
+        BInteger rightShift(BInteger o) {
             return new BInteger(value.shiftRight(o.intValue()));
         }
 
-        boolean isCase(BNumber o) {
+        boolean isCase(BInteger o) {
             return equals(o);
         }*/
 
-        BNumber negative() {
+        BInteger negative() {
             return BInteger(-value);
         }
 
-        BNumber positive() {
+        BInteger positive() {
             return BInteger(value);
         }
 
@@ -180,8 +180,12 @@ class BInteger : public BNumber {
             return BInteger(other.value);
         }
 
-        BInteger operator=(BNumber other) {
-            return BInteger(other.intValue());
+        bool operator !=(BObject o) {
+            return true;
+        }
+
+        bool operator ==(BObject o) {
+            return true;
         }
 
 };

@@ -2,6 +2,8 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
+project.archivesBaseName = "${rootProject.name}-btypes"
+
 repositories {
     mavenLocal()
     jcenter()

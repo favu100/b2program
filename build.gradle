@@ -3,6 +3,12 @@ apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'eclipse'
 
+project.archivesBaseName = 'B2Program'
+project.version = '0.1.0-SNAPSHOT' // If no snapshot, adapt ANTLR parser tag to git revision
+project.group = 'de.hhu.stups'
+
+mainClassName = 'de.hhu.stups.codegenerator.CodeGenerator'
+
 repositories {
     mavenLocal()
     jcenter()
@@ -15,25 +21,21 @@ repositories {
         name "release"
         url "https://oss.sonatype.org/content/repositories/releases/"
     }
-
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     antlr "org.antlr:antlr4:4.7"
-    compile project(path: ":antlrparser", configuration: "archives")
-    compile project(path: ":bparser", configuration: "archives")
-    compile project(path: ":prologlib", configuration: "archives")
-    compile project(path: ":parserbase", configuration: "archives")
     compile group: 'org.antlr', name: 'stringtemplate', version: '3.2'
+    // antlr parser dependency
+    implementation 'com.github.hhu-stups:antlr-parser:-SNAPSHOT' // https://github.com/hhu-stups/antlr-parser'
+
     testCompile 'junit:junit:4.8.2'
 }
 
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-
-mainClassName = 'de.hhu.stups.codegenerator.CodeGenerator'
 
 sourceSets.main.java.srcDirs = ['src/main/java']
 

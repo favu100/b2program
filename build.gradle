@@ -2,6 +2,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 project.archivesBaseName = 'B2Program'
 project.version = '0.1.0-SNAPSHOT' // If no snapshot, adapt ANTLR parser tag to git revision

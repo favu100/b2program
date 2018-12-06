@@ -82,15 +82,8 @@ public class OperationGenerator {
         ST operation = generate(node);
         TemplateHandler.add(operation,  "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
-        generateMethod(node);
         return operation.render();
     }
-
-    private void generateMethod(OperationNode node) {
-        /*ST method = group.getInstanceOf("method");
-        method.add("operationName", nameHandler.handle(node.getName()));*/
-    }
-
 
     /*
     * This function generates code for an operation from the given AST node

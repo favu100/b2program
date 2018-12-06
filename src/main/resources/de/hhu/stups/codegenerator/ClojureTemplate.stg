@@ -2,12 +2,10 @@ keywords() ::= <<
 abstract, assert, boolean, break, byte, case, catch, char, class, continue, default, do, double, else, enum, extends, final, finally, float, for, if, implements, import, instanceof, int, interface, long, native, new, package, private, protected, public, return, short, static, strictfp, super, switch, synchronized, this, throw, throws, try, void, volatile, while, true, false, null, var, const, goto
 >>
 
-machine(imports, requires, methods, includedMachines, machine, constants, values, includes, sets, declarations, initialization, operations, addition) ::= <<
-(ns <machine>
+machine(imports, methods, includedMachines, machine, constants, values, includes, sets, declarations, initialization, operations, addition) ::= <<
+(ns Projects.<machine>
     <imports; separator="\n">
     (:import de.hhu.stups.btypes.BUtils)
-    <requires; separator="\n">
-    (:require [btypes.butils])
     (:gen-class
         :name <machine>
         :constructors {[] []}
@@ -76,7 +74,7 @@ set_declaration(identifier, type, enums) ::= <<
 >>
 
 set_enumeration(enums) ::= <<
-(de.hhu.stups.btypes.BSet. (set <enums; separator=" ">))
+(de.hhu.stups.btypes.BSet. #{<enums; separator=" ">})
 >>
 
 enum_call(identifier) ::= <<
@@ -140,16 +138,19 @@ assignments(assignments) ::= <<
 >>
 
 nondeterminism(machine, identifier, isPrivate, set) ::= <<
-(reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [<if(isPrivate)><else>:_locals<endif> :<identifier>] (nondeterminism <set>)))
+(reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [<if(isPrivate)><else>:_locals<endif> :<identifier>] (.nondeterminism <set>)))
 >>
 
 void() ::= <<
+void
 >>
 
-type() ::= <<
+type(type) ::= <<
+de.hhu.stups.btypes.<type>
 >>
 
 set_type() ::=<<
+de.hhu.stups.btypes.BSet
 >>
 
 import_type(type) ::= <<
@@ -212,9 +213,9 @@ choice2(then) ::= <<
 (do <then>)
 >>
 
-any(identifier, set, body, index) ::= <<
-(doseq [_<index>_i (range (inc (size <set>)))]
-    (let [<identifier> (nth <set> _<index>_i)]
+any(machine, identifier, set, body, index, isBool) ::= <<
+(doseq [_<index>_i (range (inc (.size <if(isBool)><set><else>(get-in (.-<machine>-state this) [:<set>])<endif>)))]
+    (let [<identifier> (nth <if(isBool)><set><else>(get-in (.-<machine>-state this) [:<set>])<endif> _<index>_i)]
         <body>))
 >>
 

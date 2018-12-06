@@ -41,7 +41,8 @@
                [functionCall [de.hhu.stups.btypes.BObject] de.hhu.stups.btypes.BObject]
                [relationImage [de.hhu.stups.btypes.BSet] de.hhu.stups.btypes.BSet]
                ^:static [range [de.hhu.stups.btypes.BInteger de.hhu.stups.btypes.BInteger]
-                               de.hhu.stups.btypes.BSet]])
+                               de.hhu.stups.btypes.BSet]
+               [nondeterminism [] de.hhu.stups.btypes.BObject]])
 
 (defn -create-set
   ([] [[] #{}])
@@ -100,6 +101,8 @@
 (defn -elementOf [^de.hhu.stups.btypes.BSet this ^de.hhu.stups.btypes.BObject obj]
   (de.hhu.stups.btypes.BBoolean. (contains? (.-bset this) obj)))
 
+(defn -nondeterminism [^de.hhu.stups.btypes.BSet this]
+  (first (shuffle (into [] (.-bset this)))))
 
 ;(defn -equal [this obj]
 ;  (de.hhu.stups.btypes.BBoolean. (= this obj)))

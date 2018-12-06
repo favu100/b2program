@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator;
 
 import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -28,6 +29,7 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
+import de.prob.parser.ast.types.UntypedType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -35,6 +37,9 @@ import org.stringtemplate.v4.STGroup;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /*
 * The code generator is implemented by using the visitor pattern
@@ -100,8 +105,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		ST machine = currentGroup.getInstanceOf("machine");
 		TemplateHandler.add(machine, "addition", addition);
 		TemplateHandler.add(machine, "imports", importGenerator.getImports());
-		TemplateHandler.add(machine, "requires","");
-		TemplateHandler.add(machine, "methods", "");
+		TemplateHandler.add(machine, "methods", generateMethods(node));
 		TemplateHandler.add(machine, "includedMachines", importGenerator.generateMachineImports(node));
 		TemplateHandler.add(machine, "machine", nameHandler.handle(node.getName()));
 		generateBody(node, machine);
@@ -129,6 +133,34 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations()));
+	}
+
+	private List<String> generateMethods(MachineNode node) {
+		ST method = currentGroup.getInstanceOf("method");
+		TemplateHandler.add(method, "operationName", "initialize");
+		TemplateHandler.add(method, "argsTypes", "");
+		TemplateHandler.add(method, "returnType", typeGenerator.generate(new UntypedType(), false));
+		List<String> result = new ArrayList<>();
+		result.add(method.render());
+		result.addAll(node.getOperations().stream()
+			.map(this::generateMethod)
+			.collect(Collectors.toList()));
+		return result;
+	}
+
+	private String generateMethod(OperationNode node) {
+		ST method = currentGroup.getInstanceOf("method");
+		TemplateHandler.add(method, "operationName", nameHandler.handle(node.getName()));
+		TemplateHandler.add(method, "argsTypes", node.getParams().stream()
+				.map(param -> typeGenerator.generate(param.getType(), false))
+				.collect(Collectors.toList()));
+		//TODO: generate method for many return parameters
+		if(node.getOutputParams().size() > 0) {
+			TemplateHandler.add(method, "returnType", typeGenerator.generate(node.getOutputParams().get(0).getType(), false));
+		} else {
+			TemplateHandler.add(method, "returnType", typeGenerator.generate(new UntypedType(), false));
+		}
+		return method.render();
 	}
 
 	@Override

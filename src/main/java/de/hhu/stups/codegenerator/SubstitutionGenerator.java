@@ -174,12 +174,15 @@ public class SubstitutionGenerator {
     public String generateAnyParameters(List<DeclarationNode> parameters, DeclarationNode parameter,
                                         PredicateNode predicateNode, SubstitutionNode substitutionNode, int index, int length) {
         ST substitution = currentGroup.getInstanceOf("any");
+        TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitution, "type", typeGenerator.generate(parameter.getType(), false));
         TemplateHandler.add(substitution, "identifier", nameHandler.handle(parameter.getName()));
         if(!(parameter.getType() instanceof BoolType)) {
             TemplateHandler.add(substitution, "set", nameHandler.handleIdentifier(parameter.getType().toString(), NameHandler.IdentifierHandlingEnum.VARIABLES));
+            TemplateHandler.add(substitution, "isBool", false);
         } else {
             TemplateHandler.add(substitution, "set", expressionGenerator.generateBooleans());
+            TemplateHandler.add(substitution, "isBool", true);
         }
         TemplateHandler.add(substitution, "index", index);
         if(index == length - 1) {

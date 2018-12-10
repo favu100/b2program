@@ -6,15 +6,15 @@ all: And Divide Equal Equivalent Greater GreaterEqual Implies IncreasingSet Less
 
 OUTPUT ?= runtimes.txt
 
-CPPC ?= g++
+CPPC ?= clang++
 IMMERFLAGS=-DIMMER_NO_THREAD_SAFETY
-CPPFLAGS ?= -std=c++14 -O2 -Wall -Wextra -march=native -g $(IMMERFLAGS)
+CPPFLAGS ?= -std=c++14 -O2 -march=native -g $(IMMERFLAGS)
 
 %.exec : %.cpp
 	$(CPPC) $(CPPFLAGS) -o $@ $<
 
 % : %.exec
-	/usr/bin/time -f "%C %E" -ao $(OUTPUT) ./$<
+	gtime -f "%C %E" -ao $(OUTPUT) ./$<
 
 clean:
 	rm -f *.exec

@@ -2,6 +2,8 @@
 **/target
 *.o
 
+/benchmarks/**/*.txt
+
 # Created by https://www.gitignore.io/api/java,gradle,intellij+all
 # Edit at https://www.gitignore.io/?templates=java,gradle,intellij+all
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdarg>
 #include <immer/set.hpp>
+#include <immer/box.hpp>
 #include "BInteger.cpp"
 #include "BCouple.cpp"
 
@@ -38,23 +39,29 @@ class BSet : public BObject {
             this->set = elements;
         }
 
+        BSet<T>() {}
+
         template<typename... Args>
         BSet<T>(const Args&... args) {
           this->set = var(args...);
         }
 
-        immer::set<T,Hash, HashEqual> var() {
+        immer::set<T, Hash, HashEqual> var() {
           return immer::set<T,Hash, HashEqual>();
         }
 
         template<typename R, typename... Args>
-        immer::set<R,Hash, HashEqual> var(const R& first, const Args&&... args) {
+        immer::set<R, Hash, HashEqual> var(const R& first, const Args&... args) {
           return var(args...).insert(first);
         }
 
-        BSet<T>(const BSet<T>& set) {
-            this->set = set.set;
-        }
+        /*BSet<T>(const immer::set<T,Hash, HashEqual>& set) {
+            this->set = set;
+        }*/
+
+        /*BSet<T>(const BSet<T>&& set) {
+            this->set = std::move(set.set);
+        }*/
 
 	/*public BSet(java.util.Set<BObject> elements) {
 		this.set = HashTreePSet.from(elements);
@@ -157,54 +164,62 @@ class BSet : public BObject {
             return set.iterator();
         }*/
 
-        BSet<T> intersect(const BSet& set) {
+        BSet<T> intersect(const BSet<T>& set) const {
             immer::set<T,Hash, HashEqual> result = this->set;
-            for (T obj : this->set) {
+            for (const T& obj : this->set) {
                 if(set.set.count(obj) == 0) {
-                    result = result.erase(obj);
+                    result = std::move(result).erase(obj);
                 }
             }
             return BSet(result);
         }
 
-        BSet<T> complement(const BSet& set) {
+        BSet<T> complement(const BSet<T>& set) const {
             if(this->size() == 0) {
                 return BSet(this->set);
             }
-            immer::set<T,Hash, HashEqual> result = this->set;
-            for (T obj : set.set) {
-                result = result.erase(obj);
+            immer::set<T, Hash, HashEqual> result = this->set;
+            for (const T& obj : set.set) {
+                if(result.count(obj) == 1) {
+                    result = std::move(result).erase(obj);
+                }
             }
             return BSet(result);
         }
 
-        BSet<T> _union(const BSet& set) {
+        BSet<T> _union(const BSet<T>& set) const {
             if(this->size() > set.size()) {
                 immer::set<T,Hash, HashEqual> result = this->set;
-                for (T obj : set.set) {
-                    result = result.insert(obj);
+                for (const T& obj : set.set) {
+                    if(result.count(obj) == 0) {
+                        result = std::move(result).insert(obj);
+                    }
                 }
-                 return BSet(result);
+                return BSet(result);
             } else {
                 immer::set<T,Hash, HashEqual> result = set.set;
-                for (T obj : this->set) {
-                    result = result.insert(obj);
+                for (const T& obj : this->set) {
+                    if(result.count(obj) == 0) {
+                        result = std::move(result).insert(obj);
+                    }
                 }
                 return BSet(result);
             }
         }
 
-        static BSet<BInteger> range(const BInteger& a, const BInteger& b) {
+        inline static BSet<BInteger> range(const BInteger& a, const BInteger& b) {
             immer::set<BInteger, Hash, HashEqual> result;
-            for(int i = a.intValue(); i <= b.intValue(); ++i) {
-                result = result.insert(BInteger(i));
+            int start = a.intValue();
+            int end = b.intValue();
+            for(int i = start; i <= end; ++i) {
+                result = result.insert(i);
             }
             return BSet<BInteger>(result);
         }
 
         BSet<BObject> relationImage(const BSet<BObject>& domain) {
             immer::set<T,Hash, HashEqual> result;
-            for(T object : this->set) {
+            for(const T& object : this->set) {
                 BCouple couple = static_cast<BCouple>(object);
                 if(domain.set.count(couple.getFirst()) == 0) {
                     result = result.insert(couple.getSecond());
@@ -215,7 +230,7 @@ class BSet : public BObject {
 
 
         BObject functionCall(const T& arg) {
-            for(T object : this->set) {
+            for(const T& object : this->set) {
                 BCouple couple = static_cast<BCouple>(object);
                 if(couple.getFirst() == arg) {
                     return couple.getSecond();
@@ -247,9 +262,9 @@ class BSet : public BObject {
             return new BBoolean(!equals(o));
         }*/
 
-        /*void operator =(BSet<T>&& other) {
-            this->set = move(other.set);
-        }*/
+        void operator =(const BSet<T>& other) {
+            this->set = other.set;
+        }
 
         int hashCode() const {
             return 0;

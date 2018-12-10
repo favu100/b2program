@@ -156,12 +156,12 @@ class BInteger : public BObject {
             return new BInteger(value.xor(o.value));
         }*/
 
-        BInteger next() {
-            return value + 1;
+        BInteger next() const {
+            return BInteger(value + 1);
         }
 
-        BInteger previous() {
-            return value - 1;
+        BInteger previous() const {
+            return BInteger(value - 1);
         }
 
         /*BInteger leftShift(BInteger o) {

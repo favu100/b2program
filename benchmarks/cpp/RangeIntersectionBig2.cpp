@@ -46,6 +46,7 @@ class RangeIntersectionBig2 {
                 set1 = static_cast<BSet<BInteger > >(set1.intersect(set2));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
             }
+            printf("%d\n", set1.size());
         }
 
 };

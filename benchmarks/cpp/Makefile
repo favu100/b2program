@@ -132,145 +132,149 @@ rangeunionbig2: RangeUnionBig2.exec
 	./RangeUnionBig2
 rangeunionsmall2: RangeUnionSmall2.exec
 	./RangeUnionSmall2
+cruise: Cruise.exec
+	./Cruise_finite_k
 
 
 
 Lift.exec: Lift.cpp
-	g++-8 -std=c++14 Lift.cpp -O2 -o  Lift
+	clang++ -std=c++14 Lift.cpp -O3 -march=native -o  Lift -D IMMER_NO_THREAD_SAFETY
 LiftExec.exec: LiftExec.cpp
-	g++-8 -std=c++14 LiftExec.cpp -O2 -o LiftExec
+	clang++ -std=c++14 LiftExec.cpp -O3 -march=native -o LiftExec -D IMMER_NO_THREAD_SAFETY
 TrafficLight.exec: TrafficLight.cpp
-	g++-8 -std=c++14 TrafficLight.cpp -O2 -o TrafficLight
+	clang++ -std=c++14 TrafficLight.cpp -O3 -march=native -o TrafficLight -D IMMER_NO_THREAD_SAFETY
 TrafficLightExec.exec: TrafficLightExec.cpp
-	g++-8 -std=c++14 TrafficLightExec.cpp -O2 -o TrafficLightExec
+	clang++ -std=c++14 TrafficLightExec.cpp -O3 -march=native -o TrafficLightExec -D IMMER_NO_THREAD_SAFETY
 Sieve.exec: Sieve.cpp
-	g++-8 -std=c++14 Sieve.cpp -O2 -o Sieve
+	clang++ -std=c++14 Sieve.cpp -O3 -march=native -o Sieve -D IMMER_NO_THREAD_SAFETY
 IncreasingSet.exec: IncreasingSet.cpp
-	g++-8 -std=c++14 IncreasingSet.cpp -O2 -o IncreasingSet
+	clang++ -std=c++14 IncreasingSet.cpp -O3 -march=native -o IncreasingSet -D IMMER_NO_THREAD_SAFETY
 SetOperation.exec: SetOperation.cpp
-	g++-8 -std=c++14 SetOperation.cpp -O2 -o SetOperation
+	clang++ -std=c++14 SetOperation.cpp -O3 -march=native -o SetOperation -D IMMER_NO_THREAD_SAFETY
 Plus.exec: Plus.cpp
-	g++-8 -std=c++14 Plus.cpp -O2 -o Plus
+	clang++ -std=c++14 Plus.cpp -O3 -march=native -o Plus -D IMMER_NO_THREAD_SAFETY
 Minus.exec: Minus.cpp
-	g++-8 -std=c++14 Minus.cpp -O2 -o Minus
+	clang++ -std=c++14 Minus.cpp -O3 -march=native -o Minus -D IMMER_NO_THREAD_SAFETY
 Multiply.exec: Multiply.cpp
-	g++-8 -std=c++14 Multiply.cpp -O2 -o Multiply
+	clang++ -std=c++14 Multiply.cpp -O3 -march=native -o Multiply -D IMMER_NO_THREAD_SAFETY
 Divide.exec: Divide.cpp
-	g++-8 -std=c++14 Divide.cpp -O2 -o Divide
+	clang++ -std=c++14 Divide.cpp -O3 -march=native -o Divide -D IMMER_NO_THREAD_SAFETY
 Modulo.exec: Modulo.cpp
-	g++-8 -std=c++14 Modulo.cpp -O2 -o Modulo
+	clang++ -std=c++14 Modulo.cpp -O3 -march=native -o Modulo -D IMMER_NO_THREAD_SAFETY
 Negative.exec: Negative.cpp
-	g++-8 -std=c++14 Negative.cpp -O2 -o Negative
+	clang++ -std=c++14 Negative.cpp -O3 -march=native -o Negative -D IMMER_NO_THREAD_SAFETY
 BigNumbers.exec: BigNumbers.cpp
-	g++-8 -std=c++14 BigNumbers.cpp -O2 -o BigNumbers
+	clang++ -std=c++14 BigNumbers.cpp -O3 -march=native -o BigNumbers -D IMMER_NO_THREAD_SAFETY
 SmallNumbers.exec: SmallNumbers.cpp
-	g++-8 -std=c++14 SmallNumbers.cpp -O2 -o SmallNumbers
+	clang++ -std=c++14 SmallNumbers.cpp -O3 -march=native -o SmallNumbers -D IMMER_NO_THREAD_SAFETY
 And.exec: And.cpp
-	g++-8 -std=c++14 And.cpp -O2 -o And
+	clang++ -std=c++14 And.cpp -O3 -march=native -o And -D IMMER_NO_THREAD_SAFETY
 Or.exec: Or.cpp
-	g++-8 -std=c++14 Or.cpp -O2 -o Or
+	clang++ -std=c++14 Or.cpp -O3 -march=native -o Or -D IMMER_NO_THREAD_SAFETY
 Implies.exec: Implies.cpp
-	g++-8 -std=c++14 Implies.cpp -O2 -o Implies
+	clang++ -std=c++14 Implies.cpp -O3 -march=native -o Implies -D IMMER_NO_THREAD_SAFETY
 Equivalent.exec: Equivalent.cpp
-	g++-8 -std=c++14 Equivalent.cpp -O2 -o Equivalent
+	clang++ -std=c++14 Equivalent.cpp -O3 -march=native -o Equivalent -D IMMER_NO_THREAD_SAFETY
 Less.exec: Less.cpp
-	g++-8 -std=c++14 Less.cpp -O2 -o Less
+	clang++ -std=c++14 Less.cpp -O3 -march=native -o Less -D IMMER_NO_THREAD_SAFETY
 LessEqual.exec: LessEqual.cpp
-	g++-8 -std=c++14 LessEqual.cpp -O2 -o LessEqual
+	clang++ -std=c++14 LessEqual.cpp -O3 -march=native -o LessEqual -D IMMER_NO_THREAD_SAFETY
 Greater.exec: Greater.cpp
-	g++-8 -std=c++14 Greater.cpp -O2 -o Greater
+	clang++ -std=c++14 Greater.cpp -O3 -march=native -o Greater -D IMMER_NO_THREAD_SAFETY
 GreaterEqual.exec: GreaterEqual.cpp
-	g++-8 -std=c++14 GreaterEqual.cpp -O2 -o GreaterEqual
+	clang++ -std=c++14 GreaterEqual.cpp -O3 -march=native -o GreaterEqual -D IMMER_NO_THREAD_SAFETY
 Equal.exec: Equal.cpp
-	g++-8 -std=c++14 Equal.cpp -O2 -o Equal
+	clang++ -std=c++14 Equal.cpp -O3 -march=native -o Equal -D IMMER_NO_THREAD_SAFETY
 Unequal.exec: Unequal.cpp
-	g++-8 -std=c++14 Unequal.cpp -O2 -o Unequal
+	clang++ -std=c++14 Unequal.cpp -O3 -march=native -o Unequal -D IMMER_NO_THREAD_SAFETY
 SetCardBig.exec: SetCardBig.cpp
-	g++-8 -std=c++14 SetCardBig.cpp -O2 -o SetCardBig
+	clang++ -std=c++14 SetCardBig.cpp -O3 -march=native -o SetCardBig -D IMMER_NO_THREAD_SAFETY
 SetCardSmall.exec: SetCardSmall.cpp
-	g++-8 -std=c++14 SetCardSmall.cpp -O2 -o SetCardSmall
+	clang++ -std=c++14 SetCardSmall.cpp -O3 -march=native -o SetCardSmall -D IMMER_NO_THREAD_SAFETY
 SetComplementBig.exec: SetComplementBig.cpp
-	g++-8 -std=c++14 SetComplementBig.cpp -O2 -o SetComplementBig
+	clang++ -std=c++14 SetComplementBig.cpp -O3 -march=native -o SetComplementBig -D IMMER_NO_THREAD_SAFETY
 SetComplementSmall.exec: SetComplementSmall.cpp
-	g++-8 -std=c++14 SetComplementSmall.cpp -O2 -o SetComplementSmall
+	clang++ -std=c++14 SetComplementSmall.cpp -O3 -march=native -o SetComplementSmall -D IMMER_NO_THREAD_SAFETY
 SetElementOfBig.exec: SetElementOfBig.cpp
-	g++-8 -std=c++14 SetElementOfBig.cpp -O2 -o SetElementOfBig
+	clang++ -std=c++14 SetElementOfBig.cpp -O3 -march=native -o SetElementOfBig -D IMMER_NO_THREAD_SAFETY
 SetElementOfSmall.exec: SetElementOfSmall.cpp
-	g++-8 -std=c++14 SetElementOfSmall.cpp -O2 -o SetElementOfSmall
+	clang++ -std=c++14 SetElementOfSmall.cpp -O3 -march=native -o SetElementOfSmall -D IMMER_NO_THREAD_SAFETY
 SetIntersectionBig.exec: SetIntersectionBig.cpp
-	g++-8 -std=c++14 SetIntersectionBig.cpp -O2 -o SetIntersectionBig
+	clang++ -std=c++14 SetIntersectionBig.cpp -O3 -march=native -o SetIntersectionBig -D IMMER_NO_THREAD_SAFETY
 SetIntersectionBig3.exec: SetIntersectionBig3.cpp
-	g++-8 -std=c++14 SetIntersectionBig3.cpp -O2 -o SetIntersectionBig3
+	clang++ -std=c++14 SetIntersectionBig3.cpp -O3 -march=native -o SetIntersectionBig3 -D IMMER_NO_THREAD_SAFETY
 SetIntersectionSmall.exec: SetIntersectionSmall.cpp
-	g++-8 -std=c++14 SetIntersectionSmall.cpp -O2 -o SetIntersectionSmall
+	clang++ -std=c++14 SetIntersectionSmall.cpp -O3 -march=native -o SetIntersectionSmall -D IMMER_NO_THREAD_SAFETY
 SetUnionBig.exec: SetUnionBig.cpp
-	g++-8 -std=c++14 SetUnionBig.cpp -O2 -o SetUnionBig
+	clang++ -std=c++14 SetUnionBig.cpp -O3 -march=native -o SetUnionBig -D IMMER_NO_THREAD_SAFETY
 SetUnionSmall.exec: SetUnionSmall.cpp
-	g++-8 -std=c++14 SetUnionSmall.cpp -O2 -o SetUnionSmall
+	clang++ -std=c++14 SetUnionSmall.cpp -O3 -march=native -o SetUnionSmall -D IMMER_NO_THREAD_SAFETY
 SetCardBig2.exec: SetCardBig2.cpp
-	g++-8 -std=c++14 SetCardBig2.cpp -O2 -o SetCardBig2
+	clang++ -std=c++14 SetCardBig2.cpp -O3 -march=native -o SetCardBig2 -D IMMER_NO_THREAD_SAFETY
 SetCardSmall2.exec: SetCardSmall2.cpp
-	g++-8 -std=c++14 SetCardSmall2.cpp -O2 -o SetCardSmall2
+	clang++ -std=c++14 SetCardSmall2.cpp -O3 -march=native -o SetCardSmall2 -D IMMER_NO_THREAD_SAFETY
 SetComplementBig2.exec: SetComplementBig2.cpp
-	g++-8 -std=c++14 SetComplementBig2.cpp -O2 -o SetComplementBig2
+	clang++ -std=c++14 SetComplementBig2.cpp -O3 -march=native -o SetComplementBig2 -D IMMER_NO_THREAD_SAFETY
 SetComplementSmall2.exec: SetComplementSmall2.cpp
-	g++-8 -std=c++14 SetComplementSmall2.cpp -O2 -o SetComplementSmall2
+	clang++ -std=c++14 SetComplementSmall2.cpp -O3 -march=native -o SetComplementSmall2 -D IMMER_NO_THREAD_SAFETY
 SetElementOfBig2.exec: SetElementOfBig2.cpp
-	g++-8 -std=c++14 SetElementOfBig2.cpp -O2 -o SetElementOfBig2
+	clang++ -std=c++14 SetElementOfBig2.cpp -O3 -march=native -o SetElementOfBig2 -D IMMER_NO_THREAD_SAFETY
 SetElementOfSmall2.exec: SetElementOfSmall2.cpp
-	g++-8 -std=c++14 SetElementOfSmall2.cpp -O2 -o SetElementOfSmall2
+	clang++ -std=c++14 SetElementOfSmall2.cpp -O3 -march=native -o SetElementOfSmall2 -D IMMER_NO_THREAD_SAFETY
 SetIntersectionBig2.exec: SetIntersectionBig2.cpp
-	g++-8 -std=c++14 SetIntersectionBig2.cpp -O2 -o SetIntersectionBig2
+	clang++ -std=c++14 SetIntersectionBig2.cpp -O3 -march=native -o SetIntersectionBig2 -D IMMER_NO_THREAD_SAFETY
 SetIntersectionSmall2.exec: SetIntersectionSmall2.cpp
-	g++-8 -std=c++14 SetIntersectionSmall2.cpp -O2 -o SetIntersectionSmall2
+	clang++ -std=c++14 SetIntersectionSmall2.cpp -O3 -march=native -o SetIntersectionSmall2 -D IMMER_NO_THREAD_SAFETY
 SetUnionBig2.exec: SetUnionBig2.cpp
-	g++-8 -std=c++14 SetUnionBig2.cpp -O2 -o SetUnionBig2
+	clang++ -std=c++14 SetUnionBig2.cpp -O3 -march=native -o SetUnionBig2 -D IMMER_NO_THREAD_SAFETY
 SetUnionSmall2.exec: SetUnionSmall2.cpp
-	g++-8 -std=c++14 SetUnionSmall2.cpp -O2 -o SetUnionSmall2
+	clang++ -std=c++14 SetUnionSmall2.cpp -O3 -march=native -o SetUnionSmall2 -D IMMER_NO_THREAD_SAFETY
 RangeBig.exec: RangeBig.cpp
-	g++-8 -std=c++14 RangeBig.cpp -O2 -o RangeBig
+	clang++ -std=c++14 RangeBig.cpp -O3 -march=native -o RangeBig -D IMMER_NO_THREAD_SAFETY
 RangeSmall.exec: RangeSmall.cpp
-	g++-8 -std=c++14 RangeSmall.cpp -O2 -o RangeSmall
+	clang++ -std=c++14 RangeSmall.cpp -O3 -march=native -o RangeSmall -D IMMER_NO_THREAD_SAFETY
 RangeCardBig.exec: RangeCardBig.cpp
-	g++-8 -std=c++14 RangeCardBig.cpp -O2 -o RangeCardBig
+	clang++ -std=c++14 RangeCardBig.cpp -O3 -march=native -o RangeCardBig -D IMMER_NO_THREAD_SAFETY
 RangeCardSmall.exec: RangeCardSmall.cpp
-	g++-8 -std=c++14 RangeCardSmall.cpp -O2 -o RangeCardSmall
+	clang++ -std=c++14 RangeCardSmall.cpp -O3 -march=native -o RangeCardSmall -D IMMER_NO_THREAD_SAFETY
 RangeComplementBig.exec: RangeComplementBig.cpp
-	g++-8 -std=c++14 RangeComplementBig.cpp -O2 -o RangeComplementBig
+	clang++ -std=c++14 RangeComplementBig.cpp -O3 -march=native -o RangeComplementBig -D IMMER_NO_THREAD_SAFETY
 RangeComplementSmall.exec: RangeComplementSmall.cpp
-	g++-8 -std=c++14 RangeComplementSmall.cpp -O2 -o RangeComplementSmall
+	clang++ -std=c++14 RangeComplementSmall.cpp -O3 -march=native -o RangeComplementSmall -D IMMER_NO_THREAD_SAFETY
 RangeElementOfBig.exec: RangeElementOfBig.cpp
-	g++-8 -std=c++14 RangeElementOfBig.cpp -O2 -o RangeElementOfBig
+	clang++ -std=c++14 RangeElementOfBig.cpp -O3 -march=native -o RangeElementOfBig -D IMMER_NO_THREAD_SAFETY
 RangeElementOfSmall.exec: RangeElementOfSmall.cpp
-	g++-8 -std=c++14 RangeElementOfSmall.cpp -O2 -o RangeElementOfSmall
+	clang++ -std=c++14 RangeElementOfSmall.cpp -O3 -march=native -o RangeElementOfSmall -D IMMER_NO_THREAD_SAFETY
 RangeIntersectionBig.exec: RangeIntersectionBig.cpp
-	g++-8 -std=c++14 RangeIntersectionBig.cpp -O2 -o RangeIntersectionBig
+	clang++ -std=c++14 RangeIntersectionBig.cpp -O3 -march=native -o RangeIntersectionBig -D IMMER_NO_THREAD_SAFETY
 RangeIntersectionSmall.exec: RangeIntersectionSmall.cpp
-	g++-8 -std=c++14 RangeIntersectionSmall.cpp -O2 -o RangeIntersectionSmall
+	clang++ -std=c++14 RangeIntersectionSmall.cpp -O3 -march=native -o RangeIntersectionSmall -D IMMER_NO_THREAD_SAFETY
 RangeUnionBig.exec: RangeUnionBig.cpp
-	g++-8 -std=c++14 RangeUnionBig.cpp -O2 -o RangeUnionBig
+	clang++ -std=c++14 RangeUnionBig.cpp -O3 -march=native -o RangeUnionBig -D IMMER_NO_THREAD_SAFETY
 RangeUnionSmall.exec: RangeUnionSmall.cpp
-	g++-8 -std=c++14 RangeUnionSmall.cpp -O2 -o RangeUnionSmall
+	clang++ -std=c++14 RangeUnionSmall.cpp -O3 -march=native -o RangeUnionSmall -D IMMER_NO_THREAD_SAFETY
 RangeCardBig2.exec: RangeCardBig2.cpp
-	g++-8 -std=c++14 RangeCardBig2.cpp -O2 -o RangeCardBig2
+	clang++ -std=c++14 RangeCardBig2.cpp -O3 -march=native -o RangeCardBig2 -D IMMER_NO_THREAD_SAFETY
 RangeCardSmall2.exec: RangeCardSmall2.cpp
-	g++-8 -std=c++14 RangeCardSmall2.cpp -O2 -o RangeCardSmall2
+	clang++ -std=c++14 RangeCardSmall2.cpp -O3 -march=native -o RangeCardSmall2 -D IMMER_NO_THREAD_SAFETY
 RangeComplementBig2.exec: RangeComplementBig2.cpp
-	g++-8 -std=c++14 RangeComplementBig2.cpp -O2 -o RangeComplementBig2
+	clang++ -std=c++14 RangeComplementBig2.cpp -O3 -march=native -o RangeComplementBig2 -D IMMER_NO_THREAD_SAFETY
 RangeComplementSmall2.exec: RangeComplementSmall2.cpp
-	g++-8 -std=c++14 RangeComplementSmall2.cpp -O2 -o RangeComplementSmall2
+	clang++ -std=c++14 RangeComplementSmall2.cpp -O3 -march=native -o RangeComplementSmall2 -D IMMER_NO_THREAD_SAFETY
 RangeElementOfBig2.exec: RangeElementOfBig2.cpp
-	g++-8 -std=c++14 RangeElementOfBig2.cpp -O2 -o RangeElementOfBig2
+	clang++ -std=c++14 RangeElementOfBig2.cpp -O3 -march=native -o RangeElementOfBig2 -D IMMER_NO_THREAD_SAFETY
 RangeElementOfSmall2.exec: RangeElementOfSmall2.cpp
-	g++-8 -std=c++14 RangeElementOfSmall2.cpp -O2 -o RangeElementOfSmall2
+	clang++ -std=c++14 RangeElementOfSmall2.cpp -O3 -march=native -o RangeElementOfSmall2 -D IMMER_NO_THREAD_SAFETY
 RangeIntersectionBig2.exec: RangeIntersectionBig2.cpp
-	g++-8 -std=c++14 RangeIntersectionBig2.cpp -O2 -o RangeIntersectionBig2
+	clang++ -std=c++14 RangeIntersectionBig2.cpp -O3 -march=native -o RangeIntersectionBig2 -D IMMER_NO_THREAD_SAFETY
 RangeIntersectionSmall2.exec: RangeIntersectionSmall2.cpp
-	g++-8 -std=c++14 RangeIntersectionSmall2.cpp -O2 -o RangeIntersectionSmall2
+	clang++ -std=c++14 RangeIntersectionSmall2.cpp -O3 -march=native -o RangeIntersectionSmall2 -D IMMER_NO_THREAD_SAFETY
 RangeUnionBig2.exec: RangeUnionBig2.cpp
-	g++-8 -std=c++14 RangeUnionBig2.cpp -O2 -o RangeUnionBig2
+	clang++ -std=c++14 RangeUnionBig2.cpp -O3 -march=native -o RangeUnionBig2 -D IMMER_NO_THREAD_SAFETY
 RangeUnionSmall2.exec: RangeUnionSmall2.cpp
-	g++-8 -std=c++14 RangeUnionSmall2.cpp -O2 -o RangeUnionSmall2
+	clang++ -std=c++14 RangeUnionSmall2.cpp -O3 -march=native -o RangeUnionSmall2 -D IMMER_NO_THREAD_SAFETY
+Cruise.exec: Cruise_finite_k.cpp
+	clang++ -std=c++14 Cruise_finite_k.cpp -O3 -march=native -o Cruise_finite_k -D IMMER_NO_THREAD_SAFETY
 
 clean:
 	rm *.exec

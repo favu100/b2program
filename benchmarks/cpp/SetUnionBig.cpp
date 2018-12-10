@@ -44,6 +44,7 @@ class SetUnionBig {
                 set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger>::range((BInteger(1)),(BInteger(3000))))));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
             }
+            printf("%d\n", set.size());
         }
 
 };

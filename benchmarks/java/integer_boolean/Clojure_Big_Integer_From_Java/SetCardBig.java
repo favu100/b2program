@@ -16,8 +16,8 @@ public class SetCardBig {
         if(initialized) {
             throw new RuntimeException("Machine is already initialized");
         }
-        counter = (BInteger) new BInteger(0);
-        result = (BInteger) new BInteger(0);
+        counter = (BInteger) new BInteger("0");
+        result = (BInteger) new BInteger("0");
         initialized = true;
     }
 
@@ -25,9 +25,9 @@ public class SetCardBig {
         if(!initialized) {
             throw new RuntimeException("Machine was not initialized");
         }
-        while((counter.less(new BInteger(10000))).booleanValue()) {
-            result = (BInteger) BSet.range(new BInteger(1),new BInteger(25000)).complement(new BSet(new BInteger(24999))).card();
-            counter = (BInteger) counter.plus(new BInteger(1));
+        while((counter.less(new BInteger("10000"))).booleanValue()) {
+            result = (BInteger) BSet.range(new BInteger("1"),new BInteger("25000")).complement(new BSet(new BInteger("24999"))).card();
+            counter = (BInteger) counter.plus(new BInteger("1"));
         }
     }
 

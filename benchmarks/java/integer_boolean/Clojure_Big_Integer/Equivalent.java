@@ -14,7 +14,7 @@ public class Equivalent {
         if(initialized) {
             throw new RuntimeException("Machine is already initialized");
         }
-        counter = (BInteger) new BInteger(0);
+        counter = (BInteger) new BInteger("0");
         initialized = true;
     }
 
@@ -22,8 +22,8 @@ public class Equivalent {
         if(!initialized) {
             throw new RuntimeException("Machine was not initialized");
         }
-        while((counter.less(new BInteger(5000000)).equivalent(new BInteger(1).equal(new BInteger(1)))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger(1));
+        while((counter.less(new BInteger("5000000")).equivalent(new BInteger("1").equal(new BInteger("1")))).booleanValue()) {
+            counter = (BInteger) counter.plus(new BInteger("1"));
         }
     }
 

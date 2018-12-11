@@ -11,7 +11,7 @@ DEPENDENCIES ?= :btypes_persistent.jar
 	javac -cp .$(DEPENDENCIES) $<
 
 % : %.class
-	/usr/bin/time -f "%C %E" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@
+	gtime -f "%C %E" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@
 
 clean:
 	rm *.class

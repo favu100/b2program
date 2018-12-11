@@ -16,7 +16,7 @@ public class RangeBig {
         if(initialized) {
             throw new RuntimeException("Machine is already initialized");
         }
-        counter = (BInteger) new BInteger(0);
+        counter = (BInteger) new BInteger("0");
         set = (BSet) new BSet();
         initialized = true;
     }
@@ -25,9 +25,9 @@ public class RangeBig {
         if(!initialized) {
             throw new RuntimeException("Machine was not initialized");
         }
-        while((counter.less(new BInteger(1000))).booleanValue()) {
-            set = (BSet) BSet.range(new BInteger(1),new BInteger(25000));
-            counter = (BInteger) counter.plus(new BInteger(1));
+        while((counter.less(new BInteger("1000"))).booleanValue()) {
+            set = (BSet) BSet.range(new BInteger("1"),new BInteger("25000"));
+            counter = (BInteger) counter.plus(new BInteger("1"));
         }
     }
 

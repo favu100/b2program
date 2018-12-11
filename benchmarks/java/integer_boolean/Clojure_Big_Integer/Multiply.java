@@ -14,8 +14,8 @@ public class Multiply {
         if(initialized) {
             throw new RuntimeException("Machine is already initialized");
         }
-        counter = (BInteger) new BInteger(0);
-        value = (BInteger) new BInteger(0);
+        counter = (BInteger) new BInteger("0");
+        value = (BInteger) new BInteger("0");
         initialized = true;
     }
 
@@ -23,9 +23,9 @@ public class Multiply {
         if(!initialized) {
             throw new RuntimeException("Machine was not initialized");
         }
-        while((counter.less(new BInteger(5000000))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger(1));
-            value = (BInteger) value.multiply(new BInteger(1));
+        while((counter.less(new BInteger("5000000"))).booleanValue()) {
+            counter = (BInteger) counter.plus(new BInteger("1"));
+            value = (BInteger) value.multiply(new BInteger("1"));
         }
     }
 

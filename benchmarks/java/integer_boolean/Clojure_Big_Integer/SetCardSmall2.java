@@ -17,9 +17,9 @@ public class SetCardSmall2 {
         if(initialized) {
             throw new RuntimeException("Machine is already initialized");
         }
-        counter = (BInteger) new BInteger(0);
-        set = (BSet) new BSet(new BInteger(1));
-        result = (BInteger) new BInteger(0);
+        counter = (BInteger) new BInteger("0");
+        set = (BSet) new BSet(new BInteger("1"));
+        result = (BInteger) new BInteger("0");
         initialized = true;
     }
 
@@ -27,9 +27,9 @@ public class SetCardSmall2 {
         if(!initialized) {
             throw new RuntimeException("Machine was not initialized");
         }
-        while((counter.less(new BInteger(5000000))).booleanValue()) {
+        while((counter.less(new BInteger("5000000"))).booleanValue()) {
             result = (BInteger) set.card();
-            counter = (BInteger) counter.plus(new BInteger(1));
+            counter = (BInteger) counter.plus(new BInteger("1"));
         }
     }
 

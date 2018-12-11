@@ -17,9 +17,9 @@ public class SetComplementBig2 {
         if(initialized) {
             throw new RuntimeException("Machine is already initialized");
         }
-        counter = (BInteger) new BInteger(0);
-        set1 = (BSet) BSet.range(new BInteger(1),new BInteger(25000)).complement(new BSet(new BInteger(24999)));
-        set2 = (BSet) BSet.range(new BInteger(1),new BInteger(3000));
+        counter = (BInteger) new BInteger("0");
+        set1 = (BSet) BSet.range(new BInteger("1"),new BInteger("25000")).complement(new BSet(new BInteger("24999")));
+        set2 = (BSet) BSet.range(new BInteger("1"),new BInteger("3000"));
         initialized = true;
     }
 
@@ -27,9 +27,9 @@ public class SetComplementBig2 {
         if(!initialized) {
             throw new RuntimeException("Machine was not initialized");
         }
-        while((counter.less(new BInteger(10000))).booleanValue()) {
+        while((counter.less(new BInteger("10000"))).booleanValue()) {
             set1 = (BSet) set1.complement(set2);
-            counter = (BInteger) counter.plus(new BInteger(1));
+            counter = (BInteger) counter.plus(new BInteger("1"));
         }
     }
 

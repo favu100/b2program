@@ -30,11 +30,7 @@ class <machine> {
 
         <declarations; separator="\n">
 
-        bool initialized = false;
-
     public:
-
-        <machine>(){}
 
         <initialization>
 
@@ -46,19 +42,10 @@ class <machine> {
 <addition>
 >>
 
-initialization(body, machines) ::= <<
-void initialize() {
-    if(initialized) {
-        throw runtime_error("Machine is already initialized");
-    }
-    <machines : {m | <include_initialization(m)>}; separator="\n">
+initialization(machine, body) ::= <<
+<machine>() {
     <body>
-    initialized = true;
 }
->>
-
-include_initialization(machine) ::= <<
-<machine>.initialize();
 >>
 
 method() ::= <<
@@ -66,9 +53,6 @@ method() ::= <<
 
 operation(returnType, operationName, parameters, locals, body, return) ::= <<
 <returnType> <operationName>(<parameters; separator=", ">) {
-    if(!initialized) {
-        throw runtime_error("Machine was not initialized");
-    }
     <locals; separator="\n">
     <body>
     <return>

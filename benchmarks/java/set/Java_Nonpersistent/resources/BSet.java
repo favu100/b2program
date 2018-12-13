@@ -1,26 +1,24 @@
 package de.hhu.stups.btypes;
 
-import org.pcollections.HashTreePSet;
-import org.pcollections.PSet;
+import com.google.common.collect.ImmutableSet;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BSet implements BObject, Set<BObject> {
 
-	private final PSet<BObject> set;
+	private final ImmutableSet<BObject> set;
 
-	public BSet(PSet<BObject> elements) {
-		this.set = elements;
+	public BSet(java.util.Set<BObject> elements) {
+		this.set = ImmutableSet.copyOf(elements);
 	}
 
 	public BSet(BObject... elements) {
-		this.set = HashTreePSet.from(Arrays.asList(elements));
+		this.set = ImmutableSet.copyOf(elements);
 	}
 
 	public static LinkedHashSet<BObject> newStorage() {
@@ -113,51 +111,52 @@ public class BSet implements BObject, Set<BObject> {
 	}
 
 	public BSet intersect(BSet set) {
-		if(this.size() < set.size()) {
-			return new BSet(this.set.minusAll(this.set.minusAll(set)));
-		} else {
-			return new BSet(set.set.minusAll(set.set.minusAll(this)));
-		}
+		return new BSet(this.stream()
+				.filter(set::contains)
+				.collect(Collectors.toSet()));
 	}
 
 	public BSet complement(BSet set) {
-		return new BSet(this.set.minusAll(set));
+		return new BSet(this.stream()
+				.filter(element -> !set.contains(element))
+				.collect(Collectors.toSet()));
 	}
 
 	public BSet union(BSet set) {
-		return new BSet(this.set.plusAll(set));
+		HashSet<BObject> result = new HashSet<>(this);
+		result.addAll(set);
+		return new BSet(result);
 	}
 
 	public static BSet range(BInteger a, BInteger b) {
-		PSet<BObject> set = HashTreePSet.empty();
+		HashSet<BObject> set = new HashSet<>();
 		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = (BInteger) i.next()) {
-			set = set.plus(i);
+			set.add(new BInteger(new java.math.BigInteger(String.valueOf(i))));
 		}
 		return new BSet(set);
 	}
 
 	public BSet relationImage(BSet domain) {
-		return new BSet(HashTreePSet.from(set.stream()
-				.filter(object -> domain.contains(((BCouple) object).getFirst()))
-				.map(object -> ((BCouple) object).getSecond())
-				.collect(Collectors.toSet())));
+		return new BSet(set.stream()
+			.filter(object -> domain.contains(((BCouple) object).getFirst()))
+			.map(object -> ((BCouple) object).getSecond())
+			.collect(Collectors.toSet()));
 	}
 
 
 	public BObject functionCall(BObject arg) {
-		List<BCouple> matchedCouples = set.stream()
-				.map(object -> (BCouple) object)
-				.filter(couple -> couple.getFirst().equals(arg))
-				.collect(Collectors.toList());
-		if(matchedCouples.size() > 0) {
-			return matchedCouples.get(0).getSecond();
+		for(BObject object : set) {
+			BCouple couple = (BCouple) object;
+			if(couple.getFirst().equals(arg)) {
+				return couple.getSecond();
+			}
 		}
 		throw new RuntimeException("Argument is not in the key set of this map");
 	}
 
 
 	public BInteger card() {
-		return new BInteger(this.size());
+		return new BInteger(String.valueOf(this.size()));
 	}
 
 	public BBoolean elementOf(BObject object) {
@@ -170,11 +169,6 @@ public class BSet implements BObject, Set<BObject> {
 
 	public BBoolean unequal(BSet o) {
 		return new BBoolean(!equals(o));
-	}
-
-	public BObject nondeterminism() {
-		int index = (int) Math.floor(Math.random() * set.size());
-		return (BObject) toArray()[index];
 	}
 
 }

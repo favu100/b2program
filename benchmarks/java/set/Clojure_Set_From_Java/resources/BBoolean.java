@@ -3,7 +3,6 @@ package de.hhu.stups.btypes;
 import java.util.Objects;
 
 public class BBoolean implements BObject {
-
 	private final boolean value;
 
 	public static boolean parseBoolean(String s) {
@@ -127,5 +126,4 @@ public class BBoolean implements BObject {
 	public BBoolean unequal(BBoolean other) {
 		return new BBoolean(this.value != other.value);
 	}
-
 }

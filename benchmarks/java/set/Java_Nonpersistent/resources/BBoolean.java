@@ -1,10 +1,7 @@
 package de.hhu.stups.btypes;
 
-import java.util.Objects;
-
 public class BBoolean implements BObject {
-
-	private final boolean value;
+	private final Boolean value;
 
 	public static boolean parseBoolean(String s) {
 		return Boolean.parseBoolean(s);
@@ -19,7 +16,7 @@ public class BBoolean implements BObject {
 	}
 
 	public int compareTo(Boolean b) {
-		return b.compareTo(value);
+		return value.compareTo(b);
 	}
 
 	public static Boolean valueOf(String s) {
@@ -35,42 +32,36 @@ public class BBoolean implements BObject {
 	}
 
 	public boolean booleanValue() {
-		return value;
+		return value.booleanValue();
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(value);
+		return value.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value);
+		return value.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof BBoolean)) {
-			return false;
-		}
-		if(((BBoolean) obj).booleanValue() != value) {
-			return false;
-		}
-		return true;
+		return value.equals(obj);
 	}
 
 	public BBoolean(boolean value) {
-		this.value = value;
+		this.value = new Boolean(value);
 	}
 
 	public BBoolean(String s) {
-		this.value = Boolean.parseBoolean(s);
+		this.value = new Boolean(s);
 	}
 
 	/* groovy operator overloading support */
 	@SuppressWarnings("rawtypes")
 	Object asType(Class clazz) {
-		if (clazz == new BBoolean(true).getClass()) {
+		if (clazz == new Boolean(true).getClass()) {
 			return this.booleanValue();
 		}
 		return this;
@@ -120,12 +111,11 @@ public class BBoolean implements BObject {
 		return new BBoolean(this.booleanValue() == other);
 	}
 
-	public BBoolean equal(BBoolean other) {
-		return new BBoolean(this.value == other.value);
+	public BBoolean equal(BBoolean o) {
+		return new BBoolean(this.value.equals(o.value));
 	}
 
-	public BBoolean unequal(BBoolean other) {
-		return new BBoolean(this.value != other.value);
+	public BBoolean unequal(BBoolean o) {
+		return new BBoolean(this.value.equals(o.value));
 	}
-
 }

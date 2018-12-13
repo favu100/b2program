@@ -1,187 +1,190 @@
 package de.hhu.stups.btypes;
 
-/**
- * Created by fabian on 15.10.18.
- */
 public class BInteger extends BNumber {
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (obj instanceof java.lang.Number) {
+			return this.compareTo((java.lang.Number) obj) == 0;
+		}
+		// assert getClass() != obj.getClass()
+		return false;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (obj instanceof BNumber) {
-            //TODO: other numbers
-            return this.compareTo((BNumber) obj) == 0;
-        }
-        // assert getClass() != obj.getClass()
-        return false;
-    }
+	private static final long serialVersionUID = -6484548796859331267L;
+	private java.math.BigInteger value;
 
-    private static final long serialVersionUID = -6484548796859331267L;
-    private int value;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + value;
-        return result;
-    }
+	public BInteger(String value) {
+		this.value = new java.math.BigInteger(value);
+	}
 
-    public BInteger(int value) {
-        this.value = value;
-    }
+    public BInteger(java.math.BigInteger value) {
+		this.value = value;
+	}
 
-    public int compareTo(BNumber o) {
-        BInteger other = (BInteger) o;
-        return this.value - other.value;
-    }
+	public int compareTo(BNumber o) {
+		return this.value.compareTo(o.asBigInteger());
+	}
 
-    public BBoolean lessEqual(BNumber o) {
-        return new BBoolean(compareTo(o) <= 0);
-    }
+	public BBoolean lessEqual(BNumber o) {
+		return new BBoolean(compareTo(o) <= 0);
+	}
 
 
-    public BBoolean greaterEqual(BNumber o) {
-        return new BBoolean(compareTo(o) >= 0);
-    }
+	public BBoolean greaterEqual(BNumber o) {
+		return new BBoolean(compareTo(o) >= 0);
+	}
 
-    @Override
-    public java.math.BigInteger asBigInteger() {
-        return new java.math.BigInteger(String.valueOf(value));
-    }
+	public BBoolean less(BNumber o) {
+		return new BBoolean(compareTo(o) < 0);
+	}
 
-    public BBoolean less(BNumber o) {
-        return new BBoolean(compareTo(o) < 0);
-    }
+	public BBoolean greater(BNumber o) {
+		return new BBoolean(compareTo(o) > 0);
+	}
 
-    public BBoolean greater(BNumber o) {
-        return new BBoolean(compareTo(o) > 0);
-    }
+	public BBoolean equal(BNumber o) {
+		return new BBoolean(compareTo(o) == 0);
+	}
 
-    public BBoolean equal(BNumber o) {
-        return new BBoolean(compareTo(o) == 0);
-    }
+	public BBoolean unequal(BNumber o) {
+		return new BBoolean(compareTo(o) != 0);
+	}
 
-    public BBoolean unequal(BNumber o) {
-        return new BBoolean(compareTo(o) != 0);
-    }
 
-    @Override
-    public int intValue() {
-        return this.value;
-    }
+	public int compareTo(java.lang.Number o) {
+		java.math.BigInteger oi;
+		if (o == null) {
+			throw new NullPointerException();
+		}
+		if (getClass() != o.getClass()) {
+			oi = new java.math.BigInteger(java.lang.String.valueOf(o.longValue()));
+		} else {
+            BInteger oo = (BInteger) o;
+			oi = oo.value;
+		}
+		return this.value.compareTo(oi);
+	}
 
-    @Override
-    public long longValue() {
-        return (long) this.value;
-    }
+	@Override
+	public int intValue() {
+		return this.value.intValue();
+	}
 
-    @Override
-    public float floatValue() {
-        return (float) this.value;
-    }
+	@Override
+	public long longValue() {
+		return this.value.longValue();
+	}
 
-    @Override
-    public double doubleValue() {
-        return (double) this.value;
-    }
+	@Override
+	public float floatValue() {
+		return this.value.floatValue();
+	}
 
-    @Override
-    public BNumber plus(BNumber o) {
-        BInteger other = (BInteger) o;
-        return new BInteger(this.value + other.value);
-    }
+	@Override
+	public double doubleValue() {
+		return this.value.doubleValue();
+	}
 
-    public java.lang.String toString() {
-        return String.valueOf(value);
-    }
+	@Override
+	public BNumber plus(BNumber o) {
+		return new BInteger(this.value.add(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber minus(BNumber o) {
-        BInteger other = (BInteger) o;
-        return new BInteger(this.value - other.value);
-    }
+	@Override
+	public java.math.BigInteger asBigInteger() {
+		return this.value;
+	}
 
-    @Override
-    public BNumber multiply(BNumber o) {
-        BInteger other = (BInteger) o;
-        return new BInteger(this.value * other.value);
-    }
+	public java.lang.String toString() {
+		return this.value.toString();
+	}
 
-    @Override
-    public BNumber power(BNumber o) {
-        BInteger other = (BInteger) o;
-        return new BInteger(this.value ^ other.value);
-    }
+	@Override
+	public BNumber minus(BNumber o) {
+		return new BInteger(this.value.subtract(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber divide(BNumber o) {
-        BInteger other = (BInteger) o;
-        return new BInteger(this.value / other.value);
-    }
+	@Override
+	public BNumber multiply(BNumber o) {
+		return new BInteger(this.value.multiply(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber modulo(BNumber o) {
-        BInteger other = (BInteger) o;
-        return new BInteger(this.value % other.value);
-    }
+	@Override
+	public BNumber power(BNumber o) {
+		return new BInteger(this.value.pow(o.intValue()));
+	}
 
-    /*@Override
-    public BNumber or(BNumber o) {
-        return null;
-    }
+	@Override
+	public BNumber divide(BNumber o) {
+		return new BInteger(this.value.divide(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber and(BNumber o) {
-        return null;
-    }
+	@Override
+	public BNumber modulo(BNumber o) {
+		return new BInteger(this.value.mod(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber xor(BNumber o) {
-        return null;
-    }*/
+	@Override
+	public BNumber or(BNumber o) {
+		return new BInteger(this.value.or(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber next() {
-        return new BInteger(this.value + 1);
-    }
+	@Override
+	public BNumber and(BNumber o) {
+		return new BInteger(this.value.and(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber previous() {
-        return new BInteger(this.value - 1);
-    }
+	@Override
+	public BNumber xor(BNumber o) {
+		return new BInteger(this.value.xor(o.asBigInteger()));
+	}
 
-    @Override
-    public BNumber leftShift(BNumber o) {
-        return new BInteger(this.value << 1);
-    }
+	@Override
+	public BNumber next() {
+		return new BInteger(this.value.add(new java.math.BigInteger("1")));
+	}
 
-    @Override
-    public BNumber rightShift(BNumber o) {
-        return new BInteger(this.value >> 1);
-    }
+	@Override
+	public BNumber previous() {
+		return new BInteger(this.value.subtract(new java.math.BigInteger("1")));
+	}
 
-    @Override
-    public boolean isCase(BNumber o) {
-        return this.equals(o);
-    }
+	@Override
+	public BNumber leftShift(BNumber o) {
+		return new BInteger(this.value.shiftLeft(o.intValue()));
+	}
 
-    @Override
-    public BNumber negative() {
-        return new BInteger(-this.value);
-    }
+	@Override
+	public BNumber rightShift(BNumber o) {
+		return new BInteger(this.value.shiftRight(o.intValue()));
+	}
 
-    @Override
-    public BNumber positive() {
-        return this;
-    }
+	@Override
+	public boolean isCase(BNumber o) {
+		return this.equals(o);
+	}
 
-    public int getValue() {
-        return value;
-    }
+	@Override
+	public BNumber negative() {
+		return new BInteger(this.value.negate());
+	}
+
+	@Override
+	public BNumber positive() {
+		return this;
+	}
 
 }

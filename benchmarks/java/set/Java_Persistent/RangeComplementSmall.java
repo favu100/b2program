@@ -24,6 +24,12 @@ public class RangeComplementSmall {
         }
     }
 
-
+    public static void main(String[] args) {
+        RangeComplementSmall exec = new RangeComplementSmall();
+        long start = System.nanoTime();
+        exec.simulate();
+        long end = System.nanoTime();
+        System.out.println(exec.getClass().toString() + " Execution: " + (end - start));
+    }
 
 }

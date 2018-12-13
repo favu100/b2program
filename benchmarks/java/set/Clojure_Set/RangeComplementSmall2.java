@@ -1,9 +1,8 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
-import de.hhu.stups.btypes.BUtils;
 
-public class RangeComplementSmall {
+public class RangeComplementSmall2 {
 
 
 

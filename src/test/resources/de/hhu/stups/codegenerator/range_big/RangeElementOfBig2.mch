@@ -1,4 +1,4 @@
-MACHINE RangeElementOfBig
+MACHINE RangeElementOfBig2
 
 VARIABLES  counter, set
 

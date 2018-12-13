@@ -1,4 +1,4 @@
-MACHINE RangeUnionBig
+MACHINE RangeUnionBig2
 
 VARIABLES  counter, set1, set2
 

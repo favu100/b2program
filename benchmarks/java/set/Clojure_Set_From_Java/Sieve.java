@@ -1,7 +1,11 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
+import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class Sieve {
+
+
 
 
 
@@ -10,22 +14,13 @@ public class Sieve {
     private BInteger cur;
     private BInteger limit;
 
-    private boolean initialized = false;
-
-    public void initialize() {
-        if(initialized) {
-            throw new RuntimeException("Machine is already initialized");
-        }
+    public Sieve() {
         numbers = (BSet) BSet.range(new BInteger(2),new BInteger(10000));
         cur = (BInteger) new BInteger(2);
         limit = (BInteger) new BInteger(10000);
-        initialized = true;
     }
 
     public BInteger ComputeNumberOfPrimes() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         BInteger res = null;
         while((cur.greater(new BInteger(1)).and(cur.multiply(cur).lessEqual(limit))).booleanValue()) {
             if((numbers.elementOf(cur)).booleanValue()) {
@@ -46,11 +41,11 @@ public class Sieve {
     }
 
     public static void main(String[] args) {
-        Sieve sieve = new Sieve();
-        sieve.initialize();
+        Sieve exec = new Sieve();
         long start = System.nanoTime();
-        System.out.println(sieve.ComputeNumberOfPrimes());
+        exec.ComputeNumberOfPrimes();
         long end = System.nanoTime();
-        System.out.println(sieve.getClass().toString() + " Execution: " + (end - start));
+        System.out.println(exec.getClass().toString() + " Execution: " + (end - start));
     }
+
 }

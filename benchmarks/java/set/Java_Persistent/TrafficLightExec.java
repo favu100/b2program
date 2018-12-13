@@ -1,6 +1,10 @@
 import de.hhu.stups.btypes.BInteger;
+import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class TrafficLightExec {
+
+
 
     private TrafficLight TrafficLight = new TrafficLight();
 
@@ -8,21 +12,11 @@ public class TrafficLightExec {
 
     private BInteger counter;
 
-    private boolean initialized = false;
-
-    public void initialize() {
-        if(initialized) {
-            throw new RuntimeException("Machine is already initialized");
-        }
-        TrafficLight.initialize();
+    public TrafficLightExec() {
         counter = (BInteger) new BInteger(0);
-        initialized = true;
     }
 
     public void simulate() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         while((counter.less(new BInteger(500000))).booleanValue()) {
             this.TrafficLight.cars_ry();
             this.TrafficLight.cars_g();
@@ -36,7 +30,6 @@ public class TrafficLightExec {
 
     public static void main(String[] args) {
         TrafficLightExec exec = new TrafficLightExec();
-        exec.initialize();
         long start = System.nanoTime();
         exec.simulate();
         long end = System.nanoTime();

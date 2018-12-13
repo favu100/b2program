@@ -1,4 +1,4 @@
-MACHINE RangeComplementBig
+MACHINE RangeComplementBig2
 
 VARIABLES  counter, set1, set2
 

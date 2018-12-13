@@ -1,4 +1,4 @@
-MACHINE RangeCardBig
+MACHINE RangeCardBig2
 
 VARIABLES  counter, set, result
 

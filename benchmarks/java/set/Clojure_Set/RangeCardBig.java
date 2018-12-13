@@ -1,8 +1,11 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class RangeCardBig {
+
+
 
 
 
@@ -10,21 +13,12 @@ public class RangeCardBig {
     private BInteger counter;
     private BInteger result;
 
-    private boolean initialized = false;
-
-    public void initialize() {
-        if(initialized) {
-            throw new RuntimeException("Machine is already initialized");
-        }
+    public RangeCardBig() {
         counter = (BInteger) new BInteger(0);
         result = (BInteger) new BInteger(0);
-        initialized = true;
     }
 
     public void simulate() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         while((counter.less(new BInteger(10000))).booleanValue()) {
             result = (BInteger) BSet.range(new BInteger(1),new BInteger(25000)).card();
             counter = (BInteger) counter.plus(new BInteger(1));
@@ -33,7 +27,6 @@ public class RangeCardBig {
 
     public static void main(String[] args) {
         RangeCardBig exec = new RangeCardBig();
-        exec.initialize();
         long start = System.nanoTime();
         exec.simulate();
         long end = System.nanoTime();

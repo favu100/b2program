@@ -1,4 +1,4 @@
-MACHINE SetElementOfBig2
+MACHINE SetElementOfBig
 
 VARIABLES  counter
 

@@ -1,8 +1,11 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class TrafficLight {
+
+
 
 
     public enum colors implements BObject {
@@ -25,21 +28,12 @@ public class TrafficLight {
     private colors tl_cars;
     private colors tl_peds;
 
-    private boolean initialized = false;
-
-    public void initialize() {
-        if(initialized) {
-            throw new RuntimeException("Machine is already initialized");
-        }
+    public TrafficLight() {
         tl_cars = (colors) colors.red;
         tl_peds = (colors) colors.red;
-        initialized = true;
     }
 
     public void cars_ry() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         if((tl_cars.equal(colors.red).and(tl_peds.equal(colors.red))).booleanValue()) {
             tl_cars = (colors) colors.redyellow;
         } else {
@@ -48,9 +42,6 @@ public class TrafficLight {
     }
 
     public void cars_y() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         if((tl_cars.equal(colors.green).and(tl_peds.equal(colors.red))).booleanValue()) {
             tl_cars = (colors) colors.yellow;
         } else {
@@ -59,9 +50,6 @@ public class TrafficLight {
     }
 
     public void cars_g() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         if((tl_cars.equal(colors.redyellow).and(tl_peds.equal(colors.red))).booleanValue()) {
             tl_cars = (colors) colors.green;
         } else {
@@ -70,9 +58,6 @@ public class TrafficLight {
     }
 
     public void cars_r() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         if((tl_cars.equal(colors.yellow).and(tl_peds.equal(colors.red))).booleanValue()) {
             tl_cars = (colors) colors.red;
         } else {
@@ -81,9 +66,6 @@ public class TrafficLight {
     }
 
     public void peds_r() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         if((tl_peds.equal(colors.green).and(tl_cars.equal(colors.red))).booleanValue()) {
             tl_peds = (colors) colors.red;
         } else {
@@ -92,14 +74,13 @@ public class TrafficLight {
     }
 
     public void peds_g() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         if((tl_peds.equal(colors.red).and(tl_cars.equal(colors.red))).booleanValue()) {
             tl_peds = (colors) colors.green;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }
     }
+
+
 
 }

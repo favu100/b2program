@@ -1,8 +1,11 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class RangeElementOfSmall2 {
+
+
 
 
 
@@ -10,29 +13,19 @@ public class RangeElementOfSmall2 {
     private BInteger counter;
     private BSet set;
 
-    private boolean initialized = false;
-
-    public void initialize() {
-        if(initialized) {
-            throw new RuntimeException("Machine is already initialized");
-        }
-        counter = (BInteger) new BInteger("0");
-        set = (BSet) BSet.range(new BInteger("0"),new BInteger("5"));
-        initialized = true;
+    public RangeElementOfSmall2() {
+        counter = (BInteger) new BInteger(0);
+        set = (BSet) BSet.range(new BInteger(0),new BInteger(5));
     }
 
     public void simulate() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
-        while((counter.less(new BInteger("5000000")).and(set.elementOf(new BInteger("1")))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger("1"));
+        while((counter.less(new BInteger(5000000)).and(set.elementOf(new BInteger(1)))).booleanValue()) {
+            counter = (BInteger) counter.plus(new BInteger(1));
         }
     }
 
     public static void main(String[] args) {
         RangeElementOfSmall2 exec = new RangeElementOfSmall2();
-        exec.initialize();
         long start = System.nanoTime();
         exec.simulate();
         long end = System.nanoTime();

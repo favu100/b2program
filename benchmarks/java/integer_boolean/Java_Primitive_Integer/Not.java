@@ -2,7 +2,7 @@ import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 import de.hhu.stups.btypes.BUtils;
 
-public class Plus {
+public class Not {
 
 
 
@@ -10,22 +10,19 @@ public class Plus {
 
 
     private BInteger counter;
-    private BInteger value;
 
-    public Plus() {
+    public Not() {
         counter = (BInteger) new BInteger(0);
-        value = (BInteger) new BInteger(0);
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(5000000))).booleanValue()) {
+        while((counter.greaterEqual(new BInteger(5000000)).not()).booleanValue()) {
             counter = (BInteger) counter.plus(new BInteger(1));
-            value = (BInteger) value.plus(new BInteger(1));
         }
     }
 
     public static void main(String[] args) {
-        Plus exec = new Plus();
+        Not exec = new Not();
         long start = System.nanoTime();
         exec.simulate();
         long end = System.nanoTime();

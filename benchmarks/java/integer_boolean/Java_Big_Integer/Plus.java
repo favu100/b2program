@@ -1,6 +1,10 @@
 import de.hhu.stups.btypes.BInteger;
+import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class Plus {
+
+
 
 
 
@@ -8,21 +12,12 @@ public class Plus {
     private BInteger counter;
     private BInteger value;
 
-    private boolean initialized = false;
-
-    public void initialize() {
-        if(initialized) {
-            throw new RuntimeException("Machine is already initialized");
-        }
+    public Plus() {
         counter = (BInteger) new BInteger("0");
         value = (BInteger) new BInteger("0");
-        initialized = true;
     }
 
     public void simulate() {
-        if(!initialized) {
-            throw new RuntimeException("Machine was not initialized");
-        }
         while((counter.less(new BInteger("5000000"))).booleanValue()) {
             counter = (BInteger) counter.plus(new BInteger("1"));
             value = (BInteger) value.plus(new BInteger("1"));
@@ -31,7 +26,6 @@ public class Plus {
 
     public static void main(String[] args) {
         Plus exec = new Plus();
-        exec.initialize();
         long start = System.nanoTime();
         exec.simulate();
         long end = System.nanoTime();

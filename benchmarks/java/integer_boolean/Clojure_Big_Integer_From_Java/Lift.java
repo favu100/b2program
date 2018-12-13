@@ -1,5 +1,4 @@
 import de.hhu.stups.btypes.BInteger;
-import de.hhu.stups.btypes.BUtils;
 
 public class Lift {
 

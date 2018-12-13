@@ -21,25 +21,14 @@ class IncreasingSet {
         BInteger counter;
         BSet<BInteger > set;
 
-        bool initialized = false;
-
     public:
 
-        IncreasingSet(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        IncreasingSet() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)), (BInteger(2)), (BInteger(3)))));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(25000)))).booleanValue()) {
                 set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger >(counter))));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -47,12 +36,10 @@ class IncreasingSet {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     IncreasingSet exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

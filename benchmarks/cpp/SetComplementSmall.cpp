@@ -21,25 +21,14 @@ class SetComplementSmall {
         BInteger counter;
         BSet<BInteger > set;
 
-        bool initialized = false;
-
     public:
 
-        SetComplementSmall(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        SetComplementSmall() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger >()));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(5000000)))).booleanValue()) {
                 set = static_cast<BSet<BInteger > >(set.complement((BSet<BInteger >((BInteger(1))))));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -47,12 +36,10 @@ class SetComplementSmall {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     SetComplementSmall exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

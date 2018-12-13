@@ -21,25 +21,13 @@ class TrafficLightExec {
 
         BInteger counter;
 
-        bool initialized = false;
-
     public:
 
-        TrafficLightExec(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
-            TrafficLight.initialize();
+        TrafficLightExec() {
             counter = static_cast<BInteger >((BInteger(0)));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(500000)))).booleanValue()) {
                 this->TrafficLight.cars_ry();
                 this->TrafficLight.cars_g();
@@ -52,12 +40,10 @@ class TrafficLightExec {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     TrafficLightExec exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

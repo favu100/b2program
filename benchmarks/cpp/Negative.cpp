@@ -20,25 +20,14 @@ class Negative {
         BInteger counter;
         BInteger value;
 
-        bool initialized = false;
-
     public:
 
-        Negative(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        Negative() {
             counter = static_cast<BInteger >((BInteger(0)));
             value = static_cast<BInteger >((BInteger(0)));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(5000000)))).booleanValue()) {
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
                 value = static_cast<BInteger >(value.negative());
@@ -46,12 +35,10 @@ class Negative {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     Negative exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

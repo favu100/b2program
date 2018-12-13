@@ -21,25 +21,13 @@ class LiftExec {
 
         BInteger counter;
 
-        bool initialized = false;
-
     public:
 
-        LiftExec(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
-            Lift.initialize();
+        LiftExec() {
             counter = static_cast<BInteger >((BInteger(0)));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(3000)))).booleanValue()) {
                 BInteger i;
                 i = static_cast<BInteger >((BInteger(0)));
@@ -58,12 +46,10 @@ class LiftExec {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     LiftExec exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

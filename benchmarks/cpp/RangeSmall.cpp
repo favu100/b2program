@@ -21,25 +21,14 @@ class RangeSmall {
         BInteger counter;
         BSet<BInteger > set;
 
-        bool initialized = false;
-
     public:
 
-        RangeSmall(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        RangeSmall() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger >()));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(5000000)))).booleanValue()) {
                 set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(0)),(BInteger(5)))));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -47,12 +36,10 @@ class RangeSmall {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     RangeSmall exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

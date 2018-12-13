@@ -22,26 +22,15 @@ class SetIntersectionSmall2 {
         BSet<BInteger > set1;
         BSet<BInteger > set2;
 
-        bool initialized = false;
-
     public:
 
-        SetIntersectionSmall2(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        SetIntersectionSmall2() {
             counter = static_cast<BInteger >((BInteger(0)));
             set1 = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)))));
-            set2 = static_cast<BSet<BInteger > >((BSet<BInteger >()));
-            initialized = true;
+            set2 = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)))));
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(5000000)))).booleanValue()) {
                 set1 = static_cast<BSet<BInteger > >(set1.intersect(set2));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -49,12 +38,10 @@ class SetIntersectionSmall2 {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     SetIntersectionSmall2 exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

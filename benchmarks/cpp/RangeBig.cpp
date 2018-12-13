@@ -21,39 +21,25 @@ class RangeBig {
         BInteger counter;
         BSet<BInteger > set;
 
-        bool initialized = false;
-
     public:
 
-        RangeBig(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        RangeBig() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger >()));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(1000)))).booleanValue()) {
                 set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
             }
-            printf("%d\n",set.size());
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     RangeBig exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

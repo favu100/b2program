@@ -2,7 +2,7 @@ import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 
-public class SetElementOfBig2 {
+public class SetElementOfBig {
 
 
 
@@ -11,7 +11,7 @@ public class SetElementOfBig2 {
 
     private BInteger counter;
 
-    public SetElementOfBig2() {
+    public SetElementOfBig() {
         counter = (BInteger) new BInteger(0);
     }
 

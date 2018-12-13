@@ -21,25 +21,14 @@ class RangeUnionBig {
         BInteger counter;
         BSet<BInteger > set;
 
-        bool initialized = false;
-
     public:
 
-        RangeUnionBig(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        RangeUnionBig() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(10000)))).booleanValue()) {
                 set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger>::range((BInteger(1)),(BInteger(3000))))));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -47,12 +36,10 @@ class RangeUnionBig {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     RangeUnionBig exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

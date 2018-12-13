@@ -21,25 +21,14 @@ class RangeCardBig {
         BInteger counter;
         BInteger result;
 
-        bool initialized = false;
-
     public:
 
-        RangeCardBig(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        RangeCardBig() {
             counter = static_cast<BInteger >((BInteger(0)));
             result = static_cast<BInteger >((BInteger(0)));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(10000)))).booleanValue()) {
                 result = static_cast<BInteger >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).card());
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -47,12 +36,10 @@ class RangeCardBig {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     RangeCardBig exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

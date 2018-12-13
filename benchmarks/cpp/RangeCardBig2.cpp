@@ -5,8 +5,8 @@
 #include "BInteger.cpp"
 #include "BBoolean.cpp"
 
-#ifndef RangeCardBig2_H
-#define RangeCardBig2_H
+#ifndef RangeCardBig_H
+#define RangeCardBig_H
 
 using namespace std;
 
@@ -22,26 +22,15 @@ class RangeCardBig2 {
         BSet<BInteger > set;
         BInteger result;
 
-        bool initialized = false;
-
     public:
 
-        RangeCardBig2(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        RangeCardBig2() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))));
             result = static_cast<BInteger >((BInteger(0)));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(10000)))).booleanValue()) {
                 result = static_cast<BInteger >(set.card());
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -49,12 +38,10 @@ class RangeCardBig2 {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     RangeCardBig2 exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

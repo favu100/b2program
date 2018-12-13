@@ -24,7 +24,7 @@ public class RangeElementOfBig2 {
     }
 
     public static void main(String[] args) {
-        RangeElementOfBig2 exec = new RangeElementOfBig()2;
+        RangeElementOfBig2 exec = new RangeElementOfBig2();
         long start = System.nanoTime();
         exec.simulate();
         long end = System.nanoTime();

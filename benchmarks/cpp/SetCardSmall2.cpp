@@ -22,26 +22,15 @@ class SetCardSmall2 {
         BSet<BInteger > set;
         BInteger result;
 
-        bool initialized = false;
-
     public:
 
-        SetCardSmall2(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        SetCardSmall2() {
             counter = static_cast<BInteger >((BInteger(0)));
             set = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)))));
             result = static_cast<BInteger >((BInteger(0)));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(5000000)))).booleanValue()) {
                 result = static_cast<BInteger >(set.card());
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -49,12 +38,10 @@ class SetCardSmall2 {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     SetCardSmall2 exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

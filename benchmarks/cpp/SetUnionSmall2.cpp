@@ -22,26 +22,15 @@ class SetUnionSmall2 {
         BSet<BInteger > set1;
         BSet<BInteger > set2;
 
-        bool initialized = false;
-
     public:
 
-        SetUnionSmall2(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        SetUnionSmall2() {
             counter = static_cast<BInteger >((BInteger(0)));
             set1 = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)))));
             set2 = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(2)))));
-            initialized = true;
         }
 
         void simulate() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             while((counter.less((BInteger(5000000)))).booleanValue()) {
                 set1 = static_cast<BSet<BInteger > >(set1._union(set2));
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
@@ -49,12 +38,10 @@ class SetUnionSmall2 {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
     SetUnionSmall2 exec;
-    exec.initialize();
     start = clock();
     exec.simulate();
     finish = clock();

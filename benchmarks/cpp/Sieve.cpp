@@ -22,26 +22,15 @@ class Sieve {
         BInteger cur;
         BInteger limit;
 
-        bool initialized = false;
-
     public:
 
-        Sieve(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        Sieve() {
             numbers = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(2)),(BInteger(10000)))));
             cur = static_cast<BInteger >((BInteger(2)));
             limit = static_cast<BInteger >((BInteger(10000)));
-            initialized = true;
         }
 
         BInteger ComputeNumberOfPrimes() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             BInteger res;
             while((cur.greater((BInteger(1)))._and(cur.multiply(cur).lessEqual(limit))).booleanValue()) {
                 if((numbers.elementOf(cur)).booleanValue()) {
@@ -50,11 +39,11 @@ class Sieve {
                     n = static_cast<BInteger >(cur);
                     set = static_cast<BSet<BInteger > >((BSet<BInteger >()));
                     while((n.lessEqual(limit.divide(cur))).booleanValue()) {
-                        set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger >({cur.multiply(n)}))));
+                        set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger >(cur.multiply(n)))));
                         n = static_cast<BInteger >(n.plus((BInteger(1))));
                     }
                     numbers = static_cast<BSet<BInteger > >(numbers.complement(set));
-                }
+                } 
                 cur = static_cast<BInteger >(cur.plus((BInteger(1))));
             }
             res = static_cast<BInteger >(numbers.card());
@@ -62,18 +51,16 @@ class Sieve {
         }
 
 };
-
 int main() {
     clock_t start,finish;
     double time;
-    Sieve sieve;
-    sieve.initialize();
+    Sieve exec;
     start = clock();
-    int result = sieve.ComputeNumberOfPrimes().intValue();
+    exec.ComputeNumberOfPrimes();
     finish = clock();
     time = (double(finish)-double(start))/CLOCKS_PER_SEC;
     printf("%f\n", time);
-    printf("%d\n", result);
     return 0;
 }
 #endif
+

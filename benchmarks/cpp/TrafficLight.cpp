@@ -60,25 +60,14 @@ class TrafficLight {
         colors tl_cars;
         colors tl_peds;
 
-        bool initialized = false;
-
     public:
 
-        TrafficLight(){}
-
-        void initialize() {
-            if(initialized) {
-                throw runtime_error("Machine is already initialized");
-            }
+        TrafficLight() {
             tl_cars = static_cast<colors >((colors(colors::red)));
             tl_peds = static_cast<colors >((colors(colors::red)));
-            initialized = true;
         }
 
         void cars_ry() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             if((tl_cars.equal((colors(colors::red)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
                 tl_cars = static_cast<colors >((colors(colors::redyellow)));
             } else {
@@ -87,9 +76,6 @@ class TrafficLight {
         }
 
         void cars_y() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             if((tl_cars.equal((colors(colors::green)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
                 tl_cars = static_cast<colors >((colors(colors::yellow)));
             } else {
@@ -98,9 +84,6 @@ class TrafficLight {
         }
 
         void cars_g() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             if((tl_cars.equal((colors(colors::redyellow)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
                 tl_cars = static_cast<colors >((colors(colors::green)));
             } else {
@@ -109,9 +92,6 @@ class TrafficLight {
         }
 
         void cars_r() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             if((tl_cars.equal((colors(colors::yellow)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
                 tl_cars = static_cast<colors >((colors(colors::red)));
             } else {
@@ -120,9 +100,6 @@ class TrafficLight {
         }
 
         void peds_r() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             if((tl_peds.equal((colors(colors::green)))._and(tl_cars.equal((colors(colors::red))))).booleanValue()) {
                 tl_peds = static_cast<colors >((colors(colors::red)));
             } else {
@@ -131,9 +108,6 @@ class TrafficLight {
         }
 
         void peds_g() {
-            if(!initialized) {
-                throw runtime_error("Machine was not initialized");
-            }
             if((tl_peds.equal((colors(colors::red)))._and(tl_cars.equal((colors(colors::red))))).booleanValue()) {
                 tl_peds = static_cast<colors >((colors(colors::green)));
             } else {

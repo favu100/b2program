@@ -1,4 +1,4 @@
-MACHINE SetUnionSmall
+MACHINE SetElementOfSmall2
 
 VARIABLES  counter, set
 
@@ -8,8 +8,7 @@ INITIALISATION counter := 0; set := {1}
 
 OPERATIONS
 
-	simulate = WHILE counter < 5000000 DO
-	      set := set \/ {2};
+	simulate = WHILE counter < 5000000 & 1:set DO
 	      counter := counter + 1
 		  INVARIANT 1 = 1
 		  VARIANT 5000000 - counter

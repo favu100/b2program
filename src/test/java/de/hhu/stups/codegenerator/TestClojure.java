@@ -480,6 +480,107 @@ public class TestClojure {
     }
 
     @Test
+    public void testCardBig2() throws Exception {
+        testClojure("setoperation_big/SetCardBig2");
+    }
+
+    @Test
+    public void testComplementBig2() throws Exception {
+        testClojure("setoperation_big/SetComplementBig2");
+    }
+
+    @Test
+    public void testElementOfBig2() throws Exception {
+        testClojure("setoperation_big/SetElementOfBig2");
+    }
+
+    @Test
+    public void testIntersectionBig2() throws Exception {
+        testClojure("setoperation_big/SetIntersectionBig2");
+    }
+
+    @Test
+    public void testUnionBig2() throws Exception {
+        testClojure("setoperation_big/SetUnionBig2");
+    }
+
+    @Test
+    public void testCardSmall2() throws Exception {
+        testClojure("setoperation_small/SetCardSmall2");
+    }
+
+    @Test
+    public void testComplementSmall2() throws Exception {
+        testClojure("setoperation_small/SetComplementSmall2");
+    }
+
+    @Test
+    public void testElementOfSmall2() throws Exception {
+        testClojure("setoperation_small/SetElementOfSmall2");
+    }
+
+    @Test
+    public void testIntersectionSmall2() throws Exception {
+        testClojure("setoperation_small/SetIntersectionSmall2");
+    }
+
+    @Test
+    public void testUnionSmall2() throws Exception {
+        testClojure("setoperation_small/SetUnionSmall2");
+    }
+
+    @Test
+    public void testRangeCardBig2() throws Exception {
+        testClojure("range_big/RangeCardBig2");
+    }
+
+    @Test
+    public void testRangeComplementBig2() throws Exception {
+        testClojure("range_big/RangeComplementBig2");
+    }
+
+    @Test
+    public void testRangeElementOfBig2() throws Exception {
+        testClojure("range_big/RangeElementOfBig2");
+    }
+
+    @Test
+    public void testRangeIntersectionBig2() throws Exception {
+        testClojure("range_big/RangeIntersectionBig2");
+    }
+
+    @Test
+    public void testRangeUnionBig2() throws Exception {
+        testClojure("range_big/RangeUnionBig2");
+    }
+
+    @Test
+    public void testRangeCardSmall2() throws Exception {
+        testClojure("range_small/RangeCardSmall2");
+    }
+
+    @Test
+    public void testRangeComplementSmall2() throws Exception {
+        testClojure("range_small/RangeComplementSmall2");
+    }
+
+    @Test
+    public void testRangeElementOfSmall2() throws Exception {
+        testClojure("range_small/RangeElementOfSmall2");
+    }
+
+    @Test
+    public void testRangeIntersectionSmall2() throws Exception {
+        testClojure("range_small/RangeIntersectionSmall2");
+    }
+
+    @Test
+    public void testRangeUnionSmall2() throws Exception {
+        testClojure("range_small/RangeUnionSmall2");
+    }
+
+
+    @Test
     public void testTrafficLight() throws Exception {
         testClojure("TrafficLight");
     }

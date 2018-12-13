@@ -1,4 +1,4 @@
-MACHINE SetUnionBig
+MACHINE SetElementOfBig2
 
 VARIABLES  counter, set
 
@@ -8,8 +8,7 @@ INITIALISATION counter := 0; set := (1..25000) - {24999}
 
 OPERATIONS
 
-	simulate = WHILE counter < 10000 DO
-	      set := set \/ 1..3000;
+	simulate = WHILE counter < 10000 & 25000:set DO
 	      counter := counter + 1
 		  INVARIANT 1 = 1
 		  VARIANT 10000 - counter

@@ -467,13 +467,29 @@ public class TestJava {
 	}
 
 	@Test
+	public void testCardBig2() throws Exception {
+		testJava("setoperation_big/SetCardBig2");
+	}
+
+
+	@Test
 	public void testComplementBig() throws Exception {
 		testJava("setoperation_big/SetComplementBig", "SetComplementBig", "SetComplementAddition.st");
 	}
 
 	@Test
+	public void testComplementBig2() throws Exception {
+		testJava("setoperation_big/SetComplementBig2");
+	}
+
+	@Test
 	public void testElementOfBig() throws Exception {
 		testJava("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfAddition.st");
+	}
+
+	@Test
+	public void testElementOfBig2() throws Exception {
+		testJava("setoperation_big/SetElementOfBig2");
 	}
 
 	@Test
@@ -483,7 +499,7 @@ public class TestJava {
 
 	@Test
 	public void testIntersectionBig2() throws Exception {
-		testJava("setoperation_big/SetIntersectionBig2", "SetIntersectionBig2", "SetIntersectionBig2Addition.st");
+		testJava("setoperation_big/SetIntersectionBig2");
 	}
 
 	@Test
@@ -492,9 +508,21 @@ public class TestJava {
 	}
 
 	@Test
+	public void testUnionBig2() throws Exception {
+		testJava("setoperation_big/SetUnionBig2");
+	}
+
+
+	@Test
 	public void testCardSmall() throws Exception {
 		testJava("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.st");
 	}
+
+	@Test
+	public void testCardSmall2() throws Exception {
+		testJava("setoperation_small/SetCardSmall2");
+	}
+
 
 	@Test
 	public void testComplementSmall() throws Exception {
@@ -502,13 +530,30 @@ public class TestJava {
 	}
 
 	@Test
+	public void testComplementSmall2() throws Exception {
+		testJava("setoperation_small/SetComplementSmall2");
+	}
+
+
+	@Test
 	public void testElementOfSmall() throws Exception {
 		testJava("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.st");
 	}
 
 	@Test
+	public void testElementOfSmall2() throws Exception {
+		testJava("setoperation_small/SetElementOfSmall2");
+	}
+
+
+	@Test
 	public void testIntersectionSmall() throws Exception {
 		testJava("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.st");
+	}
+
+	@Test
+	public void testIntersectionSmall2() throws Exception {
+		testJava("setoperation_small/SetIntersectionSmall2");
 	}
 
 	@Test
@@ -517,10 +562,14 @@ public class TestJava {
 	}
 
 	@Test
+	public void testUnionSmall2() throws Exception {
+		testJava("setoperation_small/SetUnionSmall2");
+	}
+
+	@Test
 	public void testRangeBig() throws Exception {
 		testJava("range_big/RangeBig", "RangeBig", "RangeBigAddition.st");
 	}
-
 
 	@Test
 	public void testRangeCardBig() throws Exception {
@@ -528,9 +577,21 @@ public class TestJava {
 	}
 
 	@Test
+	public void testRangeCardBig2() throws Exception {
+		testJava("range_big/RangeCardBig2");
+	}
+
+
+	@Test
 	public void testRangeComplementBig() throws Exception {
 		testJava("range_big/RangeComplementBig", "RangeComplementBig", "RangeComplementBigAddition.st");
 	}
+
+	@Test
+	public void testRangeComplementBig2() throws Exception {
+		testJava("range_big/RangeComplementBig2");
+	}
+
 
 	@Test
 	public void testRangeElementOfBig() throws Exception {
@@ -538,14 +599,32 @@ public class TestJava {
 	}
 
 	@Test
+	public void testRangeElementOfBig2() throws Exception {
+		testJava("range_big/RangeElementOfBig2");
+	}
+
+
+	@Test
 	public void testRangeIntersectionBig() throws Exception {
 		testJava("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.st");
 	}
 
 	@Test
+	public void testRangeIntersectionBig2() throws Exception {
+		testJava("range_big/RangeIntersectionBig2");
+	}
+
+
+	@Test
 	public void testRangeUnionBig() throws Exception {
 		testJava("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.st");
 	}
+
+	@Test
+	public void testRangeUnionBig2() throws Exception {
+		testJava("range_big/RangeUnionBig2");
+	}
+
 
 	@Test
 	public void testRangeSmall() throws Exception {
@@ -559,8 +638,19 @@ public class TestJava {
 	}
 
 	@Test
+	public void testRangeCardSmall2() throws Exception {
+		testJava("range_small/RangeCardSmall2");
+	}
+
+
+	@Test
 	public void testRangeComplementSmall() throws Exception {
 		testJava("range_small/RangeComplementSmall", "RangeComplementSmall", "RangeComplementSmallAddition.st");
+	}
+
+	@Test
+	public void testRangeComplementSmall2() throws Exception {
+		testJava("range_small/RangeComplementSmall2");
 	}
 
 	@Test
@@ -569,13 +659,28 @@ public class TestJava {
 	}
 
 	@Test
+	public void testRangeElementOfSmall2() throws Exception {
+		testJava("range_small/RangeElementOfSmall2");
+	}
+
+	@Test
 	public void testRangeIntersectionSmall() throws Exception {
 		testJava("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.st");
 	}
 
 	@Test
+	public void testRangeIntersectionSmall2() throws Exception {
+		testJava("range_small/RangeIntersectionSmall2");
+	}
+
+	@Test
 	public void testRangeUnionSmall() throws Exception {
 		testJava("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.st");
+	}
+
+	@Test
+	public void testRangeUnionSmall2() throws Exception {
+		testJava("range_small/RangeUnionSmall2");
 	}
 
 	@Test

@@ -16,7 +16,7 @@ class TrafficLightExec {
 
     private:
 
-        TrafficLight TrafficLight;
+        TrafficLight _TrafficLight;
 
 
         BInteger counter;
@@ -29,12 +29,12 @@ class TrafficLightExec {
 
         void simulate() {
             while((counter.less((BInteger(500000)))).booleanValue()) {
-                this->TrafficLight.cars_ry();
-                this->TrafficLight.cars_g();
-                this->TrafficLight.cars_y();
-                this->TrafficLight.cars_r();
-                this->TrafficLight.peds_g();
-                this->TrafficLight.peds_r();
+                this->_TrafficLight.cars_ry();
+                this->_TrafficLight.cars_g();
+                this->_TrafficLight.cars_y();
+                this->_TrafficLight.cars_r();
+                this->_TrafficLight.peds_g();
+                this->_TrafficLight.peds_r();
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));
             }
         }

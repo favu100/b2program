@@ -2,7 +2,7 @@
 
 .PHONY: all clean
 
-all: And Divide Equal Equivalent Greater GreaterEqual Implies Less LessEqual Minus Modulo Multiply Negative Or Plus #Lift LiftExec
+all: And Divide Equal Equivalent Greater GreaterEqual Implies Less LessEqual Minus Modulo Multiply Negative Or Plus LiftExec
 
 OUTPUT ?= runtimes.txt
 DEPENDENCIES ?= :btypes.jar

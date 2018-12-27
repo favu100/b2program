@@ -6,7 +6,7 @@ public class LiftExec {
 
 
 
-    private Lift Lift = new Lift();
+    private Lift _Lift = new Lift();
 
 
 
@@ -21,13 +21,13 @@ public class LiftExec {
             BInteger i = null;
             i = (BInteger) new BInteger(0);
             while((i.less(new BInteger(100))).booleanValue()) {
-                this.Lift.inc();
+                this._Lift.inc();
                 i = (BInteger) i.plus(new BInteger(1));
             }
             BInteger _i = null;
             _i = (BInteger) new BInteger(0);
             while((_i.less(new BInteger(100))).booleanValue()) {
-                this.Lift.dec();
+                this._Lift.dec();
                 _i = (BInteger) _i.plus(new BInteger(1));
             }
             counter = (BInteger) counter.plus(new BInteger(1));

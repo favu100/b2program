@@ -5,7 +5,7 @@ public class TrafficLightExec {
 
 
 
-    private TrafficLight TrafficLight = new TrafficLight();
+    private TrafficLight _TrafficLight = new TrafficLight();
 
 
 
@@ -17,12 +17,12 @@ public class TrafficLightExec {
 
     public void simulate() {
         while((counter.less(new BInteger(500000))).booleanValue()) {
-            this.TrafficLight.cars_ry();
-            this.TrafficLight.cars_g();
-            this.TrafficLight.cars_y();
-            this.TrafficLight.cars_r();
-            this.TrafficLight.peds_g();
-            this.TrafficLight.peds_r();
+            this._TrafficLight.cars_ry();
+            this._TrafficLight.cars_g();
+            this._TrafficLight.cars_y();
+            this._TrafficLight.cars_r();
+            this._TrafficLight.peds_g();
+            this._TrafficLight.peds_r();
             counter = (BInteger) counter.plus(new BInteger(1));
         }
     }

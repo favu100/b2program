@@ -16,7 +16,7 @@ class LiftExec {
 
     private:
 
-        Lift Lift;
+        Lift _Lift;
 
 
         BInteger counter;
@@ -32,13 +32,13 @@ class LiftExec {
                 BInteger i;
                 i = static_cast<BInteger >((BInteger(0)));
                 while((i.less((BInteger(100)))).booleanValue()) {
-                    this->Lift.inc();
+                    this->_Lift.inc();
                     i = static_cast<BInteger >(i.plus((BInteger(1))));
                 }
                 BInteger _i;
                 _i = static_cast<BInteger >((BInteger(0)));
                 while((_i.less((BInteger(100)))).booleanValue()) {
-                    this->Lift.dec();
+                    this->_Lift.dec();
                     _i = static_cast<BInteger >(_i.plus((BInteger(1))));
                 }
                 counter = static_cast<BInteger >(counter.plus((BInteger(1))));

@@ -366,7 +366,7 @@ public class SubstitutionGenerator {
             functionCall = currentGroup.getInstanceOf("operation_call_without_assignment");
         }
         TemplateHandler.add(functionCall, "thisName", machineGenerator.getMachineName());
-        TemplateHandler.add(functionCall, "machine", nameHandler.handle(machineName));
+        TemplateHandler.add(functionCall, "machine", nameHandler.handleIdentifier(machineName, NameHandler.IdentifierHandlingEnum.MACHINES));
         TemplateHandler.add(functionCall, "function", operationName);
         TemplateHandler.add(functionCall, "args", node.getArguments().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, expected))

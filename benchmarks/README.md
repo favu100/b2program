@@ -3,9 +3,9 @@
 1. Execute `make` in of the subdirectories
 
 
-##Microbenchmarks
+## Microbenchmarks
 
-#####Aritmetic Operations
+##### Aritmetic Operations
 
 | Operation | Java Big Integer |  Java primitive Integer | Clojure Big Integer | Clojure Big Integer through Java | C++ primitives | ProB    |
 |-----------|------------------|-------------------------|---------------------|----------------------------------|----------------|---------|
@@ -17,33 +17,33 @@
 | Negative  | 1243.5ms         | 65.22ms                 | 1687.38ms           | 705.ms                           | 0.002ms        | 36900ms |
 
 
-#####Logical Operations
+##### Logical Operations
 
 | Operation  | Java Big Integer |  Java primitive Integer | Clojure Big Integer | Clojure Big Integer through Java | C++ primitives | ProB    |
 |------------|------------------|-------------------------|---------------------|----------------------------------|----------------|---------|
 | And        | 1677.65ms        | 54.2ms                  | 2315.44ms           | 804.79ms                         | 0.002ms        | 54197ms |
-| Or         | 1686.82ms        | 53.14ms                 | 2198.56ms           | 747.39ms                         | 0,002ms        | 53142ms |
-| Implies    | 1559.41ms        | 54.6ms                  | 2119.7ms            | 723.03ms                         | 0,002ms        | 54603ms |
-| Equivalent | 1608.87ms        | 57.92ms                 | 2352.35ms           | 925.41ms                         | 0,002ms        | 57921ms |
+| Or         | 1686.82ms        | 53.14ms                 | 2198.56ms           | 747.39ms                         | 0.002ms        | 53142ms |
+| Implies    | 1559.41ms        | 54.6ms                  | 2119.7ms            | 723.03ms                         | 0.002ms        | 54603ms |
+| Equivalent | 1608.87ms        | 57.92ms                 | 2352.35ms           | 925.41ms                         | 0.002ms        | 57921ms |
 
 
 
-#####Comparisons
+##### Comparisons
 
 | Operation    | Java Big Integer |  Java primitive Integer | Clojure Big Integer | Clojure Big Integer through Java | C++ primitives | ProB    |
 |--------------|------------------|-------------------------|---------------------|----------------------------------|----------------|---------|
 | lessEqual    | 1652.72ms        | 53.31ms                 | 2243.11ms           | 776.03ms                         | 0.002ms        | 21920ms |
-| less         | 1696.57ms        | 53.13ms                 | 2348.65ms           | 772.05ms                         | 0,002ms        | 22510ms |
-| greater      | 1572.31ms        | 53.51ms                 | 2338.49ms           | 785.06ms                         | 0,002ms        | 22510ms |
-| greaterEqual | 1589.23ms        | 54.48ms                 | 2223.4ms            | 786.18ms                         | 0,002ms        | 22250ms |
+| less         | 1696.57ms        | 53.13ms                 | 2348.65ms           | 772.05ms                         | 0.002ms        | 22510ms |
+| greater      | 1572.31ms        | 53.51ms                 | 2338.49ms           | 785.06ms                         | 0.002ms        | 22510ms |
+| greaterEqual | 1589.23ms        | 54.48ms                 | 2223.4ms            | 786.18ms                         | 0.002ms        | 22250ms |
 | equal        | 1677.65ms        | 56.69ms                 | 2355.02ms           | 743.04ms                         | 0.002ms        | 22860ms |
 | unequal      | 1588.55ms        | 56.19ms                 | 2159.09ms           | 740.62ms                         | 0.002ms        | 22150ms |
 
 
-####Operations On Sets and Ranges with Creating
+#### Operations On Sets and Ranges with Creating
 
 
-#####Small Sets
+##### Small Sets
 
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
@@ -54,7 +54,7 @@
 | elementOf  | 1886.46ms | 906.51ms            | 16486.23ms  | 4165.27ms                | 1513.54ms     | 22360ms |
 
 
-#####Big Sets
+##### Big Sets
 
 | Operation  | Java Set    | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-------------|---------------------|-------------|--------------------------|---------------|---------|
@@ -65,7 +65,7 @@
 | elementOf  | 242246.07ms | 183498.9ms          | 425799.68ms | 77650.02ms               | 243716.04ms   | 190ms   |
 
 
-#####Small Ranges
+##### Small Ranges
 
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB     |
 |------------|------------|---------------------|-------------|--------------------------|---------------|----------|
@@ -77,7 +77,7 @@
 | elementOf  | 11019.83ms | 3390.82ms           | 95053.59ms  | 7708.1ms                 | 9719.11ms     | 20720ms  |
 
 
-#####Big Ranges
+##### Big Ranges
 
 | Operation  | Java Set    | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB  |
 |------------|-------------|---------------------|-------------|--------------------------|---------------|-------|
@@ -92,7 +92,7 @@
 
 #### Operations On Sets and Ranges without Creating
 
-#####Small Sets
+##### Small Sets
 
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
@@ -103,7 +103,7 @@
 | elementOf  | 1522.7ms  | 142.99ms            | 16597.68ms  | 347.23ms                 | 23.83ms       | 21410   |
 
 
-#####Big Sets
+##### Big Sets
 
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|------------|---------------------|-------------|--------------------------|---------------|---------|
@@ -114,7 +114,7 @@
 | elementOf  | 20.78ms    | 17.38ms             | 213.22ms    | 10.28ms                  | 0.091ms       | 140ms   |
 
 
-#####Small Ranges
+##### Small Ranges
 
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
@@ -125,7 +125,7 @@
 | elementOf  | 1355.81ms | 150.57ms            | 14046.46ms  | 340.34ms                 | 22.42ms       | 20790ms |
 
 
-#####Big Ranges
+##### Big Ranges
 
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB  |
 |------------|------------|---------------------|-------------|--------------------------|---------------|-------|

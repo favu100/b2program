@@ -6,6 +6,7 @@
 ##Microbenchmarks
 
 #####Aritmetic Operations
+
 | Operation | Java Big Integer |  Java primitive Integer | Clojure Big Integer | Clojure Big Integer through Java | C++ primitives | ProB    |
 |-----------|------------------|-------------------------|---------------------|----------------------------------|----------------|---------|
 | Plus      | 1527.06ms        | 67.66ms                 | 2233.13ms           | 686.15ms                         | 0.002ms        | 37010ms |
@@ -28,6 +29,7 @@
 
 
 #####Comparisons
+
 | Operation    | Java Big Integer |  Java primitive Integer | Clojure Big Integer | Clojure Big Integer through Java | C++ primitives | ProB    |
 |--------------|------------------|-------------------------|---------------------|----------------------------------|----------------|---------|
 | lessEqual    | 1652.72ms        | 53.31ms                 | 2243.11ms           | 776.03ms                         | 0.002ms        | 21920ms |
@@ -42,6 +44,7 @@
 
 
 #####Small Sets
+
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
 | union      | 3666.73ms | 2222.21ms           | 21018.51ms  | 3121.42ms                | 1617.22ms     | 44880ms |
@@ -52,6 +55,7 @@
 
 
 #####Big Sets
+
 | Operation  | Java Set    | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-------------|---------------------|-------------|--------------------------|---------------|---------|
 | union      | 57164.6ms   | 47838.65ms          | 102604.57ms | 11787.27ms               | 30152.33ms    | 88920ms |
@@ -62,6 +66,7 @@
 
 
 #####Small Ranges
+
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB     |
 |------------|------------|---------------------|-------------|--------------------------|---------------|----------|
 | range      | 11432.64ms | 3172.84ms           | 86165.9ms   | 6152.07ms                | 10987.09ms    | 32420ms  |
@@ -73,6 +78,7 @@
 
 
 #####Big Ranges
+
 | Operation  | Java Set    | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB  |
 |------------|-------------|---------------------|-------------|--------------------------|---------------|-------|
 | range      | 17124.44ms  | 17963.64ms          | 37204.79ms  | 7374.59ms                | 23714.09ms    | 100ms |
@@ -87,6 +93,7 @@
 #### Operations On Sets and Ranges without Creating
 
 #####Small Sets
+
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
 | union      | 2702.19ms | 1339.36ms           | 9787.62ms   | 821.13ms                 | 149.9ms       | 52040ms |
@@ -97,6 +104,7 @@
 
 
 #####Big Sets
+
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|------------|---------------------|-------------|--------------------------|---------------|---------|
 | union      | 40247.6ms  | 21183.45ms          | 63773.93ms  | 4785.65ms                | 582.51ms      | 89030ms |
@@ -107,6 +115,7 @@
 
 
 #####Small Ranges
+
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
 | union      | 4515.45ms | 2701.33ms           | 32346.04ms  | 1106.96ms                | 167.9ms       | 46510ms |
@@ -117,6 +126,7 @@
 
 
 #####Big Ranges
+
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB  |
 |------------|------------|---------------------|-------------|--------------------------|---------------|-------|
 | union      | 40664.91ms | 17423.48ms          | 66492.27ms  | 3553.43ms                | 705ms         | 170ms |

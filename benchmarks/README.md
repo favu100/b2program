@@ -47,46 +47,46 @@
 
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
-| union      | 3666.73ms | 2222.21ms           | 21018.51ms  | 3121.42ms                | 1617.22ms     | 44880ms |
-| intersect  | 1982.28ms | 1370.35ms           | 8592.85ms   | 1570.04ms                | 163.14ms      | 31340ms |
-| complement | 2358.49ms | 1633.23ms           | 10260.15ms  | 2619.74ms                | 1777.8ms      | 31920ms |
-| card       | 1646.88ms | 866.8ms             | 3473.26ms   | 3605.33ms                | 1963.96ms     | 31080ms |
-| elementOf  | 1886.46ms | 906.51ms            | 16486.23ms  | 4165.27ms                | 1513.54ms     | 22360ms |
+| union      | 1786.7ms  | 2222.21ms           | 21018.51ms  | 3121.42ms                | 1617.22ms     | 44880ms |
+| intersect  | 1366.44ms | 1370.35ms           | 8592.85ms   | 1570.04ms                | 163.14ms      | 31340ms |
+| complement | 1289.64ms | 1633.23ms           | 10260.15ms  | 2619.74ms                | 1777.8ms      | 31920ms |
+| card       | 176.78ms  | 866.8ms             | 3473.26ms   | 3605.33ms                | 1963.96ms     | 31080ms |
+| elementOf  | 152.86ms  | 906.51ms            | 16486.23ms  | 4165.27ms                | 1513.54ms     | 22360ms |
 
 
 ##### Big Sets
 
 | Operation  | Java Set    | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-------------|---------------------|-------------|--------------------------|---------------|---------|
-| union      | 57164.6ms   | 47838.65ms          | 102604.57ms | 11787.27ms               | 30152.33ms    | 88920ms |
-| intersect  | 22444.45ms  | 37907.07ms          | 111557.89ms | 10523.48ms               | 31263.06ms    | 190ms   |
-| complement | 49671.83ms  | 23385.72ms          | 82672.23ms  | 9837.74ms                | 30436.09ms    | 23230ms |
-| card       | 255955.83ms | 182779.81ms         | 406777.27ms | 74601.3ms                | 246475.01ms   | 160ms   |
-| elementOf  | 242246.07ms | 183498.9ms          | 425799.68ms | 77650.02ms               | 243716.04ms   | 190ms   |
+| union      | 24062.08ms  | 47838.65ms          | 102604.57ms | 11787.27ms               | 30152.33ms    | 88920ms |
+| intersect  | 5870.62ms   | 37907.07ms          | 111557.89ms | 10523.48ms               | 31263.06ms    | 190ms   |
+| complement | 20453.51ms  | 23385.72ms          | 82672.23ms  | 9837.74ms                | 30436.09ms    | 23230ms |
+| card       | 46705.3ms   | 182779.81ms         | 406777.27ms | 74601.3ms                | 246475.01ms   | 160ms   |
+| elementOf  | 48104.32ms  | 183498.9ms          | 425799.68ms | 77650.02ms               | 243716.04ms   | 190ms   |
 
 
 ##### Small Ranges
 
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB     |
 |------------|------------|---------------------|-------------|--------------------------|---------------|----------|
-| range      | 11432.64ms | 3172.84ms           | 86165.9ms   | 6152.07ms                | 10987.09ms    | 32420ms  |
-| union      | 9224.04ms  | 3131.74ms           | 80070.53ms  | 5668.65ms                | 3954.13ms     | 65690ms  |
-| intersect  | 15602.76ms | 9136.45ms           | 169863.87ms | 10005.88ms               | 10709.27ms    | 45760ms  |
-| complement | 7443.73ms  | 2956.17ms           | 86284.4ms   | 5161.03ms                | 3509.07ms     | 148940ms |
-| card       | 11386.52ms | 3945ms              | 7515522.ms  | 6800.08ms                | 11081.98ms    | 28610ms  |
-| elementOf  | 11019.83ms | 3390.82ms           | 95053.59ms  | 7708.1ms                 | 9719.11ms     | 20720ms  |
+| range      | 2245.96ms  | 3172.84ms           | 86165.9ms   | 6152.07ms                | 10987.09ms    | 32420ms  |
+| union      | 4646.76ms  | 3131.74ms           | 80070.53ms  | 5668.65ms                | 3954.13ms     | 65690ms  |
+| intersect  | 5865.06ms  | 9136.45ms           | 169863.87ms | 10005.88ms               | 10709.27ms    | 45760ms  |
+| complement | 2953.73ms  | 2956.17ms           | 86284.4ms   | 5161.03ms                | 3509.07ms     | 148940ms |
+| card       | 2662.57ms  | 3945ms              | 7515522.ms  | 6800.08ms                | 11081.98ms    | 28610ms  |
+| elementOf  | 2440.36ms  | 3390.82ms           | 95053.59ms  | 7708.1ms                 | 9719.11ms     | 20720ms  |
 
 
 ##### Big Ranges
 
 | Operation  | Java Set    | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB  |
 |------------|-------------|---------------------|-------------|--------------------------|---------------|-------|
-| range      | 17124.44ms  | 17963.64ms          | 37204.79ms  | 7374.59ms                | 23714.09ms    | 100ms |
-| union      | 56275.74ms  | 45736.04ms          | 105024.17ms | 10549.98ms               | 29971.44ms    | 160ms |
-| intersect  | 20593.03ms  | 36753.04ms          | 106230.41ms | 11282.22ms               | 27793.75ms    | 140ms |
-| complement | 51755.73ms  | 25657.3ms           | 43438.07ms  | 12096.31ms               | 27586.16ms    | 170ms |
-| card       | 160193.23ms | 166753.65ms         | 402076.9ms  | 67318.65ms               | 242518.13ms   | 150ms |
-| elementOf  | 168923.46ms | 185207.7ms          | 387440.68ms | 76641.75ms               | 246618.14ms   | 110ms |
+| range      | 2716.77ms   | 17963.64ms          | 37204.79ms  | 7374.59ms                | 23714.09ms    | 100ms |
+| union      | 25679.33ms  | 45736.04ms          | 105024.17ms | 10549.98ms               | 29971.44ms    | 160ms |
+| intersect  | 5742.63ms   | 36753.04ms          | 106230.41ms | 11282.22ms               | 27793.75ms    | 140ms |
+| complement | 19421.93ms  | 25657.3ms           | 43438.07ms  | 12096.31ms               | 27586.16ms    | 170ms |
+| card       | 32445.89ms  | 166753.65ms         | 402076.9ms  | 67318.65ms               | 242518.13ms   | 150ms |
+| elementOf  | 26125.46ms  | 185207.7ms          | 387440.68ms | 76641.75ms               | 246618.14ms   | 110ms |
 
 
 
@@ -96,42 +96,42 @@
 
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
-| union      | 2702.19ms | 1339.36ms           | 9787.62ms   | 821.13ms                 | 149.9ms       | 52040ms |
-| intersect  | 2154.47ms | 915.52ms            | 9971.95ms   | 441.77ms                 | 129.58ms      | 39490ms |
-| complement | 1919.1ms  | 1098.94ms           | 8567.34ms   | 463.37ms                 | 83.95ms       | 36150ms |
-| card       | 1328.67ms | 105.09ms            | 2213.84ms   | 170.02ms                 | 0.003ms       | 28970ms |
-| elementOf  | 1522.7ms  | 142.99ms            | 16597.68ms  | 347.23ms                 | 23.83ms       | 21410   |
+| union      | 2035.53ms | 1339.36ms           | 9787.62ms   | 821.13ms                 | 149.9ms       | 52040ms |
+| intersect  | 1777.6ms  | 915.52ms            | 9971.95ms   | 441.77ms                 | 129.58ms      | 39490ms |
+| complement | 1337.26ms | 1098.94ms           | 8567.34ms   | 463.37ms                 | 83.95ms       | 36150ms |
+| card       | 93.33ms   | 105.09ms            | 2213.84ms   | 170.02ms                 | 0.003ms       | 28970ms |
+| elementOf  | 86.9ms    | 142.99ms            | 16597.68ms  | 347.23ms                 | 23.83ms       | 21410   |
 
 
 ##### Big Sets
 
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|------------|---------------------|-------------|--------------------------|---------------|---------|
-| union      | 40247.6ms  | 21183.45ms          | 63773.93ms  | 4785.65ms                | 582.51ms      | 89030ms |
-| intersect  | 5747.95ms  | 7184.23ms           | 4524.53ms   | 3741.65ms                | 542.56ms      | 180ms   |
-| complement | 32229.29ms | 2838.25ms           | 3203.02ms   | 2995.66ms                | 454.64ms      | 23550ms |
-| card       | 25.49ms    | 3.75ms              | 85.24ms     | 5.14ms                   | 0.003ms       | 150ms   |
-| elementOf  | 20.78ms    | 17.38ms             | 213.22ms    | 10.28ms                  | 0.091ms       | 140ms   |
+| union      | 19274.14ms | 21183.45ms          | 63773.93ms  | 4785.65ms                | 582.51ms      | 89030ms |
+| intersect  | 3654ms     | 7184.23ms           | 4524.53ms   | 3741.65ms                | 542.56ms      | 180ms   |
+| complement | 18833.03ms | 2838.25ms           | 3203.02ms   | 2995.66ms                | 454.64ms      | 23550ms |
+| card       | 6.34ms     | 3.75ms              | 85.24ms     | 5.14ms                   | 0.003ms       | 150ms   |
+| elementOf  | 9.57ms     | 17.38ms             | 213.22ms    | 10.28ms                  | 0.091ms       | 140ms   |
 
 
 ##### Small Ranges
 
 | Operation  | Java Set  | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB    |
 |------------|-----------|---------------------|-------------|--------------------------|---------------|---------|
-| union      | 4515.45ms | 2701.33ms           | 32346.04ms  | 1106.96ms                | 167.9ms       | 46510ms |
-| intersect  | 4847.78ms | 4087.77ms           | 73349.25ms  | 3135.36ms                | 305.65ms      | 38550ms |
-| complement | 3568.74ms | 1550.65ms           | 10067.29ms  | 985.27ms                 | 152.36ms      | 56360ms |
-| card       | 1378.77ms | 111.41ms            | 2043.97ms   | 164.45ms                 | 0.002ms       | 29000ms |
-| elementOf  | 1355.81ms | 150.57ms            | 14046.46ms  | 340.34ms                 | 22.42ms       | 20790ms |
+| union      | 3259.39ms | 2701.33ms           | 32346.04ms  | 1106.96ms                | 167.9ms       | 46510ms |
+| intersect  | 3635.38ms | 4087.77ms           | 73349.25ms  | 3135.36ms                | 305.65ms      | 38550ms |
+| complement | 2057.95ms | 1550.65ms           | 10067.29ms  | 985.27ms                 | 152.36ms      | 56360ms |
+| card       | 84.97ms   | 111.41ms            | 2043.97ms   | 164.45ms                 | 0.002ms       | 29000ms |
+| elementOf  | 80.25ms   | 150.57ms            | 14046.46ms  | 340.34ms                 | 22.42ms       | 20790ms |
 
 
 ##### Big Ranges
 
 | Operation  | Java Set   | Java Persistent Set | Clojure Set | Clojure Set through Java | C++ Immer Set | ProB  |
 |------------|------------|---------------------|-------------|--------------------------|---------------|-------|
-| union      | 40664.91ms | 17423.48ms          | 66492.27ms  | 3553.43ms                | 705ms         | 170ms |
-| intersect  | 5004.56ms  | 7957.43ms           | 4994.44ms   | 3538.31ms                | 466.84ms      | 130ms |
-| complement | 30957.48ms | 3292.4ms            | 3659.78ms   | 2818.45ms                | 390.93ms      | 160ms |
-| card       | 15.97ms    | 4.16ms              | 107.82ms    | 6.55ms                   | 0.005ms       | 150ms |
-| elementOf  | 22.57ms    | 14.71ms             | 269.56ms    | 7.98ms                   | 0.093ms       | 100ms |
+| union      | 21128.13ms | 17423.48ms          | 66492.27ms  | 3553.43ms                | 705ms         | 170ms |
+| intersect  | 3364.59ms  | 7957.43ms           | 4994.44ms   | 3538.31ms                | 466.84ms      | 130ms |
+| complement | 17421.02ms | 3292.4ms            | 3659.78ms   | 2818.45ms                | 390.93ms      | 160ms |
+| card       | 4.19ms     | 4.16ms              | 107.82ms    | 6.55ms                   | 0.005ms       | 150ms |
+| elementOf  | 7.68ms     | 14.71ms             | 269.56ms    | 7.98ms                   | 0.093ms       | 100ms |
 

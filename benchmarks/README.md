@@ -100,7 +100,7 @@
 | intersect  | 1777.6ms  | 915.52ms            | 9971.95ms   | 441.77ms                 | 129.58ms      | 39490ms |
 | complement | 1337.26ms | 1098.94ms           | 8567.34ms   | 463.37ms                 | 83.95ms       | 36150ms |
 | card       | 93.33ms   | 105.09ms            | 2213.84ms   | 170.02ms                 | 0.003ms       | 28970ms |
-| elementOf  | 86.9ms    | 142.99ms            | 16597.68ms  | 347.23ms                 | 23.83ms       | 21410   |
+| elementOf  | 86.9ms    | 142.99ms            | 16597.68ms  | 347.23ms                 | 23.83ms       | 21410ms |
 
 
 ##### Big Sets

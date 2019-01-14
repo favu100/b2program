@@ -36,7 +36,7 @@ public class TestCpp {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, true, null);
+		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, true, true, null);
 		cppFilePaths.forEach(path -> {
 			try {
 				Process process = Runtime.getRuntime()
@@ -631,6 +631,11 @@ public class TestCpp {
 	@Test
 	public void testCruiseControllerk() throws Exception {
 		testCpp("Cruise_finite_k");
+	}
+
+	@Test
+	public void testCruiseControllerDeterministic() throws Exception {
+		testCpp("Cruise_finite_Deterministic");
 	}
 
 	private void cleanUp(String path) {

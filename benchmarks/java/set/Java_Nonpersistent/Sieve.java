@@ -42,9 +42,15 @@ public class Sieve {
     public static void main(String[] args) {
         Sieve exec = new Sieve();
         long start = System.nanoTime();
-        exec.ComputeNumberOfPrimes();
+        System.out.println(exec.ComputeNumberOfPrimes());
         long end = System.nanoTime();
         System.out.println(exec.getClass().toString() + " Execution: " + (end - start));
+
+        Runtime runtime = Runtime.getRuntime();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory is bytes: " + memory);
+        System.out.println("Used memory is megabytes: "
+                + (memory / (1024L * 1024L)));
     }
 
 }

@@ -286,7 +286,7 @@ identifier(identifier, isReturn, isPrivate, rhsOnLhs) ::= <<
 >>
 
 number(number, useBigInteger) ::= <<
-(BInteger(<number>))
+<if(useBigInteger)>(BBigInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
 operation_call_with_assignment(var, function, args) ::= <<

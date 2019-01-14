@@ -23,11 +23,14 @@ public class ImportGenerator {
 
     private final NameHandler nameHandler;
 
+    private final boolean useBigInteger;
+
     private final Set<String> imports;
 
-    public ImportGenerator(final STGroup group, final NameHandler nameHandler) {
+    public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
         this.group = group;
         this.nameHandler = nameHandler;
+        this.useBigInteger = useBigInteger;
         this.imports = new HashSet<>();
     }
 
@@ -37,7 +40,11 @@ public class ImportGenerator {
     public void addImport(BType type) {
         ST template = group.getInstanceOf("import_type");
         if (type instanceof IntegerType) {
-            TemplateHandler.add(template, "type", "BInteger");
+            if(useBigInteger) {
+                TemplateHandler.add(template, "type", "BBigInteger");
+            } else {
+                TemplateHandler.add(template, "type", "BInteger");
+            }
             imports.add(template.render());
         } else if (type instanceof BoolType) {
             TemplateHandler.add(template, "type", "BBoolean");

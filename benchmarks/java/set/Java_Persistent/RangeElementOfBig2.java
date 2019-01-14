@@ -29,6 +29,13 @@ public class RangeElementOfBig2 {
         exec.simulate();
         long end = System.nanoTime();
         System.out.println(exec.getClass().toString() + " Execution: " + (end - start));
+
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory is bytes: " + memory);
+        System.out.println("Used memory is megabytes: "
+                + (memory / (1024L * 1024L)));
     }
 
 }

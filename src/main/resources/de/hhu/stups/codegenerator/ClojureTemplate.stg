@@ -20,15 +20,12 @@ machine(imports, methods, includedMachines, machine, constants, values, includes
     :methods [<methods; separator=" ">])
 
 (defn -create-<machine> []
-    [[] {:initialized false
-        :_locals {}
-        <values; separator=" ">
-        <includes; separator=" ">
-        <declarations; separator=" ">
-        <sets; separator=" ">
-            }])
-
-<initialization>
+    (let [<initialization>]
+        [[] {<values; separator=" ">
+            <includes; separator=" ">
+            <declarations; separator=" ">
+            <sets; separator=" ">
+                }]))
 
 <operations; separator="\n\n">
 
@@ -36,17 +33,8 @@ machine(imports, methods, includedMachines, machine, constants, values, includes
 <addition>
 >>
 
-initialization(machine, body, machines) ::= <<
-(defn -initialize [this]
-    (if (:initialized (.-<machine>-state this))
-        (throw (RuntimeException. "Machine is already initialized")))
-    <machines : {m | <include_initialization(machine, m)>}; separator="\n">
-    <body>
-    (reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [:initialized] true)) nil)
->>
-
-include_initialization(thisMachine, machine) ::= <<
-(.initialize (get-in (.-<thisMachine>-state this) [:<machine>]))
+initialization(body) ::= <<
+<body>
 >>
 
 method(operationName, argsTypes, returnType) ::= <<
@@ -55,14 +43,12 @@ method(operationName, argsTypes, returnType) ::= <<
 
 operation(machine, operationName, parameters, locals, body, return) ::= <<
 (defn -<operationName> [this<parameters : {param |  <param>}>]
-    (if (not (:initialized (.-<machine>-state this)))
-        (throw (RuntimeException. "Machine is already initialized")))
-    (do (reset! (.-<machine>-state this) (assoc (.-<machine>-state this) :_locals {<locals; separator=" ">}))
-        <body> <return>))
+    (do (let [<body>]
+            <return>)))
 >>
 
-return(machine, identifier) ::= <<
-(get-in (.-<machine>-state this) [:_locals :<identifier>])
+return(identifier) ::= <<
+<identifier>
 >>
 
 no_return() ::=<<
@@ -81,7 +67,7 @@ enum_call(identifier) ::= <<
 (de.hhu.stups.btypes.BEnum. :<identifier>)
 >>
 
-set_enum_declaration(name,enums) ::= <<
+set_enum_declaration() ::= <<
 >>
 
 bool() ::= <<
@@ -92,12 +78,10 @@ include_declaration(type, identifier) ::= <<
 :<declaration(identifier)> (<type>.)
 >>
 
-global_declaration(identifier) ::= <<
-:<declaration(identifier)> nil
+global_declaration() ::= <<
 >>
 
-local_declaration(identifier) ::= <<
-:<declaration(identifier)> nil
+local_declaration() ::= <<
 >>
 
 constant() ::= <<
@@ -116,21 +100,20 @@ parameter(identifier) ::= <<
 >>
 
 parallel(machine, loads, others, stores) ::=<<
-(do (reset! (.-<machine>-state this) (assoc (.-<machine>-state this) :_locals {<loads; separator=" ">}))
-    <others; separator="\n">
+(do <others; separator="\n">
     <stores; separator="\n">)
 >>
 
 parallel_load(machine, identifier, isPrivate) ::= <<
-:_ld_<identifier> (get-in (.-<machine>-state this) [<if(isPrivate)><else>:_locals<endif> :<identifier>])
+<if(isPrivate)>_ld_<identifier> (get-in (.-<machine>-state this) [:<identifier>])<else>_ld_<identifier> <identifier><endif>
 >>
 
 parallel_store(machine, identifier, isPrivate, val) ::= <<
-(reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [<if(isPrivate)><else>:_locals<endif> :<identifier>] <val>))
+<if(isPrivate)>_ (reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [:<identifier>] <val>))<else>identifier <val><endif>
 >>
 
 assignment(machine, identifier, isPrivate, val) ::= <<
-(reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [<if(isPrivate)><else>:_locals<endif> :<identifier>] <val>))
+<if(isPrivate)>_ (reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [:<identifier>] <val>))<else>identifier <val><endif>
 >>
 
 assignments(assignments) ::= <<
@@ -138,7 +121,7 @@ assignments(assignments) ::= <<
 >>
 
 nondeterminism(machine, identifier, isPrivate, set) ::= <<
-(reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [<if(isPrivate)><else>:_locals<endif> :<identifier>] (.nondeterminism <set>)))
+<if(isPrivate)>_ (reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [:<identifier>] (.nondeterminism <set>)))<else><identifier> (.nondeterminism <set>)<endif>
 >>
 
 void() ::= <<
@@ -230,8 +213,7 @@ while(predicate, then) ::= <<
 >>
 
 var(machine, locals, body) ::=<<
-(do (reset! (.-<machine>-state this) (assoc (.-<machine>-state this) :_locals {<locals; separator=" ">}))
-    <body>)
+(do (let [<body>])
 >>
 
 boolean_val(val) ::= <<
@@ -239,7 +221,7 @@ boolean_val(val) ::= <<
 >>
 
 identifier(machine, identifier, isAssigned, rhsOnLhs) ::= <<
-<if(rhsOnLhs)><if(isAssigned)>_ld_<identifier><else>(get-in (.-<machine>-state this) [:_ld_<identifier>])<endif><else><if(isAssigned)><identifier><else>(get-in (.-<machine>-state this) [:<identifier>])<endif><endif>
+<if(rhsOnLhs)>_ld_<identifier><else><if(isAssigned)><identifier><else>(get-in (.-<machine>-state this) [:<identifier>])<endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<
@@ -247,10 +229,10 @@ number(number, useBigInteger) ::= <<
 >>
 
 operation_call_with_assignment(thisName, machine, var, isPrivate, function, args, this) ::= <<
-(assoc-in (.-<thisName>-state this) [<if(isPrivate)><else>:_locals<endif> :<var>] <operation_call_without_assignment(thisName, machine, function, args, this)>)
+<if(isPrivate)>_ (reset! (.-<thisName>-state this) (assoc-in (.-<thisName>-state this) [:<var>] <operation_call_without_assignment(thisName, machine, function, args, this)>))<else><var> <operation_call_without_assignment(thisName, machine, function, args, this)><endif>
 >>
 
 operation_call_without_assignment(thisName, machine, function, args, this) ::= <<
-(.<function> <if(this)><else>(get-in (.<thisName>-state this) [:<machine>] )<endif> <args; separator=" ">)
+(.<function> <if(this)><else>(get-in (.<thisName>-state this) [:<machine>])<endif> <args; separator=" ">)
 >>
 

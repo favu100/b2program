@@ -17,9 +17,12 @@ public class TypeGenerator {
 
     private final NameHandler nameHandler;
 
-    public TypeGenerator(STGroup group, NameHandler nameHandler) {
+    private final boolean useBigInteger;
+
+    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
         this.group = group;
         this.nameHandler = nameHandler;
+        this.useBigInteger = useBigInteger;
     }
 
     /*
@@ -28,7 +31,11 @@ public class TypeGenerator {
     public String generate(BType type, boolean cast) {
         ST template = group.getInstanceOf("type");
         if(type instanceof IntegerType) {
-            TemplateHandler.add(template, "type", "BInteger");
+            if(useBigInteger) {
+                TemplateHandler.add(template, "type", "BBigInteger");
+            } else {
+                TemplateHandler.add(template, "type", "BInteger");
+            }
             TemplateHandler.add(template, "cast", cast);
             return template.render();
         } else if(type instanceof BoolType) {

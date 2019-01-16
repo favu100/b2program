@@ -20,25 +20,25 @@ public class BSet<T> implements BObject, Set<T> {
 		}
 	}
 
-	private static final Var SET;
+	protected static final Var SET;
 
-	private static final Var EMPTY;
+	protected static final Var EMPTY;
 
-	private static final Var COUNT;
+	protected static final Var COUNT;
 
-	private static final IFn INTERSECTION;
+	protected static final IFn INTERSECTION;
 
-	private static final IFn UNION;
+	protected static final IFn UNION;
 
-	private static final IFn DIFFERENCE;
+	protected static final IFn DIFFERENCE;
 
-	private static final IFn RANGE;
+	protected static final IFn RANGE;
 
-	private static final IFn MAP;
+	protected static final IFn MAP;
 
-	private static final IFn INC;
+	protected static final IFn INC;
 
-	private static final IFn CREATE_INTEGER;
+	protected static final IFn CREATE_INTEGER;
 
 
 	static {
@@ -61,7 +61,8 @@ public class BSet<T> implements BObject, Set<T> {
 		this.set = elements;
 	}
 
-	public BSet(Object... elements) {
+	@SafeVarargs
+	public BSet(T... elements) {
 		this.set = (PersistentHashSet) SET.invoke(elements);
 	}
 
@@ -126,8 +127,8 @@ public class BSet<T> implements BObject, Set<T> {
 		throw new UnsupportedOperationException();
 	}
 
-	public Object[] toArray() {
-		return set.toArray();
+	public T[] toArray() {
+		return (T[]) set.toArray();
 	}
 
 	public <T> T[] toArray(T[] a) {
@@ -186,6 +187,6 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public T nondeterminism() {
 		int index = (int) Math.floor(Math.random() * set.size());
-		return (T) toArray()[index];
+		return toArray()[index];
 	}
 }

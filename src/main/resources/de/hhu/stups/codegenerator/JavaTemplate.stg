@@ -61,7 +61,7 @@ private BSet\<<type>\> <identifier> = <set_enumeration(enums, false)>;
 >>
 
 set_enumeration(enums, isRelation) ::= <<
-<if(isRelation)>new BRelation<else>new BSet<endif>(<enums; separator=", ">)
+<if(isRelation)>new BRelation\<><else>new BSet\<><endif>(<enums; separator=", ">)
 >>
 
 enum_call(class, identifier) ::= <<
@@ -172,7 +172,7 @@ BSet.range(<arg1>,<arg2>)
 >>
 
 couple_create(arg1, arg2) ::= <<
-new BCouple(<arg1>, <arg2>)
+new BCouple\<>(<arg1>, <arg2>)
 >>
 
 

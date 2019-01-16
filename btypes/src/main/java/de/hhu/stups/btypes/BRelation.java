@@ -1,5 +1,7 @@
 package de.hhu.stups.btypes;
 
+import clojure.lang.PersistentHashSet;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,11 +10,16 @@ import java.util.stream.Collectors;
  */
 public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
+	@SafeVarargs
+	public BRelation(BCouple<S,T>... elements) {
+		super(elements);
+	}
+
 	public BSet<T> relationImage(BSet<S> domain) {
-		return new BSet<>(this.stream()
-			.filter(object -> domain.contains(object.getFirst()))
-			.map(BCouple::getSecond)
-			.collect(Collectors.toSet()));
+		return new BSet<T>(PersistentHashSet.create(this.set.stream()
+			.filter(object -> domain.contains(((BCouple<S,T>)object).getFirst()))
+			.map(object -> ((BCouple<S,T>) object).getSecond())
+			.collect(Collectors.toSet())));
 	}
 
 

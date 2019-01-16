@@ -9,10 +9,9 @@ import clojure.lang.Var;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class BSet implements BObject, Set<BObject> {
+public class BSet<T> implements BObject, Set<T> {
 
 	private static final class createBInteger extends AFn {
 		@Override
@@ -56,26 +55,22 @@ public class BSet implements BObject, Set<BObject> {
 		CREATE_INTEGER = new createBInteger();
 	}
 
-	private final PersistentHashSet set;
+	protected final PersistentHashSet set;
 
 	public BSet(PersistentHashSet elements) {
 		this.set = elements;
 	}
 
-	public BSet(BObject... elements) {
+	public BSet(Object... elements) {
 		this.set = (PersistentHashSet) SET.invoke(elements);
 	}
 
-	public static LinkedHashSet<BObject> newStorage() {
-		return new LinkedHashSet<>();
-	}
-
 	public java.lang.String toString() {
-		Iterator<BObject> it = this.iterator();
+		Iterator<T> it = this.iterator();
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		while (it.hasNext()) {
-			BObject b = (BObject) it.next();
+			T b = it.next();
 			sb.append(b.toString());
 			if (it.hasNext()) {
 				sb.append(", ");
@@ -97,7 +92,7 @@ public class BSet implements BObject, Set<BObject> {
 		return set.contains(o);
 	}
 
-	public boolean add(BObject bObject) {
+	public boolean add(T bObject) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -143,7 +138,7 @@ public class BSet implements BObject, Set<BObject> {
 		return set.containsAll(c);
 	}
 
-	public boolean addAll(Collection<? extends BObject> c) {
+	public boolean addAll(Collection<? extends T> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -151,61 +146,46 @@ public class BSet implements BObject, Set<BObject> {
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterator<BObject> iterator() {
+	public Iterator<T> iterator() {
 		return set.iterator();
 	}
 
-	public BSet intersect(BSet set) {
-		return new BSet((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
+	public BSet<T> intersect(BSet<T> set) {
+		return new BSet<>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
 	}
 
-	public BSet complement(BSet set) {
-		return new BSet((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
+	public BSet<T> difference(BSet<T> set) {
+		return new BSet<>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
 	}
 
-	public BSet union(BSet set) {
-		return new BSet((PersistentHashSet) UNION.invoke(this.set, set.set));
+	public BSet<T> union(BSet<T> set) {
+		return new BSet<>((PersistentHashSet) UNION.invoke(this.set, set.set));
 	}
 
-	public static BSet range(BInteger a, BInteger b) {
-		return new BSet((PersistentHashSet) SET.invoke(
+	public static BSet<BInteger> range(BInteger a, BInteger b) {
+		return new BSet<>((PersistentHashSet) SET.invoke(
 				MAP.invoke(CREATE_INTEGER, RANGE.invoke(a.getValue(), INC.invoke(b.getValue())))));
 	}
-
-	/*public BSet relationImage(BSet domain) {
-		return new BSet(set.stream()
-			.filter(object -> domain.contains(((BCouple) object).getFirst()))
-			.map(object -> ((BCouple) object).getSecond())
-			.collect(Collectors.toSet()));
-	}
-
-
-	public BObject functionCall(BObject arg) {
-		List<BCouple> matchedCouples = set.stream()
-			.map(object -> (BCouple) object)
-			.filter(couple -> couple.getFirst().equals(arg))
-			.collect(Collectors.toList());
-		if(matchedCouples.size() > 0) {
-			return matchedCouples.get(0).getSecond();
-		}
-		throw new RuntimeException("Argument is not in the key set of this map");
-	}*/
 
 
 	public BInteger card() {
 		return new BInteger((int) COUNT.invoke(this.set));
 	}
 
-	public BBoolean elementOf(BObject object) {
+	public BBoolean elementOf(T object) {
 		return new BBoolean(this.set.contains(object));
 	}
 
-	public BBoolean equal(BSet o) {
+	public BBoolean equal(BSet<T> o) {
 		return new BBoolean(equals(o));
 	}
 
-	public BBoolean unequal(BSet o) {
+	public BBoolean unequal(BSet<T> o) {
 		return new BBoolean(!equals(o));
 	}
 
+	public T nondeterminism() {
+		int index = (int) Math.floor(Math.random() * set.size());
+		return (T) toArray()[index];
+	}
 }

@@ -175,7 +175,6 @@ public class SubstitutionGenerator {
                                         PredicateNode predicateNode, SubstitutionNode substitutionNode, int index, int length) {
         ST substitution = currentGroup.getInstanceOf("any");
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(substitution, "type", typeGenerator.generate(parameter.getType(), false));
         TemplateHandler.add(substitution, "identifier", nameHandler.handle(parameter.getName()));
         if(!(parameter.getType() instanceof BoolType)) {
             TemplateHandler.add(substitution, "set", nameHandler.handleIdentifier(parameter.getType().toString(), NameHandler.IdentifierHandlingEnum.VARIABLES));
@@ -222,8 +221,6 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
-        String typeCast = typeGenerator.generate(rhs.getType(), true);
-        TemplateHandler.add(substitution, "typeCast", typeCast);
         TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
@@ -285,11 +282,9 @@ public class SubstitutionGenerator {
     private String visitParallelLoad(ExprNode expr) {
         ST substitution = currentGroup.getInstanceOf("parallel_load");
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
-        TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType(), false));
+        TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType()));
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) expr, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) expr).getName()));
-        String typeCast = typeGenerator.generate(expr.getType(), true);
-        TemplateHandler.add(substitution, "typeCast", typeCast);
         return substitution.render();
     }
 
@@ -312,8 +307,6 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
         identifierGenerator.setLhsInParallel(false);
-        String typeCast = typeGenerator.generate(rhs.getType(), true);
-        TemplateHandler.add(substitution, "typeCast", typeCast);
         TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
@@ -343,8 +336,6 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode(lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(lhs.getName()));
-        String typeCast = typeGenerator.generate(lhs.getType(), true);
-        TemplateHandler.add(substitution, "typeCast", typeCast);
         TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
@@ -419,7 +410,7 @@ public class SubstitutionGenerator {
     */
     private String generateVariableInVar(DeclarationNode identifier) {
         ST declaration = currentGroup.getInstanceOf("local_declaration");
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(identifier.getType(), false));
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(identifier.getType()));
         TemplateHandler.add(declaration, "identifier", identifierGenerator.generateVarDeclaration(identifier.getName(), true));
         return declaration.render();
     }

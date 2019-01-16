@@ -67,11 +67,11 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-#define <identifier> <set_enumeration(type, enums)>
+#define <identifier> <set_enumeration("", type, "", enums, false)>
 >>
 
-set_enumeration(type, enums) ::= <<
-(BSet\<<type> >(<enums; separator=", ">))
+set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
+<if(isRelation)>(BRelation\<<leftType>, <rightType> >(<enums; separator=", ">))<else>(BSet\<<type> >(<enums; separator=", ">))<endif>
 >>
 
 enum_call(class, identifier) ::= <<
@@ -152,24 +152,24 @@ parallel(loads, others, stores) ::=<<
 <stores; separator="\n">
 >>
 
-parallel_load(type, identifier, typeCast) ::= <<
-<type> _ld_<identifier> = static_cast\<<typeCast> >(<identifier>);
+parallel_load(type, identifier) ::= <<
+<type> _ld_<identifier> = <identifier>);
 >>
 
-parallel_store(identifier, typeCast, val) ::= <<
-<identifier> = static_cast\<<typeCast> >(<val>);
+parallel_store(identifier, val) ::= <<
+<identifier> = <val>;
 >>
 
-assignment(identifier, typeCast, val) ::= <<
-<identifier> = static_cast\<<typeCast> >(<val>);
+assignment(identifier, val) ::= <<
+<identifier> = <val>;
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(identifier, typeCast, set) ::= <<
-<identifier> = static_cast\<<typeCast> >(<set>.nondeterminism());
+nondeterminism(identifier, set) ::= <<
+<identifier> = <set>.nondeterminism();
 >>
 
 void() ::= <<
@@ -180,8 +180,16 @@ type(type) ::= <<
 <type>
 >>
 
+couple_type(leftType, rightType) ::=<<
+BCouple\<<leftType>, <rightType> >
+>>
+
 set_type(type) ::=<<
 BSet\<<type> >
+>>
+
+relation_type(leftType, rightType) ::=<<
+BRelation\<<leftType>, <rightType> >
 >>
 
 import_type(type) ::= <<
@@ -254,7 +262,7 @@ else {
 
 any(type, identifier, set, body, index) ::= <<
 for(int _<index>_i = 0; _<index>_i \< (<set>.size()); _<index>_i++) {
-    <type> <identifier> = static_cast\<<type> >(*(std::next(<set>.begin(), _<index>_i)));
+    <type> <identifier> = *(std::next(<set>.begin(), _<index>_i));
     <body>
 }
 >>
@@ -286,7 +294,7 @@ identifier(identifier, isReturn, isPrivate, rhsOnLhs) ::= <<
 >>
 
 number(number, useBigInteger) ::= <<
-<if(useBigInteger)>(BBigInteger("<number>"))<else>(BInteger(<number>))<endif>
+<if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
 operation_call_with_assignment(var, function, args) ::= <<

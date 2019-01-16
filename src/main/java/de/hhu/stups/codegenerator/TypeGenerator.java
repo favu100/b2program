@@ -28,7 +28,7 @@ public class TypeGenerator {
     /*
     * This function generates code for a type with the given type and the information whether the type is generated for casting an object
     */
-    public String generate(BType type, boolean cast) {
+    public String generate(BType type) {
         ST template = group.getInstanceOf("type");
         if(type instanceof IntegerType) {
             if(useBigInteger) {
@@ -36,24 +36,28 @@ public class TypeGenerator {
             } else {
                 TemplateHandler.add(template, "type", "BInteger");
             }
-            TemplateHandler.add(template, "cast", cast);
             return template.render();
         } else if(type instanceof BoolType) {
             TemplateHandler.add(template, "type", "BBoolean");
-            TemplateHandler.add(template, "cast", cast);
             return template.render();
         } else if(type instanceof SetType) {
-            template = group.getInstanceOf("set_type");
-            TemplateHandler.add(template, "type", generate(((SetType) type).getSubType(), false));
-            TemplateHandler.add(template, "cast", cast);
+            BType subType = ((SetType) type).getSubType();
+            if(subType instanceof CoupleType) {
+                template = group.getInstanceOf("relation_type");
+                TemplateHandler.add(template, "leftType", generate(((CoupleType) subType).getLeft()));
+                TemplateHandler.add(template, "rightType", generate(((CoupleType) subType).getRight()));
+            } else {
+                template = group.getInstanceOf("set_type");
+                TemplateHandler.add(template, "type", generate(subType));
+            }
             return template.render();
         } else if(type instanceof EnumeratedSetElementType) {
             TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
-            TemplateHandler.add(template, "cast", cast);
             return template.render();
         } else if(type instanceof CoupleType) {
-            TemplateHandler.add(template, "type", "BCouple");
-            TemplateHandler.add(template, "cast", cast);
+            template = group.getInstanceOf("couple_type");
+            TemplateHandler.add(template, "leftType", generate(((CoupleType) type).getLeft()));
+            TemplateHandler.add(template, "rightType", generate(((CoupleType) type).getRight()));
             return template.render();
         } else if(type instanceof UntypedType) {
             return generateUntyped();

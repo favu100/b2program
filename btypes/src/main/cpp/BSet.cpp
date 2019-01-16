@@ -32,7 +32,7 @@ class BSet : public BObject {
             }
     };
 
-    private:
+    protected:
         immer::set<T,Hash, HashEqual> set;
 
     public:
@@ -63,7 +63,7 @@ class BSet : public BObject {
             this->set = immer::set<T,Hash, HashEqual>();
         }
 
-        BSet<T>(const BSet& set) {
+        BSet<T>(const BSet<T>& set) {
             this->set = set.set;
         }
 
@@ -168,7 +168,7 @@ class BSet : public BObject {
             return set.iterator();
         }*/
 
-        BSet<T> intersect(const BSet& set) {
+        BSet<T> intersect(const BSet<T>& set) {
             immer::set<T,Hash, HashEqual> result = this->set;
             for (typename immer::set<T,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
                 T obj = *it;
@@ -176,33 +176,33 @@ class BSet : public BObject {
                     result = result.erase(obj);
                 }
             }
-            return BSet(result);
+            return BSet<T>(result);
         }
 
-        BSet<T> complement(const BSet& set) {
+        BSet<T> difference(const BSet<T>& set) {
             immer::set<T,Hash, HashEqual> result = this->set;
             for (typename immer::set<T,Hash, HashEqual>::const_iterator it = set.set.begin(); it != set.set.end(); ++it) {
                 T obj = *it;
                 result = result.erase(obj);
             }
-            return BSet(result);
+            return BSet<T>(result);
         }
 
-        BSet<T> _union(const BSet& set) {
+        BSet<T> _union(const BSet<T>& set) {
             if(this->size() > set.size()) {
                 immer::set<T,Hash, HashEqual> result = this->set;
                 for (typename immer::set<T,Hash, HashEqual>::const_iterator it = set.set.begin(); it != set.set.end(); ++it) {
                     T obj = *it;
                     result = result.insert(obj);
                 }
-                 return BSet(result);
+                 return BSet<T>(result);
             } else {
                 immer::set<T,Hash, HashEqual> result = set.set;
                 for (typename immer::set<T,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
                     T obj = *it;
                     result = result.insert(obj);
                 }
-                 return BSet(result);
+                 return BSet<T>(result);
             }
         }
 
@@ -212,31 +212,7 @@ class BSet : public BObject {
             for(int i = a.intValue(); i < end; ++i) {
                 result = result.insert(i);
             }
-            return BSet(result);
-        }
-
-        BSet<BObject> relationImage(const BSet<BObject>& domain) {
-            immer::set<T,Hash, HashEqual> result;
-            for(typename immer::set<T,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-                T* object = *it;
-                BCouple couple = static_cast<BCouple>(object);
-                if(domain.set.count(couple.getFirst()) == 0) {
-                    result = result.insert(couple.getSecond());
-                }
-            }
-            return BSet(result);
-        }
-
-
-        BObject functionCall(const T& arg) {
-            for(typename immer::set<T,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-                T* object = *it;
-                BCouple couple = static_cast<BCouple>(object);
-                if(couple.getFirst() == arg) {
-                    return couple.getSecond();
-                }
-            }
-            throw runtime_error("Argument is not in the key set of this map");
+            return BSet<BInteger>(result);
         }
 
 
@@ -254,15 +230,15 @@ class BSet : public BObject {
 		    return *it;
 	    }
 
-        /*BBoolean equal(BSet o) {
+        /*BBoolean equal(BSet<T> o) {
             return new BBoolean(equals(o));
         }
 
-        BBoolean unequal(BSet o) {
+        BBoolean unequal(BSet<T> o) {
             return new BBoolean(!equals(o));
         }*/
 
-        void operator =(const BSet& other) {
+        void operator =(const BSet<T>& other) {
             set = other.set;
         }
 

@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -259,7 +260,7 @@ public class ExpressionGenerator {
                 operatorName = "union";
                 break;
             case SET_SUBTRACTION:
-                operatorName = "complement";
+                operatorName = "difference";
                 break;
             case FUNCTION_CALL:
                 operatorName = "functionCall";
@@ -314,8 +315,15 @@ public class ExpressionGenerator {
     */
     private String generateSetEnumeration(BType type, List<String> expressions) {
         ST enumeration = currentGroup.getInstanceOf("set_enumeration");
-        TemplateHandler.add(enumeration,"type", typeGenerator.generate(((SetType) type).getSubType(), false));
+        BType subType = ((SetType) type).getSubType();
         TemplateHandler.add(enumeration,"enums", expressions);
+        if(subType instanceof CoupleType) {
+            TemplateHandler.add(enumeration, "leftType", typeGenerator.generate(((CoupleType) subType).getLeft()));
+            TemplateHandler.add(enumeration, "rightType", typeGenerator.generate(((CoupleType) subType).getRight()));
+        } else {
+            TemplateHandler.add(enumeration, "type", typeGenerator.generate(subType));
+        }
+        TemplateHandler.add(enumeration, "isRelation", subType instanceof CoupleType);
         return enumeration.render();
     }
 

@@ -139,7 +139,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		ST method = currentGroup.getInstanceOf("method");
 		TemplateHandler.add(method, "operationName", "initialize");
 		TemplateHandler.add(method, "argsTypes", "");
-		TemplateHandler.add(method, "returnType", typeGenerator.generate(new UntypedType(), false));
+		TemplateHandler.add(method, "returnType", typeGenerator.generate(new UntypedType()));
 		List<String> result = new ArrayList<>();
 		result.add(method.render());
 		result.addAll(node.getOperations().stream()
@@ -152,13 +152,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		ST method = currentGroup.getInstanceOf("method");
 		TemplateHandler.add(method, "operationName", nameHandler.handle(node.getName()));
 		TemplateHandler.add(method, "argsTypes", node.getParams().stream()
-				.map(param -> typeGenerator.generate(param.getType(), false))
+				.map(param -> typeGenerator.generate(param.getType()))
 				.collect(Collectors.toList()));
 		//TODO: generate method for many return parameters
 		if(node.getOutputParams().size() > 0) {
-			TemplateHandler.add(method, "returnType", typeGenerator.generate(node.getOutputParams().get(0).getType(), false));
+			TemplateHandler.add(method, "returnType", typeGenerator.generate(node.getOutputParams().get(0).getType()));
 		} else {
-			TemplateHandler.add(method, "returnType", typeGenerator.generate(new UntypedType(), false));
+			TemplateHandler.add(method, "returnType", typeGenerator.generate(new UntypedType()));
 		}
 		return method.render();
 	}

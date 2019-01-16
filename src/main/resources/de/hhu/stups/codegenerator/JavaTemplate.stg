@@ -57,11 +57,11 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-private BSet <identifier> = <set_enumeration(enums)>;
+private BSet\<<type>\> <identifier> = <set_enumeration(enums, false)>;
 >>
 
-set_enumeration(enums) ::= <<
-new BSet(<enums; separator=", ">)
+set_enumeration(enums, isRelation) ::= <<
+<if(isRelation)>new BRelation<else>new BSet<endif>(<enums; separator=", ">)
 >>
 
 enum_call(class, identifier) ::= <<
@@ -122,36 +122,44 @@ parallel(loads, others, stores) ::=<<
 <stores; separator="\n">
 >>
 
-parallel_load(type, identifier, typeCast) ::= <<
-<type> _ld_<identifier> = <typeCast> <identifier>;
+parallel_load(type, identifier) ::= <<
+<type> _ld_<identifier> = <identifier>;
 >>
 
-parallel_store(identifier, typeCast, val) ::= <<
-<identifier> = <typeCast> <val>;
+parallel_store(identifier, val) ::= <<
+<identifier> = <val>;
 >>
 
-assignment(identifier, typeCast, val) ::= <<
-<identifier> = <typeCast> <val>;
+assignment(identifier, val) ::= <<
+<identifier> = <val>;
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(identifier, typeCast, set) ::= <<
-<identifier> = <typeCast> <set>.nondeterminism();
+nondeterminism(identifier, set) ::= <<
+<identifier> = <set>.nondeterminism();
 >>
 
 void() ::= <<
 void
 >>
 
-type(type, cast) ::= <<
-<if(cast)>(<type>)<else><type><endif>
+type(type) ::= <<
+<type>
 >>
 
-set_type(type, cast) ::=<<
-<if(cast)>(BSet)<else>BSet<endif>
+couple_type(leftType, rightType) ::= <<
+BCouple\<<leftType>, <rightType>\>
+>>
+
+set_type(type) ::=<<
+BSet\<<type>\>
+>>
+
+relation_type(leftType, rightType) ::=<<
+BRelation\<<leftType>, <rightType>\>
 >>
 
 import_type(type) ::= <<
@@ -256,7 +264,7 @@ identifier(identifier, rhsOnLhs) ::= <<
 >>
 
 number(number, useBigInteger) ::= <<
-<if(useBigInteger)>new BBigInteger("<number>")<else>new BInteger(<number>)<endif>
+<if(useBigInteger)>new BInteger("<number>")<else>new BInteger(<number>)<endif>
 >>
 
 operation_call_with_assignment(var, machine, function, args, this) ::= <<

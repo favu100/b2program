@@ -55,12 +55,12 @@ no_return() ::=<<
 nil
 >>
 
-set_declaration(identifier, type, enums) ::= <<
-:<identifier> <set_enumeration(enums)>
+set_declaration(identifier, enums) ::= <<
+:<identifier> <set_enumeration(enums, false)>
 >>
 
-set_enumeration(enums) ::= <<
-(de.hhu.stups.btypes.BSet. #{<enums; separator=" ">})
+set_enumeration(enums, isRelation) ::= <<
+(<if(isRelation)>de.hhu.stups.btpyes.BRelation.<else>de.hhu.stups.btypes.BSet.<endif> #{<enums; separator=" ">})
 >>
 
 enum_call(identifier) ::= <<
@@ -132,8 +132,16 @@ type(type) ::= <<
 de.hhu.stups.btypes.<type>
 >>
 
+couple_type() ::=<<
+de.hhu.stups.btypes.BCouple
+>>
+
 set_type() ::=<<
 de.hhu.stups.btypes.BSet
+>>
+
+relation_type() ::= <<
+de.hhu.stups.btypes.BRelation
 >>
 
 import_type(type) ::= <<
@@ -225,7 +233,7 @@ identifier(machine, identifier, isAssigned, rhsOnLhs) ::= <<
 >>
 
 number(number, useBigInteger) ::= <<
-<if(useBigInteger)>(de.hhu.stups.btypes.BBigInteger. "<number>")<else>(de.hhu.stups.btypes.BInteger. <number>)<endif>
+<if(useBigInteger)>(de.hhu.stups.btypes.BInteger. "<number>")<else>(de.hhu.stups.btypes.BInteger. <number>)<endif>
 >>
 
 operation_call_with_assignment(thisName, machine, var, isPrivate, function, args, this) ::= <<

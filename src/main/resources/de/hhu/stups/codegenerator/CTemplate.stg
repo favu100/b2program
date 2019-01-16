@@ -68,7 +68,7 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-static BSet <identifier> = <set_enumeration(type, enums)>;
+static BSet <identifier> = <set_enumeration(type, enums, false)>;
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -95,8 +95,8 @@ BBoolean unequal(<name> o1, <name> o2) {
 }
 >>
 
-set_enumeration(type, enums) ::= <<
-create_bset((<type>[]){<enums; separator=", ">})
+set_enumeration(type, enums, isRelation) ::= <<
+<if(isRelation)>create_brelation<else>create_bset<endif>((<type>[]){<enums; separator=", ">})
 >>
 
 enum_call(class, identifier) ::= <<
@@ -143,8 +143,8 @@ parallel_load(type, identifier, typeCast) ::= <<
 <type> _ld_<identifier> = <typeCast> <identifier>;
 >>
 
-parallel_store(identifier, typeCast, val) ::= <<
-<identifier> = <typeCast> <val>;
+parallel_store(identifier, val) ::= <<
+<identifier> = <val>;
 >>
 
 assignment(identifier, val) ::= <<
@@ -162,12 +162,20 @@ nondeterminism(identifier, typeCast, set) ::= <<
 void() ::= <<
 >>
 
-type(type, cast) ::= <<
-<if(!cast)><type><endif>
+type(type) ::= <<
+<type>
 >>
 
-set_type(cast) ::=<<
-<if(!cast)>BSet<endif>
+couple_type() ::=<<
+BCouple
+>>
+
+set_type() ::=<<
+BSet
+>>
+
+relation_type() ::=<<
+BRelation
 >>
 
 

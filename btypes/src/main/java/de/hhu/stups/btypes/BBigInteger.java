@@ -7,7 +7,7 @@ import clojure.lang.Var;
 
 import java.math.BigInteger;
 
-public class BBigInteger extends BNumber {
+public class BBigInteger extends java.lang.Number implements Comparable<BBigInteger>, BObject {
 
 	private static final Var PLUS = RT.var("clojure.core", "+");
 
@@ -33,9 +33,9 @@ public class BBigInteger extends BNumber {
 			return true;
 		if (obj == null)
 			return false;
-		if (obj instanceof BNumber) {
+		if (obj instanceof BBigInteger) {
 			//TODO: other numbers
-			return this.compareTo((BNumber) obj) == 0;
+			return this.compareTo((BBigInteger) obj) == 0;
 		}
 		// assert getClass() != obj.getClass()
 		return false;
@@ -64,38 +64,37 @@ public class BBigInteger extends BNumber {
 		this.value = value;
 	}
 
-	public int compareTo(BNumber o) {
+	public int compareTo(BBigInteger o) {
 		BBigInteger other = (BBigInteger) o;
 		return (int) COMPARE.invoke(this.value, other.value);
 	}
 
-	public BBoolean lessEqual(BNumber o) {
+	public BBoolean lessEqual(BBigInteger o) {
 		return new BBoolean(compareTo(o) <= 0);
 	}
 
 
-	public BBoolean greaterEqual(BNumber o) {
+	public BBoolean greaterEqual(BBigInteger o) {
 		return new BBoolean(compareTo(o) >= 0);
 	}
 
-	@Override
 	public BigInteger asBigInteger() {
 		return new java.math.BigInteger(value.toString());
 	}
 
-	public BBoolean less(BNumber o) {
+	public BBoolean less(BBigInteger o) {
 		return new BBoolean(compareTo(o) < 0);
 	}
 
-	public BBoolean greater(BNumber o) {
+	public BBoolean greater(BBigInteger o) {
 		return new BBoolean(compareTo(o) > 0);
 	}
 
-	public BBoolean equal(BNumber o) {
+	public BBoolean equal(BBigInteger o) {
 		return new BBoolean(compareTo(o) == 0);
 	}
 
-	public BBoolean unequal(BNumber o) {
+	public BBoolean unequal(BBigInteger o) {
 		return new BBoolean(compareTo(o) != 0);
 	}
 
@@ -119,93 +118,66 @@ public class BBigInteger extends BNumber {
 		return this.value.doubleValue();
 	}
 
-	@Override
-	public BNumber plus(BNumber o) {
-		BBigInteger other = (BBigInteger) o;
-		return new BBigInteger((java.lang.Number) PLUS.invoke(this.value, other.value));
+	public BBigInteger plus(BBigInteger o) {
+		return new BBigInteger((java.lang.Number) PLUS.invoke(this.value, o.value));
 	}
 
 	public java.lang.String toString() {
 		return this.value.toString();
 	}
 
-	@Override
-	public BNumber minus(BNumber o) {
-		BBigInteger other = (BBigInteger) o;
-		return new BBigInteger((java.lang.Number) MINUS.invoke(this.value, other.value));
+	public BBigInteger minus(BBigInteger o) {
+		return new BBigInteger((java.lang.Number) MINUS.invoke(this.value, o.value));
 	}
 
-	@Override
-	public BNumber multiply(BNumber o) {
-		BBigInteger other = (BBigInteger) o;
-		return new BBigInteger((java.lang.Number) MULTIPLY.invoke(this.value, other.value));
+	public BBigInteger multiply(BBigInteger o) {
+		return new BBigInteger((java.lang.Number) MULTIPLY.invoke(this.value, o.value));
 	}
 
-	@Override
-	public BNumber power(BNumber o) {
-		BBigInteger other = (BBigInteger) o;
-		return new BBigInteger((java.lang.Number) POWER.invoke(this.value, other.value));
+	public BBigInteger power(BBigInteger o) {
+		return new BBigInteger((java.lang.Number) POWER.invoke(this.value, o.value));
 	}
 
-	@Override
-	public BNumber divide(BNumber o) {
-		BBigInteger other = (BBigInteger) o;
-		return new BBigInteger((java.lang.Number) DIVIDE.invoke(this.value, other.value));
+	public BBigInteger divide(BBigInteger o) {
+		return new BBigInteger((java.lang.Number) DIVIDE.invoke(this.value, o.value));
 	}
 
-	@Override
-	public BNumber modulo(BNumber o) {
-		BBigInteger other = (BBigInteger) o;
-		return new BBigInteger((java.lang.Number) MODULO.invoke(this.value, other.value));
+	public BBigInteger modulo(BBigInteger o) {
+		return new BBigInteger((java.lang.Number) MODULO.invoke(this.value, o.value));
 	}
 
 	/*@Override
-	public BNumber or(BNumber o) {
+	public BBigInteger or(BBigInteger o) {
 		return null;
 	}
 
 	@Override
-	public BNumber and(BNumber o) {
+	public BBigInteger and(BBigInteger o) {
 		return null;
 	}
 
 	@Override
-	public BNumber xor(BNumber o) {
+	public BBigInteger xor(BBigInteger o) {
 		return null;
 	}*/
 
-	@Override
-	public BNumber next() {
+	public BBigInteger next() {
 		return new BBigInteger((java.lang.Number) INC.invoke(this.value));
 	}
 
-	@Override
-	public BNumber previous() {
+	public BBigInteger previous() {
 		return new BBigInteger((java.lang.Number) DEC.invoke(this.value));
 	}
 
-	@Override
-	public BNumber leftShift(BNumber o) {
-		return null;
-	}
-
-	@Override
-	public BNumber rightShift(BNumber o) {
-		return null;
-	}
-
-	@Override
-	public boolean isCase(BNumber o) {
+	public boolean isCase(BBigInteger o) {
 		return this.equals(o);
 	}
 
-	@Override
-	public BNumber negative() {
+	public BBigInteger negative() {
 		return new BBigInteger((java.lang.Number) MINUS.invoke(this.value));
 	}
 
-	@Override
-	public BNumber positive() {
+	public BBigInteger positive() {
 		return this;
 	}
 

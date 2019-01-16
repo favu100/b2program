@@ -52,7 +52,7 @@ public class DeclarationGenerator {
     */
     private String generateGlobalDeclaration(DeclarationNode node) {
         ST declaration = currentGroup.getInstanceOf("global_declaration");
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType(), false));
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
         return declaration.render();
     }
@@ -72,7 +72,7 @@ public class DeclarationGenerator {
     */
     public String generateLocalDeclaration(DeclarationNode node) {
         ST declaration = currentGroup.getInstanceOf("local_declaration");
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType(), false));
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
         return declaration.render();
     }
@@ -83,7 +83,7 @@ public class DeclarationGenerator {
     private String generateParameter(DeclarationNode node, boolean isReturn) {
         ST declaration = currentGroup.getInstanceOf("parameter");
         TemplateHandler.add(declaration, "isReturn", isReturn);
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType(), false));
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
         return declaration.render();
     }
@@ -109,7 +109,7 @@ public class DeclarationGenerator {
 
     private String generateConstant(DeclarationNode constant) {
         ST declaration = currentGroup.getInstanceOf("constant");
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType(), false));
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
         return declaration.render();
     }

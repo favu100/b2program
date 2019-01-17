@@ -1,6 +1,6 @@
 package de.hhu.stups.btypes;
 
-public class BInteger extends BNumber {
+public class BInteger extends java.lang.Number implements Comparable<BInteger>, BObject {
 
 	@Override
 	public boolean equals(Object obj) {
@@ -34,32 +34,32 @@ public class BInteger extends BNumber {
 		this.value = value;
 	}
 
-	public int compareTo(BNumber o) {
+	public int compareTo(BInteger o) {
 		return this.value.compareTo(o.asBigInteger());
 	}
 
-	public BBoolean lessEqual(BNumber o) {
+	public BBoolean lessEqual(BInteger o) {
 		return new BBoolean(compareTo(o) <= 0);
 	}
 
 
-	public BBoolean greaterEqual(BNumber o) {
+	public BBoolean greaterEqual(BInteger o) {
 		return new BBoolean(compareTo(o) >= 0);
 	}
 
-	public BBoolean less(BNumber o) {
+	public BBoolean less(BInteger o) {
 		return new BBoolean(compareTo(o) < 0);
 	}
 
-	public BBoolean greater(BNumber o) {
+	public BBoolean greater(BInteger o) {
 		return new BBoolean(compareTo(o) > 0);
 	}
 
-	public BBoolean equal(BNumber o) {
+	public BBoolean equal(BInteger o) {
 		return new BBoolean(compareTo(o) == 0);
 	}
 
-	public BBoolean unequal(BNumber o) {
+	public BBoolean unequal(BInteger o) {
 		return new BBoolean(compareTo(o) != 0);
 	}
 
@@ -99,7 +99,7 @@ public class BInteger extends BNumber {
 	}
 
 	@Override
-	public BNumber plus(BNumber o) {
+	public BInteger plus(BInteger o) {
 		return new BInteger(this.value.add(o.asBigInteger()));
 	}
 
@@ -113,77 +113,77 @@ public class BInteger extends BNumber {
 	}
 
 	@Override
-	public BNumber minus(BNumber o) {
+	public BInteger minus(BInteger o) {
 		return new BInteger(this.value.subtract(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber multiply(BNumber o) {
+	public BInteger multiply(BInteger o) {
 		return new BInteger(this.value.multiply(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber power(BNumber o) {
+	public BInteger power(BInteger o) {
 		return new BInteger(this.value.pow(o.intValue()));
 	}
 
 	@Override
-	public BNumber divide(BNumber o) {
+	public BInteger divide(BInteger o) {
 		return new BInteger(this.value.divide(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber modulo(BNumber o) {
+	public BInteger modulo(BInteger o) {
 		return new BInteger(this.value.mod(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber or(BNumber o) {
+	public BInteger or(BInteger o) {
 		return new BInteger(this.value.or(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber and(BNumber o) {
+	public BInteger and(BInteger o) {
 		return new BInteger(this.value.and(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber xor(BNumber o) {
+	public BInteger xor(BInteger o) {
 		return new BInteger(this.value.xor(o.asBigInteger()));
 	}
 
 	@Override
-	public BNumber next() {
+	public BInteger next() {
 		return new BInteger(this.value.add(new java.math.BigInteger("1")));
 	}
 
 	@Override
-	public BNumber previous() {
+	public BInteger previous() {
 		return new BInteger(this.value.subtract(new java.math.BigInteger("1")));
 	}
 
 	@Override
-	public BNumber leftShift(BNumber o) {
+	public BInteger leftShift(BInteger o) {
 		return new BInteger(this.value.shiftLeft(o.intValue()));
 	}
 
 	@Override
-	public BNumber rightShift(BNumber o) {
+	public BInteger rightShift(BInteger o) {
 		return new BInteger(this.value.shiftRight(o.intValue()));
 	}
 
 	@Override
-	public boolean isCase(BNumber o) {
+	public boolean isCase(BInteger o) {
 		return this.equals(o);
 	}
 
 	@Override
-	public BNumber negative() {
+	public BInteger negative() {
 		return new BInteger(this.value.negate());
 	}
 
 	@Override
-	public BNumber positive() {
+	public BInteger positive() {
 		return this;
 	}
 

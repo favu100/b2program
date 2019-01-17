@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class SetUnionSmall2 {
 
@@ -10,19 +11,19 @@ public class SetUnionSmall2 {
 
 
     private BInteger counter;
-    private BSet set1;
-    private BSet set2;
+    private BSet<BInteger> set1;
+    private BSet<BInteger> set2;
 
     public SetUnionSmall2() {
-        counter = (BInteger) new BInteger(0);
-        set1 = (BSet) new BSet(new BInteger(1));
-        set2 = (BSet) new BSet(new BInteger(2));
+        counter = new BInteger(0);
+        set1 = new BSet<>(new BInteger(1));
+        set2 = new BSet<>(new BInteger(2));
     }
 
     public void simulate() {
         while((counter.less(new BInteger(5000000))).booleanValue()) {
-            set1 = (BSet) set1.union(set2);
-            counter = (BInteger) counter.plus(new BInteger(1));
+            set1 = set1.union(set2);
+            counter = counter.plus(new BInteger(1));
         }
     }
 

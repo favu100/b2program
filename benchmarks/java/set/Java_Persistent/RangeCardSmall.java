@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class RangeCardSmall {
 
@@ -13,14 +14,14 @@ public class RangeCardSmall {
     private BInteger result;
 
     public RangeCardSmall() {
-        counter = (BInteger) new BInteger(0);
-        result = (BInteger) new BInteger(0);
+        counter = new BInteger(0);
+        result = new BInteger(0);
     }
 
     public void simulate() {
         while((counter.less(new BInteger(5000000))).booleanValue()) {
-            result = (BInteger) BSet.range(new BInteger(0),new BInteger(5)).card();
-            counter = (BInteger) counter.plus(new BInteger(1));
+            result = BSet.range(new BInteger(0),new BInteger(5)).card();
+            counter = counter.plus(new BInteger(1));
         }
     }
 

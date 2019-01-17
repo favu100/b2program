@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class SetCardSmall2 {
 
@@ -10,19 +11,19 @@ public class SetCardSmall2 {
 
 
     private BInteger counter;
-    private BSet set;
+    private BSet<BInteger> set;
     private BInteger result;
 
     public SetCardSmall2() {
-        counter = (BInteger) new BInteger(0);
-        set = (BSet) new BSet(new BInteger(1));
-        result = (BInteger) new BInteger(0);
+        counter = new BInteger(0);
+        set = new BSet<>(new BInteger(1));
+        result = new BInteger(0);
     }
 
     public void simulate() {
         while((counter.less(new BInteger(5000000))).booleanValue()) {
-            result = (BInteger) set.card();
-            counter = (BInteger) counter.plus(new BInteger(1));
+            result = set.card();
+            counter = counter.plus(new BInteger(1));
         }
     }
 

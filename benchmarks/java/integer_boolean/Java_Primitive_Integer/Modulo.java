@@ -13,14 +13,14 @@ public class Modulo {
     private BInteger value;
 
     public Modulo() {
-        counter = (BInteger) new BInteger(0);
-        value = (BInteger) new BInteger(0);
+        counter = new BInteger(0);
+        value = new BInteger(0);
     }
 
     public void simulate() {
         while((counter.less(new BInteger(5000000))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger(1));
-            value = (BInteger) value.modulo(new BInteger(1));
+            counter = counter.plus(new BInteger(1));
+            value = value.modulo(new BInteger(1));
         }
     }
 
@@ -30,6 +30,12 @@ public class Modulo {
         exec.simulate();
         long end = System.nanoTime();
         System.out.println(exec.getClass().toString() + " Execution: " + (end - start));
+
+        Runtime runtime = Runtime.getRuntime();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory is bytes: " + memory);
+        System.out.println("Used memory is megabytes: "
+                + (memory / (1024L * 1024L)));
     }
 
 }

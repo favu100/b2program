@@ -40,11 +40,7 @@ public class ImportGenerator {
     public void addImport(BType type) {
         ST template = group.getInstanceOf("import_type");
         if (type instanceof IntegerType) {
-            if(useBigInteger) {
-                TemplateHandler.add(template, "type", "BBigInteger");
-            } else {
-                TemplateHandler.add(template, "type", "BInteger");
-            }
+            TemplateHandler.add(template, "type", "BInteger");
             imports.add(template.render());
         } else if (type instanceof BoolType) {
             TemplateHandler.add(template, "type", "BBoolean");

@@ -377,8 +377,8 @@ public class TestC {
     }
 
     @Test
-    public void testComplementBig() throws Exception {
-        testC("setoperation_big/SetComplementBig");
+    public void testDifferenceBig() throws Exception {
+        testC("setoperation_big/SetDifferenceBig");
     }
 
     @Test
@@ -402,8 +402,8 @@ public class TestC {
     }
 
     @Test
-    public void testComplementSmall() throws Exception {
-        testC("setoperation_small/SetComplementSmall");
+    public void testDifferenceSmall() throws Exception {
+        testC("setoperation_small/SetDifferenceSmall");
     }
 
     @Test
@@ -433,8 +433,8 @@ public class TestC {
     }
 
     @Test
-    public void testRangeComplementBig() throws Exception {
-        testC("range_big/RangeComplementBig");
+    public void testRangeDifferenceBig() throws Exception {
+        testC("range_big/RangeDifferenceBig");
     }
 
     @Test
@@ -464,8 +464,8 @@ public class TestC {
     }
 
     @Test
-    public void testRangeComplementSmall() throws Exception {
-        testC("range_small/RangeComplementSmall");
+    public void testRangeDifferenceSmall() throws Exception {
+        testC("range_small/RangeDifferenceSmall");
     }
 
     @Test

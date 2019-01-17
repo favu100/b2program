@@ -9,28 +9,28 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BSet implements BObject, Set<BObject> {
+public class BSet<T> implements BObject, Set<T> {
 
-	private final ImmutableSet<BObject> set;
+	private final ImmutableSet<T> set;
 
-	public BSet(java.util.Set<BObject> elements) {
+	public BSet(java.util.Set<T> elements) {
 		this.set = ImmutableSet.copyOf(elements);
 	}
 
-	public BSet(BObject... elements) {
+	public BSet(T... elements) {
 		this.set = ImmutableSet.copyOf(elements);
 	}
 
-	public static LinkedHashSet<BObject> newStorage() {
+	public static LinkedHashSet<T> newStorage() {
 		return new LinkedHashSet<>();
 	}
 
 	public java.lang.String toString() {
-		Iterator<BObject> it = this.iterator();
+		Iterator<T> it = this.iterator();
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		while (it.hasNext()) {
-			BObject b = (BObject) it.next();
+			T b = it.next();
 			sb.append(b.toString());
 			if (it.hasNext()) {
 				sb.append(", ");
@@ -52,7 +52,7 @@ public class BSet implements BObject, Set<BObject> {
 		return set.contains(o);
 	}
 
-	public boolean add(BObject bObject) {
+	public boolean add(T bObject) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -86,7 +86,7 @@ public class BSet implements BObject, Set<BObject> {
 		throw new UnsupportedOperationException();
 	}
 
-	public Object[] toArray() {
+	public T[] toArray() {
 		return set.toArray();
 	}
 
@@ -106,34 +106,34 @@ public class BSet implements BObject, Set<BObject> {
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterator<BObject> iterator() {
+	public Iterator<T> iterator() {
 		return set.iterator();
 	}
 
-	public BSet intersect(BSet set) {
-		return new BSet(this.stream()
+	public BSet<T> intersect(BSet<T> set) {
+		return new BSet<>(this.stream()
 				.filter(set::contains)
 				.collect(Collectors.toSet()));
 	}
 
-	public BSet complement(BSet set) {
-		return new BSet(this.stream()
+	public BSet<T> complement(BSet<T> set) {
+		return new BSet<>(this.stream()
 				.filter(element -> !set.contains(element))
 				.collect(Collectors.toSet()));
 	}
 
-	public BSet union(BSet set) {
-		HashSet<BObject> result = new HashSet<>(this);
+	public BSet<T> union(BSet<T> set) {
+		HashSet<T> result = new HashSet<>(this);
 		result.addAll(set);
-		return new BSet(result);
+		return new BSet<>(result);
 	}
 
 	public static BSet range(BInteger a, BInteger b) {
-		HashSet<BObject> set = new HashSet<>();
+		HashSet<BInteger> set = new HashSet<>();
 		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = (BInteger) i.next()) {
 			set.add(new BInteger(new java.math.BigInteger(String.valueOf(i))));
 		}
-		return new BSet(set);
+		return new BSet<>(set);
 	}
 
 	public BSet relationImage(BSet domain) {
@@ -159,15 +159,15 @@ public class BSet implements BObject, Set<BObject> {
 		return new BInteger(String.valueOf(this.size()));
 	}
 
-	public BBoolean elementOf(BObject object) {
+	public BBoolean elementOf(T object) {
 		return new BBoolean(this.contains(object));
 	}
 
-	public BBoolean equal(BSet o) {
+	public BBoolean equal(BSet<T> o) {
 		return new BBoolean(equals(o));
 	}
 
-	public BBoolean unequal(BSet o) {
+	public BBoolean unequal(BSet<T> o) {
 		return new BBoolean(!equals(o));
 	}
 

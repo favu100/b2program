@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class RangeBig {
 
@@ -10,17 +11,17 @@ public class RangeBig {
 
 
     private BInteger counter;
-    private BSet set;
+    private BSet<BInteger> set;
 
     public RangeBig() {
-        counter = (BInteger) new BInteger(0);
-        set = (BSet) new BSet();
+        counter = new BInteger(0);
+        set = new BSet<>();
     }
 
     public void simulate() {
         while((counter.less(new BInteger(1000))).booleanValue()) {
-            set = (BSet) BSet.range(new BInteger(1),new BInteger(25000));
-            counter = (BInteger) counter.plus(new BInteger(1));
+            set = BSet.range(new BInteger(1),new BInteger(25000));
+            counter = counter.plus(new BInteger(1));
         }
     }
 

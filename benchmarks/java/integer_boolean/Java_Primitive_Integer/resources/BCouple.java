@@ -2,13 +2,13 @@ package de.hhu.stups.btypes;
 
 import java.util.Objects;
 
-public class BCouple implements BObject {
+public class BCouple<S,T> implements BObject {
 
-	private BObject first;
+	private S first;
 
-	private BObject second;
+	private T second;
 
-	public BCouple(BObject first, BObject second) {
+	public BCouple(S first, T second) {
 		if (first == null || second == null) {
 			throw new IllegalArgumentException();
 		}
@@ -39,11 +39,11 @@ public class BCouple implements BObject {
 		return "(" + this.getFirst() + " |-> " + this.getSecond() + ')';
 	}
 
-	public BObject getFirst() {
+	public S getFirst() {
 		return first;
 	}
 
-	public BObject getSecond() {
+	public T getSecond() {
 		return second;
 	}
 

@@ -473,13 +473,13 @@ public class TestJava {
 
 
 	@Test
-	public void testComplementBig() throws Exception {
-		testJava("setoperation_big/SetComplementBig", "SetComplementBig", "SetComplementAddition.st");
+	public void testDifferenceBig() throws Exception {
+		testJava("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceAddition.st");
 	}
 
 	@Test
-	public void testComplementBig2() throws Exception {
-		testJava("setoperation_big/SetComplementBig2");
+	public void testDifferenceBig2() throws Exception {
+		testJava("setoperation_big/SetDifferenceBig2");
 	}
 
 	@Test
@@ -525,13 +525,13 @@ public class TestJava {
 
 
 	@Test
-	public void testComplementSmall() throws Exception {
-		testJava("setoperation_small/SetComplementSmall", "SetComplementSmall", "SetComülementSmallAddition.st");
+	public void testDifferenceSmall() throws Exception {
+		testJava("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetComülementSmallAddition.st");
 	}
 
 	@Test
-	public void testComplementSmall2() throws Exception {
-		testJava("setoperation_small/SetComplementSmall2");
+	public void testDifferenceSmall2() throws Exception {
+		testJava("setoperation_small/SetDifferenceSmall2");
 	}
 
 
@@ -583,13 +583,13 @@ public class TestJava {
 
 
 	@Test
-	public void testRangeComplementBig() throws Exception {
-		testJava("range_big/RangeComplementBig", "RangeComplementBig", "RangeComplementBigAddition.st");
+	public void testRangeDifferenceBig() throws Exception {
+		testJava("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.st");
 	}
 
 	@Test
-	public void testRangeComplementBig2() throws Exception {
-		testJava("range_big/RangeComplementBig2");
+	public void testRangeDifferenceBig2() throws Exception {
+		testJava("range_big/RangeDifferenceBig2");
 	}
 
 
@@ -644,13 +644,13 @@ public class TestJava {
 
 
 	@Test
-	public void testRangeComplementSmall() throws Exception {
-		testJava("range_small/RangeComplementSmall", "RangeComplementSmall", "RangeComplementSmallAddition.st");
+	public void testRangeDifferenceSmall() throws Exception {
+		testJava("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.st");
 	}
 
 	@Test
-	public void testRangeComplementSmall2() throws Exception {
-		testJava("range_small/RangeComplementSmall2");
+	public void testRangeDifferenceSmall2() throws Exception {
+		testJava("range_small/RangeDifferenceSmall2");
 	}
 
 	@Test

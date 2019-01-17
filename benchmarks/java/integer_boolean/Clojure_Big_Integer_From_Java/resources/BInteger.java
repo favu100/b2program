@@ -5,7 +5,7 @@ import clojure.lang.BigInt;
 import clojure.lang.RT;
 import clojure.lang.Var;
 
-public class BInteger extends BNumber {
+public class BInteger extends java.lang.Number implements Comparable<BInteger>, BObject {
 
 	private static final Var PLUS = RT.var("clojure.core", "+");
 
@@ -33,9 +33,9 @@ public class BInteger extends BNumber {
 			return true;
 		if (obj == null)
 			return false;
-		if (obj instanceof BNumber) {
+		if (obj instanceof BInteger) {
 			//TODO: other numbers
-			return this.compareTo((BNumber) obj) == 0;
+			return this.compareTo((BInteger) obj) == 0;
 		}
 		// assert getClass() != obj.getClass()
 		return false;
@@ -64,33 +64,33 @@ public class BInteger extends BNumber {
 		this.value = value;
 	}
 
-	public int compareTo(BNumber o) {
+	public int compareTo(BInteger o) {
 		BInteger other = (BInteger) o;
 		return (int) COMPARE.invoke(this.value, other.value);
 	}
 
-	public BBoolean lessEqual(BNumber o) {
+	public BBoolean lessEqual(BInteger o) {
 		return new BBoolean(compareTo(o) <= 0);
 	}
 
 
-	public BBoolean greaterEqual(BNumber o) {
+	public BBoolean greaterEqual(BInteger o) {
 		return new BBoolean(compareTo(o) >= 0);
 	}
 
-	public BBoolean less(BNumber o) {
+	public BBoolean less(BInteger o) {
 		return new BBoolean(compareTo(o) < 0);
 	}
 
-	public BBoolean greater(BNumber o) {
+	public BBoolean greater(BInteger o) {
 		return new BBoolean(compareTo(o) > 0);
 	}
 
-	public BBoolean equal(BNumber o) {
+	public BBoolean equal(BInteger o) {
 		return new BBoolean(compareTo(o) == 0);
 	}
 
-	public BBoolean unequal(BNumber o) {
+	public BBoolean unequal(BInteger o) {
 		return new BBoolean(compareTo(o) != 0);
 	}
 
@@ -115,7 +115,7 @@ public class BInteger extends BNumber {
 	}
 
 	@Override
-	public BNumber plus(BNumber o) {
+	public BInteger plus(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) PLUS.invoke(this.value, other.value));
 	}
@@ -125,67 +125,67 @@ public class BInteger extends BNumber {
 	}
 
 	@Override
-	public BNumber minus(BNumber o) {
+	public BInteger minus(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) MINUS.invoke(this.value, other.value));
 	}
 
 	@Override
-	public BNumber multiply(BNumber o) {
+	public BInteger multiply(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) MULTIPLY.invoke(this.value, other.value));
 	}
 
 	@Override
-	public BNumber power(BNumber o) {
+	public BInteger power(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) POWER.invoke(this.value, other.value));
 	}
 
 	@Override
-	public BNumber divide(BNumber o) {
+	public BInteger divide(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) DIVIDE.invoke(this.value, other.value));
 	}
 
 	@Override
-	public BNumber modulo(BNumber o) {
+	public BInteger modulo(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) MODULO.invoke(this.value, other.value));
 	}
 
 	@Override
-	public BNumber next() {
+	public BInteger next() {
 		return new BInteger((BigInt) INC.invoke(this.value));
 	}
 
 	@Override
-	public BNumber previous() {
+	public BInteger previous() {
 		return new BInteger((BigInt) DEC.invoke(this.value));
 	}
 
 	@Override
-	public BNumber leftShift(BNumber o) {
+	public BInteger leftShift(BInteger o) {
 		return null;
 	}
 
 	@Override
-	public BNumber rightShift(BNumber o) {
+	public BInteger rightShift(BInteger o) {
 		return null;
 	}
 
 	@Override
-	public boolean isCase(BNumber o) {
+	public boolean isCase(BInteger o) {
 		return this.equals(o);
 	}
 
 	@Override
-	public BNumber negative() {
+	public BInteger negative() {
 		return new BInteger((BigInt) MINUS.invoke(this.value));
 	}
 
 	@Override
-	public BNumber positive() {
+	public BInteger positive() {
 		return this;
 	}
 

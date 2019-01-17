@@ -401,8 +401,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testComplementBig() throws Exception {
-		testCpp("setoperation_big/SetComplementBig");
+	public void testDifferenceBig() throws Exception {
+		testCpp("setoperation_big/SetDifferenceBig");
 	}
 
 	@Test
@@ -426,8 +426,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testComplementSmall() throws Exception {
-		testCpp("setoperation_small/SetComplementSmall");
+	public void testDifferenceSmall() throws Exception {
+		testCpp("setoperation_small/SetDifferenceSmall");
 	}
 
 	@Test
@@ -457,8 +457,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testRangeComplementBig() throws Exception {
-		testCpp("range_big/RangeComplementBig");
+	public void testRangeDifferenceBig() throws Exception {
+		testCpp("range_big/RangeDifferenceBig");
 	}
 
 	@Test
@@ -488,8 +488,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testRangeComplementSmall() throws Exception {
-		testCpp("range_small/RangeComplementSmall");
+	public void testRangeDifferenceSmall() throws Exception {
+		testCpp("range_small/RangeDifferenceSmall");
 	}
 
 	@Test
@@ -513,8 +513,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testComplementBig2() throws Exception {
-		testCpp("setoperation_big/SetComplementBig2");
+	public void testDifferenceBig2() throws Exception {
+		testCpp("setoperation_big/SetDifferenceBig2");
 	}
 
 	@Test
@@ -538,8 +538,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testComplementSmall2() throws Exception {
-		testCpp("setoperation_small/SetComplementSmall2");
+	public void testDifferenceSmall2() throws Exception {
+		testCpp("setoperation_small/SetDifferenceSmall2");
 	}
 
 	@Test
@@ -563,8 +563,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testRangeComplementBig2() throws Exception {
-		testCpp("range_big/RangeComplementBig2");
+	public void testRangeDifferenceBig2() throws Exception {
+		testCpp("range_big/RangeDifferenceBig2");
 	}
 
 	@Test
@@ -588,8 +588,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testRangeComplementSmall2() throws Exception {
-		testCpp("range_small/RangeComplementSmall2");
+	public void testRangeDifferenceSmall2() throws Exception {
+		testCpp("range_small/RangeDifferenceSmall2");
 	}
 
 	@Test

@@ -31,11 +31,7 @@ public class TypeGenerator {
     public String generate(BType type) {
         ST template = group.getInstanceOf("type");
         if(type instanceof IntegerType) {
-            if(useBigInteger) {
-                TemplateHandler.add(template, "type", "BBigInteger");
-            } else {
-                TemplateHandler.add(template, "type", "BInteger");
-            }
+            TemplateHandler.add(template, "type", "BInteger");
             return template.render();
         } else if(type instanceof BoolType) {
             TemplateHandler.add(template, "type", "BBoolean");

@@ -1,5 +1,6 @@
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class TrafficLightExec {
 
@@ -12,7 +13,7 @@ public class TrafficLightExec {
     private BInteger counter;
 
     public TrafficLightExec() {
-        counter = (BInteger) new BInteger(0);
+        counter = new BInteger(0);
     }
 
     public void simulate() {
@@ -23,7 +24,7 @@ public class TrafficLightExec {
             this._TrafficLight.cars_r();
             this._TrafficLight.peds_g();
             this._TrafficLight.peds_r();
-            counter = (BInteger) counter.plus(new BInteger(1));
+            counter = counter.plus(new BInteger(1));
         }
     }
 

@@ -11,28 +11,28 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BSet implements BObject, Set<BObject> {
+public class BSet<T> implements BObject, Set<T> {
 
-	private final PSet<BObject> set;
+	private final PSet<T> set;
 
-	public BSet(PSet<BObject> elements) {
+	public BSet(PSet<T> elements) {
 		this.set = elements;
 	}
 
-	public BSet(BObject... elements) {
+	public BSet(T... elements) {
 		this.set = HashTreePSet.from(Arrays.asList(elements));
 	}
 
-	public static LinkedHashSet<BObject> newStorage() {
+	public static LinkedHashSet<T> newStorage() {
 		return new LinkedHashSet<>();
 	}
 
 	public java.lang.String toString() {
-		Iterator<BObject> it = this.iterator();
+		Iterator<T> it = this.iterator();
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		while (it.hasNext()) {
-			BObject b = (BObject) it.next();
+			T b = it.next();
 			sb.append(b.toString());
 			if (it.hasNext()) {
 				sb.append(", ");
@@ -54,7 +54,7 @@ public class BSet implements BObject, Set<BObject> {
 		return set.contains(o);
 	}
 
-	public boolean add(BObject bObject) {
+	public boolean add(T bObject) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -88,8 +88,8 @@ public class BSet implements BObject, Set<BObject> {
 		throw new UnsupportedOperationException();
 	}
 
-	public Object[] toArray() {
-		return set.toArray();
+	public T[] toArray() {
+		return (T[]) set.toArray();
 	}
 
 	public <T> T[] toArray(T[] a) {
@@ -108,73 +108,53 @@ public class BSet implements BObject, Set<BObject> {
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterator<BObject> iterator() {
+	public Iterator<T> iterator() {
 		return set.iterator();
 	}
 
-	public BSet intersect(BSet set) {
+	public BSet<T> intersect(BSet<T> set) {
 		if(this.size() < set.size()) {
-			return new BSet(this.set.minusAll(this.set.minusAll(set)));
+			return new BSet<>(this.set.minusAll(this.set.minusAll(set)));
 		} else {
-			return new BSet(set.set.minusAll(set.set.minusAll(this)));
+			return new BSet<>(set.set.minusAll(set.set.minusAll(this)));
 		}
 	}
 
-	public BSet complement(BSet set) {
-		return new BSet(this.set.minusAll(set));
+	public BSet<T> complement(BSet<T> set) {
+		return new BSet<>(this.set.minusAll(set));
 	}
 
-	public BSet union(BSet set) {
-		return new BSet(this.set.plusAll(set));
+	public BSet<T> union(BSet<T> set) {
+		return new BSet<>(this.set.plusAll(set));
 	}
 
-	public static BSet range(BInteger a, BInteger b) {
-		PSet<BObject> set = HashTreePSet.empty();
+	public static BSet<BInteger> range(BInteger a, BInteger b) {
+		PSet<BInteger> set = HashTreePSet.empty();
 		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = (BInteger) i.next()) {
 			set = set.plus(i);
 		}
-		return new BSet(set);
+		return new BSet<>(set);
 	}
-
-	public BSet relationImage(BSet domain) {
-		return new BSet(HashTreePSet.from(set.stream()
-				.filter(object -> domain.contains(((BCouple) object).getFirst()))
-				.map(object -> ((BCouple) object).getSecond())
-				.collect(Collectors.toSet())));
-	}
-
-
-	public BObject functionCall(BObject arg) {
-		List<BCouple> matchedCouples = set.stream()
-				.map(object -> (BCouple) object)
-				.filter(couple -> couple.getFirst().equals(arg))
-				.collect(Collectors.toList());
-		if(matchedCouples.size() > 0) {
-			return matchedCouples.get(0).getSecond();
-		}
-		throw new RuntimeException("Argument is not in the key set of this map");
-	}
-
 
 	public BInteger card() {
 		return new BInteger(this.size());
 	}
 
-	public BBoolean elementOf(BObject object) {
+	public BBoolean elementOf(T object) {
 		return new BBoolean(this.contains(object));
 	}
 
-	public BBoolean equal(BSet o) {
+	public BBoolean equal(BSet<T> o) {
 		return new BBoolean(equals(o));
 	}
 
-	public BBoolean unequal(BSet o) {
+	public BBoolean unequal(BSet<T> o) {
 		return new BBoolean(!equals(o));
 	}
 
-	public BObject nondeterminism() {
+	public T nondeterminism() {
 		int index = (int) Math.floor(Math.random() * set.size());
-		return (BObject) toArray()[index];
+		return toArray()[index];
 	}
 
 }

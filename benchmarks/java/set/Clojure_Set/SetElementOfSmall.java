@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class SetElementOfSmall {
 
@@ -12,12 +13,12 @@ public class SetElementOfSmall {
     private BInteger counter;
 
     public SetElementOfSmall() {
-        counter = (BInteger) new BInteger(0);
+        counter = new BInteger(0);
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(5000000)).and(new BSet(new BInteger(1)).elementOf(new BInteger(1)))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger(1));
+        while((counter.less(new BInteger(5000000)).and(new BSet<>(new BInteger(1)).elementOf(new BInteger(1)))).booleanValue()) {
+            counter = counter.plus(new BInteger(1));
         }
     }
 

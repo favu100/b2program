@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class SetIntersectionSmall {
 
@@ -10,17 +11,17 @@ public class SetIntersectionSmall {
 
 
     private BInteger counter;
-    private BSet set;
+    private BSet<BInteger> set;
 
     public SetIntersectionSmall() {
-        counter = (BInteger) new BInteger(0);
-        set = (BSet) new BSet(new BInteger(1));
+        counter = new BInteger(0);
+        set = new BSet<>(new BInteger(1));
     }
 
     public void simulate() {
         while((counter.less(new BInteger(5000000))).booleanValue()) {
-            set = (BSet) set.intersect(new BSet());
-            counter = (BInteger) counter.plus(new BInteger(1));
+            set = set.intersect(new BSet<>());
+            counter = counter.plus(new BInteger(1));
         }
     }
 
@@ -37,5 +38,6 @@ public class SetIntersectionSmall {
         System.out.println("Used memory is megabytes: "
                 + (memory / (1024L * 1024L)));
     }
+
 
 }

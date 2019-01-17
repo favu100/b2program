@@ -373,8 +373,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testComplementBig() throws Exception {
-        testClojure("setoperation_big/SetComplementBig");
+    public void testDifferenceBig() throws Exception {
+        testClojure("setoperation_big/SetDifferenceBig");
     }
 
     @Test
@@ -398,8 +398,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testComplementSmall() throws Exception {
-        testClojure("setoperation_small/SetComplementSmall");
+    public void testDifferenceSmall() throws Exception {
+        testClojure("setoperation_small/SetDifferenceSmall");
     }
 
     @Test
@@ -429,8 +429,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testRangeComplementBig() throws Exception {
-        testClojure("range_big/RangeComplementBig");
+    public void testRangeDifferenceBig() throws Exception {
+        testClojure("range_big/RangeDifferenceBig");
     }
 
     @Test
@@ -460,8 +460,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testRangeComplementSmall() throws Exception {
-        testClojure("range_small/RangeComplementSmall");
+    public void testRangeDifferenceSmall() throws Exception {
+        testClojure("range_small/RangeDifferenceSmall");
     }
 
     @Test
@@ -485,8 +485,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testComplementBig2() throws Exception {
-        testClojure("setoperation_big/SetComplementBig2");
+    public void testDifferenceBig2() throws Exception {
+        testClojure("setoperation_big/SetDifferenceBig2");
     }
 
     @Test
@@ -510,8 +510,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testComplementSmall2() throws Exception {
-        testClojure("setoperation_small/SetComplementSmall2");
+    public void testDifferenceSmall2() throws Exception {
+        testClojure("setoperation_small/SetDifferenceSmall2");
     }
 
     @Test
@@ -535,8 +535,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testRangeComplementBig2() throws Exception {
-        testClojure("range_big/RangeComplementBig2");
+    public void testRangeDifferenceBig2() throws Exception {
+        testClojure("range_big/RangeDifferenceBig2");
     }
 
     @Test
@@ -560,8 +560,8 @@ public class TestClojure {
     }
 
     @Test
-    public void testRangeComplementSmall2() throws Exception {
-        testClojure("range_small/RangeComplementSmall2");
+    public void testRangeDifferenceSmall2() throws Exception {
+        testClojure("range_small/RangeDifferenceSmall2");
     }
 
     @Test

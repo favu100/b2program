@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class RangeIntersectionBig {
 
@@ -10,17 +11,17 @@ public class RangeIntersectionBig {
 
 
     private BInteger counter;
-    private BSet set;
+    private BSet<BInteger> set;
 
     public RangeIntersectionBig() {
-        counter = (BInteger) new BInteger(0);
-        set = (BSet) BSet.range(new BInteger(1),new BInteger(25000));
+        counter = new BInteger(0);
+        set = BSet.range(new BInteger(1),new BInteger(25000));
     }
 
     public void simulate() {
         while((counter.less(new BInteger(10000))).booleanValue()) {
-            set = (BSet) set.intersect(BSet.range(new BInteger(1),new BInteger(3000)));
-            counter = (BInteger) counter.plus(new BInteger(1));
+            set = set.intersect(BSet.range(new BInteger(1),new BInteger(3000)));
+            counter = counter.plus(new BInteger(1));
         }
     }
 

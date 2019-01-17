@@ -12,12 +12,12 @@ public class Implies {
     private BInteger counter;
 
     public Implies() {
-        counter = (BInteger) new BInteger(0);
+        counter = new BInteger(0);
     }
 
     public void simulate() {
         while((new BInteger(1).equal(new BInteger(1)).implies(counter.less(new BInteger(5000000)))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger(1));
+            counter = counter.plus(new BInteger(1));
         }
     }
 
@@ -27,6 +27,12 @@ public class Implies {
         exec.simulate();
         long end = System.nanoTime();
         System.out.println(exec.getClass().toString() + " Execution: " + (end - start));
+
+        Runtime runtime = Runtime.getRuntime();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory is bytes: " + memory);
+        System.out.println("Used memory is megabytes: "
+                + (memory / (1024L * 1024L)));
     }
 
 }

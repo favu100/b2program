@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class TrafficLight {
 
@@ -22,19 +23,19 @@ public class TrafficLight {
         }
     }
 
-    private BSet _colors = new BSet(colors.red, colors.redyellow, colors.yellow, colors.green);
+    private BSet<colors> _colors = new BSet<>(colors.red, colors.redyellow, colors.yellow, colors.green);
 
     private colors tl_cars;
     private colors tl_peds;
 
     public TrafficLight() {
-        tl_cars = (colors) colors.red;
-        tl_peds = (colors) colors.red;
+        tl_cars = colors.red;
+        tl_peds = colors.red;
     }
 
     public void cars_ry() {
         if((tl_cars.equal(colors.red).and(tl_peds.equal(colors.red))).booleanValue()) {
-            tl_cars = (colors) colors.redyellow;
+            tl_cars = colors.redyellow;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }
@@ -42,7 +43,7 @@ public class TrafficLight {
 
     public void cars_y() {
         if((tl_cars.equal(colors.green).and(tl_peds.equal(colors.red))).booleanValue()) {
-            tl_cars = (colors) colors.yellow;
+            tl_cars = colors.yellow;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }
@@ -50,7 +51,7 @@ public class TrafficLight {
 
     public void cars_g() {
         if((tl_cars.equal(colors.redyellow).and(tl_peds.equal(colors.red))).booleanValue()) {
-            tl_cars = (colors) colors.green;
+            tl_cars = colors.green;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }
@@ -58,7 +59,7 @@ public class TrafficLight {
 
     public void cars_r() {
         if((tl_cars.equal(colors.yellow).and(tl_peds.equal(colors.red))).booleanValue()) {
-            tl_cars = (colors) colors.red;
+            tl_cars = colors.red;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }
@@ -66,7 +67,7 @@ public class TrafficLight {
 
     public void peds_r() {
         if((tl_peds.equal(colors.green).and(tl_cars.equal(colors.red))).booleanValue()) {
-            tl_peds = (colors) colors.red;
+            tl_peds = colors.red;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }
@@ -74,7 +75,7 @@ public class TrafficLight {
 
     public void peds_g() {
         if((tl_peds.equal(colors.red).and(tl_cars.equal(colors.red))).booleanValue()) {
-            tl_peds = (colors) colors.green;
+            tl_peds = colors.green;
         } else {
             throw new RuntimeException("Invocation of the operation is not possible");
         }

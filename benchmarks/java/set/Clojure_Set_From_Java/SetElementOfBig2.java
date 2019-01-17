@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import de.hhu.stups.btypes.BUtils;
 
 public class SetElementOfBig2 {
 
@@ -10,16 +11,16 @@ public class SetElementOfBig2 {
 
 
     private BInteger counter;
-    private BSet set;
+    private BSet<BInteger> set;
 
     public SetElementOfBig2() {
-        counter = (BInteger) new BInteger(0);
-        set = (BSet) BSet.range(new BInteger(1),new BInteger(25000)).complement(new BSet(new BInteger(24999)));
+        counter = new BInteger(0);
+        set = BSet.range(new BInteger(1),new BInteger(25000)).difference(new BSet<>(new BInteger(24999)));
     }
 
     public void simulate() {
         while((counter.less(new BInteger(10000)).and(set.elementOf(new BInteger(25000)))).booleanValue()) {
-            counter = (BInteger) counter.plus(new BInteger(1));
+            counter = counter.plus(new BInteger(1));
         }
     }
 

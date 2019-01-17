@@ -1,0 +1,53 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+project.archivesBaseName = "${rootProject.name}-btypes"
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+    maven {
+        name "snapshots"
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+    maven {
+        name "release"
+        url "https://oss.sonatype.org/content/repositories/releases/"
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile group: 'org.pcollections', name: 'pcollections', version: '3.0.3'
+    compile 'com.google.guava:guava:27.0.1-jre'
+    compile group: 'org.clojure', name: 'clojure', version: '1.9.0'
+    testCompile 'junit:junit:4.8.2'
+}
+
+task fatJar(type: Jar) {
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets.main.java.srcDirs = ['src/main/java']
+
+sourceSets.test.runtimeClasspath += files(sourceSets.main.java.srcDirs)
+
+tasks.withType(JavaExec) {
+    def env_vars = ['LD_LIBRARY_PATH'  : ("$System.env.LD_LIBRARY_PATH" + System.getProperty("path.separator") + "$projectDir/"),
+                    'DYLD_LIBRARY_PATH': ("$System.env.DYLD_LIBRARY_PATH" + System.getProperty("path.separator") + "$projectDir/"),
+                    'PATH'             : ("$System.env.PATH" + System.getProperty("path.separator") + "$projectDir/")]
+    environment env_vars
+
+    systemProperty "java.library.path", "./"
+}
+
+

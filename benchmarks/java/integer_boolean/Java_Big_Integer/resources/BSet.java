@@ -16,7 +16,7 @@ public class BSet<T> implements BObject, Set<T> {
 	private static final class createBInteger extends AFn {
 		@Override
 		public Object invoke(Object obj) {
-			return new BInteger(Integer.parseInt(obj.toString()));
+			return new BInteger(obj.toString());
 		}
 	}
 
@@ -170,7 +170,7 @@ public class BSet<T> implements BObject, Set<T> {
 
 
 	public BInteger card() {
-		return new BInteger((int) COUNT.invoke(this.set));
+		return new BInteger(String.valueOf(COUNT.invoke(this.set)));
 	}
 
 	public BBoolean elementOf(T object) {

@@ -6,14 +6,11 @@ import org.pcollections.PSet;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BSet<T> implements BObject, Set<T> {
 
-	private final PSet<T> set;
+	protected final PSet<T> set;
 
 	public BSet(PSet<T> elements) {
 		this.set = elements;
@@ -21,10 +18,6 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BSet(T... elements) {
 		this.set = HashTreePSet.from(Arrays.asList(elements));
-	}
-
-	public static LinkedHashSet<T> newStorage() {
-		return new LinkedHashSet<>();
 	}
 
 	public java.lang.String toString() {
@@ -100,7 +93,7 @@ public class BSet<T> implements BObject, Set<T> {
 		return set.containsAll(c);
 	}
 
-	public boolean addAll(Collection<? extends BObject> c) {
+	public boolean addAll(Collection<? extends T> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -120,7 +113,7 @@ public class BSet<T> implements BObject, Set<T> {
 		}
 	}
 
-	public BSet<T> complement(BSet<T> set) {
+	public BSet<T> difference(BSet<T> set) {
 		return new BSet<>(this.set.minusAll(set));
 	}
 

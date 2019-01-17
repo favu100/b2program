@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class BSet<T> implements BObject, Set<T> {
 
-	private final ImmutableSet<T> set;
+	protected final ImmutableSet<T> set;
 
 	public BSet(java.util.Set<T> elements) {
 		this.set = ImmutableSet.copyOf(elements);
@@ -19,10 +19,6 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BSet(T... elements) {
 		this.set = ImmutableSet.copyOf(elements);
-	}
-
-	public static LinkedHashSet<T> newStorage() {
-		return new LinkedHashSet<>();
 	}
 
 	public java.lang.String toString() {
@@ -87,7 +83,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public T[] toArray() {
-		return set.toArray();
+		return (T[]) set.toArray();
 	}
 
 	public <T> T[] toArray(T[] a) {
@@ -98,7 +94,7 @@ public class BSet<T> implements BObject, Set<T> {
 		return set.containsAll(c);
 	}
 
-	public boolean addAll(Collection<? extends BObject> c) {
+	public boolean addAll(Collection<? extends T> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -116,7 +112,7 @@ public class BSet<T> implements BObject, Set<T> {
 				.collect(Collectors.toSet()));
 	}
 
-	public BSet<T> complement(BSet<T> set) {
+	public BSet<T> difference(BSet<T> set) {
 		return new BSet<>(this.stream()
 				.filter(element -> !set.contains(element))
 				.collect(Collectors.toSet()));
@@ -128,35 +124,16 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BSet<>(result);
 	}
 
-	public static BSet range(BInteger a, BInteger b) {
+	public static BSet<BInteger> range(BInteger a, BInteger b) {
 		HashSet<BInteger> set = new HashSet<>();
-		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = (BInteger) i.next()) {
-			set.add(new BInteger(new java.math.BigInteger(String.valueOf(i))));
+		for (BInteger i = a; i.lessEqual(b).booleanValue(); i = (BInteger) i.next()) {
+			set.add(i);
 		}
 		return new BSet<>(set);
 	}
 
-	public BSet relationImage(BSet domain) {
-		return new BSet(set.stream()
-			.filter(object -> domain.contains(((BCouple) object).getFirst()))
-			.map(object -> ((BCouple) object).getSecond())
-			.collect(Collectors.toSet()));
-	}
-
-
-	public BObject functionCall(BObject arg) {
-		for(BObject object : set) {
-			BCouple couple = (BCouple) object;
-			if(couple.getFirst().equals(arg)) {
-				return couple.getSecond();
-			}
-		}
-		throw new RuntimeException("Argument is not in the key set of this map");
-	}
-
-
 	public BInteger card() {
-		return new BInteger(String.valueOf(this.size()));
+		return new BInteger(this.size());
 	}
 
 	public BBoolean elementOf(T object) {

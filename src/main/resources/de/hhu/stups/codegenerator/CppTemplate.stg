@@ -153,7 +153,7 @@ parallel(loads, others, stores) ::=<<
 >>
 
 parallel_load(type, identifier) ::= <<
-<type> _ld_<identifier> = <identifier>);
+<type> _ld_<identifier> = <identifier>;
 >>
 
 parallel_store(identifier, val) ::= <<

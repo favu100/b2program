@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdarg>
+#include <immer/set.hpp>
 #include "BSet.cpp"
 #include "BCouple.cpp"
 
@@ -10,28 +11,79 @@
 using namespace std;
 
 template<typename S, typename T>
-class BRelation<S,T> : public BSet<BCouple<S,T>> {
+class BRelation : public BSet<BCouple<S,T>> {
 
-    BSet<T> relationImage(const BSet<S>& domain) {
-        immer::set<T,Hash, HashEqual> result;
-        for(typename immer::set<BCouple<S,T>,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-            BCouple<S,T> couple = *it;
-            if(domain.set.count(couple.getFirst()) == 0) {
-                result = result.insert(couple.getSecond());
+    struct Hash {
+        public:
+            size_t operator()(const BCouple<S,T>& obj) const {
+                return obj.hashCode();
             }
-        }
-        return BSet(result);
-    }
+    };
 
+    struct HashEqual {
+        public:
+            bool operator()(const BCouple<S,T>& obj1, const BCouple<S,T>& obj2) const {
 
-    T functionCall(const S& arg) {
-        for(typename immer::set<<BCouple<S,T>>,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-            BCouple<S,T> couple = *it;
-            if(couple.getFirst() == arg) {
-                return couple.getSecond();
+                if (obj1 == obj2)
+                    return true;
+                else
+                    return false;
             }
-        }
-        throw runtime_error("Argument is not in the key set of this map");
-    }
+    };
 
-}
+    public:
+
+        template<typename... Args>
+        BRelation<S,T>(const Args&... args) {
+          this->set = var(args...);
+        }
+
+        immer::set<BCouple<S,T>, Hash, HashEqual> var() {
+          return immer::set<BCouple<S,T>, Hash, HashEqual>();
+        }
+
+        template<typename R, typename... Args>
+        immer::set<R, Hash, HashEqual> var(const R& first, const Args&... args) {
+          return var(args...).insert(first);
+        }
+
+        BRelation<S,T>() {
+            this->set = immer::set<BCouple<S,T>, Hash, HashEqual>();
+        }
+
+        BRelation<S,T>(const BRelation<S,T>& set) {
+            this->set = set.set;
+        }
+
+        BSet<T> relationImage(const BSet<S>& domain) {
+            immer::set<T,typename BSet<T>::Hash, typename BSet<T>::HashEqual> result;
+            for(BCouple<S,T> couple : this->set) {
+                if(!(domain.contains(couple.getFirst()))) {
+                    result = result.insert(couple.getSecond());
+                }
+            }
+            return BSet<T>(result);
+        }
+
+
+        T functionCall(const S& arg) {
+            for(BCouple<S,T> couple : this->set) {
+                if(couple.getFirst() == arg) {
+                    return couple.getSecond();
+                }
+            }
+            throw runtime_error("Argument is not in the key set of this map");
+        }
+
+        void operator =(const BRelation<S,T>& other) {
+            this->set = other.set;
+        }
+
+        int hashCode() const {
+            return 0;
+        }
+
+        protected:
+            immer::set<BCouple<S,T>,Hash, HashEqual> set;
+};
+#endif

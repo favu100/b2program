@@ -14,28 +14,27 @@ using namespace std;
 template<typename T>
 class BSet : public BObject {
 
-    struct Hash {
-        public:
-            size_t operator()(const T& obj) const {
-                return obj.hashCode();
-            }
-    };
 
-    struct HashEqual {
-        public:
-            bool operator()(const T& obj1, const T& obj2) const {
-
-                if (obj1 == obj2)
-                    return true;
-                else
-                    return false;
-            }
-    };
-
-    protected:
-        immer::set<T,Hash, HashEqual> set;
 
     public:
+
+        struct Hash {
+            public:
+                size_t operator()(const T& obj) const {
+                    return obj.hashCode();
+                }
+        };
+
+        struct HashEqual {
+            public:
+                bool operator()(const T& obj1, const T& obj2) const {
+
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                }
+        };
 
         /*Only used within this class*/
         BSet<T>(const immer::set<T, Hash, HashEqual>& elements) {
@@ -47,16 +46,13 @@ class BSet : public BObject {
           this->set = var(args...);
         }
 
-        immer::set<T,Hash, HashEqual> var() {
-          immer::set<T,Hash, HashEqual> result;
-          return result;
+        immer::set<T, Hash, HashEqual> var() {
+          return immer::set<T,Hash, HashEqual>();
         }
 
         template<typename R, typename... Args>
-        immer::set<R,Hash, HashEqual> var(const R& first, const Args&... args) {
-          immer::set<R, Hash, HashEqual> result = var(args...);
-          result = result.insert(first);
-          return result;
+        immer::set<R, Hash, HashEqual> var(const R& first, const Args&... args) {
+          return var(args...).insert(first);
         }
 
         BSet<T>() {
@@ -106,7 +102,7 @@ class BSet : public BObject {
             return set.empty();
         }
 
-        bool contains(const T& o) {
+        bool contains(const T& o) const {
             return set.count(o) > 0;
         }
 
@@ -259,5 +255,8 @@ class BSet : public BObject {
         typename immer::set<T,Hash, HashEqual>::const_iterator end() {
             return set.end();
         }
+
+        protected:
+            immer::set<T,Hash, HashEqual> set;
 };
 #endif

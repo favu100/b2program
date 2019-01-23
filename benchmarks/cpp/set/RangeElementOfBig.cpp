@@ -23,12 +23,12 @@ class RangeElementOfBig {
     public:
 
         RangeElementOfBig() {
-            counter = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
         }
 
         void simulate() {
             while((counter.less((BInteger(10000)))._and((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).elementOf((BInteger(25000))))).booleanValue()) {
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

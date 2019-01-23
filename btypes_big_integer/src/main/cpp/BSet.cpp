@@ -38,12 +38,12 @@ class BSet : public BObject {
     public:
 
         /*Only used within this class*/
-        BSet<T>(immer::set<T, Hash, HashEqual>& elements) {
+        BSet<T>(const immer::set<T, Hash, HashEqual>& elements) {
             this->set = elements;
         }
 
         template<typename... Args>
-        BSet<T>(Args... args) {
+        BSet<T>(const Args&... args) {
           this->set = var(args...);
         }
 
@@ -53,7 +53,7 @@ class BSet : public BObject {
         }
 
         template<typename R, typename... Args>
-        immer::set<R,Hash, HashEqual> var(R first, Args... args) {
+        immer::set<R,Hash, HashEqual> var(const R& first, const Args&... args) {
           immer::set<R, Hash, HashEqual> result = var(args...);
           result = result.insert(first);
           return result;
@@ -106,7 +106,7 @@ class BSet : public BObject {
             return set.empty();
         }
 
-        bool contains(T& o) {
+        bool contains(const T& o) {
             return set.count(o) > 0;
         }
 
@@ -168,41 +168,47 @@ class BSet : public BObject {
             return set.iterator();
         }*/
 
-        BSet<T> intersect(const BSet<T>& set) {
+
+        BSet<T> intersect(const BSet<T>& set) const {
             immer::set<T,Hash, HashEqual> result = this->set;
-            for (typename immer::set<T,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-                T obj = *it;
+            for (const T& obj : this->set) {
                 if(set.set.count(obj) == 0) {
-                    result = result.erase(obj);
+                    result = std::move(result).erase(obj);
                 }
             }
-            return BSet<T>(result);
+            return BSet(result);
         }
 
-        BSet<T> difference(const BSet<T>& set) {
-            immer::set<T,Hash, HashEqual> result = this->set;
-            for (typename immer::set<T,Hash, HashEqual>::const_iterator it = set.set.begin(); it != set.set.end(); ++it) {
-                T obj = *it;
-                result = result.erase(obj);
+        BSet<T> difference(const BSet<T>& set) const {
+            if(this->size() == 0) {
+                return BSet(this->set);
             }
-            return BSet<T>(result);
+            immer::set<T, Hash, HashEqual> result = this->set;
+            for (const T& obj : set.set) {
+                if(result.count(obj) == 1) {
+                    result = std::move(result).erase(obj);
+                }
+            }
+            return BSet(result);
         }
 
-        BSet<T> _union(const BSet<T>& set) {
+        BSet<T> _union(const BSet<T>& set) const {
             if(this->size() > set.size()) {
                 immer::set<T,Hash, HashEqual> result = this->set;
-                for (typename immer::set<T,Hash, HashEqual>::const_iterator it = set.set.begin(); it != set.set.end(); ++it) {
-                    T obj = *it;
-                    result = result.insert(obj);
+                for (const T& obj : set.set) {
+                    if(result.count(obj) == 0) {
+                        result = std::move(result).insert(obj);
+                    }
                 }
-                 return BSet<T>(result);
+                return BSet(result);
             } else {
                 immer::set<T,Hash, HashEqual> result = set.set;
-                for (typename immer::set<T,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-                    T obj = *it;
-                    result = result.insert(obj);
+                for (const T& obj : this->set) {
+                    if(result.count(obj) == 0) {
+                        result = std::move(result).insert(obj);
+                    }
                 }
-                 return BSet<T>(result);
+                return BSet(result);
             }
         }
 
@@ -212,7 +218,7 @@ class BSet : public BObject {
             for(int i = a.intValue(); i < end; ++i) {
                 result = result.insert(i);
             }
-            return BSet<BInteger>(result);
+            return BSet(result);
         }
 
 
@@ -239,7 +245,7 @@ class BSet : public BObject {
         }*/
 
         void operator =(const BSet<T>& other) {
-            set = other.set;
+            this->set = other.set;
         }
 
         int hashCode() const {

@@ -24,14 +24,14 @@ class RangeIntersectionBig {
     public:
 
         RangeIntersectionBig() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))));
+            counter = (BInteger(0));
+            set = (BSet<BInteger>::range((BInteger(1)),(BInteger(25000))));
         }
 
         void simulate() {
             while((counter.less((BInteger(10000)))).booleanValue()) {
-                set = static_cast<BSet<BInteger > >(set.intersect((BSet<BInteger>::range((BInteger(1)),(BInteger(3000))))));
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                set = set.intersect((BSet<BInteger>::range((BInteger(1)),(BInteger(3000)))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

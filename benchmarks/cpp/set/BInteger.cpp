@@ -39,7 +39,7 @@ class BInteger : public BObject {
             value = new java.math.BigInteger(val);
         }*/
 
-        BInteger(int val) {
+        BInteger(const int& val) {
             value = val;
         }
 
@@ -156,12 +156,12 @@ class BInteger : public BObject {
             return new BInteger(value.xor(o.value));
         }*/
 
-        BInteger next() const {
-            return BInteger(value + 1);
+        BInteger next() {
+            return value + 1;
         }
 
-        BInteger previous() const {
-            return BInteger(value - 1);
+        BInteger previous() {
+            return value - 1;
         }
 
         /*BInteger leftShift(BInteger o) {
@@ -198,7 +198,7 @@ class BInteger : public BObject {
         }
 
         void operator =(const BInteger& other) {
-            value = other.value;
+            this->value = other.value;
         }
 
         int hashCode() const {

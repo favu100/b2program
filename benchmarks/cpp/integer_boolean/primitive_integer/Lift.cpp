@@ -21,15 +21,15 @@ class Lift {
     public:
 
         Lift() {
-            floor = static_cast<BInteger >((BInteger(0)));
+            floor = (BInteger(0));
         }
 
         void inc() {
-            floor = static_cast<BInteger >(floor.plus((BInteger(1))));
+            floor = floor.plus((BInteger(1)));
         }
 
         void dec() {
-            floor = static_cast<BInteger >(floor.minus((BInteger(1))));
+            floor = floor.minus((BInteger(1)));
         }
 
 };

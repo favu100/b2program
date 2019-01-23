@@ -24,13 +24,13 @@ class SetElementOfBig2 {
     public:
 
         SetElementOfBig2() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).complement((BSet<BInteger >((BInteger(24999))))));
+            counter = (BInteger(0));
+            set = (BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).difference((BSet<BInteger >((BInteger(24999)))));
         }
 
         void simulate() {
             while((counter.less((BInteger(10000)))._and(set.elementOf((BInteger(25000))))).booleanValue()) {
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

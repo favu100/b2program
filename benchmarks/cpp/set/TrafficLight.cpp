@@ -63,13 +63,13 @@ class TrafficLight {
     public:
 
         TrafficLight() {
-            tl_cars = static_cast<colors >((colors(colors::red)));
-            tl_peds = static_cast<colors >((colors(colors::red)));
+            tl_cars = (colors(colors::red));
+            tl_peds = (colors(colors::red));
         }
 
         void cars_ry() {
             if((tl_cars.equal((colors(colors::red)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
-                tl_cars = static_cast<colors >((colors(colors::redyellow)));
+                tl_cars = (colors(colors::redyellow));
             } else {
                 throw runtime_error("Invocation of the operation is not possible");
             }
@@ -77,7 +77,7 @@ class TrafficLight {
 
         void cars_y() {
             if((tl_cars.equal((colors(colors::green)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
-                tl_cars = static_cast<colors >((colors(colors::yellow)));
+                tl_cars = (colors(colors::yellow));
             } else {
                 throw runtime_error("Invocation of the operation is not possible");
             }
@@ -85,7 +85,7 @@ class TrafficLight {
 
         void cars_g() {
             if((tl_cars.equal((colors(colors::redyellow)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
-                tl_cars = static_cast<colors >((colors(colors::green)));
+                tl_cars = (colors(colors::green));
             } else {
                 throw runtime_error("Invocation of the operation is not possible");
             }
@@ -93,7 +93,7 @@ class TrafficLight {
 
         void cars_r() {
             if((tl_cars.equal((colors(colors::yellow)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
-                tl_cars = static_cast<colors >((colors(colors::red)));
+                tl_cars = (colors(colors::red));
             } else {
                 throw runtime_error("Invocation of the operation is not possible");
             }
@@ -101,7 +101,7 @@ class TrafficLight {
 
         void peds_r() {
             if((tl_peds.equal((colors(colors::green)))._and(tl_cars.equal((colors(colors::red))))).booleanValue()) {
-                tl_peds = static_cast<colors >((colors(colors::red)));
+                tl_peds = (colors(colors::red));
             } else {
                 throw runtime_error("Invocation of the operation is not possible");
             }
@@ -109,7 +109,7 @@ class TrafficLight {
 
         void peds_g() {
             if((tl_peds.equal((colors(colors::red)))._and(tl_cars.equal((colors(colors::red))))).booleanValue()) {
-                tl_peds = static_cast<colors >((colors(colors::green)));
+                tl_peds = (colors(colors::green));
             } else {
                 throw runtime_error("Invocation of the operation is not possible");
             }

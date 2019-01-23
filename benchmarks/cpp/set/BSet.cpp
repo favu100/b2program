@@ -3,7 +3,6 @@
 #include <vector>
 #include <cstdarg>
 #include <immer/set.hpp>
-#include <immer/box.hpp>
 #include "BInteger.cpp"
 #include "BCouple.cpp"
 
@@ -25,11 +24,15 @@ class BSet : public BObject {
     struct HashEqual {
         public:
             bool operator()(const T& obj1, const T& obj2) const {
-                return obj1 == obj2;
+
+                if (obj1 == obj2)
+                    return true;
+                else
+                    return false;
             }
     };
 
-    private:
+    protected:
         immer::set<T,Hash, HashEqual> set;
 
     public:
@@ -39,29 +42,30 @@ class BSet : public BObject {
             this->set = elements;
         }
 
-        BSet<T>() {}
-
         template<typename... Args>
         BSet<T>(const Args&... args) {
           this->set = var(args...);
         }
 
-        immer::set<T, Hash, HashEqual> var() {
-          return immer::set<T,Hash, HashEqual>();
+        immer::set<T,Hash, HashEqual> var() {
+          immer::set<T,Hash, HashEqual> result;
+          return result;
         }
 
         template<typename R, typename... Args>
-        immer::set<R, Hash, HashEqual> var(const R& first, const Args&... args) {
-          return var(args...).insert(first);
+        immer::set<R,Hash, HashEqual> var(const R& first, const Args&... args) {
+          immer::set<R, Hash, HashEqual> result = var(args...);
+          result = result.insert(first);
+          return result;
         }
 
-        /*BSet<T>(const immer::set<T,Hash, HashEqual>& set) {
-            this->set = set;
-        }*/
+        BSet<T>() {
+            this->set = immer::set<T,Hash, HashEqual>();
+        }
 
-        /*BSet<T>(const BSet<T>&& set) {
-            this->set = std::move(set.set);
-        }*/
+        BSet<T>(const BSet<T>& set) {
+            this->set = set.set;
+        }
 
 	/*public BSet(java.util.Set<BObject> elements) {
 		this.set = HashTreePSet.from(elements);
@@ -164,6 +168,7 @@ class BSet : public BObject {
             return set.iterator();
         }*/
 
+
         BSet<T> intersect(const BSet<T>& set) const {
             immer::set<T,Hash, HashEqual> result = this->set;
             for (const T& obj : this->set) {
@@ -174,7 +179,7 @@ class BSet : public BObject {
             return BSet(result);
         }
 
-        BSet<T> complement(const BSet<T>& set) const {
+        BSet<T> difference(const BSet<T>& set) const {
             if(this->size() == 0) {
                 return BSet(this->set);
             }
@@ -207,36 +212,13 @@ class BSet : public BObject {
             }
         }
 
-        inline static BSet<BInteger> range(const BInteger& a, const BInteger& b) {
+        static BSet<BInteger> range(const BInteger& a, const BInteger& b) {
             immer::set<BInteger, Hash, HashEqual> result;
-            int start = a.intValue();
             int end = b.intValue();
-            for(int i = start; i <= end; ++i) {
+            for(int i = a.intValue(); i < end; ++i) {
                 result = result.insert(i);
             }
-            return BSet<BInteger>(result);
-        }
-
-        BSet<BObject> relationImage(const BSet<BObject>& domain) {
-            immer::set<T,Hash, HashEqual> result;
-            for(const T& object : this->set) {
-                BCouple couple = static_cast<BCouple>(object);
-                if(domain.set.count(couple.getFirst()) == 0) {
-                    result = result.insert(couple.getSecond());
-                }
-            }
             return BSet(result);
-        }
-
-
-        BObject functionCall(const T& arg) {
-            for(const T& object : this->set) {
-                BCouple couple = static_cast<BCouple>(object);
-                if(couple.getFirst() == arg) {
-                    return couple.getSecond();
-                }
-            }
-            throw runtime_error("Argument is not in the key set of this map");
         }
 
 
@@ -254,11 +236,11 @@ class BSet : public BObject {
 		    return *it;
 	    }
 
-        /*BBoolean equal(BSet o) {
+        /*BBoolean equal(BSet<T> o) {
             return new BBoolean(equals(o));
         }
 
-        BBoolean unequal(BSet o) {
+        BBoolean unequal(BSet<T> o) {
             return new BBoolean(!equals(o));
         }*/
 
@@ -278,5 +260,4 @@ class BSet : public BObject {
             return set.end();
         }
 };
-
 #endif

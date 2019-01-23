@@ -24,14 +24,14 @@ class SetCardBig {
     public:
 
         SetCardBig() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            result = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
+            result = (BInteger(0));
         }
 
         void simulate() {
             while((counter.less((BInteger(10000)))).booleanValue()) {
-                result = static_cast<BInteger >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).complement((BSet<BInteger >((BInteger(24999))))).card());
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                result = (BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).difference((BSet<BInteger >((BInteger(24999))))).card();
+                counter = counter.plus((BInteger(1)));
             }
         }
 

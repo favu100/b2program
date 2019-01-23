@@ -1,5 +1,6 @@
 #include <iostream>
 #include "BSet.cpp"
+#include "BBoolean.cpp"
 
 using namespace std;
 

@@ -1,10 +1,11 @@
 #include <iostream>
 #include "BSet.cpp"
+#include "BBoolean.cpp"
+
+using namespace std;
 
 #ifndef BUTILS_H
 #define BUTILS_H
-
-using namespace std;
 
 #define BOOL (BSet<BBoolean>(BBoolean(true), BBoolean(false)))
 

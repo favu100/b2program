@@ -176,7 +176,7 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == INTERVAL) {
             return generateInterval(expressionList);
         } else if(node.getOperator() == COUPLE) {
-            return generateCouple(expressionList);
+            return generateCouple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
             return generateBooleans();
         }
@@ -303,8 +303,10 @@ public class ExpressionGenerator {
     /*
     * This function generates code for a couple with the given arguments.
     */
-    private String generateCouple(List<String> arguments) {
+    private String generateCouple(List<String> arguments, BType leftType, BType rightType) {
         ST couple = currentGroup.getInstanceOf("couple_create");
+        TemplateHandler.add(couple, "leftType", typeGenerator.generate(leftType));
+        TemplateHandler.add(couple, "rightType", typeGenerator.generate(rightType));
         TemplateHandler.add(couple, "arg1", arguments.get(0));
         TemplateHandler.add(couple, "arg2", arguments.get(1));
         return couple.render();

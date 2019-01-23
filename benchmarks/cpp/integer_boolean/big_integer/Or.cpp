@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BUtils.cpp"
-#include "BBigInteger.cpp"
+#include "BInteger.cpp"
 #include "BBoolean.cpp"
 
 #ifndef Or_H
@@ -17,17 +17,17 @@ class Or {
 
 
 
-        BBigInteger counter;
+        BInteger counter;
 
     public:
 
         Or() {
-            counter = static_cast<BBigInteger >((BBigInteger("0")));
+            counter = (BInteger("0"));
         }
 
         void simulate() {
-            while((counter.less((BBigInteger("5000000")))._or((BBigInteger("1")).equal((BBigInteger("2"))))).booleanValue()) {
-                counter = static_cast<BBigInteger >(counter.plus((BBigInteger("1"))));
+            while((counter.less((BInteger("5000000")))._or((BInteger("1")).equal((BInteger("2"))))).booleanValue()) {
+                counter = counter.plus((BInteger("1")));
             }
         }
 

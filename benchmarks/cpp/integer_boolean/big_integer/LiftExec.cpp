@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BUtils.cpp"
-#include "BBigInteger.cpp"
+#include "BInteger.cpp"
 #include "BBoolean.cpp"
 #include "Lift.cpp"
 
@@ -19,29 +19,29 @@ class LiftExec {
         Lift _Lift;
 
 
-        BBigInteger counter;
+        BInteger counter;
 
     public:
 
         LiftExec() {
-            counter = static_cast<BBigInteger >((BBigInteger("0")));
+            counter = (BInteger("0"));
         }
 
         void simulate() {
-            while((counter.less((BBigInteger("3000")))).booleanValue()) {
-                BBigInteger i;
-                i = static_cast<BBigInteger >((BBigInteger("0")));
-                while((i.less((BBigInteger("100")))).booleanValue()) {
+            while((counter.less((BInteger("3000")))).booleanValue()) {
+                BInteger i;
+                i = (BInteger("0"));
+                while((i.less((BInteger("100")))).booleanValue()) {
                     this->_Lift.inc();
-                    i = static_cast<BBigInteger >(i.plus((BBigInteger("1"))));
+                    i = i.plus((BInteger("1")));
                 }
-                BBigInteger _i;
-                _i = static_cast<BBigInteger >((BBigInteger("0")));
-                while((_i.less((BBigInteger("100")))).booleanValue()) {
+                BInteger _i;
+                _i = (BInteger("0"));
+                while((_i.less((BInteger("100")))).booleanValue()) {
                     this->_Lift.dec();
-                    _i = static_cast<BBigInteger >(_i.plus((BBigInteger("1"))));
+                    _i = _i.plus((BInteger("1")));
                 }
-                counter = static_cast<BBigInteger >(counter.plus((BBigInteger("1"))));
+                counter = counter.plus((BInteger("1")));
             }
         }
 

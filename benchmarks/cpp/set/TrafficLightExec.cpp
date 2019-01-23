@@ -24,7 +24,7 @@ class TrafficLightExec {
     public:
 
         TrafficLightExec() {
-            counter = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
         }
 
         void simulate() {
@@ -35,7 +35,7 @@ class TrafficLightExec {
                 this->_TrafficLight.cars_r();
                 this->_TrafficLight.peds_g();
                 this->_TrafficLight.peds_r();
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

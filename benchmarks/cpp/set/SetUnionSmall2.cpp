@@ -25,15 +25,15 @@ class SetUnionSmall2 {
     public:
 
         SetUnionSmall2() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set1 = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)))));
-            set2 = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(2)))));
+            counter = (BInteger(0));
+            set1 = (BSet<BInteger >((BInteger(1))));
+            set2 = (BSet<BInteger >((BInteger(2))));
         }
 
         void simulate() {
             while((counter.less((BInteger(5000000)))).booleanValue()) {
-                set1 = static_cast<BSet<BInteger > >(set1._union(set2));
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                set1 = set1._union(set2);
+                counter = counter.plus((BInteger(1)));
             }
         }
 

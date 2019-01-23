@@ -39,7 +39,7 @@ class BInteger : public BObject {
             value = new java.math.BigInteger(val);
         }*/
 
-        BInteger(int val) {
+        BInteger(const int& val) {
             value = val;
         }
 
@@ -198,13 +198,13 @@ class BInteger : public BObject {
         }
 
         void operator =(const BInteger& other) {
-            value = other.value;
+            this->value = other.value;
         }
 
         int hashCode() const {
             int prime = 31;
             int result = 1;
-            result = prime * result + hash(value);
+            result = prime * result + value;
             return result;
         }
 

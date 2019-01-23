@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BBoolean.cpp"
+#include <gmpxx.h>
 
 #ifndef BINTEGER_H
 #define BINTEGER_H
@@ -24,7 +25,7 @@ class BInteger : public BObject {
 	}*/
 
 	private:
-	    int value;
+	    mpz_class value;
 
 	/*@Override
 	public int hashCode() {
@@ -35,16 +36,21 @@ class BInteger : public BObject {
 	}*/
 
     public:
-        /*BInteger(string val) {
-            value = new java.math.BigInteger(val);
-        }*/
 
-        BInteger(int val) {
+        BInteger(const char* val) {
+            value = val;
+        }
+
+        BInteger(const int& val) {
+            value = val;
+        }
+
+        BInteger(const mpz_class& val) {
             value = val;
         }
 
         int intValue() const {
-            return value;
+            return value.get_si();
         }
 
         BInteger(){};
@@ -53,37 +59,29 @@ class BInteger : public BObject {
             value = val.value;
         }
 
-        /*int compareTo(BInteger o) {
-            return value.compareTo(o.asBigInteger());
-        }*/
-
-        int compareTo(const BInteger& o) const {
-            return value - o.value;
-        }
 
         BBoolean lessEqual(const BInteger& o) {
-            return compareTo(o) <= 0;
+            return value <= o.value;
         }
 
-
         BBoolean greaterEqual(const BInteger& o) {
-            return compareTo(o) >= 0;
+            return value >= o.value;
         }
 
         BBoolean less(const BInteger& o) {
-            return compareTo(o) < 0;
+            return value < o.value;
         }
 
         BBoolean greater(const BInteger& o) {
-            return compareTo(o) > 0;
+            return value > o.value;
         }
 
         BBoolean equal(const BInteger& o) {
-            return compareTo(o) == 0;
+            return value == o.value;
         }
 
         BBoolean unequal(const BInteger& o) {
-            return compareTo(o) != 0;
+            return value != o.value;
         }
 
         /*int compareTo(java.lang.Number o) {
@@ -113,7 +111,7 @@ class BInteger : public BObject {
         }*/
 
         BInteger plus(const BInteger& o) {
-            return value + o.value;
+            return BInteger(value + o.value);
         }
 
         /*java.math.BigInteger asBigInteger() {
@@ -125,23 +123,19 @@ class BInteger : public BObject {
         }*/
 
         BInteger minus(const BInteger& o) {
-            return value - o.value;
+            return BInteger(value - o.value);
         }
 
         BInteger multiply(const BInteger& o) {
-            return value * o.value;
-        }
-
-        BInteger power(const BInteger& o) {
-            return value ^ o.value;
+            return BInteger(value * o.value);
         }
 
         BInteger divide(const BInteger& o) {
-            return value / o.value;
+            return BInteger(value / o.value);
         }
 
         BInteger modulo(const BInteger& o) {
-            return value % o.value;
+            return BInteger(value % o.value);
         }
 
         /*BInteger or(BInteger o) {
@@ -157,11 +151,11 @@ class BInteger : public BObject {
         }*/
 
         BInteger next() {
-            return value + 1;
+            return BInteger(value + 1);
         }
 
         BInteger previous() {
-            return value - 1;
+            return BInteger(value - 1);
         }
 
         /*BInteger leftShift(BInteger o) {
@@ -177,7 +171,7 @@ class BInteger : public BObject {
         }*/
 
         BInteger negative() {
-            return -value;
+            return BInteger(-value);
         }
 
         BInteger positive() {
@@ -204,7 +198,7 @@ class BInteger : public BObject {
         int hashCode() const {
             int prime = 31;
             int result = 1;
-            result = prime * result + hash(value);
+            result = prime * result + value.get_si();
             return result;
         }
 

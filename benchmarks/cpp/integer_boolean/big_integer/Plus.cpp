@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BUtils.cpp"
-#include "BBigInteger.cpp"
+#include "BInteger.cpp"
 #include "BBoolean.cpp"
 
 #ifndef Plus_H
@@ -17,20 +17,20 @@ class Plus {
 
 
 
-        BBigInteger counter;
-        BBigInteger value;
+        BInteger counter;
+        BInteger value;
 
     public:
 
         Plus() {
-            counter = (BBigInteger("0"));
-            value = (BBigInteger("10000000000000000000000000000000000000"));
+            counter = (BInteger("0"));
+            value = (BInteger("0"));
         }
 
         void simulate() {
-            while((counter.less((BBigInteger("5000000")))).booleanValue()) {
-                counter = counter.plus((BBigInteger("1")));
-                value = value.plus((BBigInteger("1")));
+            while((counter.less((BInteger("5000000")))).booleanValue()) {
+                counter = counter.plus((BInteger("1")));
+                value = value.plus((BInteger("1")));
             }
         }
 
@@ -38,8 +38,6 @@ class Plus {
 int main() {
     clock_t start,finish;
     double time;
-    BBigInteger x = (BBigInteger("1")).plus(BBigInteger("1"));
-    BBoolean y = x.less(BBigInteger("123"));
     Plus exec;
     start = clock();
     exec.simulate();

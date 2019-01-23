@@ -63,7 +63,7 @@ class BBoolean : public BObject {
 
     public:
 
-    	BBoolean(const bool& val) {
+    	BBoolean(bool val) {
     		value = val;
     	}
 

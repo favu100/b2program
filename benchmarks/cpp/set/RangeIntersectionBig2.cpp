@@ -5,8 +5,8 @@
 #include "BInteger.cpp"
 #include "BBoolean.cpp"
 
-#ifndef RangeIntersectionBig_H
-#define RangeIntersectionBig_H
+#ifndef RangeIntersectionBig2_H
+#define RangeIntersectionBig2_H
 
 using namespace std;
 
@@ -25,15 +25,15 @@ class RangeIntersectionBig2 {
     public:
 
         RangeIntersectionBig2() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set1 = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))));
-            set2 = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(3000)))));
+            counter = (BInteger(0));
+            set1 = (BSet<BInteger>::range((BInteger(1)),(BInteger(25000))));
+            set2 = (BSet<BInteger>::range((BInteger(1)),(BInteger(3000))));
         }
 
         void simulate() {
             while((counter.less((BInteger(10000)))).booleanValue()) {
-                set1 = static_cast<BSet<BInteger > >(set1.intersect(set2));
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                set1 = set1.intersect(set2);
+                counter = counter.plus((BInteger(1)));
             }
         }
 

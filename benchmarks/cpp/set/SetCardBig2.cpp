@@ -25,15 +25,15 @@ class SetCardBig2 {
     public:
 
         SetCardBig2() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).complement((BSet<BInteger >((BInteger(24999))))));
-            result = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
+            set = (BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).difference((BSet<BInteger >((BInteger(24999)))));
+            result = (BInteger(0));
         }
 
         void simulate() {
             while((counter.less((BInteger(10000)))).booleanValue()) {
-                result = static_cast<BInteger >(set.card());
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                result = set.card();
+                counter = counter.plus((BInteger(1)));
             }
         }
 

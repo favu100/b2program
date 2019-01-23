@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BUtils.cpp"
-#include "BBigInteger.cpp"
+#include "BInteger.cpp"
 #include "BBoolean.cpp"
 
 #ifndef BigNumbers_H
@@ -17,20 +17,20 @@ class BigNumbers {
 
 
 
-        BBigInteger counter;
-        BBigInteger value;
+        BInteger counter;
+        BInteger value;
 
     public:
 
         BigNumbers() {
-            counter = static_cast<BBigInteger >((BBigInteger("0")));
-            value = static_cast<BBigInteger >((BBigInteger("10000000000000000000")));
+            counter = (BInteger("0"));
+            value = (BInteger("10000000000000000000"));
         }
 
         void simulate() {
-            while((counter.less((BBigInteger("5000000")))).booleanValue()) {
-                counter = static_cast<BBigInteger >(counter.plus((BBigInteger("1"))));
-                value = static_cast<BBigInteger >(value.plus((BBigInteger("1"))));
+            while((counter.less((BInteger("5000000")))).booleanValue()) {
+                counter = counter.plus((BInteger("1")));
+                value = value.plus((BInteger("1")));
             }
         }
 

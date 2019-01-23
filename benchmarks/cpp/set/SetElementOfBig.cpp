@@ -5,8 +5,8 @@
 #include "BInteger.cpp"
 #include "BBoolean.cpp"
 
-#ifndef SetElementOfBig2_H
-#define SetElementOfBig2_H
+#ifndef SetElementOfBig_H
+#define SetElementOfBig_H
 
 using namespace std;
 
@@ -23,12 +23,12 @@ class SetElementOfBig {
     public:
 
         SetElementOfBig() {
-            counter = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
         }
 
         void simulate() {
-            while((counter.less((BInteger(10000)))._and((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).complement((BSet<BInteger >((BInteger(24999))))).elementOf((BInteger(25000))))).booleanValue()) {
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+            while((counter.less((BInteger(10000)))._and((BSet<BInteger>::range((BInteger(1)),(BInteger(25000)))).difference((BSet<BInteger >((BInteger(24999))))).elementOf((BInteger(25000))))).booleanValue()) {
+                counter = counter.plus((BInteger(1)));
             }
         }
 

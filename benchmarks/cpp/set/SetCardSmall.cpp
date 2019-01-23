@@ -24,14 +24,14 @@ class SetCardSmall {
     public:
 
         SetCardSmall() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            result = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
+            result = (BInteger(0));
         }
 
         void simulate() {
             while((counter.less((BInteger(5000000)))).booleanValue()) {
-                result = static_cast<BInteger >((BSet<BInteger >((BInteger(1)))).card());
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                result = (BSet<BInteger >((BInteger(1)))).card();
+                counter = counter.plus((BInteger(1)));
             }
         }
 

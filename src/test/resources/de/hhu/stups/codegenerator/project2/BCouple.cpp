@@ -7,35 +7,41 @@ using namespace std;
 #ifndef BCOUPLE_H
 #define BCOUPLE_H
 
+template<typename S, typename T>
 class BCouple : public BObject {
 
 	private:
-	    BObject lhs;
-	    BObject rhs;
+	    S lhs;
+	    T rhs;
 
 	public:
 
-        BCouple(BObject l, BObject r) {
+        BCouple(const S& l, const T& r) {
             lhs = l;
             rhs = r;
         }
 
         BCouple(){}
 
-        BObject getFirst() {
+        S getFirst() {
             return lhs;
         }
 
-        BObject getSecond() {
+        T getSecond() {
             return rhs;
         }
 
-        BBoolean operator ==(BCouple o) {
+        BBoolean operator ==(const BCouple<S,T>& o) {
             return lhs == o.lhs && rhs == o.rhs;
         }
 
-        BBoolean operator !=(BCouple o) {
+        BBoolean operator !=(const BCouple<S,T>& o) {
             return lhs != o.lhs || rhs != o.rhs;
+        }
+
+        void operator =(const BCouple<S,T>& other) {
+            this->lhs = other.lhs;
+            this->rhs = other.rhs;
         }
 
         int hashCode() const {

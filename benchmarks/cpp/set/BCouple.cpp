@@ -7,26 +7,27 @@ using namespace std;
 #ifndef BCOUPLE_H
 #define BCOUPLE_H
 
+template<typename S, typename T>
 class BCouple : public BObject {
 
 	private:
-	    BObject lhs;
-	    BObject rhs;
+	    S lhs;
+	    T rhs;
 
 	public:
 
-        BCouple(BObject l, BObject r) {
+        BCouple(S l, T r) {
             lhs = l;
             rhs = r;
         }
 
         BCouple(){}
 
-        BObject getFirst() {
+        S getFirst() {
             return lhs;
         }
 
-        BObject getSecond() {
+        T getSecond() {
             return rhs;
         }
 

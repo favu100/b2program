@@ -25,9 +25,9 @@ class Sieve {
     public:
 
         Sieve() {
-            numbers = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(2)),(BInteger(10000)))));
-            cur = static_cast<BInteger >((BInteger(2)));
-            limit = static_cast<BInteger >((BInteger(10000)));
+            numbers = (BSet<BInteger>::range((BInteger(2)),(BInteger(10000))));
+            cur = (BInteger(2));
+            limit = (BInteger(10000));
         }
 
         BInteger ComputeNumberOfPrimes() {
@@ -36,17 +36,17 @@ class Sieve {
                 if((numbers.elementOf(cur)).booleanValue()) {
                     BInteger n;
                     BSet<BInteger > set;
-                    n = static_cast<BInteger >(cur);
-                    set = static_cast<BSet<BInteger > >((BSet<BInteger >()));
+                    n = cur;
+                    set = (BSet<BInteger >());
                     while((n.lessEqual(limit.divide(cur))).booleanValue()) {
-                        set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger >(cur.multiply(n)))));
-                        n = static_cast<BInteger >(n.plus((BInteger(1))));
+                        set = set._union((BSet<BInteger >(cur.multiply(n))));
+                        n = n.plus((BInteger(1)));
                     }
-                    numbers = static_cast<BSet<BInteger > >(numbers.complement(set));
+                    numbers = numbers.difference(set);
                 } 
-                cur = static_cast<BInteger >(cur.plus((BInteger(1))));
+                cur = cur.plus((BInteger(1)));
             }
-            res = static_cast<BInteger >(numbers.card());
+            res = numbers.card();
             return res;
         }
 
@@ -56,10 +56,11 @@ int main() {
     double time;
     Sieve exec;
     start = clock();
-    exec.ComputeNumberOfPrimes();
+    BInteger result = exec.ComputeNumberOfPrimes();
     finish = clock();
     time = (double(finish)-double(start))/CLOCKS_PER_SEC;
     printf("%f\n", time);
+    printf("%d\n", result.intValue());
     return 0;
 }
 #endif

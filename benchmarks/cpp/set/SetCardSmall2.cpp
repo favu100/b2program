@@ -25,15 +25,15 @@ class SetCardSmall2 {
     public:
 
         SetCardSmall2() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)))));
-            result = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
+            set = (BSet<BInteger >((BInteger(1))));
+            result = (BInteger(0));
         }
 
         void simulate() {
             while((counter.less((BInteger(5000000)))).booleanValue()) {
-                result = static_cast<BInteger >(set.card());
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                result = set.card();
+                counter = counter.plus((BInteger(1)));
             }
         }
 

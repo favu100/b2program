@@ -15,7 +15,7 @@ class BRelation<S,T> : public BSet<BCouple<S,T>> {
     BSet<T> relationImage(const BSet<S>& domain) {
         immer::set<T,Hash, HashEqual> result;
         for(typename immer::set<BCouple<S,T>,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-            BCouple<S,T>* couple = *it;
+            BCouple<S,T> couple = *it;
             if(domain.set.count(couple.getFirst()) == 0) {
                 result = result.insert(couple.getSecond());
             }
@@ -26,7 +26,7 @@ class BRelation<S,T> : public BSet<BCouple<S,T>> {
 
     T functionCall(const S& arg) {
         for(typename immer::set<<BCouple<S,T>>,Hash, HashEqual>::const_iterator it = this->set.begin(); it != this->set.end(); ++it) {
-            BCouple<S,T>* couple = *it;
+            BCouple<S,T> couple = *it;
             if(couple.getFirst() == arg) {
                 return couple.getSecond();
             }

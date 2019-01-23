@@ -19,7 +19,7 @@
      :constructors {[java.lang.String] []
                     [java.lang.Number] []}
      :init create-integer
-     :state binteger  
+     :state binteger
      :methods [[plus [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BInteger]
                [minus [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BInteger]
                [multiply [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BInteger]
@@ -27,16 +27,17 @@
                [modulo [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BInteger]
                [power [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BInteger]
                [less [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean]
-               [lessEqual [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean] 
+               [lessEqual [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean]
                [greater [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean]
                [greaterEqual [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean]
                [equal [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean]
                [unequal [de.hhu.stups.btypes.BInteger] de.hhu.stups.btypes.BBoolean]
                [negative [] de.hhu.stups.btypes.BInteger]
                [positive [] de.hhu.stups.btypes.BInteger]])
-   
-(defn -create-integer [^java.lang.Number value]
-  [[] value])
+
+(defn -create-integer [^String value]
+  [[] (try (clojure.lang.BigInt/fromLong (Long/parseLong value))
+        (catch Exception e (clojure.lang.BigInt/fromBigInteger (biginteger value))))])
 
 (defn -equals [^de.hhu.stups.btypes.BInteger this ^de.hhu.stups.btypes.BInteger other]
   (and (= (class this) (class other))
@@ -101,8 +102,3 @@
 
 (defn -positive [^de.hhu.stups.btypes.BInteger this]
   this)
-
-
-
-
-

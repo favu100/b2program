@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BUtils.cpp"
-#include "BBigInteger.cpp"
+#include "BInteger.cpp"
 #include "BBoolean.cpp"
 
 #ifndef GreaterEqual_H
@@ -17,17 +17,17 @@ class GreaterEqual {
 
 
 
-        BBigInteger counter;
+        BInteger counter;
 
     public:
 
         GreaterEqual() {
-            counter = static_cast<BBigInteger >((BBigInteger("0")));
+            counter = (BInteger("0"));
         }
 
         void simulate() {
-            while((counter.less((BBigInteger("5000000")))._and((BBigInteger("2")).greaterEqual((BBigInteger("1"))))).booleanValue()) {
-                counter = static_cast<BBigInteger >(counter.plus((BBigInteger("1"))));
+            while((counter.less((BInteger("5000000")))._and((BInteger("2")).greaterEqual((BInteger("1"))))).booleanValue()) {
+                counter = counter.plus((BInteger("1")));
             }
         }
 

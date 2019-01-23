@@ -8,7 +8,7 @@ OUTPUT ?= runtimes.txt
 
 CPPC ?= clang++
 IMMERFLAGS=-DIMMER_NO_THREAD_SAFETY
-CPPFLAGS ?= -std=c++14 -O2 -march=native -g $(IMMERFLAGS)
+CPPFLAGS ?= -std=c++14 -O2 -march=native -g -lgmpxx -lgmp $(IMMERFLAGS)
 
 %.exec : %.cpp
 	$(CPPC) $(CPPFLAGS) -o $@ $<

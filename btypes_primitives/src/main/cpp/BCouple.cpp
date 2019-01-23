@@ -16,7 +16,7 @@ class BCouple : public BObject {
 
 	public:
 
-        BCouple(S l, T r) {
+        BCouple(const S& l, const T& r) {
             lhs = l;
             rhs = r;
         }
@@ -31,12 +31,17 @@ class BCouple : public BObject {
             return rhs;
         }
 
-        BBoolean operator ==(BCouple o) {
+        BBoolean operator ==(const BCouple<S,T>& o) {
             return lhs == o.lhs && rhs == o.rhs;
         }
 
-        BBoolean operator !=(BCouple o) {
+        BBoolean operator !=(const BCouple<S,T>& o) {
             return lhs != o.lhs || rhs != o.rhs;
+        }
+
+        void operator =(const BCouple<S,T>& other) {
+            this->lhs = other.lhs;
+            this->rhs = other.rhs;
         }
 
         int hashCode() const {

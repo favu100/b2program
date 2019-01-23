@@ -2,7 +2,7 @@
 
 .PHONY: all clean
 
-all: And Divide Equal Equivalent Greater GreaterEqual Implies Less LessEqual Minus Modulo Multiply Negative Or Plus SmallNumbers Unequal LiftExec
+all: And Divide Equal Equivalent Greater GreaterEqual Implies Less LessEqual Minus Modulo Multiply Negative Or Plus Unequal LiftExec
 
 OUTPUT ?= runtimes.txt
 

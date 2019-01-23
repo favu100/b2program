@@ -25,15 +25,15 @@ class RangeIntersectionSmall2 {
     public:
 
         RangeIntersectionSmall2() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set1 = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(0)),(BInteger(5)))));
-            set2 = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(0)),(BInteger(5)))));
+            counter = (BInteger(0));
+            set1 = (BSet<BInteger>::range((BInteger(0)),(BInteger(5))));
+            set2 = (BSet<BInteger>::range((BInteger(0)),(BInteger(5))));
         }
 
         void simulate() {
             while((counter.less((BInteger(5000000)))).booleanValue()) {
-                set1 = static_cast<BSet<BInteger > >(set1.intersect(set2));
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                set1 = set1.intersect(set2);
+                counter = counter.plus((BInteger(1)));
             }
         }
 

@@ -201,8 +201,8 @@ interval(arg1, arg2) ::= <<
 (BSet\<BInteger>::range(<arg1>,<arg2>))
 >>
 
-couple_create(arg1, arg2) ::= <<
-(BCouple(<arg1>, <arg2>))
+couple_create(leftType, rightType, arg1, arg2) ::= <<
+(BCouple\<<leftType>, <rightType>\>(<arg1>, <arg2>))
 >>
 
 

@@ -22,12 +22,12 @@ class Implies {
     public:
 
         Implies() {
-            counter = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
         }
 
         void simulate() {
             while(((BInteger(1)).equal((BInteger(1))).implies(counter.less((BInteger(5000000))))).booleanValue()) {
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

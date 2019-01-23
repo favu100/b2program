@@ -24,14 +24,14 @@ class RangeSmall {
     public:
 
         RangeSmall() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set = static_cast<BSet<BInteger > >((BSet<BInteger >()));
+            counter = (BInteger(0));
+            set = (BSet<BInteger >());
         }
 
         void simulate() {
             while((counter.less((BInteger(5000000)))).booleanValue()) {
-                set = static_cast<BSet<BInteger > >((BSet<BInteger>::range((BInteger(0)),(BInteger(5)))));
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                set = (BSet<BInteger>::range((BInteger(0)),(BInteger(5))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

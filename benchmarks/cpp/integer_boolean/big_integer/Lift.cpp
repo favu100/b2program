@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "BUtils.cpp"
-#include "BBigInteger.cpp"
+#include "BInteger.cpp"
 
 #ifndef Lift_H
 #define Lift_H
@@ -16,20 +16,20 @@ class Lift {
 
 
 
-        BBigInteger floor;
+        BInteger floor;
 
     public:
 
         Lift() {
-            floor = static_cast<BBigInteger >((BBigInteger("0")));
+            floor = (BInteger("0"));
         }
 
         void inc() {
-            floor = static_cast<BBigInteger >(floor.plus((BBigInteger("1"))));
+            floor = floor.plus((BInteger("1")));
         }
 
         void dec() {
-            floor = static_cast<BBigInteger >(floor.minus((BBigInteger("1"))));
+            floor = floor.minus((BInteger("1")));
         }
 
 };

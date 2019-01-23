@@ -24,14 +24,14 @@ class SetOperation {
     public:
 
         SetOperation() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            set = static_cast<BSet<BInteger > >((BSet<BInteger >((BInteger(1)), (BInteger(2)), (BInteger(3)))));
+            counter = (BInteger(0));
+            set = (BSet<BInteger >((BInteger(1)), (BInteger(2)), (BInteger(3))));
         }
 
         void simulate() {
             while((counter.less((BInteger(500000)))).booleanValue()) {
-                set = static_cast<BSet<BInteger > >(set._union((BSet<BInteger >((BInteger(1))))));
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
+                set = set._union((BSet<BInteger >((BInteger(1)))));
+                counter = counter.plus((BInteger(1)));
             }
         }
 

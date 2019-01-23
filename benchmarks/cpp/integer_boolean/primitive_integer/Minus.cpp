@@ -23,14 +23,14 @@ class Minus {
     public:
 
         Minus() {
-            counter = static_cast<BInteger >((BInteger(0)));
-            value = static_cast<BInteger >((BInteger(0)));
+            counter = (BInteger(0));
+            value = (BInteger(0));
         }
 
         void simulate() {
             while((counter.less((BInteger(5000000)))).booleanValue()) {
-                counter = static_cast<BInteger >(counter.plus((BInteger(1))));
-                value = static_cast<BInteger >(value.minus((BInteger(1))));
+                counter = counter.plus((BInteger(1)));
+                value = value.minus((BInteger(1)));
             }
         }
 

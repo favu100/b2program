@@ -638,6 +638,11 @@ public class TestCpp {
 		testCpp("Cruise_finite_Deterministic");
 	}
 
+	@Test
+	public void testScheduler() throws Exception {
+		testCpp("scheduler");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

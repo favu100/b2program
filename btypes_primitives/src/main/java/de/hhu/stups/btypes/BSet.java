@@ -177,6 +177,10 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(this.set.contains(object));
 	}
 
+	public BBoolean notElementOf(T object) {
+		return new BBoolean(!this.set.contains(object));
+	}
+
 	public BBoolean equal(BSet<T> o) {
 		return new BBoolean(equals(o));
 	}

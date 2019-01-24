@@ -226,19 +226,31 @@ class BSet : public BObject {
             return BBoolean(set.count(object) > 0);
         }
 
+        BBoolean notElementOf(const T& object) {
+            return BBoolean(set.count(object) == 0);
+        }
+
         T nondeterminism() {
 		    int index = rand() % set.size();
 		    typename immer::set<T,Hash, HashEqual>::const_iterator it = std::next(set.begin(), index);
 		    return *it;
 	    }
 
-        /*BBoolean equal(BSet<T> o) {
-            return new BBoolean(equals(o));
+        friend bool operator !=(const BSet<T>& o1, const BSet<T>& o2) {
+            return o1.value != o2.value;
         }
 
-        BBoolean unequal(BSet<T> o) {
-            return new BBoolean(!equals(o));
-        }*/
+        friend bool operator ==(const BSet<T>& o1, const BSet<T>& o2) {
+            return o1.value == o2.value;
+        }
+
+        BBoolean equal(const BSet<T>& other) {
+            return BBoolean(this->set == other.set);
+        }
+
+        BBoolean unequal(const BSet<T>& other) {
+            return BBoolean(this->set != other.set);
+        }
 
         void operator =(const BSet<T>& other) {
             this->set = other.set;

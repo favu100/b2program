@@ -58,7 +58,7 @@ public class IdentifierGenerator {
         boolean isReturn = outputParams.stream()
                 .map(declarationNode -> nameHandler.getEnumTypes().keySet().contains(declarationNode.getName()) ?
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
-                        nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES))
+                        nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
                 .collect(Collectors.toList())
                 .contains(node.toString());
 
@@ -91,7 +91,7 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(identifier, "identifier", node.getType() != null && nameHandler.getEnumTypes().keySet().contains(node.getName()) ?
                 nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
-                nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
+                nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
@@ -104,7 +104,7 @@ public class IdentifierGenerator {
     */
     public String generateVarDeclaration(String name, boolean isAssigned) {
         ST identifier = group.getInstanceOf("identifier");
-        StringBuilder resultIdentifier = new StringBuilder(nameHandler.handleIdentifier(name, NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
+        StringBuilder resultIdentifier = new StringBuilder(nameHandler.handleIdentifier(name, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         if(currentLocals.keySet().contains(name)) {
             for (int i = 0; i < currentLocals.get(name); i++) {
                 resultIdentifier.insert(0, "_");

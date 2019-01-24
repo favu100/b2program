@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
+import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
+
 
 public class OperationGenerator {
 
@@ -101,7 +104,7 @@ public class OperationGenerator {
             TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
             TemplateHandler.add(operation, "isTyped", true);
             ST returnTemplate = group.getInstanceOf("return");
-            TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
+            TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
             TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
             TemplateHandler.add(operation, "return", returnTemplate.render());
         } else if(node.getOutputParams().size() == 0) {
@@ -109,7 +112,7 @@ public class OperationGenerator {
             TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
             TemplateHandler.add(operation, "return", group.getInstanceOf("no_return").render());
         }
-        TemplateHandler.add(operation, "operationName", nameHandler.handle(node.getName()));
+        TemplateHandler.add(operation, "operationName", nameHandler.handleIdentifier(node.getName(), INCLUDED_MACHINES));
         TemplateHandler.add(operation, "parameters", declarationGenerator.generateDeclarations(node.getParams(), DeclarationType.PARAMETER, false));
         TemplateHandler.add(operation, "returnParameters", declarationGenerator.generateDeclarations(node.getOutputParams(), DeclarationType.PARAMETER, true));
         return operation;

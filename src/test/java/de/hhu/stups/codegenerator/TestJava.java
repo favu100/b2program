@@ -708,6 +708,11 @@ public class TestJava {
 		testJava("Cruise_finite_Deterministic");
 	}
 
+	@Test
+	public void testScheduler() throws Exception {
+		testJava("scheduler");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

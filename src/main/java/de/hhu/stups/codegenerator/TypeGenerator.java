@@ -48,7 +48,7 @@ public class TypeGenerator {
             }
             return template.render();
         } else if(type instanceof EnumeratedSetElementType) {
-            TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
+            TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
             return template.render();
         } else if(type instanceof CoupleType) {
             template = group.getInstanceOf("couple_type");

@@ -6,7 +6,7 @@ import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,8 @@ public class OperatorGenerator {
     * Generated code: Y.elementOf(x) (x is an argument, while Y is the set where the operation is acted on)
     */
     private static final List<Object> BINARY_SWAP =
-            Collections.singletonList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF);
+            Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF,
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING);
 
     private final PredicateGenerator predicateGenerator;
 

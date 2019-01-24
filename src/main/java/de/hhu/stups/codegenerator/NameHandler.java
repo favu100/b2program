@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
 import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
 import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.MACHINES;
 
@@ -25,7 +26,8 @@ public class NameHandler {
     public enum IdentifierHandlingEnum {
         MACHINES,
         INCLUDED_MACHINES,
-        VARIABLES
+        FUNCTION_NAMES,
+        VARIABLES;
     }
 
     private final STGroup group;
@@ -36,7 +38,9 @@ public class NameHandler {
 
     private List<String> reservedMachinesWithIncludedMachines;
 
-    private List<String> reservedMachinesAndVariables;
+    private List<String> reservedMachinesAndFunctions;
+
+    private List<String> reservedMachinesAndFunctionsAndVariables;
 
     private Map<String, List<String>> enumTypes;
 
@@ -46,7 +50,8 @@ public class NameHandler {
         this.enumTypes = new HashMap<>();
         this.reservedMachines = new ArrayList<>();
         this.reservedMachinesWithIncludedMachines = new ArrayList<>();
-        this.reservedMachinesAndVariables = new ArrayList<>();
+        this.reservedMachinesAndFunctions = new ArrayList<>();
+        this.reservedMachinesAndFunctionsAndVariables = new ArrayList<>();
     }
 
     /*
@@ -61,15 +66,22 @@ public class NameHandler {
         reservedMachinesWithIncludedMachines.addAll(node.getMachineReferences().stream()
                 .map(reference -> handleIdentifier(reference.getMachineName(), MACHINES))
                 .collect(Collectors.toList()));
-        reservedMachinesAndVariables.addAll(reservedMachinesWithIncludedMachines);
-        reservedMachinesAndVariables.addAll(node.getVariables().stream()
-                .map(variable -> handleIdentifier(variable.getName(), INCLUDED_MACHINES))
+
+        reservedMachinesAndFunctions.addAll(reservedMachinesWithIncludedMachines);
+        reservedMachinesAndFunctions.addAll(node.getOperations().stream()
+                .map(operation -> handleIdentifier(operation.getName(), INCLUDED_MACHINES))
                 .collect(Collectors.toList()));
 
-        reservedMachinesAndVariables.addAll(node.getEnumaratedSets().stream()
-                .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), INCLUDED_MACHINES))
+        reservedMachinesAndFunctionsAndVariables.addAll(reservedMachinesAndFunctions);
+        reservedMachinesAndFunctionsAndVariables.addAll(node.getVariables().stream()
+                .map(variable -> handleIdentifier(variable.getName(), FUNCTION_NAMES))
                 .collect(Collectors.toList()));
-        globals.addAll(reservedMachinesAndVariables);
+
+        reservedMachinesAndFunctionsAndVariables.addAll(node.getEnumaratedSets().stream()
+                .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), FUNCTION_NAMES))
+                .collect(Collectors.toList()));
+
+        globals.addAll(reservedMachinesAndFunctionsAndVariables);
         globals.addAll(node.getEnumaratedSets().stream()
                 .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES))
                 .collect(Collectors.toList()));
@@ -127,8 +139,11 @@ public class NameHandler {
             case INCLUDED_MACHINES:
                 variables = reservedMachinesWithIncludedMachines;
                 break;
+            case FUNCTION_NAMES:
+                variables = reservedMachinesAndFunctions;
+                break;
             case VARIABLES:
-                variables = reservedMachinesAndVariables;
+                variables = reservedMachinesAndFunctionsAndVariables;
                 break;
             default:
                 break;

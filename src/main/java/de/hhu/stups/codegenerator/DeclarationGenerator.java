@@ -102,6 +102,7 @@ public class DeclarationGenerator {
 
     public List<String> generateConstants(MachineNode node) {
         //TODO Generate code for PROPERTIES (?)
+        //System.err.println(node.getProperties().getClass());
         return node.getConstants().stream()
                 .map(this::generateConstant)
                 .collect(Collectors.toList());

@@ -269,7 +269,12 @@ public class SubstitutionGenerator {
         //TODO: For now, the variable on the left-hand side and on the right-hand side must be distinct
         for (int i = 0; i < node.getLeftSide().size(); i++) {
             IdentifierExprNode identifier = (IdentifierExprNode) node.getLeftSide().get(i);
-            if(definedLoadsInParallel.contains(identifier.getName())) {
+            boolean onRightHandSide = node.getRightSide().stream()
+                    .filter(n -> n instanceof IdentifierExprNode)
+                    .map(id -> ((IdentifierExprNode) id).getName())
+                    .collect(Collectors.toList())
+                    .contains(identifier.getName());
+            if(definedLoadsInParallel.contains(identifier.getName()) || !onRightHandSide) {
                 continue;
             }
             assignments.add(visitParallelLoad(identifier));

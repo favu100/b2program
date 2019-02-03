@@ -10,6 +10,7 @@ import clojure.lang.Var;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Optional;
 
 public class BSet<T> implements BObject, Set<T> {
 
@@ -192,5 +193,21 @@ public class BSet<T> implements BObject, Set<T> {
 	public T nondeterminism() {
 		int index = (int) Math.floor(Math.random() * set.size());
 		return toArray()[index];
+	}
+
+	public BInteger min() {
+		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).lessEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
+		if(result.isPresent()) {
+			return result.get();
+		}
+		throw new RuntimeException("Minumum does not exist");
+	}
+
+	public BInteger max() {
+		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).greaterEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
+		if(result.isPresent()) {
+			return result.get();
+		}
+		throw new RuntimeException("Minumum does not exist");
 	}
 }

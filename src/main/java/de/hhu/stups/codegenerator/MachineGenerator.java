@@ -204,6 +204,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		throw new RuntimeException("Given node is not implemented: " + node.getClass());
 	}
 
+
+
 	/*
 	* Code is not generated from set comprehensions in the given subset of B
 	*/

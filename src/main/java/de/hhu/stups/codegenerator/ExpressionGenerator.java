@@ -36,6 +36,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MINUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MOD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MULT;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.OVERWRITE_RELATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PLUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE;
@@ -55,7 +56,7 @@ public class ExpressionGenerator {
     */
     private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
             Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
-                    FUNCTION_CALL, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
+                    FUNCTION_CALL, OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
                     RANGE_RESTRICTION, RANGE_SUBTRACTION, CARTESIAN_PRODUCT);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
@@ -267,6 +268,9 @@ public class ExpressionGenerator {
                 break;
             case RELATIONAL_IMAGE:
                 operatorName = "relationImage";
+                break;
+            case OVERWRITE_RELATION:
+                operatorName = "overwrite";
                 break;
             case DOMAIN_RESTRICTION:
                 operatorName = "domainRestriction";

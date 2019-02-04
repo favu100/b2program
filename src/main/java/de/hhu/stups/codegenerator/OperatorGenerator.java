@@ -26,7 +26,9 @@ public class OperatorGenerator {
     */
     private static final List<Object> BINARY_SWAP =
             Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF,
-                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING);
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING,
+                    ExpressionOperatorNode.ExpressionOperator.DOMAIN_SUBTRACTION,
+                    ExpressionOperatorNode.ExpressionOperator.DOMAIN_RESTRICTION);
 
     private final PredicateGenerator predicateGenerator;
 

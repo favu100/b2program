@@ -16,7 +16,6 @@ repositories {
         name "release"
         url "https://oss.sonatype.org/content/repositories/releases/"
     }
-
 }
 
 dependencies {

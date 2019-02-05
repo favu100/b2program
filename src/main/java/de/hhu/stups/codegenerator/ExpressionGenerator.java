@@ -5,6 +5,7 @@ import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
@@ -86,9 +87,9 @@ public class ExpressionGenerator {
 
     private OperatorGenerator operatorGenerator;
 
-    private SetComprehensionGenerator currentComprehensionGenerator;
+    private IterationConstructGenerator currentIterationConstructGenerator;
 
-    private int comprehensionCounter;
+    private int iterationConstructCounter;
 
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
@@ -101,8 +102,8 @@ public class ExpressionGenerator {
         this.declarationGenerator = declarationGenerator;
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
-        this.currentComprehensionGenerator = null;
-        this.comprehensionCounter = 0;
+        this.currentIterationConstructGenerator = null;
+        this.iterationConstructCounter = 0;
     }
 
     /*
@@ -128,6 +129,8 @@ public class ExpressionGenerator {
             return visitCastPredicateExpressionNode((CastPredicateExpressionNode) node);
         } else if(node instanceof SetComprehensionNode) {
             return visitSetComprehensionNode((SetComprehensionNode) node);
+        } else if(node instanceof LambdaNode) {
+            return visitLambdaNode((LambdaNode) node);
         }
         throw new RuntimeException("Given node is not implemented: " + node.getClass());
     }
@@ -146,8 +149,8 @@ public class ExpressionGenerator {
     * This function generates code for an identifier from the belonging AST node.
     */
     public String visitIdentifierExprNode(IdentifierExprNode node) {
-        if(machineGenerator.isInSetComprehension()) {
-            return "_sc_" + node.getName();
+        if(machineGenerator.isInIterationConstruct()) {
+            return "_ic_" + node.getName();
         }
         if(substitutionGenerator.getCurrentLocalScope() > 0) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
@@ -355,7 +358,11 @@ public class ExpressionGenerator {
     }
 
     public String visitSetComprehensionNode(SetComprehensionNode node) {
-        return currentComprehensionGenerator.getComprehensionMapIdentifier().get(node.toString());
+        return currentIterationConstructGenerator.getIterationsMapIdentifier().get(node.toString());
+    }
+
+    public String visitLambdaNode(LambdaNode node) {
+        return currentIterationConstructGenerator.getIterationsMapIdentifier().get(node.toString());
     }
 
     public String generateBooleans() {
@@ -370,15 +377,15 @@ public class ExpressionGenerator {
         this.substitutionGenerator = substitutionGenerator;
     }
 
-    public void setComprehensionGenerator(SetComprehensionGenerator comprehensionGenerator) {
-        this.currentComprehensionGenerator = comprehensionGenerator;
+    public void setIterationConstructGenerator(IterationConstructGenerator iterationConstructGenerator) {
+        this.currentIterationConstructGenerator = iterationConstructGenerator;
     }
 
-    public int getComprehensionCounter() {
-        return comprehensionCounter;
+    public int getIterationConstructCounter() {
+        return iterationConstructCounter;
     }
 
-    public void incrementComprehensionCounter() {
-        comprehensionCounter++;
+    public void incrementIterationConstructCounter() {
+        iterationConstructCounter++;
     }
 }

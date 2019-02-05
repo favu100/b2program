@@ -1,4 +1,4 @@
-MACHINE SetComprehension1
+MACHINE SetComprehension2
 
 VARIABLES  set
 

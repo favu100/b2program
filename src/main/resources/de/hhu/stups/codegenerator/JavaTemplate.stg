@@ -69,7 +69,7 @@ set_comprehension(type, identifier, isRelation, comprehension) ::= <<
 <comprehension>
 >>
 
-set_comprehension_enumeration(type, identifier, set, body) ::= <<
+iteration_construct_enumeration(type, identifier, set, body) ::= <<
 for(<type> <identifier> : <set>) {
     <body>
 }
@@ -77,9 +77,21 @@ for(<type> <identifier> : <set>) {
 
 set_comprehension_predicate(set, element, predicate) ::= <<
 if((<predicate>).booleanValue()) {
-    <set> = <set>.union(<element>);
+    <set> = <set>.union(new BSet\<>(<element>));
 }
 >>
+
+lambda(type, identifier, lambda) ::= <<
+<type> <identifier> = new BRelation\<>();
+<lambda>
+>>
+
+lambda_expression(relation, element, expression, predicate) ::= <<
+if((<predicate>).booleanValue()) {
+    <relation> = <relation>.union(new BRelation\<>(new BCouple\<>(<element>, <expression>)));
+}
+>>
+
 
 enum_call(class, identifier) ::= <<
 <class>.<identifier>

@@ -5,6 +5,7 @@ import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -73,7 +74,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private String addition;
 
-	private boolean inSetComprehension;
+	private boolean inIterationConstruct;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, Path addition) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
@@ -93,11 +94,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
-																expressionGenerator, identifierGenerator);
+																expressionGenerator, identifierGenerator, importGenerator);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator,
 															declarationGenerator, identifierGenerator, nameHandler, typeGenerator);
-		this.inSetComprehension = false;
+		this.inIterationConstruct = false;
 	}
 
 	/*
@@ -217,9 +218,14 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return expressionGenerator.visitSetComprehensionNode(node);
 	}
 
+	@Override
+	public String visitLambdaNode(LambdaNode node, Void aVoid) {
+		return expressionGenerator.visitLambdaNode(node);
+	}
+
 	/*
-	* Code is not generated from identifier predicates in the given subset of B
-	*/
+        * Code is not generated from identifier predicates in the given subset of B
+        */
 	@Override
 	public String visitIdentifierPredicateNode(IdentifierPredicateNode node, Void expected) {
 		throw new RuntimeException("Given node is not implemented: " + node.getClass());
@@ -348,15 +354,15 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return machineNode.getName();
 	}
 
-	public void inSetComprehension() {
-		inSetComprehension = true;
+	public void inIterationConstruct() {
+		inIterationConstruct = true;
 	}
 
-	public void leaveSetComprehesion() {
-		inSetComprehension = false;
+	public void leaveIterationConstruct() {
+		inIterationConstruct = false;
 	}
 
-	public boolean isInSetComprehension() {
-		return inSetComprehension;
+	public boolean isInIterationConstruct() {
+		return inIterationConstruct;
 	}
 }

@@ -4,6 +4,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -29,6 +30,7 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
+import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Created by fabian on 05.02.19.
  */
-public class SetComprehensionGenerator implements AbstractVisitor<Void, Void> {
+public class IterationConstructGenerator implements AbstractVisitor<Void, Void> {
 
     private final MachineGenerator machineGenerator;
 
@@ -51,26 +53,38 @@ public class SetComprehensionGenerator implements AbstractVisitor<Void, Void> {
 
     private final TypeGenerator typeGenerator;
 
-    private final HashMap<String, String> comprehensionsMapCode;
+    private final ImportGenerator importGenerator;
 
-    private final HashMap<String, String> comprehensionMapIdentifier;
+    private final HashMap<String, String> iterationsMapCode;
+
+    private final HashMap<String, String> iterationsMapIdentifier;
 
     private final List<String> boundedVariables;
 
-    public SetComprehensionGenerator(final MachineGenerator machineGenerator, final STGroup group,
-                                     final ExpressionGenerator expressionGenerator, final TypeGenerator typeGenerator) {
+    public IterationConstructGenerator(final MachineGenerator machineGenerator, final STGroup group,
+                                       final ExpressionGenerator expressionGenerator, final TypeGenerator typeGenerator,
+                                       final ImportGenerator importGenerator) {
         this.machineGenerator = machineGenerator;
         this.group = group;
         this.expressionGenerator = expressionGenerator;
+        this.importGenerator = importGenerator;
         this.typeGenerator = typeGenerator;
-        this.comprehensionsMapCode = new HashMap<>();
-        this.comprehensionMapIdentifier = new HashMap<>();
+        this.iterationsMapCode = new HashMap<>();
+        this.iterationsMapIdentifier = new HashMap<>();
         this.boundedVariables = new ArrayList<>();
     }
 
-    public String generate(SetComprehensionNode node) {
+    public ST generateEnumeration(DeclarationNode declarationNode) {
+        ST template = group.getInstanceOf("iteration_construct_enumeration");
+        TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
+        TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName());
+        return template;
+    }
+
+    public String generateSetComprehension(SetComprehensionNode node) {
         PredicateNode predicate = node.getPredicateNode();
         if(!(predicate instanceof PredicateOperatorNode)) {
+            //TODO
             throw new RuntimeException("Predicate for Set Comprehension must be a conjunction");
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
@@ -85,10 +99,11 @@ public class SetComprehensionGenerator implements AbstractVisitor<Void, Void> {
                 }
             }
         }
-        int comprehensionCounter = expressionGenerator.getComprehensionCounter();
+        importGenerator.addImport(node.getType());
+        int iterationConstructCounter = expressionGenerator.getIterationConstructCounter();
         ST template = group.getInstanceOf("set_comprehension");
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
-        TemplateHandler.add(template, "identifier", "_sc_set_" + comprehensionCounter);
+        TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
         TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
         boundedVariables.clear();
         boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::toString).collect(Collectors.toList()));
@@ -109,31 +124,90 @@ public class SetComprehensionGenerator implements AbstractVisitor<Void, Void> {
             }
             //TODO
             if(i == node.getDeclarationList().size() - 1) {
-                TemplateHandler.add(enumerationTemplate, "body", generatePredicate(predicate, "_sc_set_" + comprehensionCounter, "_sc_" + declarationNode.getName()));
+                TemplateHandler.add(enumerationTemplate, "body", generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarationNode.getName()));
             }
             TemplateHandler.add(template, "comprehension", enumerationTemplate.render());
         }
         String result = template.render();
-        comprehensionMapIdentifier.put(node.toString(), "_sc_set_"+ comprehensionCounter);
-        comprehensionsMapCode.put(node.toString(), result);
+        iterationsMapIdentifier.put(node.toString(), "_ic_set_"+ iterationConstructCounter);
+        iterationsMapCode.put(node.toString(), result);
         return result;
     }
 
-    public ST generateEnumeration(DeclarationNode declarationNode) {
-        ST template = group.getInstanceOf("set_comprehension_enumeration");
-        TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
-        TemplateHandler.add(template, "identifier", "_sc_" + declarationNode.getName());
-        return template;
+    public String generateLambda(LambdaNode node) {
+        PredicateNode predicate = node.getPredicate();
+        ExprNode expression = node.getExpression();
+        if(!(predicate instanceof PredicateOperatorNode)) {
+            //TODO
+            throw new RuntimeException("Predicate for Lambda Expression must be a conjunction");
+        } else {
+            PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
+            if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
+                throw new RuntimeException("Predicate for Lambda Expression must be a conjunction");
+            } else {
+                for(int i = 0; i < node.getDeclarations().size(); i++) {
+                    PredicateNode innerPredicate = predicateOperatorNode.getPredicateArguments().get(i);
+                    if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
+                        throw new RuntimeException("First predicates must declare the set to iterate over");
+                    }
+                }
+            }
+        }
+        importGenerator.addImport(node.getType());
+        importGenerator.addImport(((SetType)node.getType()).getSubType());
+        int iterationConstructCounter = expressionGenerator.getIterationConstructCounter();
+        ST template = group.getInstanceOf("lambda");
+        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
+        TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
+        boundedVariables.clear();
+        boundedVariables.addAll(node.getDeclarations().stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        for(int i = 0; i < node.getDeclarations().size(); i++) {
+            DeclarationNode declarationNode = node.getDeclarations().get(i);
+            PredicateOperatorWithExprArgsNode innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+            ST enumerationTemplate;
+            if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
+                ExprNode leftExpression = innerPredicate.getExpressionNodes().get(0);
+                ExprNode rightExpression = innerPredicate.getExpressionNodes().get(1);
+                if(!(leftExpression instanceof IdentifierExprNode) || !(((IdentifierExprNode) leftExpression).getName().equals(declarationNode.getName()))) {
+                    throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
+                }
+                enumerationTemplate = generateEnumeration(declarationNode);
+                TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rightExpression, null));
+            } else {
+                throw new RuntimeException("Other operations within predicate node not supported yet");
+            }
+            //TODO
+            if(i == node.getDeclarations().size() - 1) {
+                TemplateHandler.add(enumerationTemplate, "body", generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarationNode.getName()));
+            }
+            TemplateHandler.add(template, "lambda", enumerationTemplate.render());
+        }
+        String result = template.render();
+        iterationsMapIdentifier.put(node.toString(), "_ic_set_"+ iterationConstructCounter);
+        iterationsMapCode.put(node.toString(), result);
+        return result;
     }
 
-    public String generatePredicate(PredicateNode predicateNode, String setName, String elementName) {
+    public String generateSetComprehensionPredicate(PredicateNode predicateNode, String setName, String elementName) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("set_comprehension_predicate");
-        machineGenerator.inSetComprehension();
+        machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "set", setName);
         TemplateHandler.add(template, "element", elementName);
-        machineGenerator.leaveSetComprehesion();
+        machineGenerator.leaveIterationConstruct();
+        return template.render();
+    }
+
+    public String generateLambdaExpression(PredicateNode predicateNode, ExprNode expression, String relationName, String elementName) {
+        //TODO only take end of predicate arguments
+        ST template = group.getInstanceOf("lambda_expression");
+        machineGenerator.inIterationConstruct();
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+        TemplateHandler.add(template, "relation", relationName);
+        TemplateHandler.add(template, "element", elementName);
+        TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));
+        machineGenerator.leaveIterationConstruct();
         return template.render();
     }
 
@@ -165,8 +239,15 @@ public class SetComprehensionGenerator implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitSetComprehensionNode(SetComprehensionNode node, Void aVoid) {
-        comprehensionsMapCode.put(node.toString(), generate(node));
-        expressionGenerator.incrementComprehensionCounter();
+        iterationsMapCode.put(node.toString(), generateSetComprehension(node));
+        expressionGenerator.incrementIterationConstructCounter();
+        return null;
+    }
+
+    @Override
+    public Void visitLambdaNode(LambdaNode node, Void aVoid) {
+        iterationsMapCode.put(node.toString(), generateLambda(node));
+        expressionGenerator.incrementIterationConstructCounter();
         return null;
     }
 
@@ -277,11 +358,11 @@ public class SetComprehensionGenerator implements AbstractVisitor<Void, Void> {
         return null;
     }
 
-    public HashMap<String, String> getComprehensionsMapCode() {
-        return comprehensionsMapCode;
+    public HashMap<String, String> getIterationsMapCode() {
+        return iterationsMapCode;
     }
 
-    public HashMap<String, String> getComprehensionMapIdentifier() {
-        return comprehensionMapIdentifier;
+    public HashMap<String, String> getIterationsMapIdentifier() {
+        return iterationsMapIdentifier;
     }
 }

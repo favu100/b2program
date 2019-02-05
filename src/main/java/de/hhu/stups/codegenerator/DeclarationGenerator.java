@@ -5,9 +5,14 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
+import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,16 +107,31 @@ public class DeclarationGenerator {
 
     public List<String> generateConstants(MachineNode node) {
         //TODO Generate code for PROPERTIES (?)
-        //System.err.println(node.getProperties().getClass());
+        List<PredicateNode> propertiesNodes = new ArrayList<>();
+        if(node.getProperties() != null) {
+            System.err.println(node.getProperties().getClass());
+            if(!(node.getProperties() instanceof PredicateOperatorNode)) {
+                return new ArrayList<>();
+            }
+            PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
+            propertiesNodes.addAll(properties.getPredicateArguments());
+        }
         return node.getConstants().stream()
-                .map(this::generateConstant)
+                .map(constant -> this.generateConstant(constant, propertiesNodes))
                 .collect(Collectors.toList());
     }
 
-    private String generateConstant(DeclarationNode constant) {
+    private String generateConstant(DeclarationNode constant, List<PredicateNode> properties) {
         ST declaration = currentGroup.getInstanceOf("constant");
+        List<PredicateNode> equalProperties = properties.stream()
+                .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
+                        && ((PredicateOperatorWithExprArgsNode) prop).getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL
+                        && ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0) instanceof IdentifierExprNode
+                        && ((IdentifierExprNode) ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0)).getName().equals(constant.getName()))
+                .collect(Collectors.toList());
         TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(declaration, "val", machineGenerator.visitExprNode(((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1), null));
         return declaration.render();
     }
 

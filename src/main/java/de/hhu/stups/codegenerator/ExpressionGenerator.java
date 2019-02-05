@@ -6,6 +6,7 @@ import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
+import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
@@ -85,6 +86,10 @@ public class ExpressionGenerator {
 
     private OperatorGenerator operatorGenerator;
 
+    private SetComprehensionGenerator currentComprehensionGenerator;
+
+    private int comprehensionCounter;
+
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator) {
@@ -96,6 +101,8 @@ public class ExpressionGenerator {
         this.declarationGenerator = declarationGenerator;
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
+        this.currentComprehensionGenerator = null;
+        this.comprehensionCounter = 0;
     }
 
     /*
@@ -119,6 +126,8 @@ public class ExpressionGenerator {
             return visitIdentifierExprNode((IdentifierExprNode) node);
         } else if(node instanceof CastPredicateExpressionNode) {
             return visitCastPredicateExpressionNode((CastPredicateExpressionNode) node);
+        } else if(node instanceof SetComprehensionNode) {
+            return visitSetComprehensionNode((SetComprehensionNode) node);
         }
         throw new RuntimeException("Given node is not implemented: " + node.getClass());
     }
@@ -137,6 +146,9 @@ public class ExpressionGenerator {
     * This function generates code for an identifier from the belonging AST node.
     */
     public String visitIdentifierExprNode(IdentifierExprNode node) {
+        if(machineGenerator.isInSetComprehension()) {
+            return "_sc_" + node.getName();
+        }
         if(substitutionGenerator.getCurrentLocalScope() > 0) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
             return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned);
@@ -342,6 +354,10 @@ public class ExpressionGenerator {
         return val.render();
     }
 
+    public String visitSetComprehensionNode(SetComprehensionNode node) {
+        return currentComprehensionGenerator.getComprehensionMapIdentifier().get(node.toString());
+    }
+
     public String generateBooleans() {
         return currentGroup.getInstanceOf("bool").render();
     }
@@ -352,5 +368,17 @@ public class ExpressionGenerator {
 
     public void setSubstitutionGenerator(SubstitutionGenerator substitutionGenerator) {
         this.substitutionGenerator = substitutionGenerator;
+    }
+
+    public void setComprehensionGenerator(SetComprehensionGenerator comprehensionGenerator) {
+        this.currentComprehensionGenerator = comprehensionGenerator;
+    }
+
+    public int getComprehensionCounter() {
+        return comprehensionCounter;
+    }
+
+    public void incrementComprehensionCounter() {
+        comprehensionCounter++;
     }
 }

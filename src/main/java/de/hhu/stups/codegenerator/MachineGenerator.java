@@ -73,6 +73,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private String addition;
 
+	private boolean inSetComprehension;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, Path addition) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		if(addition != null) {
@@ -95,6 +97,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator,
 															declarationGenerator, identifierGenerator, nameHandler, typeGenerator);
+		this.inSetComprehension = false;
 	}
 
 	/*
@@ -207,11 +210,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 
 	/*
-	* Code is not generated from set comprehensions in the given subset of B
+	*
 	*/
 	@Override
 	public String visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
-		throw new RuntimeException("Given node is not implemented: " + node.getClass());
+		return expressionGenerator.visitSetComprehensionNode(node);
 	}
 
 	/*
@@ -345,4 +348,15 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return machineNode.getName();
 	}
 
+	public void inSetComprehension() {
+		inSetComprehension = true;
+	}
+
+	public void leaveSetComprehesion() {
+		inSetComprehension = false;
+	}
+
+	public boolean isInSetComprehension() {
+		return inSetComprehension;
+	}
 }

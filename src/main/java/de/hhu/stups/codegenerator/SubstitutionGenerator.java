@@ -218,7 +218,12 @@ public class SubstitutionGenerator {
     * This function generates code for one assignment with the expressions and the belonging template
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
+        SetComprehensionGenerator comprehensionGenerator = new SetComprehensionGenerator(machineGenerator, currentGroup, expressionGenerator, typeGenerator);
+        comprehensionGenerator.visitExprNode(rhs, null);
+        expressionGenerator.setComprehensionGenerator(comprehensionGenerator);
+
         ST substitution = currentGroup.getInstanceOf("assignment");
+        TemplateHandler.add(substitution, "setComprehension", comprehensionGenerator.getComprehensionsMapCode().values());
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));

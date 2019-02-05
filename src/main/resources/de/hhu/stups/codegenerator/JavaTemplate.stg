@@ -64,6 +64,23 @@ set_enumeration(enums, isRelation) ::= <<
 <if(isRelation)>new BRelation\<><else>new BSet\<><endif>(<enums; separator=", ">)
 >>
 
+set_comprehension(type, identifier, isRelation, comprehension) ::= <<
+<type> <identifier> = new <if(isRelation)>BRelation<else>BSet<endif>\<>();
+<comprehension>
+>>
+
+set_comprehension_enumeration(type, identifier, set, body) ::= <<
+for(<type> <identifier> : <set>) {
+    <body>
+}
+>>
+
+set_comprehension_predicate(set, element, predicate) ::= <<
+if((<predicate>).booleanValue()) {
+    <set> = <set>.union(<element>);
+}
+>>
+
 enum_call(class, identifier) ::= <<
 <class>.<identifier>
 >>
@@ -98,8 +115,8 @@ local_declaration(type, identifier) ::= <<
 <declaration(type, identifier)> = null;
 >>
 
-constant(type, identifier) ::= <<
-private static final <type> <identifier>;
+constant(type, identifier, val) ::= <<
+private static final <type> <identifier> = <val>;
 >>
 
 values(assignments) ::= <<
@@ -130,7 +147,8 @@ parallel_store(identifier, val) ::= <<
 <identifier> = <val>;
 >>
 
-assignment(identifier, val) ::= <<
+assignment(setComprehension, identifier, val) ::= <<
+<setComprehension; separator="\n">
 <identifier> = <val>;
 >>
 

@@ -100,6 +100,7 @@ BBoolean <identifier> = new BBoolean(<if(forall)>true<else>false<endif>);
 quantified_evaluation(identifier, predicate, forall) ::= <<
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+    break;
 }
 >>
 
@@ -170,8 +171,8 @@ parallel_store(identifier, val) ::= <<
 <identifier> = <val>;
 >>
 
-assignment(setComprehension, identifier, val) ::= <<
-<setComprehension; separator="\n">
+assignment(iterationConstruct, identifier, val) ::= <<
+<iterationConstruct; separator="\n">
 <identifier> = <val>;
 >>
 
@@ -225,7 +226,8 @@ unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
-select(predicate, then) ::= <<
+select(iterationConstruct, predicate, then) ::= <<
+<iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
 } else {
@@ -233,7 +235,8 @@ if((<predicate>).booleanValue()) {
 }
 >>
 
-if(predicate, then, else1) ::= <<
+if(iterationConstruct, predicate, then, else1) ::= <<
+<iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
 } <else1; separator=" ">

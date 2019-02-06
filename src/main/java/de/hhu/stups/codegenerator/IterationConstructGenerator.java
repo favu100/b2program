@@ -196,9 +196,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
             if(!((node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION &&
-                    predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.IMPLIES) ||
+                    predicateOperatorNode.getOperator() == PredicateOperatorNode.PredicateOperator.IMPLIES) ||
                     (node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION &&
-                            predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND))) {
+                            predicateOperatorNode.getOperator() == PredicateOperatorNode.PredicateOperator.AND))) {
                 throw new RuntimeException("Predicate for Quantified Predicate is not valid");
             } else {
                 for(int i = 0; i < node.getDeclarationList().size(); i++) {
@@ -210,7 +210,6 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
             }
         }
         importGenerator.addImport(node.getType());
-        importGenerator.addImport(((SetType)node.getType()).getSubType());
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         ST template = group.getInstanceOf("quantified_predicate");
         TemplateHandler.add(template, "identifier", "_ic_boolean_" + iterationConstructCounter);

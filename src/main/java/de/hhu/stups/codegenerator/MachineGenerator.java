@@ -52,6 +52,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final ImportGenerator importGenerator;
 
+	private final IterationConstructHandler iterationConstructHandler;
+
 	private final OperatorGenerator operatorGenerator;
 
 	private final OperationGenerator operationGenerator;
@@ -89,12 +91,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler);
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, useBigInteger);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
+		this.iterationConstructHandler = new IterationConstructHandler();
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
-		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator);
+		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, nameHandler, importGenerator,
-															declarationGenerator, identifierGenerator, typeGenerator);
+															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
-																expressionGenerator, identifierGenerator, importGenerator);
+																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator,
 															declarationGenerator, identifierGenerator, nameHandler, typeGenerator);
@@ -201,13 +204,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	/*
-	* Code is not generated from quantified predicates in the given subset of B
+	*
 	*/
 	@Override
 	public String visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
-		throw new RuntimeException("Given node is not implemented: " + node.getClass());
+		return predicateGenerator.generateQuantifiedPredicateNode(node);
 	}
-
 
 
 	/*

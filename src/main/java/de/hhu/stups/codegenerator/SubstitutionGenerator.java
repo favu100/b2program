@@ -41,6 +41,8 @@ public class SubstitutionGenerator {
 
     private final ImportGenerator importGenerator;
 
+    private final IterationConstructHandler iterationConstructHandler;
+
     private int currentLocalScope;
 
     private int localScopes;
@@ -51,7 +53,8 @@ public class SubstitutionGenerator {
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                                  final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator,
-                                 final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator) {
+                                 final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator,
+                                 final IterationConstructHandler iterationConstructHandler) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -60,6 +63,7 @@ public class SubstitutionGenerator {
         this.expressionGenerator.setSubstitutionGenerator(this);
         this.identifierGenerator = identifierGenerator;
         this.importGenerator = importGenerator;
+        this.iterationConstructHandler = iterationConstructHandler;
         this.identifierOnLhsInParallel = new ArrayList<>();
         this.definedLoadsInParallel = new ArrayList<>();
         this.identifierGenerator.setIdentifierOnLhsInParallel(identifierOnLhsInParallel);
@@ -221,9 +225,9 @@ public class SubstitutionGenerator {
     * This function generates code for one assignment with the expressions and the belonging template
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(machineGenerator, currentGroup, expressionGenerator, typeGenerator, importGenerator);
+        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
         iterationConstructGenerator.visitExprNode(rhs, null);
-        expressionGenerator.setIterationConstructGenerator(iterationConstructGenerator);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
         ST substitution = currentGroup.getInstanceOf("assignment");
         TemplateHandler.add(substitution, "setComprehension", iterationConstructGenerator.getIterationsMapCode().values());

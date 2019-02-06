@@ -92,6 +92,17 @@ if((<predicate>).booleanValue()) {
 }
 >>
 
+quantified_predicate(identifier, forall, predicate) ::= <<
+BBoolean <identifier> = new BBoolean(<if(forall)>true<else>false<endif>);
+<predicate>
+>>
+
+quantified_evaluation(identifier, predicate, forall) ::= <<
+if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
+    <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+}
+>>
+
 
 enum_call(class, identifier) ::= <<
 <class>.<identifier>

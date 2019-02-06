@@ -87,13 +87,12 @@ public class ExpressionGenerator {
 
     private OperatorGenerator operatorGenerator;
 
-    private IterationConstructGenerator currentIterationConstructGenerator;
-
-    private int iterationConstructCounter;
+    private final IterationConstructHandler iterationConstructHandler;
 
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
-                               final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator) {
+                               final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
+                               final IterationConstructHandler iterationConstructHandler) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;
@@ -102,8 +101,7 @@ public class ExpressionGenerator {
         this.declarationGenerator = declarationGenerator;
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
-        this.currentIterationConstructGenerator = null;
-        this.iterationConstructCounter = 0;
+        this.iterationConstructHandler = iterationConstructHandler;
     }
 
     /*
@@ -358,11 +356,11 @@ public class ExpressionGenerator {
     }
 
     public String visitSetComprehensionNode(SetComprehensionNode node) {
-        return currentIterationConstructGenerator.getIterationsMapIdentifier().get(node.toString());
+        return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
     public String visitLambdaNode(LambdaNode node) {
-        return currentIterationConstructGenerator.getIterationsMapIdentifier().get(node.toString());
+        return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
     public String generateBooleans() {
@@ -377,15 +375,4 @@ public class ExpressionGenerator {
         this.substitutionGenerator = substitutionGenerator;
     }
 
-    public void setIterationConstructGenerator(IterationConstructGenerator iterationConstructGenerator) {
-        this.currentIterationConstructGenerator = iterationConstructGenerator;
-    }
-
-    public int getIterationConstructCounter() {
-        return iterationConstructCounter;
-    }
-
-    public void incrementIterationConstructCounter() {
-        iterationConstructCounter++;
-    }
 }

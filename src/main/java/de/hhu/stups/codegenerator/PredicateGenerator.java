@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator;
 
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
+import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -35,14 +36,17 @@ public class PredicateGenerator {
 
     private final ImportGenerator importGenerator;
 
+    private final IterationConstructHandler iterationConstructHandler;
+
     private OperatorGenerator operatorGenerator;
 
     public PredicateGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                              final ImportGenerator importGenerator) {
+                              final ImportGenerator importGenerator, final IterationConstructHandler iterationConstructHandler) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.importGenerator = importGenerator;
+        this.iterationConstructHandler = iterationConstructHandler;
     }
 
     /*
@@ -80,6 +84,10 @@ public class PredicateGenerator {
             return generateBoolean(operator);
         }
         throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
+    }
+
+    public String generateQuantifiedPredicateNode(QuantifiedPredicateNode node) {
+        return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
     /*

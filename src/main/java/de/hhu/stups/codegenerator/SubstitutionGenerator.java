@@ -113,7 +113,6 @@ public class SubstitutionGenerator {
     * This function generates code for if substitutions with and without else-branches from the belonging AST node and the belonging template.
     */
     private String visitIfSubstitution(IfOrSelectSubstitutionsNode node) {
-
         IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
         node.getConditions().forEach(cond -> iterationConstructGenerator.visitPredicateNode(cond, null));
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
@@ -262,6 +261,7 @@ public class SubstitutionGenerator {
     }
 
     private String visitParallelSubstitutionNode(ListSubstitutionNode node) {
+        //TODO Implement handling iteration construct
         //TODO implement parallel execution of operation call from included machine
         identifierOnLhsInParallel.clear();
         ST substitutions = currentGroup.getInstanceOf("parallel");
@@ -361,7 +361,12 @@ public class SubstitutionGenerator {
     }
 
     private String generateNondeterminism(IdentifierExprNode lhs, ExprNode rhs) {
+        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
+        iterationConstructGenerator.visitExprNode(rhs, null);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
+        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode(lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(lhs.getName()));
@@ -399,7 +404,12 @@ public class SubstitutionGenerator {
     * This function generates code for a while loop with the belonging AST node and the belonging template.
     */
     public String visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
+        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
+        iterationConstructGenerator.visitPredicateNode(node.getCondition(), null);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+
         ST whileST = currentGroup.getInstanceOf("while");
+        TemplateHandler.add(whileST, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
         TemplateHandler.add(whileST, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), expected));
         TemplateHandler.add(whileST, "then", machineGenerator.visitSubstitutionNode(node.getBody(), expected));
         return whileST.render();

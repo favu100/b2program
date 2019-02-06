@@ -288,9 +288,11 @@ if(<predicate>.booleanValue()) {
 }
 >>
 
-while(predicate, then) ::= <<
+while(iterationConstruct, predicate, then) ::= <<
+<iterationConstruct; separator="\n">
 while((<predicate>).booleanValue()) {
     <then>
+    <iterationConstruct; separator="\n">
 }
 >>
 

@@ -404,14 +404,20 @@ public class SubstitutionGenerator {
     * This function generates code for a while loop with the belonging AST node and the belonging template.
     */
     public String visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        iterationConstructGenerator.visitPredicateNode(node.getCondition(), null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+        IterationConstructGenerator iterationConstructGenerator1 = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
+        iterationConstructGenerator1.visitPredicateNode(node.getCondition(), null);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator1);
 
         ST whileST = currentGroup.getInstanceOf("while");
-        TemplateHandler.add(whileST, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
+        TemplateHandler.add(whileST, "iterationConstruct1", iterationConstructGenerator1.getIterationsMapCode().values());
         TemplateHandler.add(whileST, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), expected));
         TemplateHandler.add(whileST, "then", machineGenerator.visitSubstitutionNode(node.getBody(), expected));
+
+        IterationConstructGenerator iterationConstructGenerator2 = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
+        iterationConstructGenerator2.visitPredicateNode(node.getCondition(), null);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator2);
+
+        TemplateHandler.add(whileST, "iterationConstruct2", iterationConstructGenerator2.getIterationsMapCode().values());
         return whileST.render();
     }
 

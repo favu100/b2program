@@ -80,17 +80,16 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return template;
     }
 
-    public String generateSetComprehension(SetComprehensionNode node) {
-        PredicateNode predicate = node.getPredicateNode();
+    private void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations) {
         if(!(predicate instanceof PredicateOperatorNode)) {
             //TODO
-            throw new RuntimeException("Predicate for Set Comprehension must be a conjunction");
+            throw new RuntimeException("Predicate for iteration must be a conjunction");
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
             if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                throw new RuntimeException("Predicate for Set Comprehension must be a conjunction");
+                throw new RuntimeException("Predicate for iteration must be a conjunction");
             } else {
-                for(int i = 0; i < node.getDeclarationList().size(); i++) {
+                for(int i = 0; i < declarations.size(); i++) {
                     PredicateNode innerPredicate = predicateOperatorNode.getPredicateArguments().get(i);
                     if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
                         throw new RuntimeException("First predicates must declare the set to iterate over");
@@ -98,18 +97,13 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
                 }
             }
         }
-        importGenerator.addImport(node.getType());
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        ST template = group.getInstanceOf("set_comprehension");
-        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
-        TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
-        TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
-        boundedVariables.clear();
-        boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::toString).collect(Collectors.toList()));
-        for(int i = 0; i < node.getDeclarationList().size(); i++) {
-            DeclarationNode declarationNode = node.getDeclarationList().get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) node.getPredicateNode()).getPredicateArguments().get(i);
-            ST enumerationTemplate;
+    }
+
+    private ST getEnumerationTemplate(List<DeclarationNode> declarations, PredicateNode predicate) {
+        ST enumerationTemplate = null;
+        for(int i = 0; i < declarations.size(); i++) {
+            DeclarationNode declarationNode = declarations.get(i);
+            PredicateOperatorWithExprArgsNode innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
             if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
                 ExprNode leftExpression = innerPredicate.getExpressionNodes().get(0);
                 ExprNode rightExpression = innerPredicate.getExpressionNodes().get(1);
@@ -121,12 +115,26 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
             } else {
                 throw new RuntimeException("Other operations within predicate node not supported yet");
             }
-            //TODO
-            if(i == node.getDeclarationList().size() - 1) {
-                TemplateHandler.add(enumerationTemplate, "body", generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarationNode.getName()));
-            }
-            TemplateHandler.add(template, "comprehension", enumerationTemplate.render());
         }
+        return enumerationTemplate;
+    }
+
+    public String generateSetComprehension(SetComprehensionNode node) {
+        PredicateNode predicate = node.getPredicateNode();
+        List<DeclarationNode> declarations = node.getDeclarationList();
+        checkPredicate(predicate, declarations);
+        importGenerator.addImport(node.getType());
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        ST template = group.getInstanceOf("set_comprehension");
+        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
+        TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
+        TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
+        boundedVariables.clear();
+        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
+        //TODO
+        TemplateHandler.add(enumerationTemplate, "body", generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
+        TemplateHandler.add(template, "comprehension", enumerationTemplate.render());
         String result = template.render();
         iterationsMapIdentifier.put(node.toString(), "_ic_set_"+ iterationConstructCounter);
         iterationsMapCode.put(node.toString(), result);
@@ -135,23 +143,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     public String generateLambda(LambdaNode node) {
         PredicateNode predicate = node.getPredicate();
+        List<DeclarationNode> declarations = node.getDeclarations();
+        checkPredicate(predicate, declarations);
         ExprNode expression = node.getExpression();
-        if(!(predicate instanceof PredicateOperatorNode)) {
-            //TODO
-            throw new RuntimeException("Predicate for Lambda Expression must be a conjunction");
-        } else {
-            PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
-            if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                throw new RuntimeException("Predicate for Lambda Expression must be a conjunction");
-            } else {
-                for(int i = 0; i < node.getDeclarations().size(); i++) {
-                    PredicateNode innerPredicate = predicateOperatorNode.getPredicateArguments().get(i);
-                    if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                        throw new RuntimeException("First predicates must declare the set to iterate over");
-                    }
-                }
-            }
-        }
         importGenerator.addImport(node.getType());
         importGenerator.addImport(((SetType)node.getType()).getSubType());
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
@@ -159,28 +153,11 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
         boundedVariables.clear();
-        boundedVariables.addAll(node.getDeclarations().stream().map(DeclarationNode::toString).collect(Collectors.toList()));
-        for(int i = 0; i < node.getDeclarations().size(); i++) {
-            DeclarationNode declarationNode = node.getDeclarations().get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
-            ST enumerationTemplate;
-            if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-                ExprNode leftExpression = innerPredicate.getExpressionNodes().get(0);
-                ExprNode rightExpression = innerPredicate.getExpressionNodes().get(1);
-                if(!(leftExpression instanceof IdentifierExprNode) || !(((IdentifierExprNode) leftExpression).getName().equals(declarationNode.getName()))) {
-                    throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
-                }
-                enumerationTemplate = generateEnumeration(declarationNode);
-                TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rightExpression, null));
-            } else {
-                throw new RuntimeException("Other operations within predicate node not supported yet");
-            }
-            //TODO
-            if(i == node.getDeclarations().size() - 1) {
-                TemplateHandler.add(enumerationTemplate, "body", generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarationNode.getName()));
-            }
-            TemplateHandler.add(template, "lambda", enumerationTemplate.render());
-        }
+        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
+        //TODO
+        TemplateHandler.add(enumerationTemplate, "body", generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
+        TemplateHandler.add(template, "lambda", enumerationTemplate.render());
         String result = template.render();
         iterationsMapIdentifier.put(node.toString(), "_ic_set_"+ iterationConstructCounter);
         iterationsMapCode.put(node.toString(), result);
@@ -189,54 +166,20 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
         PredicateNode predicate = node.getPredicateNode();
+        List<DeclarationNode> declarations = node.getDeclarationList();
+        checkPredicate(predicate, declarations);
         boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
-        if(!(predicate instanceof PredicateOperatorNode)) {
-            //TODO
-            throw new RuntimeException("Predicate for Quantified Predicate is not valid");
-        } else {
-            PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
-            if(!((node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION &&
-                    predicateOperatorNode.getOperator() == PredicateOperatorNode.PredicateOperator.IMPLIES) ||
-                    (node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION &&
-                            predicateOperatorNode.getOperator() == PredicateOperatorNode.PredicateOperator.AND))) {
-                throw new RuntimeException("Predicate for Quantified Predicate is not valid");
-            } else {
-                for(int i = 0; i < node.getDeclarationList().size(); i++) {
-                    PredicateNode innerPredicate = predicateOperatorNode.getPredicateArguments().get(i);
-                    if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                        throw new RuntimeException("First predicates must declare the set to iterate over");
-                    }
-                }
-            }
-        }
         importGenerator.addImport(node.getType());
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         ST template = group.getInstanceOf("quantified_predicate");
         TemplateHandler.add(template, "identifier", "_ic_boolean_" + iterationConstructCounter);
         TemplateHandler.add(template, "forall", forAll);
         boundedVariables.clear();
-        boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::toString).collect(Collectors.toList()));
-        for(int i = 0; i < node.getDeclarationList().size(); i++) {
-            DeclarationNode declarationNode = node.getDeclarationList().get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
-            ST enumerationTemplate;
-            if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-                ExprNode leftExpression = innerPredicate.getExpressionNodes().get(0);
-                ExprNode rightExpression = innerPredicate.getExpressionNodes().get(1);
-                if(!(leftExpression instanceof IdentifierExprNode) || !(((IdentifierExprNode) leftExpression).getName().equals(declarationNode.getName()))) {
-                    throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
-                }
-                enumerationTemplate = generateEnumeration(declarationNode);
-                TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rightExpression, null));
-            } else {
-                throw new RuntimeException("Other operations within predicate node not supported yet");
-            }
-            //TODO
-            if(i == node.getDeclarationList().size() - 1) {
-                TemplateHandler.add(enumerationTemplate, "body", generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll));
-            }
-            TemplateHandler.add(template, "predicate", enumerationTemplate.render());
-        }
+        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        //TODO
+        ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
+        TemplateHandler.add(enumerationTemplate, "body", generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll));
+        TemplateHandler.add(template, "predicate", enumerationTemplate.render());
         String result = template.render();
         iterationsMapIdentifier.put(node.toString(), "_ic_boolean_"+ iterationConstructCounter);
         iterationsMapCode.put(node.toString(), result);

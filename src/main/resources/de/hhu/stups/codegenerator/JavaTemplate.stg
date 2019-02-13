@@ -64,8 +64,9 @@ set_enumeration(enums, isRelation) ::= <<
 <if(isRelation)>new BRelation\<><else>new BSet\<><endif>(<enums; separator=", ">)
 >>
 
-set_comprehension(type, identifier, isRelation, comprehension) ::= <<
+set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
 <type> <identifier> = new <if(isRelation)>BRelation<else>BSet<endif>\<>();
+<otherIterationConstructs>
 <comprehension>
 >>
 
@@ -81,8 +82,9 @@ if((<predicate>).booleanValue()) {
 }
 >>
 
-lambda(type, identifier, lambda) ::= <<
+lambda(type, identifier, otherIterationConstructs, lambda) ::= <<
 <type> <identifier> = new BRelation\<>();
+<otherIterationConstructs>
 <lambda>
 >>
 
@@ -92,8 +94,9 @@ if((<predicate>).booleanValue()) {
 }
 >>
 
-quantified_predicate(identifier, forall, predicate) ::= <<
+quantified_predicate(identifier, forall, otherIterationConstructs, predicate) ::= <<
 BBoolean <identifier> = new BBoolean(<if(forall)>true<else>false<endif>);
+<otherIterationConstructs>
 <predicate>
 >>
 
@@ -103,7 +106,6 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     break;
 }
 >>
-
 
 enum_call(class, identifier) ::= <<
 <class>.<identifier>

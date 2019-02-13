@@ -30,7 +30,6 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
-import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -123,29 +122,25 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         checkPredicate(predicate, declarations);
-        importGenerator.addImport(node.getType());
+        importGenerator.addImportInIteration(node.getType());
 
         ST template = group.getInstanceOf("set_comprehension");
 
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator);
-        iterationConstructGenerator.visitPredicateNode(node.getPredicateNode(), null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+        TemplateHandler.add(template, "otherIterationConstructs", inspectPredicate(predicate).getIterationsMapCode().values());
+
         ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
 
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         //TODO
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         TemplateHandler.add(enumerationTemplate, "body", generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
-        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructGenerator.getIterationsMapCode().values());
         iterationConstructHandler.setIterationConstructGenerator(this);
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
         TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
-        boundedVariables.clear();
-        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        setBoundedVariables(declarations);
         TemplateHandler.add(template, "comprehension", enumerationTemplate.render());
         String result = template.render();
-        iterationsMapIdentifier.put(node.toString(), "_ic_set_"+ iterationConstructCounter);
-        iterationsMapCode.put(node.toString(), result);
+        addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
         return result;
     }
 
@@ -154,29 +149,24 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         List<DeclarationNode> declarations = node.getDeclarations();
         checkPredicate(predicate, declarations);
         ExprNode expression = node.getExpression();
-        importGenerator.addImport(node.getType());
-        importGenerator.addImport(((SetType)node.getType()).getSubType());
+        importGenerator.addImportInIteration(node.getType());
 
         ST template = group.getInstanceOf("lambda");
 
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator);
-        iterationConstructGenerator.visitPredicateNode(node.getPredicate(), null);
-        iterationConstructGenerator.visitExprNode(node.getExpression(), null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+        TemplateHandler.add(template, "otherIterationConstructs", inspectExpression(inspectPredicate(predicate), expression).getIterationsMapCode().values());
+
         ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
 
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         //TODO
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         TemplateHandler.add(enumerationTemplate, "body", generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
-        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructGenerator.getIterationsMapCode().values());
+        iterationConstructHandler.setIterationConstructGenerator(this);
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
-        boundedVariables.clear();
-        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        setBoundedVariables(declarations);
         TemplateHandler.add(template, "lambda", enumerationTemplate.render());
         String result = template.render();
-        iterationsMapIdentifier.put(node.toString(), "_ic_set_"+ iterationConstructCounter);
-        iterationsMapCode.put(node.toString(), result);
+        addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
         return result;
     }
 
@@ -185,31 +175,45 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         List<DeclarationNode> declarations = node.getDeclarationList();
         checkPredicate(predicate, declarations);
         boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
-        importGenerator.addImport(node.getType());
+        importGenerator.addImportInIteration(node.getType());
 
         ST template = group.getInstanceOf("quantified_predicate");
 
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator);
-        iterationConstructGenerator.visitPredicateNode(node.getPredicateNode(), null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+        TemplateHandler.add(template, "otherIterationConstructs", inspectPredicate(predicate).getIterationsMapCode().values());
+
         ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
 
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-
         //TODO
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         TemplateHandler.add(enumerationTemplate, "body", generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll));
-        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructGenerator.getIterationsMapCode().values());
-
+        iterationConstructHandler.setIterationConstructGenerator(this);
         TemplateHandler.add(template, "identifier", "_ic_boolean_" + iterationConstructCounter);
         TemplateHandler.add(template, "forall", forAll);
-        boundedVariables.clear();
-        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
-
+        setBoundedVariables(declarations);
         TemplateHandler.add(template, "predicate", enumerationTemplate.render());
         String result = template.render();
-        iterationsMapIdentifier.put(node.toString(), "_ic_boolean_"+ iterationConstructCounter);
-        iterationsMapCode.put(node.toString(), result);
+        addIteration(node.toString(), "_ic_boolean_"+ iterationConstructCounter, result);
         return result;
+    }
+
+    private IterationConstructGenerator inspectPredicate(IterationConstructGenerator iterationConstructGenerator, PredicateNode predicate) {
+        iterationConstructGenerator.visitPredicateNode(predicate, null);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+        return iterationConstructGenerator;
+    }
+
+    private IterationConstructGenerator inspectPredicate(PredicateNode predicate) {
+        return inspectPredicate(new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator), predicate);
+    }
+
+    private IterationConstructGenerator inspectExpression(IterationConstructGenerator iterationConstructGenerator, ExprNode expression) {
+        iterationConstructGenerator.visitExprNode(expression, null);
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+        return iterationConstructGenerator;
+    }
+
+    private IterationConstructGenerator inspectExpression(ExprNode expression) {
+        return inspectExpression(new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator), expression);
     }
 
     public String generateSetComprehensionPredicate(PredicateNode predicateNode, String setName, String elementName) {
@@ -395,6 +399,16 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     @Override
     public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode choiceSubstitutionNode, Void aVoid) {
         return null;
+    }
+
+    private void setBoundedVariables(List<DeclarationNode> declarations) {
+        boundedVariables.clear();
+        boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+    }
+
+    private void addIteration(String node, String identifier, String code) {
+        iterationsMapIdentifier.put(node, identifier);
+        iterationsMapCode.put(node, code);
     }
 
     public HashMap<String, String> getIterationsMapCode() {

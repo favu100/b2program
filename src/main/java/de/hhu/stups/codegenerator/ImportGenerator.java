@@ -66,6 +66,13 @@ public class ImportGenerator {
         }
     }
 
+    public void addImportInIteration(BType type) {
+        addImport(type);
+        if(type instanceof SetType) {
+            addImport(((SetType) type).getSubType());
+        }
+    }
+
     public List<String> generateMachineImports(MachineNode node) {
         return node.getMachineReferences().stream()
                 .map(this::generateMachineImport)

@@ -1,4 +1,4 @@
-MACHINE Lambda
+MACHINE Lambda2
 
 VARIABLES  set
 
@@ -8,6 +8,6 @@ INITIALISATION set := {}
 
 OPERATIONS
 
-	calculate = BEGIN set := %p.(p:0..5 & p mod 2 = 0 | p * p) END
+	calculate = BEGIN set := %p.(p:{x|x : 0..5 & x mod 2 = 0} & p mod 2 = 0 | p * p) END
 
 END

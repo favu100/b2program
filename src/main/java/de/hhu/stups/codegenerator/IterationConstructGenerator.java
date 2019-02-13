@@ -126,7 +126,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         ST template = group.getInstanceOf("set_comprehension");
 
-        TemplateHandler.add(template, "otherIterationConstructs", inspectPredicate(predicate).getIterationsMapCode().values());
+        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
 
         ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
 
@@ -153,7 +153,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         ST template = group.getInstanceOf("lambda");
 
-        TemplateHandler.add(template, "otherIterationConstructs", inspectExpression(inspectPredicate(predicate), expression).getIterationsMapCode().values());
+        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectExpression(
+                iterationConstructHandler.inspectPredicate(predicate), expression).getIterationsMapCode().values());
 
         ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
 
@@ -179,7 +180,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         ST template = group.getInstanceOf("quantified_predicate");
 
-        TemplateHandler.add(template, "otherIterationConstructs", inspectPredicate(predicate).getIterationsMapCode().values());
+        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
 
         ST enumerationTemplate = getEnumerationTemplate(declarations, predicate);
 
@@ -194,26 +195,6 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         String result = template.render();
         addIteration(node.toString(), "_ic_boolean_"+ iterationConstructCounter, result);
         return result;
-    }
-
-    private IterationConstructGenerator inspectPredicate(IterationConstructGenerator iterationConstructGenerator, PredicateNode predicate) {
-        iterationConstructGenerator.visitPredicateNode(predicate, null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        return iterationConstructGenerator;
-    }
-
-    private IterationConstructGenerator inspectPredicate(PredicateNode predicate) {
-        return inspectPredicate(new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator), predicate);
-    }
-
-    private IterationConstructGenerator inspectExpression(IterationConstructGenerator iterationConstructGenerator, ExprNode expression) {
-        iterationConstructGenerator.visitExprNode(expression, null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        return iterationConstructGenerator;
-    }
-
-    private IterationConstructGenerator inspectExpression(ExprNode expression) {
-        return inspectExpression(new IterationConstructGenerator(iterationConstructHandler, machineGenerator, group, typeGenerator, importGenerator), expression);
     }
 
     public String generateSetComprehensionPredicate(PredicateNode predicateNode, String setName, String elementName) {

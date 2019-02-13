@@ -98,12 +98,8 @@ public class SubstitutionGenerator {
     * This function generates code for select substitutions from the belonging AST node and the belonging template.
     */
     private String visitSelectSubstitution(IfOrSelectSubstitutionsNode node) {
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        node.getConditions().forEach(cond -> iterationConstructGenerator.visitPredicateNode(cond, null));
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-
         ST select = currentGroup.getInstanceOf("select");
-        TemplateHandler.add(select, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
+        TemplateHandler.add(select, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
         TemplateHandler.add(select, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(select, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
         return select.render();
@@ -113,12 +109,8 @@ public class SubstitutionGenerator {
     * This function generates code for if substitutions with and without else-branches from the belonging AST node and the belonging template.
     */
     private String visitIfSubstitution(IfOrSelectSubstitutionsNode node) {
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        node.getConditions().forEach(cond -> iterationConstructGenerator.visitPredicateNode(cond, null));
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-
         ST ifST = currentGroup.getInstanceOf("if");
-        TemplateHandler.add(ifST, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
+        TemplateHandler.add(ifST, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
         TemplateHandler.add(ifST, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(ifST, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
         TemplateHandler.add(ifST, "else1", generateElseIfs(node));
@@ -235,12 +227,8 @@ public class SubstitutionGenerator {
     * This function generates code for one assignment with the expressions and the belonging template
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        iterationConstructGenerator.visitExprNode(rhs, null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-
         ST substitution = currentGroup.getInstanceOf("assignment");
-        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
+        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
@@ -361,12 +349,8 @@ public class SubstitutionGenerator {
     }
 
     private String generateNondeterminism(IdentifierExprNode lhs, ExprNode rhs) {
-        IterationConstructGenerator iterationConstructGenerator = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        iterationConstructGenerator.visitExprNode(rhs, null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
-        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructGenerator.getIterationsMapCode().values());
+        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode(lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(lhs.getName()));
@@ -404,20 +388,11 @@ public class SubstitutionGenerator {
     * This function generates code for a while loop with the belonging AST node and the belonging template.
     */
     public String visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
-        IterationConstructGenerator iterationConstructGenerator1 = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        iterationConstructGenerator1.visitPredicateNode(node.getCondition(), null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator1);
-
         ST whileST = currentGroup.getInstanceOf("while");
-        TemplateHandler.add(whileST, "iterationConstruct1", iterationConstructGenerator1.getIterationsMapCode().values());
+        TemplateHandler.add(whileST, "iterationConstruct1", iterationConstructHandler.inspectPredicate(node.getCondition()).getIterationsMapCode().values());
         TemplateHandler.add(whileST, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), expected));
         TemplateHandler.add(whileST, "then", machineGenerator.visitSubstitutionNode(node.getBody(), expected));
-
-        IterationConstructGenerator iterationConstructGenerator2 = new IterationConstructGenerator(iterationConstructHandler, machineGenerator, currentGroup, typeGenerator, importGenerator);
-        iterationConstructGenerator2.visitPredicateNode(node.getCondition(), null);
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator2);
-
-        TemplateHandler.add(whileST, "iterationConstruct2", iterationConstructGenerator2.getIterationsMapCode().values());
+        TemplateHandler.add(whileST, "iterationConstruct2", iterationConstructHandler.inspectPredicate(node.getCondition()).getIterationsMapCode().values());
         return whileST.render();
     }
 

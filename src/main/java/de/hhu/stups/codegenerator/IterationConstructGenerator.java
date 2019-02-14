@@ -82,7 +82,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     private void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations) {
         if(!(predicate instanceof PredicateOperatorNode)) {
             //TODO
-            throw new RuntimeException("Predicate for iteration must be a conjunction");
+            if(declarations.size() != 1) {
+                throw new RuntimeException("Predicate for iteration must be a conjunction");
+            }
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
             if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
@@ -98,19 +100,27 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         }
     }
 
+    private ST getElementOfTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
+            throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
+        }
+        ST enumerationTemplate = generateEnumeration(declarationNode);
+        TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
+        return enumerationTemplate;
+    }
+
     private ST getEnumerationTemplate(List<DeclarationNode> declarations, PredicateNode predicate) {
         ST enumerationTemplate = null;
         for(int i = 0; i < declarations.size(); i++) {
             DeclarationNode declarationNode = declarations.get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+            PredicateOperatorWithExprArgsNode innerPredicate;
+            if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+            } else {
+                innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+            }
             if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-                ExprNode leftExpression = innerPredicate.getExpressionNodes().get(0);
-                ExprNode rightExpression = innerPredicate.getExpressionNodes().get(1);
-                if(!(leftExpression instanceof IdentifierExprNode) || !(((IdentifierExprNode) leftExpression).getName().equals(declarationNode.getName()))) {
-                    throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
-                }
-                enumerationTemplate = generateEnumeration(declarationNode);
-                TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rightExpression, null));
+                enumerationTemplate = getElementOfTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
             } else {
                 throw new RuntimeException("Other operations within predicate node not supported yet");
             }

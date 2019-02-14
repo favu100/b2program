@@ -81,6 +81,18 @@ iteration_construct_assignment(type, identifier, expression, body) ::= <<
 <body>
 >>
 
+iteration_construct_subset(type, identifier, set, body) ::= <<
+for(<type> <identifier> : <set>.pow()) {
+    <body>
+}
+>>
+
+iteration_construct_subsetneq(type, identifier, set, body) ::= <<
+for(<type> <identifier> : <set>.pow().difference(<set>)) {
+    <body>
+}
+>>
+
 set_comprehension_predicate(set, element, predicate) ::= <<
 if((<predicate>).booleanValue()) {
     <set> = <set>.union(new BSet\<>(<element>));

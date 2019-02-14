@@ -119,6 +119,26 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return enumerationTemplate;
     }
 
+    private ST getSubsetTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
+            throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
+        }
+        ST template = group.getInstanceOf("iteration_construct_subset");
+        ST enumerationTemplate = generateEnumeration(template, declarationNode);
+        TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
+        return enumerationTemplate;
+    }
+
+    private ST getSubsetNeqTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
+            throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
+        }
+        ST template = group.getInstanceOf("iteration_construct_subsetneq");
+        ST enumerationTemplate = generateEnumeration(template, declarationNode);
+        TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
+        return enumerationTemplate;
+    }
+
     private ST getEnumerationTemplate(List<DeclarationNode> declarations, PredicateNode predicate) {
         ST enumerationTemplate = null;
         for(int i = 0; i < declarations.size(); i++) {
@@ -133,6 +153,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
                 enumerationTemplate = getElementOfTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
                 enumerationTemplate = getEqualTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+            } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION) {
+                enumerationTemplate = getSubsetTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+            } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
+                enumerationTemplate = getSubsetNeqTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
             } else {
                 throw new RuntimeException("Other operations within predicate node not supported yet");
             }

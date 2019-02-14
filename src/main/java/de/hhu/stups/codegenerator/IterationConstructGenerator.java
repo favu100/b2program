@@ -72,8 +72,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.boundedVariables = new ArrayList<>();
     }
 
-    public ST generateEnumeration(DeclarationNode declarationNode) {
-        ST template = group.getInstanceOf("iteration_construct_enumeration");
+    public ST generateEnumeration(ST template, DeclarationNode declarationNode) {
         TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
         TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName());
         return template;
@@ -104,8 +103,19 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
             throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
         }
-        ST enumerationTemplate = generateEnumeration(declarationNode);
+        ST template = group.getInstanceOf("iteration_construct_enumeration");
+        ST enumerationTemplate = generateEnumeration(template, declarationNode);
         TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
+        return enumerationTemplate;
+    }
+
+    private ST getEqualTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
+            throw new RuntimeException("The expression on the left hand side of the first predicates must match the first identifier names");
+        }
+        ST template = group.getInstanceOf("iteration_construct_assignment");
+        ST enumerationTemplate = generateEnumeration(template, declarationNode);
+        TemplateHandler.add(enumerationTemplate, "expression", machineGenerator.visitExprNode(rhs, null));
         return enumerationTemplate;
     }
 
@@ -121,6 +131,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
             }
             if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
                 enumerationTemplate = getElementOfTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+            } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
+                enumerationTemplate = getEqualTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
             } else {
                 throw new RuntimeException("Other operations within predicate node not supported yet");
             }

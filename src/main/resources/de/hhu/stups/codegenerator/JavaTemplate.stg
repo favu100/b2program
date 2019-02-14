@@ -76,6 +76,11 @@ for(<type> <identifier> : <set>) {
 }
 >>
 
+iteration_construct_assignment(type, identifier, expression, body) ::= <<
+<type> <identifier> = <expression>;
+<body>
+>>
+
 set_comprehension_predicate(set, element, predicate) ::= <<
 if((<predicate>).booleanValue()) {
     <set> = <set>.union(new BSet\<>(<element>));

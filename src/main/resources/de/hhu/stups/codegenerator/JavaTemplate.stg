@@ -58,11 +58,11 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-private BSet\<<type>\> <identifier> = <set_enumeration(enums, false)>;
+private BSet\<<type>\> <identifier> = <set_enumeration("", type, "", enums, false)>;
 >>
 
-set_enumeration(enums, isRelation) ::= <<
-<if(isRelation)>new BRelation\<><else>new BSet\<><endif>(<enums; separator=", ">)
+set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
+<if(isRelation)>new BRelation\<<leftType>, <rightType> ><else>new BSet\<<type> ><endif>(<enums; separator=", ">)
 >>
 
 set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<

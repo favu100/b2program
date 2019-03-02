@@ -3,13 +3,17 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, constants, values, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, machine, constants_declarations, constants_initializations, values, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 <imports; separator="\n">
 import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
 
-    <constants; separator="\n">
+    <constants_declarations; separator="\n">
+
+    static {
+        <constants_initializations; separator="\n">
+    }
 
     <values>
 
@@ -158,8 +162,13 @@ local_declaration(type, identifier) ::= <<
 <declaration(type, identifier)> = null;
 >>
 
-constant(type, identifier, val) ::= <<
-private static final <type> <identifier> = <val>;
+constant_declaration(type, identifier) ::= <<
+private static final <type> <identifier>;
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+<iterationConstruct; separator="\n">
+<identifier> = <val>;
 >>
 
 values(assignments) ::= <<

@@ -92,7 +92,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, useBigInteger);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, typeGenerator, importGenerator);
-		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
+		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler);
@@ -132,7 +132,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	* This function generates the whole body of a machine from the given AST node for the machine.
 	*/
 	private void generateBody(MachineNode node, ST machine) {
-		TemplateHandler.add(machine, "constants", declarationGenerator.generateConstants(node));
+		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
+		TemplateHandler.add(machine, "constants_initializations", declarationGenerator.generateConstantsInitializations(node));
 		TemplateHandler.add(machine, "values", declarationGenerator.generateValues(node));
 		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node));
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));

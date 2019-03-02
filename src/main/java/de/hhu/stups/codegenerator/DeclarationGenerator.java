@@ -67,8 +67,8 @@ public class DeclarationGenerator {
     }
 
     /*
-* This function generates code for a list of local declarations or parameters in the generated code
-*/
+    * This function generates code for a list of local declarations or parameters in the generated code
+    */
     public List<String> generateDeclarations(List<DeclarationNode> declarations, OperationGenerator.DeclarationType type, boolean isReturn) {
         return declarations.stream()
                 .map(declaration -> type == OperationGenerator.DeclarationType.LOCAL_DECLARATION ?
@@ -124,11 +124,12 @@ public class DeclarationGenerator {
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
         List<PredicateNode> propertiesNodes = new ArrayList<>();
         if(node.getProperties() != null) {
-            if(!(node.getProperties() instanceof PredicateOperatorNode)) {
-                return "";
+            if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {
+                propertiesNodes.add(node.getProperties());
+            } else {
+                PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
+                propertiesNodes.addAll(properties.getPredicateArguments());
             }
-            PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
-            propertiesNodes.addAll(properties.getPredicateArguments());
         }
         List<PredicateNode> equalProperties = propertiesNodes.stream()
                 .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode

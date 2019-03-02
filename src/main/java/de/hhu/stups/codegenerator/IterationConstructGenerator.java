@@ -166,8 +166,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return enumerationTemplates;
     }
 
-    private ST evaluateEnumerationTemplates(List<DeclarationNode> declarations, PredicateNode predicate, String innerBody) {
-        List<ST> enumerationTemplates = getEnumerationTemplates(declarations, predicate);
+    private ST evaluateEnumerationTemplates(List<ST> enumerationTemplates, String innerBody) {
+
         int enumerationSize = enumerationTemplates.size();
         ST lastEnumeration = enumerationTemplates.get(enumerationSize - 1);
 
@@ -204,74 +204,106 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     public String generateSetComprehension(SetComprehensionNode node) {
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
+        addBoundedVariables(declarations);
         checkPredicate(predicate, declarations);
         importGenerator.addImportInIteration(node.getType());
 
         ST template = group.getInstanceOf("set_comprehension");
 
-        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+        for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
+            this.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
+        }
 
-        //TODO
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+
+        List<ST> enumerationTemplates = getEnumerationTemplates(declarations, predicate);
+
         iterationConstructHandler.setIterationConstructGenerator(this);
-        setBoundedVariables(declarations);
+
+        String elementName = getElementFromBoundedVariables(declarations);
+        String innerBody = generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, elementName);
+        String comprehension = evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
         TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
-
-        String elementName = getElementFromBoundedVariables(declarations);
-        TemplateHandler.add(template, "comprehension", evaluateEnumerationTemplates(declarations, predicate, generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, elementName)).render());
+        TemplateHandler.add(template, "comprehension", comprehension);
         String result = template.render();
         addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
+        clearBoundedVariables(declarations);
         return result;
     }
 
     public String generateLambda(LambdaNode node) {
         PredicateNode predicate = node.getPredicate();
         List<DeclarationNode> declarations = node.getDeclarations();
+        addBoundedVariables(declarations);
         checkPredicate(predicate, declarations);
         ExprNode expression = node.getExpression();
         importGenerator.addImportInIteration(node.getType());
 
         ST template = group.getInstanceOf("lambda");
 
-        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectExpression(
-                iterationConstructHandler.inspectPredicate(predicate), expression).getIterationsMapCode().values());
-        //TODO
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectExpression(
+                iterationConstructHandler.inspectPredicate(predicate), expression);
+        for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
+            this.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
+        }
+
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+
+        List<ST> enumerationTemplates = getEnumerationTemplates(declarations, predicate);
+
         iterationConstructHandler.setIterationConstructGenerator(this);
-        setBoundedVariables(declarations);
+
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String innerBody = generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName());
+        String lambda = evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+
 
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
-        TemplateHandler.add(template, "lambda", evaluateEnumerationTemplates(declarations, predicate, generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName())).render());
+        TemplateHandler.add(template, "lambda", lambda);
         String result = template.render();
         addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
+        clearBoundedVariables(declarations);
         return result;
     }
 
     public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
+        addBoundedVariables(declarations);
+
         checkPredicate(predicate, declarations);
         boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
         importGenerator.addImportInIteration(node.getType());
 
         ST template = group.getInstanceOf("quantified_predicate");
 
-        TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
+        for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
+            this.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
+        }
 
-        //TODO
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+
+        List<ST> enumerationTemplates = getEnumerationTemplates(declarations, predicate);
+
         iterationConstructHandler.setIterationConstructGenerator(this);
-        setBoundedVariables(declarations);
+
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String innerBody = generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll);
+        String predicateString = evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "identifier", "_ic_boolean_" + iterationConstructCounter);
         TemplateHandler.add(template, "forall", forAll);
-        TemplateHandler.add(template, "predicate", evaluateEnumerationTemplates(declarations, predicate, generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll)));
+        TemplateHandler.add(template, "predicate", predicateString);
         String result = template.render();
         addIteration(node.toString(), "_ic_boolean_"+ iterationConstructCounter, result);
+        clearBoundedVariables(declarations);
         return result;
     }
 
@@ -461,9 +493,12 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
-    public void setBoundedVariables(List<DeclarationNode> declarations) {
-        boundedVariables.clear();
+    public void addBoundedVariables(List<DeclarationNode> declarations) {
         boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+    }
+
+    public void clearBoundedVariables(List<DeclarationNode> declarations) {
+        boundedVariables.removeAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
     }
 
     public List<String> getBoundedVariables() {

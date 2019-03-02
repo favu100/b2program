@@ -183,6 +183,25 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return lastEnumeration;
     }
 
+    public String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
+        String elementName = "";
+        if(declarations.size() == 1) {
+            return "_ic_" + declarations.get(declarations.size() - 1).getName();
+        } else {
+            ST firstCouple = group.getInstanceOf("couple_create");
+            TemplateHandler.add(firstCouple, "arg1", declarations.get(0).getName());
+            TemplateHandler.add(firstCouple, "arg2", declarations.get(1).getName());
+            return declarations.subList(2, declarations.size()).stream()
+                    .map(DeclarationNode::getName)
+                    .reduce(firstCouple.render(), (a,e) -> {
+                ST couple = group.getInstanceOf("couple_create");
+                TemplateHandler.add(couple, "arg1", a);
+                TemplateHandler.add(couple, "arg2", e);
+                return couple.render();
+            });
+        }
+    }
+
     public String generateSetComprehension(SetComprehensionNode node) {
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
@@ -193,7 +212,6 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         TemplateHandler.add(template, "otherIterationConstructs", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
 
-
         //TODO
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         iterationConstructHandler.setIterationConstructGenerator(this);
@@ -202,7 +220,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
         TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
-        TemplateHandler.add(template, "comprehension", evaluateEnumerationTemplates(declarations, predicate, generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName())).render());
+
+        String elementName = getElementFromBoundedVariables(declarations);
+        TemplateHandler.add(template, "comprehension", evaluateEnumerationTemplates(declarations, predicate, generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, elementName)).render());
         String result = template.render();
         addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
         return result;
@@ -262,6 +282,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "set", setName);
+        TemplateHandler.add(template, "isRelation", boundedVariables.size() > 1);
         TemplateHandler.add(template, "element", elementName);
         machineGenerator.leaveIterationConstruct();
         return template.render();

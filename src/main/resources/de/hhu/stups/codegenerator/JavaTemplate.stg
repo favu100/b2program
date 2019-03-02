@@ -97,9 +97,9 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
-set_comprehension_predicate(set, element, predicate) ::= <<
+set_comprehension_predicate(set, element, predicate, isRelation) ::= <<
 if((<predicate>).booleanValue()) {
-    <set> = <set>.union(new BSet\<>(<element>));
+    <set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
 }
 >>
 

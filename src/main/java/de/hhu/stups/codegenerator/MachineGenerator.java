@@ -96,7 +96,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler);
-		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
+		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
 																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator,
@@ -133,7 +133,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	private void generateBody(MachineNode node, ST machine) {
 		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
-		TemplateHandler.add(machine, "constants_initializations", declarationGenerator.generateConstantsInitializations(node));
 		TemplateHandler.add(machine, "values", declarationGenerator.generateValues(node));
 		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node));
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));

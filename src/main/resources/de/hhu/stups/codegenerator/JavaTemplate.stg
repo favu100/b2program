@@ -11,10 +11,6 @@ public class <machine> {
 
     <constants_declarations; separator="\n">
 
-    static {
-        <constants_initializations; separator="\n">
-    }
-
     <values>
 
     <includes; separator="\n">
@@ -36,8 +32,9 @@ public class <machine> {
 
 >>
 
-initialization(machine, body) ::= <<
+initialization(machine, body, constants_initializations) ::= <<
 public <machine>() {
+    <constants_initializations; separator="\n">
     <body>
 }
 >>
@@ -163,7 +160,7 @@ local_declaration(type, identifier) ::= <<
 >>
 
 constant_declaration(type, identifier) ::= <<
-private static final <type> <identifier>;
+private final <type> <identifier>;
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<

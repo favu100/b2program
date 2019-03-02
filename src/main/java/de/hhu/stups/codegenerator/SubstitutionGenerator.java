@@ -35,6 +35,8 @@ public class SubstitutionGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final DeclarationGenerator declarationGenerator;
+
     private final ExpressionGenerator expressionGenerator;
 
     private final IdentifierGenerator identifierGenerator;
@@ -52,13 +54,14 @@ public class SubstitutionGenerator {
     private final List<String> definedLoadsInParallel;
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                                 final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator,
+                                 final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator, final ExpressionGenerator expressionGenerator,
                                  final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator,
                                  final IterationConstructHandler iterationConstructHandler) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
+        this.declarationGenerator = declarationGenerator;
         this.expressionGenerator = expressionGenerator;
         this.expressionGenerator.setSubstitutionGenerator(this);
         this.identifierGenerator = identifierGenerator;
@@ -80,6 +83,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "machines", node.getMachineReferences().stream()
                 .map(reference -> nameHandler.handle(reference.getMachineNode().getName()))
                 .collect(Collectors.toList()));
+        TemplateHandler.add(initialization, "constants_initializations", declarationGenerator.generateConstantsInitializations(node));
         TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
         return initialization.render();
     }

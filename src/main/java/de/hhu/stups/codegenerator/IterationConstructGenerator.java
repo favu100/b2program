@@ -184,19 +184,18 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     public String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
-        String elementName = "";
         if(declarations.size() == 1) {
             return "_ic_" + declarations.get(declarations.size() - 1).getName();
         } else {
             ST firstCouple = group.getInstanceOf("couple_create");
-            TemplateHandler.add(firstCouple, "arg1", declarations.get(0).getName());
-            TemplateHandler.add(firstCouple, "arg2", declarations.get(1).getName());
+            TemplateHandler.add(firstCouple, "arg1", "_ic_" + declarations.get(0).getName());
+            TemplateHandler.add(firstCouple, "arg2", "_ic_" + declarations.get(1).getName());
             return declarations.subList(2, declarations.size()).stream()
                     .map(DeclarationNode::getName)
                     .reduce(firstCouple.render(), (a,e) -> {
                 ST couple = group.getInstanceOf("couple_create");
                 TemplateHandler.add(couple, "arg1", a);
-                TemplateHandler.add(couple, "arg2", e);
+                TemplateHandler.add(couple, "arg2", "_ic_" + e);
                 return couple.render();
             });
         }

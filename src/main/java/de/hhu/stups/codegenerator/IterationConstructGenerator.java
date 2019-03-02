@@ -178,12 +178,13 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         //TODO
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        TemplateHandler.add(enumerationTemplate, "body", generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
         iterationConstructHandler.setIterationConstructGenerator(this);
+        setBoundedVariables(declarations);
+        TemplateHandler.add(enumerationTemplate, "body", generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
+
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
         TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
-        setBoundedVariables(declarations);
         TemplateHandler.add(template, "comprehension", enumerationTemplate.render());
         String result = template.render();
         addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
@@ -206,11 +207,12 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         //TODO
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        TemplateHandler.add(enumerationTemplate, "body", generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
         iterationConstructHandler.setIterationConstructGenerator(this);
+        setBoundedVariables(declarations);
+
+        TemplateHandler.add(enumerationTemplate, "body", generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName()));
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
-        setBoundedVariables(declarations);
         TemplateHandler.add(template, "lambda", enumerationTemplate.render());
         String result = template.render();
         addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
@@ -232,11 +234,12 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
         //TODO
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        TemplateHandler.add(enumerationTemplate, "body", generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll));
         iterationConstructHandler.setIterationConstructGenerator(this);
+        setBoundedVariables(declarations);
+
+        TemplateHandler.add(enumerationTemplate, "body", generateQuantifiedPredicateEvaluation(predicate, "_ic_boolean_" + iterationConstructCounter, forAll));
         TemplateHandler.add(template, "identifier", "_ic_boolean_" + iterationConstructCounter);
         TemplateHandler.add(template, "forall", forAll);
-        setBoundedVariables(declarations);
         TemplateHandler.add(template, "predicate", enumerationTemplate.render());
         String result = template.render();
         addIteration(node.toString(), "_ic_boolean_"+ iterationConstructCounter, result);
@@ -428,9 +431,13 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
-    private void setBoundedVariables(List<DeclarationNode> declarations) {
+    public void setBoundedVariables(List<DeclarationNode> declarations) {
         boundedVariables.clear();
         boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+    }
+
+    public List<String> getBoundedVariables() {
+        return boundedVariables;
     }
 
     private void addIteration(String node, String identifier, String code) {

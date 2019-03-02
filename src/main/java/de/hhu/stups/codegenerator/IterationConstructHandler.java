@@ -84,4 +84,8 @@ public class IterationConstructHandler {
     public HashMap<String, String> getIterationsMapIdentifier() {
         return currentIterationConstructGenerator.getIterationsMapIdentifier();
     }
+
+    public IterationConstructGenerator getCurrentIterationConstructGenerator() {
+        return currentIterationConstructGenerator;
+    }
 }

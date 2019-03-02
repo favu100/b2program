@@ -111,6 +111,7 @@ public class SubstitutionGenerator {
     private String visitIfSubstitution(IfOrSelectSubstitutionsNode node) {
         ST ifST = currentGroup.getInstanceOf("if");
         TemplateHandler.add(ifST, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
+
         TemplateHandler.add(ifST, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(ifST, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
         TemplateHandler.add(ifST, "else1", generateElseIfs(node));

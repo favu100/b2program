@@ -146,18 +146,13 @@ parameter(type, identifier) ::= <<
 <type> <identifier>
 >>
 
-parallel(loads, others, stores) ::=<<
+parallel(loads, others) ::=<<
 <loads; separator="\n">
 <others; separator="\n">
-<stores; separator="\n">
 >>
 
 parallel_load(type, identifier) ::= <<
 <type> _ld_<identifier> = <identifier>;
->>
-
-parallel_store(identifier, val) ::= <<
-<identifier> = <val>;
 >>
 
 assignment(identifier, val) ::= <<

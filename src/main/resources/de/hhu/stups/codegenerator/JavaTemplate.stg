@@ -182,31 +182,26 @@ parameter(type, identifier) ::= <<
 <type> <identifier>
 >>
 
-parallel(loads, others, stores) ::=<<
+parallel(loads, others) ::=<<
 <loads; separator="\n">
 <others; separator="\n">
-<stores; separator="\n">
 >>
 
 parallel_load(type, identifier) ::= <<
 <type> _ld_<identifier> = <identifier>;
 >>
 
-parallel_store(identifier, val) ::= <<
-<identifier> = <val>;
->>
-
-assignment(iterationConstruct, identifier, val, isIdentifierLhs, arg) ::= <<
+assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(identifier, set, isIdentifierLhs, arg) ::= <<
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<set>.nondeterminism()));<endif>
+nondeterminism(identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<

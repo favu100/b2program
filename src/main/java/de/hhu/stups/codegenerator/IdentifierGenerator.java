@@ -34,7 +34,7 @@ public class IdentifierGenerator {
 
     private Stack<Integer> stackScope;
 
-    private List<String> identifierOnLhsInParallel;
+    private ParallelConstructAnalyzer parallelConstructAnalyzer;
 
     private boolean lhsInParallel;
 
@@ -47,6 +47,7 @@ public class IdentifierGenerator {
         this.maxLocals = new HashMap<>();
         this.stackScope = new Stack<>();
         stackScope.push(0);
+        this.lhsInParallel = false;
     }
 
 
@@ -95,7 +96,11 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
-        TemplateHandler.add(identifier, "rhsOnLhs", identifierOnLhsInParallel.contains(node.getName()) && !lhsInParallel);
+        TemplateHandler.add(identifier, "rhsOnLhs", !lhsInParallel && parallelConstructAnalyzer != null && parallelConstructAnalyzer.getDefinedIdentifiersInParallel()
+                .stream()
+                .map(IdentifierExprNode::getName)
+                .collect(Collectors.toList())
+                .contains(node.getName()));
         return identifier.render();
     }
 
@@ -115,7 +120,11 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", false);
         TemplateHandler.add(identifier, "isPrivate", false);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
-        TemplateHandler.add(identifier, "rhsOnLhs", identifierOnLhsInParallel.contains(name) && !lhsInParallel);
+        TemplateHandler.add(identifier, "rhsOnLhs", !lhsInParallel && parallelConstructAnalyzer != null && parallelConstructAnalyzer.getDefinedIdentifiersInParallel()
+                .stream()
+                .map(IdentifierExprNode::getName)
+                .collect(Collectors.toList())
+                .contains(name));
         return identifier.render();
     }
 
@@ -178,7 +187,11 @@ public class IdentifierGenerator {
         this.lhsInParallel = lhsInParallel;
     }
 
-    public void setIdentifierOnLhsInParallel(List<String> identifierOnLhsInParallel) {
-        this.identifierOnLhsInParallel = identifierOnLhsInParallel;
+    public void setParallelConstructAnalyzer(ParallelConstructAnalyzer parallelConstructAnalyzer) {
+        this.parallelConstructAnalyzer = parallelConstructAnalyzer;
+    }
+
+    public ParallelConstructAnalyzer getParallelConstructAnalyzer() {
+        return parallelConstructAnalyzer;
     }
 }

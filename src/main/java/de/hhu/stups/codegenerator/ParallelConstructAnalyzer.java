@@ -29,10 +29,35 @@ import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by fabian on 03.03.19.
  */
 public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
+
+    private final List<IdentifierExprNode> identifierOnLhsInParallel;
+
+    private final List<IdentifierExprNode> identifierOnRhsInParallel;
+
+    private final List<IdentifierExprNode> definedIdentifiersInParallel;
+
+    private final List<IdentifierExprNode> definedLoadsInParallel;
+
+    private boolean onLeftHandSide;
+
+    private boolean onRightHandSide;
+
+    public ParallelConstructAnalyzer() {
+        this.identifierOnLhsInParallel = new ArrayList<>();
+        this.identifierOnRhsInParallel = new ArrayList<>();
+        this.definedIdentifiersInParallel = new ArrayList<>();
+        this.definedLoadsInParallel = new ArrayList<>();
+        this.onLeftHandSide = false;
+        this.onRightHandSide = true;
+    }
 
     @Override
     public Void visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
@@ -42,7 +67,11 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitIdentifierExprNode(IdentifierExprNode node, Void expected) {
-        //TODO
+        if(onLeftHandSide) {
+            identifierOnLhsInParallel.add(node);
+        } else if(onRightHandSide) {
+            identifierOnRhsInParallel.add(node);
+        }
         return null;
     }
 
@@ -138,6 +167,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitListSubstitutionNode(ListSubstitutionNode node, Void expected) {
+        if(node.getOperator() == ListSubstitutionNode.ListOperator.Sequential) {
+            return null;
+        }
         node.getSubstitutions().forEach(subs -> visitSubstitutionNode(subs, expected));
         return null;
     }
@@ -153,8 +185,20 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
     }
 
     @Override
-    public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expeted) {
-        //TODO
+    public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expected) {
+        this.onLeftHandSide = true;
+        node.getLeftSide().forEach(lhs -> visitExprNode(lhs, expected));
+        this.onLeftHandSide = false;
+        this.onRightHandSide = true;
+        node.getRightSide().forEach(rhs -> visitExprNode(rhs, expected));
+        this.onRightHandSide = false;
+        definedLoadsInParallel.addAll(identifierOnLhsInParallel.stream()
+                .filter(lhs -> identifierOnRhsInParallel.stream()
+                        .map(IdentifierExprNode::getName)
+                        .collect(Collectors.toList())
+                        .contains(lhs.getName()))
+                .collect(Collectors.toList()));
+        definedIdentifiersInParallel.addAll(definedLoadsInParallel);
         return null;
     }
 
@@ -201,5 +245,17 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
     public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
         node.getSubstitutions().forEach(subs -> visitSubstitutionNode(subs, expected));
         return null;
+    }
+
+    public void resetParallel() {
+        definedLoadsInParallel.clear();
+    }
+
+    public List<IdentifierExprNode> getDefinedLoadsInParallel() {
+        return definedLoadsInParallel;
+    }
+
+    public List<IdentifierExprNode> getDefinedIdentifiersInParallel() {
+        return definedIdentifiersInParallel;
     }
 }

@@ -99,17 +99,12 @@ parameter(identifier) ::= <<
 <identifier>
 >>
 
-parallel(machine, loads, others, stores) ::=<<
-(do <others; separator="\n">
-    <stores; separator="\n">)
+parallel(machine, loads, others) ::=<<
+(do <others; separator="\n">)
 >>
 
 parallel_load(machine, identifier, isPrivate) ::= <<
 <if(isPrivate)>_ld_<identifier> (get-in (.-<machine>-state this) [:<identifier>])<else>_ld_<identifier> <identifier><endif>
->>
-
-parallel_store(machine, identifier, isPrivate, val) ::= <<
-<if(isPrivate)>_ (reset! (.-<machine>-state this) (assoc-in (.-<machine>-state this) [:<identifier>] <val>))<else>identifier <val><endif>
 >>
 
 assignment(machine, identifier, isPrivate, val) ::= <<

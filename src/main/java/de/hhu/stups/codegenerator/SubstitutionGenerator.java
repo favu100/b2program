@@ -22,6 +22,7 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SubstitutionGenerator {
@@ -50,9 +51,7 @@ public class SubstitutionGenerator {
 
     private int localScopes;
 
-    private final List<String> identifierOnLhsInParallel;
-
-    private final List<String> definedLoadsInParallel;
+    private int parallelNestingLevel;
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                                  final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator, final ExpressionGenerator expressionGenerator,
@@ -68,11 +67,9 @@ public class SubstitutionGenerator {
         this.identifierGenerator = identifierGenerator;
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
-        this.identifierOnLhsInParallel = new ArrayList<>();
-        this.definedLoadsInParallel = new ArrayList<>();
-        this.identifierGenerator.setIdentifierOnLhsInParallel(identifierOnLhsInParallel);
         this.currentLocalScope = 0;
         this.localScopes = 0;
+        this.parallelNestingLevel = 0;
     }
 
     /*
@@ -236,18 +233,28 @@ public class SubstitutionGenerator {
         ST substitution = currentGroup.getInstanceOf("assignment");
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
+        if(identifierGenerator.getParallelConstructAnalyzer() != null) {
+            identifierGenerator.setLhsInParallel(true);
+        }
         if(lhs instanceof IdentifierExprNode) {
             TemplateHandler.add(substitution, "isIdentifierLhs", true);
             TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
             TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
+            if(identifierGenerator.getParallelConstructAnalyzer() != null) {
+                identifierGenerator.setLhsInParallel(false);
+            }
         } else if(lhs instanceof ExpressionOperatorNode) {
             TemplateHandler.add(substitution, "isIdentifierLhs", false);
             TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
             TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0)).getName()));
             //TODO generate code for couples as arguments
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(1), null));
+            if(identifierGenerator.getParallelConstructAnalyzer() != null) {
+                identifierGenerator.setLhsInParallel(false);
+            }
+            TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
         }
+        TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
 
@@ -266,49 +273,36 @@ public class SubstitutionGenerator {
     private String visitParallelSubstitutionNode(ListSubstitutionNode node) {
         //TODO Implement handling iteration construct
         //TODO implement parallel execution of operation call from included machine
-        identifierOnLhsInParallel.clear();
+        parallelNestingLevel++;
         ST substitutions = currentGroup.getInstanceOf("parallel");
-        List<SubstitutionNode> assignments = node.getSubstitutions().stream()
-                .filter(substituion -> substituion instanceof AssignSubstitutionNode)
-                .collect(Collectors.toList());
-        List<String> loads = assignments.stream()
-                .map(assignment -> visitParallelLoads((AssignSubstitutionNode) assignment))
-                .collect(Collectors.toList());
-        List<String> others = node.getSubstitutions().stream()
-                .filter(substituion -> !(substituion instanceof AssignSubstitutionNode))
-                .map(substitution -> machineGenerator.visitSubstitutionNode(substitution, null))
-                .collect(Collectors.toList());
-        List<String> stores = assignments.stream()
-                .map(assignment -> visitParallelStores((AssignSubstitutionNode) assignment))
-                .collect(Collectors.toList());
+        ParallelConstructAnalyzer parallelConstructAnalyzer;
+        if(identifierGenerator.getParallelConstructAnalyzer() == null) {
+            parallelConstructAnalyzer = new ParallelConstructAnalyzer();
+            identifierGenerator.setParallelConstructAnalyzer(parallelConstructAnalyzer);
+        } else {
+            parallelConstructAnalyzer = new ParallelConstructAnalyzer();
+            parallelConstructAnalyzer.getDefinedIdentifiersInParallel().addAll(identifierGenerator.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel());
+            identifierGenerator.setParallelConstructAnalyzer(parallelConstructAnalyzer);
+        }
+        parallelConstructAnalyzer.visitSubstitutionNode(node, null);
+
+        identifierGenerator.setLhsInParallel(true);
+        Set<String> loads = parallelConstructAnalyzer.getDefinedLoadsInParallel().stream()
+                .map(this::visitParallelLoad)
+                .collect(Collectors.toSet());
         TemplateHandler.add(substitutions, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitutions, "loads", loads);
+        identifierGenerator.setLhsInParallel(false);
+        parallelConstructAnalyzer.resetParallel();
+        List<String> others = node.getSubstitutions().stream()
+                .map(subs -> machineGenerator.visitSubstitutionNode(subs, null))
+                .collect(Collectors.toList());
+        identifierGenerator.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         TemplateHandler.add(substitutions, "others", others);
-        TemplateHandler.add(substitutions, "stores", stores);
-        identifierOnLhsInParallel.clear();
-        return substitutions.render();
-    }
-
-    private String visitParallelLoads(AssignSubstitutionNode node) {
-        ST substitutions = currentGroup.getInstanceOf("assignments");
-        List<String> assignments = new ArrayList<>();
-        //TODO: For now, the variable on the left-hand side and on the right-hand side must be distinct
-        //TODO: Loads for functional overrides
-        for (int i = 0; i < node.getLeftSide().size(); i++) {
-            IdentifierExprNode identifier = (IdentifierExprNode) node.getLeftSide().get(i);
-            boolean onRightHandSide = node.getRightSide().stream()
-                    .filter(n -> n instanceof IdentifierExprNode)
-                    .map(id -> ((IdentifierExprNode) id).getName())
-                    .collect(Collectors.toList())
-                    .contains(identifier.getName());
-            if(definedLoadsInParallel.contains(identifier.getName()) || !onRightHandSide) {
-                continue;
-            }
-            assignments.add(visitParallelLoad(identifier));
-            identifierOnLhsInParallel.add(identifier.getName());
-            definedLoadsInParallel.add(identifier.getName());
+        parallelNestingLevel--;
+        if(parallelNestingLevel == 0) {
+            identifierGenerator.setParallelConstructAnalyzer(null);
         }
-        TemplateHandler.add(substitutions, "assignments", assignments);
         return substitutions.render();
     }
 
@@ -318,30 +312,6 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType()));
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(expr, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) expr).getName()));
-        return substitution.render();
-    }
-
-
-    private String visitParallelStores(AssignSubstitutionNode node) {
-        ST substitutions = currentGroup.getInstanceOf("assignments");
-        List<String> assignments = new ArrayList<>();
-        //TODO: For now, the variable on the left-hand side and on the right-hand side must be distinct
-        for (int i = 0; i < node.getLeftSide().size(); i++) {
-            assignments.add(visitParallelStore(node.getLeftSide().get(i), node.getRightSide().get(i)));
-        }
-        TemplateHandler.add(substitutions, "assignments", assignments);
-        return substitutions.render();
-    }
-
-    private String visitParallelStore(ExprNode lhs, ExprNode rhs) {
-        //TODO: Stores for functional overrides
-        ST substitution = currentGroup.getInstanceOf("parallel_store");
-        identifierGenerator.setLhsInParallel(true);
-        TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
-        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
-        identifierGenerator.setLhsInParallel(false);
-        TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
 
@@ -369,17 +339,28 @@ public class SubstitutionGenerator {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
+        if(identifierGenerator.getParallelConstructAnalyzer() != null) {
+            identifierGenerator.setLhsInParallel(true);
+        }
         if(lhs instanceof IdentifierExprNode) {
             TemplateHandler.add(substitution, "isIdentifierLhs", true);
             TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
             TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
+            if(identifierGenerator.getParallelConstructAnalyzer() != null) {
+                identifierGenerator.setLhsInParallel(false);
+            }
         } else if(lhs instanceof ExpressionOperatorNode) {
             TemplateHandler.add(substitution, "isIdentifierLhs", false);
             TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
             TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0)).getName()));
             //TODO generate code for couples as arguments
+            if(identifierGenerator.getParallelConstructAnalyzer() != null) {
+                identifierGenerator.setLhsInParallel(false);
+            }
+            TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(1), null));
         }
+
         TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
@@ -463,11 +444,6 @@ public class SubstitutionGenerator {
 
     public int getCurrentLocalScope() {
         return currentLocalScope;
-    }
-
-    public void resetParallel() {
-        definedLoadsInParallel.clear();
-        identifierOnLhsInParallel.clear();
     }
 
     public void setOperationGenerator(OperationGenerator operationGenerator) {

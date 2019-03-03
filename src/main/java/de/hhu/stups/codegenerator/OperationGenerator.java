@@ -81,7 +81,6 @@ public class OperationGenerator {
     */
     private String visitOperation(OperationNode node) {
         identifierGenerator.setParams(node.getParams(), node.getOutputParams());
-        substitutionGenerator.resetParallel();
         ST operation = generate(node);
         TemplateHandler.add(operation,  "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));

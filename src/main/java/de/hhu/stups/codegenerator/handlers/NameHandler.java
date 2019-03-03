@@ -1,4 +1,4 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.handlers;
 
 import de.prob.parser.ast.nodes.MachineNode;
 import org.stringtemplate.v4.ST;
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
-import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
-import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.MACHINES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.MACHINES;
 
 /**
  * Created by fabian on 01.06.18.

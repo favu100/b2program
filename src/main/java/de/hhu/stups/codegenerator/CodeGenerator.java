@@ -1,5 +1,7 @@
 package de.hhu.stups.codegenerator;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
+import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;

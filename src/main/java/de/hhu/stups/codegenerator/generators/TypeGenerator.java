@@ -1,6 +1,8 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.handlers.NameHandler;
+import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;

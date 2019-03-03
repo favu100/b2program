@@ -1,6 +1,10 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
+import de.hhu.stups.codegenerator.handlers.NameHandler;
+import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
+import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
@@ -275,12 +279,12 @@ public class SubstitutionGenerator {
         //TODO implement parallel execution of operation call from included machine
         parallelNestingLevel++;
         ST substitutions = currentGroup.getInstanceOf("parallel");
-        ParallelConstructAnalyzer parallelConstructAnalyzer;
+        ParallelConstructHandler parallelConstructAnalyzer;
         if(identifierGenerator.getParallelConstructAnalyzer() == null) {
-            parallelConstructAnalyzer = new ParallelConstructAnalyzer();
+            parallelConstructAnalyzer = new ParallelConstructHandler();
             identifierGenerator.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         } else {
-            parallelConstructAnalyzer = new ParallelConstructAnalyzer();
+            parallelConstructAnalyzer = new ParallelConstructHandler();
             parallelConstructAnalyzer.getDefinedIdentifiersInParallel().addAll(identifierGenerator.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel());
             identifierGenerator.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         }

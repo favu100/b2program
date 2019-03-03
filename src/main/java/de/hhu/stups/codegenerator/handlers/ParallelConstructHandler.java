@@ -1,4 +1,4 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.handlers;
 
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Created by fabian on 03.03.19.
  */
-public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
+public class ParallelConstructHandler implements AbstractVisitor<Void, Void> {
 
     private final List<IdentifierExprNode> identifierOnLhsInParallel;
 
@@ -50,7 +50,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     private boolean onRightHandSide;
 
-    public ParallelConstructAnalyzer() {
+    public ParallelConstructHandler() {
         this.identifierOnLhsInParallel = new ArrayList<>();
         this.identifierOnRhsInParallel = new ArrayList<>();
         this.definedIdentifiersInParallel = new ArrayList<>();

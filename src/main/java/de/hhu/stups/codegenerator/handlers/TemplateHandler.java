@@ -1,4 +1,4 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.handlers;
 
 import org.stringtemplate.v4.ST;
 

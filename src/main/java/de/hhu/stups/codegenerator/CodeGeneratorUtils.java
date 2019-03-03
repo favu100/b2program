@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator;
 
+import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 

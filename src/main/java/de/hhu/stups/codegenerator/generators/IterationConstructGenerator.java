@@ -1,5 +1,7 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.generators;
 
+import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
+import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;

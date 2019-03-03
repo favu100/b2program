@@ -1,6 +1,9 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.handlers.NameHandler;
+import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
+import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -34,7 +37,7 @@ public class IdentifierGenerator {
 
     private Stack<Integer> stackScope;
 
-    private ParallelConstructAnalyzer parallelConstructAnalyzer;
+    private ParallelConstructHandler parallelConstructAnalyzer;
 
     private boolean lhsInParallel;
 
@@ -187,11 +190,11 @@ public class IdentifierGenerator {
         this.lhsInParallel = lhsInParallel;
     }
 
-    public void setParallelConstructAnalyzer(ParallelConstructAnalyzer parallelConstructAnalyzer) {
+    public void setParallelConstructAnalyzer(ParallelConstructHandler parallelConstructAnalyzer) {
         this.parallelConstructAnalyzer = parallelConstructAnalyzer;
     }
 
-    public ParallelConstructAnalyzer getParallelConstructAnalyzer() {
+    public ParallelConstructHandler getParallelConstructAnalyzer() {
         return parallelConstructAnalyzer;
     }
 }

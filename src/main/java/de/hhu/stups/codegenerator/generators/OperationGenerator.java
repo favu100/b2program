@@ -1,6 +1,8 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.handlers.NameHandler;
+import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.types.BType;
@@ -13,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
-import static de.hhu.stups.codegenerator.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
 
 
 public class OperationGenerator {

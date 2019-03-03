@@ -1,5 +1,9 @@
-package de.hhu.stups.codegenerator;
+package de.hhu.stups.codegenerator.handlers;
 
+import de.hhu.stups.codegenerator.generators.ImportGenerator;
+import de.hhu.stups.codegenerator.generators.IterationConstructGenerator;
+import de.hhu.stups.codegenerator.generators.MachineGenerator;
+import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import org.stringtemplate.v4.STGroup;

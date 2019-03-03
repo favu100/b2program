@@ -125,6 +125,16 @@ public class DeclarationGenerator {
     }
 
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
+
+        ST initialization = currentGroup.getInstanceOf("constant_initialization");
+        TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        ExprNode expression = ((PredicateOperatorWithExprArgsNode) extractEqualProperties(node, constant).get(0)).getExpressionNodes().get(1);
+        TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
+        TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+        return initialization.render();
+    }
+
+    private List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
         List<PredicateNode> propertiesNodes = new ArrayList<>();
         if(node.getProperties() != null) {
             if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {
@@ -134,18 +144,12 @@ public class DeclarationGenerator {
                 propertiesNodes.addAll(properties.getPredicateArguments());
             }
         }
-        List<PredicateNode> equalProperties = propertiesNodes.stream()
+        return propertiesNodes.stream()
                 .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
                         && ((PredicateOperatorWithExprArgsNode) prop).getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL
                         && ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0) instanceof IdentifierExprNode
                         && ((IdentifierExprNode) ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0)).getName().equals(constant.getName()))
                 .collect(Collectors.toList());
-        ST initialization = currentGroup.getInstanceOf("constant_initialization");
-        TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
-        TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
-        TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
-        return initialization.render();
     }
 
     private String generateConstantDeclaration(DeclarationNode constant) {

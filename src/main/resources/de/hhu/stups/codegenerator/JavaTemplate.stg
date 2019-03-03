@@ -196,17 +196,17 @@ parallel_store(identifier, val) ::= <<
 <identifier> = <val>;
 >>
 
-assignment(iterationConstruct, identifier, val) ::= <<
+assignment(iterationConstruct, identifier, val, isIdentifierLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<identifier> = <val>;
+<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(identifier, set) ::= <<
-<identifier> = <set>.nondeterminism();
+nondeterminism(identifier, set, isIdentifierLhs, arg) ::= <<
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<

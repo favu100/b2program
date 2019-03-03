@@ -4,6 +4,7 @@ package de.hhu.stups.codegenerator;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
+import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
@@ -235,9 +236,18 @@ public class SubstitutionGenerator {
         ST substitution = currentGroup.getInstanceOf("assignment");
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) lhs, null));
-        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
         TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
+        if(lhs instanceof IdentifierExprNode) {
+            TemplateHandler.add(substitution, "isIdentifierLhs", true);
+            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
+            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
+        } else if(lhs instanceof ExpressionOperatorNode) {
+            TemplateHandler.add(substitution, "isIdentifierLhs", false);
+            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
+            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0)).getName()));
+            //TODO generate code for couples as arguments
+            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(1), null));
+        }
         return substitution.render();
     }
 
@@ -283,6 +293,7 @@ public class SubstitutionGenerator {
         ST substitutions = currentGroup.getInstanceOf("assignments");
         List<String> assignments = new ArrayList<>();
         //TODO: For now, the variable on the left-hand side and on the right-hand side must be distinct
+        //TODO: Loads for functional overrides
         for (int i = 0; i < node.getLeftSide().size(); i++) {
             IdentifierExprNode identifier = (IdentifierExprNode) node.getLeftSide().get(i);
             boolean onRightHandSide = node.getRightSide().stream()
@@ -305,7 +316,7 @@ public class SubstitutionGenerator {
         ST substitution = currentGroup.getInstanceOf("parallel_load");
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType()));
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) expr, null));
+        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(expr, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) expr).getName()));
         return substitution.render();
     }
@@ -323,10 +334,11 @@ public class SubstitutionGenerator {
     }
 
     private String visitParallelStore(ExprNode lhs, ExprNode rhs) {
+        //TODO: Stores for functional overrides
         ST substitution = currentGroup.getInstanceOf("parallel_store");
         identifierGenerator.setLhsInParallel(true);
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode((IdentifierExprNode) lhs, null));
+        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
         identifierGenerator.setLhsInParallel(false);
         TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
@@ -353,12 +365,21 @@ public class SubstitutionGenerator {
         return substitutions.render();
     }
 
-    private String generateNondeterminism(IdentifierExprNode lhs, ExprNode rhs) {
+    private String generateNondeterminism(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitIdentifierExprNode(lhs, null));
-        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(lhs.getName()));
+        if(lhs instanceof IdentifierExprNode) {
+            TemplateHandler.add(substitution, "isIdentifierLhs", true);
+            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
+            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
+        } else if(lhs instanceof ExpressionOperatorNode) {
+            TemplateHandler.add(substitution, "isIdentifierLhs", false);
+            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
+            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0)).getName()));
+            //TODO generate code for couples as arguments
+            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(1), null));
+        }
         TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }

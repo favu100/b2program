@@ -98,21 +98,22 @@ public class OperationGenerator {
         TemplateHandler.add(operation, "locals", declarationGenerator.generateDeclarations(node.getOutputParams()
                 .stream()
                 .collect(Collectors.toList()), DeclarationType.LOCAL_DECLARATION, false));
-
+        BType type = null;
+        String returnString = null;
         if(node.getOutputParams().size() == 1) {
-            BType type = node.getOutputParams().get(0).getType();
+            type = node.getOutputParams().get(0).getType();
             String identifier = node.getOutputParams().get(0).getName();
-            TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
-            TemplateHandler.add(operation, "isTyped", true);
             ST returnTemplate = group.getInstanceOf("return");
             TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
             TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-            TemplateHandler.add(operation, "return", returnTemplate.render());
+            returnString = returnTemplate.render();
         } else if(node.getOutputParams().size() == 0) {
-            TemplateHandler.add(operation, "isTyped", false);
-            TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
-            TemplateHandler.add(operation, "return", group.getInstanceOf("no_return").render());
+            type = new UntypedType();
+            returnString = group.getInstanceOf("no_return").render();
         }
+        TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
+        TemplateHandler.add(operation, "isTyped", !(type instanceof UntypedType));
+        TemplateHandler.add(operation, "return", returnString);
         TemplateHandler.add(operation, "operationName", nameHandler.handleIdentifier(node.getName(), INCLUDED_MACHINES));
         TemplateHandler.add(operation, "parameters", declarationGenerator.generateDeclarations(node.getParams(), DeclarationType.PARAMETER, false));
         TemplateHandler.add(operation, "returnParameters", declarationGenerator.generateDeclarations(node.getOutputParams(), DeclarationType.PARAMETER, true));

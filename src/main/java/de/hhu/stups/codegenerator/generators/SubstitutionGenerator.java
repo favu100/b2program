@@ -121,11 +121,9 @@ public class SubstitutionGenerator {
     private String visitIfSubstitution(IfOrSelectSubstitutionsNode node) {
         ST ifST = currentGroup.getInstanceOf("if");
         TemplateHandler.add(ifST, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
-
         TemplateHandler.add(ifST, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(ifST, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
         TemplateHandler.add(ifST, "else1", generateElseIfs(node));
-
         if (node.getElseSubstitution() != null) {
             TemplateHandler.add(ifST, "else1", generateElse(node));
         }
@@ -142,7 +140,6 @@ public class SubstitutionGenerator {
         List<String> then = node.getSubstitutions().subList(1, node.getSubstitutions().size()).stream()
                 .map(substitutionNode -> machineGenerator.visitSubstitutionNode(substitutionNode, null))
                 .collect(Collectors.toList());
-
         List<String> elseIfs = new ArrayList<>();
 
         for (int i = 0; i < conditions.size(); i++) {
@@ -197,19 +194,22 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitution, "type", typeGenerator.generate(parameter.getType()));
         TemplateHandler.add(substitution, "identifier", nameHandler.handle(parameter.getName()));
+        String set;
         if(!(parameter.getType() instanceof BoolType)) {
-            TemplateHandler.add(substitution, "set", nameHandler.handleIdentifier(parameter.getType().toString(), NameHandler.IdentifierHandlingEnum.VARIABLES));
-            TemplateHandler.add(substitution, "isBool", false);
+            set = nameHandler.handleIdentifier(parameter.getType().toString(), NameHandler.IdentifierHandlingEnum.VARIABLES);
         } else {
-            TemplateHandler.add(substitution, "set", expressionGenerator.generateBooleans());
-            TemplateHandler.add(substitution, "isBool", true);
+            set = expressionGenerator.generateBooleans();
         }
+        TemplateHandler.add(substitution, "set", set);
+        TemplateHandler.add(substitution, "isBool", parameter.getType() instanceof BoolType);
         TemplateHandler.add(substitution, "index", index);
+        String body;
         if(index == length - 1) {
-            TemplateHandler.add(substitution, "body", generateAnyBody(predicateNode, substitutionNode));
+            body = generateAnyBody(predicateNode, substitutionNode);
         } else {
-            TemplateHandler.add(substitution, "body", generateAnyParameters(parameters, parameters.get(index + 1), predicateNode, substitutionNode, index + 1, length));
+            body = generateAnyParameters(parameters, parameters.get(index + 1), predicateNode, substitutionNode, index + 1, length);
         }
+        TemplateHandler.add(substitution, "body", body);
         return substitution.render();
     }
 
@@ -234,28 +234,13 @@ public class SubstitutionGenerator {
         return substitutions.render();
     }
 
+    //TODO: Refactor
     /*
     * This function generates code for one assignment with the expressions and the belonging template
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("assignment");
-        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
-        TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        parallelConstructHandler.setLhsInParallel(true);
-        if(lhs instanceof IdentifierExprNode) {
-            TemplateHandler.add(substitution, "isIdentifierLhs", true);
-            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
-            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
-            parallelConstructHandler.setLhsInParallel(false);
-        } else if(lhs instanceof ExpressionOperatorNode) {
-            TemplateHandler.add(substitution, "isIdentifierLhs", false);
-            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
-            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0)).getName()));
-            //TODO generate code for couples as arguments
-            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(1), null));
-            parallelConstructHandler.setLhsInParallel(false);
-            TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
-        }
+        generateAssignmentBody(substitution, lhs, rhs);
         TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
         return substitution.render();
     }
@@ -277,6 +262,16 @@ public class SubstitutionGenerator {
         //TODO implement parallel execution of operation call from included machine
         parallelNestingLevel++;
         ST substitutions = currentGroup.getInstanceOf("parallel");
+        TemplateHandler.add(substitutions, "machine", nameHandler.handle(machineGenerator.getMachineName()));
+        ParallelConstructAnalyzer parallelConstructAnalyzer = getParallelConstructAnalyzer();
+        generateParallelLoads(substitutions, parallelConstructAnalyzer, node);
+        generateParallelSubstitutions(substitutions, parallelConstructAnalyzer, node);
+        parallelNestingLevel--;
+        resetParallelConstructAnalyzer();
+        return substitutions.render();
+    }
+
+    private ParallelConstructAnalyzer getParallelConstructAnalyzer() {
         ParallelConstructAnalyzer parallelConstructAnalyzer;
         if(parallelConstructHandler.getParallelConstructAnalyzer() == null) {
             parallelConstructAnalyzer = new ParallelConstructAnalyzer();
@@ -286,26 +281,32 @@ public class SubstitutionGenerator {
             parallelConstructAnalyzer.getDefinedIdentifiersInParallel().addAll(parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel());
             parallelConstructHandler.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         }
-        parallelConstructAnalyzer.visitSubstitutionNode(node, null);
+        return parallelConstructAnalyzer;
+    }
 
+    private void generateParallelLoads(ST substitutions, ParallelConstructAnalyzer parallelConstructAnalyzer, ListSubstitutionNode node) {
+        parallelConstructAnalyzer.visitSubstitutionNode(node, null);
         parallelConstructHandler.setLhsInParallel(true);
         Set<String> loads = parallelConstructAnalyzer.getDefinedLoadsInParallel().stream()
                 .map(this::visitParallelLoad)
                 .collect(Collectors.toSet());
-        TemplateHandler.add(substitutions, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(substitutions, "loads", loads);
         parallelConstructHandler.setLhsInParallel(false);
         parallelConstructAnalyzer.resetParallel();
+    }
+
+    private void generateParallelSubstitutions(ST substitutions, ParallelConstructAnalyzer parallelConstructAnalyzer, ListSubstitutionNode node) {
         List<String> others = node.getSubstitutions().stream()
                 .map(subs -> machineGenerator.visitSubstitutionNode(subs, null))
                 .collect(Collectors.toList());
         parallelConstructHandler.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         TemplateHandler.add(substitutions, "others", others);
-        parallelNestingLevel--;
+    }
+
+    private void resetParallelConstructAnalyzer() {
         if(parallelNestingLevel == 0) {
             parallelConstructHandler.setParallelConstructAnalyzer(null);
         }
-        return substitutions.render();
     }
 
     private String visitParallelLoad(ExprNode expr) {
@@ -339,26 +340,33 @@ public class SubstitutionGenerator {
 
     private String generateNondeterminism(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
+        generateAssignmentBody(substitution, lhs, rhs);
+        TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
+        return substitution.render();
+    }
+
+    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs) {
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         parallelConstructHandler.setLhsInParallel(true);
+        IdentifierExprNode identifier = null;
+        boolean isIdentifierLhs = false;
         if(lhs instanceof IdentifierExprNode) {
-            TemplateHandler.add(substitution, "isIdentifierLhs", true);
-            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(lhs, null));
-            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) lhs).getName()));
+            identifier = (IdentifierExprNode) lhs;
+            isIdentifierLhs = true;
             parallelConstructHandler.setLhsInParallel(false);
         } else if(lhs instanceof ExpressionOperatorNode) {
-            TemplateHandler.add(substitution, "isIdentifierLhs", false);
-            TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
-            TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0)).getName()));
+            identifier = (IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+            isIdentifierLhs = false;
             //TODO generate code for couples as arguments
-            parallelConstructHandler.setLhsInParallel(false);
-            TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(0), null));
-            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) lhs).getExpressionNodes().get(1), null));
+            ExprNode argument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
+            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
         }
-
-        TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
-        return substitution.render();
+        TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
+        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));
+        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(identifier.getName()));
+        parallelConstructHandler.setLhsInParallel(false);
+        TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(identifier, null));
     }
 
     public String visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode node, Void expected) {

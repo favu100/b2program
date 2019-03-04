@@ -37,38 +37,39 @@ public class IdentifierGenerator {
 
     private Stack<Integer> stackScope;
 
-    private ParallelConstructHandler parallelConstructAnalyzer;
+    private final ParallelConstructHandler parallelConstructHandler;
 
-    private boolean lhsInParallel;
-
-    public IdentifierGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler) {
+    public IdentifierGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
+                               final ParallelConstructHandler parallelConstructHandler) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
+        this.parallelConstructHandler = parallelConstructHandler;
         this.outputParams = new ArrayList<>();
         this.currentLocals = new HashMap<>();
         this.maxLocals = new HashMap<>();
         this.stackScope = new Stack<>();
         stackScope.push(0);
-        this.lhsInParallel = false;
     }
-
 
     /*
     * This function generates code for an identifier.
     * It also calculates whether the identifier is a output parameter and whether it is generated to a private variable within a machine.
     */
     public String generate(IdentifierExprNode node) {
-        boolean isReturn = outputParams.stream()
+        boolean isReturn = isReturn(node);
+        boolean isPrivate = nameHandler.getGlobals().contains(node.getName());
+        boolean isAssigned = node.getParent() == null || isAssigned(node, node.getParent());
+        return generate(node, isReturn, isPrivate, isAssigned);
+    }
+
+    private boolean isReturn(IdentifierExprNode node) {
+        return outputParams.stream()
                 .map(declarationNode -> nameHandler.getEnumTypes().keySet().contains(declarationNode.getName()) ?
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
                 .collect(Collectors.toList())
                 .contains(node.toString());
-
-        boolean isPrivate = nameHandler.getGlobals().contains(node.getName());
-        boolean isAssigned = node.getParent() == null || isAssigned(node, node.getParent());
-        return generate(node, isReturn, isPrivate, isAssigned);
     }
 
     public boolean isAssigned(IdentifierExprNode node, Node parent) {
@@ -99,11 +100,7 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
-        TemplateHandler.add(identifier, "rhsOnLhs", !lhsInParallel && parallelConstructAnalyzer != null && parallelConstructAnalyzer.getDefinedIdentifiersInParallel()
-                .stream()
-                .map(IdentifierExprNode::getName)
-                .collect(Collectors.toList())
-                .contains(node.getName()));
+        TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
         return identifier.render();
     }
 
@@ -123,12 +120,16 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", false);
         TemplateHandler.add(identifier, "isPrivate", false);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
-        TemplateHandler.add(identifier, "rhsOnLhs", !lhsInParallel && parallelConstructAnalyzer != null && parallelConstructAnalyzer.getDefinedIdentifiersInParallel()
+        TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(name));
+        return identifier.render();
+    }
+
+    private boolean rhsOnLhs(String name) {
+        return !parallelConstructHandler.isLhsInParallel() && parallelConstructHandler.getParallelConstructAnalyzer() != null && parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel()
                 .stream()
                 .map(IdentifierExprNode::getName)
                 .collect(Collectors.toList())
-                .contains(name));
-        return identifier.render();
+                .contains(name);
     }
 
     /*
@@ -186,15 +187,4 @@ public class IdentifierGenerator {
         stackScope.pop();
     }
 
-    public void setLhsInParallel(boolean lhsInParallel) {
-        this.lhsInParallel = lhsInParallel;
-    }
-
-    public void setParallelConstructAnalyzer(ParallelConstructHandler parallelConstructAnalyzer) {
-        this.parallelConstructAnalyzer = parallelConstructAnalyzer;
-    }
-
-    public ParallelConstructHandler getParallelConstructAnalyzer() {
-        return parallelConstructAnalyzer;
-    }
 }

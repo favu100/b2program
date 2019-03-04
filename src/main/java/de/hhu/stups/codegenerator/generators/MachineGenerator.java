@@ -4,6 +4,7 @@ import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
+import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
@@ -75,6 +76,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final NameHandler nameHandler;
 
+	private final ParallelConstructHandler parallelConstructHandler;
+
 	private STGroup currentGroup;
 
 	private MachineNode machineNode;
@@ -93,7 +96,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			}
 		}
 		this.nameHandler = new NameHandler(currentGroup);
-		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler);
+		this.parallelConstructHandler = new ParallelConstructHandler();
+		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler);
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, useBigInteger);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, typeGenerator, importGenerator);
@@ -102,7 +106,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
-																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler);
+																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler,
+																parallelConstructHandler);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator,
 															declarationGenerator, identifierGenerator, nameHandler, typeGenerator);

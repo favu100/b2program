@@ -67,7 +67,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.iterationPredicateGenerator = new IterationPredicateGenerator(group, machineGenerator, typeGenerator);
         this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator, typeGenerator);
         this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator, typeGenerator);
-        this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator, typeGenerator);
+        this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator);
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
         this.boundedVariables = new ArrayList<>();

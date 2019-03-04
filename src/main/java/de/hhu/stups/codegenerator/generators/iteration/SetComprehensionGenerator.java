@@ -8,6 +8,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.types.BType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -44,38 +45,30 @@ public class SetComprehensionGenerator {
         this.typeGenerator = typeGenerator;
     }
 
+    private void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
+        iterationConstructGenerator.addBoundedVariables(declarations);
+        iterationPredicateGenerator.checkPredicate(predicate, declarations);
+        importGenerator.addImportInIteration(type);
+    }
+
     public String generateSetComprehension(SetComprehensionNode node) {
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
-        iterationConstructGenerator.addBoundedVariables(declarations);
-        iterationPredicateGenerator.checkPredicate(predicate, declarations);
-        importGenerator.addImportInIteration(node.getType());
+        BType type = node.getType();
+
+        prepareGeneration(predicate, declarations, type);
 
         ST template = group.getInstanceOf("set_comprehension");
 
-        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
-        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
-        for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
-            iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
-        }
+        generateOtherIterationConstructs(template, predicate);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String identifier = "_ic_set_" + iterationConstructCounter;
+        boolean isRelation = node.getDeclarationList().size() > 1;
+        generateBody(template, identifier, isRelation, predicate, declarations, type);
 
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
-
-        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-
-        String elementName = getElementFromBoundedVariables(declarations);
-        String innerBody = generateSetComprehensionPredicate(predicate, "_ic_set_" + iterationConstructCounter, elementName);
-        String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
-
-        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
-        TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
-        TemplateHandler.add(template, "isRelation", node.getDeclarationList().size() > 1);
-        TemplateHandler.add(template, "comprehension", comprehension);
         String result = template.render();
-        iterationConstructGenerator.addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
-        iterationConstructGenerator.clearBoundedVariables(declarations);
+        addGeneration(node.toString(), identifier, declarations, result);
         return result;
     }
 
@@ -91,7 +84,35 @@ public class SetComprehensionGenerator {
         return template.render();
     }
 
-    public String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
+    private void generateOtherIterationConstructs(ST template, PredicateNode predicate) {
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
+        for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
+            iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
+        }
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+    }
+
+    private void generateBody(ST template, String identifier, boolean isRelation, PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
+
+        iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
+
+        String elementName = getElementFromBoundedVariables(declarations);
+        String innerBody = generateSetComprehensionPredicate(predicate, identifier, elementName);
+        String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+
+        TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "identifier", identifier);
+        TemplateHandler.add(template, "isRelation", isRelation);
+        TemplateHandler.add(template, "comprehension", comprehension);
+    }
+
+    private void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
+        iterationConstructGenerator.addIteration(node, identifier, result);
+        iterationConstructGenerator.clearBoundedVariables(declarations);
+    }
+
+    private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             return "_ic_" + declarations.get(declarations.size() - 1).getName();
         } else {

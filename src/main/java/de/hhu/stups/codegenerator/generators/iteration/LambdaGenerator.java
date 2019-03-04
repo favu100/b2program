@@ -9,6 +9,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.types.BType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -45,40 +46,57 @@ public class LambdaGenerator {
         this.typeGenerator = typeGenerator;
     }
 
+    private void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
+        iterationConstructGenerator.addBoundedVariables(declarations);
+        iterationPredicateGenerator.checkPredicate(predicate, declarations);
+        importGenerator.addImportInIteration(type);
+    }
+
     public String generateLambda(LambdaNode node) {
         PredicateNode predicate = node.getPredicate();
         List<DeclarationNode> declarations = node.getDeclarations();
-        iterationConstructGenerator.addBoundedVariables(declarations);
-        iterationPredicateGenerator.checkPredicate(predicate, declarations);
         ExprNode expression = node.getExpression();
-        importGenerator.addImportInIteration(node.getType());
+        BType type = node.getType();
+
+        prepareGeneration(predicate, declarations, type);
 
         ST template = group.getInstanceOf("lambda");
+        generateOtherIterationConstructs(template, predicate, expression);
 
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String identifier = "_ic_set_" + iterationConstructCounter;
+        generateBody(template, identifier, predicate, declarations, expression, type);
+
+        String result = template.render();
+        addGeneration(node.toString(), identifier, declarations, result);
+        return result;
+    }
+
+    private void generateOtherIterationConstructs(ST template, PredicateNode predicate, ExprNode expression) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectExpression(
                 iterationConstructHandler.inspectPredicate(predicate), expression);
         for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
             iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
         }
-
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+    }
 
+    private void generateBody(ST template, String identifier, PredicateNode predicate, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
 
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        String innerBody = generateLambdaExpression(predicate, expression, "_ic_set_" + iterationConstructCounter, "_ic_" + declarations.get(declarations.size() - 1).getName());
+        String innerBody = generateLambdaExpression(predicate, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName());
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
-
-        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
-        TemplateHandler.add(template, "identifier", "_ic_set_" + iterationConstructCounter);
+        TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "lambda", lambda);
-        String result = template.render();
-        iterationConstructGenerator.addIteration(node.toString(), "_ic_set_"+ iterationConstructCounter, result);
+    }
+
+    private void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
+        iterationConstructGenerator.addIteration(node, identifier, result);
         iterationConstructGenerator.clearBoundedVariables(declarations);
-        return result;
     }
 
     public String generateLambdaExpression(PredicateNode predicateNode, ExprNode expression, String relationName, String elementName) {

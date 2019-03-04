@@ -1,6 +1,5 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
-import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -29,26 +28,17 @@ public class SetComprehensionGenerator {
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
-    private final ImportGenerator importGenerator;
-
     private final TypeGenerator typeGenerator;
 
     public SetComprehensionGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
-                                     final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator, final ImportGenerator importGenerator,
+                                     final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator,
                                      final TypeGenerator typeGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
-        this.importGenerator = importGenerator;
         this.typeGenerator = typeGenerator;
-    }
-
-    private void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
-        iterationConstructGenerator.addBoundedVariables(declarations);
-        iterationPredicateGenerator.checkPredicate(predicate, declarations);
-        importGenerator.addImportInIteration(type);
     }
 
     public String generateSetComprehension(SetComprehensionNode node) {
@@ -56,7 +46,7 @@ public class SetComprehensionGenerator {
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
 
-        prepareGeneration(predicate, declarations, type);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
 
         ST template = group.getInstanceOf("set_comprehension");
 
@@ -68,7 +58,7 @@ public class SetComprehensionGenerator {
         generateBody(template, identifier, isRelation, predicate, declarations, type);
 
         String result = template.render();
-        addGeneration(node.toString(), identifier, declarations, result);
+        iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
         return result;
     }
 
@@ -105,11 +95,6 @@ public class SetComprehensionGenerator {
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "isRelation", isRelation);
         TemplateHandler.add(template, "comprehension", comprehension);
-    }
-
-    private void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
-        iterationConstructGenerator.addIteration(node, identifier, result);
-        iterationConstructGenerator.clearBoundedVariables(declarations);
     }
 
     private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {

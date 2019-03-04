@@ -17,6 +17,7 @@ import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
 import de.prob.parser.ast.nodes.ltl.LTLPrefixOperatorNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -32,6 +33,7 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
+import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.STGroup;
 
@@ -55,6 +57,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final QuantifiedPredicateGenerator quantifiedPredicateGenerator;
 
+    private final ImportGenerator importGenerator;
+
     private final HashMap<String, String> iterationsMapCode;
 
     private final HashMap<String, String> iterationsMapIdentifier;
@@ -65,9 +69,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
                                        final TypeGenerator typeGenerator, final ImportGenerator importGenerator) {
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = new IterationPredicateGenerator(group, machineGenerator, typeGenerator);
-        this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator, typeGenerator);
-        this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator, typeGenerator);
-        this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, importGenerator);
+        this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
+        this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
+        this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
         this.boundedVariables = new ArrayList<>();
@@ -225,11 +230,11 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
-    public void addBoundedVariables(List<DeclarationNode> declarations) {
+    private void addBoundedVariables(List<DeclarationNode> declarations) {
         boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
     }
 
-    public void clearBoundedVariables(List<DeclarationNode> declarations) {
+    private void clearBoundedVariables(List<DeclarationNode> declarations) {
         boundedVariables.removeAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
     }
 
@@ -237,7 +242,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return boundedVariables;
     }
 
-    public void addIteration(String node, String identifier, String code) {
+    private void addIteration(String node, String identifier, String code) {
         iterationsMapIdentifier.put(node, identifier);
         iterationsMapCode.put(node, code);
     }
@@ -248,5 +253,16 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     public HashMap<String, String> getIterationsMapIdentifier() {
         return iterationsMapIdentifier;
+    }
+
+    public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
+        this.addBoundedVariables(declarations);
+        iterationPredicateGenerator.checkPredicate(predicate, declarations);
+        importGenerator.addImportInIteration(type);
+    }
+
+    public void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
+        this.addIteration(node, identifier, result);
+        this.clearBoundedVariables(declarations);
     }
 }

@@ -1,6 +1,5 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
-import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -28,29 +27,20 @@ public class QuantifiedPredicateGenerator {
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
-    private final ImportGenerator importGenerator;
-
     public QuantifiedPredicateGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
-                           final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator, final ImportGenerator importGenerator) {
+                           final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
-        this.importGenerator = importGenerator;
-    }
-
-    private void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
-        iterationConstructGenerator.addBoundedVariables(declarations);
-        iterationPredicateGenerator.checkPredicate(predicate, declarations);
-        importGenerator.addImportInIteration(type);
     }
 
     public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
-        prepareGeneration(predicate, declarations, type);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
         boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
 
         ST template = group.getInstanceOf("quantified_predicate");
@@ -61,7 +51,7 @@ public class QuantifiedPredicateGenerator {
         generateBody(template, identifier, forAll, predicate, declarations);
 
         String result = template.render();
-        addGeneration(node.toString(), identifier, declarations, result);
+        iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
         return result;
     }
 
@@ -84,11 +74,6 @@ public class QuantifiedPredicateGenerator {
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);
         TemplateHandler.add(template, "predicate", predicateString);
-    }
-
-    private void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
-        iterationConstructGenerator.addIteration(node, identifier, result);
-        iterationConstructGenerator.clearBoundedVariables(declarations);
     }
 
     public String generateQuantifiedPredicateEvaluation(PredicateNode predicateNode, String identifier, boolean forAll) {

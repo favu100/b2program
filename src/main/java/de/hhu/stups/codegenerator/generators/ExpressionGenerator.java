@@ -42,6 +42,10 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MOD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MULT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.OVERWRITE_RELATION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_FUNCTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_INJECTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_SURJECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PLUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE;
@@ -50,6 +54,12 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_SUBTRACTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_BIJECTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_RELATION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_SURJECTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_SURJECTION_RELATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TRUE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.UNARY_MINUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.UNION;
@@ -62,7 +72,9 @@ public class ExpressionGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
             Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
                     FUNCTION_CALL, OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
-                    RANGE_RESTRICTION, RANGE_SUBTRACTION, CARTESIAN_PRODUCT);
+                    RANGE_RESTRICTION, RANGE_SUBTRACTION, CARTESIAN_PRODUCT, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
+                    TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
+                    PARTIAL_SURJECTION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
             Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, INVERSE_RELATION, MIN, MAX, POW);
@@ -302,6 +314,36 @@ public class ExpressionGenerator {
                 break;
             case CARTESIAN_PRODUCT:
                 operatorName = "cartesianProduct";
+                break;
+            case TOTAL_FUNCTION:
+                operatorName = "totalFunction";
+                break;
+            case TOTAL_BIJECTION:
+                operatorName = "totalBijection";
+                break;
+            case TOTAL_INJECTION:
+                operatorName = "totalInjection";
+                break;
+            case TOTAL_SURJECTION:
+                operatorName = "totalSurjection";
+                break;
+            case TOTAL_RELATION:
+                operatorName = "totalRelation";
+                break;
+            case TOTAL_SURJECTION_RELATION:
+                operatorName = "totalSurjectionRelation";
+                break;
+            case PARTIAL_BIJECTION:
+                operatorName = "partialBijection";
+                break;
+            case PARTIAL_SURJECTION:
+                operatorName = "partialSurjection";
+                break;
+            case PARTIAL_FUNCTION:
+                operatorName = "partialFunction";
+                break;
+            case PARTIAL_INJECTION:
+                operatorName = "partialInjection";
                 break;
             default:
                 throw new RuntimeException("Given operator is not implemented: " + operator);

@@ -351,10 +351,10 @@ public class SubstitutionGenerator {
         parallelConstructHandler.setLhsInParallel(true);
         IdentifierExprNode identifier = null;
         boolean isIdentifierLhs = false;
+        parallelConstructHandler.setLhsInParallel(true);
         if(lhs instanceof IdentifierExprNode) {
             identifier = (IdentifierExprNode) lhs;
             isIdentifierLhs = true;
-            parallelConstructHandler.setLhsInParallel(false);
         } else if(lhs instanceof ExpressionOperatorNode) {
             identifier = (IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
             isIdentifierLhs = false;

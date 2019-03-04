@@ -125,10 +125,13 @@ public class DeclarationGenerator {
     }
 
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
-
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        ExprNode expression = ((PredicateOperatorWithExprArgsNode) extractEqualProperties(node, constant).get(0)).getExpressionNodes().get(1);
+        List<PredicateNode> equalProperties = extractEqualProperties(node, constant);
+        if(equalProperties.isEmpty()) {
+            return "";
+        }
+        ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
         TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
         return initialization.render();

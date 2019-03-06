@@ -62,7 +62,7 @@ public class SetComprehensionGenerator {
         return result;
     }
 
-    public String generateSetComprehensionPredicate(PredicateNode predicateNode, String setName, String elementName) {
+    private String generateSetComprehensionPredicate(PredicateNode predicateNode, String setName, String elementName) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("set_comprehension_predicate");
         machineGenerator.inIterationConstruct();

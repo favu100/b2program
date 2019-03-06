@@ -205,12 +205,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return expressionGenerator.visitNumberNode(node);
 	}
 
-	/*
-	* Code is not generated from quantified expresions in the given subset of B
-	*/
 	@Override
 	public String visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
-		throw new RuntimeException("Given node is not implemented: " + node.getClass());
+		return expressionGenerator.visitQuantifiedExpressionNode(node);
 	}
 
 	/*
@@ -220,7 +217,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public String visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
 		return predicateGenerator.generateQuantifiedPredicateNode(node);
 	}
-
 
 	/*
 	*

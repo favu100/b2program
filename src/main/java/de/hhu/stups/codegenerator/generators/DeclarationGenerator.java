@@ -186,10 +186,10 @@ public class DeclarationGenerator {
     * This function generates code for enumerated sets within a machine.
     */
     public List<String> generateEnumDeclarations(MachineNode node) {
-        node.getEnumaratedSets().forEach(set -> setToEnum.put(set.getSetDeclarationNode().getName(), set.getElements().stream()
+        node.getEnumeratedSets().forEach(set -> setToEnum.put(set.getSetDeclarationNode().getName(), set.getElements().stream()
                 .map(DeclarationNode::getName)
                 .collect(Collectors.toList())));
-        return node.getEnumaratedSets().stream()
+        return node.getEnumeratedSets().stream()
                 .map(this::declareEnums)
                 .collect(Collectors.toList());
     }
@@ -198,7 +198,7 @@ public class DeclarationGenerator {
     * This function generates code for all declarations of enums for enumerated sets from the node of the machine.
     */
     public List<String> generateSetDeclarations(MachineNode node) {
-        return node.getEnumaratedSets().stream()
+        return node.getEnumeratedSets().stream()
                 .map(this::visitEnumeratedSetDeclarationNode)
                 .collect(Collectors.toList());
     }

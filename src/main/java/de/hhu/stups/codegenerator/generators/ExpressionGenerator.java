@@ -10,6 +10,7 @@ import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
+import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.types.BType;
@@ -140,6 +141,8 @@ public class ExpressionGenerator {
             return visitIdentifierExprNode((IdentifierExprNode) node);
         } else if(node instanceof CastPredicateExpressionNode) {
             return visitCastPredicateExpressionNode((CastPredicateExpressionNode) node);
+        } else if(node instanceof QuantifiedExpressionNode) {
+            return visitQuantifiedExpressionNode((QuantifiedExpressionNode) node);
         } else if(node instanceof SetComprehensionNode) {
             return visitSetComprehensionNode((SetComprehensionNode) node);
         } else if(node instanceof LambdaNode) {
@@ -398,6 +401,10 @@ public class ExpressionGenerator {
         ST val = currentGroup.getInstanceOf("boolean_val");
         TemplateHandler.add(val, "val", operator == TRUE);
         return val.render();
+    }
+
+    public String visitQuantifiedExpressionNode(QuantifiedExpressionNode node) {
+        return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
     public String visitSetComprehensionNode(SetComprehensionNode node) {

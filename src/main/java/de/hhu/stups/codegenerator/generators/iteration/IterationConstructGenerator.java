@@ -57,6 +57,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final QuantifiedPredicateGenerator quantifiedPredicateGenerator;
 
+    private final QuantifiedExpressionGenerator quantifiedExpressionGenerator;
+
     private final ImportGenerator importGenerator;
 
     private final HashMap<String, String> iterationsMapCode;
@@ -72,6 +74,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
@@ -101,7 +104,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     @Override
-    public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode quantifiedExpressionNode, Void aVoid) {
+    public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
+        iterationsMapCode.put(node.toString(), quantifiedExpressionGenerator.generateQuantifiedExpresion(node));
+        iterationConstructHandler.incrementIterationConstructCounter();
         return null;
     }
 

@@ -76,9 +76,9 @@ public class QuantifiedPredicateGenerator {
         TemplateHandler.add(template, "predicate", predicateString);
     }
 
-    public String generateQuantifiedPredicateEvaluation(PredicateNode predicateNode, String identifier, boolean forAll) {
+    private String generateQuantifiedPredicateEvaluation(PredicateNode predicateNode, String identifier, boolean forAll) {
         //TODO only take end of predicate arguments
-        ST template = group.getInstanceOf("quantified_evaluation");
+        ST template = group.getInstanceOf("quantified_predicate_evaluation");
         machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "identifier", identifier);

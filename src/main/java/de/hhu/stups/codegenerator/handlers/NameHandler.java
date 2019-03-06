@@ -58,7 +58,7 @@ public class NameHandler {
     * This functions initializes different levels for handling collisions between identifiers and keywords
     */
     public void initialize(MachineNode node) {
-        node.getEnumaratedSets().forEach(set -> enumTypes.put(set.getSetDeclarationNode().getName(), set.getElementsAsStrings()));
+        node.getEnumeratedSets().forEach(set -> enumTypes.put(set.getSetDeclarationNode().getName(), set.getElementsAsStrings()));
         reservedMachines.addAll(node.getMachineReferences().stream()
                 .map(reference -> handle(reference.getMachineName()))
                 .collect(Collectors.toList()));
@@ -77,12 +77,12 @@ public class NameHandler {
                 .map(variable -> handleIdentifier(variable.getName(), FUNCTION_NAMES))
                 .collect(Collectors.toList()));
 
-        reservedMachinesAndFunctionsAndVariables.addAll(node.getEnumaratedSets().stream()
+        reservedMachinesAndFunctionsAndVariables.addAll(node.getEnumeratedSets().stream()
                 .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), FUNCTION_NAMES))
                 .collect(Collectors.toList()));
 
         globals.addAll(reservedMachinesAndFunctionsAndVariables);
-        globals.addAll(node.getEnumaratedSets().stream()
+        globals.addAll(node.getEnumeratedSets().stream()
                 .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES))
                 .collect(Collectors.toList()));
     }

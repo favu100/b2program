@@ -62,7 +62,7 @@ private BSet\<<type>\> <identifier> = <set_enumeration("", type, "", enums, fals
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-<if(isRelation)>new BRelation\<<leftType>, <rightType> ><else>new BSet\<<type> ><endif>(<enums; separator=", ">)
+<if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet\<<type>\><endif>(<enums; separator=", ">)
 >>
 
 set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
@@ -118,10 +118,22 @@ BBoolean <identifier> = new BBoolean(<if(forall)>true<else>false<endif>);
 <predicate>
 >>
 
-quantified_evaluation(identifier, predicate, forall) ::= <<
+quantified_predicate_evaluation(identifier, predicate, forall) ::= <<
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
     break;
+}
+>>
+
+quantified_expression(identifier, identity, setType, otherIterationConstructs, evaluation, isInteger) ::= <<
+<if(isInteger)>BInteger <identifier> = new BInteger(<identity>);<else>BSet <identifier> = new BSet\<<setType>\>();<endif>
+<otherIterationConstructs>
+<evaluation>
+>>
+
+quantified_expression_evaluation(predicate, identifier, operation, expression) ::= <<
+if((<predicate>).booleanValue()) {
+    <identifier> = <identifier>.<operation>(<expression>);
 }
 >>
 

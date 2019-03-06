@@ -33,7 +33,10 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DOMAIN_RESTRICTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DOMAIN_SUBTRACTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FALSE;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FIN;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.GENERALIZED_INTER;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.GENERALIZED_UNION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERSECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERVAL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INVERSE_RELATION;
@@ -78,7 +81,7 @@ public class ExpressionGenerator {
                     PARTIAL_SURJECTION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
-            Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, INVERSE_RELATION, MIN, MAX, POW);
+            Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
             Arrays.asList(TRUE,FALSE);
@@ -255,6 +258,15 @@ public class ExpressionGenerator {
                 break;
             case POW:
                 operatorName = "pow";
+                break;
+            case FIN:
+                operatorName = "fin";
+                break;
+            case GENERALIZED_UNION:
+                operatorName = "union";
+                break;
+            case GENERALIZED_INTER:
+                operatorName = "intersect";
                 break;
             default:
                 throw new RuntimeException("Given operator is not implemented: " + operator);

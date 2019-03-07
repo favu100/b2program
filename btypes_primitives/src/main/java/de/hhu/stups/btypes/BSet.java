@@ -222,7 +222,7 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(set.size() != this.set.size() && set.containsAll(this));
 	}
 
-	public BBoolean strictNonSubset() {
+	public BBoolean strictNotSubset() {
 		return new BBoolean(set.size() == this.set.size() || !set.containsAll(this));
 	}
 

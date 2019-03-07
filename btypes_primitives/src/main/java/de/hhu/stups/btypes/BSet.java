@@ -10,6 +10,8 @@ import clojure.lang.Var;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Optional;
 
 public class BSet<T> implements BObject, Set<T> {
@@ -245,6 +247,29 @@ public class BSet<T> implements BObject, Set<T> {
 			return result.get();
 		}
 		throw new RuntimeException("Maximum does not exist");
+	}
+
+	public BSet<BSet<T>> pow() {
+		BSet<BSet<T>> result = new BSet<>();
+		BSet<T> start = new BSet<>();
+		Queue<BSet<T>> queue = new LinkedList<>();
+		queue.add(start);
+		while(!queue.isEmpty()) {
+			BSet<T> currentSet = queue.remove();
+			for(T element : this) {
+				BSet<T> nextSet = currentSet.union(new BSet<>(element));
+				int previousSize = result.size();
+				result = result.union(new BSet<>(nextSet));
+				if(previousSize < result.size()) {
+					queue.add(nextSet);
+				}
+			}
+		}
+		return result;
+	}
+
+	public BSet<BSet<T>> fin() {
+		return this.pow();
 	}
 
 	public <S> BRelation<T,S> cartesianProduct(BSet<S> set) {

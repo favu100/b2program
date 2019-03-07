@@ -169,7 +169,7 @@ public class PredicateGenerator {
                 operatorName = "strictSubset";
                 break;
             case STRICT_NON_INCLUSION:
-                operatorName = "strictNonSubset";
+                operatorName = "strictNotSubset";
                 break;
             case EQUAL:
                 operatorName = "equal";

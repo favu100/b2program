@@ -74,7 +74,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		throw new RuntimeException("Argument is not in the key set of this map");
 	}
 
-	public BSet<T> domain() {
+	public BSet<S> domain() {
 		return new BSet(PersistentHashSet.create(this.set.stream()
 				.map(object -> ((BCouple<S,T>) object).getFirst())
 				.collect(Collectors.toList())));
@@ -119,7 +119,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 				.collect(Collectors.toList())));
 	}
 
-	public BRelation<S,T> overwrite(BRelation<S,T> arg) {
+	public BRelation<S,T> override(BRelation<S,T> arg) {
 		return arg.union(this.domainRestriction(arg.domain()));
 	}
 

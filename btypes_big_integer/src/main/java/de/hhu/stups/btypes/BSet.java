@@ -156,12 +156,32 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BSet<>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
 	}
 
+	public <K extends BObject> T intersect() {
+		if (set.isEmpty()) {
+			return (T) new BSet<K>();
+		} else {
+			return (T) this.set.stream()
+					.reduce((a,e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
+		}
+
+	}
+
 	public BSet<T> difference(BSet<T> set) {
 		return new BSet<>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
 	}
 
 	public BSet<T> union(BSet<T> set) {
 		return new BSet<>((PersistentHashSet) UNION.invoke(this.set, set.set));
+	}
+
+	public <K extends BObject> T union() {
+		if (set.isEmpty()) {
+			return (T) new BSet<K>();
+		} else {
+			return (T) this.set.stream()
+					.reduce((a,e) -> ((BSet<K>) a).union((BSet<K>) e)).get();
+		}
+
 	}
 
 	public static BSet<BInteger> range(BInteger a, BInteger b) {
@@ -190,6 +210,22 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(!equals(o));
 	}
 
+	public BBoolean subset(BSet<T> set) {
+		return new BBoolean(set.containsAll(this));
+	}
+
+	public BBoolean notSubset() {
+		return new BBoolean(!set.containsAll(this));
+	}
+
+	public BBoolean strictSubset() {
+		return new BBoolean(set.size() != this.set.size() && set.containsAll(this));
+	}
+
+	public BBoolean strictNonSubset() {
+		return new BBoolean(set.size() == this.set.size() || !set.containsAll(this));
+	}
+
 	public T nondeterminism() {
 		int index = (int) Math.floor(Math.random() * set.size());
 		return toArray()[index];
@@ -209,5 +245,15 @@ public class BSet<T> implements BObject, Set<T> {
 			return result.get();
 		}
 		throw new RuntimeException("Minumum does not exist");
+	}
+
+	public <S> BRelation<T,S> cartesianProduct(BSet<S> set) {
+		BRelation<T,S> result = new BRelation<>();
+		for(T e1 : this) {
+			for(S e2 : set) {
+				result = result.union(new BRelation<>(new BCouple(e1,e2)));
+			}
+		}
+		return result;
 	}
 }

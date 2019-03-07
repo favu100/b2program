@@ -120,7 +120,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 				.collect(Collectors.toList())));
 	}
 
-	public BRelation<S,T> overwrite(BRelation<S,T> arg) {
+	public BRelation<S,T> override(BRelation<S,T> arg) {
 		return arg.union(this.domainRestriction(arg.domain()));
 	}
 

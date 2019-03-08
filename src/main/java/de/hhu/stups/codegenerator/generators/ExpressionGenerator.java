@@ -37,6 +37,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.GENERALIZED_INTER;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.GENERALIZED_UNION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ID;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERSECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERVAL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INVERSE_RELATION;
@@ -81,7 +82,7 @@ public class ExpressionGenerator {
                     PARTIAL_SURJECTION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
-            Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER);
+            Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, ID, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
             Arrays.asList(TRUE,FALSE);
@@ -246,6 +247,9 @@ public class ExpressionGenerator {
                 break;
             case RANGE:
                 operatorName = "range";
+                break;
+            case ID:
+                operatorName = "identity";
                 break;
             case INVERSE_RELATION:
                 operatorName = "inverse";

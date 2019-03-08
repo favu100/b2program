@@ -272,6 +272,14 @@ public class BSet<T> implements BObject, Set<T> {
 		return this.pow();
 	}
 
+	public BRelation<T,T> identity() {
+		BRelation<T,T> result = new BRelation<>();
+		for(T e : this) {
+			result = result.union(new BRelation<>(new BCouple<>(e,e)));
+		}
+		return result;
+	}
+
 	public <S> BRelation<T,S> cartesianProduct(BSet<S> set) {
 		BRelation<T,S> result = new BRelation<>();
 		for(T e1 : this) {

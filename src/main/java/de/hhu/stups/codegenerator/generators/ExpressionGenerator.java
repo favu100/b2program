@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.BOOL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CARD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.COMPOSITION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.COUPLE;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DIRECT_PRODUCT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DIVIDE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DOMAIN;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DOMAIN_RESTRICTION;
@@ -47,6 +49,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MOD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MULT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.OVERWRITE_RELATION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARALLEL_PRODUCT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_FUNCTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_INJECTION;
@@ -77,7 +80,7 @@ public class ExpressionGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
             Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
                     FUNCTION_CALL, OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
-                    RANGE_RESTRICTION, RANGE_SUBTRACTION, CARTESIAN_PRODUCT, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
+                    RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, CARTESIAN_PRODUCT, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
                     TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
                     PARTIAL_SURJECTION);
 
@@ -330,6 +333,15 @@ public class ExpressionGenerator {
                 break;
             case RANGE_SUBTRACTION:
                 operatorName = "rangeSubstraction";
+                break;
+            case DIRECT_PRODUCT:
+                operatorName = "directProduct";
+                break;
+            case PARALLEL_PRODUCT:
+                operatorName = "parallelProduct";
+                break;
+            case COMPOSITION:
+                operatorName = "composition";
                 break;
             case CARTESIAN_PRODUCT:
                 operatorName = "cartesianProduct";

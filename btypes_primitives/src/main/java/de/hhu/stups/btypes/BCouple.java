@@ -27,7 +27,7 @@ public class BCouple<S,T> implements BObject {
 
         BCouple bObjects = (BCouple) o;
 		// elements is never null
-		return bObjects.getFirst().equals(this.first) && bObjects.getSecond().equals(this.second);
+		return bObjects.projection1().equals(this.first) && bObjects.projection2().equals(this.second);
 	}
 
 	public int hashCode() {
@@ -36,14 +36,14 @@ public class BCouple<S,T> implements BObject {
 
 	@Override
 	public java.lang.String toString() {
-		return "(" + this.getFirst() + " |-> " + this.getSecond() + ')';
+		return "(" + this.projection1() + " |-> " + this.projection2() + ')';
 	}
 
-	public S getFirst() {
+	public S projection1() {
 		return first;
 	}
 
-	public T getSecond() {
+	public T projection2() {
 		return second;
 	}
 

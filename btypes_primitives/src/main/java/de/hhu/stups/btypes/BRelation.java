@@ -59,31 +59,31 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BSet<T> relationImage(BSet<S> domain) {
 		return new BSet<T>(PersistentHashSet.create(this.set.stream()
-				.filter(object -> domain.contains(((BCouple<S,T>)object).getFirst()))
-				.map(object -> ((BCouple<S,T>) object).getSecond())
+				.filter(object -> domain.contains(((BCouple<S,T>)object).projection1()))
+				.map(object -> ((BCouple<S,T>) object).projection2())
 				.collect(Collectors.toSet())));
 	}
 
 
 	public T functionCall(S arg) {
 		List<BCouple<S,T>> matchedCouples = this.stream()
-				.filter(couple -> couple.getFirst().equals(arg))
+				.filter(couple -> couple.projection1().equals(arg))
 				.collect(Collectors.toList());
 		if(matchedCouples.size() > 0) {
-			return matchedCouples.get(0).getSecond();
+			return matchedCouples.get(0).projection2();
 		}
 		throw new RuntimeException("Argument is not in the key set of this map");
 	}
 
 	public BSet<S> domain() {
 		return new BSet(PersistentHashSet.create(this.set.stream()
-				.map(object -> ((BCouple<S,T>) object).getFirst())
+				.map(object -> ((BCouple<S,T>) object).projection1())
 				.collect(Collectors.toList())));
 	}
 
 	public BSet<T> range() {
 		return new BSet(PersistentHashSet.create(this.set.stream()
-				.map(object -> ((BCouple<S,T>) object).getSecond())
+				.map(object -> ((BCouple<S,T>) object).projection2())
 				.collect(Collectors.toList())));
 	}
 
@@ -91,32 +91,32 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		return new BRelation<T, S>(PersistentHashSet.create(this.set.stream()
 				.map(object -> {
 					BCouple<S,T> couple = (BCouple<S,T>) object;
-					return new BCouple<T,S>(couple.getSecond(), couple.getFirst());
+					return new BCouple<T,S>(couple.projection2(), couple.projection1());
 				})
 				.collect(Collectors.toList())));
 	}
 
 	public BRelation<S,T> domainRestriction(BSet<S> arg) {
 		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> arg.contains(((BCouple<S,T>) object).getFirst()))
+				.filter(object -> arg.contains(((BCouple<S,T>) object).projection1()))
 				.collect(Collectors.toList())));
 	}
 
 	public BRelation<S,T> domainSubstraction(BSet<S> arg) {
 		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> !arg.contains(((BCouple<S,T>) object).getFirst()))
+				.filter(object -> !arg.contains(((BCouple<S,T>) object).projection1()))
 				.collect(Collectors.toList())));
 	}
 
 	public BRelation<S,T> rangeRestriction(BSet<T> arg) {
 		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> arg.contains(((BCouple<S,T>) object).getSecond()))
+				.filter(object -> arg.contains(((BCouple<S,T>) object).projection2()))
 				.collect(Collectors.toList())));
 	}
 
 	public BRelation<S,T> rangeSubstraction(BSet<T> arg) {
 		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> !arg.contains(((BCouple<S,T>) object).getSecond()))
+				.filter(object -> !arg.contains(((BCouple<S,T>) object).projection2()))
 				.collect(Collectors.toList())));
 	}
 

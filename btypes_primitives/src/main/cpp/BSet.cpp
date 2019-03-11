@@ -14,27 +14,28 @@ using namespace std;
 template<typename T>
 class BSet : public BObject {
 
+    struct Hash {
+        public:
+            size_t operator()(const T& obj) const {
+                return obj.hashCode();
+            }
+    };
 
+    struct HashEqual {
+        public:
+            bool operator()(const T& obj1, const T& obj2) const {
+                if (obj1 == obj2)
+                    return true;
+                else
+                    return false;
+                }
+        };
+
+    protected:
+        immer::set<T,Hash, HashEqual> set;
 
     public:
 
-        struct Hash {
-            public:
-                size_t operator()(const T& obj) const {
-                    return obj.hashCode();
-                }
-        };
-
-        struct HashEqual {
-            public:
-                bool operator()(const T& obj1, const T& obj2) const {
-
-                    if (obj1 == obj2)
-                        return true;
-                    else
-                        return false;
-                }
-        };
 
         /*Only used within this class*/
         BSet<T>(const immer::set<T, Hash, HashEqual>& elements) {
@@ -230,6 +231,80 @@ class BSet : public BObject {
             return BBoolean(set.count(object) == 0);
         }
 
+        BBoolean subset(const BSet<T>& set) {
+            for (const T& obj : this->set) {
+                if(set.count(obj) == 0) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean notSubset(const BSet<T>& set) {
+            for (const T& obj : this->set) {
+                if(set.count(obj) == 0) {
+                    return BBoolean(true);
+                }
+            }
+            return BBoolean(false);
+        }
+
+        BBoolean strictSubset(const BSet<T>& set) {
+            if(this->set.size() != set.size()) {
+                for (const T& obj : this->set) {
+                    if(set.count(obj) == 0) {
+                        return BBoolean(false);
+                    }
+                }
+                return BBoolean(true);
+            }
+            return BBoolean(false);
+        }
+
+        BBoolean strictNotSubset(const BSet<T>& set) {
+            if(this->set.size() != set.size()) {
+                for (const T& obj : this->set) {
+                    if(set.count(obj) == 0) {
+                        return BBoolean(true);
+                    }
+                }
+                return BBoolean(false);
+            }
+            return BBoolean(false);
+        }
+
+        BInteger min() {
+            BInteger result;
+            int i = 0;
+            for(const T& obj : this->set) {
+                BInteger e = obj;
+                if(i == 0) {
+                    result = e;
+                }
+                if(e.less(result).booleanValue()) {
+                    result = e;
+                }
+                ++i;
+            }
+            return result;
+        }
+
+        BInteger max() {
+            BInteger result;
+            int i = 0;
+            for(const T& obj : this->set) {
+                BInteger e = obj;
+                if(i == 0) {
+                    result = e;
+                }
+                if(e.greater(result).booleanValue()) {
+                    result = e;
+                }
+                ++i;
+            }
+            return result;
+        }
+
         T nondeterminism() {
 		    int index = rand() % set.size();
 		    typename immer::set<T,Hash, HashEqual>::const_iterator it = std::next(set.begin(), index);
@@ -237,11 +312,11 @@ class BSet : public BObject {
 	    }
 
         friend bool operator !=(const BSet<T>& o1, const BSet<T>& o2) {
-            return o1.value != o2.value;
+            return o1.set != o2.set;
         }
 
         friend bool operator ==(const BSet<T>& o1, const BSet<T>& o2) {
-            return o1.value == o2.value;
+            return o1.set == o2.set;
         }
 
         BBoolean equal(const BSet<T>& other) {
@@ -268,7 +343,6 @@ class BSet : public BObject {
             return set.end();
         }
 
-        protected:
-            immer::set<T,Hash, HashEqual> set;
 };
+
 #endif

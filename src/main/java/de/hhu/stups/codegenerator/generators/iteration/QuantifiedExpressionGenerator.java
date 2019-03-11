@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
+import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
@@ -25,16 +26,19 @@ public class QuantifiedExpressionGenerator {
 
     private final MachineGenerator machineGenerator;
 
+    private final NameHandler nameHandler;
+
     private final IterationConstructGenerator iterationConstructGenerator;
 
     private final IterationConstructHandler iterationConstructHandler;
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
-    public QuantifiedExpressionGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
-                                        final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
+    public QuantifiedExpressionGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler, final IterationConstructGenerator iterationConstructGenerator,
+                                         final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
+        this.nameHandler = nameHandler;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
@@ -89,7 +93,7 @@ public class QuantifiedExpressionGenerator {
                 operation = "intersect";
             }
         }
-        return operation;
+        return nameHandler.handle(operation);
     }
 
     private void generateOtherIterationConstructs(ST template, PredicateNode predicate, ExprNode expression) {

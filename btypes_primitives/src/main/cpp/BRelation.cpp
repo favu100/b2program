@@ -2,11 +2,12 @@
 #include <string>
 #include <cstdarg>
 #include <immer/set.hpp>
-#include "BSet.cpp"
 #include "BCouple.cpp"
+#include "BSet.cpp"
 
 #ifndef BRELATION_H
 #define BRELATION_H
+
 
 using namespace std;
 
@@ -30,6 +31,9 @@ class BRelation : public BSet<BCouple<S,T>> {
                     return false;
             }
     };
+
+    protected:
+        immer::set<BCouple<S,T>,Hash, HashEqual> set;
 
     public:
 
@@ -83,7 +87,15 @@ class BRelation : public BSet<BCouple<S,T>> {
             return 0;
         }
 
-        protected:
-            immer::set<BCouple<S,T>,Hash, HashEqual> set;
 };
+
+        /*template<typename T>
+        BRelation<T,T> BSet<BCouple<T,T>>::identity() {
+            BRelation<T,T> result;
+            for(const T& e : set) {
+                result = result._union(BRelation<T,T>(BCouple<T,T>(e,e)));
+            }
+            return result;
+        }*/
+
 #endif

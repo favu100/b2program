@@ -1,9 +1,9 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
-import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
@@ -361,6 +361,8 @@ public class SubstitutionGenerator {
             //TODO generate code for couples as arguments
             ExprNode argument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
+            TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));
+            TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rhs.getType()));
         }
         TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));

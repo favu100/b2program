@@ -62,11 +62,12 @@ public class SetComprehensionGenerator {
         return result;
     }
 
-    private String generateSetComprehensionPredicate(PredicateNode predicateNode, String setName, String elementName) {
+    private String generateSetComprehensionPredicate(PredicateNode predicateNode, String type, String setName, String elementName) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("set_comprehension_predicate");
         machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+        TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);
         TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
         TemplateHandler.add(template, "element", elementName);
@@ -88,10 +89,13 @@ public class SetComprehensionGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
         String elementName = getElementFromBoundedVariables(declarations);
-        String innerBody = generateSetComprehensionPredicate(predicate, identifier, elementName);
+
+        String generatedType = typeGenerator.generate(type);
+
+        String innerBody = generateSetComprehensionPredicate(predicate, generatedType, identifier, elementName);
         String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
-        TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "type", generatedType);
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "isRelation", isRelation);
         TemplateHandler.add(template, "comprehension", comprehension);

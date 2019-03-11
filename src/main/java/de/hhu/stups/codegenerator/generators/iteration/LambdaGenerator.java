@@ -9,6 +9,8 @@ import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -55,7 +57,12 @@ public class LambdaGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
-        generateBody(template, identifier, predicate, declarations, expression, type);
+
+        CoupleType coupleType = (CoupleType) ((SetType) node.getType()).getSubType();
+        String leftType = typeGenerator.generate(coupleType.getLeft());
+        String rightType = typeGenerator.generate(coupleType.getRight());
+
+        generateBody(template, identifier, predicate, leftType, rightType, declarations, expression, type);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -71,12 +78,14 @@ public class LambdaGenerator {
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
     }
 
-    private void generateBody(ST template, String identifier, PredicateNode predicate, List<DeclarationNode> declarations, ExprNode expression, BType type) {
+    private void generateBody(ST template, String identifier, PredicateNode predicate, String leftType, String rightType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
 
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        String innerBody = generateLambdaExpression(predicate, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName());
+
+
+        String innerBody = generateLambdaExpression(predicate, leftType, rightType, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName());
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
@@ -84,7 +93,7 @@ public class LambdaGenerator {
         TemplateHandler.add(template, "lambda", lambda);
     }
 
-    public String generateLambdaExpression(PredicateNode predicateNode, ExprNode expression, String relationName, String elementName) {
+    public String generateLambdaExpression(PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("lambda_expression");
         machineGenerator.inIterationConstruct();

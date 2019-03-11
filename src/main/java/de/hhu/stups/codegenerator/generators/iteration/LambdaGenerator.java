@@ -98,6 +98,8 @@ public class LambdaGenerator {
         ST template = group.getInstanceOf("lambda_expression");
         machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+        TemplateHandler.add(template, "leftType", leftType);
+        TemplateHandler.add(template, "rightType", rightType);
         TemplateHandler.add(template, "relation", relationName);
         TemplateHandler.add(template, "element", elementName);
         TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));

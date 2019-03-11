@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, constants_declarations, constants_initializations, values, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, machine, constants_declarations, values, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 <imports; separator="\n">
 import de.hhu.stups.btypes.BUtils;
 
@@ -65,12 +65,6 @@ set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
 <if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet\<<type>\><endif>(<enums; separator=", ">)
 >>
 
-set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
-<type> <identifier> = new <if(isRelation)>BRelation<else>BSet<endif>\<>();
-<otherIterationConstructs>
-<comprehension>
->>
-
 iteration_construct_enumeration(type, identifier, set, body) ::= <<
 for(<type> <identifier> : <set>) {
     <body>
@@ -94,10 +88,16 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
+set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
+<type> <identifier> = new <if(isRelation)>BRelation<else>BSet<endif>\<>();
+<otherIterationConstructs>
+<comprehension>
+>>
+
 set_comprehension_predicate(set, element, predicate, isRelation) ::= <<
-if((<predicate>).booleanValue()) {
-    <set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
-}
+ if((<predicate>).booleanValue()) {
+     <set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
+ }
 >>
 
 lambda(type, identifier, otherIterationConstructs, lambda) ::= <<
@@ -212,7 +212,8 @@ assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
+<iterationConstruct; separator="\n">
 <if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<set>.nondeterminism()));<endif>
 >>
 

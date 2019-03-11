@@ -14,28 +14,24 @@ using namespace std;
 template<typename T>
 class BSet : public BObject {
 
-    struct Hash {
-        public:
-            size_t operator()(const T& obj) const {
-                return obj.hashCode();
-            }
-    };
+    public:
 
-    struct HashEqual {
-        public:
-            bool operator()(const T& obj1, const T& obj2) const {
-                if (obj1 == obj2)
-                    return true;
-                else
-                    return false;
+        struct Hash {
+            public:
+                size_t operator()(const T& obj) const {
+                    return obj.hashCode();
                 }
         };
 
-    protected:
-        immer::set<T,Hash, HashEqual> set;
-
-    public:
-
+        struct HashEqual {
+            public:
+                bool operator()(const T& obj1, const T& obj2) const {
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                    }
+            };
 
         /*Only used within this class*/
         BSet<T>(const immer::set<T, Hash, HashEqual>& elements) {
@@ -60,9 +56,9 @@ class BSet : public BObject {
             this->set = immer::set<T,Hash, HashEqual>();
         }
 
-        BSet<T>(const BSet<T>& set) {
+        /*BSet<T>(const BSet<T>& set) {
             this->set = set.set;
-        }
+        }*/
 
 	/*public BSet(java.util.Set<BObject> elements) {
 		this.set = HashTreePSet.from(elements);
@@ -342,6 +338,9 @@ class BSet : public BObject {
         typename immer::set<T,Hash, HashEqual>::const_iterator end() {
             return set.end();
         }
+
+        protected:
+            immer::set<T,Hash, HashEqual> set;
 
 };
 

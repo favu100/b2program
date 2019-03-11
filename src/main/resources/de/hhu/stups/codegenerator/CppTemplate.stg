@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(imports, includedMachines, machine, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, includedMachines, machine, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 #include \<iostream>
 #include \<string>
 #include "BUtils.cpp"
@@ -21,8 +21,9 @@ class <machine> {
 
     <enums; separator="\n\n">
 
-
     private:
+
+        <constants_declarations; separator="\n">
 
         <includes; separator="\n">
 
@@ -42,8 +43,9 @@ class <machine> {
 <addition>
 >>
 
-initialization(machine, body) ::= <<
+initialization(machine, body, constants_initializations) ::= <<
 <machine>() {
+    <constants_initializations; separator="\n">
     <body>
 }
 >>
@@ -68,6 +70,78 @@ no_return() ::=<<
 
 set_declaration(identifier, type, enums) ::= <<
 #define <identifier> <set_enumeration("", type, "", enums, false)>
+>>
+
+iteration_construct_enumeration(type, identifier, set, body) ::= <<
+for(<type> <identifier> : <set>) {
+    <body>
+}
+>>
+
+iteration_construct_assignment(type, identifier, expression, body) ::= <<
+<type> <identifier> = <expression>;
+<body>
+>>
+
+iteration_construct_subset(type, identifier, set, body) ::= <<
+for(<type> <identifier> : <set>.pow()) {
+    <body>
+}
+>>
+
+iteration_construct_subsetneq(type, identifier, set, body) ::= <<
+for(<type> <identifier> : <set>.pow().difference(<set>)) {
+    <body>
+}
+>>
+
+set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
+<type> <identifier> = <type>();
+<otherIterationConstructs>
+<comprehension>
+>>
+
+set_comprehension_predicate(set, type, element, predicate, isRelation) ::= <<
+if((<predicate>).booleanValue()) {
+    <set> = <set>._union(<type>(<element>));
+}
+>>
+
+lambda(type, identifier, otherIterationConstructs, lambda) ::= <<
+<type> <identifier> = <type>();
+<otherIterationConstructs>
+<lambda>
+>>
+
+lambda_expression(relation, leftType, rightType, element, expression, predicate) ::= <<
+if((<predicate>).booleanValue()) {
+    <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BCouple\<<leftType>, <rightType>\>(<element>, <expression>)));
+}
+>>
+
+quantified_predicate(identifier, forall, otherIterationConstructs, predicate) ::= <<
+BBoolean <identifier> = BBoolean(<if(forall)>true<else>false<endif>);
+<otherIterationConstructs>
+<predicate>
+>>
+
+quantified_predicate_evaluation(identifier, predicate, forall) ::= <<
+if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
+    <identifier> = BBoolean(<if(forall)>false<else>true<endif>);
+    break;
+}
+>>
+
+quantified_expression(identifier, identity, setType, otherIterationConstructs, evaluation, isInteger) ::= <<
+<if(isInteger)>BInteger <identifier> = BInteger(<identity>);<else>BSet\<<setType>\> <identifier> = BSet\<<setType>\>();<endif>
+<otherIterationConstructs>
+<evaluation>
+>>
+
+quantified_expression_evaluation(predicate, identifier, operation, expression) ::= <<
+if((<predicate>).booleanValue()) {
+    <identifier> = <identifier>.<operation>(<expression>);
+}
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -136,7 +210,13 @@ declaration(type, identifier) ::= <<
 <type> <identifier>
 >>
 
-constant() ::= <<
+constant_declaration(type, identifier) ::= <<
+<type> <identifier>;
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+<iterationConstruct; separator="\n">
+<identifier> = <val>;
 >>
 
 values() ::= <<
@@ -155,16 +235,18 @@ parallel_load(type, identifier) ::= <<
 <type> _ld_<identifier> = <identifier>;
 >>
 
-assignment(identifier, val) ::= <<
-<identifier> = <val>;
+assignment(leftType, rightType, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BCouple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(identifier, set) ::= <<
-<identifier> = <set>.nondeterminism();
+nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BCouple\<<leftType>, <rightType>\>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<
@@ -209,7 +291,8 @@ unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
-select(predicate, then) ::= <<
+select(iterationConstruct, predicate, then) ::= <<
+<iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
 } else {
@@ -217,7 +300,8 @@ if((<predicate>).booleanValue()) {
 }
 >>
 
-if(predicate, then, else1) ::= <<
+if(iterationConstruct, predicate, then, else1) ::= <<
+<iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
 } <else1; separator=" ">
@@ -269,9 +353,11 @@ if(<predicate>.booleanValue()) {
 }
 >>
 
-while(predicate, then) ::= <<
+while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+<iterationConstruct1; separator="\n">
 while((<predicate>).booleanValue()) {
     <then>
+    <iterationConstruct2; separator="\n">
 }
 >>
 

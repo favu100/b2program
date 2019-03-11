@@ -106,11 +106,16 @@ public class SetComprehensionGenerator {
             return "_ic_" + declarations.get(declarations.size() - 1).getName();
         } else {
             ST firstCouple = group.getInstanceOf("couple_create");
-            TemplateHandler.add(firstCouple, "arg1", "_ic_" + declarations.get(0).getName());
-            TemplateHandler.add(firstCouple, "arg2", "_ic_" + declarations.get(1).getName());
+            DeclarationNode left = declarations.get(0);
+            DeclarationNode right = declarations.get(1);
+            TemplateHandler.add(firstCouple, "leftType", typeGenerator.generate(left.getType()));
+            TemplateHandler.add(firstCouple, "rightType", typeGenerator.generate(right.getType()));
+            TemplateHandler.add(firstCouple, "arg1", "_ic_" + left.getName());
+            TemplateHandler.add(firstCouple, "arg2", "_ic_" + right.getName());
             return declarations.subList(2, declarations.size()).stream()
                     .map(DeclarationNode::getName)
                     .reduce(firstCouple.render(), (a,e) -> {
+                        //TODO: implement type for C++
                         ST couple = group.getInstanceOf("couple_create");
                         TemplateHandler.add(couple, "arg1", a);
                         TemplateHandler.add(couple, "arg2", "_ic_" + e);

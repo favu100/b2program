@@ -40,7 +40,7 @@ public class TestCpp {
 		cppFilePaths.forEach(path -> {
 			try {
 				Process process = Runtime.getRuntime()
-                        .exec("g++ -std=c++14 -c " + path.toFile().getAbsoluteFile().toString());
+                        .exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + path.toFile().getAbsoluteFile().toString());
 				writeInputToSystem(process.getErrorStream());
 				writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 				process.waitFor();
@@ -642,6 +642,199 @@ public class TestCpp {
 	public void testScheduler() throws Exception {
 		testCpp("scheduler");
 	}
+
+	@Test
+	public void testCanBusTLC() throws Exception {
+		testCpp("CAN_BUS_tlc");
+	}
+
+	@Ignore
+	@Test
+	public void testCore() throws Exception {
+		testCpp("Core");
+	}
+
+	@Ignore
+	@Test
+	public void testSetLawsNAT() throws Exception {
+		testCpp("SetLawsNAT");
+	}
+
+	@Test
+	public void SimpsonFourSlot() throws Exception {
+		testCpp("Simpson_Four_Slot");
+	}
+
+	@Test
+	public void Train1BeebookTLC() throws Exception {
+		testCpp("Train_1_beebook_TLC");
+	}
+
+	@Test
+	public void Train1() throws Exception {
+		testCpp("train_1");
+	}
+
+	@Ignore
+	@Test
+	public void testEarley2() throws Exception {
+		testCpp("earley_2");
+	}
+
+	@Ignore
+	@Test
+	public void testOBSW_M001() throws Exception {
+		testCpp("obsw_M001");
+	}
+
+	@Ignore
+	@Test
+	public void testRef5Switch() throws Exception {
+		testCpp("Ref5_Switch");
+	}
+
+	@Ignore
+	@Test
+	public void testrether_mch1() throws Exception {
+		testCpp("rether_mch1");
+	}
+
+
+	@Test
+	public void testSetComprehension1() throws Exception {
+		testCpp("SetComprehension1");
+	}
+
+	@Test
+	public void testSetComprehension2() throws Exception {
+		testCpp("SetComprehension2");
+	}
+
+	@Test
+	public void testSetComprehension3() throws Exception {
+		testCpp("SetComprehension3");
+	}
+
+	@Test
+	public void testSetComprehension4() throws Exception {
+		testCpp("SetComprehension4");
+	}
+
+	@Ignore
+	@Test
+	public void testSetComprehension5() throws Exception {
+		//Does not work because of bounded variables from outer scope
+		testCpp("SetComprehension5");
+	}
+
+	@Test
+	public void testLambda() throws Exception {
+		testCpp("Lambda");
+	}
+
+	@Test
+	public void testLambda2() throws Exception {
+		testCpp("Lambda2");
+	}
+
+	@Test
+	public void testQuantifiedPredicate() throws Exception {
+		testCpp("QuantifiedPredicate");
+	}
+
+	@Test
+	public void testQuantifiedPredicate2() throws Exception {
+		testCpp("QuantifiedPredicate2");
+	}
+
+	@Test
+	public void testQuantifiedPredicate3() throws Exception {
+		testCpp("QuantifiedPredicate3");
+	}
+
+	@Test
+	public void testQuantifiedExpression1() throws Exception {
+		testCpp("QuantifiedExpression1");
+	}
+
+	@Test
+	public void testQuantifiedExpression2() throws Exception {
+		testCpp("QuantifiedExpression2");
+	}
+
+	@Test
+	public void testQuantifiedExpression3() throws Exception {
+		testCpp("QuantifiedExpression3");
+	}
+
+	@Test
+	public void testQuantifiedExpression4() throws Exception {
+		testCpp("QuantifiedExpression4");
+	}
+
+
+	@Test
+	public void testGeneralizedUnion() throws Exception {
+		testCpp("GeneralizedUnion");
+	}
+
+	@Test
+	public void testGeneralizedIntersection() throws Exception {
+		testCpp("GeneralizedIntersection");
+	}
+
+
+	@Test
+	public void testFunctionalOverride() throws Exception {
+		testCpp("FunctionalOverride");
+	}
+
+	@Test
+	public void testFunctionalOverride2() throws Exception {
+		testCpp("FunctionalOverride2");
+	}
+
+	@Test
+	public void testFunctionalOverride3() throws Exception {
+		testCpp("FunctionalOverride3");
+	}
+
+	@Test
+	public void testOverride() throws Exception {
+		testCpp("Override");
+	}
+
+	@Test
+	public void testPow() throws Exception {
+		testCpp("Pow");
+	}
+
+	@Test
+	public void testId() throws Exception {
+		testCpp("Id");
+	}
+
+	@Test
+	public void testParallelProduct() throws Exception {
+		testCpp("ParallelProduct");
+	}
+
+	@Test
+	public void testDirectProduct() throws Exception {
+		testCpp("DirectProduct");
+	}
+
+	@Test
+	public void testComposition() throws Exception {
+		testCpp("Composition");
+	}
+
+	@Ignore
+	@Test
+	public void testProjections() throws Exception {
+		testCpp("Projections");
+	}
+	
 
 	private void cleanUp(String path) {
 		File file = new File(path);

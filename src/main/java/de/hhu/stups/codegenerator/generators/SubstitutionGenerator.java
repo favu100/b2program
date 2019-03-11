@@ -90,6 +90,7 @@ public class SubstitutionGenerator {
                 .map(reference -> nameHandler.handle(reference.getMachineNode().getName()))
                 .collect(Collectors.toList()));
         TemplateHandler.add(initialization, "constants_initializations", declarationGenerator.generateConstantsInitializations(node));
+        TemplateHandler.add(initialization, "values", declarationGenerator.generateValues(node));
         TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
         return initialization.render();
     }

@@ -223,7 +223,6 @@ public class TestJava {
 		testJava("Bakery0", "Bakery0", "Bakery0Addition.st");
 	}
 
-	@Ignore
 	@Test
 	public void testGCD() throws Exception {
 		// TODO
@@ -263,19 +262,6 @@ public class TestJava {
 	public void testPhonebook6() throws Exception {
 		// TODO
 		testJava("phonebook6");
-	}
-
-	@Ignore
-	@Test
-	public void testSum() throws Exception {
-		testJava("Sum");
-	}
-
-	@Ignore
-	@Test
-	public void testRecursion() throws Exception {
-		//Correct exception
-		testJava("recursion/Sum1");
 	}
 
 	@Test
@@ -711,6 +697,198 @@ public class TestJava {
 	@Test
 	public void testScheduler() throws Exception {
 		testJava("scheduler");
+	}
+
+	@Test
+	public void testCanBusTLC() throws Exception {
+		testJava("CAN_BUS_tlc");
+	}
+
+	@Ignore
+	@Test
+	public void testCore() throws Exception {
+		testJava("Core");
+	}
+
+	@Ignore
+	@Test
+	public void testSetLawsNAT() throws Exception {
+		testJava("SetLawsNAT");
+	}
+
+	@Test
+	public void SimpsonFourSlot() throws Exception {
+		testJava("Simpson_Four_Slot");
+	}
+
+	@Test
+	public void Train1BeebookTLC() throws Exception {
+		testJava("Train_1_beebook_TLC");
+	}
+
+	@Test
+	public void Train1() throws Exception {
+		testJava("train_1");
+	}
+
+	@Ignore
+	@Test
+	public void testEarley2() throws Exception {
+		testJava("earley_2");
+	}
+
+	@Ignore
+	@Test
+	public void testOBSW_M001() throws Exception {
+		testJava("obsw_M001");
+	}
+
+	@Ignore
+	@Test
+	public void testRef5Switch() throws Exception {
+		testJava("Ref5_Switch");
+	}
+
+	@Ignore
+	@Test
+	public void testrether_mch1() throws Exception {
+		testJava("rether_mch1");
+	}
+
+
+	@Test
+	public void testSetComprehension1() throws Exception {
+		testJava("SetComprehension1");
+	}
+
+	@Test
+	public void testSetComprehension2() throws Exception {
+		testJava("SetComprehension2");
+	}
+
+	@Test
+	public void testSetComprehension3() throws Exception {
+		testJava("SetComprehension3");
+	}
+
+	@Test
+	public void testSetComprehension4() throws Exception {
+		testJava("SetComprehension4");
+	}
+
+	@Ignore
+	@Test
+	public void testSetComprehension5() throws Exception {
+		//Does not work because of bounded variables from outer scope
+		testJava("SetComprehension5");
+	}
+
+	@Test
+	public void testLambda() throws Exception {
+		testJava("Lambda");
+	}
+
+	@Test
+	public void testLambda2() throws Exception {
+		testJava("Lambda2");
+	}
+
+	@Test
+	public void testQuantifiedPredicate() throws Exception {
+		testJava("QuantifiedPredicate");
+	}
+
+	@Test
+	public void testQuantifiedPredicate2() throws Exception {
+		testJava("QuantifiedPredicate2");
+	}
+
+	@Test
+	public void testQuantifiedPredicate3() throws Exception {
+		testJava("QuantifiedPredicate3");
+	}
+
+	@Test
+	public void testQuantifiedExpression1() throws Exception {
+		testJava("QuantifiedExpression1");
+	}
+
+	@Test
+	public void testQuantifiedExpression2() throws Exception {
+		testJava("QuantifiedExpression2");
+	}
+
+	@Test
+	public void testQuantifiedExpression3() throws Exception {
+		testJava("QuantifiedExpression3");
+	}
+
+	@Test
+	public void testQuantifiedExpression4() throws Exception {
+		testJava("QuantifiedExpression4");
+	}
+
+
+	@Test
+	public void testGeneralizedUnion() throws Exception {
+		testJava("GeneralizedUnion");
+	}
+
+	@Test
+	public void testGeneralizedIntersection() throws Exception {
+		testJava("GeneralizedIntersection");
+	}
+
+
+	@Test
+	public void testFunctionalOverride() throws Exception {
+		testJava("FunctionalOverride");
+	}
+
+	@Test
+	public void testFunctionalOverride2() throws Exception {
+		testJava("FunctionalOverride2");
+	}
+
+	@Test
+	public void testFunctionalOverride3() throws Exception {
+		testJava("FunctionalOverride3");
+	}
+
+	@Test
+	public void testOverride() throws Exception {
+		testJava("Override");
+	}
+
+	@Test
+	public void testPow() throws Exception {
+		testJava("Pow");
+	}
+
+	@Test
+	public void testId() throws Exception {
+		testJava("Id");
+	}
+
+	@Test
+	public void testParallelProduct() throws Exception {
+		testJava("ParallelProduct");
+	}
+
+	@Test
+	public void testDirectProduct() throws Exception {
+		testJava("DirectProduct");
+	}
+
+	@Test
+	public void testComposition() throws Exception {
+		testJava("Composition");
+	}
+
+	@Ignore
+	@Test
+	public void testProjections() throws Exception {
+		testJava("Projections");
 	}
 
 	private void cleanUp(String path) {

@@ -143,7 +143,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	private void generateBody(MachineNode node, ST machine) {
 		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
-		TemplateHandler.add(machine, "values", declarationGenerator.generateValues(node));
 		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node));
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));

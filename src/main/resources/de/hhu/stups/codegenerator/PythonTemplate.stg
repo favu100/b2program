@@ -85,6 +85,15 @@ constant() ::= <<
 values() ::= <<
 >>
 
+constant_declaration(type, identifier) ::= <<
+<type> <identifier>
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+<iterationConstruct; separator="\n">
+__<identifier> = <val>
+>>
+
 
 parameter(identifier) ::= <<
 <identifier>

@@ -23,11 +23,11 @@ class BCouple : public BObject {
 
         BCouple(){}
 
-        S getFirst() {
+        S projection1() {
             return lhs;
         }
 
-        T getSecond() {
+        T projection2() {
             return rhs;
         }
 

@@ -99,6 +99,13 @@ parameter(identifier) ::= <<
 <identifier>
 >>
 
+constant_declaration(type, identifier) ::= <<
+<identifier>
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+>>
+
 parallel(machine, loads, others) ::=<<
 (do <others; separator="\n">)
 >>

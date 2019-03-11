@@ -3,15 +3,13 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, constants_declarations, values, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, machine, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 <imports; separator="\n">
 import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
 
     <constants_declarations; separator="\n">
-
-    <values>
 
     <includes; separator="\n">
 
@@ -32,9 +30,10 @@ public class <machine> {
 
 >>
 
-initialization(machine, body, constants_initializations) ::= <<
+initialization(machine, body, constants_initializations, values) ::= <<
 public <machine>() {
     <constants_initializations; separator="\n">
+    <values>
     <body>
 }
 >>
@@ -181,9 +180,7 @@ constant_initialization(iterationConstruct, identifier, val) ::= <<
 >>
 
 values(assignments) ::= <<
-static {
-    <assignments; separator="\n">
-}
+<assignments; separator="\n">
 >>
 
 declaration(type, identifier) ::= <<

@@ -43,9 +43,10 @@ class <machine> {
 <addition>
 >>
 
-initialization(machine, body, constants_initializations) ::= <<
+initialization(machine, body, constants_initializations, values) ::= <<
 <machine>() {
     <constants_initializations; separator="\n">
+    <values; separator="\n">
     <body>
 }
 >>
@@ -220,6 +221,7 @@ constant_initialization(iterationConstruct, identifier, val) ::= <<
 >>
 
 values() ::= <<
+<assignments; separator="\n">
 >>
 
 parameter(type, identifier) ::= <<

@@ -1,0 +1,13 @@
+MACHINE Projections2
+
+VARIABLES  x
+
+INVARIANT  x : INT
+
+INITIALISATION x := prj1(1,2)
+
+OPERATIONS
+
+	calculate = BEGIN x := prj2(1,3) END
+
+END

@@ -128,6 +128,15 @@ constant() ::= <<
 values() ::= <<
 >>
 
+constant_declaration(type, identifier) ::= <<
+<type> <identifier>
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+<iterationConstruct; separator="\n">
+<identifier> = <val>;
+>>
+
 
 parameter(type, identifier, isReturn) ::= <<
 <if(isReturn)><type> *<identifier><else><type> <identifier><endif>

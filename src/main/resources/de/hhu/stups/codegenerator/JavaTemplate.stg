@@ -64,6 +64,10 @@ set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
 <if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet\<<type>\><endif>(<enums; separator=", ">)
 >>
 
+seq_enumeration(type, elements) ::= <<
+new BRelation\<BInteger, <type>\>(<elements; separator=", ">)
+>>
+
 iteration_construct_enumeration(type, identifier, set, body) ::= <<
 for(<type> <identifier> : <set>) {
     <body>

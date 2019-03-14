@@ -99,6 +99,9 @@ set_enumeration(type, enums, isRelation) ::= <<
 <if(isRelation)>create_brelation<else>create_bset<endif>((<type>[]){<enums; separator=", ">})
 >>
 
+seq_enumeration(type, elements) ::= <<
+>>
+
 enum_call(class, identifier) ::= <<
 create_<class>(<identifier>);
 >>

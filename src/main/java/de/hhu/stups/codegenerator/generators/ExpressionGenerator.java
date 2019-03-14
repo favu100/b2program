@@ -30,6 +30,8 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CLOSURE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CLOSURE1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.COMPOSITION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CONC;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CONCAT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.COUPLE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DIRECT_PRODUCT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DIVIDE;
@@ -38,14 +40,21 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DOMAIN_SUBTRACTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FALSE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FIN;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FIRST;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FRONT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.GENERALIZED_INTER;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.GENERALIZED_UNION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ID;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INSERT_FRONT;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INSERT_TAIL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERSECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERVAL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INVERSE_RELATION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ISEQ;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ISEQ1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ITERATE;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.LAST;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MAX;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MIN;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MINUS;
@@ -57,14 +66,23 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_FUNCTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_INJECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_SURJECTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PERM;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PLUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE_RESTRICTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE_SUBTRACTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RESTRICT_FRONT;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RESTRICT_TAIL;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.REV;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SEQ;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SEQ1;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SEQ_ENUMERATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_SUBTRACTION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SIZE;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TAIL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_BIJECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION;
@@ -85,10 +103,11 @@ public class ExpressionGenerator {
                     FUNCTION_CALL, OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
                     RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, CARTESIAN_PRODUCT, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
                     TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
-                    PARTIAL_SURJECTION);
+                    PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
-            Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, ID, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER);
+            Arrays.asList(UNARY_MINUS, CARD, DOMAIN, RANGE, ID, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER,
+                    FIRST, LAST, FRONT, TAIL, CONC, SEQ, SEQ1, ISEQ, ISEQ1, PERM, SIZE, REV);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
             Arrays.asList(TRUE,FALSE);
@@ -216,8 +235,10 @@ public class ExpressionGenerator {
             return generateUnaryExpression(operator, expressionList);
         } else if(EXPRESSION_BOOLEANS.contains(operator)) {
             return generateBoolean(operator);
-        } else if(node.getOperator() == SET_ENUMERATION){
+        } else if(node.getOperator() == SET_ENUMERATION) {
             return generateSetEnumeration(node.getType(), expressionList);
+        } else if(node.getOperator() == SEQ_ENUMERATION) {
+            return generateSeqEnumeration(node.getType(), expressionList);
         } else if(node.getOperator() == INTERVAL) {
             return generateInterval(expressionList);
         } else if(node.getOperator() == COUPLE) {
@@ -290,6 +311,42 @@ public class ExpressionGenerator {
             case GENERALIZED_INTER:
                 operatorName = "intersect";
                 break;
+            case FIRST:
+                operatorName = "first";
+                break;
+            case LAST:
+                operatorName = "last";
+                break;
+            case FRONT:
+                operatorName = "front";
+                break;
+            case TAIL:
+                operatorName = "tail";
+                break;
+            case CONC:
+                operatorName = "conc";
+                break;
+            case SEQ:
+                operatorName = "seq";
+                break;
+            case SEQ1:
+                operatorName = "seq1";
+                break;
+            case ISEQ:
+                operatorName = "iseq";
+                break;
+            case ISEQ1:
+                operatorName = "iseq1";
+                break;
+            case PERM:
+                operatorName = "permutate";
+                break;
+            case SIZE:
+                operatorName = "size";
+                break;
+            case REV:
+                operatorName = "reverse";
+                break;
             default:
                 throw new RuntimeException("Given operator is not implemented: " + operator);
         }
@@ -335,7 +392,7 @@ public class ExpressionGenerator {
                 operatorName = "relationImage";
                 break;
             case OVERWRITE_RELATION:
-                operatorName = "overwrite";
+                operatorName = "override";
                 break;
             case DOMAIN_RESTRICTION:
                 operatorName = "domainRestriction";
@@ -391,6 +448,21 @@ public class ExpressionGenerator {
             case PARTIAL_INJECTION:
                 operatorName = "partialInjection";
                 break;
+            case INSERT_FRONT:
+                operatorName = "prepend";
+                break;
+            case INSERT_TAIL:
+                operatorName = "append";
+                break;
+            case RESTRICT_FRONT:
+                operatorName = "drop";
+                break;
+            case RESTRICT_TAIL:
+                operatorName = "take";
+                break;
+            case CONCAT:
+                operatorName = "concat";
+                break;
             default:
                 throw new RuntimeException("Given operator is not implemented: " + operator);
         }
@@ -434,6 +506,15 @@ public class ExpressionGenerator {
             TemplateHandler.add(enumeration, "type", typeGenerator.generate(subType));
         }
         TemplateHandler.add(enumeration, "isRelation", subType instanceof CoupleType);
+        return enumeration.render();
+    }
+
+
+    private String generateSeqEnumeration(BType type, List<String> expressions) {
+        ST enumeration = currentGroup.getInstanceOf("seq_enumeration");
+        BType subType = ((SetType) type).getSubType();
+        TemplateHandler.add(enumeration,"elements", expressions);
+        TemplateHandler.add(enumeration, "type", typeGenerator.generate(((CoupleType) subType).getRight()));
         return enumeration.render();
     }
 

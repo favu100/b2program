@@ -55,6 +55,9 @@ set_enumeration(enums, isRelation) ::= <<
 <if(isRelation)>BRelation<else>BSet<endif>(<enums; separator=", ">)
 >>
 
+seq_enumeration(type, elements) ::= <<
+>>
+
 enum_call(class, identifier) ::= <<
 <class>.<identifier>
 >>

@@ -149,6 +149,10 @@ set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
 <if(isRelation)>(BRelation\<<leftType>, <rightType> >(<enums; separator=", ">))<else>(BSet\<<type> >(<enums; separator=", ">))<endif>
 >>
 
+seq_enumeration(type, elements) ::= <<
+(BRelation\<BInteger, <type>\ >(<elements; separator=", ">))
+>>
+
 enum_call(class, identifier) ::= <<
 (<class>(<class>::<identifier>))
 >>

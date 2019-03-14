@@ -63,6 +63,9 @@ set_enumeration(enums, isRelation) ::= <<
 (<if(isRelation)>de.hhu.stups.btpyes.BRelation.<else>de.hhu.stups.btypes.BSet.<endif> #{<enums; separator=" ">})
 >>
 
+seq_enumeration(type, elements) ::= <<
+>>
+
 enum_call(identifier) ::= <<
 (de.hhu.stups.btypes.BEnum. :<identifier>)
 >>

@@ -521,6 +521,7 @@ public class ExpressionGenerator {
         if(expressions.size() > 0) {
             importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
         }
+        importGenerator.addImport(IntegerType.getInstance());
         for(int i = 1; i <= expressions.size(); i++) {
             ST number = currentGroup.getInstanceOf("number");
             TemplateHandler.add(number, "number", String.valueOf(i));

@@ -15,10 +15,13 @@ import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.SetType;
+import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -342,7 +345,7 @@ public class ExpressionGenerator {
                 operatorName = "permutate";
                 break;
             case SIZE:
-                operatorName = "size";
+                operatorName = "card";
                 break;
             case REV:
                 operatorName = "reverse";
@@ -513,8 +516,20 @@ public class ExpressionGenerator {
     private String generateSeqEnumeration(BType type, List<String> expressions) {
         ST enumeration = currentGroup.getInstanceOf("seq_enumeration");
         BType subType = ((SetType) type).getSubType();
-        TemplateHandler.add(enumeration,"elements", expressions);
-        TemplateHandler.add(enumeration, "type", typeGenerator.generate(((CoupleType) subType).getRight()));
+        BType rhsType = ((CoupleType) subType).getRight();
+        List<String> couples = new ArrayList<>();
+        if(expressions.size() > 0) {
+            importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
+        }
+        for(int i = 1; i <= expressions.size(); i++) {
+            ST number = currentGroup.getInstanceOf("number");
+            TemplateHandler.add(number, "number", String.valueOf(i));
+            TemplateHandler.add(number, "useBigInteger", useBigInteger);
+            String lhs = number.render();
+            couples.add(generateCouple(Arrays.asList(lhs, expressions.get(i-1)), IntegerType.getInstance(), rhsType));
+        }
+        TemplateHandler.add(enumeration,"elements", couples);
+        TemplateHandler.add(enumeration, "type", typeGenerator.generate(rhsType));
         return enumeration.render();
     }
 

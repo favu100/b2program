@@ -124,4 +124,37 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		return arg.union(this.domainRestriction(arg.domain()));
 	}
 
+	public T first() {
+		return this.functionCall((S) new BInteger(1));
+	}
+
+	public T last() {
+		return this.functionCall((S) this.card());
+	}
+
+	public BRelation<S,T> reverse() {
+		BInteger size = this.card();
+		BRelation<S,T> result = new BRelation<>();
+		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.next()) {
+			result = result.union(new BRelation<>(new BCouple<>((S) i, (T) this.functionCall((S) size.minus(i).next()))));
+		}
+		return result;
+	}
+
+	public BRelation<S,T> front() {
+		return this.domainSubstraction(new BSet<>((S) this.card()));
+	}
+
+	public BRelation<S,T> tail() {
+		List<BCouple<S,T>> relation = this.domainSubstraction(new BSet<>((S) new BInteger(1)))
+				.stream()
+				.map(couple -> new BCouple<>((S) ((BInteger) couple.projection1()).previous(), couple.projection2()))
+				.collect(Collectors.toList());
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : relation) {
+			result = result.union(new BRelation<>(couple));
+		}
+		return result;
+	}
+
 }

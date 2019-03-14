@@ -29,7 +29,8 @@ public class OperatorGenerator {
             Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF,
                     PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING,
                     ExpressionOperatorNode.ExpressionOperator.DOMAIN_SUBTRACTION,
-                    ExpressionOperatorNode.ExpressionOperator.DOMAIN_RESTRICTION);
+                    ExpressionOperatorNode.ExpressionOperator.DOMAIN_RESTRICTION,
+                    ExpressionOperatorNode.ExpressionOperator.INSERT_FRONT);
 
     private final PredicateGenerator predicateGenerator;
 

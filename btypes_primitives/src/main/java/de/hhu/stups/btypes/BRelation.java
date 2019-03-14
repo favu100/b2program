@@ -146,13 +146,52 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 	}
 
 	public BRelation<S,T> tail() {
-		List<BCouple<S,T>> relation = this.domainSubstraction(new BSet<>((S) new BInteger(1)))
-				.stream()
-				.map(couple -> new BCouple<>((S) ((BInteger) couple.projection1()).previous(), couple.projection2()))
-				.collect(Collectors.toList());
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : relation) {
-			result = result.union(new BRelation<>(couple));
+		BRelation<S,T> couplesWithoutFirst = this.domainSubstraction(new BSet<>((S) new BInteger(1)));
+		for(BCouple<S,T> couple : couplesWithoutFirst) {
+			result = result.union(new BRelation<>(new BCouple<>((S) ((BInteger) couple.projection1()).previous(), couple.projection2())));
+		}
+		return result;
+	}
+
+	public BRelation<S,T> take(BInteger n) {
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			if(((BInteger) couple.projection1()).lessEqual(n).booleanValue()) {
+				result = result.union(new BRelation<>(couple));
+			}
+		}
+		return result;
+	}
+
+	public BRelation<S,T> drop(BInteger n) {
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			if(((BInteger) couple.projection1()).greater(n).booleanValue()) {
+				result = result.union(new BRelation<>(couple));
+			}
+		}
+		return result;
+	}
+
+	public BRelation<S,T> concat(BRelation<S,T> arg) {
+		BRelation<S,T> result = this;
+		BInteger size = this.card();
+		for(BCouple<S,T> couple : arg) {
+			result = result.union(new BRelation<>(new BCouple<>((S) size.plus((BInteger) couple.projection1()), couple.projection2())));
+		}
+		return result;
+	}
+
+	public BRelation<S,T> append(T arg) {
+		BInteger size = this.card();
+		return this.union(new BRelation<>(new BCouple<>((S) size.next(), arg)));
+	}
+
+	public BRelation<S,T> prepend(T arg) {
+		BRelation<S,T> result = new BRelation<>(new BCouple<>((S) new BInteger(1), arg));
+		for(BCouple<S,T> couple : this) {
+			result = result.union(new BRelation<>(new BCouple<>((S) ((BInteger) couple.projection1()).next(), couple.projection2())));
 		}
 		return result;
 	}

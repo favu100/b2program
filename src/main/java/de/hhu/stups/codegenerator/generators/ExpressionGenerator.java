@@ -99,7 +99,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 public class ExpressionGenerator {
 
     /*
-    * Hard-coded lists for identifying the type of the operators for expresion
+    * Hard-coded lists for identifying the type of the operators for expression
     */
     private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
             Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
@@ -458,10 +458,10 @@ public class ExpressionGenerator {
                 operatorName = "append";
                 break;
             case RESTRICT_FRONT:
-                operatorName = "drop";
+                operatorName = "take";
                 break;
             case RESTRICT_TAIL:
-                operatorName = "take";
+                operatorName = "drop";
                 break;
             case CONCAT:
                 operatorName = "concat";

@@ -46,6 +46,8 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     private final List<IdentifierExprNode> definedLoadsInParallel;
 
+    private final List<String> definedIdentifiersInCode;
+
     private boolean onLeftHandSide;
 
     private boolean onRightHandSide;
@@ -55,6 +57,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         this.identifierOnRhsInParallel = new ArrayList<>();
         this.definedIdentifiersInParallel = new ArrayList<>();
         this.definedLoadsInParallel = new ArrayList<>();
+        this.definedIdentifiersInCode = new ArrayList<>();
         this.onLeftHandSide = false;
         this.onRightHandSide = true;
     }
@@ -258,4 +261,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
     public List<IdentifierExprNode> getDefinedIdentifiersInParallel() {
         return definedIdentifiersInParallel;
     }
+
+    public List<String> definedIdentifiersInCode() {
+        return definedIdentifiersInCode;
+    }
+
 }

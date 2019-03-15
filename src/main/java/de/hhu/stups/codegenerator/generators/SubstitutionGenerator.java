@@ -280,6 +280,7 @@ public class SubstitutionGenerator {
         } else {
             parallelConstructAnalyzer = new ParallelConstructAnalyzer();
             parallelConstructAnalyzer.getDefinedIdentifiersInParallel().addAll(parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel());
+            parallelConstructAnalyzer.definedIdentifiersInCode().addAll(parallelConstructHandler.getParallelConstructAnalyzer().definedIdentifiersInCode());
             parallelConstructHandler.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         }
         return parallelConstructAnalyzer;
@@ -311,10 +312,17 @@ public class SubstitutionGenerator {
     }
 
     private String visitParallelLoad(ExprNode expr) {
+        String identifier = machineGenerator.visitExprNode(expr, null);
+        List<String> identifiersInCode = parallelConstructHandler.getParallelConstructAnalyzer().definedIdentifiersInCode();
+        if(identifiersInCode.contains(identifier)) {
+            return "";
+        } else {
+            identifiersInCode.add(identifier);
+        }
         ST substitution = currentGroup.getInstanceOf("parallel_load");
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType()));
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(expr, null));
+        TemplateHandler.add(substitution, "identifier", identifier);
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) expr).getName()));
         return substitution.render();
     }

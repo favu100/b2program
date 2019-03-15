@@ -32,7 +32,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 	}
 
 	public BInteger card() {
-		return new BInteger((int) COUNT.invoke(this.set));
+		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
 	}
 
 	public BBoolean elementOf(BCouple<S,T> object) {
@@ -55,7 +55,6 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		int index = (int) Math.floor(Math.random() * set.size());
 		return toArray()[index];
 	}
-
 
 	public BSet<T> relationImage(BSet<S> domain) {
 		return new BSet<T>(PersistentHashSet.create(this.set.stream()
@@ -195,5 +194,4 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		}
 		return result;
 	}
-
 }

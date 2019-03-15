@@ -891,6 +891,83 @@ public class TestJava {
 		testJava("Projections");
 	}
 
+	@Test
+	public void testAppend() throws Exception {
+		testJava("Append");
+	}
+
+
+	@Ignore
+	@Test
+	public void testConc() throws Exception {
+		testJava("Conc");
+	}
+
+	@Test
+	public void testConcat() throws Exception {
+		testJava("Concat");
+	}
+
+	@Test
+	public void testDrop() throws Exception {
+		testJava("Drop");
+	}
+
+	@Test
+	public void testEmptySequence() throws Exception {
+		testJava("EmptySequence");
+	}
+
+	@Test
+	public void testEnumeratedSequence() throws Exception {
+		testJava("EnumeratedSequence");
+	}
+
+	@Test
+	public void testFirstElementSequence() throws Exception {
+		testJava("FirstElementSequence");
+	}
+
+	@Test
+	public void testFrontSequence() throws Exception {
+		testJava("FrontSequence");
+	}
+
+	@Test
+	public void testLastElementSequence() throws Exception {
+		testJava("LastElementSequence");
+	}
+
+	@Test
+	public void testPrepend() throws Exception {
+		testJava("Prepend");
+	}
+
+	@Test
+	public void testReverse() throws Exception {
+		testJava("ReverseSequence");
+	}
+
+	@Test
+	public void testSizeOfSequence() throws Exception {
+		testJava("SizeOfSequence");
+	}
+
+	@Test
+	public void testTailSequence() throws Exception {
+		testJava("TailSequence");
+	}
+
+	@Test
+	public void testTake() throws Exception {
+		testJava("Take");
+	}
+
+	@Test
+	public void testSequenceOperateRelation() throws Exception {
+		testJava("SequenceOperateRelation");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

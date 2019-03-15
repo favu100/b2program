@@ -834,6 +834,83 @@ public class TestCpp {
 	public void testProjections() throws Exception {
 		testCpp("Projections");
 	}
+
+	@Test
+	public void testAppend() throws Exception {
+		testCpp("Append");
+	}
+
+
+	@Ignore
+	@Test
+	public void testConc() throws Exception {
+		testCpp("Conc");
+	}
+
+	@Test
+	public void testConcat() throws Exception {
+		testCpp("Concat");
+	}
+
+	@Test
+	public void testDrop() throws Exception {
+		testCpp("Drop");
+	}
+
+	@Test
+	public void testEmptySequence() throws Exception {
+		testCpp("EmptySequence");
+	}
+
+	@Test
+	public void testEnumeratedSequence() throws Exception {
+		testCpp("EnumeratedSequence");
+	}
+
+	@Test
+	public void testFirstElementSequence() throws Exception {
+		testCpp("FirstElementSequence");
+	}
+
+	@Test
+	public void testFrontSequence() throws Exception {
+		testCpp("FrontSequence");
+	}
+
+	@Test
+	public void testLastElementSequence() throws Exception {
+		testCpp("LastElementSequence");
+	}
+
+	@Test
+	public void testPrepend() throws Exception {
+		testCpp("Prepend");
+	}
+
+	@Test
+	public void testReverse() throws Exception {
+		testCpp("ReverseSequence");
+	}
+
+	@Test
+	public void testSizeOfSequence() throws Exception {
+		testCpp("SizeOfSequence");
+	}
+
+	@Test
+	public void testTailSequence() throws Exception {
+		testCpp("TailSequence");
+	}
+
+	@Test
+	public void testTake() throws Exception {
+		testCpp("Take");
+	}
+
+	@Test
+	public void testSequenceOperateRelation() throws Exception {
+		testCpp("SequenceOperateRelation");
+	}
 	
 
 	private void cleanUp(String path) {

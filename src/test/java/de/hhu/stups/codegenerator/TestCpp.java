@@ -186,7 +186,6 @@ public class TestCpp {
 		testCpp("Lift");
 	}
 
-	@Ignore
 	@Test
 	public void testTravelAgency() throws Exception {
 		testCpp("TravelAgency");

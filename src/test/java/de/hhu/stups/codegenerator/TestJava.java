@@ -239,7 +239,6 @@ public class TestJava {
 		testJava("Lift", "Lift", "LiftAddition.st");
 	}
 
-	@Ignore
 	@Test
 	public void testTravelAgency() throws Exception {
 		testJava("TravelAgency");

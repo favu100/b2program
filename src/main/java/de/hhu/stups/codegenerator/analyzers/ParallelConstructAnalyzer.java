@@ -157,7 +157,8 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
-        visitSubstitutionNode(node.getBody(), expected);
+        //visitSubstitutionNode(node.getBody(), expected);
+        //TODO: Distinguish between declared variables in VAR and other variables
         return null;
     }
 
@@ -219,8 +220,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-        visitPredicateNode(node.getWherePredicate(), expected);
-        visitSubstitutionNode(node.getThenSubstitution(), expected);
+        //visitPredicateNode(node.getWherePredicate(), expected);
+        //visitSubstitutionNode(node.getThenSubstitution(), expected);
+        //TODO: Distinguish between declared variables in ANY and other variables
         return null;
     }
 

@@ -248,7 +248,7 @@ class BSet : public BObject {
         BBoolean strictSubset(const BSet<T>& set) {
             if(this->set.size() != set.size()) {
                 for (const T& obj : this->set) {
-                    if(set.count(obj) == 0) {
+                    if(set.set.count(obj) == 0) {
                         return BBoolean(false);
                     }
                 }

@@ -216,15 +216,15 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(set.containsAll(this));
 	}
 
-	public BBoolean notSubset() {
+	public BBoolean notSubset(BSet<T> set) {
 		return new BBoolean(!set.containsAll(this));
 	}
 
-	public BBoolean strictSubset() {
+	public BBoolean strictSubset(BSet<T> set) {
 		return new BBoolean(set.size() != this.set.size() && set.containsAll(this));
 	}
 
-	public BBoolean strictNotSubset() {
+	public BBoolean strictNotSubset(BSet<T> set) {
 		return new BBoolean(set.size() == this.set.size() || !set.containsAll(this));
 	}
 

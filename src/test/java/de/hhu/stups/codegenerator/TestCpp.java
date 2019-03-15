@@ -911,7 +911,16 @@ public class TestCpp {
 	public void testSequenceOperateRelation() throws Exception {
 		testCpp("SequenceOperateRelation");
 	}
-	
+
+	@Test
+	public void testPred() throws Exception {
+		testCpp("Pred");
+	}
+
+	@Test
+	public void testSucc() throws Exception {
+		testCpp("Succ");
+	}
 
 	private void cleanUp(String path) {
 		File file = new File(path);

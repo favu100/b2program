@@ -968,6 +968,16 @@ public class TestJava {
 		testJava("SequenceOperateRelation");
 	}
 
+	@Test
+	public void testPred() throws Exception {
+		testJava("Pred");
+	}
+
+	@Test
+	public void testSucc() throws Exception {
+		testJava("Succ");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

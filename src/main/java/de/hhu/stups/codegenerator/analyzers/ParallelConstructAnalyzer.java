@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.analyzers;
 
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
@@ -48,6 +49,8 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     private final List<String> definedIdentifiersInCode;
 
+    private final List<String> ignoredVariables;
+
     private boolean onLeftHandSide;
 
     private boolean onRightHandSide;
@@ -58,6 +61,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         this.definedIdentifiersInParallel = new ArrayList<>();
         this.definedLoadsInParallel = new ArrayList<>();
         this.definedIdentifiersInCode = new ArrayList<>();
+        this.ignoredVariables = new ArrayList<>();
         this.onLeftHandSide = false;
         this.onRightHandSide = true;
     }
@@ -70,6 +74,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitIdentifierExprNode(IdentifierExprNode node, Void expected) {
+        if(ignoredVariables.contains(node.getName())) {
+            return null;
+        }
         if(onLeftHandSide) {
             identifierOnLhsInParallel.add(node);
         } else if(onRightHandSide) {
@@ -157,8 +164,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
-        //visitSubstitutionNode(node.getBody(), expected);
-        //TODO: Distinguish between declared variables in VAR and other variables
+        List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
+        visitSubstitutionNode(node.getBody(), expected);
+        ignoredVariables.removeAll(locals);
         return null;
     }
 
@@ -220,9 +229,11 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-        //visitPredicateNode(node.getWherePredicate(), expected);
-        //visitSubstitutionNode(node.getThenSubstitution(), expected);
-        //TODO: Distinguish between declared variables in ANY and other variables
+        List<String> locals = node.getParameters().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
+        visitPredicateNode(node.getWherePredicate(), expected);
+        visitSubstitutionNode(node.getThenSubstitution(), expected);
+        ignoredVariables.removeAll(locals);
         return null;
     }
 

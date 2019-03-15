@@ -60,6 +60,10 @@ class BRelation : public BSet<BCouple<S,T>> {
             this->set = set.set;
         }
 
+        BInteger card() {
+            return BInteger(set.size());
+        }
+
         BRelation<S,T> _union(const BRelation<S,T>& set) const {
             if(this->size() > set.size()) {
                 immer::set<BCouple<S,T>,Hash, HashEqual> result = this->set;
@@ -167,6 +171,78 @@ class BRelation : public BSet<BCouple<S,T>> {
         BRelation<S,T> override(const BRelation<S,T>& arg) {
             return arg._union(this->domainRestriction(arg.domain()));
         }
+
+    	T first() {
+    		return functionCall((S) BInteger(1));
+    	}
+
+    	T last() {
+    		return functionCall((S) card());
+    	}
+
+    	BRelation<S,T> reverse() {
+    		BInteger size = card();
+    		BRelation<S,T> result = BRelation<S,T>();
+    		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.next()) {
+    			result = result._union(BRelation<S,T>(BCouple<S,T>((S) i, (T) functionCall((S) size.minus(i).next()))));
+    		}
+    		return result;
+    	}
+
+    	BRelation<S,T> front() {
+    		return domainSubstraction(BSet<S>((S) card()));
+    	}
+
+    	BRelation<S,T> tail() {
+    		BRelation<S,T> result = BRelation<S,T>();
+    		BRelation<S,T> couplesWithoutFirst = domainSubstraction(BSet<S>((S) BInteger(1)));
+    		for(BCouple<S,T> couple : couplesWithoutFirst) {
+    			result = result._union(BRelation<S,T>(BCouple<S,T>((S) ((BInteger) couple.projection1()).previous(), couple.projection2())));
+    		}
+    		return result;
+    	}
+
+    	BRelation<S,T> take(const BInteger& n) {
+    		BRelation<S,T> result = BRelation<S,T>();
+    		for(BCouple<S,T> couple : this->set) {
+    			if(((BInteger) couple.projection1()).lessEqual(n).booleanValue()) {
+    				result = result._union(BRelation<S,T>(couple));
+    			}
+    		}
+    		return result;
+    	}
+
+    	BRelation<S,T> drop(const BInteger& n) {
+    		BRelation<S,T> result = BRelation<S,T>();
+    		for(BCouple<S,T> couple : this->set) {
+    			if(((BInteger) couple.projection1()).greater(n).booleanValue()) {
+    				result = result._union(BRelation<S,T>(couple));
+    			}
+    		}
+    		return result;
+    	}
+
+    	BRelation<S,T> concat(const BRelation<S,T>& arg) {
+    		BRelation<S,T> result = *this;
+    		BInteger size = card();
+    		for(BCouple<S,T> couple : arg) {
+    			result = result._union(BRelation<S,T>(BCouple<S,T>((S) size.plus((BInteger) couple.projection1()), couple.projection2())));
+    		}
+    		return result;
+    	}
+
+    	BRelation<S,T> append(const T& arg) {
+    		BInteger size = card();
+    		return _union(BRelation<S,T>(BCouple<S,T>((S) size.next(), arg)));
+    	}
+
+    	BRelation<S,T> prepend(const T& arg) {
+    		BRelation<S,T> result = BRelation<S,T>(BCouple<S,T>((S) BInteger(1), arg));
+    		for(BCouple<S,T> couple : this->set) {
+    			result = result._union(BRelation<S,T>(BCouple<S,T>((S) ((BInteger) couple.projection1()).next(), couple.projection2())));
+    		}
+    		return result;
+    	}
 
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;

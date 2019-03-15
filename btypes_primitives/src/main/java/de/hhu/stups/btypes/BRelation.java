@@ -32,7 +32,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 	}
 
 	public BInteger card() {
-		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
+		return new BInteger((int) COUNT.invoke(this.set));
 	}
 
 	public BBoolean elementOf(BCouple<S,T> object) {

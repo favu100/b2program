@@ -150,7 +150,7 @@ set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
 >>
 
 seq_enumeration(type, elements) ::= <<
-(BRelation\<BInteger, <type>\ >(<elements; separator=", ">))
+(BRelation\<BInteger, <type> >(<elements; separator=", ">))
 >>
 
 enum_call(class, identifier) ::= <<

@@ -98,47 +98,60 @@ public class OperationGenerator {
     */
     private ST generate(OperationNode node) {
         ST operation = group.getInstanceOf("operation");
-
+        generateReturn(operation, node.getOutputParams());
         TemplateHandler.add(operation, "locals", declarationGenerator.generateDeclarations(node.getOutputParams()
                 .stream()
                 .collect(Collectors.toList()), DeclarationType.LOCAL_DECLARATION, false));
-        BType type = null;
-        String returnString = null;
-        List<DeclarationNode> outputs = node.getOutputParams();
-        if(outputs.size() > 1) {
-            //TODO: Introduce RecordType in ANTLR Parser
-            importGenerator.addRecordImport();
-
-            TemplateHandler.add(operation, "returnType", "BRecord");
-
-            List<String> identifiers = outputs.stream()
-                    .map(DeclarationNode::getName)
-                    .map(identifier -> nameHandler.handleIdentifier(identifier, FUNCTION_NAMES))
-                    .collect(Collectors.toList());
-
-            ST recordTemplate = group.getInstanceOf("record_create");
-            TemplateHandler.add(recordTemplate, "elements", identifiers);
-            ST returnTemplate = group.getInstanceOf("return");
-            TemplateHandler.add(returnTemplate, "identifier", recordTemplate.render());
-            returnString = returnTemplate.render();
-        } else if(outputs.size() == 1) {
-            type = outputs.get(0).getType();
-            String identifier = outputs.get(0).getName();
-            TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
-            ST returnTemplate = group.getInstanceOf("return");
-            TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
-            TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-            returnString = returnTemplate.render();
-        } else if(outputs.size() == 0) {
-            TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
-            returnString = group.getInstanceOf("no_return").render();
-        }
-        TemplateHandler.add(operation, "isTyped", !(type instanceof UntypedType));
-        TemplateHandler.add(operation, "return", returnString);
         TemplateHandler.add(operation, "operationName", nameHandler.handleIdentifier(node.getName(), INCLUDED_MACHINES));
         TemplateHandler.add(operation, "parameters", declarationGenerator.generateDeclarations(node.getParams(), DeclarationType.PARAMETER, false));
         TemplateHandler.add(operation, "returnParameters", declarationGenerator.generateDeclarations(node.getOutputParams(), DeclarationType.PARAMETER, true));
         return operation;
+    }
+
+    private void generateReturn(ST operation, List<DeclarationNode> outputs) {
+        if(outputs.size() > 1) {
+            generateReturnStatementRecord(operation, outputs);
+        } else if(outputs.size() == 1) {
+            generateReturnStatementIdentifier(operation, outputs);
+        } else if(outputs.size() == 0) {
+            generateVoidReturnStatement(operation);
+        }
+    }
+
+    private void generateVoidReturnStatement(ST operation) {
+        TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
+        TemplateHandler.add(operation, "return", group.getInstanceOf("no_return").render());
+        TemplateHandler.add(operation, "isTyped", false);
+    }
+
+    private void generateReturnStatementIdentifier(ST operation, List<DeclarationNode> outputs) {
+        BType type = outputs.get(0).getType();
+        String identifier = outputs.get(0).getName();
+        TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
+        ST returnTemplate = group.getInstanceOf("return");
+        TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
+        TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
+        TemplateHandler.add(operation, "isTyped", true);
+        TemplateHandler.add(operation, "return", returnTemplate.render());
+    }
+
+    private void generateReturnStatementRecord(ST operation, List<DeclarationNode> outputs) {
+        //TODO: Introduce Record Type in ANTLR Parser
+        importGenerator.addRecordImport();
+
+        TemplateHandler.add(operation, "returnType", "BRecord");
+
+        List<String> identifiers = outputs.stream()
+                .map(DeclarationNode::getName)
+                .map(identifier -> nameHandler.handleIdentifier(identifier, FUNCTION_NAMES))
+                .collect(Collectors.toList());
+
+        ST recordTemplate = group.getInstanceOf("record_create");
+        TemplateHandler.add(recordTemplate, "elements", identifiers);
+        ST returnTemplate = group.getInstanceOf("return");
+        TemplateHandler.add(returnTemplate, "identifier", recordTemplate.render());
+        TemplateHandler.add(operation, "isTyped", true);
+        TemplateHandler.add(operation, "return", returnTemplate.render());
     }
 
     public Map<String, String> getMachineFromOperation() {

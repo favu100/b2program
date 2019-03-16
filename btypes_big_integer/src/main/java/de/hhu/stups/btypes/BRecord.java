@@ -77,6 +77,13 @@ public class BRecord implements BObject, Map<java.lang.String, BObject> {
 		this.map = map;
 	}
 
+	public BRecord(BObject... objects) {
+		this.map = new HashMap<>();
+		for(int i = 0; i < objects.length; i++) {
+			putAt(String.valueOf(i), objects[i]);
+		}
+	}
+
 	public java.lang.String toString() {
 		Iterator<java.util.Map.Entry<java.lang.String, BObject>> it = this
 				.entrySet().iterator();

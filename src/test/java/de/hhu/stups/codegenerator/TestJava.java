@@ -119,6 +119,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testOperation2() throws Exception {
+		testJava("Operation2");
+	}
+
+	@Test
 	public void testLocalDeclaration() throws Exception {
 		testJava("LocalDeclaration", "LocalDeclaration", "LocalDeclarationAddition.st");
 	}

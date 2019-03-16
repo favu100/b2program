@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.types.BType;
@@ -100,18 +101,34 @@ public class OperationGenerator {
                 .collect(Collectors.toList()), DeclarationType.LOCAL_DECLARATION, false));
         BType type = null;
         String returnString = null;
-        if(node.getOutputParams().size() == 1) {
-            type = node.getOutputParams().get(0).getType();
-            String identifier = node.getOutputParams().get(0).getName();
+        List<DeclarationNode> outputs = node.getOutputParams();
+        if(outputs.size() > 1) {
+            //TODO: generate BRecord containing all output parameters
+            //TODO: Introduce RecordType in ANTLR Parser
+            TemplateHandler.add(operation, "returnType", "BRecord");
+
+            List<String> identifiers = outputs.stream()
+                    .map(DeclarationNode::getName)
+                    .map(identifier -> nameHandler.handleIdentifier(identifier, FUNCTION_NAMES))
+                    .collect(Collectors.toList());
+
+            ST recordTemplate = group.getInstanceOf("record_create");
+            TemplateHandler.add(recordTemplate, "elements", identifiers);
+            ST returnTemplate = group.getInstanceOf("return");
+            TemplateHandler.add(returnTemplate, "identifier", recordTemplate.render());
+            returnString = returnTemplate.render();
+        } else if(outputs.size() == 1) {
+            type = outputs.get(0).getType();
+            String identifier = outputs.get(0).getName();
+            TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
             ST returnTemplate = group.getInstanceOf("return");
             TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
             TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
             returnString = returnTemplate.render();
-        } else if(node.getOutputParams().size() == 0) {
-            type = new UntypedType();
+        } else if(outputs.size() == 0) {
+            TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
             returnString = group.getInstanceOf("no_return").render();
         }
-        TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
         TemplateHandler.add(operation, "isTyped", !(type instanceof UntypedType));
         TemplateHandler.add(operation, "return", returnString);
         TemplateHandler.add(operation, "operationName", nameHandler.handleIdentifier(node.getName(), INCLUDED_MACHINES));

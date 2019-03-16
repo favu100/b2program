@@ -251,6 +251,10 @@ couple_create(arg1, arg2) ::= <<
 new BCouple\<>(<arg1>, <arg2>)
 >>
 
+record_create(elements) ::= <<
+new BRecord(<elements; separator=", ">)
+>>
+
 
 binary(arg1,operator,arg2) ::= <<
 <arg1>.<operator>(<arg2>)

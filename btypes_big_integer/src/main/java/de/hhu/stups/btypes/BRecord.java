@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 public class BRecord implements BObject, Map<java.lang.String, BObject> {
 

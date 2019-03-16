@@ -384,7 +384,7 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
-operation_call_with_assignment(var, function, args) ::= <<
+operation_call_with_assignment_one_parameter(var, function, args) ::= <<
 <function>(<args; separator=",">, <var>);
 >>
 

@@ -241,7 +241,7 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(de.hhu.stups.btypes.BInteger. "<number>")<else>(de.hhu.stups.btypes.BInteger. <number>)<endif>
 >>
 
-operation_call_with_assignment(thisName, machine, var, isPrivate, function, args, this) ::= <<
+operation_call_with_assignment_one_parameter(thisName, machine, var, isPrivate, function, args, this) ::= <<
 <if(isPrivate)>_ (reset! (.-<thisName>-state this) (assoc-in (.-<thisName>-state this) [:<var>] <operation_call_without_assignment(thisName, machine, function, args, this)>))<else><var> <operation_call_without_assignment(thisName, machine, function, args, this)><endif>
 >>
 

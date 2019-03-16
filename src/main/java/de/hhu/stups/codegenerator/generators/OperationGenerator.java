@@ -44,12 +44,14 @@ public class OperationGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final ImportGenerator importGenerator;
+
     private final Map<String, String> machineFromOperation;
 
 
     public OperationGenerator(final STGroup group, final MachineGenerator machineGenerator, final SubstitutionGenerator substitutionGenerator,
                               final DeclarationGenerator declarationGenerator, final IdentifierGenerator identifierGenerator,
-                              final NameHandler nameHandler, final TypeGenerator typeGenerator) {
+                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final ImportGenerator importGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.declarationGenerator = declarationGenerator;
@@ -58,6 +60,7 @@ public class OperationGenerator {
         this.identifierGenerator = identifierGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
+        this.importGenerator = importGenerator;
         this.machineFromOperation = new HashMap<>();
     }
 
@@ -103,8 +106,9 @@ public class OperationGenerator {
         String returnString = null;
         List<DeclarationNode> outputs = node.getOutputParams();
         if(outputs.size() > 1) {
-            //TODO: generate BRecord containing all output parameters
             //TODO: Introduce RecordType in ANTLR Parser
+            importGenerator.addRecordImport();
+
             TemplateHandler.add(operation, "returnType", "BRecord");
 
             List<String> identifiers = outputs.stream()

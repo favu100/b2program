@@ -391,14 +391,28 @@ public class SubstitutionGenerator {
                 .collect(Collectors.toList());
         String operationName = node.getOperationNode().getName();
         String machineName = operationGenerator.getMachineFromOperation().get(operationName);
-        ST functionCall;
-        //Size of variables must be less equal than 1 for now.
-        //TODO: Implement Records
-        if(variables.size() > 0) {
-            functionCall = currentGroup.getInstanceOf("operation_call_with_assignment");
+        ST functionCall = null;
+        if(variables.size() > 1) {
+            //TODO: Add Record Type to ANTLR Parser
+            importGenerator.addRecordImport();
+            functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
+            //TODO
+            TemplateHandler.add(functionCall, "var", "record");
+            List<String> assignments = new ArrayList<>();
+            for(int i = 0; i < variables.size(); i++) {
+                ST assignment = currentGroup.getInstanceOf("operation_call_assignment");
+                TemplateHandler.add(assignment, "identifier", variables.get(i));
+                TemplateHandler.add(assignment, "type", typeGenerator.generate(node.getAssignedVariables().get(i).getType()));
+                TemplateHandler.add(assignment, "var", "record");
+                TemplateHandler.add(assignment, "index", String.valueOf(i));
+                assignments.add(assignment.render());
+            }
+            TemplateHandler.add(functionCall, "assignments", assignments);
+        } else if(variables.size() == 1) {
+            functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_one_parameter");
             TemplateHandler.add(functionCall, "var", variables.get(0));
             TemplateHandler.add(functionCall, "isPrivate", nameHandler.getGlobals().contains(variables.get(0)));
-        } else {
+        } else if(variables.size() == 0) {
             functionCall = currentGroup.getInstanceOf("operation_call_without_assignment");
         }
         TemplateHandler.add(functionCall, "thisName", machineGenerator.getMachineName());

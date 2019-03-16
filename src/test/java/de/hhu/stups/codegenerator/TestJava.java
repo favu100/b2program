@@ -274,6 +274,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testProject3() throws Exception {
+		testJava("project3/A");
+	}
+
+	@Test
 	public void testLiftBenchmarks() throws Exception {
 		testJava("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.st");
 	}

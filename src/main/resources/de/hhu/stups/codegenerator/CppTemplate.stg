@@ -377,7 +377,7 @@ boolean_val(val) ::= <<
 >>
 
 identifier(identifier, isReturn, isPrivate, rhsOnLhs) ::= <<
-<identifier>
+<if(rhsOnLhs)>_ld_<identifier><else><identifier><endif>
 >>
 
 number(number, useBigInteger) ::= <<

@@ -319,6 +319,12 @@ public class TestJava {
 		testJava("Swap", "Swap", "SwapAddition.st");
 	}
 
+
+	@Test
+	public void testSwap2() throws Exception {
+		testJava("Swap2");
+	}
+
 	@Test
 	public void testManyLocalDeclarations() throws Exception {
 		testJava("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.st");

@@ -271,6 +271,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testSwap2() throws Exception {
+		testCpp("Swap2");
+	}
+
+	@Test
 	public void testReset() throws Exception {
 		testCpp("Reset");
 	}

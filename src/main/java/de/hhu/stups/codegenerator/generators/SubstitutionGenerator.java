@@ -26,6 +26,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -225,17 +226,22 @@ public class SubstitutionGenerator {
     * This function generates code for a list of assignments from the belonging AST node.
     */
     public String visitAssignSubstitutionNode(AssignSubstitutionNode node) {
-        ST substitutions = currentGroup.getInstanceOf("assignments");
-        List<String> assignments = new ArrayList<>();
+        List<SubstitutionNode> substitutions = new ArrayList<>();
+        if(node.getLeftSide().size() == 1) {
+            ExprNode lhs = node.getLeftSide().get(0);
+            ExprNode rhs = node.getRightSide().get(0);
+            return generateAssignment(lhs, rhs);
+        }
         //TODO: For now, the variable on the left-hand side and on the right-hand side must be distinct
         for (int i = 0; i < node.getLeftSide().size(); i++) {
-            assignments.add(generateAssignment(node.getLeftSide().get(i), node.getRightSide().get(i)));
+            ExprNode lhs = node.getLeftSide().get(i);
+            ExprNode rhs = node.getRightSide().get(i);
+            substitutions.add(new AssignSubstitutionNode(node.getSourceCodePosition(), Collections.singletonList(lhs), Collections.singletonList(rhs)));
         }
-        TemplateHandler.add(substitutions, "assignments", assignments);
-        return substitutions.render();
+        ListSubstitutionNode assignments = new ListSubstitutionNode(node.getSourceCodePosition(), ListSubstitutionNode.ListOperator.Parallel, substitutions);
+        return visitParallelSubstitutionNode(assignments);
     }
 
-    //TODO: Refactor
     /*
     * This function generates code for one assignment with the expressions and the belonging template
     */

@@ -102,12 +102,21 @@ parameter(identifier) ::= <<
 <identifier>
 >>
 
-assignment(identifier, val) ::= <<
-<identifier> = <val>
+parallel(loads, others) ::=<<
+<loads; separator="\n">
+<others; separator="\n">
+>>
+
+parallel_load(type, identifier) ::= <<
+_ld_<identifier> = <identifier>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
+>>
+
+assignment(identifier, val) ::= <<
+<identifier> = <val>
 >>
 
 void() ::= <<

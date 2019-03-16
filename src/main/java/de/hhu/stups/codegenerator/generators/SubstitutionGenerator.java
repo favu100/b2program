@@ -61,6 +61,8 @@ public class SubstitutionGenerator {
 
     private int parallelNestingLevel;
 
+    private int recordCounter;
+
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                                  final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator, final ExpressionGenerator expressionGenerator,
                                  final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator,
@@ -79,6 +81,7 @@ public class SubstitutionGenerator {
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
+        this.recordCounter = 0;
     }
 
     /*
@@ -424,17 +427,17 @@ public class SubstitutionGenerator {
         //TODO: Add Record Type to ANTLR Parser
         importGenerator.addRecordImport();
         ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
-        //TODO
-        TemplateHandler.add(functionCall, "var", "record");
+        TemplateHandler.add(functionCall, "var", "_ld_record_" + recordCounter);
         List<String> assignments = new ArrayList<>();
         for(int i = 0; i < variables.size(); i++) {
             ST assignment = currentGroup.getInstanceOf("operation_call_assignment");
             TemplateHandler.add(assignment, "identifier", variables.get(i));
             TemplateHandler.add(assignment, "type", typeGenerator.generate(assignedVariables.get(i).getType()));
-            TemplateHandler.add(assignment, "var", "record");
+            TemplateHandler.add(assignment, "var", "_ld_record_" + recordCounter);
             TemplateHandler.add(assignment, "index", String.valueOf(i));
             assignments.add(assignment.render());
         }
+        recordCounter++;
         TemplateHandler.add(functionCall, "assignments", assignments);
         return functionCall;
     }

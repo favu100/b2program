@@ -115,7 +115,7 @@ public class SetComprehensionGenerator {
             return declarations.subList(2, declarations.size()).stream()
                     .map(DeclarationNode::getName)
                     .reduce(firstCouple.render(), (a,e) -> {
-                        //TODO: implement type for C++
+                        //TODO: implement type placeholder for C++
                         ST couple = group.getInstanceOf("couple_create");
                         TemplateHandler.add(couple, "arg1", a);
                         TemplateHandler.add(couple, "arg2", "_ic_" + e);

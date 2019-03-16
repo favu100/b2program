@@ -232,7 +232,6 @@ public class SubstitutionGenerator {
             ExprNode rhs = node.getRightSide().get(0);
             return generateAssignment(lhs, rhs);
         }
-        //TODO: For now, the variable on the left-hand side and on the right-hand side must be distinct
         for (int i = 0; i < node.getLeftSide().size(); i++) {
             ExprNode lhs = node.getLeftSide().get(i);
             ExprNode rhs = node.getRightSide().get(i);

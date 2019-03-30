@@ -37,14 +37,15 @@ public class QuantifiedPredicateGenerator {
     }
 
     public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
+        machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
-        boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
-
         ST template = group.getInstanceOf("quantified_predicate");
         generateOtherIterationConstructs(template, predicate);
+
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
+        boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_boolean_"+ iterationConstructCounter;
@@ -52,6 +53,7 @@ public class QuantifiedPredicateGenerator {
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
+        machineGenerator.leaveIterationConstruct();
         return result;
     }
 
@@ -79,11 +81,9 @@ public class QuantifiedPredicateGenerator {
     private String generateQuantifiedPredicateEvaluation(PredicateNode predicateNode, String identifier, boolean forAll) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("quantified_predicate_evaluation");
-        machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);
-        machineGenerator.leaveIterationConstruct();
         return template.render();
     }
 

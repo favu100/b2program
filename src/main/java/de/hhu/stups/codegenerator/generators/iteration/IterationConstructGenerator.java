@@ -84,7 +84,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
 
     @Override
-    public Void visitExprOperatorNode(ExpressionOperatorNode node, Void aVoid) {
+    public Void visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
         node.getExpressionNodes().forEach(expr -> visitExprNode(expr, null));
         return null;
     }
@@ -100,13 +100,13 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     @Override
-    public Void visitNumberNode(NumberNode node, Void aVoid) {
+    public Void visitNumberNode(NumberNode node, Void expected) {
         return null;
     }
 
     @Override
     public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), quantifiedExpressionGenerator.generateQuantifiedExpresion(node));
+        iterationsMapCode.put(node.toString(), quantifiedExpressionGenerator.generateQuantifiedExpression(node));
         iterationConstructHandler.incrementIterationConstructCounter();
         return null;
     }
@@ -265,6 +265,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.addBoundedVariables(declarations);
         iterationPredicateGenerator.checkPredicate(predicate, declarations);
         importGenerator.addImportInIteration(type);
+        iterationConstructHandler.setIterationConstructGenerator(this);
     }
 
     public void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {

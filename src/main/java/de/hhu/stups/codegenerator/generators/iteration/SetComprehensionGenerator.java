@@ -42,15 +42,15 @@ public class SetComprehensionGenerator {
     }
 
     public String generateSetComprehension(SetComprehensionNode node) {
+        machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
-
         ST template = group.getInstanceOf("set_comprehension");
-
         generateOtherIterationConstructs(template, predicate);
+
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
@@ -59,19 +59,19 @@ public class SetComprehensionGenerator {
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
+
+        machineGenerator.leaveIterationConstruct();
         return result;
     }
 
     private String generateSetComprehensionPredicate(PredicateNode predicateNode, String type, String setName, String elementName) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("set_comprehension_predicate");
-        machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);
         TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
         TemplateHandler.add(template, "element", elementName);
-        machineGenerator.leaveIterationConstruct();
         return template.render();
     }
 

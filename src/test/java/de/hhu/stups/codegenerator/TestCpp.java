@@ -776,6 +776,11 @@ public class TestCpp {
 		testCpp("QuantifiedExpression4");
 	}
 
+	@Test
+	public void testQuantifiedExpression5() throws Exception {
+		testCpp("QuantifiedExpression5");
+	}
+
 
 	@Test
 	public void testGeneralizedUnion() throws Exception {

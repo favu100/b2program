@@ -843,6 +843,11 @@ public class TestJava {
 		testJava("QuantifiedExpression4");
 	}
 
+	@Test
+	public void testQuantifiedExpression5() throws Exception {
+		testJava("QuantifiedExpression5");
+	}
+
 
 	@Test
 	public void testGeneralizedUnion() throws Exception {

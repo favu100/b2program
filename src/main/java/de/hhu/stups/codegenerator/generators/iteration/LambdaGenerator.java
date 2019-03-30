@@ -45,15 +45,16 @@ public class LambdaGenerator {
     }
 
     public String generateLambda(LambdaNode node) {
+        machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicate();
         List<DeclarationNode> declarations = node.getDeclarations();
         ExprNode expression = node.getExpression();
         BType type = node.getType();
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
-
         ST template = group.getInstanceOf("lambda");
         generateOtherIterationConstructs(template, predicate, expression);
+
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
@@ -66,6 +67,7 @@ public class LambdaGenerator {
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
+        machineGenerator.leaveIterationConstruct();
         return result;
     }
 
@@ -96,14 +98,12 @@ public class LambdaGenerator {
     public String generateLambdaExpression(PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("lambda_expression");
-        machineGenerator.inIterationConstruct();
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "leftType", leftType);
         TemplateHandler.add(template, "rightType", rightType);
         TemplateHandler.add(template, "relation", relationName);
         TemplateHandler.add(template, "element", elementName);
         TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));
-        machineGenerator.leaveIterationConstruct();
         return template.render();
     }
 

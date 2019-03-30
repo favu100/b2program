@@ -84,7 +84,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private String addition;
 
-	private boolean inIterationConstruct;
+	private int iterationConstructDepth;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, Path addition) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
@@ -111,7 +111,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, importGenerator);
-		this.inIterationConstruct = false;
+		this.iterationConstructDepth = 0;
 	}
 
 	/*
@@ -362,14 +362,14 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	public void inIterationConstruct() {
-		inIterationConstruct = true;
+		iterationConstructDepth++;
 	}
 
 	public void leaveIterationConstruct() {
-		inIterationConstruct = false;
+		iterationConstructDepth--;
 	}
 
 	public boolean isInIterationConstruct() {
-		return inIterationConstruct;
+		return iterationConstructDepth > 0;
 	}
 }

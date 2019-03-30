@@ -44,26 +44,25 @@ public class QuantifiedExpressionGenerator {
         this.iterationPredicateGenerator = iterationPredicateGenerator;
     }
 
-    public String generateQuantifiedExpresion(QuantifiedExpressionNode node) {
+    public String generateQuantifiedExpression(QuantifiedExpressionNode node) {
+        machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         ExprNode expression = node.getExpressionNode();
         BType type = node.getType();
+        ST template = group.getInstanceOf("quantified_expression");
+        generateOtherIterationConstructs(template, predicate, expression);
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
 
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
-
-        ST template = group.getInstanceOf("quantified_expression");
-        generateOtherIterationConstructs(template, predicate, expression);
-
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = isInteger ? "_ic_integer_" + iterationConstructCounter : "_ic_set_"+ iterationConstructCounter;
 
         generateBody(template, identifier, operator, predicate, expression, declarations);
-
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
+        machineGenerator.leaveIterationConstruct();
         return result;
     }
 
@@ -124,13 +123,10 @@ public class QuantifiedExpressionGenerator {
     private String generateQuantifiedExpressionEvaluation(PredicateNode predicateNode, String identifier, String operation, ExprNode expression) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("quantified_expression_evaluation");
-        machineGenerator.inIterationConstruct();
-
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "operation", operation);
         TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));
-        machineGenerator.leaveIterationConstruct();
         return template.render();
     }
 

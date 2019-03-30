@@ -3,17 +3,17 @@
 This is the code generator **B2Program** for generating code from B to other
 programming languages.
 
-A subset of B is supported for Java and C++ now.
+A subset of B is supported for Java and C++ now. The work for code generation for Python, Clojure and C has begun but not continued.
 
 Note:
 
-* The implementation of the types in B uses persistent set from:
+* The implementation of the B types in C++ uses persistent set from:
   https://github.com/arximboldi/immer
 * The library must first be installed before the generated C++ code can be used.
 * The generated code in Python is not supported as the implementations of needed
   B Types are missed.
 * The generated code for C works for a subset of the generated code that works
-  for Java.
+  for Java and C++.
 * Sets and couples are not supported for C.
   Including other machines is not supported in C, too.
   The only types that are implemented for C are BInteger and BBoolean.
@@ -32,15 +32,25 @@ Note:
 
 # C
 ./gradlew run -Planguage="c" -Pbig_integer="true/false" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+
+# C++
+./gradlew run -Planguage="cpp" -Pbig_integer="true/false" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
 ```
 
 ### Compile the generated code in Java
 
-1. Run `./gradlew build` in project btypes
+1. Run `./gradlew build` in project btypes_persistent or btypes_big_integer
 2. Move `btypes-all-2.9.12-SNAPSHOT.jar` to same folder as the generated classes
 3. `javac -cp btypes-all-2.9.12-SNAPSHOT.jar <files....>`
 4. Example: `javac -cp btypes-all-2.9.12-SNAPSHOT.jar TrafficLightExec.java TrafficLight.java`
   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
+  
+  ### Compile the generated code in C++
+  
+  1. Move all B types (see btypes_persistent or btypes_big_integer folder) files to same folder as the generated classes
+  3. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
+  4. Example: `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
+   (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
 
 ### Compile the generated code in C
 
@@ -53,6 +63,12 @@ Note:
 1. Write a main function in the generated main class
 2. `java -cp :btypes-all-2.9.12-SNAPSHOT.jar <main file>`
 3. Example: `java -cp :btypes-all-2.9.12-SNAPSHOT.jar TrafficLightExec`
+
+### Execute the generated code in C++
+
+1. Write a main function in the generated main class
+2. `./<main file>`
+3. Example: `./TrafficLightExec.exec`
 
 ### Execute the generated code in C
 

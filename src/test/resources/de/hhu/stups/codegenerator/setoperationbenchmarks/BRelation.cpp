@@ -225,7 +225,7 @@ class BRelation : public BSet<BCouple<S,T>> {
     	BRelation<S,T> concat(const BRelation<S,T>& arg) {
     		BRelation<S,T> result = *this;
     		BInteger size = card();
-    		for(BCouple<S,T> couple : arg) {
+    		for(BCouple<S,T> couple : arg.set) {
     			result = result._union(BRelation<S,T>(BCouple<S,T>((S) size.plus((BInteger) couple.projection1()), couple.projection2())));
     		}
     		return result;
@@ -240,6 +240,30 @@ class BRelation : public BSet<BCouple<S,T>> {
     		BRelation<S,T> result = BRelation<S,T>(BCouple<S,T>((S) BInteger(1), arg));
     		for(BCouple<S,T> couple : this->set) {
     			result = result._union(BRelation<S,T>(BCouple<S,T>((S) ((BInteger) couple.projection1()).next(), couple.projection2())));
+    		}
+    		return result;
+    	}
+
+    	template<typename R>
+    	BRelation<S,BCouple<T,R>> directProduct(const BRelation<S,R>& arg) {
+    		BRelation<S,BCouple<T,R>> result = BRelation<S,BCouple<T,R>>();
+    		for(BCouple<S,T> e1 : this->set) {
+    			for(BCouple<S,R> e2 : arg.set) {
+    				if(e1.projection1().equal(e2.projection1()).booleanValue()) {
+    					result = result._union(BRelation<S, BCouple<T, R>>(BCouple<S, BCouple<T,R>>(e1.projection1(), BCouple<T,R>(e1.projection2(), e2.projection2()))));
+    				}
+    			}
+    		}
+    		return result;
+    	}
+
+    	template<typename R,typename A>
+    	BRelation<BCouple<S,R>,BCouple<T,A>> parallelProduct(const BRelation<R,A>& arg) {
+    		BRelation<BCouple<S,R>, BCouple<T,A>> result = BRelation<BCouple<S, R>, BCouple<T, A>>();
+    		for(BCouple<S,T> e1 : this->set) {
+    			for(BCouple<R,A> e2 : arg.set) {
+    				result = result._union(BRelation<BCouple<S, R>, BCouple<T, A>>(BCouple<BCouple<S, R>, BCouple<T, A>>(BCouple<S,R>(e1.projection1(), e2.projection1()), BCouple<T,A>(e1.projection2(), e2.projection2()))));
+    			}
     		}
     		return result;
     	}

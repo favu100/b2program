@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.analyzers;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -253,8 +254,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode node, Void expected) {
-        //TODO
-        return null;
+        throw new CodeGenerationException("Operation call in parallel substitution is not allowed");
     }
 
     @Override

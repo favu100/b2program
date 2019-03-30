@@ -95,7 +95,9 @@ public class SubstitutionGenerator {
                 .collect(Collectors.toList()));
         TemplateHandler.add(initialization, "constants_initializations", declarationGenerator.generateConstantsInitializations(node));
         TemplateHandler.add(initialization, "values", declarationGenerator.generateValues(node));
-        TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
+        if(node.getInitialisation() != null) {
+            TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
+        }
         return initialization.render();
     }
 

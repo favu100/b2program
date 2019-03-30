@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
+import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -28,17 +29,21 @@ public class QuantifiedExpressionGenerator {
 
     private final NameHandler nameHandler;
 
+    private final TypeGenerator typeGenerator;
+
     private final IterationConstructGenerator iterationConstructGenerator;
 
     private final IterationConstructHandler iterationConstructHandler;
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
-    public QuantifiedExpressionGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler, final IterationConstructGenerator iterationConstructGenerator,
-                                         final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
+    public QuantifiedExpressionGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler, final TypeGenerator typeGenerator,
+                                         final IterationConstructGenerator iterationConstructGenerator,  final IterationConstructHandler iterationConstructHandler,
+                                         final IterationPredicateGenerator iterationPredicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
+        this.typeGenerator = typeGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
@@ -59,7 +64,7 @@ public class QuantifiedExpressionGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = isInteger ? "_ic_integer_" + iterationConstructCounter : "_ic_set_"+ iterationConstructCounter;
 
-        generateBody(template, identifier, operator, predicate, expression, declarations);
+        generateBody(template, identifier, node, predicate, expression, declarations);
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
         machineGenerator.leaveIterationConstruct();
@@ -104,7 +109,8 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
     }
 
-    private void generateBody(ST template, String identifier, QuantifiedExpressionNode.QuantifiedExpressionOperator operator, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, String identifier, QuantifiedExpressionNode node, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
+        QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
 
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
@@ -116,6 +122,7 @@ public class QuantifiedExpressionGenerator {
 
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "identity", getIdentity(operator));
+        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "isInteger", isInteger);
         TemplateHandler.add(template, "evaluation", evaluation);
     }

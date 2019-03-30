@@ -133,8 +133,8 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 }
 >>
 
-quantified_expression(identifier, identity, setType, otherIterationConstructs, evaluation, isInteger) ::= <<
-<if(isInteger)>BInteger <identifier> = BInteger(<identity>);<else>BSet\<<setType>\> <identifier> = BSet\<<setType>\>();<endif>
+quantified_expression(identifier, identity, type, otherIterationConstructs, evaluation, isInteger) ::= <<
+<if(isInteger)>BInteger <identifier> = BInteger(<identity>);<else><type> <identifier> = <type>();<endif>
 <otherIterationConstructs>
 <evaluation>
 >>

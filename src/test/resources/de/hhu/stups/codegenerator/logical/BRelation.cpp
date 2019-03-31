@@ -268,6 +268,19 @@ class BRelation : public BSet<BCouple<S,T>> {
     		return result;
     	}
 
+    	template <typename R>
+    	BRelation<S,R> composition(const BRelation<T,R>& arg) {
+    		BRelation<S,R> result = BRelation<S,R>();
+    		for(BCouple<S,T> e1 : this->set) {
+    			for(BCouple <T,R> e2 : arg.set) {
+    				if(e1.projection2().equal(e2.projection1()).booleanValue()) {
+    					result = result._union(BRelation<S,R>(BCouple<S,R>(e1.projection1(), e2.projection2())));
+    				}
+    			}
+    		}
+    		return result;
+    	}
+
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;
         }

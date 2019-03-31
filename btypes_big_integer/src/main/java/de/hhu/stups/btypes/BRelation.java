@@ -200,7 +200,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		for(BCouple<S,T> e1 : this) {
 			for(BCouple<S,R> e2 : arg) {
 				if(e1.projection1().equals(e2.projection1())) {
-					result = result.union(new BRelation<S, BCouple<T, R>>(new BCouple<>(e1.projection1(), new BCouple<>(e1.projection2(), e2.projection2()))));
+					result = result.union(new BRelation<>(new BCouple<>(e1.projection1(), new BCouple<>(e1.projection2(), e2.projection2()))));
 				}
 			}
 		}
@@ -208,12 +208,25 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 	}
 
 	public <R,A> BRelation<BCouple<S,R>,BCouple<T,A>> parallelProduct(BRelation<R,A> arg) {
-		BRelation<BCouple<S,R>, BCouple<T,A>> result = new BRelation<BCouple<S, R>, BCouple<T, A>>();
+		BRelation<BCouple<S,R>, BCouple<T,A>> result = new BRelation<>();
 		for(BCouple<S,T> e1 : this) {
 			for(BCouple<R,A> e2 : arg) {
-				result = result.union(new BRelation<BCouple<S, R>, BCouple<T, A>>(new BCouple<>(new BCouple<>(e1.projection1(), e2.projection1()), new BCouple<>(e1.projection2(), e2.projection2()))));
+				result = result.union(new BRelation<>(new BCouple<>(new BCouple<>(e1.projection1(), e2.projection1()), new BCouple<>(e1.projection2(), e2.projection2()))));
 			}
 		}
 		return result;
 	}
+
+	public <R> BRelation<S,R> composition(BRelation<T,R> arg) {
+		BRelation<S,R> result = new BRelation<>();
+		for(BCouple<S,T> e1 : this) {
+			for(BCouple <T,R> e2 : arg) {
+				if(e1.projection2().equals(e2.projection1())) {
+					result = result.union(new BRelation<>(new BCouple<>(e1.projection1(), e2.projection2())));
+				}
+			}
+		}
+		return result;
+	}
+
 }

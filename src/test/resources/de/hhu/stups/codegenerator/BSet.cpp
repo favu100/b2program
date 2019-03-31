@@ -339,6 +339,10 @@ class BSet : public BObject {
             return set.end();
         }
 
+        immer::set<T,Hash, HashEqual> getSet() const {
+            return set;
+        }
+
         protected:
             immer::set<T,Hash, HashEqual> set;
 

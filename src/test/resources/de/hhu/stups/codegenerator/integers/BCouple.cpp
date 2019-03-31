@@ -31,12 +31,20 @@ class BCouple : public BObject {
             return rhs;
         }
 
-        BBoolean operator ==(const BCouple<S,T>& o) {
-            return lhs == o.lhs && rhs == o.rhs;
+        BBoolean equal(const BCouple& other) {
+            return lhs == other.lhs && rhs == other.rhs;
         }
 
-        BBoolean operator !=(const BCouple<S,T>& o) {
-            return lhs != o.lhs || rhs != o.rhs;
+        BBoolean unequal(const BCouple& other) {
+            return lhs != other.lhs || rhs != other.rhs;
+        }
+
+        friend bool operator ==(const BCouple<S,T>& o1, const BCouple<S,T>& o2) {
+            return o1.lhs == o2.lhs && o1.rhs == o2.rhs;
+        }
+
+        friend bool operator !=(const BCouple<S,T>& o1, const BCouple<S,T>& o2) {
+            return o1.lhs != o2.lhs || o1.rhs != o2.rhs;
         }
 
         void operator =(const BCouple<S,T>& other) {

@@ -284,7 +284,7 @@ public class BSet<T> implements BObject, Set<T> {
 		BRelation<T,S> result = new BRelation<>();
 		for(T e1 : this) {
 			for(S e2 : set) {
-				result = result.union(new BRelation<>(new BCouple(e1,e2)));
+				result = result.union(new BRelation<>(new BCouple<>(e1,e2)));
 			}
 		}
 		return result;

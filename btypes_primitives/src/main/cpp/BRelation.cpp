@@ -318,6 +318,26 @@ class BRelation : public BSet<BCouple<S,T>> {
     		return result;
     	}
 
+        static BRelation<BCouple<S,T>, S> projection1(const BSet<S>& arg1, const BSet<T>& arg2) {
+            BRelation<BCouple<S,T>, S> result = BRelation<BCouple<S,T>, S>();
+            for(S e1 : arg1.getSet()) {
+                for(T e2 : arg2.getSet()) {
+                    result = result._union(BRelation<BCouple<S,T>, S>(BCouple<BCouple<S,T>, S>(BCouple<S,T>(e1,e2), e1)));
+                }
+            }
+            return result;
+        }
+
+    	static BRelation<BCouple<S,T>, T> projection2(const BSet<S>& arg1, const BSet<T>& arg2) {
+    		BRelation<BCouple<S,T>, T> result = BRelation<BCouple<S,T>, T>();
+    		for(S e1 : arg1.getSet()) {
+    			for(T e2 : arg2.getSet()) {
+    				result = result._union(BRelation<BCouple<S,T>, T>(BCouple<BCouple<S,T>, T>(BCouple<S,T>(e1,e2), e2)));
+    			}
+    		}
+    		return result;
+    	}
+
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;
         }

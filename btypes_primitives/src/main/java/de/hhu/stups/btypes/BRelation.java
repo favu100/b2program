@@ -259,4 +259,24 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		}
 		return result;
 	}
+
+	public static <S,T> BRelation<BCouple<S,T>, S> projection1(BSet<S> arg1, BSet<T> arg2) {
+		BRelation<BCouple<S,T>, S> result = new BRelation<BCouple<S,T>, S>();
+		for(S e1 : arg1) {
+			for(T e2 : arg2) {
+				result = result.union(new BRelation<BCouple<S,T>, S>(new BCouple<BCouple<S,T>, S>(new BCouple<S,T>(e1,e2), e1)));
+			}
+		}
+		return result;
+	}
+
+	public static <S,T> BRelation<BCouple<S,T>, T> projection2(BSet<S> arg1, BSet<T> arg2) {
+		BRelation<BCouple<S,T>, T> result = new BRelation<BCouple<S,T>, T>();
+		for(S e1 : arg1) {
+			for(T e2 : arg2) {
+				result = result.union(new BRelation<BCouple<S,T>, T>(new BCouple<BCouple<S,T>, T>(new BCouple<S,T>(e1,e2), e2)));
+			}
+		}
+		return result;
+	}
 }

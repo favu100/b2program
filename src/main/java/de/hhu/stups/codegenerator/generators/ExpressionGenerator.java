@@ -249,7 +249,7 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == INTERVAL) {
             return generateInterval(expressionList);
         } else if(node.getOperator() == PRJ1 || node.getOperator() == PRJ2) {
-            return generateProjection(node.getOperator(), expressionList);
+            return generateProjection(node.getOperator(), ((SetType)node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType)node.getExpressionNodes().get(1).getType()).getSubType(), expressionList);
         } else if(node.getOperator() == COUPLE) {
             return generateCouple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
@@ -495,8 +495,10 @@ public class ExpressionGenerator {
         return interval.render();
     }
 
-    private String generateProjection(ExpressionOperatorNode.ExpressionOperator operator, List<String> arguments) {
+    private String generateProjection(ExpressionOperatorNode.ExpressionOperator operator, BType domainType, BType rangeType, List<String> arguments) {
         ST projection = currentGroup.getInstanceOf("projection");
+        TemplateHandler.add(projection, "domainType", typeGenerator.generate(domainType));
+        TemplateHandler.add(projection, "rangeType", typeGenerator.generate(rangeType));
         TemplateHandler.add(projection, "arg1", arguments.get(0));
         TemplateHandler.add(projection, "arg2", arguments.get(1));
         TemplateHandler.add(projection, "isProjection1", operator == PRJ1);

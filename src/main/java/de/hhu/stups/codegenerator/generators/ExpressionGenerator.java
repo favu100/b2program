@@ -73,6 +73,8 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PLUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRED;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRJ1;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRJ2;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE_RESTRICTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.RANGE_SUBTRACTION;
@@ -246,6 +248,8 @@ public class ExpressionGenerator {
             return generateSeqEnumeration(node.getType(), expressionList);
         } else if(node.getOperator() == INTERVAL) {
             return generateInterval(expressionList);
+        } else if(node.getOperator() == PRJ1 || node.getOperator() == PRJ2) {
+            return generateProjection(node.getOperator(), expressionList);
         } else if(node.getOperator() == COUPLE) {
             return generateCouple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
@@ -489,6 +493,14 @@ public class ExpressionGenerator {
         TemplateHandler.add(interval, "arg1", arguments.get(0));
         TemplateHandler.add(interval, "arg2", arguments.get(1));
         return interval.render();
+    }
+
+    private String generateProjection(ExpressionOperatorNode.ExpressionOperator operator, List<String> arguments) {
+        ST projection = currentGroup.getInstanceOf("projection");
+        TemplateHandler.add(projection, "arg1", arguments.get(0));
+        TemplateHandler.add(projection, "arg2", arguments.get(1));
+        TemplateHandler.add(projection, "isProjection1", operator == PRJ1);
+        return projection.render();
     }
 
     /*

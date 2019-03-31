@@ -247,6 +247,10 @@ interval(arg1, arg2) ::= <<
 BSet.range(<arg1>,<arg2>)
 >>
 
+projection(arg1, arg2, isProjection1) ::= <<
+BRelation.<if(isProjection1)>projection1<else>projection2<endif>(<arg1>,<arg2>)
+>>
+
 couple_create(arg1, arg2) ::= <<
 new BCouple\<>(<arg1>, <arg2>)
 >>

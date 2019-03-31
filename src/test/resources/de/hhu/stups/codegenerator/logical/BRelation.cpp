@@ -281,6 +281,18 @@ class BRelation : public BSet<BCouple<S,T>> {
     		return result;
     	}
 
+    	BRelation<S,S> iterate(BInteger n) {
+    		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
+            BRelation<T,T> result;
+            for(const T& e : this->domain()) {
+                result = result._union(BRelation<T,T>(BCouple<T,T>(e,e)));
+            }
+    		for(BInteger i = BInteger(1); i.lessEqual(n).booleanValue(); i = i.next()) {
+    			result = thisRelation.composition(result);
+    		}
+    		return result;
+    	}
+
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;
         }

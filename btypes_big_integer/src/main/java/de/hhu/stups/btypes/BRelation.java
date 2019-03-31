@@ -233,7 +233,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
 		BRelation<S,S> result = this.domain().identity();
 		for(BInteger i = new BInteger("1"); i.lessEqual(n).booleanValue(); i = i.next()) {
-			result = thisRelation.composition(result);
+			result = result.composition(thisRelation);
 		}
 		return result;
 	}

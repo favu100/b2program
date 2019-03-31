@@ -838,10 +838,14 @@ public class TestCpp {
 		testCpp("Composition");
 	}
 
-	@Ignore
 	@Test
-	public void testProjections() throws Exception {
-		testCpp("Projections");
+	public void testProjection1() throws Exception {
+		testCpp("Projection1");
+	}
+
+	@Test
+	public void testProjection2() throws Exception {
+		testCpp("Projection2");
 	}
 
 	@Test

@@ -905,10 +905,14 @@ public class TestJava {
 		testJava("Composition");
 	}
 
-	@Ignore
 	@Test
-	public void testProjections() throws Exception {
-		testJava("Projections");
+	public void testProjection1() throws Exception {
+		testJava("Projection1");
+	}
+
+	@Test
+	public void testProjection2() throws Exception {
+		testJava("Projection2");
 	}
 
 	@Test

@@ -998,6 +998,11 @@ public class TestJava {
 		testJava("Succ");
 	}
 
+	@Test
+	public void testIterate() throws Exception {
+		testJava("Iterate");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

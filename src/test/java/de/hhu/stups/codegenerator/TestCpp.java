@@ -931,6 +931,11 @@ public class TestCpp {
 		testCpp("Succ");
 	}
 
+	@Test
+	public void testIterate() throws Exception {
+		testCpp("Iterate");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

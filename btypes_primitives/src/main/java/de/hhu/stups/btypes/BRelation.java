@@ -228,4 +228,13 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		}
 		return result;
 	}
+
+	public BRelation<S,S> iterate(BInteger n) {
+		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
+		BRelation<S,S> result = this.domain().identity();
+		for(BInteger i = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.next()) {
+			result = thisRelation.composition(result);
+		}
+		return result;
+	}
 }

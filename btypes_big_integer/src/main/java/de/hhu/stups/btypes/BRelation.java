@@ -238,4 +238,26 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		return result;
 	}
 
+	public BRelation<S,S> closure() {
+		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
+		BRelation<S,S> result = this.domain().identity();
+		BRelation<S,S> nextResult = result.composition(thisRelation);
+		while(!result.equal(nextResult).booleanValue()) {
+			result = nextResult;
+			nextResult = result.composition(thisRelation);
+		}
+		return result;
+	}
+
+	public BRelation<S,S> closure1() {
+		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
+		BRelation<S,S> result = (BRelation<S,S>) this;
+		BRelation<S,S> nextResult = result.composition(thisRelation);
+		while(!result.equal(nextResult).booleanValue()) {
+			result = nextResult;
+			nextResult = result.composition(thisRelation);
+		}
+		return result;
+	}
+
 }

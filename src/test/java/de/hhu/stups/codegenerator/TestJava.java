@@ -1003,6 +1003,16 @@ public class TestJava {
 		testJava("Iterate");
 	}
 
+	@Test
+	public void testClosure() throws Exception {
+		testJava("Closure");
+	}
+
+	@Test
+	public void testClosure1() throws Exception {
+		testJava("Closure1");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

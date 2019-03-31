@@ -936,6 +936,16 @@ public class TestCpp {
 		testCpp("Iterate");
 	}
 
+	@Test
+	public void testClosure() throws Exception {
+		testCpp("Closure");
+	}
+
+	@Test
+	public void testClosure1() throws Exception {
+		testCpp("Closure1");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

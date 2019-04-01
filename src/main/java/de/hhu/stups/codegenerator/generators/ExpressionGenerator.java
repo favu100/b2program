@@ -43,6 +43,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.DOMAIN_SUBTRACTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FALSE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FIN;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FIN1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FIRST;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FRONT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL;
@@ -72,6 +73,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PERM;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PLUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRED;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRJ1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRJ2;
@@ -113,7 +115,7 @@ public class ExpressionGenerator {
                     PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
-            Arrays.asList(UNARY_MINUS, PRED, SUCC, CARD, DOMAIN, RANGE, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER,
+            Arrays.asList(UNARY_MINUS, PRED, SUCC, CARD, DOMAIN, RANGE, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, MIN, MAX, FIN, FIN1, POW, POW1, GENERALIZED_UNION, GENERALIZED_INTER,
                     FIRST, LAST, FRONT, TAIL, CONC, SEQ, SEQ1, ISEQ, ISEQ1, PERM, SIZE, REV);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
@@ -316,8 +318,14 @@ public class ExpressionGenerator {
             case POW:
                 operatorName = "pow";
                 break;
+            case POW1:
+                operatorName = "pow1";
+                break;
             case FIN:
                 operatorName = "fin";
+                break;
+            case FIN1:
+                operatorName = "fin1";
                 break;
             case GENERALIZED_UNION:
                 operatorName = "union";

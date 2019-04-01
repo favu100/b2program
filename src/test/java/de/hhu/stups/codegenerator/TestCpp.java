@@ -819,6 +819,21 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testPow1() throws Exception {
+		testCpp("Pow1");
+	}
+
+	@Test
+	public void testFin() throws Exception {
+		testCpp("Fin");
+	}
+
+	@Test
+	public void testFin1() throws Exception {
+		testCpp("Fin1");
+	}
+
+	@Test
 	public void testId() throws Exception {
 		testCpp("Id");
 	}

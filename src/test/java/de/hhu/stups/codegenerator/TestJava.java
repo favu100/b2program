@@ -886,6 +886,21 @@ public class TestJava {
 	}
 
 	@Test
+	public void testPow1() throws Exception {
+		testJava("Pow1");
+	}
+
+	@Test
+	public void testFin() throws Exception {
+		testJava("Fin");
+	}
+
+	@Test
+	public void testFin1() throws Exception {
+		testJava("Fin1");
+	}
+
+	@Test
 	public void testId() throws Exception {
 		testJava("Id");
 	}

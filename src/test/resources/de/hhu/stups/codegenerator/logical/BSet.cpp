@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <queue>
 #include <vector>
 #include <cstdarg>
 #include <immer/set.hpp>
@@ -268,6 +269,38 @@ class BSet : public BObject {
             }
             return BBoolean(false);
         }
+
+    	BSet<BSet<T>> pow() {
+    		BSet<BSet<T>> result = BSet<BSet<T>>();
+    		BSet<T> start = BSet<T>();
+    		queue<BSet<T>> q = queue<BSet<T>>();
+    		q.push(start);
+    		while(!q.empty()) {
+    			BSet<T> currentSet = q.front();
+    			q.pop();
+    			for(T element : this->set) {
+    				BSet<T> nextSet = currentSet._union(BSet<T>(element));
+    				int previousSize = result.size();
+    				result = result._union(BSet<BSet<T>>(nextSet));
+    				if(previousSize < result.size()) {
+    					q.push(nextSet);
+    				}
+    			}
+    		}
+    		return result;
+    	}
+
+    	BSet<BSet<T>> pow1() {
+    		return this->pow().difference(BSet<BSet<T>>());
+    	}
+
+    	BSet<BSet<T>> fin() {
+    		return this->pow();
+    	}
+
+    	BSet<BSet<T>> fin1() {
+    		return this->pow1();
+    	}
 
         BInteger min() {
             BInteger result;

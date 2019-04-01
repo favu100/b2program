@@ -1,4 +1,4 @@
-MACHINE Fin
+MACHINE Fin1
 
 VARIABLES  f, r
 

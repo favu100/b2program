@@ -268,8 +268,16 @@ public class BSet<T> implements BObject, Set<T> {
 		return result;
 	}
 
+	public BSet<BSet<T>> pow1() {
+		return this.pow().difference(new BSet<>());
+	}
+
 	public BSet<BSet<T>> fin() {
 		return this.pow();
+	}
+
+	public BSet<BSet<T>> fin1() {
+		return this.pow1();
 	}
 
 	public BRelation<T,T> identity() {

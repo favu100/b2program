@@ -965,6 +965,16 @@ public class TestCpp {
 		testCpp("Closure1");
 	}
 
+	@Test
+	public void testFnc() throws Exception {
+		testCpp("Fnc");
+	}
+
+	@Test
+	public void testRel() throws Exception {
+		testCpp("Rel");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

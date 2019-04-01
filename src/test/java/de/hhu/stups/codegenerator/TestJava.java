@@ -1032,6 +1032,16 @@ public class TestJava {
 		testJava("Closure1");
 	}
 
+	@Test
+	public void testFnc() throws Exception {
+		testJava("Fnc");
+	}
+
+	@Test
+	public void testRel() throws Exception {
+		testJava("Rel");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

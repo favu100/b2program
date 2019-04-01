@@ -51,9 +51,13 @@ public class ImportGenerator {
             if(((SetType) type).getSubType() instanceof CoupleType) {
                 TemplateHandler.add(template, "type", "BRelation");
                 imports.add(template.render());
+                CoupleType coupleType = (CoupleType) ((SetType) type).getSubType();
+                addImport(coupleType.getLeft());
+                addImport(coupleType.getRight());
             } else {
                 TemplateHandler.add(template, "type", "BSet");
                 imports.add(template.render());
+                addImport(((SetType) type).getSubType());
             }
         } else if(type instanceof EnumeratedSetElementType) {
             template = group.getInstanceOf("import_type");
@@ -65,6 +69,8 @@ public class ImportGenerator {
         } else if(type instanceof CoupleType) {
             TemplateHandler.add(template, "type", "BCouple");
             imports.add(template.render());
+            addImport(((CoupleType) type).getLeft());
+            addImport(((CoupleType) type).getRight());
         }
     }
 

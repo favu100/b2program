@@ -279,4 +279,26 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		}
 		return result;
 	}
+
+	public BRelation<S,BSet<T>> fnc() {
+		BRelation<S,BSet<T>> result = new BRelation<S, BSet<T>>();
+		BSet<S> domain = this.domain();
+		for(S e : domain) {
+			BSet<T> range = this.relationImage(new BSet<S>(e));
+			result = result.union(new BRelation<S, BSet<T>>(new BCouple<S, BSet<T>>(e, range)));
+		}
+		return result;
+	}
+
+	public <R> BRelation<S,R> rel() {
+		BRelation<S,R> result = new BRelation<S, R>();
+		BSet<S> domain = this.domain();
+		for(S e1 : domain) {
+			BSet<R> range = (BSet<R>) this.functionCall(e1);
+			for(R e2 : range) {
+				result = result.union(new BRelation<S, R>(new BCouple<S,R>(e1,e2)));
+			}
+		}
+		return result;
+	}
 }

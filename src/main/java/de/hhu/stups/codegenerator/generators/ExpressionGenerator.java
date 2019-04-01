@@ -113,7 +113,7 @@ public class ExpressionGenerator {
                     PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
-            Arrays.asList(UNARY_MINUS, PRED, SUCC, CARD, DOMAIN, RANGE, ID, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER,
+            Arrays.asList(UNARY_MINUS, PRED, SUCC, CARD, DOMAIN, RANGE, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, MIN, MAX, FIN, POW, GENERALIZED_UNION, GENERALIZED_INTER,
                     FIRST, LAST, FRONT, TAIL, CONC, SEQ, SEQ1, ISEQ, ISEQ1, PERM, SIZE, REV);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
@@ -249,7 +249,9 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == INTERVAL) {
             return generateInterval(expressionList);
         } else if(node.getOperator() == PRJ1 || node.getOperator() == PRJ2) {
-            return generateProjection(node.getOperator(), ((SetType)node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType)node.getExpressionNodes().get(1).getType()).getSubType(), expressionList);
+            return generateProjection(node.getOperator(), ((SetType) node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType) node.getExpressionNodes().get(1).getType()).getSubType(), expressionList);
+        } else if(node.getOperator() == ID) {
+            return generateIdentity(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType());
         } else if(node.getOperator() == COUPLE) {
             return generateCouple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
@@ -292,9 +294,6 @@ public class ExpressionGenerator {
                 break;
             case RANGE:
                 operatorName = "range";
-                break;
-            case ID:
-                operatorName = "identity";
                 break;
             case CLOSURE:
                 operatorName = "closure";
@@ -503,6 +502,13 @@ public class ExpressionGenerator {
         TemplateHandler.add(projection, "arg2", arguments.get(1));
         TemplateHandler.add(projection, "isProjection1", operator == PRJ1);
         return projection.render();
+    }
+
+    private String generateIdentity(List<String> expressionList, BType type) {
+        ST identity = currentGroup.getInstanceOf("identity");
+        TemplateHandler.add(identity, "type", typeGenerator.generate(type));
+        TemplateHandler.add(identity, "arg", expressionList.get(0));
+        return identity.render();
     }
 
     /*

@@ -251,6 +251,10 @@ projection(arg1, arg2, isProjection1) ::= <<
 BRelation.<if(isProjection1)>projection1<else>projection2<endif>(<arg1>,<arg2>)
 >>
 
+identity(arg) ::= <<
+<arg>.identity();
+>>
+
 couple_create(arg1, arg2) ::= <<
 new BCouple\<>(<arg1>, <arg2>)
 >>

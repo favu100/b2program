@@ -288,6 +288,10 @@ projection(domainType, rangeType, arg1, arg2, isProjection1) ::= <<
 (BRelation\<<domainType>, <rangeType> >::<if(isProjection1)>projection1<else>projection2<endif>(<arg1>,<arg2>))
 >>
 
+identity(type, arg) ::= <<
+(BRelation\<<type>, <type> >::identity(<arg>))
+>>
+
 couple_create(leftType, rightType, arg1, arg2) ::= <<
 (BCouple\<<leftType>, <rightType> >(<arg1>, <arg2>))
 >>

@@ -281,6 +281,14 @@ class BRelation : public BSet<BCouple<S,T>> {
     		return result;
     	}
 
+        static BRelation<T,T> identity(const BSet<T>& set) {
+            BRelation<T,T> result;
+            for(const T& e : set.getSet()) {
+                result = result._union(BRelation<T,T>(BCouple<T,T>(e,e)));
+            }
+            return result;
+        }
+
     	BRelation<S,S> iterate(BInteger n) {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
             BRelation<T,T> result;
@@ -350,14 +358,5 @@ class BRelation : public BSet<BCouple<S,T>> {
             immer::set<BCouple<S,T>,Hash, HashEqual> set;
 
 };
-
-        /*template<typename T>
-        BRelation<T,T> BSet<BCouple<T,T>>::identity() {
-            BRelation<T,T> result;
-            for(const T& e : set) {
-                result = result._union(BRelation<T,T>(BCouple<T,T>(e,e)));
-            }
-            return result;
-        }*/
 
 #endif

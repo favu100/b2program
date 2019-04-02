@@ -35,11 +35,13 @@ class BInteger : public BObject {
 	}*/
 
     public:
+        typedef void value_type;
+
         /*BInteger(string val) {
             value = new java.math.BigInteger(val);
         }*/
 
-        BInteger(int val) {
+        BInteger(const int& val) {
             value = val;
         }
 
@@ -198,7 +200,7 @@ class BInteger : public BObject {
         }
 
         void operator =(const BInteger& other) {
-            value = other.value;
+            this->value = other.value;
         }
 
         int hashCode() const {

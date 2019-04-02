@@ -161,6 +161,8 @@ set_enum_declaration(name,enums) ::= <<
 class <name> : public BObject {
     public:
 
+        typedef void value_type;
+
         enum <name>_type {
             <enums;separator=", \n">
         };

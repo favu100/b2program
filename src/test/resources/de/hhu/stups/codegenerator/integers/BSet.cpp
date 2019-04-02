@@ -16,6 +16,7 @@ template<typename T>
 class BSet : public BObject {
 
     public:
+        typedef T value_type;
 
         struct Hash {
             public:

@@ -16,6 +16,8 @@ class BRelation : public BSet<BCouple<S,T>> {
 
     public:
 
+        typedef BCouple<S,T> value_type;
+
         struct Hash {
             public:
                 size_t operator()(const BCouple<S,T>& obj) const {
@@ -341,6 +343,30 @@ class BRelation : public BSet<BCouple<S,T>> {
     		for(S e1 : arg1.getSet()) {
     			for(T e2 : arg2.getSet()) {
     				result = result._union(BRelation<BCouple<S,T>, T>(BCouple<BCouple<S,T>, T>(BCouple<S,T>(e1,e2), e2)));
+    			}
+    		}
+    		return result;
+    	}
+
+    	BRelation<S,BSet<T>> fnc() {
+    		BRelation<S,BSet<T>> result = BRelation<S, BSet<T>>();
+    		BSet<S> domain = this->domain();
+    		for(S e : domain) {
+    			BSet<T> range = this->relationImage(BSet<S>(e));
+    			result = result._union(BRelation<S, BSet<T>>(BCouple<S, BSet<T>>(e, range)));
+    		}
+    		return result;
+    	}
+
+    	template<typename R = typename T::value_type>
+    	BRelation<S,R> rel() {
+    	    //BSet<R> is T
+    		BRelation<S,R> result = BRelation<S, R>();
+    		BSet<S> domain = this->domain();
+    		for(S e1 : domain) {
+    			BSet<R> range = (BSet<R>) this->functionCall(e1);
+    			for(R e2 : range) {
+    				result = result._union(BRelation<S, R>(BCouple<S,R>(e1,e2)));
     			}
     		}
     		return result;

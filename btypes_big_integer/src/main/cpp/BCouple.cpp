@@ -15,6 +15,7 @@ class BCouple : public BObject {
 	    T rhs;
 
 	public:
+	    typedef void value_type;
 
         BCouple(const S& l, const T& r) {
             lhs = l;

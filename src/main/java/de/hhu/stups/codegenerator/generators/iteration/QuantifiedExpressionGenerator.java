@@ -10,6 +10,7 @@ import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -122,7 +123,9 @@ public class QuantifiedExpressionGenerator {
 
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "identity", getIdentity(operator));
-        TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
+        if(node.getType() instanceof SetType) {
+            TemplateHandler.add(template, "setType", typeGenerator.generate(((SetType) node.getType()).getSubType()));
+        }
         TemplateHandler.add(template, "isInteger", isInteger);
         TemplateHandler.add(template, "evaluation", evaluation);
     }

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Divide arithmetic = new Divide();
+    arithmetic.simulate();
+    System.out.println(arithmetic.value);
+}

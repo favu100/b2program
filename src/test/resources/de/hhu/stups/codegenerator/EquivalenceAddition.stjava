@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    Equivalence equi = new Equivalence();
+    System.out.println(equi.Inc(new BInteger(10)));
+}

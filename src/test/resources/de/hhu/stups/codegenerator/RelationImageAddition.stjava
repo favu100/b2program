@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    RelationImage relationImage = new RelationImage();
+    System.out.println(relationImage.aa.card());
+}

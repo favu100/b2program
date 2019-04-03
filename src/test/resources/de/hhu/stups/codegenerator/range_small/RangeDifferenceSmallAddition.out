@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RangeComplementSmall range = new RangeComplementSmall();
+    range.simulate();
+    System.out.println(range.set);
+}

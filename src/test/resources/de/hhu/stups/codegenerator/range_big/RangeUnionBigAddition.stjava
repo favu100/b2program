@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RangeUnionBig range = new RangeUnionBig();
+    range.simulate();
+    System.out.println(range.set);
+}

@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    Interval interval = new Interval();
+    System.out.println(interval.yy.card());
+}

@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    BooleanPredicate bool = new BooleanPredicate();
+    System.out.println(bakery.Inc(new BInteger(10)));
+}

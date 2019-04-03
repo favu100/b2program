@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Minus arithmetic = new Minus();
+    arithmetic.simulate();
+    System.out.println(arithmetic.value);
+}

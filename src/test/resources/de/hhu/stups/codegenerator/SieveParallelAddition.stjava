@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    SieveParallel sieve = new SieveParallel();
+    System.out.println(sieve.ComputeNumberOfPrimes());
+}

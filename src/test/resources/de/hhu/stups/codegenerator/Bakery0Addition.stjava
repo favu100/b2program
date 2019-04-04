@@ -1,8 +1,8 @@
 public static void main(String[] args) {
-    Bakery bakery = new Bakery();
+    Bakery0 bakery = new Bakery0();
     bakery.enter1();
-    bakery.enter2();
     bakery.leave1();
+    bakery.enter2();
     bakery.leave2();
     bakery.try1();
     bakery.try2();

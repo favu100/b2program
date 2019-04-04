@@ -83,7 +83,7 @@ public class TestJava {
 		if(!error.isEmpty()) {
 			throw new RuntimeException(error);
 		}
-		Path mainPath = javaFilePaths.get(0);
+		Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
 
 		if(!execute) {
 			return;
@@ -273,7 +273,7 @@ public class TestJava {
 
 	@Test
 	public void testProject() throws Exception {
-		testJava("project1/A", "A", "AAdidtion.stjava", true);
+		testJava("project1/A", "A", "AAddition.stjava", true);
 	}
 
 	@Test
@@ -324,7 +324,7 @@ public class TestJava {
 
 	@Test
 	public void testReset() throws Exception {
-		testJava("Reset", "Reset", "ResetAddition.stjava", true);
+		testJava("Reset");
 	}
 
 	@Test
@@ -345,7 +345,7 @@ public class TestJava {
 
 	@Test
 	public void testManyLocalDeclarations2() throws Exception {
-		testJava("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2.stjava", true);
+		testJava("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2Addition.stjava", true);
 	}
 
 	@Test
@@ -478,7 +478,7 @@ public class TestJava {
 
 	@Test
 	public void testDifferenceBig() throws Exception {
-		testJava("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceAddition.stjava", true);
+		testJava("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceBigAddition.stjava", true);
 	}
 
 	@Test
@@ -488,7 +488,7 @@ public class TestJava {
 
 	@Test
 	public void testElementOfBig() throws Exception {
-		testJava("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfAddition.stjava", true);
+		testJava("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfBigAddition.stjava", true);
 	}
 
 	@Test
@@ -530,7 +530,7 @@ public class TestJava {
 
 	@Test
 	public void testDifferenceSmall() throws Exception {
-		testJava("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetComplementSmallAddition.stjava", true);
+		testJava("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetDifferenceSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -689,7 +689,7 @@ public class TestJava {
 
 	@Test
 	public void testChoice() throws Exception {
-		testJava("Choice", "Choice", "ChoiceAddition.stjava", true);
+		testJava("Choice");
 	}
 
 	@Test

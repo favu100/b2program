@@ -3,6 +3,7 @@ public static void main(String[] args) {
     counter.Reset();
     counter.Inc();
     counter.Odd();
+    counter.Inc();
     counter.Even();
     System.out.println(counter.count);
 }

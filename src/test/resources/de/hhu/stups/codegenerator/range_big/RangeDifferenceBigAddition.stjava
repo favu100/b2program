@@ -1,5 +1,5 @@
 public static void main(String[] args) {
-    RangeComplementBig range = new RangeComplementBig();
+    RangeDifferenceBig range = new RangeDifferenceBig();
     range.simulate();
     System.out.println(range.set.card());
 }

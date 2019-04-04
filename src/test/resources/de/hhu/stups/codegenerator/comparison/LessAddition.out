@@ -1,5 +1,0 @@
-public static void main(String[] args) {
-    Less comparison = new Less();
-    comparison.simulate();
-    System.out.println(comparison.counter);
-}

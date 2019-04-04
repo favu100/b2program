@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     SetOperation setoperation = new SetOperation();
     setoperation.simulate();
-    System.out.println(setoperation.set);
+    System.out.println(setoperation.set.card());
 }

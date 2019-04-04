@@ -1,5 +1,0 @@
-public static void main(String[] args) {
-    Negative arithmetic = new Negative();
-    arithmetic.simulate();
-    System.out.println(arithmetic.value);
-}

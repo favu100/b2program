@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     IncreasingSet iset = new IncreasingSet();
     iset.simulate();
-    System.out.println(iset.set);
+    System.out.println(iset.set.card());
 }

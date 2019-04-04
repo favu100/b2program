@@ -1,5 +1,0 @@
-public static void main(String[] args) {
-    Or logical = new Or();
-    logical.simulate();
-    System.out.println(logical.counter);
-}

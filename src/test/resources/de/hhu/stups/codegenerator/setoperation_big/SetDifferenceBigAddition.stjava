@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     SetComplementBig set = new SetComplementBig();
     set.simulate();
-    System.out.println(set.set);
+    System.out.println(set.set.card());
 }

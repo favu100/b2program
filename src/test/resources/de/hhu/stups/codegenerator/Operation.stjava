@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    Operation operation = new Operation();
+    System.out.println(operation.Inc(new BInteger(10)));
+}

@@ -66,7 +66,7 @@ public class TestJava {
 		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
 	}
 
-	public void testJava(String machinePath, String machineName, String addition) throws Exception {
+	public void testJava(String machinePath, String machineName, String addition, boolean execute) throws Exception {
 		testJava(machinePath);
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
@@ -85,6 +85,10 @@ public class TestJava {
 		}
 		Path mainPath = javaFilePaths.get(0);
 
+		if(!execute) {
+			return;
+		}
+
 		Process executeProcess = runtime.exec("java -cp btypes_persistent.jar:build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName);
 		executeProcess.waitFor();
 
@@ -93,8 +97,8 @@ public class TestJava {
 			throw new RuntimeException(error);
 		}
 
-		String result = streamToString(executeProcess.getInputStream());
-		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out")));
+		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out"))).replaceAll("\n", "");
 
 		System.out.println("Assert: " + result + " = " + expectedOutput);
 
@@ -110,12 +114,12 @@ public class TestJava {
 
 	@Test
 	public void testExample() throws Exception {
-		testJava("Example", "Example", "ExampleAddition.stjava");
+		testJava("Example");
 	}
 
 	@Test
 	public void testOperation() throws Exception {
-		testJava("Operation", "Operation", "OperationAddition.stjava");
+		testJava("Operation", "Operation", "OperationAddition.stjava", true);
 	}
 
 	@Test
@@ -125,7 +129,7 @@ public class TestJava {
 
 	@Test
 	public void testLocalDeclaration() throws Exception {
-		testJava("LocalDeclaration", "LocalDeclaration", "LocalDeclarationAddition.stjava");
+		testJava("LocalDeclaration", "LocalDeclaration", "LocalDeclarationAddition.stjava", true);
 	}
 
 	@Ignore
@@ -137,53 +141,53 @@ public class TestJava {
 
 	@Test
 	public void testEnumSets() throws Exception {
-		testJava("EnumSets", "EnumSets", "EnumSetsAddition.stjava");
+		testJava("EnumSets", "EnumSets", "EnumSetsAddition.stjava", true);
 	}
 
 	@Test
 	public void testNameCollision() throws Exception {
-		testJava("NameCollision", "NameCollision", "NameCollisionAddition.stjava");
+		testJava("NameCollision", "NameCollision", "NameCollisionAddition.stjava", true);
 	}
 
 	@Test
 	public void testWhile() throws Exception {
-		testJava("While", "While", "WhileAddition.stjava");
+		testJava("While", "While", "WhileAddition.stjava", true);
 	}
 
 	@Test
 	public void testInterval() throws Exception {
-		testJava("Interval", "Interval", "IntervalAddition.stjava");
+		testJava("Interval", "Interval", "IntervalAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testPair() throws Exception {
-		testJava("Pair", "Pair", "PairAddition.stjava");
+		testJava("Pair", "Pair", "PairAddition.stjava", true);
 	}
 
 	@Test
 	public void testIfAndPredicates() throws Exception {
-		testJava("IfAndPredicates", "IfAndPredicates", "IfAndPredicates.stjava");
+		testJava("IfAndPredicates", "IfAndPredicates", "IfAndPredicates.stjava", true);
 	}
 
 	@Test
 	public void testDanglingElse() throws Exception {
-		testJava("DanglingElse", "DanglingElse", "DanglingElseAddition.stjava");
+		testJava("DanglingElse", "DanglingElse", "DanglingElseAddition.stjava", true);
 	}
 
 	@Test
 	public void testImplies() throws Exception {
-		testJava("Implies", "Implies", "ImpliesAddition.stjava");
+		testJava("Implies", "Implies", "ImpliesAddition.stjava", true);
 	}
 
 	@Test
 	public void testEquivalence() throws Exception {
-		testJava("Equivalence", "Equivalence", "EquivalenceAddition.stjava");
+		testJava("Equivalence", "Equivalence", "EquivalenceAddition.stjava", true);
 	}
 
 	@Test
 	public void testBooleanPredicate() throws Exception {
-		testJava("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stjava");
+		testJava("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stjava", true);
 	}
 
 	@Ignore
@@ -194,38 +198,38 @@ public class TestJava {
 
 	@Test
 	public void testNondeterminism() throws Exception {
-		testJava("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stjava");
+		testJava("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stjava", true);
 	}
 
 	@Test
 	public void testMapFunction() throws Exception {
-		testJava("MapFunction", "MapFunction", "MapFunctionAddition.stjava");
+		testJava("MapFunction", "MapFunction", "MapFunctionAddition.stjava", true);
 	}
 
 	@Test
 	public void testRelationImage() throws Exception {
-		testJava("RelationImage", "RelationImage", "RelationImageAddition.stjava");
+		testJava("RelationImage", "RelationImage", "RelationImageAddition.stjava", true);
 	}
 
 	@Test
 	public void testEmptySet() throws Exception {
-		testJava("EmptySet", "EmptySet", "EmptySetAddition.stjava");
+		testJava("EmptySet", "EmptySet", "EmptySetAddition.stjava", true);
 	}
 
 	@Test
 	public void testSetUnion() throws Exception {
-		testJava("SetUnion", "SetUnion", "SetUnionAddition.stjava");
+		testJava("SetUnion", "SetUnion", "SetUnionAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testCounter() throws Exception {
-		testJava("Counter", "Counter", "CounterAddition.stjava");
+		testJava("Counter", "Counter", "CounterAddition.stjava", true);
 	}
 
 	@Test
 	public void testBakery0() throws Exception {
-		testJava("Bakery0", "Bakery0", "Bakery0Addition.stjava");
+		testJava("Bakery0", "Bakery0", "Bakery0Addition.stjava", true);
 	}
 
 	@Test
@@ -235,12 +239,12 @@ public class TestJava {
 
 	@Test
 	public void testACounter() throws Exception {
-		testJava("ACounter", "ACounter", "ACounterAddition.stjava");
+		testJava("ACounter", "ACounter", "ACounterAddition.stjava", true);
 	}
 
 	@Test
 	public void testLift() throws Exception {
-		testJava("Lift", "Lift", "LiftAddition.stjava");
+		testJava("Lift", "Lift", "LiftAddition.stjava", true);
 	}
 
 	@Test
@@ -250,7 +254,7 @@ public class TestJava {
 
 	@Test
 	public void testTrafficLight() throws Exception {
-		testJava("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava");
+		testJava("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
 	}
 
 	@Ignore
@@ -269,7 +273,7 @@ public class TestJava {
 
 	@Test
 	public void testProject() throws Exception {
-		testJava("project1/A", "A", "AAdidtion.stjava");
+		testJava("project1/A", "A", "AAdidtion.stjava", true);
 	}
 
 	@Test
@@ -279,18 +283,18 @@ public class TestJava {
 
 	@Test
 	public void testLiftBenchmarks() throws Exception {
-		testJava("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stjava");
+		testJava("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testSieveBenchmarks() throws Exception {
-		testJava("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stjava");
+		testJava("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stjava", true);
 	}
 
 	@Test
 	public void testTrafficLightBenchmarks() throws Exception {
-		testJava("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stjava");
+		testJava("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stjava", true);
 	}
 
 	@Test
@@ -300,32 +304,32 @@ public class TestJava {
 
 	@Test
 	public void testSetOperation() throws Exception {
-		testJava("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stjava");
+		testJava("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stjava", true);
 	}
 
 	@Test
 	public void testProject2() throws Exception {
-		testJava("project2/MachineA", "MachineA", "MachineAAddition.stjava");
+		testJava("project2/MachineA", "MachineA", "MachineAAddition.stjava", true);
 	}
 
 	@Test
 	public void testSieve() throws Exception {
-		testJava("Sieve", "Sieve", "SieveAddition.stjava");
+		testJava("Sieve", "Sieve", "SieveAddition.stjava", true);
 	}
 
 	@Test
 	public void testSieveParallel() throws Exception {
-		testJava("SieveParallel", "SieveParallel", "SieveParallelAddition.stjava");
+		testJava("SieveParallel", "SieveParallel", "SieveParallelAddition.stjava", true);
 	}
 
 	@Test
 	public void testReset() throws Exception {
-		testJava("Reset", "Reset", "ResetAddition.stjava");
+		testJava("Reset", "Reset", "ResetAddition.stjava", true);
 	}
 
 	@Test
 	public void testSwap() throws Exception {
-		testJava("Swap", "Swap", "SwapAddition.stjava");
+		testJava("Swap", "Swap", "SwapAddition.stjava", true);
 	}
 
 
@@ -336,43 +340,43 @@ public class TestJava {
 
 	@Test
 	public void testManyLocalDeclarations() throws Exception {
-		testJava("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stjava");
+		testJava("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stjava", true);
 	}
 
 	@Test
 	public void testManyLocalDeclarations2() throws Exception {
-		testJava("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2.stjava");
+		testJava("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2.stjava", true);
 	}
 
 	@Test
 	public void testPlus() throws Exception {
-		testJava("arithmetic/Plus", "Plus", "PlusAddition.stjava");
+		testJava("arithmetic/Plus", "Plus", "PlusAddition.stjava", true);
 	}
 
 	@Test
 	public void testMinus() throws Exception {
-		testJava("arithmetic/Minus", "Minus", "MinusAddition.stjava");
+		testJava("arithmetic/Minus", "Minus", "MinusAddition.stjava", true);
 	}
 
 	@Test
 	public void testMultiply() throws Exception {
-		testJava("arithmetic/Multiply", "Multiply", "MultiplyAddition.stjava");
+		testJava("arithmetic/Multiply", "Multiply", "MultiplyAddition.stjava", true);
 	}
 
 	@Test
 	public void testDivide() throws Exception {
-		testJava("arithmetic/Divide", "Divide", "DivideAddition.stjava");
+		testJava("arithmetic/Divide", "Divide", "DivideAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testModulo() throws Exception {
-		testJava("arithmetic/Modulo", "Modulo", "ModuloAddition.stjava");
+		testJava("arithmetic/Modulo", "Modulo", "ModuloAddition.stjava", true);
 	}
 
 	@Test
 	public void testNegative() throws Exception {
-		testJava("arithmetic/Negative", "Negative", "NegativeAddition.stjava");
+		testJava("arithmetic/Negative", "Negative", "NegativeAddition.stjava", true);
 	}
 
 	@Ignore
@@ -383,29 +387,29 @@ public class TestJava {
 
 	/*@Test
 	public void testSmallNumbers() throws Exception {
-		testJava("integers/SmallNumbers", "SmallNumbersAddition.stjava");
+		testJava("integers/SmallNumbers", "SmallNumbersAddition.stjava", true);
 	}
 
 	@Test
 	public void testBigNumbers() throws Exception {
-		testJava("integers/BigNumbers", "BigNumbersAddition.stjava");
+		testJava("integers/BigNumbers", "BigNumbersAddition.stjava", true);
 	}*/
 
 	@Test
 	public void testAnd() throws Exception {
-		testJava("logical/And", "And", "AndAddition.stjava");
+		testJava("logical/And", "And", "AndAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testOr() throws Exception {
-		testJava("logical/Or", "Or", "OrAddition.stjava");
+		testJava("logical/Or", "Or", "OrAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testImpliesPerformance() throws Exception {
-		testJava("logical/Implies", "Implies", "ImpliesAddition.stjava");
+		testJava("logical/Implies", "Implies", "ImpliesAddition.stjava", true);
 	}
 
 	@Test
@@ -415,7 +419,7 @@ public class TestJava {
 
 	@Test
 	public void testEquivalent() throws Exception {
-		testJava("logical/Equivalent", "Equivalent", "EquivalentAddition.stjava");
+		testJava("logical/Equivalent", "Equivalent", "EquivalentAddition.stjava", true);
 	}
 
 	@Test
@@ -430,40 +434,40 @@ public class TestJava {
 
 	@Test
 	public void testLess() throws Exception {
-		testJava("comparison/Less", "Less", "LessAddition.stjava");
+		testJava("comparison/Less", "Less", "LessAddition.stjava", true);
 	}
 
 	@Test
 	public void testLessEqual() throws Exception {
-		testJava("comparison/LessEqual", "LessEqual", "LessEqualAddition.stjava");
+		testJava("comparison/LessEqual", "LessEqual", "LessEqualAddition.stjava", true);
 	}
 
 	@Test
 	public void testGreater() throws Exception {
-		testJava("comparison/Greater", "Greater", "GreaterAddition.stjava");
+		testJava("comparison/Greater", "Greater", "GreaterAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testGreaterEqual() throws Exception {
-		testJava("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stjava");
+		testJava("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stjava", true);
 	}
 
 
 	@Test
 	public void tessEqual() throws Exception {
-		testJava("comparison/Equal", "Equal", "EqualAddition.stjava");
+		testJava("comparison/Equal", "Equal", "EqualAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testUnequal() throws Exception {
-		testJava("comparison/Unequal", "Unequal", "UnequalAddition.stjava");
+		testJava("comparison/Unequal", "Unequal", "UnequalAddition.stjava", true);
 	}
 
 	@Test
 	public void testCardBig() throws Exception {
-		testJava("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stjava");
+		testJava("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stjava", false);
 	}
 
 	@Test
@@ -474,7 +478,7 @@ public class TestJava {
 
 	@Test
 	public void testDifferenceBig() throws Exception {
-		testJava("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceAddition.stjava");
+		testJava("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceAddition.stjava", true);
 	}
 
 	@Test
@@ -484,7 +488,7 @@ public class TestJava {
 
 	@Test
 	public void testElementOfBig() throws Exception {
-		testJava("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfAddition.stjava");
+		testJava("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfAddition.stjava", true);
 	}
 
 	@Test
@@ -494,7 +498,7 @@ public class TestJava {
 
 	@Test
 	public void testIntersectionBig() throws Exception {
-		testJava("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stjava");
+		testJava("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stjava", true);
 	}
 
 	@Test
@@ -504,7 +508,7 @@ public class TestJava {
 
 	@Test
 	public void testUnionBig() throws Exception {
-		testJava("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stjava");
+		testJava("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stjava", false);
 	}
 
 	@Test
@@ -515,7 +519,7 @@ public class TestJava {
 
 	@Test
 	public void testCardSmall() throws Exception {
-		testJava("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stjava");
+		testJava("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -526,7 +530,7 @@ public class TestJava {
 
 	@Test
 	public void testDifferenceSmall() throws Exception {
-		testJava("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetComplementSmallAddition.stjava");
+		testJava("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetComplementSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -537,7 +541,7 @@ public class TestJava {
 
 	@Test
 	public void testElementOfSmall() throws Exception {
-		testJava("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stjava");
+		testJava("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -548,7 +552,7 @@ public class TestJava {
 
 	@Test
 	public void testIntersectionSmall() throws Exception {
-		testJava("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stjava");
+		testJava("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -558,7 +562,7 @@ public class TestJava {
 
 	@Test
 	public void testUnionSmall() throws Exception {
-		testJava("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stjava");
+		testJava("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -568,12 +572,12 @@ public class TestJava {
 
 	@Test
 	public void testRangeBig() throws Exception {
-		testJava("range_big/RangeBig", "RangeBig", "RangeBigAddition.stjava");
+		testJava("range_big/RangeBig", "RangeBig", "RangeBigAddition.stjava", true);
 	}
 
 	@Test
 	public void testRangeCardBig() throws Exception {
-		testJava("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stjava");
+		testJava("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stjava", false);
 	}
 
 	@Test
@@ -584,7 +588,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeDifferenceBig() throws Exception {
-		testJava("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stjava");
+		testJava("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stjava", true);
 	}
 
 	@Test
@@ -595,7 +599,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeElementOfBig() throws Exception {
-		testJava("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stjava");
+		testJava("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stjava", true);
 	}
 
 	@Test
@@ -606,7 +610,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeIntersectionBig() throws Exception {
-		testJava("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stjava");
+		testJava("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stjava", true);
 	}
 
 	@Test
@@ -617,7 +621,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeUnionBig() throws Exception {
-		testJava("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stjava");
+		testJava("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stjava", false);
 	}
 
 	@Test
@@ -628,13 +632,13 @@ public class TestJava {
 
 	@Test
 	public void testRangeSmall() throws Exception {
-		testJava("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stjava");
+		testJava("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testRangeCardSmall() throws Exception {
-		testJava("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stjava");
+		testJava("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -645,7 +649,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeDifferenceSmall() throws Exception {
-		testJava("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stjava");
+		testJava("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -655,7 +659,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeElementOfSmall() throws Exception {
-		testJava("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stjava");
+		testJava("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -665,7 +669,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeIntersectionSmall() throws Exception {
-		testJava("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stjava");
+		testJava("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -675,7 +679,7 @@ public class TestJava {
 
 	@Test
 	public void testRangeUnionSmall() throws Exception {
-		testJava("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stjava");
+		testJava("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -685,7 +689,7 @@ public class TestJava {
 
 	@Test
 	public void testChoice() throws Exception {
-		testJava("Choice", "Choice", "ChoiceAddition.stjava");
+		testJava("Choice", "Choice", "ChoiceAddition.stjava", true);
 	}
 
 	@Test

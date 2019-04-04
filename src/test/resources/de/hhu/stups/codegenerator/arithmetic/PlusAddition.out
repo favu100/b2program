@@ -1,5 +1,0 @@
-public static void main(String[] args) {
-    Plus arithmetic = new Plus();
-    arithmetic.simulate();
-    System.out.println(arithmetic.value);
-}

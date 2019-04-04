@@ -1,5 +1,0 @@
-public static void main(String[] args) {
-    RangeCardBig range = new RangeCardBig();
-    range.simulate();
-    System.out.println(range.result);
-}

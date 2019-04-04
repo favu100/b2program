@@ -1,5 +1,0 @@
-public static void main(String[] args) {
-    SetElementOfBig set = new SetElementOfBig();
-    set.simulate();
-    System.out.println(set.counter);
-}

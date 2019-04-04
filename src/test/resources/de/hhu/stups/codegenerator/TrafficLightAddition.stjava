@@ -5,7 +5,6 @@ public static void main(String[] args) {
     traffic.cars_y();
     traffic.cars_r();
     traffic.peds_g();
-    System.out.println(traffic.tl_cars);
-    System.out.println(traffic.tl_peds);
+    System.out.println(traffic.tl_cars + " " + traffic.tlpeds);
     traffic.peds_r();
 }

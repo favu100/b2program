@@ -129,7 +129,7 @@ public class TestJava {
 
 	@Test
 	public void testLocalDeclaration() throws Exception {
-		testJava("LocalDeclaration", "LocalDeclaration", "LocalDeclarationAddition.stjava", true);
+		testJava("LocalDeclaration");
 	}
 
 	@Ignore
@@ -167,7 +167,7 @@ public class TestJava {
 
 	@Test
 	public void testIfAndPredicates() throws Exception {
-		testJava("IfAndPredicates", "IfAndPredicates", "IfAndPredicates.stjava", true);
+		testJava("IfAndPredicates");
 	}
 
 	@Test
@@ -218,7 +218,7 @@ public class TestJava {
 
 	@Test
 	public void testSetUnion() throws Exception {
-		testJava("SetUnion", "SetUnion", "SetUnionAddition.stjava", true);
+		testJava("SetUnion");
 	}
 
 

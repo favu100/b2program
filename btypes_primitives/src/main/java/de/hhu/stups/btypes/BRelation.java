@@ -57,66 +57,87 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 	}
 
 	public BSet<T> relationImage(BSet<S> domain) {
-		return new BSet<T>(PersistentHashSet.create(this.set.stream()
-				.filter(object -> domain.contains(((BCouple<S,T>)object).projection1()))
-				.map(object -> ((BCouple<S,T>) object).projection2())
-				.collect(Collectors.toSet())));
+		BSet<T> result = new BSet<>();
+		for(BCouple<S,T> couple : this) {
+			if(domain.contains(couple.projection1())) {
+				result = result.union(new BSet<>(couple.projection2()));
+			}
+		}
+		return result;
 	}
 
 
 	public T functionCall(S arg) {
-		List<BCouple<S,T>> matchedCouples = this.stream()
-				.filter(couple -> couple.projection1().equals(arg))
-				.collect(Collectors.toList());
-		if(matchedCouples.size() > 0) {
-			return matchedCouples.get(0).projection2();
+		for(BCouple<S,T> couple : this) {
+			if(couple.projection1().equals(arg)) {
+				return couple.projection2();
+			}
 		}
 		throw new RuntimeException("Argument is not in the key set of this map");
 	}
 
 	public BSet<S> domain() {
-		return new BSet(PersistentHashSet.create(this.set.stream()
-				.map(object -> ((BCouple<S,T>) object).projection1())
-				.collect(Collectors.toList())));
+		BSet<S> result = new BSet<>();
+		for(BCouple<S,T> couple : this) {
+			result = result.union(new BSet<>(couple.projection1()));
+		}
+		return result;
 	}
 
 	public BSet<T> range() {
-		return new BSet(PersistentHashSet.create(this.set.stream()
-				.map(object -> ((BCouple<S,T>) object).projection2())
-				.collect(Collectors.toList())));
+		BSet<T> result = new BSet<>();
+		for(BCouple<S,T> couple : this) {
+			result = result.union(new BSet<>(couple.projection2()));
+		}
+		return result;
 	}
 
 	public BRelation<T,S> inverse() {
-		return new BRelation<T, S>(PersistentHashSet.create(this.set.stream()
-				.map(object -> {
-					BCouple<S,T> couple = (BCouple<S,T>) object;
-					return new BCouple<T,S>(couple.projection2(), couple.projection1());
-				})
-				.collect(Collectors.toList())));
+		BRelation<T,S> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			result = result.union(new BRelation<>(new BCouple<>(couple.projection2(), couple.projection1())));
+		}
+		return result;
 	}
 
 	public BRelation<S,T> domainRestriction(BSet<S> arg) {
-		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> arg.contains(((BCouple<S,T>) object).projection1()))
-				.collect(Collectors.toList())));
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			if(arg.contains(couple.projection1())) {
+				result = result.union(new BRelation<>(couple));
+			}
+		}
+		return result;
 	}
 
 	public BRelation<S,T> domainSubstraction(BSet<S> arg) {
-		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> !arg.contains(((BCouple<S,T>) object).projection1()))
-				.collect(Collectors.toList())));
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			if(!arg.contains(couple.projection1())) {
+				result = result.union(new BRelation<>(couple));
+			}
+		}
+		return result;
 	}
 
 	public BRelation<S,T> rangeRestriction(BSet<T> arg) {
-		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> arg.contains(((BCouple<S,T>) object).projection2()))
-				.collect(Collectors.toList())));
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			if(arg.contains(couple.projection2())) {
+				result = result.union(new BRelation<>(couple));
+			}
+		}
+		return result;
 	}
 
 	public BRelation<S,T> rangeSubstraction(BSet<T> arg) {
-		return new BRelation(PersistentHashSet.create(this.set.stream()
-				.filter(object -> !arg.contains(((BCouple<S,T>) object).projection2()))
-				.collect(Collectors.toList())));
+		BRelation<S,T> result = new BRelation<>();
+		for(BCouple<S,T> couple : this) {
+			if(!arg.contains(couple.projection2())) {
+				result = result.union(new BRelation<>(couple));
+			}
+		}
+		return result;
 	}
 
 	public BRelation<S,T> override(BRelation<S,T> arg) {

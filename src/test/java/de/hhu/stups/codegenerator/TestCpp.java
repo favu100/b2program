@@ -4,7 +4,9 @@ package de.hhu.stups.codegenerator;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,6 +15,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by fabian on 30.08.18.
@@ -31,16 +35,28 @@ public class TestCpp {
 		writeInputToOutput(inputStream, System.err);
 	}
 
+	private static String streamToString(InputStream inputStream) throws IOException {
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = inputStream.read(buffer)) != -1) {
+			result.write(buffer, 0, length);
+		}
+		return result.toString();
+	}
+
 
 	public void testCpp(String machine) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
 		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, true, null);
+
+
 		cppFilePaths.forEach(path -> {
 			try {
 				Process process = Runtime.getRuntime()
-                        .exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + path.toFile().getAbsoluteFile().toString());
+						.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + path.toFile().getAbsoluteFile().toString());
 				writeInputToSystem(process.getErrorStream());
 				writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 				process.waitFor();
@@ -58,6 +74,54 @@ public class TestCpp {
 		//cFilePaths.forEach(path -> cleanUp(path.toString()));
 	}
 
+
+	public void testCpp(String machine, String machineName, String addition, boolean execute) throws Exception {
+		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
+		CodeGenerator codeGenerator = new CodeGenerator();
+		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, true, null);
+
+		Runtime runtime = Runtime.getRuntime();
+
+		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
+
+		Process compileProcess = runtime
+				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " build/resources/test/de/hhu/stups/codegenerator/" + machine + ".cpp");
+		compileProcess.waitFor();
+
+		String error = streamToString(compileProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
+		if(!execute) {
+			return;
+		}
+
+		Process executeProcess = runtime.exec("./" + machineName + ".exec");
+		executeProcess.waitFor();
+
+		error = streamToString(executeProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
+		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".cpp", ".out"))).replaceAll("\n", "");
+
+		System.out.println("Assert: " + result + " = " + expectedOutput);
+
+		assertEquals(result, expectedOutput);
+
+		Set<File> execFiles = cppFilePaths.stream()
+				.map(path -> new File(path.getParent().toFile(), machine + ".exec"))
+				.collect(Collectors.toSet());
+
+		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
+		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+		//cFilePaths.forEach(path -> cleanUp(path.toString()));
+	}
+
 	@Test
 	public void testExample() throws Exception {
 		testCpp("Example");
@@ -65,7 +129,12 @@ public class TestCpp {
 
 	@Test
 	public void testOperation() throws Exception {
-		testCpp("Operation");
+		testCpp("Operation", "Operation", "OperationAddition.stjava", true);
+	}
+
+	@Test
+	public void testOperation2() throws Exception {
+		testCpp("Operation2");
 	}
 
 	@Test
@@ -82,28 +151,28 @@ public class TestCpp {
 
 	@Test
 	public void testEnumSets() throws Exception {
-		testCpp("EnumSets");
+		testCpp("EnumSets", "EnumSets", "EnumSetsAddition.stjava", true);
 	}
 
 	@Test
 	public void testNameCollision() throws Exception {
-		testCpp("NameCollision");
+		testCpp("NameCollision", "NameCollision", "NameCollisionAddition.stjava", true);
 	}
 
 	@Test
 	public void testWhile() throws Exception {
-		testCpp("While");
+		testCpp("While", "While", "WhileAddition.stjava", true);
 	}
 
 	@Test
 	public void testInterval() throws Exception {
-		testCpp("Interval");
+		testCpp("Interval", "Interval", "IntervalAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testPair() throws Exception {
-		testCpp("Pair");
+		testCpp("Pair", "Pair", "PairAddition.stjava", true);
 	}
 
 	@Test
@@ -112,18 +181,23 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testDanglingElse() throws Exception {
+		testCpp("DanglingElse", "DanglingElse", "DanglingElseAddition.stjava", true);
+	}
+
+	@Test
 	public void testImplies() throws Exception {
-		testCpp("Implies");
+		testCpp("Implies", "Implies", "ImpliesAddition.stjava", true);
 	}
 
 	@Test
 	public void testEquivalence() throws Exception {
-		testCpp("Equivalence");
+		testCpp("Equivalence", "Equivalence", "EquivalenceAddition.stjava", true);
 	}
 
 	@Test
 	public void testBooleanPredicate() throws Exception {
-		testCpp("BooleanPredicate");
+		testCpp("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stjava", true);
 	}
 
 	@Ignore
@@ -132,25 +206,24 @@ public class TestCpp {
 		testCpp("Records");
 	}
 
-	@Ignore
 	@Test
 	public void testNondeterminism() throws Exception {
-		testCpp("Nondeterminism");
+		testCpp("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stjava", true);
 	}
 
 	@Test
 	public void testMapFunction() throws Exception {
-		testCpp("MapFunction");
+		testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stjava", true);
 	}
 
 	@Test
 	public void testRelationImage() throws Exception {
-		testCpp("RelationImage");
+		testCpp("RelationImage", "RelationImage", "RelationImageAddition.stjava", true);
 	}
 
 	@Test
 	public void testEmptySet() throws Exception {
-		testCpp("EmptySet");
+		testCpp("EmptySet", "EmptySet", "EmptySetAddition.stjava", true);
 	}
 
 	@Test
@@ -161,34 +234,37 @@ public class TestCpp {
 
 	@Test
 	public void testCounter() throws Exception {
-		testCpp("Counter");
+		testCpp("Counter", "Counter", "CounterAddition.stjava", true);
 	}
 
 	@Test
 	public void testBakery0() throws Exception {
-		testCpp("Bakery0");
+		testCpp("Bakery0", "Bakery0", "Bakery0Addition.stjava", true);
 	}
 
-	@Ignore
 	@Test
 	public void testGCD() throws Exception {
-		// TODO
 		testCpp("GCD");
 	}
 
 	@Test
 	public void testACounter() throws Exception {
-		testCpp("ACounter");
+		testCpp("ACounter", "ACounter", "ACounterAddition.stjava", true);
 	}
 
 	@Test
 	public void testLift() throws Exception {
-		testCpp("Lift");
+		testCpp("Lift", "Lift", "LiftAddition.stjava", true);
 	}
 
 	@Test
 	public void testTravelAgency() throws Exception {
 		testCpp("TravelAgency");
+	}
+
+	@Test
+	public void testTrafficLight() throws Exception {
+		testCpp("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
 	}
 
 	@Ignore
@@ -205,38 +281,31 @@ public class TestCpp {
 		testCpp("phonebook6");
 	}
 
-	@Ignore
-	@Test
-	public void testSum() throws Exception {
-		testCpp("Sum");
-	}
-
-	@Ignore
-	@Test
-	public void testRecursion() throws Exception {
-		//Correct exception
-		testCpp("recursion/Sum1");
-	}
-
 	@Test
 	public void testProject() throws Exception {
-		testCpp("project1/A");
+		//This might be a bug in the parser in the scoping part
+		testCpp("project1/A", "A", "AAddition.stjava", true);
+	}
+
+	@Test
+	public void testProject3() throws Exception {
+		testCpp("project3/A");
 	}
 
 	@Test
 	public void testLiftBenchmarks() throws Exception {
-		testCpp("liftbenchmarks/LiftExec");
+		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testSieveBenchmarks() throws Exception {
-		testCpp("sievebenchmarks/Sieve");
+		testCpp("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stjava", true);
 	}
 
 	@Test
 	public void testTrafficLightBenchmarks() throws Exception {
-		testCpp("trafficlightbenchmarks/TrafficLightExec");
+		testCpp("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stjava", true);
 	}
 
 	@Test
@@ -246,33 +315,22 @@ public class TestCpp {
 
 	@Test
 	public void testSetOperation() throws Exception {
-		testCpp("setoperationbenchmarks/SetOperation");
+		testCpp("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stjava", true);
 	}
-
 
 	@Test
 	public void testProject2() throws Exception {
-		testCpp("project2/MachineA");
+		testCpp("project2/MachineA", "MachineA", "MachineAAddition.stjava", true);
 	}
 
 	@Test
 	public void testSieve() throws Exception {
-		testCpp("Sieve");
+		testCpp("Sieve", "Sieve", "SieveAddition.stjava", true);
 	}
 
 	@Test
 	public void testSieveParallel() throws Exception {
-		testCpp("SieveParallel");
-	}
-
-	@Test
-	public void testSwap() throws Exception {
-		testCpp("Swap");
-	}
-
-	@Test
-	public void testSwap2() throws Exception {
-		testCpp("Swap2");
+		testCpp("SieveParallel", "SieveParallel", "SieveParallelAddition.stjava", true);
 	}
 
 	@Test
@@ -281,44 +339,55 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testSwap() throws Exception {
+		testCpp("Swap", "Swap", "SwapAddition.stjava", true);
+	}
+
+
+	@Test
+	public void testSwap2() throws Exception {
+		testCpp("Swap2");
+	}
+
+	@Test
 	public void testManyLocalDeclarations() throws Exception {
-		testCpp("ManyLocalDeclarations");
+		testCpp("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stjava", true);
 	}
 
 	@Test
 	public void testManyLocalDeclarations2() throws Exception {
-		testCpp("ManyLocalDeclarations2");
+		testCpp("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2Addition.stjava", true);
 	}
 
 	@Test
 	public void testPlus() throws Exception {
-		testCpp("arithmetic/Plus");
+		testCpp("arithmetic/Plus", "Plus", "PlusAddition.stjava", true);
 	}
 
 	@Test
 	public void testMinus() throws Exception {
-		testCpp("arithmetic/Minus");
+		testCpp("arithmetic/Minus", "Minus", "MinusAddition.stjava", true);
 	}
 
 	@Test
 	public void testMultiply() throws Exception {
-		testCpp("arithmetic/Multiply");
+		testCpp("arithmetic/Multiply", "Multiply", "MultiplyAddition.stjava", true);
 	}
 
 	@Test
 	public void testDivide() throws Exception {
-		testCpp("arithmetic/Divide");
+		testCpp("arithmetic/Divide", "Divide", "DivideAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testModulo() throws Exception {
-		testCpp("arithmetic/Modulo");
+		testCpp("arithmetic/Modulo", "Modulo", "ModuloAddition.stjava", true);
 	}
 
 	@Test
 	public void testNegative() throws Exception {
-		testCpp("arithmetic/Negative");
+		testCpp("arithmetic/Negative", "Negative", "NegativeAddition.stjava", true);
 	}
 
 	@Ignore
@@ -327,35 +396,33 @@ public class TestCpp {
 		testCpp("arithmetic/Positive");
 	}
 
-	@Test
+	/*@Test
 	public void testSmallNumbers() throws Exception {
-		testCpp("integers/SmallNumbers");
+		testCpp("integers/SmallNumbers", "SmallNumbersAddition.stjava", true);
 	}
 
 	@Test
 	public void testBigNumbers() throws Exception {
-		testCpp("integers/BigNumbers");
-	}
+		testCpp("integers/BigNumbers", "BigNumbersAddition.stjava", true);
+	}*/
 
 	@Test
 	public void testAnd() throws Exception {
-		testCpp("logical/And");
+		testCpp("logical/And", "And", "AndAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testOr() throws Exception {
-		testCpp("logical/Or");
+		testCpp("logical/Or", "Or", "OrAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testImpliesPerformance() throws Exception {
-		testCpp("logical/Implies");
+		testCpp("logical/Implies", "Implies", "ImpliesAddition.stjava", true);
 	}
 
-
-	@Ignore
 	@Test
 	public void testNot() throws Exception {
 		testCpp("logical/Not");
@@ -363,157 +430,66 @@ public class TestCpp {
 
 	@Test
 	public void testEquivalent() throws Exception {
-		testCpp("logical/Equivalent");
+		testCpp("logical/Equivalent", "Equivalent", "EquivalentAddition.stjava", true);
+	}
+
+	@Test
+	public void testBooleanExpression() throws Exception {
+		testCpp("logical/BooleanExpression");
+	}
+
+	@Test
+	public void testBooleanConstant() throws Exception {
+		testCpp("logical/BooleanConstant");
 	}
 
 	@Test
 	public void testLess() throws Exception {
-		testCpp("comparison/Less");
+		testCpp("comparison/Less", "Less", "LessAddition.stjava", true);
 	}
 
 	@Test
 	public void testLessEqual() throws Exception {
-		testCpp("comparison/LessEqual");
+		testCpp("comparison/LessEqual", "LessEqual", "LessEqualAddition.stjava", true);
 	}
 
 	@Test
 	public void testGreater() throws Exception {
-		testCpp("comparison/Greater");
+		testCpp("comparison/Greater", "Greater", "GreaterAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testGreaterEqual() throws Exception {
-		testCpp("comparison/GreaterEqual");
+		testCpp("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stjava", true);
 	}
 
 
 	@Test
 	public void tessEqual() throws Exception {
-		testCpp("comparison/Equal");
+		testCpp("comparison/Equal", "Equal", "EqualAddition.stjava", true);
 	}
 
 
 	@Test
 	public void testUnequal() throws Exception {
-		testCpp("comparison/Unequal");
+		testCpp("comparison/Unequal", "Unequal", "UnequalAddition.stjava", true);
 	}
 
 	@Test
 	public void testCardBig() throws Exception {
-		testCpp("setoperation_big/SetCardBig");
-	}
-
-	@Test
-	public void testDifferenceBig() throws Exception {
-		testCpp("setoperation_big/SetDifferenceBig");
-	}
-
-	@Test
-	public void testElementOfBig() throws Exception {
-		testCpp("setoperation_big/SetElementOfBig");
-	}
-
-	@Test
-	public void testIntersectionBig() throws Exception {
-		testCpp("setoperation_big/SetIntersectionBig");
-	}
-
-	@Test
-	public void testUnionBig() throws Exception {
-		testCpp("setoperation_big/SetUnionBig");
-	}
-
-	@Test
-	public void testCardSmall() throws Exception {
-		testCpp("setoperation_small/SetCardSmall");
-	}
-
-	@Test
-	public void testDifferenceSmall() throws Exception {
-		testCpp("setoperation_small/SetDifferenceSmall");
-	}
-
-	@Test
-	public void testElementOfSmall() throws Exception {
-		testCpp("setoperation_small/SetElementOfSmall");
-	}
-
-	@Test
-	public void testIntersectionSmall() throws Exception {
-		testCpp("setoperation_small/SetIntersectionSmall");
-	}
-
-	@Test
-	public void testUnionSmall() throws Exception {
-		testCpp("setoperation_small/SetUnionSmall");
-	}
-
-	@Test
-	public void testRangeBig() throws Exception {
-		testCpp("range_big/RangeBig");
-	}
-
-
-	@Test
-	public void testRangeCardBig() throws Exception {
-		testCpp("range_big/RangeCardBig");
-	}
-
-	@Test
-	public void testRangeDifferenceBig() throws Exception {
-		testCpp("range_big/RangeDifferenceBig");
-	}
-
-	@Test
-	public void testRangeElementOfBig() throws Exception {
-		testCpp("range_big/RangeElementOfBig");
-	}
-
-	@Test
-	public void testRangeIntersectionBig() throws Exception {
-		testCpp("range_big/RangeIntersectionBig");
-	}
-
-	@Test
-	public void testRangeUnionBig() throws Exception {
-		testCpp("range_big/RangeUnionBig");
-	}
-
-	@Test
-	public void testRangeSmall() throws Exception {
-		testCpp("range_small/RangeSmall");
-	}
-
-
-	@Test
-	public void testRangeCardSmall() throws Exception {
-		testCpp("range_small/RangeCardSmall");
-	}
-
-	@Test
-	public void testRangeDifferenceSmall() throws Exception {
-		testCpp("range_small/RangeDifferenceSmall");
-	}
-
-	@Test
-	public void testRangeElementOfSmall() throws Exception {
-		testCpp("range_small/RangeElementOfSmall");
-	}
-
-	@Test
-	public void testRangeIntersectionSmall() throws Exception {
-		testCpp("range_small/RangeIntersectionSmall");
-	}
-
-	@Test
-	public void testRangeUnionSmall() throws Exception {
-		testCpp("range_small/RangeUnionSmall");
+		testCpp("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stjava", false);
 	}
 
 	@Test
 	public void testCardBig2() throws Exception {
 		testCpp("setoperation_big/SetCardBig2");
+	}
+
+
+	@Test
+	public void testDifferenceBig() throws Exception {
+		testCpp("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceBigAddition.stjava", true);
 	}
 
 	@Test
@@ -522,8 +498,18 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testElementOfBig() throws Exception {
+		testCpp("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfBigAddition.stjava", true);
+	}
+
+	@Test
 	public void testElementOfBig2() throws Exception {
 		testCpp("setoperation_big/SetElementOfBig2");
+	}
+
+	@Test
+	public void testIntersectionBig() throws Exception {
+		testCpp("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stjava", true);
 	}
 
 	@Test
@@ -532,8 +518,19 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testUnionBig() throws Exception {
+		testCpp("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stjava", false);
+	}
+
+	@Test
 	public void testUnionBig2() throws Exception {
 		testCpp("setoperation_big/SetUnionBig2");
+	}
+
+
+	@Test
+	public void testCardSmall() throws Exception {
+		testCpp("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -541,14 +538,32 @@ public class TestCpp {
 		testCpp("setoperation_small/SetCardSmall2");
 	}
 
+
+	@Test
+	public void testDifferenceSmall() throws Exception {
+		testCpp("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetDifferenceSmallAddition.stjava", true);
+	}
+
 	@Test
 	public void testDifferenceSmall2() throws Exception {
 		testCpp("setoperation_small/SetDifferenceSmall2");
 	}
 
+
+	@Test
+	public void testElementOfSmall() throws Exception {
+		testCpp("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stjava", true);
+	}
+
 	@Test
 	public void testElementOfSmall2() throws Exception {
 		testCpp("setoperation_small/SetElementOfSmall2");
+	}
+
+
+	@Test
+	public void testIntersectionSmall() throws Exception {
+		testCpp("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -557,8 +572,23 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testUnionSmall() throws Exception {
+		testCpp("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stjava", true);
+	}
+
+	@Test
 	public void testUnionSmall2() throws Exception {
 		testCpp("setoperation_small/SetUnionSmall2");
+	}
+
+	@Test
+	public void testRangeBig() throws Exception {
+		testCpp("range_big/RangeBig", "RangeBig", "RangeBigAddition.stjava", true);
+	}
+
+	@Test
+	public void testRangeCardBig() throws Exception {
+		testCpp("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stjava", false);
 	}
 
 	@Test
@@ -566,9 +596,21 @@ public class TestCpp {
 		testCpp("range_big/RangeCardBig2");
 	}
 
+
+	@Test
+	public void testRangeDifferenceBig() throws Exception {
+		testCpp("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stjava", true);
+	}
+
 	@Test
 	public void testRangeDifferenceBig2() throws Exception {
 		testCpp("range_big/RangeDifferenceBig2");
+	}
+
+
+	@Test
+	public void testRangeElementOfBig() throws Exception {
+		testCpp("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stjava", true);
 	}
 
 	@Test
@@ -576,9 +618,21 @@ public class TestCpp {
 		testCpp("range_big/RangeElementOfBig2");
 	}
 
+
+	@Test
+	public void testRangeIntersectionBig() throws Exception {
+		testCpp("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stjava", true);
+	}
+
 	@Test
 	public void testRangeIntersectionBig2() throws Exception {
 		testCpp("range_big/RangeIntersectionBig2");
+	}
+
+
+	@Test
+	public void testRangeUnionBig() throws Exception {
+		testCpp("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stjava", false);
 	}
 
 	@Test
@@ -586,9 +640,27 @@ public class TestCpp {
 		testCpp("range_big/RangeUnionBig2");
 	}
 
+
+	@Test
+	public void testRangeSmall() throws Exception {
+		testCpp("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stjava", true);
+	}
+
+
+	@Test
+	public void testRangeCardSmall() throws Exception {
+		testCpp("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stjava", true);
+	}
+
 	@Test
 	public void testRangeCardSmall2() throws Exception {
 		testCpp("range_small/RangeCardSmall2");
+	}
+
+
+	@Test
+	public void testRangeDifferenceSmall() throws Exception {
+		testCpp("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -597,8 +669,18 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testRangeElementOfSmall() throws Exception {
+		testCpp("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stjava", true);
+	}
+
+	@Test
 	public void testRangeElementOfSmall2() throws Exception {
 		testCpp("range_small/RangeElementOfSmall2");
+	}
+
+	@Test
+	public void testRangeIntersectionSmall() throws Exception {
+		testCpp("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stjava", true);
 	}
 
 	@Test
@@ -607,14 +689,13 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testRangeUnionSmall2() throws Exception {
-		testCpp("range_small/RangeUnionSmall2");
+	public void testRangeUnionSmall() throws Exception {
+		testCpp("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stjava", true);
 	}
 
-
 	@Test
-	public void testTrafficLight() throws Exception {
-		testCpp("TrafficLight");
+	public void testRangeUnionSmall2() throws Exception {
+		testCpp("range_small/RangeUnionSmall2");
 	}
 
 	@Test

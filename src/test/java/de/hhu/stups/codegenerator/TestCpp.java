@@ -129,7 +129,7 @@ public class TestCpp {
 
 	@Test
 	public void testOperation() throws Exception {
-		testCpp("Operation", "Operation", "OperationAddition.stjava", true);
+		testCpp("Operation", "Operation", "OperationAddition.stCpp", true);
 	}
 
 	@Test
@@ -151,28 +151,28 @@ public class TestCpp {
 
 	@Test
 	public void testEnumSets() throws Exception {
-		testCpp("EnumSets", "EnumSets", "EnumSetsAddition.stjava", true);
+		testCpp("EnumSets", "EnumSets", "EnumSetsAddition.stCpp", true);
 	}
 
 	@Test
 	public void testNameCollision() throws Exception {
-		testCpp("NameCollision", "NameCollision", "NameCollisionAddition.stjava", true);
+		testCpp("NameCollision", "NameCollision", "NameCollisionAddition.stCpp", true);
 	}
 
 	@Test
 	public void testWhile() throws Exception {
-		testCpp("While", "While", "WhileAddition.stjava", true);
+		testCpp("While", "While", "WhileAddition.stCpp", true);
 	}
 
 	@Test
 	public void testInterval() throws Exception {
-		testCpp("Interval", "Interval", "IntervalAddition.stjava", true);
+		testCpp("Interval", "Interval", "IntervalAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testPair() throws Exception {
-		testCpp("Pair", "Pair", "PairAddition.stjava", true);
+		testCpp("Pair", "Pair", "PairAddition.stCpp", true);
 	}
 
 	@Test
@@ -182,22 +182,22 @@ public class TestCpp {
 
 	@Test
 	public void testDanglingElse() throws Exception {
-		testCpp("DanglingElse", "DanglingElse", "DanglingElseAddition.stjava", true);
+		testCpp("DanglingElse", "DanglingElse", "DanglingElseAddition.stCpp", true);
 	}
 
 	@Test
 	public void testImplies() throws Exception {
-		testCpp("Implies", "Implies", "ImpliesAddition.stjava", true);
+		testCpp("Implies", "Implies", "ImpliesAddition.stCpp", true);
 	}
 
 	@Test
 	public void testEquivalence() throws Exception {
-		testCpp("Equivalence", "Equivalence", "EquivalenceAddition.stjava", true);
+		testCpp("Equivalence", "Equivalence", "EquivalenceAddition.stCpp", true);
 	}
 
 	@Test
 	public void testBooleanPredicate() throws Exception {
-		testCpp("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stjava", true);
+		testCpp("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stCpp", true);
 	}
 
 	@Ignore
@@ -208,22 +208,22 @@ public class TestCpp {
 
 	@Test
 	public void testNondeterminism() throws Exception {
-		testCpp("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stjava", true);
+		testCpp("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stCpp", true);
 	}
 
 	@Test
 	public void testMapFunction() throws Exception {
-		testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stjava", true);
+		testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stCpp", true);
 	}
 
 	@Test
 	public void testRelationImage() throws Exception {
-		testCpp("RelationImage", "RelationImage", "RelationImageAddition.stjava", true);
+		testCpp("RelationImage", "RelationImage", "RelationImageAddition.stCpp", true);
 	}
 
 	@Test
 	public void testEmptySet() throws Exception {
-		testCpp("EmptySet", "EmptySet", "EmptySetAddition.stjava", true);
+		testCpp("EmptySet", "EmptySet", "EmptySetAddition.stCpp", true);
 	}
 
 	@Test
@@ -234,12 +234,12 @@ public class TestCpp {
 
 	@Test
 	public void testCounter() throws Exception {
-		testCpp("Counter", "Counter", "CounterAddition.stjava", true);
+		testCpp("Counter", "Counter", "CounterAddition.stCpp", true);
 	}
 
 	@Test
 	public void testBakery0() throws Exception {
-		testCpp("Bakery0", "Bakery0", "Bakery0Addition.stjava", true);
+		testCpp("Bakery0", "Bakery0", "Bakery0Addition.stCpp", true);
 	}
 
 	@Test
@@ -249,12 +249,12 @@ public class TestCpp {
 
 	@Test
 	public void testACounter() throws Exception {
-		testCpp("ACounter", "ACounter", "ACounterAddition.stjava", true);
+		testCpp("ACounter", "ACounter", "ACounterAddition.stCpp", true);
 	}
 
 	@Test
 	public void testLift() throws Exception {
-		testCpp("Lift", "Lift", "LiftAddition.stjava", true);
+		testCpp("Lift", "Lift", "LiftAddition.stCpp", true);
 	}
 
 	@Test
@@ -264,7 +264,7 @@ public class TestCpp {
 
 	@Test
 	public void testTrafficLight() throws Exception {
-		testCpp("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
+		testCpp("TrafficLight", "TrafficLight", "TrafficLightAddition.stCpp", true);
 	}
 
 	@Ignore
@@ -284,7 +284,7 @@ public class TestCpp {
 	@Test
 	public void testProject() throws Exception {
 		//This might be a bug in the parser in the scoping part
-		testCpp("project1/A", "A", "AAddition.stjava", true);
+		testCpp("project1/A", "A", "AAddition.stCpp", true);
 	}
 
 	@Test
@@ -294,18 +294,18 @@ public class TestCpp {
 
 	@Test
 	public void testLiftBenchmarks() throws Exception {
-		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stjava", true);
+		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testSieveBenchmarks() throws Exception {
-		testCpp("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stjava", true);
+		testCpp("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stCpp", true);
 	}
 
 	@Test
 	public void testTrafficLightBenchmarks() throws Exception {
-		testCpp("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stjava", true);
+		testCpp("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stCpp", true);
 	}
 
 	@Test
@@ -315,22 +315,22 @@ public class TestCpp {
 
 	@Test
 	public void testSetOperation() throws Exception {
-		testCpp("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stjava", true);
+		testCpp("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stCpp", true);
 	}
 
 	@Test
 	public void testProject2() throws Exception {
-		testCpp("project2/MachineA", "MachineA", "MachineAAddition.stjava", true);
+		testCpp("project2/MachineA", "MachineA", "MachineAAddition.stCpp", true);
 	}
 
 	@Test
 	public void testSieve() throws Exception {
-		testCpp("Sieve", "Sieve", "SieveAddition.stjava", true);
+		testCpp("Sieve", "Sieve", "SieveAddition.stCpp", true);
 	}
 
 	@Test
 	public void testSieveParallel() throws Exception {
-		testCpp("SieveParallel", "SieveParallel", "SieveParallelAddition.stjava", true);
+		testCpp("SieveParallel", "SieveParallel", "SieveParallelAddition.stCpp", true);
 	}
 
 	@Test
@@ -340,7 +340,7 @@ public class TestCpp {
 
 	@Test
 	public void testSwap() throws Exception {
-		testCpp("Swap", "Swap", "SwapAddition.stjava", true);
+		testCpp("Swap", "Swap", "SwapAddition.stCpp", true);
 	}
 
 
@@ -351,43 +351,43 @@ public class TestCpp {
 
 	@Test
 	public void testManyLocalDeclarations() throws Exception {
-		testCpp("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stjava", true);
+		testCpp("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stCpp", true);
 	}
 
 	@Test
 	public void testManyLocalDeclarations2() throws Exception {
-		testCpp("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2Addition.stjava", true);
+		testCpp("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2Addition.stCpp", true);
 	}
 
 	@Test
 	public void testPlus() throws Exception {
-		testCpp("arithmetic/Plus", "Plus", "PlusAddition.stjava", true);
+		testCpp("arithmetic/Plus", "Plus", "PlusAddition.stCpp", true);
 	}
 
 	@Test
 	public void testMinus() throws Exception {
-		testCpp("arithmetic/Minus", "Minus", "MinusAddition.stjava", true);
+		testCpp("arithmetic/Minus", "Minus", "MinusAddition.stCpp", true);
 	}
 
 	@Test
 	public void testMultiply() throws Exception {
-		testCpp("arithmetic/Multiply", "Multiply", "MultiplyAddition.stjava", true);
+		testCpp("arithmetic/Multiply", "Multiply", "MultiplyAddition.stCpp", true);
 	}
 
 	@Test
 	public void testDivide() throws Exception {
-		testCpp("arithmetic/Divide", "Divide", "DivideAddition.stjava", true);
+		testCpp("arithmetic/Divide", "Divide", "DivideAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testModulo() throws Exception {
-		testCpp("arithmetic/Modulo", "Modulo", "ModuloAddition.stjava", true);
+		testCpp("arithmetic/Modulo", "Modulo", "ModuloAddition.stCpp", true);
 	}
 
 	@Test
 	public void testNegative() throws Exception {
-		testCpp("arithmetic/Negative", "Negative", "NegativeAddition.stjava", true);
+		testCpp("arithmetic/Negative", "Negative", "NegativeAddition.stCpp", true);
 	}
 
 	@Ignore
@@ -398,29 +398,29 @@ public class TestCpp {
 
 	/*@Test
 	public void testSmallNumbers() throws Exception {
-		testCpp("integers/SmallNumbers", "SmallNumbersAddition.stjava", true);
+		testCpp("integers/SmallNumbers", "SmallNumbersAddition.stCpp", true);
 	}
 
 	@Test
 	public void testBigNumbers() throws Exception {
-		testCpp("integers/BigNumbers", "BigNumbersAddition.stjava", true);
+		testCpp("integers/BigNumbers", "BigNumbersAddition.stCpp", true);
 	}*/
 
 	@Test
 	public void testAnd() throws Exception {
-		testCpp("logical/And", "And", "AndAddition.stjava", true);
+		testCpp("logical/And", "And", "AndAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testOr() throws Exception {
-		testCpp("logical/Or", "Or", "OrAddition.stjava", true);
+		testCpp("logical/Or", "Or", "OrAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testImpliesPerformance() throws Exception {
-		testCpp("logical/Implies", "Implies", "ImpliesAddition.stjava", true);
+		testCpp("logical/Implies", "Implies", "ImpliesAddition.stCpp", true);
 	}
 
 	@Test
@@ -430,7 +430,7 @@ public class TestCpp {
 
 	@Test
 	public void testEquivalent() throws Exception {
-		testCpp("logical/Equivalent", "Equivalent", "EquivalentAddition.stjava", true);
+		testCpp("logical/Equivalent", "Equivalent", "EquivalentAddition.stCpp", true);
 	}
 
 	@Test
@@ -445,40 +445,40 @@ public class TestCpp {
 
 	@Test
 	public void testLess() throws Exception {
-		testCpp("comparison/Less", "Less", "LessAddition.stjava", true);
+		testCpp("comparison/Less", "Less", "LessAddition.stCpp", true);
 	}
 
 	@Test
 	public void testLessEqual() throws Exception {
-		testCpp("comparison/LessEqual", "LessEqual", "LessEqualAddition.stjava", true);
+		testCpp("comparison/LessEqual", "LessEqual", "LessEqualAddition.stCpp", true);
 	}
 
 	@Test
 	public void testGreater() throws Exception {
-		testCpp("comparison/Greater", "Greater", "GreaterAddition.stjava", true);
+		testCpp("comparison/Greater", "Greater", "GreaterAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testGreaterEqual() throws Exception {
-		testCpp("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stjava", true);
+		testCpp("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void tessEqual() throws Exception {
-		testCpp("comparison/Equal", "Equal", "EqualAddition.stjava", true);
+		testCpp("comparison/Equal", "Equal", "EqualAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testUnequal() throws Exception {
-		testCpp("comparison/Unequal", "Unequal", "UnequalAddition.stjava", true);
+		testCpp("comparison/Unequal", "Unequal", "UnequalAddition.stCpp", true);
 	}
 
 	@Test
 	public void testCardBig() throws Exception {
-		testCpp("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stjava", false);
+		testCpp("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stCpp", false);
 	}
 
 	@Test
@@ -489,7 +489,7 @@ public class TestCpp {
 
 	@Test
 	public void testDifferenceBig() throws Exception {
-		testCpp("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceBigAddition.stjava", true);
+		testCpp("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceBigAddition.stCpp", true);
 	}
 
 	@Test
@@ -499,7 +499,7 @@ public class TestCpp {
 
 	@Test
 	public void testElementOfBig() throws Exception {
-		testCpp("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfBigAddition.stjava", true);
+		testCpp("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfBigAddition.stCpp", true);
 	}
 
 	@Test
@@ -509,7 +509,7 @@ public class TestCpp {
 
 	@Test
 	public void testIntersectionBig() throws Exception {
-		testCpp("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stjava", true);
+		testCpp("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stCpp", true);
 	}
 
 	@Test
@@ -519,7 +519,7 @@ public class TestCpp {
 
 	@Test
 	public void testUnionBig() throws Exception {
-		testCpp("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stjava", false);
+		testCpp("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stCpp", false);
 	}
 
 	@Test
@@ -530,7 +530,7 @@ public class TestCpp {
 
 	@Test
 	public void testCardSmall() throws Exception {
-		testCpp("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stjava", true);
+		testCpp("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -541,7 +541,7 @@ public class TestCpp {
 
 	@Test
 	public void testDifferenceSmall() throws Exception {
-		testCpp("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetDifferenceSmallAddition.stjava", true);
+		testCpp("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetDifferenceSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -552,7 +552,7 @@ public class TestCpp {
 
 	@Test
 	public void testElementOfSmall() throws Exception {
-		testCpp("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stjava", true);
+		testCpp("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -563,7 +563,7 @@ public class TestCpp {
 
 	@Test
 	public void testIntersectionSmall() throws Exception {
-		testCpp("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stjava", true);
+		testCpp("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -573,7 +573,7 @@ public class TestCpp {
 
 	@Test
 	public void testUnionSmall() throws Exception {
-		testCpp("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stjava", true);
+		testCpp("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -583,12 +583,12 @@ public class TestCpp {
 
 	@Test
 	public void testRangeBig() throws Exception {
-		testCpp("range_big/RangeBig", "RangeBig", "RangeBigAddition.stjava", true);
+		testCpp("range_big/RangeBig", "RangeBig", "RangeBigAddition.stCpp", true);
 	}
 
 	@Test
 	public void testRangeCardBig() throws Exception {
-		testCpp("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stjava", false);
+		testCpp("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stCpp", false);
 	}
 
 	@Test
@@ -599,7 +599,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeDifferenceBig() throws Exception {
-		testCpp("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stjava", true);
+		testCpp("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stCpp", true);
 	}
 
 	@Test
@@ -610,7 +610,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeElementOfBig() throws Exception {
-		testCpp("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stjava", true);
+		testCpp("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stCpp", true);
 	}
 
 	@Test
@@ -621,7 +621,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeIntersectionBig() throws Exception {
-		testCpp("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stjava", true);
+		testCpp("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stCpp", true);
 	}
 
 	@Test
@@ -632,7 +632,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeUnionBig() throws Exception {
-		testCpp("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stjava", false);
+		testCpp("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stCpp", false);
 	}
 
 	@Test
@@ -643,13 +643,13 @@ public class TestCpp {
 
 	@Test
 	public void testRangeSmall() throws Exception {
-		testCpp("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stjava", true);
+		testCpp("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stCpp", true);
 	}
 
 
 	@Test
 	public void testRangeCardSmall() throws Exception {
-		testCpp("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stjava", true);
+		testCpp("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -660,7 +660,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeDifferenceSmall() throws Exception {
-		testCpp("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stjava", true);
+		testCpp("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -670,7 +670,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeElementOfSmall() throws Exception {
-		testCpp("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stjava", true);
+		testCpp("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -680,7 +680,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeIntersectionSmall() throws Exception {
-		testCpp("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stjava", true);
+		testCpp("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stCpp", true);
 	}
 
 	@Test
@@ -690,7 +690,7 @@ public class TestCpp {
 
 	@Test
 	public void testRangeUnionSmall() throws Exception {
-		testCpp("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stjava", true);
+		testCpp("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stCpp", true);
 	}
 
 	@Test

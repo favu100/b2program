@@ -67,7 +67,7 @@ public class ImportGenerator {
             TemplateHandler.add(template, "type", "BBoolean");
             imports.add(template.render());
         } else if(type instanceof CoupleType) {
-            TemplateHandler.add(template, "type", "BCouple");
+            TemplateHandler.add(template, "type", "BTuple");
             imports.add(template.render());
             addImport(((CoupleType) type).getLeft());
             addImport(((CoupleType) type).getRight());

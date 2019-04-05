@@ -125,7 +125,7 @@ void() ::= <<
 type() ::= <<
 >>
 
-couple_type() ::=<<
+tuple_type() ::=<<
 >>
 
 set_type() ::= <<
@@ -144,7 +144,7 @@ BSet.range(<arg1>,<arg2>)
 >>
 
 couple_create(arg1, arg2) ::= <<
-BCouple(<arg1>, <arg2>)
+BTuple(<arg1>, <arg2>)
 >>
 
 

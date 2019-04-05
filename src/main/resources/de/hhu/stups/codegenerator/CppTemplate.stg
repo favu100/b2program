@@ -116,7 +116,7 @@ lambda(type, identifier, otherIterationConstructs, lambda) ::= <<
 
 lambda_expression(relation, leftType, rightType, element, expression, predicate) ::= <<
 if((<predicate>).booleanValue()) {
-    <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BCouple\<<leftType>, <rightType>\>(<element>, <expression>)));
+    <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 }
 >>
 
@@ -245,7 +245,7 @@ parallel_load(type, identifier) ::= <<
 
 assignment(leftType, rightType, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BCouple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
@@ -254,7 +254,7 @@ assignments(assignments) ::= <<
 
 nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BCouple\<<leftType>, <rightType>\>(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<
@@ -265,8 +265,8 @@ type(type) ::= <<
 <type>
 >>
 
-couple_type(leftType, rightType) ::=<<
-BCouple\<<leftType>, <rightType> >
+tuple_type(leftType, rightType) ::=<<
+BTuple\<<leftType>, <rightType> >
 >>
 
 set_type(type) ::=<<
@@ -294,8 +294,8 @@ identity(type, arg) ::= <<
 (BRelation\<<type>, <type> >::identity(<arg>))
 >>
 
-couple_create(leftType, rightType, arg1, arg2) ::= <<
-(BCouple\<<leftType>, <rightType> >(<arg1>, <arg2>))
+tuple_create(leftType, rightType, arg1, arg2) ::= <<
+(BTuple\<<leftType>, <rightType> >(<arg1>, <arg2>))
 >>
 
 

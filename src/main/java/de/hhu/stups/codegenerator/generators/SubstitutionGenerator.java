@@ -377,7 +377,7 @@ public class SubstitutionGenerator {
         } else if(lhs instanceof ExpressionOperatorNode) {
             identifier = (IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
             isIdentifierLhs = false;
-            //TODO generate code for couples as arguments
+            //TODO generate code for tuples as arguments
             ExprNode argument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
             TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));

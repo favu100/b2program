@@ -111,7 +111,7 @@ lambda(type, identifier, otherIterationConstructs, lambda) ::= <<
 
 lambda_expression(relation, element, expression, predicate) ::= <<
 if((<predicate>).booleanValue()) {
-    <relation> = <relation>.union(new BRelation\<>(new BCouple\<>(<element>, <expression>)));
+    <relation> = <relation>.union(new BRelation\<>(new BTuple\<>(<element>, <expression>)));
 }
 >>
 
@@ -206,7 +206,7 @@ parallel_load(type, identifier) ::= <<
 
 assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BTuple\<>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
@@ -215,7 +215,7 @@ assignments(assignments) ::= <<
 
 nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BCouple\<>(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<
@@ -226,8 +226,8 @@ type(type) ::= <<
 <type>
 >>
 
-couple_type(leftType, rightType) ::= <<
-BCouple\<<leftType>, <rightType>\>
+tuple_type(leftType, rightType) ::= <<
+BTuple\<<leftType>, <rightType>\>
 >>
 
 set_type(type) ::=<<
@@ -255,8 +255,8 @@ identity(arg) ::= <<
 <arg>.identity();
 >>
 
-couple_create(arg1, arg2) ::= <<
-new BCouple\<>(<arg1>, <arg2>)
+tuple_create(arg1, arg2) ::= <<
+new BTuple\<>(<arg1>, <arg2>)
 >>
 
 record_create(elements) ::= <<

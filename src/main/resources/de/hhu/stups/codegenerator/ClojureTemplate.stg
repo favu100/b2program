@@ -137,8 +137,8 @@ type(type) ::= <<
 de.hhu.stups.btypes.<type>
 >>
 
-couple_type() ::=<<
-de.hhu.stups.btypes.BCouple
+tuple_type() ::=<<
+de.hhu.stups.btypes.BTuple
 >>
 
 set_type() ::=<<
@@ -158,8 +158,8 @@ interval(arg1, arg2) ::= <<
 (de.hhu.stups.btypes.BSet/range <arg1> <arg2>)
 >>
 
-couple_create(arg1, arg2) ::= <<
-(de.hhu.stups.btypes.BCouple. <arg1> <arg2>)
+tuple_create(arg1, arg2) ::= <<
+(de.hhu.stups.btypes.BTuple. <arg1> <arg2>)
 >>
 
 

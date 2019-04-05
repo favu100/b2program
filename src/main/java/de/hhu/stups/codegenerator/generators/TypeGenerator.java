@@ -53,7 +53,7 @@ public class TypeGenerator {
             TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
             return template.render();
         } else if(type instanceof CoupleType) {
-            template = group.getInstanceOf("couple_type");
+            template = group.getInstanceOf("tuple_type");
             TemplateHandler.add(template, "leftType", generate(((CoupleType) type).getLeft()));
             TemplateHandler.add(template, "rightType", generate(((CoupleType) type).getRight()));
             return template.render();

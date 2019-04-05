@@ -257,7 +257,7 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == ID) {
             return generateIdentity(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType());
         } else if(node.getOperator() == COUPLE) {
-            return generateCouple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
+            return generateTuple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
             return generateBooleans();
         }
@@ -528,15 +528,15 @@ public class ExpressionGenerator {
     }
 
     /*
-    * This function generates code for a couple with the given arguments.
+    * This function generates code for a tuple with the given arguments.
     */
-    private String generateCouple(List<String> arguments, BType leftType, BType rightType) {
-        ST couple = currentGroup.getInstanceOf("couple_create");
-        TemplateHandler.add(couple, "leftType", typeGenerator.generate(leftType));
-        TemplateHandler.add(couple, "rightType", typeGenerator.generate(rightType));
-        TemplateHandler.add(couple, "arg1", arguments.get(0));
-        TemplateHandler.add(couple, "arg2", arguments.get(1));
-        return couple.render();
+    private String generateTuple(List<String> arguments, BType leftType, BType rightType) {
+        ST tuple = currentGroup.getInstanceOf("tuple_create");
+        TemplateHandler.add(tuple, "leftType", typeGenerator.generate(leftType));
+        TemplateHandler.add(tuple, "rightType", typeGenerator.generate(rightType));
+        TemplateHandler.add(tuple, "arg1", arguments.get(0));
+        TemplateHandler.add(tuple, "arg2", arguments.get(1));
+        return tuple.render();
     }
 
     /*
@@ -561,7 +561,7 @@ public class ExpressionGenerator {
         ST enumeration = currentGroup.getInstanceOf("seq_enumeration");
         BType subType = ((SetType) type).getSubType();
         BType rhsType = ((CoupleType) subType).getRight();
-        List<String> couples = new ArrayList<>();
+        List<String> tuples = new ArrayList<>();
         if(expressions.size() > 0) {
             importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
         }
@@ -571,9 +571,9 @@ public class ExpressionGenerator {
             TemplateHandler.add(number, "number", String.valueOf(i));
             TemplateHandler.add(number, "useBigInteger", useBigInteger);
             String lhs = number.render();
-            couples.add(generateCouple(Arrays.asList(lhs, expressions.get(i-1)), IntegerType.getInstance(), rhsType));
+            tuples.add(generateTuple(Arrays.asList(lhs, expressions.get(i-1)), IntegerType.getInstance(), rhsType));
         }
-        TemplateHandler.add(enumeration,"elements", couples);
+        TemplateHandler.add(enumeration,"elements", tuples);
         TemplateHandler.add(enumeration, "type", typeGenerator.generate(rhsType));
         return enumeration.render();
     }

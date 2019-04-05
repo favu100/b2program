@@ -173,8 +173,8 @@ type(type) ::= <<
 <type>
 >>
 
-couple_type() ::=<<
-BCouple
+tuple_type() ::=<<
+BTuple
 >>
 
 set_type() ::=<<
@@ -194,7 +194,7 @@ interval(arg1, arg2) ::= <<
 range(<arg1>, <arg2>)
 >>
 
-couple_create(arg1, arg2) ::= <<
+tuple_create(arg1, arg2) ::= <<
 >>
 
 

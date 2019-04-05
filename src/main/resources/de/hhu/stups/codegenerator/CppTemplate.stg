@@ -283,7 +283,7 @@ import_type(type) ::= <<
 
 
 interval(arg1, arg2) ::= <<
-(BSet\<BInteger>::range(<arg1>,<arg2>))
+(BSet\<BInteger>::interval(<arg1>,<arg2>))
 >>
 
 projection(domainType, rangeType, arg1, arg2, isProjection1) ::= <<

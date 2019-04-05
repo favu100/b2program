@@ -186,7 +186,7 @@ public class BSet<T> implements BObject, Set<T> {
 
 	}
 
-	public static BSet<BInteger> range(BInteger a, BInteger b) {
+	public static BSet<BInteger> interval(BInteger a, BInteger b) {
 		return new BSet<>((PersistentHashSet) SET.invoke(
 				MAP.invoke(CREATE_INTEGER, RANGE.invoke(a.getValue(), INC.invoke(b.getValue())))));
 	}

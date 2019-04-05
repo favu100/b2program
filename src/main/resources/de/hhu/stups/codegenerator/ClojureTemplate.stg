@@ -155,7 +155,7 @@ import_type(type) ::= <<
 
 
 interval(arg1, arg2) ::= <<
-(de.hhu.stups.btypes.BSet/range <arg1> <arg2>)
+(de.hhu.stups.btypes.BSet/interval <arg1> <arg2>)
 >>
 
 tuple_create(arg1, arg2) ::= <<

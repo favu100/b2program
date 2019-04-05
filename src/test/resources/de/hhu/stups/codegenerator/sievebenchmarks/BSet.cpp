@@ -206,7 +206,7 @@ class BSet : public BObject {
             }
         }
 
-        static BSet<BInteger> range(const BInteger& a, const BInteger& b) {
+        static BSet<BInteger> interval(const BInteger& a, const BInteger& b) {
             immer::set<BInteger, Hash, HashEqual> result;
             int end = b.intValue();
             for(int i = a.intValue(); i < end; ++i) {

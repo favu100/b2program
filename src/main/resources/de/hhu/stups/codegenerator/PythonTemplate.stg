@@ -140,7 +140,7 @@ import <type>
 
 
 interval(arg1, arg2) ::= <<
-BSet.range(<arg1>,<arg2>)
+BSet.interval(<arg1>,<arg2>)
 >>
 
 tuple_create(arg1, arg2) ::= <<

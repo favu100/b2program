@@ -191,7 +191,7 @@ import_type(type) ::= <<
 >>
 
 interval(arg1, arg2) ::= <<
-range(<arg1>, <arg2>)
+interval(<arg1>, <arg2>)
 >>
 
 tuple_create(arg1, arg2) ::= <<

@@ -76,18 +76,18 @@ public class OperationGenerator {
     /*
     * This function generates code for all operations in a machine.
     */
-    public List<String> visitOperations(List<OperationNode> operations) {
+    public List<String> visitOperations(List<OperationNode> operations, List<String> globals) {
         return operations.stream()
-                .map(this::visitOperation)
+                .map(op -> visitOperation(op, globals))
                 .collect(Collectors.toList());
     }
 
     /*
     * This function generates code for one operation with the given AST node for an operation.
     */
-    private String visitOperation(OperationNode node) {
+    private String visitOperation(OperationNode node, List<String> globals) {
         identifierGenerator.setParams(node.getParams(), node.getOutputParams());
-        ST operation = generate(node);
+        ST operation = generate(node, globals);
         TemplateHandler.add(operation,  "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
         return operation.render();
@@ -96,11 +96,12 @@ public class OperationGenerator {
     /*
     * This function generates code for an operation from the given AST node
     */
-    private ST generate(OperationNode node) {
+    private ST generate(OperationNode node, List<String> globals) {
         ST operation = group.getInstanceOf("operation");
         generateReturn(operation, node.getOutputParams());
         TemplateHandler.add(operation, "locals", declarationGenerator.generateDeclarations(node.getOutputParams()
                 .stream()
+                .filter(identifier -> !globals.contains(identifier.getName()))
                 .collect(Collectors.toList()), DeclarationType.LOCAL_DECLARATION, false));
         TemplateHandler.add(operation, "operationName", nameHandler.handleIdentifier(node.getName(), INCLUDED_MACHINES));
         TemplateHandler.add(operation, "parameters", declarationGenerator.generateDeclarations(node.getParams(), DeclarationType.PARAMETER, false));

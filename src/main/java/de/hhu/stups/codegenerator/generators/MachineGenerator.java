@@ -6,6 +6,7 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
@@ -148,7 +149,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
-		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations()));
+		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
 	}
 
 	private List<String> generateMethods(MachineNode node) {

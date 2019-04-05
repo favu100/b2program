@@ -273,6 +273,7 @@ public class TestJava {
 
 	@Test
 	public void testProject() throws Exception {
+		//This might be a bug in the parser in the scoping part
 		testJava("project1/A", "A", "AAddition.stjava", true);
 	}
 

@@ -285,10 +285,10 @@ public class ExpressionGenerator {
                 operatorName = "negative";
                 break;
             case PRED:
-                operatorName = "previous";
+                operatorName = "pred";
                 break;
             case SUCC:
-                operatorName = "next";
+                operatorName = "succ";
                 break;
             case CARD:
                 operatorName = "card";

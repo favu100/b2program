@@ -158,11 +158,11 @@ class BInteger : public BObject {
             return new BInteger(value.xor(o.value));
         }*/
 
-        BInteger next() {
+        BInteger succ() {
             return value + 1;
         }
 
-        BInteger previous() {
+        BInteger pred() {
             return value - 1;
         }
 

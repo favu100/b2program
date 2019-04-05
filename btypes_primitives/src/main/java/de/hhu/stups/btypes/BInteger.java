@@ -135,11 +135,11 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
         return null;
     }*/
 
-    public BInteger next() {
+    public BInteger succ() {
         return new BInteger(this.value + 1);
     }
 
-    public BInteger previous() {
+    public BInteger pred() {
         return new BInteger(this.value - 1);
     }
 

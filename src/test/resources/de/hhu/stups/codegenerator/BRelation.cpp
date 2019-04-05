@@ -185,8 +185,8 @@ class BRelation : public BSet<BTuple<S,T>> {
     	BRelation<S,T> reverse() {
     		BInteger size = card();
     		BRelation<S,T> result = BRelation<S,T>();
-    		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.next()) {
-    			result = result._union(BRelation<S,T>(BTuple<S,T>((S) i, (T) functionCall((S) size.minus(i).next()))));
+    		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
+    			result = result._union(BRelation<S,T>(BTuple<S,T>((S) i, (T) functionCall((S) size.minus(i).succ()))));
     		}
     		return result;
     	}
@@ -199,7 +199,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		BRelation<S,T> result = BRelation<S,T>();
     		BRelation<S,T> tuplesWithoutFirst = domainSubstraction(BSet<S>((S) BInteger(1)));
     		for(BTuple<S,T> tuple : tuplesWithoutFirst) {
-    			result = result._union(BRelation<S,T>(BTuple<S,T>((S) ((BInteger) tuple.projection1()).previous(), tuple.projection2())));
+    			result = result._union(BRelation<S,T>(BTuple<S,T>((S) ((BInteger) tuple.projection1()).pred(), tuple.projection2())));
     		}
     		return result;
     	}
@@ -235,13 +235,13 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,T> append(const T& arg) {
     		BInteger size = card();
-    		return _union(BRelation<S,T>(BTuple<S,T>((S) size.next(), arg)));
+    		return _union(BRelation<S,T>(BTuple<S,T>((S) size.succ(), arg)));
     	}
 
     	BRelation<S,T> prepend(const T& arg) {
     		BRelation<S,T> result = BRelation<S,T>(BTuple<S,T>((S) BInteger(1), arg));
     		for(BTuple<S,T> tuple : this->set) {
-    			result = result._union(BRelation<S,T>(BTuple<S,T>((S) ((BInteger) tuple.projection1()).next(), tuple.projection2())));
+    			result = result._union(BRelation<S,T>(BTuple<S,T>((S) ((BInteger) tuple.projection1()).succ(), tuple.projection2())));
     		}
     		return result;
     	}
@@ -297,7 +297,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             for(const T& e : this->domain()) {
                 result = result._union(BRelation<T,T>(BTuple<T,T>(e,e)));
             }
-    		for(BInteger i = BInteger(1); i.lessEqual(n).booleanValue(); i = i.next()) {
+    		for(BInteger i = BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
     			result = thisRelation.composition(result);
     		}
     		return result;

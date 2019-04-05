@@ -153,11 +153,11 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 		return new BInteger((BigInt) MODULO.invoke(this.value, other.value));
 	}
 
-	public BInteger next() {
+	public BInteger succ() {
 		return new BInteger((BigInt) INC.invoke(this.value));
 	}
 
-	public BInteger previous() {
+	public BInteger pred() {
 		return new BInteger((BigInt) DEC.invoke(this.value));
 	}
 

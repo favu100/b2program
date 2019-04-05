@@ -155,8 +155,8 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	public BRelation<S,T> reverse() {
 		BInteger size = this.card();
 		BRelation<S,T> result = new BRelation<>();
-		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.next()) {
-			result = result.union(new BRelation<>(new BTuple<>((S) i, (T) this.functionCall((S) size.minus(i).next()))));
+		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.succ()) {
+			result = result.union(new BRelation<>(new BTuple<>((S) i, (T) this.functionCall((S) size.minus(i).succ()))));
 		}
 		return result;
 	}
@@ -169,7 +169,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		BRelation<S,T> result = new BRelation<>();
 		BRelation<S,T> tuplesWithoutFirst = this.domainSubstraction(new BSet<>((S) new BInteger("1")));
 		for(BTuple<S,T> tuple : tuplesWithoutFirst) {
-			result = result.union(new BRelation<>(new BTuple<>((S) ((BInteger) tuple.projection1()).previous(), tuple.projection2())));
+			result = result.union(new BRelation<>(new BTuple<>((S) ((BInteger) tuple.projection1()).pred(), tuple.projection2())));
 		}
 		return result;
 	}
@@ -205,13 +205,13 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 
 	public BRelation<S,T> append(T arg) {
 		BInteger size = this.card();
-		return this.union(new BRelation<>(new BTuple<>((S) size.next(), arg)));
+		return this.union(new BRelation<>(new BTuple<>((S) size.succ(), arg)));
 	}
 
 	public BRelation<S,T> prepend(T arg) {
 		BRelation<S,T> result = new BRelation<>(new BTuple<>((S) new BInteger("1"), arg));
 		for(BTuple<S,T> tuple : this) {
-			result = result.union(new BRelation<>(new BTuple<>((S) ((BInteger) tuple.projection1()).next(), tuple.projection2())));
+			result = result.union(new BRelation<>(new BTuple<>((S) ((BInteger) tuple.projection1()).succ(), tuple.projection2())));
 		}
 		return result;
 	}
@@ -253,7 +253,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	public BRelation<S,S> iterate(BInteger n) {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
 		BRelation<S,S> result = this.domain().identity();
-		for(BInteger i = new BInteger("1"); i.lessEqual(n).booleanValue(); i = i.next()) {
+		for(BInteger i = new BInteger("1"); i.lessEqual(n).booleanValue(); i = i.succ()) {
 			result = result.composition(thisRelation);
 		}
 		return result;

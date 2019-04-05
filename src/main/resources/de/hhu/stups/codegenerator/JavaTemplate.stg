@@ -251,8 +251,8 @@ projection(arg1, arg2, isProjection1) ::= <<
 BRelation.<if(isProjection1)>projection1<else>projection2<endif>(<arg1>,<arg2>)
 >>
 
-identity(arg) ::= <<
-<arg>.identity();
+identity(type, arg) ::= <<
+BRelation\<<type>, <type> >.identity(<arg>)
 >>
 
 tuple_create(arg1, arg2) ::= <<

@@ -252,7 +252,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 
 	public BRelation<S,S> iterate(BInteger n) {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = this.domain().identity();
+		BRelation<S,S> result = identity(this.domain());
 		for(BInteger i = new BInteger("1"); i.lessEqual(n).booleanValue(); i = i.succ()) {
 			result = result.composition(thisRelation);
 		}
@@ -261,7 +261,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 
 	public BRelation<S,S> closure() {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = this.domain().identity();
+		BRelation<S,S> result = identity(this.domain());
 		BRelation<S,S> nextResult = result.composition(thisRelation);
 		while(!result.equal(nextResult).booleanValue()) {
 			result = nextResult;
@@ -319,6 +319,14 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 			for(R e2 : range) {
 				result = result.union(new BRelation<S, R>(new BTuple<S,R>(e1,e2)));
 			}
+		}
+		return result;
+	}
+
+	public static <T> BRelation<T,T> identity(BSet<T> arg) {
+		BRelation<T,T> result = new BRelation<>();
+		for(T e : arg) {
+			result = result.union(new BRelation<>(new BTuple<>(e,e)));
 		}
 		return result;
 	}

@@ -5,7 +5,6 @@
 #include <cstdarg>
 #include <immer/set.hpp>
 #include "BInteger.cpp"
-#include "BCouple.cpp"
 
 #ifndef BSET_H
 #define BSET_H

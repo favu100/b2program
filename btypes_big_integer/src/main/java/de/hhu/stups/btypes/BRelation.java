@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 /**
  * Created by fabian on 15.01.19.
  */
-public class BRelation<S,T> extends BSet<BCouple<S,T>> {
+public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 
 	public BRelation(PersistentHashSet elements) {
 		super(elements);
 	}
 
 	@SafeVarargs
-	public BRelation(BCouple<S,T>... elements) {
+	public BRelation(BTuple<S,T>... elements) {
 		super(elements);
 	}
 
@@ -35,11 +35,11 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
 	}
 
-	public BBoolean elementOf(BCouple<S,T> object) {
+	public BBoolean elementOf(BTuple<S,T> object) {
 		return new BBoolean(this.set.contains(object));
 	}
 
-	public BBoolean notElementOf(BCouple<S,T> object) {
+	public BBoolean notElementOf(BTuple<S,T> object) {
 		return new BBoolean(!this.set.contains(object));
 	}
 
@@ -51,16 +51,16 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		return new BBoolean(!equals(o));
 	}
 
-	public BCouple<S,T> nondeterminism() {
+	public BTuple<S,T> nondeterminism() {
 		int index = (int) Math.floor(Math.random() * set.size());
 		return toArray()[index];
 	}
 
 	public BSet<T> relationImage(BSet<S> domain) {
 		BSet<T> result = new BSet<>();
-		for(BCouple<S,T> couple : this) {
-			if(domain.contains(couple.projection1())) {
-				result = result.union(new BSet<>(couple.projection2()));
+		for(BTuple<S,T> tuple : this) {
+			if(domain.contains(tuple.projection1())) {
+				result = result.union(new BSet<>(tuple.projection2()));
 			}
 		}
 		return result;
@@ -68,9 +68,9 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 
 	public T functionCall(S arg) {
-		for(BCouple<S,T> couple : this) {
-			if(couple.projection1().equals(arg)) {
-				return couple.projection2();
+		for(BTuple<S,T> tuple : this) {
+			if(tuple.projection1().equals(arg)) {
+				return tuple.projection2();
 			}
 		}
 		throw new RuntimeException("Argument is not in the key set of this map");
@@ -78,33 +78,33 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BSet<S> domain() {
 		BSet<S> result = new BSet<>();
-		for(BCouple<S,T> couple : this) {
-			result = result.union(new BSet<>(couple.projection1()));
+		for(BTuple<S,T> tuple : this) {
+			result = result.union(new BSet<>(tuple.projection1()));
 		}
 		return result;
 	}
 
 	public BSet<T> range() {
 		BSet<T> result = new BSet<>();
-		for(BCouple<S,T> couple : this) {
-			result = result.union(new BSet<>(couple.projection2()));
+		for(BTuple<S,T> tuple : this) {
+			result = result.union(new BSet<>(tuple.projection2()));
 		}
 		return result;
 	}
 
 	public BRelation<T,S> inverse() {
 		BRelation<T,S> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			result = result.union(new BRelation<>(new BCouple<>(couple.projection2(), couple.projection1())));
+		for(BTuple<S,T> tuple : this) {
+			result = result.union(new BRelation<>(new BTuple<>(tuple.projection2(), tuple.projection1())));
 		}
 		return result;
 	}
 
 	public BRelation<S,T> domainRestriction(BSet<S> arg) {
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			if(arg.contains(couple.projection1())) {
-				result = result.union(new BRelation<>(couple));
+		for(BTuple<S,T> tuple : this) {
+			if(arg.contains(tuple.projection1())) {
+				result = result.union(new BRelation<>(tuple));
 			}
 		}
 		return result;
@@ -112,9 +112,9 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BRelation<S,T> domainSubstraction(BSet<S> arg) {
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			if(!arg.contains(couple.projection1())) {
-				result = result.union(new BRelation<>(couple));
+		for(BTuple<S,T> tuple : this) {
+			if(!arg.contains(tuple.projection1())) {
+				result = result.union(new BRelation<>(tuple));
 			}
 		}
 		return result;
@@ -122,9 +122,9 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BRelation<S,T> rangeRestriction(BSet<T> arg) {
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			if(arg.contains(couple.projection2())) {
-				result = result.union(new BRelation<>(couple));
+		for(BTuple<S,T> tuple : this) {
+			if(arg.contains(tuple.projection2())) {
+				result = result.union(new BRelation<>(tuple));
 			}
 		}
 		return result;
@@ -132,9 +132,9 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BRelation<S,T> rangeSubstraction(BSet<T> arg) {
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			if(!arg.contains(couple.projection2())) {
-				result = result.union(new BRelation<>(couple));
+		for(BTuple<S,T> tuple : this) {
+			if(!arg.contains(tuple.projection2())) {
+				result = result.union(new BRelation<>(tuple));
 			}
 		}
 		return result;
@@ -156,7 +156,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		BInteger size = this.card();
 		BRelation<S,T> result = new BRelation<>();
 		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.next()) {
-			result = result.union(new BRelation<>(new BCouple<>((S) i, (T) this.functionCall((S) size.minus(i).next()))));
+			result = result.union(new BRelation<>(new BTuple<>((S) i, (T) this.functionCall((S) size.minus(i).next()))));
 		}
 		return result;
 	}
@@ -167,18 +167,18 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BRelation<S,T> tail() {
 		BRelation<S,T> result = new BRelation<>();
-		BRelation<S,T> couplesWithoutFirst = this.domainSubstraction(new BSet<>((S) new BInteger("1")));
-		for(BCouple<S,T> couple : couplesWithoutFirst) {
-			result = result.union(new BRelation<>(new BCouple<>((S) ((BInteger) couple.projection1()).previous(), couple.projection2())));
+		BRelation<S,T> tuplesWithoutFirst = this.domainSubstraction(new BSet<>((S) new BInteger("1")));
+		for(BTuple<S,T> tuple : tuplesWithoutFirst) {
+			result = result.union(new BRelation<>(new BTuple<>((S) ((BInteger) tuple.projection1()).previous(), tuple.projection2())));
 		}
 		return result;
 	}
 
 	public BRelation<S,T> take(BInteger n) {
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			if(((BInteger) couple.projection1()).lessEqual(n).booleanValue()) {
-				result = result.union(new BRelation<>(couple));
+		for(BTuple<S,T> tuple : this) {
+			if(((BInteger) tuple.projection1()).lessEqual(n).booleanValue()) {
+				result = result.union(new BRelation<>(tuple));
 			}
 		}
 		return result;
@@ -186,9 +186,9 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public BRelation<S,T> drop(BInteger n) {
 		BRelation<S,T> result = new BRelation<>();
-		for(BCouple<S,T> couple : this) {
-			if(((BInteger) couple.projection1()).greater(n).booleanValue()) {
-				result = result.union(new BRelation<>(couple));
+		for(BTuple<S,T> tuple : this) {
+			if(((BInteger) tuple.projection1()).greater(n).booleanValue()) {
+				result = result.union(new BRelation<>(tuple));
 			}
 		}
 		return result;
@@ -197,42 +197,42 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 	public BRelation<S,T> concat(BRelation<S,T> arg) {
 		BRelation<S,T> result = this;
 		BInteger size = this.card();
-		for(BCouple<S,T> couple : arg) {
-			result = result.union(new BRelation<>(new BCouple<>((S) size.plus((BInteger) couple.projection1()), couple.projection2())));
+		for(BTuple<S,T> tuple : arg) {
+			result = result.union(new BRelation<>(new BTuple<>((S) size.plus((BInteger) tuple.projection1()), tuple.projection2())));
 		}
 		return result;
 	}
 
 	public BRelation<S,T> append(T arg) {
 		BInteger size = this.card();
-		return this.union(new BRelation<>(new BCouple<>((S) size.next(), arg)));
+		return this.union(new BRelation<>(new BTuple<>((S) size.next(), arg)));
 	}
 
 	public BRelation<S,T> prepend(T arg) {
-		BRelation<S,T> result = new BRelation<>(new BCouple<>((S) new BInteger("1"), arg));
-		for(BCouple<S,T> couple : this) {
-			result = result.union(new BRelation<>(new BCouple<>((S) ((BInteger) couple.projection1()).next(), couple.projection2())));
+		BRelation<S,T> result = new BRelation<>(new BTuple<>((S) new BInteger("1"), arg));
+		for(BTuple<S,T> tuple : this) {
+			result = result.union(new BRelation<>(new BTuple<>((S) ((BInteger) tuple.projection1()).next(), tuple.projection2())));
 		}
 		return result;
 	}
 
-	public <R> BRelation<S,BCouple<T,R>> directProduct(BRelation<S,R> arg) {
-		BRelation<S,BCouple<T,R>> result = new BRelation<>();
-		for(BCouple<S,T> e1 : this) {
-			for(BCouple<S,R> e2 : arg) {
+	public <R> BRelation<S,BTuple<T,R>> directProduct(BRelation<S,R> arg) {
+		BRelation<S,BTuple<T,R>> result = new BRelation<>();
+		for(BTuple<S,T> e1 : this) {
+			for(BTuple<S,R> e2 : arg) {
 				if(e1.projection1().equals(e2.projection1())) {
-					result = result.union(new BRelation<>(new BCouple<>(e1.projection1(), new BCouple<>(e1.projection2(), e2.projection2()))));
+					result = result.union(new BRelation<>(new BTuple<>(e1.projection1(), new BTuple<>(e1.projection2(), e2.projection2()))));
 				}
 			}
 		}
 		return result;
 	}
 
-	public <R,A> BRelation<BCouple<S,R>,BCouple<T,A>> parallelProduct(BRelation<R,A> arg) {
-		BRelation<BCouple<S,R>, BCouple<T,A>> result = new BRelation<>();
-		for(BCouple<S,T> e1 : this) {
-			for(BCouple<R,A> e2 : arg) {
-				result = result.union(new BRelation<>(new BCouple<>(new BCouple<>(e1.projection1(), e2.projection1()), new BCouple<>(e1.projection2(), e2.projection2()))));
+	public <R,A> BRelation<BTuple<S,R>,BTuple<T,A>> parallelProduct(BRelation<R,A> arg) {
+		BRelation<BTuple<S,R>, BTuple<T,A>> result = new BRelation<>();
+		for(BTuple<S,T> e1 : this) {
+			for(BTuple<R,A> e2 : arg) {
+				result = result.union(new BRelation<>(new BTuple<>(new BTuple<>(e1.projection1(), e2.projection1()), new BTuple<>(e1.projection2(), e2.projection2()))));
 			}
 		}
 		return result;
@@ -240,10 +240,10 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 
 	public <R> BRelation<S,R> composition(BRelation<T,R> arg) {
 		BRelation<S,R> result = new BRelation<>();
-		for(BCouple<S,T> e1 : this) {
-			for(BCouple <T,R> e2 : arg) {
+		for(BTuple<S,T> e1 : this) {
+			for(BTuple <T,R> e2 : arg) {
 				if(e1.projection2().equals(e2.projection1())) {
-					result = result.union(new BRelation<>(new BCouple<>(e1.projection1(), e2.projection2())));
+					result = result.union(new BRelation<>(new BTuple<>(e1.projection1(), e2.projection2())));
 				}
 			}
 		}
@@ -281,21 +281,21 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		return result;
 	}
 
-	public static <S,T> BRelation<BCouple<S,T>, S> projection1(BSet<S> arg1, BSet<T> arg2) {
-		BRelation<BCouple<S,T>, S> result = new BRelation<BCouple<S,T>, S>();
+	public static <S,T> BRelation<BTuple<S,T>, S> projection1(BSet<S> arg1, BSet<T> arg2) {
+		BRelation<BTuple<S,T>, S> result = new BRelation<BTuple<S,T>, S>();
 		for(S e1 : arg1) {
 			for(T e2 : arg2) {
-				result = result.union(new BRelation<BCouple<S,T>, S>(new BCouple<BCouple<S,T>, S>(new BCouple<S,T>(e1,e2), e1)));
+				result = result.union(new BRelation<BTuple<S,T>, S>(new BTuple<BTuple<S,T>, S>(new BTuple<S,T>(e1,e2), e1)));
 			}
 		}
 		return result;
 	}
 
-	public static <S,T> BRelation<BCouple<S,T>, T> projection2(BSet<S> arg1, BSet<T> arg2) {
-		BRelation<BCouple<S,T>, T> result = new BRelation<BCouple<S,T>, T>();
+	public static <S,T> BRelation<BTuple<S,T>, T> projection2(BSet<S> arg1, BSet<T> arg2) {
+		BRelation<BTuple<S,T>, T> result = new BRelation<BTuple<S,T>, T>();
 		for(S e1 : arg1) {
 			for(T e2 : arg2) {
-				result = result.union(new BRelation<BCouple<S,T>, T>(new BCouple<BCouple<S,T>, T>(new BCouple<S,T>(e1,e2), e2)));
+				result = result.union(new BRelation<BTuple<S,T>, T>(new BTuple<BTuple<S,T>, T>(new BTuple<S,T>(e1,e2), e2)));
 			}
 		}
 		return result;
@@ -306,7 +306,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		BSet<S> domain = this.domain();
 		for(S e : domain) {
 			BSet<T> range = this.relationImage(new BSet<S>(e));
-			result = result.union(new BRelation<S, BSet<T>>(new BCouple<S, BSet<T>>(e, range)));
+			result = result.union(new BRelation<S, BSet<T>>(new BTuple<S, BSet<T>>(e, range)));
 		}
 		return result;
 	}
@@ -317,7 +317,7 @@ public class BRelation<S,T> extends BSet<BCouple<S,T>> {
 		for(S e1 : domain) {
 			BSet<R> range = (BSet<R>) this.functionCall(e1);
 			for(R e2 : range) {
-				result = result.union(new BRelation<S, R>(new BCouple<S,R>(e1,e2)));
+				result = result.union(new BRelation<S, R>(new BTuple<S,R>(e1,e2)));
 			}
 		}
 		return result;

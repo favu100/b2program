@@ -364,11 +364,26 @@ class BSet : public BObject {
             return 0;
         }
 
-        typename immer::set<T,Hash, HashEqual>::const_iterator begin() {
+        friend std::ostream& operator<<(std::ostream &strm, const BSet<T>& set) {
+            strm << "{";
+            typename immer::set<T,Hash, HashEqual>::const_iterator it = set.begin();
+            while(it != set.end()) {
+                T element = *it;
+                strm << element;
+                ++it;
+                if(it != set.end()) {
+                    strm << ",";
+                }
+            }
+            strm << "}";
+            return strm;
+        }
+
+        typename immer::set<T,Hash, HashEqual>::const_iterator begin() const {
             return set.begin();
         }
 
-        typename immer::set<T,Hash, HashEqual>::const_iterator end() {
+        typename immer::set<T,Hash, HashEqual>::const_iterator end() const {
             return set.end();
         }
 

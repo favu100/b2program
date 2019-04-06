@@ -154,5 +154,9 @@ class BBoolean : public BObject {
         int hashCode() const {
             return value == true ? 1 : 0;
         }
+
+        friend std::ostream& operator<<(std::ostream &strm, const BBoolean &b) {
+          return strm << value;
+        }
 };
 #endif

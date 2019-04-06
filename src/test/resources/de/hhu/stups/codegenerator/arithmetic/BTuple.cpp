@@ -57,6 +57,10 @@ class BTuple : public BObject {
             return 0;
         }
 
+        friend std::ostream& operator<<(std::ostream &strm, const BTuple<S,T> &b) {
+          return strm << "(" << b.lhs << "|->" << b.rhs << ")";
+        }
+
         /*BTuple operator() {
             return *this;
         }*/

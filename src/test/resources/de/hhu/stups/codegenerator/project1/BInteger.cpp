@@ -210,5 +210,8 @@ class BInteger : public BObject {
             return result;
         }
 
+        friend std::ostream& operator<<(std::ostream &strm, const BInteger &b) {
+          return strm << b.value;
+        }
 };
 #endif

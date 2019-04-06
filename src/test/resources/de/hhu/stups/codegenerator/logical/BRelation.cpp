@@ -360,7 +360,6 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	template<typename R = typename T::value_type>
     	BRelation<S,R> rel() {
-    	    //BSet<R> is T
     		BRelation<S,R> result = BRelation<S, R>();
     		BSet<S> domain = this->domain();
     		for(S e1 : domain) {
@@ -378,6 +377,29 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         int hashCode() const {
             return 0;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const BRelation<S,T>& rel) {
+            strm << "{";
+            typename immer::set<BTuple<S,T>,Hash, HashEqual>::const_iterator it = rel.begin();
+            while(it != rel.end()) {
+                BTuple<S,T> tuple = *it;
+                strm << tuple;
+                ++it;
+                if(it != rel.end()) {
+                    strm << ",";
+                }
+            }
+            strm << "}";
+            return strm;
+        }
+
+        typename immer::set<BTuple<S,T>,Hash, HashEqual>::const_iterator begin() const {
+            return set.begin();
+        }
+
+        typename immer::set<BTuple<S,T>,Hash, HashEqual>::const_iterator end() const {
+            return set.end();
         }
 
         protected:

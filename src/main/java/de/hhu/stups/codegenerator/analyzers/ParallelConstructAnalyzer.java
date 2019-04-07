@@ -125,23 +125,22 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
     }
 
     @Override
-    public Void visitLTLKeywordNode(LTLKeywordNode ltlKeywordNode, Void aVoid) {
+    public Void visitLTLKeywordNode(LTLKeywordNode node, Void expected) {
         return null;
     }
 
     @Override
-    public Void visitLTLInfixOperatorNode(LTLInfixOperatorNode ltlInfixOperatorNode, Void aVoid) {
+    public Void visitLTLInfixOperatorNode(LTLInfixOperatorNode node, Void expected) {
         return null;
     }
 
     @Override
-    public Void visitLTLBPredicateNode(LTLBPredicateNode ltlbPredicateNode, Void aVoid) {
+    public Void visitLTLBPredicateNode(LTLBPredicateNode node, Void expected) {
         return null;
     }
 
     @Override
     public Void visitIdentifierPredicateNode(IdentifierPredicateNode node, Void expected) {
-        //TODO
         return null;
     }
 

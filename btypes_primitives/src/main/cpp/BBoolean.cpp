@@ -155,7 +155,7 @@ class BBoolean : public BObject {
         }
 
         friend std::ostream& operator<<(std::ostream &strm, const BBoolean &b) {
-          return strm << b.value;
+          return strm << toString(b.value);
         }
 };
 #endif

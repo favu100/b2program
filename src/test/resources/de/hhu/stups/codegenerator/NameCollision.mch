@@ -20,7 +20,7 @@ out <-- Inc(pp) =
 
 out <-- getSwitch =
     BEGIN
-        out := bool(switch)
+        out := switch
     END
 
 END

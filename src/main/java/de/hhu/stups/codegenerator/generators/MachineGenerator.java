@@ -232,11 +232,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	/*
-    * Code is not generated from identifier predicates in the given subset of B
+    *
     */
 	@Override
 	public String visitIdentifierPredicateNode(IdentifierPredicateNode node, Void expected) {
-		throw new RuntimeException("Given node is not implemented: " + node.getClass());
+		return "";
 	}
 
 	/*

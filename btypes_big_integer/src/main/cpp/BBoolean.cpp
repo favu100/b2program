@@ -62,7 +62,6 @@ class BBoolean : public BObject {
 	}*/
 
     public:
-
         typedef void value_type;
 
     	BBoolean(bool val) {
@@ -156,7 +155,7 @@ class BBoolean : public BObject {
         }
 
         friend std::ostream& operator<<(std::ostream &strm, const BBoolean &b) {
-          return strm << b.value;
+          return strm << toString(b.value);
         }
 };
 #endif

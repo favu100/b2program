@@ -405,6 +405,15 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
+operation_call_with_assignment_many_parameters(var, machine, function, args, this, assignments) ::= <<
+BRecord <var> = <operation_call_without_assignment(machine, function, args, this)>
+<assignments; separator="\n">
+>>
+
+operation_call_assignment(identifier, type, var, index) ::= <<
+<identifier> = (<type>) <var>.get("<index>");
+>>
+
 operation_call_with_assignment_one_parameter(var, machine, function, args, this) ::= <<
 <var> = <operation_call_without_assignment(machine, function, args, this)>
 >>

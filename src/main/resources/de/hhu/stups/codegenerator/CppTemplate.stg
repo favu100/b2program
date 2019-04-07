@@ -155,7 +155,7 @@ seq_enumeration(type, elements) ::= <<
 >>
 
 enum_call(class, identifier) ::= <<
-(<class>(<class>::<identifier>))
+(<class>(<class>::<identifier>, "<identifier>"))
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -170,10 +170,13 @@ class <name> : public BObject {
 
         <name>_type value;
 
+        string name;
+
         <name>(){}
 
-        <name>(<name>_type type) {
+        <name>(<name>_type type, string name) {
             this->value = type;
+            this->name = name;
         }
 
         BBoolean equal(const <name>& o) {
@@ -193,7 +196,7 @@ class <name> : public BObject {
         }
 
         friend std::ostream& operator\<\<(std::ostream &strm, const <name>& e) {
-          return strm \<\< e.value;
+          return strm \<\< e.name;
         }
 
         int hashCode() const {
@@ -303,6 +306,9 @@ tuple_create(leftType, rightType, arg1, arg2) ::= <<
 (BTuple\<<leftType>, <rightType> >(<arg1>, <arg2>))
 >>
 
+record_create(elements) ::= <<
+(BRecord(<elements; separator=", ">))
+>>
 
 binary(arg1,operator,arg2) ::= <<
 <arg1>.<operator>(<arg2>)

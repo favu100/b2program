@@ -89,7 +89,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         BSet<T> relationImage(const BSet<S>& domain) {
             immer::set<T,typename BSet<T>::Hash, typename BSet<T>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
-                if(!(domain.contains(tuple.projection1()))) {
+                if(domain.contains(tuple.projection1())) {
                     result = result.insert(tuple.projection2());
                 }
             }

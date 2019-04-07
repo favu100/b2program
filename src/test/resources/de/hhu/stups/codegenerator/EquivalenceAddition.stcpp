@@ -1,0 +1,5 @@
+int main() {
+    Equivalence equi;
+    cout << equi.Inc(BInteger(10));
+    return 0;
+}

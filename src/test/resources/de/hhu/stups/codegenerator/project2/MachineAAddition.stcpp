@@ -1,0 +1,6 @@
+int main() {
+    MachineA machine;
+    machine.IncX1();
+    machine.IncX2();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    SetIntersectionBig2 set;
+    set.simulate();
+    cout << set.getSet1().card();
+    return 0;
+}

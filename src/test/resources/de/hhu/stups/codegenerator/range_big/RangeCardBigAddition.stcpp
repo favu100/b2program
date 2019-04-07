@@ -1,0 +1,6 @@
+int main() {
+    RangeCardBig range;
+    range.simulate();
+    cout << range.getResult();
+    return 0;
+}

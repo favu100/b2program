@@ -1,0 +1,6 @@
+int main() {
+    TrafficLightExec traffic;
+    traffic.simulate();
+    cout << traffic.getCounter();
+    return 0;
+}

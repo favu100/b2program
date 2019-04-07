@@ -1,0 +1,5 @@
+int main() {
+    DanglingElse dangling;
+    cout << dangling.Inc();
+    return 0;
+}

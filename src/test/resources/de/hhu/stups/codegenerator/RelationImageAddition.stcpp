@@ -1,0 +1,5 @@
+int main() {
+    RelationImage relationImage;
+    cout << relationImage.getAA().card();
+    return 0;
+}

@@ -1,0 +1,5 @@
+int main() {
+    IfAndPredicates if;
+    cout << if.Inc(BInteger(10));
+    return 0;
+}

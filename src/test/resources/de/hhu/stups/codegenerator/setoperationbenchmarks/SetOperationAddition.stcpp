@@ -1,0 +1,6 @@
+int main() {
+    SetOperation setoperation;
+    setoperation.simulate();
+    cout << setoperation.getSet().card();
+    return 0;
+}

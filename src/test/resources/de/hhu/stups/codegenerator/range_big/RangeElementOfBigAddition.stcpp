@@ -1,0 +1,6 @@
+int main() {
+    RangeElementOfBig range;
+    range.simulate();
+    cout << range.getCounter();
+    return 0;
+}

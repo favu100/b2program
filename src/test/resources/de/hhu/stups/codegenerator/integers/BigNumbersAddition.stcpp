@@ -1,0 +1,6 @@
+int main() {
+    BigNumbers numbers;
+    numbers.simulate();
+    cout << numbers.getValue();
+    return 0;
+}

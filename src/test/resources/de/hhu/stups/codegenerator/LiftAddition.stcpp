@@ -1,0 +1,8 @@
+int main() {
+    Lift lift;
+    lift.inc();
+    lift.inc();
+    lift.inc();
+    cout << lift.getFloor();
+    return 0;
+}

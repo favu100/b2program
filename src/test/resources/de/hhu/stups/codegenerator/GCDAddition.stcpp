@@ -1,0 +1,5 @@
+int main() {
+    GCD gcd;
+    cout << gcd.GCDSolution();
+    return 0;
+}

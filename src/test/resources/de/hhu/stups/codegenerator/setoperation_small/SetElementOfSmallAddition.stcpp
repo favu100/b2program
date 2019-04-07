@@ -1,0 +1,6 @@
+int main() {
+    SetElementOfSmall set;
+    set.simulate();
+    cout << set.getCounter();
+    return 0;
+}

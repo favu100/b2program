@@ -38,9 +38,10 @@ class <machine> {
         <operations; separator="\n\n">
 
 };
-#endif
 
 <addition>
+
+#endif
 >>
 
 initialization(machine, body, constants_initializations, values) ::= <<
@@ -189,6 +190,10 @@ class <name> : public BObject {
 
         friend bool operator !=(const <name>& p1, const <name>& p2) {
             return p1.value != p2.value;
+        }
+
+        friend std::ostream& operator\<\<(std::ostream &strm, const <name>& e) {
+          return strm \<\< e.value;
         }
 
         int hashCode() const {
@@ -394,8 +399,8 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
-operation_call_with_assignment_one_parameter(var, function, args) ::= <<
-<function>(<args; separator=",">, <var>);
+operation_call_with_assignment_one_parameter(var, machine, function, args, this) ::= <<
+<var> = <operation_call_without_assignment(machine, function, args, this)>
 >>
 
 operation_call_without_assignment(machine, function, args, this) ::= <<

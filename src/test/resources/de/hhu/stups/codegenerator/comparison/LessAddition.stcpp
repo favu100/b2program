@@ -1,0 +1,6 @@
+int main() {
+    Less comparison;
+    comparison.simulate();
+    cout << comparison.getCounter();
+    return 0;
+}

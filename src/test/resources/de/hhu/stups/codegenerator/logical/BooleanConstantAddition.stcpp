@@ -1,0 +1,6 @@
+int main() {
+    BooleanConstant logical;
+    logical.simulate();
+    cout << logical.getCounter();
+    return 0;
+}

@@ -1,0 +1,4 @@
+int main() {
+    Nondeterminism nondeterminism;
+    return 0;
+}

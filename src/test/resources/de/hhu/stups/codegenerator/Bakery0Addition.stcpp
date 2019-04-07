@@ -1,0 +1,11 @@
+int main() {
+    Bakery0 bakery;
+    bakery.enter1();
+    bakery.leave1();
+    bakery.enter2();
+    bakery.leave2();
+    bakery.try1();
+    bakery.try2();
+    cout << bakery.getAA();
+    return 0;
+}

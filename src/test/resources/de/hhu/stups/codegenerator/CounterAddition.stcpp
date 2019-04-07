@@ -1,0 +1,10 @@
+int main() {
+    Counter counter;
+    counter.Reset();
+    counter.Inc();
+    counter.Odd();
+    counter.Inc();
+    counter.Even();
+    cout << counter.getCount();
+    return 0;
+}

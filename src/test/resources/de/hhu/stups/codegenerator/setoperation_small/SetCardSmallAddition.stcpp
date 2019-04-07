@@ -1,0 +1,6 @@
+int main() {
+    SetCardSmall set;
+    set.simulate();
+    cout << set.getResult();
+    return 0;
+}

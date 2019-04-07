@@ -1,0 +1,6 @@
+int main() {
+    SetElementOfBig set;
+    set.simulate();
+    cout << set.getCounter();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    SetIntersectionSmall set;
+    set.simulate();
+    cout << set.getSet();
+    return 0;
+}

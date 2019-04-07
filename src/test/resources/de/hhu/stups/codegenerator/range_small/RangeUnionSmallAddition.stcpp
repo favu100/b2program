@@ -1,0 +1,6 @@
+int main() {
+    RangeUnionSmall range;
+    range.simulate();
+    cout << range.getSet().card();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    SetDifferenceSmall set;
+    set.simulate();
+    cout << set.getSet();
+    return 0;
+}

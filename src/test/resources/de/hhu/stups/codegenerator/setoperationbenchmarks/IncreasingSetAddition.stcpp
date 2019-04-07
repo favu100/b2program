@@ -1,0 +1,6 @@
+int main() {
+    IncreasingSet iset;
+    iset.simulate();
+    cout << iset.getSet().card();
+    return 0;
+}

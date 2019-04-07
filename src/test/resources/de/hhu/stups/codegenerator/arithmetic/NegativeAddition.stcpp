@@ -1,0 +1,6 @@
+int main() {
+    Negative arithmetic;
+    arithmetic.simulate();
+    cout << arithmetic.getValue();
+    return 0;
+}

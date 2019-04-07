@@ -1,0 +1,6 @@
+int main() {
+    Plus arithmetic;
+    arithmetic.simulate();
+    cout << arithmetic.getValue();
+    return 0;
+}

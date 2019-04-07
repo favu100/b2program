@@ -1,0 +1,5 @@
+int main() {
+    Pair pair;
+    cout << pair.getYY();
+    return 0;
+}

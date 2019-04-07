@@ -1,0 +1,6 @@
+int main() {
+    Unequal comparison;
+    comparison.simulate();
+    cout << comparison.getCounter();
+    return 0;
+}

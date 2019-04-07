@@ -1,0 +1,5 @@
+int main() {
+    SetUnion union;
+    cout << union.getYY().card();
+    return 0;
+}

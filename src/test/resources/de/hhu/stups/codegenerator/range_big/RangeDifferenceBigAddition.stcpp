@@ -1,0 +1,6 @@
+int main() {
+    RangeDifferenceBig range;
+    range.simulate();
+    cout << range.getSet().card();
+    return 0;
+}

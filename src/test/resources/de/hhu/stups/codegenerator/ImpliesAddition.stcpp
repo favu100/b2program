@@ -1,0 +1,5 @@
+int main() {
+    Implies implies;
+    cout << implies.Inc(BInteger(10));
+    return 0;
+}

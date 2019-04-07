@@ -1,0 +1,5 @@
+int main() {
+    BooleanPredicate bool1;
+    cout << bool1.Inc(BInteger(10));
+    return 0;
+}

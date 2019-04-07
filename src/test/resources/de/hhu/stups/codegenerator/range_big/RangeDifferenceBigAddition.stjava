@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     RangeDifferenceBig range = new RangeDifferenceBig();
     range.simulate();
-    System.out.println(range.set.card());
+    System.out.println(range.getSet().card());
 }

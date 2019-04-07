@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     SetElementOfSmall set = new SetElementOfSmall();
     set.simulate();
-    System.out.println(set.counter);
+    System.out.println(set.getCounter());
 }

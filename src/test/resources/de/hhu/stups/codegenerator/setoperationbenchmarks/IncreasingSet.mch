@@ -13,6 +13,11 @@ OPERATIONS
 	      counter := counter + 1
 		  INVARIANT 1 = 1
 		  VARIANT 25000 - counter
+	      END;
+
+	out <-- getSet =
+	      BEGIN
+	        out := set
 	      END
 
 END

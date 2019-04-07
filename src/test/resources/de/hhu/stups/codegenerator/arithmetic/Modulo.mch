@@ -12,6 +12,11 @@ OPERATIONS
 	        value := value mod 1
 		  INVARIANT 1 = 1
 		  VARIANT 5000000 - counter
-	      END
+	      END;
+
+	out <-- getValue =
+	         BEGIN
+	            out := value
+	         END
 
 END

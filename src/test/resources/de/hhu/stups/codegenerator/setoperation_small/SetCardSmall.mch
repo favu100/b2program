@@ -13,6 +13,11 @@ OPERATIONS
 	      counter := counter + 1
 		  INVARIANT 1 = 1
 		  VARIANT 5000000 - counter
+	      END;
+
+	out <-- getResult =
+	      BEGIN
+	        out := result
 	      END
 
 END

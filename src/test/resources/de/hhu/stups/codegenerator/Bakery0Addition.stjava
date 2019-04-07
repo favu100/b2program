@@ -6,5 +6,5 @@ public static void main(String[] args) {
     bakery.leave2();
     bakery.try1();
     bakery.try2();
-    System.out.println(bakery.aa);
+    System.out.println(bakery.getAA());
 }

@@ -13,5 +13,6 @@ OPERATIONS
 	leave1 = SELECT aa=1 THEN aa:=0 END ;
 	leave2 = SELECT aa=2 THEN aa:=0 END ;
 	try1 = skip;
-	try2 = skip
+	try2 = skip;
+	out <-- getAA = BEGIN out := aa END
 END

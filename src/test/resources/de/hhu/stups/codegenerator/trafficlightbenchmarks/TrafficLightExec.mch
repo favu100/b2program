@@ -20,6 +20,11 @@ OPERATIONS
 	            counter := counter + 1
 		       INVARIANT 1 = 1
 		       VARIANT 500000 - counter
-	           END
+	           END;
+
+	out <-- getCounter =
+	      BEGIN
+	        out := counter
+	      END
 
 END

@@ -5,5 +5,5 @@ public static void main(String[] args) {
     counter.Odd();
     counter.Inc();
     counter.Even();
-    System.out.println(counter.count);
+    System.out.println(counter.getCount());
 }

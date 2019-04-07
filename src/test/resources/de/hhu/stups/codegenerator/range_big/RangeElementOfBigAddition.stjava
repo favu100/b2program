@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     RangeElementOfBig range = new RangeElementOfBig();
     range.simulate();
-    System.out.println(range.counter);
+    System.out.println(range.getCounter());
 }

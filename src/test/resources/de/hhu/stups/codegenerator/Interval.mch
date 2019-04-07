@@ -15,6 +15,11 @@ out <-- Inc(pp) =
         xx := 1
     ELSE
         xx := 2
+    END;
+
+out <-- getYY =
+    BEGIN
+        out := yy
     END
 
 END

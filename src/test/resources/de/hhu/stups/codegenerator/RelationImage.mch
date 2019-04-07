@@ -16,6 +16,11 @@ out <-- Inc(pp) =
         xx := 1
     ELSE
         xx := 2
+    END;
+
+out <-- getAA =
+    BEGIN
+        out := aa
     END
 
 END

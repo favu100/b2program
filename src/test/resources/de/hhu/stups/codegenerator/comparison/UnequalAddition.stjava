@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     Unequal comparison = new Unequal();
     comparison.simulate();
-    System.out.println(comparison.counter);
+    System.out.println(comparison.getCounter());
 }

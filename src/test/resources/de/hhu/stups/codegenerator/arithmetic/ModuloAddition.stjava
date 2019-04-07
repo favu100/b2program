@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     Modulo arithmetic = new Modulo();
     arithmetic.simulate();
-    System.out.println(arithmetic.value);
+    System.out.println(arithmetic.getValue());
 }

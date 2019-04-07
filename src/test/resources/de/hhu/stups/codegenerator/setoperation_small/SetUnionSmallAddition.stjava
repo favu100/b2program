@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     SetUnionSmall set = new SetUnionSmall();
     set.simulate();
-    System.out.println(set.set.card());
+    System.out.println(set.getSet().card());
 }

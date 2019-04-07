@@ -1,4 +1,4 @@
 public static void main(String[] args) {
     SetUnion union = new SetUnion();
-    System.out.println(union.yy.card());
+    System.out.println(union.getYY().card());
 }

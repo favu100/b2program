@@ -1,5 +1,5 @@
 public static void main(String[] args) {
     SetCardBig set = new SetCardBig();
     set.simulate();
-    System.out.println(set.result);
+    System.out.println(set.getResult());
 }

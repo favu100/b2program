@@ -173,6 +173,23 @@ class BSet : public BObject {
             return BSet(result);
         }
 
+     	template<typename K = typename T::value_type>
+     	BSet<K> intersect() {
+     	    if(this->size() == 0) {
+     	        return BSet<K>();
+     	    }
+     	    BSet<K> result;
+     	    int i = 0;
+            for(const T& s : this->set) {
+                if(i == 0) {
+                    result = (BSet<K>) s;
+                }
+                ++i;
+                result = result.intersect((BSet<K>)s);
+            }
+            return result;
+     	}
+
         BSet<T> difference(const BSet<T>& set) const {
             if(this->size() == 0) {
                 return BSet(this->set);
@@ -205,6 +222,15 @@ class BSet : public BObject {
                 return BSet(result);
             }
         }
+
+     	template<typename K = typename T::value_type>
+     	BSet<K> _union() {
+     	    BSet<K> result;
+            for(const T& s : this->set) {
+                result = result._union((BSet<K>) s);
+            }
+            return result;
+     	}
 
         static BSet<BInteger> interval(const BInteger& a, const BInteger& b) {
             immer::set<BInteger, Hash, HashEqual> result;

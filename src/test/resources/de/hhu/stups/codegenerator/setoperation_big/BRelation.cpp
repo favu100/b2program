@@ -99,11 +99,11 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         T functionCall(const S& arg) {
             for(BTuple<S,T> tuple : this->set) {
-                if(tuple.projection1() == arg) {
+                if((tuple.projection1()).equal(arg).booleanValue()) {
                     return tuple.projection2();
                 }
             }
-            throw runtime_error("Argument is not in the key set of this map");
+            throw runtime_error("Argument is not in the domain of this function");
         }
 
     	BSet<S> domain() const {
@@ -171,7 +171,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         }
 
         BRelation<S,T> override(const BRelation<S,T>& arg) {
-            return arg._union(this->domainRestriction(arg.domain()));
+            return arg._union(this->domainSubstraction(arg.domain()));
         }
 
     	T first() {
@@ -219,7 +219,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		for(BTuple<S,T> tuple : this->set) {
     		    BInteger projection1 = (BInteger) tuple.projection1();
     			if(projection1.greater(n).booleanValue()) {
-    				result = result._union(BRelation<S,T>(projection1.minus(n), tuple.projection2()));
+    				result = result._union(BRelation<S,T>(BTuple<S,T>((S) projection1.minus(n), tuple.projection2())));
     			}
     		}
     		return result;
@@ -230,6 +230,16 @@ class BRelation : public BSet<BTuple<S,T>> {
     		BInteger size = card();
     		for(BTuple<S,T> tuple : arg.set) {
     			result = result._union(BRelation<S,T>(BTuple<S,T>((S) size.plus((BInteger) tuple.projection1()), tuple.projection2())));
+    		}
+    		return result;
+    	}
+
+    	template<typename R, typename C = typename T::value_type, typename A = typename C::value_type>
+    	BRelation<R,A> conc() {
+    		BRelation<R,A> result = BRelation<R,A>();
+    		BInteger size = this->card();
+    		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
+    			result = result.concat((BRelation<R,A>) functionCall((S) i));
     		}
     		return result;
     	}
@@ -271,7 +281,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	template <typename R>
+    	template<typename R>
     	BRelation<S,R> composition(const BRelation<T,R>& arg) {
     		BRelation<S,R> result = BRelation<S,R>();
     		for(BTuple<S,T> e1 : this->set) {
@@ -382,11 +392,11 @@ class BRelation : public BSet<BTuple<S,T>> {
             return o1.set == o2.set;
         }
 
-        BBoolean equal(const BSet<T>& other) {
+        BBoolean equal(const BRelation<S,T>& other) {
             return BBoolean(this->set == other.set);
         }
 
-        BBoolean unequal(const BSet<T>& other) {
+        BBoolean unequal(const BRelation<S,T>& other) {
             return BBoolean(this->set != other.set);
         }
 

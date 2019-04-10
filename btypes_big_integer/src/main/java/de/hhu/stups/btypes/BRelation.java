@@ -91,7 +91,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 				return tuple.projection2();
 			}
 		}
-		throw new RuntimeException("Argument is not in the key set of this map");
+		throw new RuntimeException("Argument is not in the domain of this relation");
 	}
 
 	public BSet<S> domain() {
@@ -159,7 +159,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	}
 
 	public BRelation<S,T> override(BRelation<S,T> arg) {
-		return arg.union(this.domainRestriction(arg.domain()));
+		return arg.union(this.domainSubstraction(arg.domain()));
 	}
 
 	public T first() {
@@ -218,6 +218,15 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		BInteger size = this.card();
 		for(BTuple<S,T> tuple : arg) {
 			result = result.union(new BRelation<>(new BTuple<>((S) size.plus((BInteger) tuple.projection1()), tuple.projection2())));
+		}
+		return result;
+	}
+
+	public <R,A> BRelation<R,A> conc() {
+		BRelation<R,A> result = new BRelation<>();
+		BInteger size = this.card();
+		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
+			result = result.concat((BRelation<R,A>) functionCall((S) i));
 		}
 		return result;
 	}

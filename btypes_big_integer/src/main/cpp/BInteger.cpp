@@ -38,6 +38,8 @@ class BInteger : public BObject {
     public:
 
         typedef void value_type;
+        typedef void left_type;
+        typedef void right_type;
 
         BInteger(const char* val) {
             value = val;

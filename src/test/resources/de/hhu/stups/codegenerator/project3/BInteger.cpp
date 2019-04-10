@@ -36,6 +36,8 @@ class BInteger : public BObject {
 
     public:
         typedef void value_type;
+        typedef void left_type;
+        typedef void right_type;
 
         /*BInteger(string val) {
             value = new java.math.BigInteger(val);

@@ -17,6 +17,8 @@ class BRelation : public BSet<BTuple<S,T>> {
     public:
 
         typedef BTuple<S,T> value_type;
+        typedef S left_type;
+        typedef T right_type;
 
         struct Hash {
             public:
@@ -234,7 +236,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	template<typename R, typename C = typename T::value_type, typename A = typename C::value_type>
+    	template<typename R = typename T::left_type, typename A = typename T::right_type>
     	BRelation<R,A> conc() {
     		BRelation<R,A> result = BRelation<R,A>();
     		BInteger size = this->card();

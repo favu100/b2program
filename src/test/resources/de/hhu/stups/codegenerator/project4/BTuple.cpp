@@ -16,6 +16,8 @@ class BTuple : public BObject {
 
 	public:
 	    typedef void value_type;
+        typedef S left_type;
+        typedef T right_type;
 
         BTuple(const S& l, const T& r) {
             lhs = l;

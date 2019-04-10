@@ -16,6 +16,8 @@ class BSet : public BObject {
 
     public:
         typedef T value_type;
+        typedef void left_type;
+        typedef void right_type;
 
         struct Hash {
             public:

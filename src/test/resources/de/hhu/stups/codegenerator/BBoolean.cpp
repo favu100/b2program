@@ -63,6 +63,8 @@ class BBoolean : public BObject {
 
     public:
         typedef void value_type;
+        typedef void left_type;
+        typedef void right_type;
 
     	BBoolean(bool val) {
     		value = val;

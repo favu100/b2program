@@ -1,5 +1,5 @@
 int main() {
     NameCollision collision;
-    cout << collision.getSwitch();
+    cout << collision.getRes();
     return 0;
 }

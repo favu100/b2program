@@ -1,0 +1,6 @@
+int main() {
+    Modulo modulo;
+    modulo.calculate();
+    cout << modulo.getRes();
+    return 0;
+}

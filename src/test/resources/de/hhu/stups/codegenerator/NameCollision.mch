@@ -1,26 +1,15 @@
-MACHINE
-    NameCollision
+MACHINE NameCollision
 
-VARIABLES xx, yy, switch
+VARIABLES switch
 
-INVARIANT xx : INT & yy : POW(INTEGER) & switch : BOOL
-INITIALISATION xx := 1; yy := {1,2,3} \/ {2}; switch := TRUE
+INVARIANT switch:INT
+INITIALISATION switch := 5
 
 OPERATIONS
-out <-- Inc(pp) =
-    IF xx = 1 & xx < 10 THEN
-        xx := xx + pp; out := xx
-    ELSIF xx < 2 THEN
-        xx := xx - pp; out := xx + 1
-    ELSIF xx > 3 THEN
-        xx := 1
-    ELSE
-        xx := 2
-    END;
-
-out <-- getSwitch =
-    BEGIN
-        out := switch
-    END
+    xx <-- op1(bb, switch) =
+        PRE bb : 1..10 & switch : INT THEN
+	        xx := switch + bb
+        END;
+    out <-- getRes = out := switch
 
 END

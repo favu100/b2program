@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Max max = new Max();
+    max.calculate();
+    System.out.println(max.getRes());
+}

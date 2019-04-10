@@ -150,44 +150,8 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testEnumSets() throws Exception {
-		testCpp("EnumSets", "EnumSets", "EnumSetsAddition.stCpp", true);
-	}
-
-	@Test
-	public void testNameCollision() throws Exception {
-		testCpp("NameCollision", "NameCollision", "NameCollisionAddition.stCpp", true);
-	}
-
-	@Test
 	public void testWhile() throws Exception {
 		testCpp("While", "While", "WhileAddition.stCpp", true);
-	}
-
-	@Test
-	public void testInterval() throws Exception {
-		testCpp("Interval", "Interval", "IntervalAddition.stCpp", true);
-	}
-
-
-	@Test
-	public void testPair() throws Exception {
-		testCpp("Pair", "Pair", "PairAddition.stCpp", true);
-	}
-
-	@Test
-	public void testIfAndPredicates() throws Exception {
-		testCpp("IfAndPredicates");
-	}
-
-	@Test
-	public void testDanglingElse() throws Exception {
-		testCpp("DanglingElse", "DanglingElse", "DanglingElseAddition.stCpp", true);
-	}
-
-	@Test
-	public void testImplies() throws Exception {
-		testCpp("Implies", "Implies", "ImpliesAddition.stCpp", true);
 	}
 
 	@Test
@@ -214,16 +178,6 @@ public class TestCpp {
 	@Test
 	public void testMapFunction() throws Exception {
 		testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stCpp", true);
-	}
-
-	@Test
-	public void testRelationImage() throws Exception {
-		testCpp("RelationImage", "RelationImage", "RelationImageAddition.stCpp", true);
-	}
-
-	@Test
-	public void testEmptySet() throws Exception {
-		testCpp("EmptySet", "EmptySet", "EmptySetAddition.stCpp", true);
 	}
 
 	@Test
@@ -339,17 +293,6 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testSwap() throws Exception {
-		testCpp("Swap", "Swap", "SwapAddition.stCpp", true);
-	}
-
-
-	@Test
-	public void testSwap2() throws Exception {
-		testCpp("Swap2");
-	}
-
-	@Test
 	public void testManyLocalDeclarations() throws Exception {
 		testCpp("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stCpp", true);
 	}
@@ -365,23 +308,23 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testMinus() throws Exception {
+	public void testMinus2() throws Exception {
 		testCpp("arithmetic/Minus", "Minus", "MinusAddition.stCpp", true);
 	}
 
 	@Test
-	public void testMultiply() throws Exception {
+	public void testMultiply2() throws Exception {
 		testCpp("arithmetic/Multiply", "Multiply", "MultiplyAddition.stCpp", true);
 	}
 
 	@Test
-	public void testDivide() throws Exception {
+	public void testDivide2() throws Exception {
 		testCpp("arithmetic/Divide", "Divide", "DivideAddition.stCpp", true);
 	}
 
 
 	@Test
-	public void testModulo() throws Exception {
+	public void testModulo2() throws Exception {
 		testCpp("arithmetic/Modulo", "Modulo", "ModuloAddition.stCpp", true);
 	}
 
@@ -407,13 +350,13 @@ public class TestCpp {
 	}*/
 
 	@Test
-	public void testAnd() throws Exception {
+	public void testAnd2() throws Exception {
 		testCpp("logical/And", "And", "AndAddition.stCpp", true);
 	}
 
 
 	@Test
-	public void testOr() throws Exception {
+	public void testOr2() throws Exception {
 		testCpp("logical/Or", "Or", "OrAddition.stCpp", true);
 	}
 
@@ -424,12 +367,12 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testNot() throws Exception {
+	public void testNot2() throws Exception {
 		testCpp("logical/Not");
 	}
 
 	@Test
-	public void testEquivalent() throws Exception {
+	public void testEquivalent2() throws Exception {
 		testCpp("logical/Equivalent", "Equivalent", "EquivalentAddition.stCpp", true);
 	}
 
@@ -444,23 +387,23 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testLess() throws Exception {
+	public void testLess2() throws Exception {
 		testCpp("comparison/Less", "Less", "LessAddition.stCpp", true);
 	}
 
 	@Test
-	public void testLessEqual() throws Exception {
+	public void testLessEqual2() throws Exception {
 		testCpp("comparison/LessEqual", "LessEqual", "LessEqualAddition.stCpp", true);
 	}
 
 	@Test
-	public void testGreater() throws Exception {
+	public void testGreater2() throws Exception {
 		testCpp("comparison/Greater", "Greater", "GreaterAddition.stCpp", true);
 	}
 
 
 	@Test
-	public void testGreaterEqual() throws Exception {
+	public void testGreaterEqual2() throws Exception {
 		testCpp("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stCpp", true);
 	}
 
@@ -472,7 +415,7 @@ public class TestCpp {
 
 
 	@Test
-	public void testUnequal() throws Exception {
+	public void testUnequal2() throws Exception {
 		testCpp("comparison/Unequal", "Unequal", "UnequalAddition.stCpp", true);
 	}
 
@@ -699,11 +642,6 @@ public class TestCpp {
 	}
 
 	@Test
-	public void testChoice() throws Exception {
-		testCpp("Choice");
-	}
-
-	@Test
 	public void testAssert() throws Exception {
 		testCpp("Assert");
 	}
@@ -786,80 +724,304 @@ public class TestCpp {
 
 
 	@Test
+	public void testAnd() throws Exception {
+		testCpp("And", "And", "AndAddition.stcpp", true);
+	}
+
+	@Test
+	public void testCard() throws Exception {
+		testCpp("Card", "Card", "CardAddition.stcpp", true);
+	}
+
+	@Test
+	public void testChoice() throws Exception {
+		testCpp("Choice", "Choice", "ChoiceAddition.stcpp", true);
+	}
+
+	@Test
+	public void testDanglingElse() throws Exception {
+		testCpp("DanglingElse", "DanglingElse", "DanglingElseAddition.stcpp", true);
+	}
+
+	@Test
+	public void testDifference() throws Exception {
+		testCpp("Difference", "Difference", "DifferenceAddition.stcpp", true);
+	}
+
+	@Test
+	public void testDivide() throws Exception {
+		testCpp("Divide", "Divide", "DivideAddition.stcpp", true);
+	}
+
+	@Test
+	public void testDomain() throws Exception {
+		testCpp("Domain", "Domain", "DomainAddition.stcpp", true);
+	}
+
+	@Test
+	public void testDomainRestriction() throws Exception {
+		testCpp("DomainRestriction", "DomainRestriction", "DomainRestrictionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testDomainSubstraction() throws Exception {
+		testCpp("DomainSubstraction", "DomainSubstraction", "DomainSubstractionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testElementOf() throws Exception {
+		testCpp("ElementOf", "ElementOf", "ElementOfAddition.stcpp", true);
+	}
+
+	@Test
+	public void testEmptySet() throws Exception {
+		testCpp("EmptySet", "EmptySet", "EmptySetAddition.stcpp", true);
+	}
+
+	@Test
+	public void testEqual() throws Exception {
+		testCpp("Equal", "Equal", "EqualAddition.stcpp", true);
+	}
+
+	@Test
+	public void testEquivalent() throws Exception {
+		testCpp("Equivalent", "Equivalent", "EquivalentAddition.stcpp", true);
+	}
+
+	@Test
+	public void testGreater() throws Exception {
+		testCpp("Greater", "Greater", "GreaterAddition.stcpp", true);
+	}
+
+	@Test
+	public void testGreaterEqual() throws Exception {
+		testCpp("GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stcpp", true);
+	}
+
+	@Test
+	public void testIfAndPredicates() throws Exception {
+		testCpp("IfAndPredicates");
+	}
+
+	@Test
+	public void testImplies() throws Exception {
+		testCpp("Implies", "Implies", "ImpliesAddition.stcpp", true);
+	}
+
+	@Test
+	public void testIntersection() throws Exception {
+		testCpp("Intersection", "Intersection", "IntersectionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testInterval() throws Exception {
+		testCpp("Interval", "Interval", "IntervalAddition.stcpp", true);
+	}
+
+	@Test
+	public void testInverse() throws Exception {
+		testCpp("Inverse", "Inverse", "InverseAddition.stcpp", true);
+	}
+
+	@Test
+	public void testLess() throws Exception {
+		testCpp("Less", "Less", "LessAddition.stcpp", true);
+	}
+
+	@Test
+	public void testLessEqual() throws Exception {
+		testCpp("LessEqual", "LessEqual", "LessEqualAddition.stcpp", true);
+	}
+
+	@Test
+	public void testMax() throws Exception {
+		testCpp("Max", "MAx", "MaxAddition.stcpp", true);
+	}
+
+	@Test
+	public void testMin() throws Exception {
+		testCpp("Min", "Min", "MinAddition.stcpp", true);
+	}
+
+	@Test
+	public void testMinus() throws Exception {
+		testCpp("Minus", "Minus", "MinusAddition.stcpp", true);
+	}
+
+	@Test
+	public void testModulo() throws Exception {
+		testCpp("Modulo", "Modulo", "ModuloAddition.stcpp", true);
+	}
+
+	@Test
+	public void testMultiply() throws Exception {
+		testCpp("Multiply", "Multiply", "MultiplyAddition.stcpp", true);
+	}
+
+	@Test
+	public void testNameCollision() throws Exception {
+		testCpp("NameCollision", "NameCollision", "NameCollisionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testNot() throws Exception {
+		testCpp("Not", "Not", "NotAddition.stcpp", true);
+	}
+
+	@Test
+	public void testNotElementOf() throws Exception {
+		testCpp("NotElementOf", "NotElementOf", "NotElementOfAddition.stcpp", true);
+	}
+
+	@Test
+	public void testNotStrictSubset() throws Exception {
+		testCpp("NotStrictSubset", "NotStrictSubset", "NotStrictSubsetAddition.stcpp", true);
+	}
+
+	@Test
+	public void testNotSubset() throws Exception {
+		testCpp("NotSubset", "NotSubset", "NotSubsetAddition.stcpp", true);
+	}
+
+	@Test
+	public void testOr() throws Exception {
+		testCpp("Or", "Or", "OrAddition.stcpp", true);
+	}
+
+	@Test
+	public void testPlus2() throws Exception {
+		testCpp("Plus", "Plus", "PlusAddition.stcpp", true);
+	}
+
+	@Test
+	public void testRange() throws Exception {
+		testCpp("Range", "Range", "RangeAddition.stcpp", true);
+	}
+
+	@Test
+	public void testRangeRestriction() throws Exception {
+		testCpp("RangeRestriction", "RangeRestriction", "RangeRestrictionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testRangeSubstraction() throws Exception {
+		testCpp("RangeSubstraction", "RangeSubstraction", "RangeSubstractionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testRelationalImage() throws Exception {
+		testCpp("RelationalImage", "RelationalImage", "RelationalImageAddition.stcpp", true);
+	}
+
+	@Test
+	public void testStrictSubset() throws Exception {
+		testCpp("StrictSubset", "StrictSubset", "StrictSubsetAddition.stcpp", true);
+	}
+
+	@Test
+	public void testSubset() throws Exception {
+		testCpp("Subset", "Subset", "SubsetAddition.stcpp", true);
+	}
+
+	@Test
+	public void testSwap() throws Exception {
+		testCpp("Swap", "Swap", "SwapAddition.stcpp", true);
+	}
+
+
+	@Test
+	public void testSwap2() throws Exception {
+		testCpp("Swap2", "Swap2", "Swap2Addition.stcpp", true);
+	}
+
+	@Test
+	public void testUnaryMinus() throws Exception {
+		testCpp("UnaryMinus", "UnaryMinus", "UnaryMinusAddition.stcpp", true);
+	}
+
+	@Test
+	public void testUnequal() throws Exception {
+		testCpp("Unequal", "Unequal", "UnequalAddition.stcpp", true);
+	}
+
+	@Test
+	public void testUnion() throws Exception {
+		testCpp("Union", "Union", "UnionAddition.stcpp", true);
+	}
+
+	@Test
 	public void testSetComprehension1() throws Exception {
-		testCpp("SetComprehension1");
+		testCpp("SetComprehension1", "SetComprehension1", "SetComprehension1Addition.stcpp", true);
 	}
 
 	@Test
 	public void testSetComprehension2() throws Exception {
-		testCpp("SetComprehension2");
+		testCpp("SetComprehension2", "SetComprehension2", "SetComprehension2Addition.stcpp", true);
 	}
 
 	@Test
 	public void testSetComprehension3() throws Exception {
-		testCpp("SetComprehension3");
+		testCpp("SetComprehension3", "SetComprehension3", "SetComprehension3Addition.stcpp", true);
 	}
 
 	@Test
 	public void testSetComprehension4() throws Exception {
-		testCpp("SetComprehension4");
+		testCpp("SetComprehension4", "SetComprehension4", "SetComprehension4Addition.stcpp", true);
 	}
 
-	@Ignore
 	@Test
 	public void testSetComprehension5() throws Exception {
-		//Does not work because of bounded variables from outer scope
-		testCpp("SetComprehension5");
+		testCpp("SetComprehension5", "SetComprehension5", "SetComprehension5Addition.stcpp", true);
 	}
 
 	@Test
 	public void testLambda() throws Exception {
-		testCpp("Lambda");
+		testCpp("Lambda", "Lambda", "LambdaAddition.stcpp", true);
 	}
 
 	@Test
 	public void testLambda2() throws Exception {
-		testCpp("Lambda2");
+		testCpp("Lambda2", "Lambda2", "Lambda2Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedPredicate() throws Exception {
-		testCpp("QuantifiedPredicate");
+		testCpp("QuantifiedPredicate", "QuantifiedPredicate", "QuantifiedPredicateAddition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedPredicate2() throws Exception {
-		testCpp("QuantifiedPredicate2");
+		testCpp("QuantifiedPredicate2", "QuantifiedPredicate2", "QuantifiedPredicate2Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedPredicate3() throws Exception {
-		testCpp("QuantifiedPredicate3");
+		testCpp("QuantifiedPredicate3", "QuantifiedPredicate3", "QuantifiedPredicate3Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression1() throws Exception {
-		testCpp("QuantifiedExpression1");
+		testCpp("QuantifiedExpression1", "QuantifiedExpression1", "QuantifiedExpression1Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression2() throws Exception {
-		testCpp("QuantifiedExpression2");
+		testCpp("QuantifiedExpression2", "QuantifiedExpression2", "QuantifiedExpression2Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression3() throws Exception {
-		testCpp("QuantifiedExpression3");
+		testCpp("QuantifiedExpression3", "QuantifiedExpression3", "QuantifiedExpression3Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression4() throws Exception {
-		testCpp("QuantifiedExpression4");
+		testCpp("QuantifiedExpression4", "QuantifiedExpression4", "QuantifiedExpression4Addition.stcpp", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression5() throws Exception {
-		testCpp("QuantifiedExpression5");
+		testCpp("QuantifiedExpression5", "QuantifiedExpression5", "QuantifiedExpression5Addition.stcpp", true);
 	}
 
 
@@ -876,99 +1038,98 @@ public class TestCpp {
 
 	@Test
 	public void testFunctionalOverride() throws Exception {
-		testCpp("FunctionalOverride");
+		testCpp("FunctionalOverride", "FunctionalOverride", "FunctionalOverrideAddition.stcpp", true);
 	}
 
 	@Test
 	public void testFunctionalOverride2() throws Exception {
-		testCpp("FunctionalOverride2");
+		testCpp("FunctionalOverride2", "FunctionalOverride2", "FunctionalOverride2Addition.stcpp", true);
 	}
 
 	@Test
 	public void testFunctionalOverride3() throws Exception {
-		testCpp("FunctionalOverride3");
+		testCpp("FunctionalOverride3", "FunctionalOverride3", "FunctionalOverride3Addition.stcpp", true);
 	}
 
 	@Test
 	public void testOverride() throws Exception {
-		testCpp("Override");
+		testCpp("Override", "Override", "OverrideAddition.stcpp", true);
 	}
 
 	@Test
 	public void testPow() throws Exception {
-		testCpp("Pow");
+		testCpp("Pow", "Pow", "PowAddition.stcpp", true);
 	}
 
 	@Test
 	public void testPow1() throws Exception {
-		testCpp("Pow1");
+		testCpp("Pow1", "Pow1", "Pow1Addition.stcpp", true);
 	}
 
 	@Test
 	public void testFin() throws Exception {
-		testCpp("Fin");
+		testCpp("Fin", "Fin", "FinAddition.stcpp", true);
 	}
 
 	@Test
 	public void testFin1() throws Exception {
-		testCpp("Fin1");
+		testCpp("Fin1", "Fin1", "Fin1Addition.stcpp", true);
 	}
 
 	@Test
 	public void testId() throws Exception {
-		testCpp("Id");
+		testCpp("Id", "Id", "IdAddition.stcpp", true);
 	}
 
 	@Test
 	public void testParallelProduct() throws Exception {
-		testCpp("ParallelProduct");
+		testCpp("ParallelProduct", "ParallelProduct", "ParallelProductAddition.stcpp", true);
 	}
 
 	@Test
 	public void testDirectProduct() throws Exception {
-		testCpp("DirectProduct");
+		testCpp("DirectProduct", "DirectProduct", "DirectProductAddition.stcpp", true);
 	}
 
 	@Test
 	public void testComposition() throws Exception {
-		testCpp("Composition");
+		testCpp("Composition", "Composition", "CompositionAddition.stcpp", true);
 	}
 
 	@Test
 	public void testProjection1() throws Exception {
-		testCpp("Projection1");
+		testCpp("Projection1", "Projection1", "Projection1Addition.stcpp", true);
 	}
 
 	@Test
 	public void testProjection2() throws Exception {
-		testCpp("Projection2");
+		testCpp("Projection2", "Projection2", "Projection2Addition.stcpp", true);
 	}
 
 	@Test
 	public void testAppend() throws Exception {
-		testCpp("Append");
+		testCpp("Append", "Append", "AppendAddition.stcpp", true);
 	}
 
 
-	@Ignore
 	@Test
 	public void testConc() throws Exception {
-		testCpp("Conc");
+		testCpp("Conc", "Conc", "ConcAddition.stcpp", true);
 	}
 
 	@Test
 	public void testConcat() throws Exception {
-		testCpp("Concat");
+		testCpp("Concat", "Concat", "ConcatAddition.stcpp", true);
 	}
 
 	@Test
 	public void testDrop() throws Exception {
-		testCpp("Drop");
+		testCpp("Drop", "Drop", "DropAddition.stcpp", true);
 	}
 
 	@Test
 	public void testEmptySequence() throws Exception {
-		testCpp("EmptySequence");
+		testCpp("EmptySequence", "EmptySequence", "EmptySequenceAddition.stcpp", true);
 	}
 
 	@Test
@@ -978,27 +1139,27 @@ public class TestCpp {
 
 	@Test
 	public void testFirstElementSequence() throws Exception {
-		testCpp("FirstElementSequence");
+		testCpp("FirstElementSequence", "FirstElementSequence", "FirstElementSequenceAddition.stcpp", true);
 	}
 
 	@Test
 	public void testFrontSequence() throws Exception {
-		testCpp("FrontSequence");
+		testCpp("FrontSequence", "FrontSequence", "FrontSequenceAddition.stcpp", true);
 	}
 
 	@Test
 	public void testLastElementSequence() throws Exception {
-		testCpp("LastElementSequence");
+		testCpp("LastElementSequence", "LastElementSequence", "LastElementSequenceAddition.stcpp", true);
 	}
 
 	@Test
 	public void testPrepend() throws Exception {
-		testCpp("Prepend");
+		testCpp("Prepend", "Prepend", "PrependAddition.stcpp", true);
 	}
 
 	@Test
 	public void testReverse() throws Exception {
-		testCpp("ReverseSequence");
+		testCpp("ReverseSequence", "ReverseSequence", "ReverseSequenceAddition.stcpp", true);
 	}
 
 	@Test
@@ -1008,52 +1169,52 @@ public class TestCpp {
 
 	@Test
 	public void testTailSequence() throws Exception {
-		testCpp("TailSequence");
+		testCpp("TailSequence", "TailSequence", "TailSequenceAddition.stcpp", true);
 	}
 
 	@Test
 	public void testTake() throws Exception {
-		testCpp("Take");
+		testCpp("Take", "Take", "TakeAddition.stcpp", true);
 	}
 
 	@Test
 	public void testSequenceOperateRelation() throws Exception {
-		testCpp("SequenceOperateRelation");
+		testCpp("SequenceOperateRelation", "SequenceOperateRelation", "SequenceOperateRelationAddition.stcpp", true);
 	}
 
 	@Test
 	public void testPred() throws Exception {
-		testCpp("Pred");
+		testCpp("Pred", "Pred", "PredAddition.stcpp", true);
 	}
 
 	@Test
 	public void testSucc() throws Exception {
-		testCpp("Succ");
+		testCpp("Succ", "Succ", "SuccAddition.stcpp", true);
 	}
 
 	@Test
 	public void testIterate() throws Exception {
-		testCpp("Iterate");
+		testCpp("Iterate", "Iterate", "IterateAddition.stcpp", true);
 	}
 
 	@Test
 	public void testClosure() throws Exception {
-		testCpp("Closure");
+		testCpp("Closure", "Closure", "ClosureAddition.stcpp", true);
 	}
 
 	@Test
 	public void testClosure1() throws Exception {
-		testCpp("Closure1");
+		testCpp("Closure1", "Closure1", "Closure1Addition.stcpp", true);
 	}
 
 	@Test
 	public void testFnc() throws Exception {
-		testCpp("Fnc");
+		testCpp("Fnc", "Fnc", "FncAddition.stcpp", true);
 	}
 
 	@Test
 	public void testRel() throws Exception {
-		testCpp("Rel");
+		testCpp("Rel", "Rel", "RelAddition.stcpp", true);
 	}
 
 	private void cleanUp(String path) {

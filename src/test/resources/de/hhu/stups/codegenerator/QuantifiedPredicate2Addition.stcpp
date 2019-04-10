@@ -1,0 +1,6 @@
+int main() {
+    QuantifiedPredicate2 predicate;
+    predicate.calculate();
+    cout << predicate.getRes();
+    return 0;
+}

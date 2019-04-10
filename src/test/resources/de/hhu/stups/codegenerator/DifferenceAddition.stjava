@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Difference difference = new Difference();
+    difference.calculate();
+    System.out.println(difference.getRes());
+}

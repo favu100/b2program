@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    EmptySequence empty = new EmptySequence();
+    empty.calculate();
+    System.out.println(empty.getRes());
+}

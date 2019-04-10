@@ -1,0 +1,6 @@
+int main() {
+    RelationalImage relationalImage;
+    relationalImage.calculate();
+    cout << relationalImage.getRes();
+    return 0;
+}

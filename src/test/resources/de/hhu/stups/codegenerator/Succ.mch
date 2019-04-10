@@ -8,6 +8,7 @@ INITIALISATION f := 1; r := 0
 
 OPERATIONS
 
-	calculate = BEGIN r := succ(f) END
+	calculate = BEGIN r := succ(f) END;
+	out <-- getRes = out := r
 
 END

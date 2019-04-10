@@ -1,0 +1,6 @@
+int main() {
+    Take sequence;
+    sequence.calculate();
+    cout << sequence.getRes();
+    return 0;
+}

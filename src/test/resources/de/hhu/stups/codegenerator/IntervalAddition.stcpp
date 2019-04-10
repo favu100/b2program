@@ -1,5 +1,6 @@
 int main() {
     Interval interval;
-    cout << interval.getYY().card();
+    interval.calculate();
+    cout << interval.getRes();
     return 0;
 }

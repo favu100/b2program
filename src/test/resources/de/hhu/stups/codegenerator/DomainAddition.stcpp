@@ -1,0 +1,6 @@
+int main() {
+    Domain domain;
+    domain.calculate();
+    cout << domain.getRes();
+    return 0;
+}

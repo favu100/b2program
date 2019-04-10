@@ -1,0 +1,6 @@
+int main() {
+    FunctionalOverride functional;
+    functional.calculate();
+    cout << functional.getRes();
+    return 0;
+}

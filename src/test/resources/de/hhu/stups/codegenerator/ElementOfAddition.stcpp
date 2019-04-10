@@ -1,0 +1,6 @@
+int main() {
+    ElementOf elementOf;
+    elementOf.calculate();
+    cout << elementOf.getRes();
+    return 0;
+}

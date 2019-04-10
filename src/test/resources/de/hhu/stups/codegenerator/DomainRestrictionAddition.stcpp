@@ -1,0 +1,6 @@
+int main() {
+    DomainRestriction domain;
+    domain.calculate();
+    cout << domain.getRes();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    NotElementOf notElementOf;
+    notElementOf.calculate();
+    cout << notElementOf.getRes();
+    return 0;
+}

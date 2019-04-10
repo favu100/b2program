@@ -1,10 +1,10 @@
 MACHINE
     IfAndPredicates
 
-VARIABLES xx, yy, switch
+VARIABLES xx
 
-INVARIANT xx : INT & yy : POW(INTEGER) & switch : BOOL
-INITIALISATION xx := 1; yy := {1,2,3} \/ {2}; switch := TRUE
+INVARIANT xx : INT
+INITIALISATION xx := 1
 
 OPERATIONS
 out <-- Inc(pp) =
@@ -16,6 +16,8 @@ out <-- Inc(pp) =
         xx := 1
     ELSE
         xx := 2
-    END
+    END;
+
+out <-- getRes = out := xx
 
 END

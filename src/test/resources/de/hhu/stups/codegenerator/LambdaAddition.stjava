@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Lambda lambda = new Lambda();
+    lambda.calculate();
+    System.out.println(lambda.getRes());
+}

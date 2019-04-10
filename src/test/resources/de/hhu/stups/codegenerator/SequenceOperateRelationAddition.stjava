@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SequenceOperateRelation sequence = new SequenceOperateRelation();
+    sequence.calculate();
+    System.out.println(sequence.getRes());
+}

@@ -1,0 +1,6 @@
+int main() {
+    RangeRestriction range;
+    range.calculate();
+    cout << range.getRes();
+    return 0;
+}

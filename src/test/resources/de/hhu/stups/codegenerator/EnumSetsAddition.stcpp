@@ -1,5 +1,0 @@
-int main() {
-    EnumSets enums;
-    cout << enums.Inc(BInteger(10));
-    return 0;
-}

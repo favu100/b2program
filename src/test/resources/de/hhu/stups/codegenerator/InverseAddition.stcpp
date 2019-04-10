@@ -1,0 +1,6 @@
+int main() {
+    Inverse inverse;
+    inverse.calculate();
+    cout << inverse.getRes();
+    return 0;
+}

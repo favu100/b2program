@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    FirstElementSequence sequence = new FirstElementSequence();
+    sequence.calculate();
+    System.out.println(sequence.getRes());
+}

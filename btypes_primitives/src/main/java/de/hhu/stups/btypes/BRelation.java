@@ -19,6 +19,24 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		super(elements);
 	}
 
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		BRelation<S,T> bObjects = (BRelation<S,T>) o;
+
+		if (!set.equals(bObjects.set))
+			return false;
+
+		return true;
+	}
+
+	public int hashCode() {
+		return set.hashCode();
+	}
+
 	public BRelation<S,T> intersect(BRelation<S,T> set) {
 		return new BRelation<>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
 	}
@@ -187,8 +205,9 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	public BRelation<S,T> drop(BInteger n) {
 		BRelation<S,T> result = new BRelation<>();
 		for(BTuple<S,T> tuple : this) {
-			if(((BInteger) tuple.projection1()).greater(n).booleanValue()) {
-				result = result.union(new BRelation<>(tuple));
+			BInteger projection1 = (BInteger) tuple.projection1();
+			if(projection1.greater(n).booleanValue()) {
+				result = result.union(new BRelation<S,T>(new BTuple<S,T>((S) projection1.minus(n), tuple.projection2())));
 			}
 		}
 		return result;
@@ -254,7 +273,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
 		BRelation<S,S> result = identity(this.domain());
 		for(BInteger i = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
-			result = result.composition(thisRelation);
+			result = result.union(result.composition(thisRelation));
 		}
 		return result;
 	}
@@ -263,10 +282,12 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
 		BRelation<S,S> result = identity(this.domain());
 		BRelation<S,S> nextResult = result.composition(thisRelation);
-		while(!result.equal(nextResult).booleanValue()) {
-			result = nextResult;
+		BRelation<S,S> lastResult = null;
+		do {
+			lastResult = result;
+			result = result.union(nextResult);
 			nextResult = result.composition(thisRelation);
-		}
+		} while(!result.equal(lastResult).booleanValue());
 		return result;
 	}
 
@@ -274,10 +295,12 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
 		BRelation<S,S> result = (BRelation<S,S>) this;
 		BRelation<S,S> nextResult = result.composition(thisRelation);
-		while(!result.equal(nextResult).booleanValue()) {
-			result = nextResult;
+		BRelation<S,S> lastResult = null;
+		do {
+			lastResult = result;
+			result = result.union(nextResult);
 			nextResult = result.composition(thisRelation);
-		}
+		} while(!result.equal(lastResult).booleanValue());
 		return result;
 	}
 

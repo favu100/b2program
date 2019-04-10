@@ -1,0 +1,6 @@
+public static void main(String[] args) {
+    Swap2 swap = new Swap2();
+    swap.swap();
+    System.out.println(swap.getXX() + " ");
+    System.out.println(swap.getYY());
+}

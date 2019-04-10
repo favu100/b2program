@@ -140,44 +140,8 @@ public class TestJava {
 	}
 
 	@Test
-	public void testEnumSets() throws Exception {
-		testJava("EnumSets", "EnumSets", "EnumSetsAddition.stjava", true);
-	}
-
-	@Test
-	public void testNameCollision() throws Exception {
-		testJava("NameCollision", "NameCollision", "NameCollisionAddition.stjava", true);
-	}
-
-	@Test
 	public void testWhile() throws Exception {
 		testJava("While", "While", "WhileAddition.stjava", true);
-	}
-
-	@Test
-	public void testInterval() throws Exception {
-		testJava("Interval", "Interval", "IntervalAddition.stjava", true);
-	}
-
-
-	@Test
-	public void testPair() throws Exception {
-		testJava("Pair", "Pair", "PairAddition.stjava", true);
-	}
-
-	@Test
-	public void testIfAndPredicates() throws Exception {
-		testJava("IfAndPredicates");
-	}
-
-	@Test
-	public void testDanglingElse() throws Exception {
-		testJava("DanglingElse", "DanglingElse", "DanglingElseAddition.stjava", true);
-	}
-
-	@Test
-	public void testImplies() throws Exception {
-		testJava("Implies", "Implies", "ImpliesAddition.stjava", true);
 	}
 
 	@Test
@@ -204,16 +168,6 @@ public class TestJava {
 	@Test
 	public void testMapFunction() throws Exception {
 		testJava("MapFunction", "MapFunction", "MapFunctionAddition.stjava", true);
-	}
-
-	@Test
-	public void testRelationImage() throws Exception {
-		testJava("RelationImage", "RelationImage", "RelationImageAddition.stjava", true);
-	}
-
-	@Test
-	public void testEmptySet() throws Exception {
-		testJava("EmptySet", "EmptySet", "EmptySetAddition.stjava", true);
 	}
 
 	@Test
@@ -329,17 +283,6 @@ public class TestJava {
 	}
 
 	@Test
-	public void testSwap() throws Exception {
-		testJava("Swap", "Swap", "SwapAddition.stjava", true);
-	}
-
-
-	@Test
-	public void testSwap2() throws Exception {
-		testJava("Swap2");
-	}
-
-	@Test
 	public void testManyLocalDeclarations() throws Exception {
 		testJava("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stjava", true);
 	}
@@ -355,23 +298,23 @@ public class TestJava {
 	}
 
 	@Test
-	public void testMinus() throws Exception {
+	public void testMinus2() throws Exception {
 		testJava("arithmetic/Minus", "Minus", "MinusAddition.stjava", true);
 	}
 
 	@Test
-	public void testMultiply() throws Exception {
+	public void testMultiply2() throws Exception {
 		testJava("arithmetic/Multiply", "Multiply", "MultiplyAddition.stjava", true);
 	}
 
 	@Test
-	public void testDivide() throws Exception {
+	public void testDivide2() throws Exception {
 		testJava("arithmetic/Divide", "Divide", "DivideAddition.stjava", true);
 	}
 
 
 	@Test
-	public void testModulo() throws Exception {
+	public void testModulo2() throws Exception {
 		testJava("arithmetic/Modulo", "Modulo", "ModuloAddition.stjava", true);
 	}
 
@@ -397,13 +340,13 @@ public class TestJava {
 	}*/
 
 	@Test
-	public void testAnd() throws Exception {
+	public void testAndPerformance() throws Exception {
 		testJava("logical/And", "And", "AndAddition.stjava", true);
 	}
 
 
 	@Test
-	public void testOr() throws Exception {
+	public void testOr2() throws Exception {
 		testJava("logical/Or", "Or", "OrAddition.stjava", true);
 	}
 
@@ -414,12 +357,12 @@ public class TestJava {
 	}
 
 	@Test
-	public void testNot() throws Exception {
+	public void testNot2() throws Exception {
 		testJava("logical/Not");
 	}
 
 	@Test
-	public void testEquivalent() throws Exception {
+	public void testEquivalent2() throws Exception {
 		testJava("logical/Equivalent", "Equivalent", "EquivalentAddition.stjava", true);
 	}
 
@@ -434,23 +377,23 @@ public class TestJava {
 	}
 
 	@Test
-	public void testLess() throws Exception {
+	public void testLess2() throws Exception {
 		testJava("comparison/Less", "Less", "LessAddition.stjava", true);
 	}
 
 	@Test
-	public void testLessEqual() throws Exception {
+	public void testLessEqual2() throws Exception {
 		testJava("comparison/LessEqual", "LessEqual", "LessEqualAddition.stjava", true);
 	}
 
 	@Test
-	public void testGreater() throws Exception {
+	public void testGreater2() throws Exception {
 		testJava("comparison/Greater", "Greater", "GreaterAddition.stjava", true);
 	}
 
 
 	@Test
-	public void testGreaterEqual() throws Exception {
+	public void testGreaterEqual2() throws Exception {
 		testJava("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stjava", true);
 	}
 
@@ -462,7 +405,7 @@ public class TestJava {
 
 
 	@Test
-	public void testUnequal() throws Exception {
+	public void testUnequal2() throws Exception {
 		testJava("comparison/Unequal", "Unequal", "UnequalAddition.stjava", true);
 	}
 
@@ -689,11 +632,6 @@ public class TestJava {
 	}
 
 	@Test
-	public void testChoice() throws Exception {
-		testJava("Choice");
-	}
-
-	@Test
 	public void testAssert() throws Exception {
 		testJava("Assert");
 	}
@@ -774,82 +712,305 @@ public class TestJava {
 		testJava("rether_mch1");
 	}
 
+	@Test
+	public void testAnd() throws Exception {
+		testJava("And", "And", "AndAddition.stjava", true);
+	}
+
+	@Test
+	public void testCard() throws Exception {
+		testJava("Card", "Card", "CardAddition.stjava", true);
+	}
+
+	@Test
+	public void testChoice() throws Exception {
+		testJava("Choice", "Choice", "ChoiceAddition.stjava", true);
+	}
+
+	@Test
+	public void testDanglingElse() throws Exception {
+		testJava("DanglingElse", "DanglingElse", "DanglingElseAddition.stjava", true);
+	}
+
+	@Test
+	public void testDifference() throws Exception {
+		testJava("Difference", "Difference", "DifferenceAddition.stjava", true);
+	}
+
+	@Test
+	public void testDivide() throws Exception {
+		testJava("Divide", "Divide", "DivideAddition.stjava", true);
+	}
+
+	@Test
+	public void testDomain() throws Exception {
+		testJava("Domain", "Domain", "DomainAddition.stjava", true);
+	}
+
+	@Test
+	public void testDomainRestriction() throws Exception {
+		testJava("DomainRestriction", "DomainRestriction", "DomainRestrictionAddition.stjava", true);
+	}
+
+	@Test
+	public void testDomainSubstraction() throws Exception {
+		testJava("DomainSubstraction", "DomainSubstraction", "DomainSubstractionAddition.stjava", true);
+	}
+
+	@Test
+	public void testElementOf() throws Exception {
+		testJava("ElementOf", "ElementOf", "ElementOfAddition.stjava", true);
+	}
+
+	@Test
+	public void testEmptySet() throws Exception {
+		testJava("EmptySet", "EmptySet", "EmptySetAddition.stjava", true);
+	}
+
+	@Test
+	public void testEqual() throws Exception {
+		testJava("Equal", "Equal", "EqualAddition.stjava", true);
+	}
+
+	@Test
+	public void testEquivalent() throws Exception {
+		testJava("Equivalent", "Equivalent", "EquivalentAddition.stjava", true);
+	}
+
+	@Test
+	public void testGreater() throws Exception {
+		testJava("Greater", "Greater", "GreaterAddition.stjava", true);
+	}
+
+	@Test
+	public void testGreaterEqual() throws Exception {
+		testJava("GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stjava", true);
+	}
+
+	@Test
+	public void testIfAndPredicates() throws Exception {
+		testJava("IfAndPredicates");
+	}
+
+	@Test
+	public void testImplies() throws Exception {
+		testJava("Implies", "Implies", "ImpliesAddition.stjava", true);
+	}
+
+	@Test
+	public void testIntersection() throws Exception {
+		testJava("Intersection", "Intersection", "IntersectionAddition.stjava", true);
+	}
+
+	@Test
+	public void testInterval() throws Exception {
+		testJava("Interval", "Interval", "IntervalAddition.stjava", true);
+	}
+
+	@Test
+	public void testInverse() throws Exception {
+		testJava("Inverse", "Inverse", "InverseAddition.stjava", true);
+	}
+
+	@Test
+	public void testLess() throws Exception {
+		testJava("Less", "Less", "LessAddition.stjava", true);
+	}
+
+	@Test
+	public void testLessEqual() throws Exception {
+		testJava("LessEqual", "LessEqual", "LessEqualAddition.stjava", true);
+	}
+
+	@Test
+	public void testMax() throws Exception {
+		testJava("Max", "Max", "MaxAddition.stjava", true);
+	}
+
+	@Test
+	public void testMin() throws Exception {
+		testJava("Min", "Min", "MinAddition.stjava", true);
+	}
+
+	@Test
+	public void testMinus() throws Exception {
+		testJava("Minus", "Minus", "MinusAddition.stjava", true);
+	}
+
+	@Test
+	public void testModulo() throws Exception {
+		testJava("Modulo", "Modulo", "ModuloAddition.stjava", true);
+	}
+
+	@Test
+	public void testMultiply() throws Exception {
+		testJava("Multiply", "Multiply", "MultiplyAddition.stjava", true);
+	}
+
+	@Test
+	public void testNameCollision() throws Exception {
+		testJava("NameCollision", "NameCollision", "NameCollisionAddition.stjava", true);
+	}
+
+	@Test
+	public void testNot() throws Exception {
+		testJava("Not", "Not", "NotAddition.stjava", true);
+	}
+
+	@Test
+	public void testNotElementOf() throws Exception {
+		testJava("NotElementOf", "NotElementOf", "NotElementOfAddition.stjava", true);
+	}
+
+	@Test
+	public void testNotStrictSubset() throws Exception {
+		testJava("NotStrictSubset", "NotStrictSubset", "NotStrictSubsetAddition.stjava", true);
+	}
+
+	@Test
+	public void testNotSubset() throws Exception {
+		testJava("NotSubset", "NotSubset", "NotSubsetAddition.stjava", true);
+	}
+
+	@Test
+	public void testOr() throws Exception {
+		testJava("Or", "Or", "OrAddition.stjava", true);
+	}
+
+	@Test
+	public void testPlus2() throws Exception {
+		testJava("Plus", "Plus", "PlusAddition.stjava", true);
+	}
+
+	@Test
+	public void testRange() throws Exception {
+		testJava("Range", "Range", "RangeAddition.stjava", true);
+	}
+
+	@Test
+	public void testRangeRestriction() throws Exception {
+		testJava("RangeRestriction", "RangeRestriction", "RangeRestrictionAddition.stjava", true);
+	}
+
+	@Test
+	public void testRangeSubstraction() throws Exception {
+		testJava("RangeSubstraction", "RangeSubstraction", "RangeSubstractionAddition.stjava", true);
+	}
+
+	@Test
+	public void testRelationalImage() throws Exception {
+		testJava("RelationalImage", "RelationalImage", "RelationalImageAddition.stjava", true);
+	}
+
+	@Test
+	public void testStrictSubset() throws Exception {
+		testJava("StrictSubset", "StrictSubset", "StrictSubsetAddition.stjava", true);
+	}
+
+	@Test
+	public void testSubset() throws Exception {
+		testJava("Subset", "Subset", "SubsetAddition.stjava", true);
+	}
+
+	@Test
+	public void testSwap() throws Exception {
+		testJava("Swap", "Swap", "SwapAddition.stjava", true);
+	}
+
+
+	@Test
+	public void testSwap2() throws Exception {
+		testJava("Swap2", "Swap2", "Swap2Addition.stjava", true);
+	}
+
+	@Test
+	public void testUnaryMinus() throws Exception {
+		testJava("UnaryMinus", "UnaryMinus", "UnaryMinusAddition.stjava", true);
+	}
+
+	@Test
+	public void testUnequal() throws Exception {
+		testJava("Unequal", "Unequal", "UnequalAddition.stjava", true);
+	}
+
+	@Test
+	public void testUnion() throws Exception {
+		testJava("Union", "Union", "UnionAddition.stjava", true);
+	}
 
 	@Test
 	public void testSetComprehension1() throws Exception {
-		testJava("SetComprehension1");
+		testJava("SetComprehension1", "SetComprehension1", "SetComprehension1Addition.stjava", true);
 	}
 
 	@Test
 	public void testSetComprehension2() throws Exception {
-		testJava("SetComprehension2");
+		testJava("SetComprehension2", "SetComprehension2", "SetComprehension2Addition.stjava", true);
 	}
 
 	@Test
 	public void testSetComprehension3() throws Exception {
-		testJava("SetComprehension3");
+		testJava("SetComprehension3", "SetComprehension3", "SetComprehension3Addition.stjava", true);
 	}
 
 	@Test
 	public void testSetComprehension4() throws Exception {
-		testJava("SetComprehension4");
+		testJava("SetComprehension4", "SetComprehension4", "SetComprehension4Addition.stjava", true);
 	}
 
-	@Ignore
 	@Test
 	public void testSetComprehension5() throws Exception {
-		//Does not work because of bounded variables from outer scope
-		testJava("SetComprehension5");
+		testJava("SetComprehension5", "SetComprehension5", "SetComprehension5Addition.stjava", true);
 	}
 
 	@Test
 	public void testLambda() throws Exception {
-		testJava("Lambda");
+		testJava("Lambda", "Lambda", "LambdaAddition.stjava", true);
 	}
 
 	@Test
 	public void testLambda2() throws Exception {
-		testJava("Lambda2");
+		testJava("Lambda2", "Lambda2", "Lambda2Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedPredicate() throws Exception {
-		testJava("QuantifiedPredicate");
+		testJava("QuantifiedPredicate", "QuantifiedPredicate", "QuantifiedPredicateAddition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedPredicate2() throws Exception {
-		testJava("QuantifiedPredicate2");
+		testJava("QuantifiedPredicate2", "QuantifiedPredicate2", "QuantifiedPredicate2Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedPredicate3() throws Exception {
-		testJava("QuantifiedPredicate3");
+		testJava("QuantifiedPredicate3", "QuantifiedPredicate3", "QuantifiedPredicate3Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression1() throws Exception {
-		testJava("QuantifiedExpression1");
+		testJava("QuantifiedExpression1", "QuantifiedExpression1", "QuantifiedExpression1Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression2() throws Exception {
-		testJava("QuantifiedExpression2");
+		testJava("QuantifiedExpression2", "QuantifiedExpression2", "QuantifiedExpression2Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression3() throws Exception {
-		testJava("QuantifiedExpression3");
+		testJava("QuantifiedExpression3", "QuantifiedExpression3", "QuantifiedExpression3Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression4() throws Exception {
-		testJava("QuantifiedExpression4");
+		testJava("QuantifiedExpression4", "QuantifiedExpression4", "QuantifiedExpression4Addition.stjava", true);
 	}
 
 	@Test
 	public void testQuantifiedExpression5() throws Exception {
-		testJava("QuantifiedExpression5");
+		testJava("QuantifiedExpression5", "QuantifiedExpression5", "QuantifiedExpression5Addition.stjava", true);
 	}
 
 
@@ -866,99 +1027,98 @@ public class TestJava {
 
 	@Test
 	public void testFunctionalOverride() throws Exception {
-		testJava("FunctionalOverride");
+		testJava("FunctionalOverride", "FunctionalOverride", "FunctionalOverrideAddition.stjava", true);
 	}
 
 	@Test
 	public void testFunctionalOverride2() throws Exception {
-		testJava("FunctionalOverride2");
+		testJava("FunctionalOverride2", "FunctionalOverride2", "FunctionalOverride2Addition.stjava", true);
 	}
 
 	@Test
 	public void testFunctionalOverride3() throws Exception {
-		testJava("FunctionalOverride3");
+		testJava("FunctionalOverride3", "FunctionalOverride3", "FunctionalOverride3Addition.stjava", true);
 	}
 
 	@Test
 	public void testOverride() throws Exception {
-		testJava("Override");
+		testJava("Override", "Override", "OverrideAddition.stjava", true);
 	}
 
 	@Test
 	public void testPow() throws Exception {
-		testJava("Pow");
+		testJava("Pow", "Pow", "PowAddition.stjava", true);
 	}
 
 	@Test
 	public void testPow1() throws Exception {
-		testJava("Pow1");
+		testJava("Pow1", "Pow1", "Pow1Addition.stjava", true);
 	}
 
 	@Test
 	public void testFin() throws Exception {
-		testJava("Fin");
+		testJava("Fin", "Fin", "FinAddition.stjava", true);
 	}
 
 	@Test
 	public void testFin1() throws Exception {
-		testJava("Fin1");
+		testJava("Fin1", "Fin1", "Fin1Addition.stjava", true);
 	}
 
 	@Test
 	public void testId() throws Exception {
-		testJava("Id");
+		testJava("Id", "Id", "IdAddition.stjava", true);
 	}
 
 	@Test
 	public void testParallelProduct() throws Exception {
-		testJava("ParallelProduct");
+		testJava("ParallelProduct", "ParallelProduct", "ParallelProductAddition.stjava", true);
 	}
 
 	@Test
 	public void testDirectProduct() throws Exception {
-		testJava("DirectProduct");
+		testJava("DirectProduct", "DirectProduct", "DirectProductAddition.stjava", true);
 	}
 
 	@Test
 	public void testComposition() throws Exception {
-		testJava("Composition");
+		testJava("Composition", "Composition", "CompositionAddition.stjava", true);
 	}
 
 	@Test
 	public void testProjection1() throws Exception {
-		testJava("Projection1");
+		testJava("Projection1", "Projection1", "Projection1Addition.stjava", true);
 	}
 
 	@Test
 	public void testProjection2() throws Exception {
-		testJava("Projection2");
+		testJava("Projection2", "Projection2", "Projection2Addition.stjava", true);
 	}
 
 	@Test
 	public void testAppend() throws Exception {
-		testJava("Append");
+		testJava("Append", "Append", "AppendAddition.stjava", true);
 	}
 
 
-	@Ignore
 	@Test
 	public void testConc() throws Exception {
-		testJava("Conc");
+		testJava("Conc", "Conc", "ConcAddition.stjava", true);
 	}
 
 	@Test
 	public void testConcat() throws Exception {
-		testJava("Concat");
+		testJava("Concat", "Concat", "ConcatAddition.stjava", true);
 	}
 
 	@Test
 	public void testDrop() throws Exception {
-		testJava("Drop");
+		testJava("Drop", "Drop", "DropAddition.stjava", true);
 	}
 
 	@Test
 	public void testEmptySequence() throws Exception {
-		testJava("EmptySequence");
+		testJava("EmptySequence", "EmptySequence", "EmptySequenceAddition.stjava", true);
 	}
 
 	@Test
@@ -968,27 +1128,27 @@ public class TestJava {
 
 	@Test
 	public void testFirstElementSequence() throws Exception {
-		testJava("FirstElementSequence");
+		testJava("FirstElementSequence", "FirstElementSequence", "FirstElementSequenceAddition.stjava", true);
 	}
 
 	@Test
 	public void testFrontSequence() throws Exception {
-		testJava("FrontSequence");
+		testJava("FrontSequence", "FrontSequence", "FrontSequenceAddition.stjava", true);
 	}
 
 	@Test
 	public void testLastElementSequence() throws Exception {
-		testJava("LastElementSequence");
+		testJava("LastElementSequence", "LastElementSequence", "LastElementSequenceAddition.stjava", true);
 	}
 
 	@Test
 	public void testPrepend() throws Exception {
-		testJava("Prepend");
+		testJava("Prepend", "Prepend", "PrependAddition.stjava", true);
 	}
 
 	@Test
 	public void testReverse() throws Exception {
-		testJava("ReverseSequence");
+		testJava("ReverseSequence", "ReverseSequence", "ReverseSequenceAddition.stjava", true);
 	}
 
 	@Test
@@ -998,53 +1158,54 @@ public class TestJava {
 
 	@Test
 	public void testTailSequence() throws Exception {
-		testJava("TailSequence");
+		testJava("TailSequence", "TailSequence", "TailSequenceAddition.stjava", true);
 	}
 
 	@Test
 	public void testTake() throws Exception {
-		testJava("Take");
+		testJava("Take", "Take", "TakeAddition.stjava", true);
 	}
 
 	@Test
 	public void testSequenceOperateRelation() throws Exception {
-		testJava("SequenceOperateRelation");
+		testJava("SequenceOperateRelation", "SequenceOperateRelation", "SequenceOperateRelationAddition.stjava", true);
 	}
 
 	@Test
 	public void testPred() throws Exception {
-		testJava("Pred");
+		testJava("Pred", "Pred", "PredAddition.stjava", true);
 	}
 
 	@Test
 	public void testSucc() throws Exception {
-		testJava("Succ");
+		testJava("Succ", "Succ", "SuccAddition.stjava", true);
 	}
 
 	@Test
 	public void testIterate() throws Exception {
-		testJava("Iterate");
+		testJava("Iterate", "Iterate", "IterateAddition.stjava", true);
 	}
 
 	@Test
 	public void testClosure() throws Exception {
-		testJava("Closure");
+		testJava("Closure", "Closure", "ClosureAddition.stjava", true);
 	}
 
 	@Test
 	public void testClosure1() throws Exception {
-		testJava("Closure1");
+		testJava("Closure1", "Closure1", "Closure1Addition.stjava", true);
 	}
 
 	@Test
 	public void testFnc() throws Exception {
-		testJava("Fnc");
+		testJava("Fnc", "Fnc", "FncAddition.stjava", true);
 	}
 
 	@Test
 	public void testRel() throws Exception {
-		testJava("Rel");
+		testJava("Rel", "Rel", "RelAddition.stjava", true);
 	}
+
 
 	private void cleanUp(String path) {
 		File file = new File(path);

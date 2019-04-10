@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Minus minus = new Minus();
+    minus.calculate();
+    System.out.println(minus.getRes());
+}

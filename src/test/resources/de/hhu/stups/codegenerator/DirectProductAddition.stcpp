@@ -1,0 +1,6 @@
+int main() {
+    DirectProduct direct;
+    direct.calculate();
+    cout << direct.getRes();
+    return 0;
+}

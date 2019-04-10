@@ -8,6 +8,7 @@ INITIALISATION f := <>; s:= {(1|->2)}
 
 OPERATIONS
 
-	calculate = BEGIN f := f \/ s END
+	calculate = BEGIN f := f \/ s END;
+	out <-- getRes = out := f
 
 END

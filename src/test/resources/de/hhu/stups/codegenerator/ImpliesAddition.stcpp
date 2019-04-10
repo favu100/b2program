@@ -1,5 +1,6 @@
 int main() {
-    Implies implies;
-    cout << implies.Inc(BInteger(10));
+    Implies logical;
+    logical.calculate();
+    cout << logical.getRes();
     return 0;
 }

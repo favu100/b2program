@@ -1,0 +1,6 @@
+public static void main(String[] args) {
+    Projection1 projection = new Projection1();
+    projection.calculate();
+    System.out.println(projection.getRes() + " ");
+    System.out.println(projection.getPair());
+}

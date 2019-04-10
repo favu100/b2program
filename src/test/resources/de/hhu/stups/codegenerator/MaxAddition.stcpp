@@ -1,0 +1,6 @@
+int main() {
+    Max max;
+    max.calculate();
+    cout << max.getRes();
+    return 0;
+}

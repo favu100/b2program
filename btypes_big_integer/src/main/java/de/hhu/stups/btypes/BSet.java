@@ -19,7 +19,7 @@ public class BSet<T> implements BObject, Set<T> {
 	private static final class createBInteger extends AFn {
 		@Override
 		public Object invoke(Object obj) {
-			return new BInteger(obj.toString());
+			return new BInteger(Integer.parseInt(obj.toString()));
 		}
 	}
 
@@ -114,7 +114,7 @@ public class BSet<T> implements BObject, Set<T> {
 		if (o == null || getClass() != o.getClass())
 			return false;
 
-		BSet bObjects = (BSet) o;
+		BSet<T> bObjects = (BSet<T>) o;
 
 		if (!set.equals(bObjects.set))
 			return false;
@@ -193,7 +193,7 @@ public class BSet<T> implements BObject, Set<T> {
 
 
 	public BInteger card() {
-		return new BInteger(String.valueOf(COUNT.invoke(this.set)));
+		return new BInteger((int) COUNT.invoke(this.set));
 	}
 
 	public BBoolean elementOf(T object) {
@@ -234,7 +234,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BInteger min() {
-		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).lessEqual((BInteger)b).booleanValue() ? (BInteger) a : (BInteger) b);
+		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).lessEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
 		if(result.isPresent()) {
 			return result.get();
 		}
@@ -242,11 +242,11 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BInteger max() {
-		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).greaterEqual((BInteger)b).booleanValue() ? (BInteger) a : (BInteger) b);
+		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).greaterEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
 		if(result.isPresent()) {
 			return result.get();
 		}
-		throw new RuntimeException("Minumum does not exist");
+		throw new RuntimeException("Maximum does not exist");
 	}
 
 	public BSet<BSet<T>> pow() {
@@ -254,6 +254,7 @@ public class BSet<T> implements BObject, Set<T> {
 		BSet<T> start = new BSet<>();
 		Queue<BSet<T>> queue = new LinkedList<>();
 		queue.add(start);
+		result = result.union(new BSet<>(start));
 		while(!queue.isEmpty()) {
 			BSet<T> currentSet = queue.remove();
 			for(T element : this) {
@@ -269,7 +270,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BSet<BSet<T>> pow1() {
-		return this.pow().difference(new BSet<>());
+		return this.pow().difference(new BSet<>(new BSet<>()));
 	}
 
 	public BSet<BSet<T>> fin() {

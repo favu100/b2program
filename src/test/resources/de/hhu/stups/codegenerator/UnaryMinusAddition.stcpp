@@ -1,0 +1,6 @@
+int main() {
+    UnaryMinus minus;
+    minus.calculate();
+    cout << minus.getRes();
+    return 0;
+}

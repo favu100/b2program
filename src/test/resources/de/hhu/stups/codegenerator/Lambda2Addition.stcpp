@@ -1,0 +1,6 @@
+int main() {
+    Lambda2 lambda;
+    lambda.calculate();
+    cout << lambda.getRes();
+    return 0;
+}

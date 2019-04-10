@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Concat concat = new Concat();
+    concat.calculate();
+    System.out.println(concat.getRes());
+}

@@ -1,25 +1,14 @@
 MACHINE Interval
 
-VARIABLES xx, yy, switch
+VARIABLES  x, r
 
-INVARIANT xx : INT & yy : POW(INTEGER) & switch : BOOL
-INITIALISATION xx := 1; yy := 1..4; switch := TRUE
+INVARIANT  x : INT & r : POW(INT)
+
+INITIALISATION x := 1; r := {}
 
 OPERATIONS
-out <-- Inc(pp) =
-    IF xx = 1 & xx < 10 THEN
-        xx := xx + pp; out := xx
-    ELSIF xx < 2 THEN
-        xx := xx - pp; out := xx + 1
-    ELSIF xx > 3 THEN
-        xx := 1
-    ELSE
-        xx := 2
-    END;
 
-out <-- getYY =
-    BEGIN
-        out := yy
-    END
+	calculate = BEGIN r := x..5 END;
+	out <-- getRes = out := card(r)
 
 END

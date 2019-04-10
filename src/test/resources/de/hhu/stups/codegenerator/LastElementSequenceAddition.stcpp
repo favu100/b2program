@@ -1,0 +1,6 @@
+int main() {
+    LastElementSequence last;
+    last.calculate();
+    cout << last.getRes();
+    return 0;
+}

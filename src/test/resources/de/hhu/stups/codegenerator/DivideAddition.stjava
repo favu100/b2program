@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Divide divide = new Divide();
+    divide.calculate();
+    System.out.println(divide.getRes());
+}

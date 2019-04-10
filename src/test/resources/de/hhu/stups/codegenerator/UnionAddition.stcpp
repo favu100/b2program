@@ -1,0 +1,6 @@
+int main() {
+    Union _union;
+    _union.calculate();
+    cout << _union.getRes();
+    return 0;
+}

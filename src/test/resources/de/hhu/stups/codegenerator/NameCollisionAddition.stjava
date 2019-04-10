@@ -1,4 +1,4 @@
 public static void main(String[] args) {
     NameCollision collision = new NameCollision();
-    System.out.println(collision.getSwitch());
+    System.out.println(collision.getRes());
 }

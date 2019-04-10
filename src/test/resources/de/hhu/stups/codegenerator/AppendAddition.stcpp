@@ -1,0 +1,6 @@
+int main() {
+    Append append;
+    append.calculate();
+    cout << append.getRes();
+    return 0;
+}

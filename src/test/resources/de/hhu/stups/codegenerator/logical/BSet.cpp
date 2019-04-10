@@ -230,7 +230,7 @@ class BSet : public BObject {
 
         BBoolean subset(const BSet<T>& set) {
             for (const T& obj : this->set) {
-                if(set.count(obj) == 0) {
+                if(set.set.count(obj) == 0) {
                     return BBoolean(false);
                 }
             }
@@ -239,7 +239,7 @@ class BSet : public BObject {
 
         BBoolean notSubset(const BSet<T>& set) {
             for (const T& obj : this->set) {
-                if(set.count(obj) == 0) {
+                if(set.set.count(obj) == 0) {
                     return BBoolean(true);
                 }
             }
@@ -261,7 +261,7 @@ class BSet : public BObject {
         BBoolean strictNotSubset(const BSet<T>& set) {
             if(this->set.size() != set.size()) {
                 for (const T& obj : this->set) {
-                    if(set.count(obj) == 0) {
+                    if(set.set.count(obj) == 0) {
                         return BBoolean(true);
                     }
                 }
@@ -275,6 +275,7 @@ class BSet : public BObject {
     		BSet<T> start = BSet<T>();
     		queue<BSet<T>> q = queue<BSet<T>>();
     		q.push(start);
+    		result = result._union(BSet<BSet<T>>(start));
     		while(!q.empty()) {
     			BSet<T> currentSet = q.front();
     			q.pop();
@@ -291,7 +292,7 @@ class BSet : public BObject {
     	}
 
     	BSet<BSet<T>> pow1() {
-    		return this->pow().difference(BSet<BSet<T>>());
+    		return this->pow().difference(BSet<BSet<T>>(BSet<T>()));
     	}
 
     	BSet<BSet<T>> fin() {

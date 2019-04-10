@@ -1,0 +1,6 @@
+int main() {
+    EmptySequence empty;
+    empty.calculate();
+    cout << empty.getRes();
+    return 0;
+}

@@ -1,4 +1,5 @@
 public static void main(String[] args) {
     EmptySet empty = new EmptySet();
-    System.out.println(empty.Inc(new BInteger(10)));
+    empty.calculate();
+    System.out.println(empty.getRes());
 }

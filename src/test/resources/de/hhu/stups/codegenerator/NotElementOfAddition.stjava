@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotElementOf notElementOf = new NotElementOf();
+    notElementOf.calculate();
+    System.out.println(notElementOf.getRes());
+}

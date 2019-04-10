@@ -8,6 +8,7 @@ INITIALISATION f := [1,2,3]; s := []
 
 OPERATIONS
 
-	calculate = BEGIN f := [1,2]; s:= front(f) END
+	calculate = BEGIN s:= front(f) END;
+	out <-- getRes = out := card(s)
 
 END

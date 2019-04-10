@@ -1,0 +1,6 @@
+int main() {
+    Fnc fnc;
+    fnc.calculate();
+    cout << fnc.getRes();
+    return 0;
+}

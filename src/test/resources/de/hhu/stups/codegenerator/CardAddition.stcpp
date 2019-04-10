@@ -1,0 +1,6 @@
+int main() {
+    Card card;
+    card.calculate();
+    cout << card.getRes();
+    return 0;
+}

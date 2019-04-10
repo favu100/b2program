@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    DomainRestriction domain = new DomainRestriction();
+    domain.calculate();
+    System.out.println(domain.getRes());
+}

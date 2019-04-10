@@ -1,0 +1,6 @@
+int main() {
+    Fin fin;
+    fin.calculate();
+    cout << fin.getRes();
+    return 0;
+}

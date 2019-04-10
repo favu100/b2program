@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Modulo modulo = new Modulo();
+    modulo.calculate();
+    System.out.println(modulo.getRes());
+}

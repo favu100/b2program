@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    DomainSubstraction domain = new DomainSubstraction();
+    domain.calculate();
+    System.out.println(domain.getRes());
+}

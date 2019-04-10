@@ -1,4 +1,5 @@
 public static void main(String[] args) {
     IfAndPredicates if = new IfAndPredicates();
-    System.out.println(if.Inc(new BInteger(10)));
+    if.calculate();
+    System.out.println(if.getRes());
 }

@@ -1,21 +1,17 @@
-MACHINE
-    Implies
+MACHINE Implies
 
-VARIABLES xx, yy, switch
+VARIABLES  x, y, r
 
-INVARIANT xx : INT & yy : POW(INTEGER) & switch : BOOL
-INITIALISATION xx := 1; yy := {1,2,3} \/ {2}; switch := TRUE
+INVARIANT  x : BOOL & y : BOOL & r : BOOL
+
+INITIALISATION x := TRUE; y := FALSE; r := FALSE
 
 OPERATIONS
-out <-- Inc(pp) =
-    IF xx < 10 => xx < 5 THEN
-        xx := xx + pp; out := xx
-    ELSIF xx < 2 THEN
-        xx := xx - pp; out := xx + 1
-    ELSIF xx > 3 THEN
-        xx := 1
-    ELSE
-        xx := 2
-    END
+
+	calculate =
+	    IF x = TRUE => y = TRUE THEN
+	        r := TRUE
+	    END;
+	out <-- getRes = out := r
 
 END

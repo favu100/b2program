@@ -8,6 +8,7 @@ INITIALISATION x := 0
 
 OPERATIONS
 
-	calculate = BEGIN x := SIGMA (p).(p:0..5|p) END
+	calculate = BEGIN x := SIGMA (p).(p:0..5|p) END;
+	out <-- getRes = out := x
 
 END

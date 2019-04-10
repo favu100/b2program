@@ -1,0 +1,6 @@
+int main() {
+    Concat concat;
+    concat.calculate();
+    cout << concat.getRes();
+    return 0;
+}

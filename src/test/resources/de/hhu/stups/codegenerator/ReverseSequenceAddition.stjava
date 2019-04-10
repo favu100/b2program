@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    ReverseSequence sequence = new ReverseSequence();
+    sequence.calculate();
+    System.out.println(sequence.getRes());
+}

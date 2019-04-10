@@ -1,0 +1,6 @@
+int main() {
+    Succ succ;
+    succ.calculate();
+    cout << succ.getRes();
+    return 0;
+}

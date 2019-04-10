@@ -347,7 +347,7 @@ else {
 >>
 
 choice(len, then, choice1) ::= <<
-int index = rand() % <len>
+int index = rand() % <len>;
 if(index == 0) {
     <then>
 } <choice1; separator=" ">
@@ -411,7 +411,7 @@ BRecord <var> = <operation_call_without_assignment(machine, function, args, this
 >>
 
 operation_call_assignment(identifier, type, var, index) ::= <<
-<identifier> = (<type>) <var>.get("<index>");
+<identifier> = *(dynamic_cast\<<type>*>(&(<var>.get("<index>"))));
 >>
 
 operation_call_with_assignment_one_parameter(var, machine, function, args, this) ::= <<

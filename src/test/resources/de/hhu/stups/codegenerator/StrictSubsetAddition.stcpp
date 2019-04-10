@@ -1,0 +1,6 @@
+int main() {
+    StrictSubset subset;
+    subset.calculate();
+    cout << subset.getRes();
+    return 0;
+}

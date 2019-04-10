@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    UnaryMinus minus = new UnaryMinus();
+    minus.calculate();
+    System.out.println(minus.getRes());
+}

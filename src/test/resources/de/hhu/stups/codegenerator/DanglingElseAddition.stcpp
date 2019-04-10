@@ -1,5 +1,6 @@
 int main() {
     DanglingElse dangling;
-    cout << dangling.Inc();
+    dangling.calculate();
+    cout << dangling.getRes();
     return 0;
 }

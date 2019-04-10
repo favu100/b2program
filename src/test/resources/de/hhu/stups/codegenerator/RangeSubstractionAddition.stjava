@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RangeSubstraction range = new RangeSubstraction();
+    range.calculate();
+    System.out.println(range.getRes());
+}

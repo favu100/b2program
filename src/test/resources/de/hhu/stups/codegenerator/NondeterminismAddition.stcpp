@@ -1,4 +1,6 @@
 int main() {
     Nondeterminism nondeterminism;
+    nondeterminism.calculate();
+    cout << nondeterminism.getRes();
     return 0;
 }

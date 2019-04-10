@@ -1,0 +1,6 @@
+int main() {
+    Composition composition;
+    composition.calculate();
+    cout << composition.getRes();
+    return 0;
+}

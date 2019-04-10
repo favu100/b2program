@@ -217,8 +217,9 @@ class BRelation : public BSet<BTuple<S,T>> {
     	BRelation<S,T> drop(const BInteger& n) {
     		BRelation<S,T> result = BRelation<S,T>();
     		for(BTuple<S,T> tuple : this->set) {
-    			if(((BInteger) tuple.projection1()).greater(n).booleanValue()) {
-    				result = result._union(BRelation<S,T>(tuple));
+    		    BInteger projection1 = (BInteger) tuple.projection1();
+    			if(projection1.greater(n).booleanValue()) {
+    				result = result._union(BRelation<S,T>(projection1.minus(n), tuple.projection2()));
     			}
     		}
     		return result;
@@ -293,27 +294,23 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,S> iterate(BInteger n) {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
-            BRelation<T,T> result;
-            for(const T& e : this->domain()) {
-                result = result._union(BRelation<T,T>(BTuple<T,T>(e,e)));
-            }
+            BRelation<S,S> result = BRelation<S,S>::identity(this->domain());
     		for(BInteger i = BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
-    			result = thisRelation.composition(result);
+    			result = result._union(result.composition(thisRelation));
     		}
     		return result;
     	}
 
     	BRelation<S,S> closure() {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
-            BRelation<T,T> result;
-            for(const T& e : this->domain()) {
-                result = result._union(BRelation<T,T>(BTuple<T,T>(e,e)));
-            }
+            BRelation<S,S> result = BRelation<S,S>::identity(this->domain());
     		BRelation<S,S> nextResult = result.composition(thisRelation);
-    		while(!result.equal(nextResult).booleanValue()) {
-    			result = nextResult;
+    		BRelation<S,S> lastResult;
+    		do {
+    		    lastResult = result;
+    			result = result._union(nextResult);
     			nextResult = result.composition(thisRelation);
-    		}
+    		} while(!result.equal(lastResult).booleanValue());
     		return result;
     	}
 
@@ -321,10 +318,12 @@ class BRelation : public BSet<BTuple<S,T>> {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
     		BRelation<S,S> result = (BRelation<S,S>) *this;
     		BRelation<S,S> nextResult = result.composition(thisRelation);
-    		while(!result.equal(nextResult).booleanValue()) {
-    			result = nextResult;
+    		BRelation<S,S> lastResult;
+    		do {
+    		    lastResult = result;
+    			result = result._union(nextResult);
     			nextResult = result.composition(thisRelation);
-    		}
+    		} while(!result.equal(lastResult).booleanValue());
     		return result;
     	}
 
@@ -374,6 +373,23 @@ class BRelation : public BSet<BTuple<S,T>> {
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;
         }
+
+        friend bool operator !=(const BRelation<S,T>& o1, const BRelation<S,T>& o2) {
+            return o1.set != o2.set;
+        }
+
+        friend bool operator ==(const BRelation<S,T>& o1, const BRelation<S,T>& o2) {
+            return o1.set == o2.set;
+        }
+
+        BBoolean equal(const BSet<T>& other) {
+            return BBoolean(this->set == other.set);
+        }
+
+        BBoolean unequal(const BSet<T>& other) {
+            return BBoolean(this->set != other.set);
+        }
+
 
         int hashCode() const {
             return 0;

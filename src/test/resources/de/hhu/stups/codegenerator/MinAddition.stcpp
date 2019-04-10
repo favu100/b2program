@@ -1,0 +1,6 @@
+int main() {
+    Min min;
+    min.calculate();
+    cout << min.getRes();
+    return 0;
+}

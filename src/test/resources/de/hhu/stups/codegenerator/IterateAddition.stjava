@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Iterate iterate = new Iterate();
+    iterate.calculate();
+    System.out.println(iterate.getRes());
+}

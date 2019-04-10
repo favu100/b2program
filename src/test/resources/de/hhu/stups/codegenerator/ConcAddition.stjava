@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Conc conc = new Conc();
+    conc.calculate();
+    System.out.println(conc.getRes());
+}

@@ -8,6 +8,7 @@ INITIALISATION f := 1; r := 0
 
 OPERATIONS
 
-	calculate = BEGIN r := pred(f) END
+	calculate = BEGIN r := pred(f) END;
+	out <-- getRes = out := r
 
 END

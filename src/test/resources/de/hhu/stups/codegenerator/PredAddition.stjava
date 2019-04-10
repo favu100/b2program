@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Pred pred = new Pred();
+    pred.calculate();
+    System.out.println(pred.getRes());
+}

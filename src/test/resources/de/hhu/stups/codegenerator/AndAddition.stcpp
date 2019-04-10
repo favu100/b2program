@@ -1,0 +1,6 @@
+int main() {
+    And logical;
+    logical.calculate();
+    cout << logical.getRes();
+    return 0;
+}

@@ -1,21 +1,14 @@
-MACHINE
-    EmptySet
+MACHINE EmptySet
 
-VARIABLES xx, yy, switch
+VARIABLES  f
 
-INVARIANT xx : INT & yy : POW(INTEGER) & switch : BOOL
-INITIALISATION xx := 1; yy := {1,2,3} \/ {}; switch := TRUE
+INVARIANT  f : POW(INT)
+
+INITIALISATION f := {}
 
 OPERATIONS
-out <-- Inc(pp) =
-    IF xx = 1 & xx < 10 THEN
-        xx := xx + pp; out := xx
-    ELSIF xx < 2 THEN
-        xx := xx - pp; out := xx + 1
-    ELSIF xx > 3 THEN
-        xx := 1
-    ELSE
-        xx := 2
-    END
+
+	calculate = BEGIN f := {} END;
+	out <-- getRes = out := f
 
 END

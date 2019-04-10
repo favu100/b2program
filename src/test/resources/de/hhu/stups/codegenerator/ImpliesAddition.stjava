@@ -1,4 +1,5 @@
 public static void main(String[] args) {
-    Implies implies = new Implies();
-    System.out.println(implies.Inc(new BInteger(10)));
+    Implies logical = new Implies();
+    logical.calculate();
+    System.out.println(logical.getRes());
 }

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Equivalent logical = new Equivalent();
+    logical.calculate();
+    System.out.println(logical.getRes());
+}

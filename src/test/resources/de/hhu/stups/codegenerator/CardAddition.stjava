@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Card card = new Card();
+    card.calculate();
+    System.out.println(card.getRes());
+}

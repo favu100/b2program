@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    StrictSubset subset = new StrictSubset();
+    subset.calculate();
+    System.out.println(subset.getRes());
+}

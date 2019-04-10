@@ -8,6 +8,7 @@ INITIALISATION f := [1,2,3]
 
 OPERATIONS
 
-	calculate = BEGIN f := f<-4 END
+	calculate = BEGIN f := f<-4 END;
+	out <-- getRes = out := card(f)
 
 END

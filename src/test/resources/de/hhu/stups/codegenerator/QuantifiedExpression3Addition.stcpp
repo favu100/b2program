@@ -1,0 +1,6 @@
+int main() {
+    QuantifiedExpression3 expression;
+    expression.calculate();
+    cout << expression.getRes();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    Rel rel;
+    rel.calculate();
+    cout << rel.getRes();
+    return 0;
+}

@@ -8,6 +8,8 @@ INITIALISATION f := 1|->2; g := prj2({1,2,3},{2,3}); x := 0
 
 OPERATIONS
 
-	calculate = BEGIN x := g(f) END
+	calculate = BEGIN x := g(f) END;
+	out <-- getRes = out := x;
+	out <-- getPair = out := f
 
 END

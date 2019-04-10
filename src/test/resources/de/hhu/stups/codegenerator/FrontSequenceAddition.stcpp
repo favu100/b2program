@@ -1,0 +1,6 @@
+int main() {
+    FrontSequence front;
+    front.calculate();
+    cout << front.getRes();
+    return 0;
+}

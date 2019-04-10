@@ -1,0 +1,6 @@
+int main() {
+    NotStrictSubset subset;
+    subset.calculate();
+    cout << subset.getRes();
+    return 0;
+}

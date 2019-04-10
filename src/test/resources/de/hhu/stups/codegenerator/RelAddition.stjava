@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Rel rel = new Rel();
+    rel.calculate();
+    System.out.println(rel.getRes());
+}

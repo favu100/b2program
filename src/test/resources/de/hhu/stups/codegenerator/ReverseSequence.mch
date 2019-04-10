@@ -8,6 +8,7 @@ INITIALISATION f := [1,2,3]; s := []
 
 OPERATIONS
 
-	calculate = BEGIN f := [1,2]; s:= rev(f) END
+	calculate = BEGIN s:= rev(f) END;
+	out <-- getRes = out := first(s)
 
 END

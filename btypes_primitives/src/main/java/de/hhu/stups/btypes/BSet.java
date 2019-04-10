@@ -114,7 +114,7 @@ public class BSet<T> implements BObject, Set<T> {
 		if (o == null || getClass() != o.getClass())
 			return false;
 
-		BSet bObjects = (BSet) o;
+		BSet<T> bObjects = (BSet<T>) o;
 
 		if (!set.equals(bObjects.set))
 			return false;
@@ -254,6 +254,7 @@ public class BSet<T> implements BObject, Set<T> {
 		BSet<T> start = new BSet<>();
 		Queue<BSet<T>> queue = new LinkedList<>();
 		queue.add(start);
+		result = result.union(new BSet<>(start));
 		while(!queue.isEmpty()) {
 			BSet<T> currentSet = queue.remove();
 			for(T element : this) {
@@ -269,7 +270,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BSet<BSet<T>> pow1() {
-		return this.pow().difference(new BSet<>());
+		return this.pow().difference(new BSet<>(new BSet<>()));
 	}
 
 	public BSet<BSet<T>> fin() {

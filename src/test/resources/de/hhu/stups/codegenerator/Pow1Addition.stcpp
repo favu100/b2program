@@ -1,0 +1,6 @@
+int main() {
+    Pow1 pow;
+    pow.calculate();
+    cout << pow.getRes();
+    return 0;
+}

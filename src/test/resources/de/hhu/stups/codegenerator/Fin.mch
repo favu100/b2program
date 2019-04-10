@@ -8,6 +8,7 @@ INITIALISATION f := {1,2,3}; r := {}
 
 OPERATIONS
 
-	calculate = BEGIN r := FIN(f) END
+	calculate = BEGIN r := FIN(f) END;
+	out <-- getRes = out := card(r)
 
 END

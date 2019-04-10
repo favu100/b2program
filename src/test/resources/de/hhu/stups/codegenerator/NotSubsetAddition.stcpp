@@ -1,0 +1,6 @@
+int main() {
+    NotSubset subset;
+    subset.calculate();
+    cout << subset.getRes();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    Id identity;
+    identity.calculate();
+    cout << identity.getRes();
+    return 0;
+}

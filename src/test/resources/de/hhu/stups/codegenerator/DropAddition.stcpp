@@ -1,0 +1,6 @@
+int main() {
+    Drop drop;
+    drop.calculate();
+    cout << drop.getRes();
+    return 0;
+}

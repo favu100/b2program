@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    QuantifiedExpression2 expression = new QuantifiedExpression2();
+    expression.calculate();
+    System.out.println(expression.getRes());
+}

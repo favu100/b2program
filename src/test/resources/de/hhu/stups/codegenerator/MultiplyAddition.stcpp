@@ -1,0 +1,6 @@
+int main() {
+    Multiply multiply;
+    multiply.calculate();
+    cout << multiply.getRes();
+    return 0;
+}

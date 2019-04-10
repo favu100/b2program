@@ -1,5 +1,6 @@
 int main() {
     IfAndPredicates if;
-    cout << if.Inc(BInteger(10));
+    if.calculate();
+    cout << if.getRes();
     return 0;
 }

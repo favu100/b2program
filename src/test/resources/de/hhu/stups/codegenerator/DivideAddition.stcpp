@@ -1,0 +1,6 @@
+int main() {
+    Divide divide;
+    divide.calculate();
+    cout << divide.getRes();
+    return 0;
+}

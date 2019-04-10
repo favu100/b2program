@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RelationalImage relation = new RelationalImage();
+    relation.calculate();
+    System.out.println(relation.getRes());
+}

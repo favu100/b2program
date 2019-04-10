@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Union union = new Union();
+    union.calculate();
+    System.out.println(union.getRes());
+}

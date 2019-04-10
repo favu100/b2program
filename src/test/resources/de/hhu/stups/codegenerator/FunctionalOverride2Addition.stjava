@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    FunctionalOverride2 functional = new FunctionalOverride2();
+    functional.calculate();
+    System.out.println(functional.getRes());
+}

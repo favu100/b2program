@@ -1,0 +1,6 @@
+int main() {
+    ReverseSequence reverse;
+    reverse.calculate();
+    cout << reverse.getRes();
+    return 0;
+}

@@ -1,0 +1,6 @@
+int main() {
+    Override override;
+    override.calculate();
+    cout << override.getRes();
+    return 0;
+}

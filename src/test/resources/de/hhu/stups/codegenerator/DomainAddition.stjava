@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Domain domain = new Domain();
+    domain.calculate();
+    System.out.println(domain.getRes());
+}

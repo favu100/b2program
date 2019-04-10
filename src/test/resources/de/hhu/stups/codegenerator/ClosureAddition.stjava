@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Closure closure = new Closure();
+    closure.calculate();
+    System.out.println(closure.getRes());
+}

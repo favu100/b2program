@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Multiply multiply = new Multiply();
+    multiply.calculate();
+    System.out.println(multiply.getRes());
+}

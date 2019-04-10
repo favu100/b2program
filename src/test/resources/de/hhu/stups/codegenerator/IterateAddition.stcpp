@@ -1,0 +1,6 @@
+int main() {
+    Iterate iterate;
+    iterate.calculate();
+    cout << iterate.getRes();
+    return 0;
+}

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    And logical = new And();
+    logical.calculate();
+    System.out.println(logical.getRes());
+}

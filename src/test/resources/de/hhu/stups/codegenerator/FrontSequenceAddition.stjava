@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    FrontSequence sequence = new FrontSequence();
+    sequence.calculate();
+    System.out.println(sequence.getRes());
+}

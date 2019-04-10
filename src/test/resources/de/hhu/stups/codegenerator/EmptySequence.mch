@@ -8,6 +8,7 @@ INITIALISATION f := <>
 
 OPERATIONS
 
-	calculate = BEGIN f := [] END
+	calculate = BEGIN f := [] END;
+	out <-- getRes = out := f
 
 END

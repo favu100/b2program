@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    ElementOf elementOf = new ElementOf();
+    elementOf.calculate();
+    System.out.println(elementOf.getRes());
+}

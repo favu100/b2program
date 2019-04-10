@@ -1,0 +1,6 @@
+int main() {
+    Difference difference;
+    difference.calculate();
+    cout << difference.getRes();
+    return 0;
+}

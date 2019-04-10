@@ -1,0 +1,6 @@
+int main() {
+    Conc conc;
+    conc.calculate();
+    cout << conc.getRes();
+    return 0;
+}

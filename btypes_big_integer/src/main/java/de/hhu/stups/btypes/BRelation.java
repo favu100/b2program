@@ -50,7 +50,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	}
 
 	public BInteger card() {
-		return new BInteger((int) COUNT.invoke(this.set));
+		return new BInteger(COUNT.invoke(this.set).toString());
 	}
 
 	public BBoolean elementOf(BTuple<S,T> object) {
@@ -225,7 +225,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	public <R,A> BRelation<R,A> conc() {
 		BRelation<R,A> result = new BRelation<>();
 		BInteger size = this.card();
-		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			result = result.concat((BRelation<R,A>) functionCall((S) i));
 		}
 		return result;

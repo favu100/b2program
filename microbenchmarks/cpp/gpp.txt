@@ -1,0 +1,273 @@
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o And.exec And.cpp
+/usr/bin/time ./And.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o BigNumbers.exec BigNumbers.cpp
+BigNumbers.cpp:34:54: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
+            value = static_cast<BInteger >((BInteger(10000000000000000000)));
+                                                     ^
+BigNumbers.cpp:34:54: warning: implicit conversion from 'unsigned long long' to 'int' changes value from 10000000000000000000 to -1981284352 [-Wconstant-conversion]
+            value = static_cast<BInteger >((BInteger(10000000000000000000)));
+                                            ~~~~~~~~ ^~~~~~~~~~~~~~~~~~~~
+2 warnings generated.
+/usr/bin/time ./BigNumbers.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Divide.exec Divide.cpp
+/usr/bin/time ./Divide.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Equal.exec Equal.cpp
+/usr/bin/time ./Equal.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Equivalent.exec Equivalent.cpp
+/usr/bin/time ./Equivalent.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Greater.exec Greater.cpp
+/usr/bin/time ./Greater.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o GreaterEqual.exec GreaterEqual.cpp
+/usr/bin/time ./GreaterEqual.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Implies.exec Implies.cpp
+/usr/bin/time ./Implies.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o IncreasingSet.exec IncreasingSet.cpp
+/usr/bin/time ./IncreasingSet.exec
+0.034999
+        0.03 real         0.03 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Less.exec Less.cpp
+/usr/bin/time ./Less.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o LessEqual.exec LessEqual.cpp
+/usr/bin/time ./LessEqual.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Minus.exec Minus.cpp
+/usr/bin/time ./Minus.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Modulo.exec Modulo.cpp
+/usr/bin/time ./Modulo.exec
+0.000001
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Multiply.exec Multiply.cpp
+/usr/bin/time ./Multiply.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Negative.exec Negative.cpp
+/usr/bin/time ./Negative.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Or.exec Or.cpp
+/usr/bin/time ./Or.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Plus.exec Plus.cpp
+/usr/bin/time ./Plus.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeBig.exec RangeBig.cpp
+/usr/bin/time ./RangeBig.exec
+25000
+23.659359
+       23.70 real        23.56 user         0.09 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeCardBig2.exec RangeCardBig2.cpp
+/usr/bin/time ./RangeCardBig2.exec
+0.000003
+        0.02 real         0.02 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeCardBig.exec RangeCardBig.cpp
+/usr/bin/time ./RangeCardBig.exec
+234.675303
+      235.11 real       234.19 user         0.48 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeCardSmall2.exec RangeCardSmall2.cpp
+/usr/bin/time ./RangeCardSmall2.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeCardSmall.exec RangeCardSmall.cpp
+/usr/bin/time ./RangeCardSmall.exec
+9.620772
+        9.64 real         9.60 user         0.01 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeComplementBig2.exec RangeComplementBig2.cpp
+/usr/bin/time ./RangeComplementBig2.exec
+0.527524
+        0.55 real         0.55 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeComplementBig.exec RangeComplementBig.cpp
+/usr/bin/time ./RangeComplementBig.exec
+26.932742
+       27.02 real        26.90 user         0.05 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeComplementSmall2.exec RangeComplementSmall2.cpp
+/usr/bin/time ./RangeComplementSmall2.exec
+0.147279
+        0.15 real         0.14 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeComplementSmall.exec RangeComplementSmall.cpp
+/usr/bin/time ./RangeComplementSmall.exec
+3.457230
+        3.46 real         3.45 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeElementOfBig2.exec RangeElementOfBig2.cpp
+/usr/bin/time ./RangeElementOfBig2.exec
+0.000085
+        0.02 real         0.02 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeElementOfBig.exec RangeElementOfBig.cpp
+/usr/bin/time ./RangeElementOfBig.exec
+232.015162
+      232.49 real       231.54 user         0.47 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeElementOfSmall2.exec RangeElementOfSmall2.cpp
+/usr/bin/time ./RangeElementOfSmall2.exec
+0.021276
+        0.02 real         0.02 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeElementOfSmall.exec RangeElementOfSmall.cpp
+/usr/bin/time ./RangeElementOfSmall.exec
+9.739314
+        9.76 real         9.72 user         0.01 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeIntersectionBig2.exec RangeIntersectionBig2.cpp
+/usr/bin/time ./RangeIntersectionBig2.exec
+3000
+0.460223
+        0.49 real         0.48 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeIntersectionBig.exec RangeIntersectionBig.cpp
+/usr/bin/time ./RangeIntersectionBig.exec
+27.065033
+       27.13 real        27.03 user         0.05 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeIntersectionSmall2.exec RangeIntersectionSmall2.cpp
+/usr/bin/time ./RangeIntersectionSmall2.exec
+0.240838
+        0.24 real         0.24 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeIntersectionSmall.exec RangeIntersectionSmall.cpp
+/usr/bin/time ./RangeIntersectionSmall.exec
+9.874711
+        9.89 real         9.85 user         0.01 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeSmall.exec RangeSmall.cpp
+/usr/bin/time ./RangeSmall.exec
+9.679462
+        9.70 real         9.66 user         0.01 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeUnionBig2.exec RangeUnionBig2.cpp
+/usr/bin/time ./RangeUnionBig2.exec
+0.613286
+        0.64 real         0.63 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeUnionBig.exec RangeUnionBig.cpp
+/usr/bin/time ./RangeUnionBig.exec
+26.785654
+       26.86 real        26.75 user         0.05 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeUnionSmall2.exec RangeUnionSmall2.cpp
+/usr/bin/time ./RangeUnionSmall2.exec
+0.157821
+        0.16 real         0.15 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o RangeUnionSmall.exec RangeUnionSmall.cpp
+/usr/bin/time ./RangeUnionSmall.exec
+3.499894
+        3.51 real         3.49 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetCardBig2.exec SetCardBig2.cpp
+/usr/bin/time ./SetCardBig2.exec
+0.000002
+        0.02 real         0.02 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetCardBig.exec SetCardBig.cpp
+/usr/bin/time ./SetCardBig.exec
+236.285769
+      236.73 real       235.83 user         0.45 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetCardSmall2.exec SetCardSmall2.cpp
+/usr/bin/time ./SetCardSmall2.exec
+0.000003
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetCardSmall.exec SetCardSmall.cpp
+/usr/bin/time ./SetCardSmall.exec
+1.494003
+        1.50 real         1.49 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetComplementBig2.exec SetComplementBig2.cpp
+/usr/bin/time ./SetComplementBig2.exec
+0.514659
+        0.54 real         0.53 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetComplementBig.exec SetComplementBig.cpp
+/usr/bin/time ./SetComplementBig.exec
+27.039489
+       27.12 real        27.00 user         0.06 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetComplementSmall2.exec SetComplementSmall2.cpp
+/usr/bin/time ./SetComplementSmall2.exec
+0.074979
+        0.07 real         0.07 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetComplementSmall.exec SetComplementSmall.cpp
+/usr/bin/time ./SetComplementSmall.exec
+1.497379
+        1.50 real         1.49 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetElementOfBig2.exec SetElementOfBig2.cpp
+/usr/bin/time ./SetElementOfBig2.exec
+0.000084
+        0.02 real         0.02 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetElementOfBig.exec SetElementOfBig.cpp
+/usr/bin/time ./SetElementOfBig.exec
+233.713957
+      234.23 real       233.20 user         0.51 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetElementOfSmall2.exec SetElementOfSmall2.cpp
+/usr/bin/time ./SetElementOfSmall2.exec
+0.022621
+        0.02 real         0.02 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetElementOfSmall.exec SetElementOfSmall.cpp
+/usr/bin/time ./SetElementOfSmall.exec
+1.523617
+        1.53 real         1.52 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetIntersectionBig2.exec SetIntersectionBig2.cpp
+/usr/bin/time ./SetIntersectionBig2.exec
+0.497234
+        0.52 real         0.52 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetIntersectionBig.exec SetIntersectionBig.cpp
+/usr/bin/time ./SetIntersectionBig.exec
+26.943534
+       27.02 real        26.91 user         0.05 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetIntersectionSmall2.exec SetIntersectionSmall2.cpp
+/usr/bin/time ./SetIntersectionSmall2.exec
+0.117874
+        0.12 real         0.11 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetIntersectionSmall.exec SetIntersectionSmall.cpp
+/usr/bin/time ./SetIntersectionSmall.exec
+0.145145
+        0.14 real         0.14 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetOperation.exec SetOperation.cpp
+/usr/bin/time ./SetOperation.exec
+0.159674
+        0.16 real         0.15 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetUnionBig2.exec SetUnionBig2.cpp
+/usr/bin/time ./SetUnionBig2.exec
+24999
+0.586738
+        0.61 real         0.61 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetUnionBig.exec SetUnionBig.cpp
+/usr/bin/time ./SetUnionBig.exec
+24999
+27.126463
+       27.21 real        27.08 user         0.06 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetUnionSmall2.exec SetUnionSmall2.cpp
+/usr/bin/time ./SetUnionSmall2.exec
+0.134618
+        0.13 real         0.13 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SetUnionSmall.exec SetUnionSmall.cpp
+/usr/bin/time ./SetUnionSmall.exec
+1.550034
+        1.55 real         1.54 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Sieve.exec Sieve.cpp
+/usr/bin/time ./Sieve.exec
+0.026383
+1229
+        0.03 real         0.03 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o SmallNumbers.exec SmallNumbers.cpp
+/usr/bin/time ./SmallNumbers.exec
+0.000001
+        0.00 real         0.00 user         0.00 sys
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o TrafficLight.exec TrafficLight.cpp
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [TrafficLight.exec] Error 1
+rm RangeIntersectionSmall2.exec And.exec RangeCardBig.exec RangeElementOfSmall.exec Implies.exec RangeIntersectionBig.exec SetUnionBig2.exec SetCardBig.exec SetElementOfBig.exec Negative.exec RangeUnionSmall2.exec Sieve.exec SetIntersectionSmall.exec SetComplementSmall.exec SetComplementBig2.exec RangeElementOfBig2.exec RangeUnionBig.exec Modulo.exec SetUnionSmall.exec SetOperation.exec Equal.exec GreaterEqual.exec SetUnionBig.exec Equivalent.exec RangeComplementSmall2.exec RangeComplementBig.exec SetIntersectionBig2.exec RangeCardBig2.exec RangeSmall.exec RangeElementOfSmall2.exec SetElementOfBig2.exec RangeCardSmall.exec Multiply.exec SetIntersectionSmall2.exec SetComplementSmall2.exec RangeUnionBig2.exec SetElementOfSmall.exec IncreasingSet.exec RangeIntersectionSmall.exec SetComplementBig.exec Minus.exec SetIntersectionBig.exec SetCardBig2.exec Plus.exec SetUnionSmall2.exec Or.exec RangeIntersectionBig2.exec Divide.exec BigNumbers.exec RangeElementOfBig.exec RangeUnionSmall.exec SetCardSmall.exec SmallNumbers.exec SetElementOfSmall2.exec Less.exec LessEqual.exec RangeComplementBig2.exec Greater.exec RangeCardSmall2.exec RangeComplementSmall.exec RangeBig.exec SetCardSmall2.exec
+Fabians-MacBook-Air-3:cpp fabian$ make Unequal
+g++ -std=c++14 -O2 -march=native -DIMMER_NO_THREAD_SAFETY -o Unequal.exec Unequal.cpp
+/usr/bin/time ./Unequal.exec
+0.000002
+        0.00 real         0.00 user         0.00 sys

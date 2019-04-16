@@ -19,7 +19,8 @@ using namespace std;
 
 class <machine> {
 
-    <enums; separator="\n\n">
+    public:
+        <enums; separator="\n\n">
 
     private:
 
@@ -154,8 +155,8 @@ seq_enumeration(type, elements) ::= <<
 (BRelation\<BInteger, <type> >(<elements; separator=", ">))
 >>
 
-enum_call(class, identifier) ::= <<
-(<class>(<class>::<identifier>, "<identifier>"))
+enum_call(machine, class, identifier, isCurrentMachine) ::= <<
+<if(isCurrentMachine)>(<class>(<class>::<identifier>, "<identifier>"))<else>(<machine>::<class>(<machine>::<class>::<identifier>, "<identifier>"))<endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -163,6 +164,8 @@ class <name> : public BObject {
     public:
 
         typedef void value_type;
+        typedef void left_type;
+        typedef void right_type;
 
         enum <name>_type {
             <enums;separator=", \n">

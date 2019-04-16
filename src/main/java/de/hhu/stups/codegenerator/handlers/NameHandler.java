@@ -155,6 +155,22 @@ public class NameHandler {
         return globals;
     }
 
+    public List<String> getReservedMachines() {
+        return reservedMachines;
+    }
+
+    public List<String> getReservedMachinesAndFunctions() {
+        return reservedMachinesAndFunctions;
+    }
+
+    public List<String> getReservedMachinesAndFunctionsAndVariables() {
+        return reservedMachinesAndFunctionsAndVariables;
+    }
+
+    public List<String> getReservedMachinesWithIncludedMachines() {
+        return reservedMachinesWithIncludedMachines;
+    }
+
     public Map<String, List<String>> getEnumTypes() {
         return enumTypes;
     }

@@ -38,6 +38,8 @@ public class DeclarationGenerator {
 
     private final Map<String, List<String>> setToEnum;
 
+    private final Map<String, String> enumToMachine;
+
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final IterationConstructHandler iterationConstructHandler,
                                 final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final NameHandler nameHandler) {
@@ -48,6 +50,7 @@ public class DeclarationGenerator {
         this.importGenerator = importGenerator;
         this.nameHandler = nameHandler;
         this.setToEnum = new HashMap<>();
+        this.enumToMachine = new HashMap<>();
     }
 
     /*
@@ -186,9 +189,12 @@ public class DeclarationGenerator {
     * This function generates code for enumerated sets within a machine.
     */
     public List<String> generateEnumDeclarations(MachineNode node) {
-        node.getEnumeratedSets().forEach(set -> setToEnum.put(set.getSetDeclarationNode().getName(), set.getElements().stream()
-                .map(DeclarationNode::getName)
-                .collect(Collectors.toList())));
+        node.getEnumeratedSets().forEach(set -> {
+                setToEnum.put(set.getSetDeclarationNode().getName(), set.getElements().stream()
+                    .map(DeclarationNode::getName)
+                    .collect(Collectors.toList()));
+                enumToMachine.put(set.getSetDeclarationNode().getName(), node.getName());
+        });
         return node.getEnumeratedSets().stream()
                 .map(this::declareEnums)
                 .collect(Collectors.toList());
@@ -238,8 +244,18 @@ public class DeclarationGenerator {
     */
     public String callEnum(String setName, DeclarationNode enumNode) {
         ST enumST = currentGroup.getInstanceOf("enum_call");
+        TemplateHandler.add(enumST, "machine", enumToMachine.get(setName));
         TemplateHandler.add(enumST, "class", nameHandler.handleIdentifier(setName, NameHandler.IdentifierHandlingEnum.MACHINES));
         TemplateHandler.add(enumST, "identifier", nameHandler.handleEnum(enumNode.getName(), setToEnum.get(setName)));
+        TemplateHandler.add(enumST, "isCurrentMachine", enumToMachine.get(setName).equals(machineGenerator.getMachineName()));
         return enumST.render();
+    }
+
+    public Map<String, List<String>> getSetToEnum() {
+        return setToEnum;
+    }
+
+    public Map<String, String> getEnumToMachine() {
+        return enumToMachine;
     }
 }

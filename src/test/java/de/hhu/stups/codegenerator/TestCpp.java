@@ -658,7 +658,12 @@ public class TestCpp {
 
 	@Test
 	public void testCruiseControllerDeterministic() throws Exception {
-		testCpp("Cruise_finite_Deterministic");
+		testCpp("Cruise_finite1_deterministic");
+	}
+
+	@Test
+	public void testCruiseControllerDeterministicExec() throws Exception {
+		testCpp("Cruise_finite1_deterministic_exec");
 	}
 
 	@Test
@@ -667,8 +672,23 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testSchedulerDeterministic() throws Exception {
+		testCpp("scheduler_deterministic");
+	}
+
+	@Test
+	public void testSchedulerDeterministicExec() throws Exception {
+		testCpp("scheduler_deterministic_exec");
+	}
+
+	@Test
 	public void testCanBusTLC() throws Exception {
 		testCpp("CAN_BUS_tlc");
+	}
+
+	@Test
+	public void testCanBusTLCExec() throws Exception {
+		testCpp("CAN_BUS_tlc_exec");
 	}
 
 	@Ignore
@@ -691,6 +711,16 @@ public class TestCpp {
 	@Test
 	public void Train1BeebookTLC() throws Exception {
 		testCpp("Train_1_beebook_TLC");
+	}
+
+	@Test
+	public void Train1BeebookDeterministic() throws Exception {
+		testCpp("Train_1_beebook_deterministic");
+	}
+
+	@Test
+	public void Train1BeebookDeterministicExec() throws Exception {
+		testCpp("Train_1_beebook_deterministic_exec");
 	}
 
 	@Test

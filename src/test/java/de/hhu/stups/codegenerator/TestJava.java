@@ -648,7 +648,12 @@ public class TestJava {
 
 	@Test
 	public void testCruiseControllerDeterministic() throws Exception {
-		testJava("Cruise_finite_Deterministic");
+		testJava("Cruise_finite1_deterministic");
+	}
+
+	@Test
+	public void testCruiseControllerDeterministicExec() throws Exception {
+		testJava("Cruise_finite1_deterministic_exec");
 	}
 
 	@Test
@@ -657,8 +662,23 @@ public class TestJava {
 	}
 
 	@Test
+	public void testSchedulerDeterministic() throws Exception {
+		testJava("scheduler_deterministic");
+	}
+
+	@Test
+	public void testSchedulerDeterministicExec() throws Exception {
+		testJava("scheduler_deterministic_exec");
+	}
+
+	@Test
 	public void testCanBusTLC() throws Exception {
 		testJava("CAN_BUS_tlc");
+	}
+
+	@Test
+	public void testCanBusTLCExec() throws Exception {
+		testJava("CAN_BUS_tlc_exec");
 	}
 
 	@Ignore
@@ -681,6 +701,17 @@ public class TestJava {
 	@Test
 	public void Train1BeebookTLC() throws Exception {
 		testJava("Train_1_beebook_TLC");
+	}
+
+	@Test
+	public void Train1BeebookDeterministic() throws Exception {
+		testJava("Train_1_beebook_deterministic");
+	}
+
+
+	@Test
+	public void Train1BeebookDeterministicExec() throws Exception {
+		testJava("Train_1_beebook_deterministic_exec");
 	}
 
 	@Test

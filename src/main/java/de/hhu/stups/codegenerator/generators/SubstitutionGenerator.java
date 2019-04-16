@@ -406,7 +406,7 @@ public class SubstitutionGenerator {
         }
         TemplateHandler.add(functionCall, "thisName", machineGenerator.getMachineName());
         TemplateHandler.add(functionCall, "machine", nameHandler.handleIdentifier(machineName, NameHandler.IdentifierHandlingEnum.MACHINES));
-        TemplateHandler.add(functionCall, "function", operationName);
+        TemplateHandler.add(functionCall, "function", nameHandler.handleIdentifier(operationName, NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
         TemplateHandler.add(functionCall, "args", node.getArguments().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, expected))
                 .collect(Collectors.toList()));

@@ -65,7 +65,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final OperationGenerator operationGenerator;
 
-	private final DeclarationGenerator declarationGenerator;
+	private DeclarationGenerator declarationGenerator;
 
 	private final ExpressionGenerator expressionGenerator;
 
@@ -75,7 +75,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final IdentifierGenerator identifierGenerator;
 
-	private final NameHandler nameHandler;
+	private NameHandler nameHandler;
 
 	private final ParallelConstructHandler parallelConstructHandler;
 
@@ -358,6 +358,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return nameHandler;
 	}
 
+	public DeclarationGenerator getDeclarationGenerator() {
+		return declarationGenerator;
+	}
+
 	public String getMachineName() {
 		return machineNode.getName();
 	}
@@ -373,4 +377,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public boolean isInIterationConstruct() {
 		return iterationConstructDepth > 0;
 	}
+
+
 }

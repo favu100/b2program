@@ -1,7 +1,9 @@
 package de.hhu.stups.codegenerator;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
+import de.hhu.stups.codegenerator.generators.DeclarationGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
+import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -25,6 +28,10 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class CodeGenerator {
 
 	private List<Path> paths = new ArrayList<>();
+
+	private NameHandler nameHandler = null;
+
+	private DeclarationGenerator declarationGenerator = null;
 
 	/*
 	* Main function
@@ -105,7 +112,34 @@ public class CodeGenerator {
 	*/
 	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, MachineNode node, Path addition) {
 		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, addition);
+		if(nameHandler != null) {
+			Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
+			for(String key : enumTypes.keySet()) {
+				generator.getNameHandler().getEnumTypes().put(key, enumTypes.get(key));
+			}
+			generator.getNameHandler().getReservedMachines().addAll(nameHandler.getReservedMachines());
+			generator.getNameHandler().getReservedMachinesAndFunctions().addAll(nameHandler.getReservedMachinesAndFunctions());
+			generator.getNameHandler().getReservedMachinesAndFunctionsAndVariables().addAll(nameHandler.getReservedMachinesAndFunctionsAndVariables());
+			generator.getNameHandler().getReservedMachinesWithIncludedMachines().addAll(nameHandler.getReservedMachinesWithIncludedMachines());
+
+		}
+
+		if(declarationGenerator != null) {
+			Map<String, List<String>> setToEnum = declarationGenerator.getSetToEnum();
+			for(String key : setToEnum.keySet()) {
+				generator.getDeclarationGenerator().getSetToEnum().put(key, setToEnum.get(key));
+			}
+			Map<String, String> enumToMachine = declarationGenerator.getEnumToMachine();
+			for(String key : enumToMachine.keySet()) {
+				generator.getDeclarationGenerator().getEnumToMachine().put(key, enumToMachine.get(key));
+			}
+		}
+
 		String code = generator.generateMachine(node);
+
+		nameHandler = generator.getNameHandler();
+		declarationGenerator = generator.getDeclarationGenerator();
+
 
 		int lastIndexDot = path.toString().lastIndexOf(".");
 		int lastIndexSlash = path.toString().lastIndexOf("/");

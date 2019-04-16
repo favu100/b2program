@@ -79,4 +79,4 @@ Note:
 ## Performance
 
 Analysis of the Performance is described in
-[benchmarks/README.md](benchmarks/README.md).
+[benchmarks/README.md](microbenchmarks/README.md).

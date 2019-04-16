@@ -140,8 +140,8 @@ if((<predicate>).booleanValue()) {
 }
 >>
 
-enum_call(class, identifier) ::= <<
-<class>.<identifier>
+enum_call(machine, class, identifier, isCurrentMachine) ::= <<
+<if(isCurrentMachine)><class>.<identifier><else><machine>.<class>.<identifier><endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<

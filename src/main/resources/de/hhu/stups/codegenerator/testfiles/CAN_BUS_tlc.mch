@@ -27,7 +27,8 @@ VARIABLES
   T3_evaluated,
   T3_readpriority,
   T3_readvalue,
-  T3_state
+  T3_state,
+  visited
 INVARIANT
    T2v : INT &
    T3_evaluated : BOOL &
@@ -49,7 +50,8 @@ INVARIANT
    BUSwrite : NATSET +-> INT &
    /*BUSwrite : FIN(NATSET*INT) &*/
    BUSwrite /= {} &
-   0 : dom(BUSwrite)
+   0 : dom(BUSwrite) &
+   visited : POW(INTEGER)
 INITIALISATION
          T2v := 0
       ||
@@ -86,6 +88,7 @@ INITIALISATION
          BUSpriority := 0
       ||
          T2_mode := T2MODE_SENSE
+      || visited := {}
 OPERATIONS
   T1Evaluate =
     PRE
@@ -95,6 +98,8 @@ OPERATIONS
          T1_timer := 0
       ||
          T1_state := T1_CALC
+      ||
+         visited := visited \/ {1}
     END;
   T1Calculate(p) =
     PRE
@@ -104,6 +109,8 @@ OPERATIONS
          T1_writevalue := p
       ||
          T1_state := T1_SEND
+      ||
+         visited := visited \/ {2}
     END;
   T1SendResult(ppriority,pv) =
     PRE
@@ -114,6 +121,8 @@ OPERATIONS
          BUSwrite := BUSwrite <+ {ppriority |-> pv}
       ||
          T1_state := T1_WAIT
+      ||
+         visited := visited \/ {3}
     END;
   T1Wait(pt) =
     PRE
@@ -123,6 +132,8 @@ OPERATIONS
          T1_timer := pt
       ||
          T1_state := T1_EN
+      ||
+         visited := visited \/ {4}
     END;
   T2Evaluate =
     PRE
@@ -132,6 +143,8 @@ OPERATIONS
          T2_timer := 0
       ||
          T2_state := T2_RCV
+      ||
+         visited := visited \/ {5}
     END;
   T2ReadBus(ppriority,pv) =
     PRE
@@ -144,6 +157,8 @@ OPERATIONS
          T2_readpriority := ppriority
       ||
          T2_state := T2_PROC
+      ||
+         visited := visited \/ {6}
     END;
   T2Reset =
     PRE
@@ -157,6 +172,8 @@ OPERATIONS
          T2_state := T2_SEND
       ||
          T2_mode := T2MODE_TRANSMIT
+      ||
+         visited := visited \/ {7}
     END;
   T2Complete =
     PRE
@@ -167,6 +184,8 @@ OPERATIONS
          T2_state := T2_RELEASE
       ||
          T2_mode := T2MODE_SENSE
+      ||
+         visited := visited \/ {8}
     END;
   T2ReleaseBus(ppriority) =
     PRE
@@ -177,6 +196,8 @@ OPERATIONS
          BUSwrite := {ppriority} <<| BUSwrite
       ||
          T2_state := T2_WAIT
+      ||
+         visited := visited \/ {9}
     END;
 
   T2Calculate =
@@ -187,6 +208,8 @@ OPERATIONS
          T2v := T2_readvalue
       ||
          T2_state := T2_WAIT
+      ||
+         visited := visited \/ {10}
     END;
 
   T2WriteBus(ppriority,pv) =
@@ -198,6 +221,8 @@ OPERATIONS
          BUSwrite := BUSwrite <+ {ppriority |-> pv}
       ||
          T2_state := T2_WAIT
+      ||
+         visited := visited \/ {11}
     END;
 
   T2Wait(pt) =
@@ -208,6 +233,8 @@ OPERATIONS
          T2_timer := pt
       ||
          T2_state := T2_EN
+      ||
+         visited := visited \/ {12}
     END;
 
   T3Initiate =
@@ -219,6 +246,8 @@ OPERATIONS
          T3_state := T3_WRITE
       ||
          T3_enabled := FALSE
+      ||
+         visited := visited \/ {13}
     END;
 
   T3Evaluate =
@@ -228,6 +257,8 @@ OPERATIONS
       & /* @grd3 */ T3_enabled = FALSE
     THEN
          T3_state := T3_READ
+      ||
+         visited := visited \/ {14}
     END;
 
   T3writebus(ppriority,pv) =
@@ -239,6 +270,8 @@ OPERATIONS
          BUSwrite := BUSwrite <+ {ppriority |-> pv}
       ||
          T3_state := T3_WAIT
+      ||
+         visited := visited \/ {15}
     END;
 
   T3Read(ppriority,pv) =
@@ -252,6 +285,8 @@ OPERATIONS
          T3_readpriority := ppriority
       ||
          T3_state := T3_PROC
+      ||
+         visited := visited \/ {16}
     END;
 
   T3Poll =
@@ -260,6 +295,8 @@ OPERATIONS
       & /* @grd2 */ T3_state = T3_PROC
     THEN
          T3_state := T3_WAIT
+      ||
+         visited := visited \/ {17}
     END;
 
   T3ReleaseBus(ppriority) =
@@ -271,6 +308,8 @@ OPERATIONS
          BUSwrite := {ppriority} <<| BUSwrite
       ||
          T3_state := T3_RELEASE
+      ||
+         visited := visited \/ {18}
     END;
 
   T3Wait =
@@ -280,6 +319,8 @@ OPERATIONS
          T3_state := T3_READY
       ||
          T3_evaluated := TRUE
+      ||
+         visited := visited \/ {19}
     END;
 
   T3ReEnableWait =
@@ -291,6 +332,8 @@ OPERATIONS
          T3_evaluated := TRUE
       ||
          T3_enabled := TRUE
+      ||
+         visited := visited \/ {20}
     END;
 
   Update(pmax) =
@@ -309,7 +352,8 @@ OPERATIONS
          T2_timer := T2_timer - 1
       ||
          T3_evaluated := FALSE
+      ||
+         visited := visited \/ {21}
     END
 
 END
-

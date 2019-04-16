@@ -325,8 +325,6 @@ select(iterationConstruct, predicate, then) ::= <<
 <iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
-} else {
-    throw runtime_error("Invocation of the operation is not possible");
 }
 >>
 

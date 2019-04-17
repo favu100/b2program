@@ -136,5 +136,7 @@ gradle-app.setting
 
 bin
 .project
+btypes_primitives/.settings/org.eclipse.jdt.core.prefs
+btypes_big_integer/.settings/org.eclipse.jdt.core.prefs
 .settings/org.eclipse.jdt.core.prefs
 .classpath

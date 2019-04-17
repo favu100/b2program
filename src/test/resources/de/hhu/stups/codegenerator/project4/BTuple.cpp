@@ -56,7 +56,7 @@ class BTuple : public BObject {
         }
 
         int hashCode() const {
-            return 0;
+            return this->lhs.hashCode() ^ (this->rhs.hashCode() << 1);
         }
 
         friend std::ostream& operator<<(std::ostream &strm, const BTuple<S,T> &b) {

@@ -10,7 +10,7 @@ INITIALISATION counter := 0
 
 OPERATIONS
 	simulate =
-	      WHILE counter < 100000 DO
+	      WHILE counter < 200000 DO
             new(process1);
             new(process2);
             new(process3);
@@ -45,7 +45,7 @@ OPERATIONS
             del(process1);
             counter := counter + 1
          INVARIANT 1=1
-         VARIANT 100000 - counter
+         VARIANT 200000 - counter
 	     END
 
 END

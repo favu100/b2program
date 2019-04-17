@@ -14,7 +14,8 @@ ABSTRACT_VARIABLES
   OCC,
   resbl,
   resrt,
-  rsrtbl
+  rsrtbl,
+  visited
 /* PROMOTED OPERATIONS
   route_reservation,
   route_freeing,
@@ -62,6 +63,7 @@ INVARIANT
   & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
   & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
   & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
+  & visited : POW(INTEGER)
 ASSERTIONS
   /* @thm1 */ !(b).(b : OCC & b : dom(TRK) => nxt(rsrtbl(b))(b) = TRK(b));
   /* @thm2 */ ran(lst) /\ dom(TRK) \ ran(fst) = {};
@@ -80,11 +82,13 @@ INITIALISATION
          frm := {}
       ||
          LBT := {}
+      ||
+         visited := {}
 
 OPERATIONS
   route_reservation(r) =
 
-    SELECT
+    PRE
         /* @grd1 */ r /: resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
     THEN
@@ -93,19 +97,23 @@ OPERATIONS
          rsrtbl := rsrtbl \/ (rtbl |> {r})
       ||
          resbl := resbl \/ (rtbl~)[{r}]
+      ||
+         visited := visited \/ {1}
     END;
 
   route_freeing(r) =
-    SELECT
+    PRE
         /* @grd1 */ r : resrt \ ran(rsrtbl)
     THEN
          resrt := resrt \ {r}
       ||
          frm := frm \ {r}
+      ||
+         visited := visited \/ {2}
     END;
 
   FRONT_MOVE_1(r) =
-    SELECT
+    PRE
         /* @grd1 */ r : frm
       & /* @grd2 */ fst(r) : resbl \ OCC
       & /* @grd3 */ rsrtbl(fst(r)) = r
@@ -113,19 +121,23 @@ OPERATIONS
          OCC := OCC \/ {fst(r)}
       ||
          LBT := LBT \/ {fst(r)}
+      ||
+         visited := visited \/ {3}
     END;
 
   FRONT_MOVE_2(b) =
-    SELECT
+    PRE
         /* @grd1 */ b : OCC
       & /* @grd2 */ b : dom(TRK)
       & /* @grd3 */ TRK(b) /: OCC
     THEN
          OCC := OCC \/ {TRK(b)}
+      ||
+         visited := visited \/ {4}
     END;
 
   BACK_MOVE_1(b) =
-    SELECT
+    PRE
         /* @grd1 */ b : LBT
       & /* @grd2 */ b /: dom(TRK)
     THEN
@@ -136,10 +148,12 @@ OPERATIONS
          resbl := resbl \ {b}
       ||
          LBT := LBT \ {b}
+      ||
+         visited := visited \/ {5}
     END;
 
   BACK_MOVE_2(b) =
-    SELECT
+    PRE
         /* @grd1 */ b : LBT
       & /* @grd2 */ b : dom(TRK)
       & /* @grd3 */ TRK(b) : OCC
@@ -151,21 +165,27 @@ OPERATIONS
          resbl := resbl \ {b}
       ||
          LBT := LBT \ {b} \/ {TRK(b)}
+      ||
+         visited := visited \/ {6}
 
     END;
 
   point_positionning(r) =
-    SELECT
+    PRE
         /* @grd1 */ r : resrt \ frm
     THEN
          TRK := ((dom(nxt(r)) <<| TRK) |>> ran(nxt(r))) \/ nxt(r)
+      ||
+         visited := visited \/ {7}
     END;
 
   route_formation(r) =
-    SELECT
+    PRE
         /* @grd1 */ r : resrt \ frm
       & /* @grd2 */ (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK
     THEN
          frm := frm \/ {r}
+      ||
+         visited := visited \/ {8}
     END
 END

@@ -156,7 +156,7 @@ seq_enumeration(type, elements) ::= <<
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
-<if(isCurrentMachine)>(<class>(<class>::<identifier>, "<identifier>"))<else>(<machine>::<class>(<machine>::<class>::<identifier>, "<identifier>"))<endif>
+<if(isCurrentMachine)>(<class>(<class>::<identifier>))<else>(<machine>::<class>(<machine>::<class>::<identifier>))<endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -173,13 +173,10 @@ class <name> : public BObject {
 
         <name>_type value;
 
-        string name;
-
         <name>(){}
 
-        <name>(<name>_type type, string name) {
+        <name>(<name>_type type) {
             this->value = type;
-            this->name = name;
         }
 
         BBoolean equal(const <name>& o) {
@@ -198,8 +195,14 @@ class <name> : public BObject {
             return p1.value != p2.value;
         }
 
+        void operator =(const <name>& other) {
+            this->value = other.value;
+        }
+
         friend std::ostream& operator\<\<(std::ostream &strm, const <name>& e) {
-          return strm \<\< e.name;
+            switch(e.value) {
+                <enums: {enum | case <enum>: return strm \<\< "<enum>";}; separator="\n">
+            }
         }
 
         int hashCode() const {

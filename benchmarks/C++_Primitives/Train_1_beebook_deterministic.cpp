@@ -44,7 +44,7 @@ class Train_1_beebook_deterministic {
 
                 BLOCKS(){}
 
-                BLOCKS(BLOCKS_type type) {
+                BLOCKS(const BLOCKS_type& type) {
                     this->value = type;
                 }
 
@@ -116,7 +116,7 @@ class Train_1_beebook_deterministic {
 
                 ROUTES(){}
 
-                ROUTES(ROUTES_type type) {
+                ROUTES(const ROUTES_type& type) {
                     this->value = type;
                 }
 

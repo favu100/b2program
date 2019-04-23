@@ -32,7 +32,7 @@ class Cruise_finite1_deterministic {
 
                 RSset(){}
 
-                RSset(RSset_type type) {
+                RSset(const RSset_type& type) {
                     this->value = type;
                 }
 
@@ -87,7 +87,7 @@ class Cruise_finite1_deterministic {
 
                 ODset(){}
 
-                ODset(ODset_type type) {
+                ODset(const ODset_type& type) {
                     this->value = type;
                 }
 

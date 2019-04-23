@@ -34,7 +34,7 @@ class CAN_BUS_tlc {
 
                 T1state(){}
 
-                T1state(T1state_type type) {
+                T1state(const T1state_type& type) {
                     this->value = type;
                 }
 
@@ -89,7 +89,7 @@ class CAN_BUS_tlc {
 
                 T2mode(){}
 
-                T2mode(T2mode_type type) {
+                T2mode(const T2mode_type& type) {
                     this->value = type;
                 }
 
@@ -147,7 +147,7 @@ class CAN_BUS_tlc {
 
                 T2state(){}
 
-                T2state(T2state_type type) {
+                T2state(const T2state_type& type) {
                     this->value = type;
                 }
 
@@ -208,7 +208,7 @@ class CAN_BUS_tlc {
 
                 T3state(){}
 
-                T3state(T3state_type type) {
+                T3state(const T3state_type& type) {
                     this->value = type;
                 }
 

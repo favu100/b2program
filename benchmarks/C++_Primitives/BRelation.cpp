@@ -100,7 +100,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
 
         T functionCall(const S& arg) const {
-            for(BTuple<S,T> tuple : this->set) {
+            for(const BTuple<S,T>& tuple : this->set) {
                 if((tuple.projection1()).equal(arg).booleanValue()) {
                     return tuple.projection2();
                 }
@@ -110,7 +110,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BSet<S> domain() const {
     	    immer::set<S,typename BSet<S>::Hash, typename BSet<S>::HashEqual> result;
-    	    for(BTuple<S,T> tuple : this->set) {
+    	    for(const BTuple<S,T>& tuple : this->set) {
                 result = result.insert(tuple.projection1());
     	    }
             return BSet<S>(result);
@@ -118,7 +118,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BSet<T> range() const {
     	    immer::set<T,typename BSet<T>::Hash, typename BSet<T>::HashEqual> result;
-    	    for(BTuple<S,T> tuple : this->set) {
+    	    for(const BTuple<S,T>& tuple : this->set) {
                 result = result.insert(tuple.projection2());
     	    }
             return BSet<T>(result);
@@ -126,7 +126,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         BRelation<T,S> inverse() const {
             immer::set<BTuple<T,S>,typename BRelation<T,S>::Hash, typename BRelation<T,S>::HashEqual> result;
-            for(BTuple<S,T> tuple : this->set) {
+            for(const BTuple<S,T>& tuple : this->set) {
                 result = result.insert(BTuple<T,S>(tuple.projection2(), tuple.projection1()));
             }
             return BRelation<T,S>(result);
@@ -134,7 +134,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         BRelation<S,T> domainRestriction(const BSet<S>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
-            for(BTuple<S,T> tuple : this->set) {
+            for(const BTuple<S,T>& tuple : this->set) {
                 if(arg.contains(tuple.projection1())) {
                     result = result.insert(tuple);
                 }
@@ -144,7 +144,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         BRelation<S,T> domainSubstraction(const BSet<S>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
-            for(BTuple<S,T> tuple : this->set) {
+            for(const BTuple<S,T>& tuple : this->set) {
                 if(!arg.contains(tuple.projection1())) {
                     result = result.insert(tuple);
                 }
@@ -154,7 +154,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         BRelation<S,T> rangeRestriction(const BSet<T>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
-            for(BTuple<S,T> tuple : this->set) {
+            for(const BTuple<S,T>& tuple : this->set) {
                 if(arg.contains(tuple.projection2())) {
                     result = result.insert(tuple);
                 }
@@ -164,7 +164,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         BRelation<S,T> rangeSubstraction(const BSet<T>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
-            for(BTuple<S,T> tuple : this->set) {
+            for(const BTuple<S,T>& tuple : this->set) {
                 if(!arg.contains(tuple.projection2())) {
                     result = result.insert(tuple);
                 }
@@ -200,7 +200,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	BRelation<S,T> tail() const {
     		BRelation<S,T> result = BRelation<S,T>();
     		BRelation<S,T> tuplesWithoutFirst = domainSubstraction(BSet<S>((S) BInteger(1)));
-    		for(BTuple<S,T> tuple : tuplesWithoutFirst) {
+    		for(const BTuple<S,T>& tuple : tuplesWithoutFirst) {
     			result = result._union(BRelation<S,T>(BTuple<S,T>((S) ((BInteger) tuple.projection1()).pred(), tuple.projection2())));
     		}
     		return result;
@@ -208,7 +208,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,T> take(const BInteger& n) const {
     		BRelation<S,T> result = BRelation<S,T>();
-    		for(BTuple<S,T> tuple : this->set) {
+    		for(const BTuple<S,T>& tuple : this->set) {
     			if(((BInteger) tuple.projection1()).lessEqual(n).booleanValue()) {
     				result = result._union(BRelation<S,T>(tuple));
     			}
@@ -218,7 +218,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,T> drop(const BInteger& n) const {
     		BRelation<S,T> result = BRelation<S,T>();
-    		for(BTuple<S,T> tuple : this->set) {
+    		for(const BTuple<S,T>& tuple : this->set) {
     		    BInteger projection1 = (BInteger) tuple.projection1();
     			if(projection1.greater(n).booleanValue()) {
     				result = result._union(BRelation<S,T>(BTuple<S,T>((S) projection1.minus(n), tuple.projection2())));
@@ -230,7 +230,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	BRelation<S,T> concat(const BRelation<S,T>& arg) const {
     		BRelation<S,T> result = *this;
     		BInteger size = card();
-    		for(BTuple<S,T> tuple : arg.set) {
+    		for(const BTuple<S,T>& tuple : arg.set) {
     			result = result._union(BRelation<S,T>(BTuple<S,T>((S) size.plus((BInteger) tuple.projection1()), tuple.projection2())));
     		}
     		return result;
@@ -253,7 +253,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,T> prepend(const T& arg) {
     		BRelation<S,T> result = BRelation<S,T>(BTuple<S,T>((S) BInteger(1), arg));
-    		for(BTuple<S,T> tuple : this->set) {
+    		for(const BTuple<S,T>& tuple : this->set) {
     			result = result._union(BRelation<S,T>(BTuple<S,T>((S) ((BInteger) tuple.projection1()).succ(), tuple.projection2())));
     		}
     		return result;
@@ -262,8 +262,8 @@ class BRelation : public BSet<BTuple<S,T>> {
     	template<typename R>
     	BRelation<S,BTuple<T,R>> directProduct(const BRelation<S,R>& arg) {
     		BRelation<S,BTuple<T,R>> result = BRelation<S,BTuple<T,R>>();
-    		for(BTuple<S,T> e1 : this->set) {
-    			for(BTuple<S,R> e2 : arg.set) {
+    		for(const BTuple<S,T>& e1 : this->set) {
+    			for(const BTuple<S,R>& e2 : arg.set) {
     				if(e1.projection1().equal(e2.projection1()).booleanValue()) {
     					result = result._union(BRelation<S, BTuple<T, R>>(BTuple<S, BTuple<T,R>>(e1.projection1(), BTuple<T,R>(e1.projection2(), e2.projection2()))));
     				}
@@ -275,8 +275,8 @@ class BRelation : public BSet<BTuple<S,T>> {
     	template<typename R,typename A>
     	BRelation<BTuple<S,R>,BTuple<T,A>> parallelProduct(const BRelation<R,A>& arg) {
     		BRelation<BTuple<S,R>, BTuple<T,A>> result = BRelation<BTuple<S, R>, BTuple<T, A>>();
-    		for(BTuple<S,T> e1 : this->set) {
-    			for(BTuple<R,A> e2 : arg.set) {
+    		for(const BTuple<S,T>& e1 : this->set) {
+    			for(const BTuple<R,A>& e2 : arg.set) {
     				result = result._union(BRelation<BTuple<S, R>, BTuple<T, A>>(BTuple<BTuple<S, R>, BTuple<T, A>>(BTuple<S,R>(e1.projection1(), e2.projection1()), BTuple<T,A>(e1.projection2(), e2.projection2()))));
     			}
     		}
@@ -286,8 +286,8 @@ class BRelation : public BSet<BTuple<S,T>> {
     	template<typename R>
     	BRelation<S,R> composition(const BRelation<T,R>& arg) {
     		BRelation<S,R> result = BRelation<S,R>();
-    		for(BTuple<S,T> e1 : this->set) {
-    			for(BTuple <T,R> e2 : arg.set) {
+    		for(const BTuple<S,T>& e1 : this->set) {
+    			for(const BTuple <T,R>& e2 : arg.set) {
     				if(e1.projection2().equal(e2.projection1()).booleanValue()) {
     					result = result._union(BRelation<S,R>(BTuple<S,R>(e1.projection1(), e2.projection2())));
     				}
@@ -341,8 +341,8 @@ class BRelation : public BSet<BTuple<S,T>> {
 
         static BRelation<BTuple<S,T>, S> projection1(const BSet<S>& arg1, const BSet<T>& arg2) {
             BRelation<BTuple<S,T>, S> result = BRelation<BTuple<S,T>, S>();
-            for(S e1 : arg1.getSet()) {
-                for(T e2 : arg2.getSet()) {
+            for(const S& e1 : arg1.getSet()) {
+                for(const T& e2 : arg2.getSet()) {
                     result = result._union(BRelation<BTuple<S,T>, S>(BTuple<BTuple<S,T>, S>(BTuple<S,T>(e1,e2), e1)));
                 }
             }
@@ -351,8 +351,8 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	static BRelation<BTuple<S,T>, T> projection2(const BSet<S>& arg1, const BSet<T>& arg2) {
     		BRelation<BTuple<S,T>, T> result = BRelation<BTuple<S,T>, T>();
-    		for(S e1 : arg1.getSet()) {
-    			for(T e2 : arg2.getSet()) {
+    		for(const S& e1 : arg1.getSet()) {
+    			for(const T& e2 : arg2.getSet()) {
     				result = result._union(BRelation<BTuple<S,T>, T>(BTuple<BTuple<S,T>, T>(BTuple<S,T>(e1,e2), e2)));
     			}
     		}
@@ -362,7 +362,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	BRelation<S,BSet<T>> fnc() const {
     		BRelation<S,BSet<T>> result = BRelation<S, BSet<T>>();
     		BSet<S> domain = this->domain();
-    		for(S e : domain) {
+    		for(const S& e : domain) {
     			BSet<T> range = this->relationImage(BSet<S>(e));
     			result = result._union(BRelation<S, BSet<T>>(BTuple<S, BSet<T>>(e, range)));
     		}
@@ -373,9 +373,9 @@ class BRelation : public BSet<BTuple<S,T>> {
     	BRelation<S,R> rel() const {
     		BRelation<S,R> result = BRelation<S, R>();
     		BSet<S> domain = this->domain();
-    		for(S e1 : domain) {
+    		for(const S& e1 : domain) {
     			BSet<R> range = (BSet<R>) this->functionCall(e1);
-    			for(R e2 : range) {
+    			for(const R& e2 : range) {
     				result = result._union(BRelation<S, R>(BTuple<S,R>(e1,e2)));
     			}
     		}

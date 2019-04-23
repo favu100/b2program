@@ -31,7 +31,7 @@ class TrafficLight {
 
                 colors(){}
 
-                colors(colors_type type) {
+                colors(const colors_type& type) {
                     this->value = type;
                 }
 

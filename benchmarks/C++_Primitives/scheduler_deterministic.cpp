@@ -30,7 +30,7 @@ class scheduler_deterministic {
 
                 PID(){}
 
-                PID(PID_type type) {
+                PID(const PID_type& type) {
                     this->value = type;
                 }
 

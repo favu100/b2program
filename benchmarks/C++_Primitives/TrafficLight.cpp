@@ -29,13 +29,10 @@ class TrafficLight {
 
                 colors_type value;
 
-                string name;
-
                 colors(){}
 
-                colors(colors_type type, string name) {
+                colors(colors_type type) {
                     this->value = type;
-                    this->name = name;
                 }
 
                 BBoolean equal(const colors& o) {
@@ -54,8 +51,17 @@ class TrafficLight {
                     return p1.value != p2.value;
                 }
 
+                void operator =(const colors& other) {
+                    this->value = other.value;
+                }
+
                 friend std::ostream& operator<<(std::ostream &strm, const colors& e) {
-                  return strm << e.name;
+                    switch(e.value) {
+                        case red: return strm << "red";
+                        case redyellow: return strm << "redyellow";
+                        case yellow: return strm << "yellow";
+                        case green: return strm << "green";
+                    }
                 }
 
                 int hashCode() const {
@@ -67,7 +73,7 @@ class TrafficLight {
 
 
 
-        #define _colors (BSet<colors >((colors(colors::red, "red")), (colors(colors::redyellow, "redyellow")), (colors(colors::yellow, "yellow")), (colors(colors::green, "green"))))
+        #define _colors (BSet<colors >((colors(colors::red)), (colors(colors::redyellow)), (colors(colors::yellow)), (colors(colors::green))))
 
         colors tl_cars;
         colors tl_peds;
@@ -75,47 +81,46 @@ class TrafficLight {
     public:
 
         TrafficLight() {
-            tl_cars = (colors(colors::red, "red"));
-            tl_peds = (colors(colors::red, "red"));
+            tl_cars = (colors(colors::red));
+            tl_peds = (colors(colors::red));
         }
 
         void cars_ry() {
-            if((tl_cars.equal((colors(colors::red, "red")))._and(tl_peds.equal((colors(colors::red, "red"))))).booleanValue()) {
-                tl_cars = (colors(colors::redyellow, "redyellow"));
+            if((tl_cars.equal((colors(colors::red)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
+                tl_cars = (colors(colors::redyellow));
             }
         }
 
         void cars_y() {
-            if((tl_cars.equal((colors(colors::green, "green")))._and(tl_peds.equal((colors(colors::red, "red"))))).booleanValue()) {
-                tl_cars = (colors(colors::yellow, "yellow"));
+            if((tl_cars.equal((colors(colors::green)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
+                tl_cars = (colors(colors::yellow));
             }
         }
 
         void cars_g() {
-            if((tl_cars.equal((colors(colors::redyellow, "redyellow")))._and(tl_peds.equal((colors(colors::red, "red"))))).booleanValue()) {
-                tl_cars = (colors(colors::green, "green"));
+            if((tl_cars.equal((colors(colors::redyellow)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
+                tl_cars = (colors(colors::green));
             }
         }
 
         void cars_r() {
-            if((tl_cars.equal((colors(colors::yellow, "yellow")))._and(tl_peds.equal((colors(colors::red, "red"))))).booleanValue()) {
-                tl_cars = (colors(colors::red, "red"));
+            if((tl_cars.equal((colors(colors::yellow)))._and(tl_peds.equal((colors(colors::red))))).booleanValue()) {
+                tl_cars = (colors(colors::red));
             }
         }
 
         void peds_r() {
-            if((tl_peds.equal((colors(colors::green, "green")))._and(tl_cars.equal((colors(colors::red, "red"))))).booleanValue()) {
-                tl_peds = (colors(colors::red, "red"));
+            if((tl_peds.equal((colors(colors::green)))._and(tl_cars.equal((colors(colors::red))))).booleanValue()) {
+                tl_peds = (colors(colors::red));
             }
         }
 
         void peds_g() {
-            if((tl_peds.equal((colors(colors::red, "red")))._and(tl_cars.equal((colors(colors::red, "red"))))).booleanValue()) {
-                tl_peds = (colors(colors::green, "green"));
+            if((tl_peds.equal((colors(colors::red)))._and(tl_cars.equal((colors(colors::red))))).booleanValue()) {
+                tl_peds = (colors(colors::green));
             }
         }
 
 };
-
 
 #endif

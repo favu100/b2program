@@ -28,13 +28,10 @@ class scheduler_deterministic {
 
                 PID_type value;
 
-                string name;
-
                 PID(){}
 
-                PID(PID_type type, string name) {
+                PID(PID_type type) {
                     this->value = type;
-                    this->name = name;
                 }
 
                 BBoolean equal(const PID& o) {
@@ -53,8 +50,16 @@ class scheduler_deterministic {
                     return p1.value != p2.value;
                 }
 
+                void operator =(const PID& other) {
+                    this->value = other.value;
+                }
+
                 friend std::ostream& operator<<(std::ostream &strm, const PID& e) {
-                  return strm << e.name;
+                    switch(e.value) {
+                        case process1: return strm << "process1";
+                        case process2: return strm << "process2";
+                        case process3: return strm << "process3";
+                    }
                 }
 
                 int hashCode() const {
@@ -66,7 +71,7 @@ class scheduler_deterministic {
 
 
 
-        #define _PID (BSet<PID >((PID(PID::process1, "process1")), (PID(PID::process2, "process2")), (PID(PID::process3, "process3"))))
+        #define _PID (BSet<PID >((PID(PID::process1)), (PID(PID::process2)), (PID(PID::process3))))
 
         BSet<PID > active;
         BSet<PID > _ready;
@@ -80,19 +85,19 @@ class scheduler_deterministic {
             waiting = (BSet<PID >());
         }
 
-        void _new(PID pp) {
+        void _new(const PID& pp) {
             if((_PID.elementOf(pp)._and(active.notElementOf(pp))._and(_ready._union(waiting).notElementOf(pp))).booleanValue()) {
                 waiting = waiting._union((BSet<PID >(pp)));
             }
         }
 
-        void del(PID pp) {
+        void del(const PID& pp) {
             if((waiting.elementOf(pp)).booleanValue()) {
                 waiting = waiting.difference((BSet<PID >(pp)));
             }
         }
 
-        void ready(PID rr) {
+        void ready(const PID& rr) {
             if((waiting.elementOf(rr)).booleanValue()) {
                 waiting = waiting.difference((BSet<PID >(rr)));
                 if((active.equal((BSet<PID >()))).booleanValue()) {
@@ -103,7 +108,7 @@ class scheduler_deterministic {
             }
         }
 
-        void swap(PID pp) {
+        void swap(const PID& pp) {
             if((active.unequal((BSet<PID >()))).booleanValue()) {
                 waiting = waiting._union(active);
                 if((_ready.equal((BSet<PID >()))).booleanValue()) {

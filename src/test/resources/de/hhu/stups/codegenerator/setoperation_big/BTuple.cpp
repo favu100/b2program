@@ -26,19 +26,19 @@ class BTuple : public BObject {
 
         BTuple(){}
 
-        S projection1() {
+        S projection1() const {
             return lhs;
         }
 
-        T projection2() {
+        T projection2() const {
             return rhs;
         }
 
-        BBoolean equal(const BTuple& other) {
+        BBoolean equal(const BTuple& other) const {
             return lhs == other.lhs && rhs == other.rhs;
         }
 
-        BBoolean unequal(const BTuple& other) {
+        BBoolean unequal(const BTuple& other) const {
             return lhs != other.lhs || rhs != other.rhs;
         }
 

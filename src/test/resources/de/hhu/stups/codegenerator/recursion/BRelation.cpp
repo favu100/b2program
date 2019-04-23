@@ -64,7 +64,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             this->set = set.set;
         }
 
-        BInteger card() {
+        BInteger card() const {
             return BInteger(set.size());
         }
 
@@ -88,7 +88,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             }
         }
 
-        BSet<T> relationImage(const BSet<S>& domain) {
+        BSet<T> relationImage(const BSet<S>& domain) const {
             immer::set<T,typename BSet<T>::Hash, typename BSet<T>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
                 if(domain.contains(tuple.projection1())) {
@@ -99,7 +99,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         }
 
 
-        T functionCall(const S& arg) {
+        T functionCall(const S& arg) const {
             for(BTuple<S,T> tuple : this->set) {
                 if((tuple.projection1()).equal(arg).booleanValue()) {
                     return tuple.projection2();
@@ -124,7 +124,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BSet<T>(result);
     	}
 
-        BRelation<T,S> inverse() {
+        BRelation<T,S> inverse() const {
             immer::set<BTuple<T,S>,typename BRelation<T,S>::Hash, typename BRelation<T,S>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
                 result = result.insert(BTuple<T,S>(tuple.projection2(), tuple.projection1()));
@@ -132,7 +132,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BRelation<T,S>(result);
         }
 
-        BRelation<S,T> domainRestriction(const BSet<S>& arg) {
+        BRelation<S,T> domainRestriction(const BSet<S>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
                 if(arg.contains(tuple.projection1())) {
@@ -142,7 +142,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BRelation<S,T>(result);
         }
 
-        BRelation<S,T> domainSubstraction(const BSet<S>& arg) {
+        BRelation<S,T> domainSubstraction(const BSet<S>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
                 if(!arg.contains(tuple.projection1())) {
@@ -152,7 +152,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BRelation<S,T>(result);
         }
 
-        BRelation<S,T> rangeRestriction(const BSet<T>& arg) {
+        BRelation<S,T> rangeRestriction(const BSet<T>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
                 if(arg.contains(tuple.projection2())) {
@@ -162,7 +162,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BRelation<S,T>(result);
         }
 
-        BRelation<S,T> rangeSubstraction(const BSet<T>& arg) {
+        BRelation<S,T> rangeSubstraction(const BSet<T>& arg) const {
             immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
             for(BTuple<S,T> tuple : this->set) {
                 if(!arg.contains(tuple.projection2())) {
@@ -172,19 +172,19 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BRelation<S,T>(result);
         }
 
-        BRelation<S,T> override(const BRelation<S,T>& arg) {
+        BRelation<S,T> override(const BRelation<S,T>& arg) const {
             return arg._union(this->domainSubstraction(arg.domain()));
         }
 
-    	T first() {
+    	T first() const {
     		return functionCall((S) BInteger(1));
     	}
 
-    	T last() {
+    	T last() const {
     		return functionCall((S) card());
     	}
 
-    	BRelation<S,T> reverse() {
+    	BRelation<S,T> reverse() const {
     		BInteger size = card();
     		BRelation<S,T> result = BRelation<S,T>();
     		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
@@ -193,11 +193,11 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,T> front() {
+    	BRelation<S,T> front() const {
     		return domainSubstraction(BSet<S>((S) card()));
     	}
 
-    	BRelation<S,T> tail() {
+    	BRelation<S,T> tail() const {
     		BRelation<S,T> result = BRelation<S,T>();
     		BRelation<S,T> tuplesWithoutFirst = domainSubstraction(BSet<S>((S) BInteger(1)));
     		for(BTuple<S,T> tuple : tuplesWithoutFirst) {
@@ -206,7 +206,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,T> take(const BInteger& n) {
+    	BRelation<S,T> take(const BInteger& n) const {
     		BRelation<S,T> result = BRelation<S,T>();
     		for(BTuple<S,T> tuple : this->set) {
     			if(((BInteger) tuple.projection1()).lessEqual(n).booleanValue()) {
@@ -216,7 +216,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,T> drop(const BInteger& n) {
+    	BRelation<S,T> drop(const BInteger& n) const {
     		BRelation<S,T> result = BRelation<S,T>();
     		for(BTuple<S,T> tuple : this->set) {
     		    BInteger projection1 = (BInteger) tuple.projection1();
@@ -227,7 +227,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,T> concat(const BRelation<S,T>& arg) {
+    	BRelation<S,T> concat(const BRelation<S,T>& arg) const {
     		BRelation<S,T> result = *this;
     		BInteger size = card();
     		for(BTuple<S,T> tuple : arg.set) {
@@ -237,7 +237,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	template<typename R = typename T::left_type, typename A = typename T::right_type>
-    	BRelation<R,A> conc() {
+    	BRelation<R,A> conc() const {
     		BRelation<R,A> result = BRelation<R,A>();
     		BInteger size = this->card();
     		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
@@ -304,7 +304,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return result;
         }
 
-    	BRelation<S,S> iterate(BInteger n) {
+    	BRelation<S,S> iterate(const BInteger& n) const {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
             BRelation<S,S> result = BRelation<S,S>::identity(this->domain());
     		for(BInteger i = BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
@@ -313,7 +313,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,S> closure() {
+    	BRelation<S,S> closure() const {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
             BRelation<S,S> result = BRelation<S,S>::identity(this->domain());
     		BRelation<S,S> nextResult = result.composition(thisRelation);
@@ -326,7 +326,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,S> closure1() {
+    	BRelation<S,S> closure1() const {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
     		BRelation<S,S> result = (BRelation<S,S>) *this;
     		BRelation<S,S> nextResult = result.composition(thisRelation);
@@ -359,7 +359,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
-    	BRelation<S,BSet<T>> fnc() {
+    	BRelation<S,BSet<T>> fnc() const {
     		BRelation<S,BSet<T>> result = BRelation<S, BSet<T>>();
     		BSet<S> domain = this->domain();
     		for(S e : domain) {
@@ -370,7 +370,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	template<typename R = typename T::value_type>
-    	BRelation<S,R> rel() {
+    	BRelation<S,R> rel() const {
     		BRelation<S,R> result = BRelation<S, R>();
     		BSet<S> domain = this->domain();
     		for(S e1 : domain) {
@@ -394,11 +394,11 @@ class BRelation : public BSet<BTuple<S,T>> {
             return o1.set == o2.set;
         }
 
-        BBoolean equal(const BRelation<S,T>& other) {
+        BBoolean equal(const BRelation<S,T>& other) const {
             return BBoolean(this->set == other.set);
         }
 
-        BBoolean unequal(const BRelation<S,T>& other) {
+        BBoolean unequal(const BRelation<S,T>& other) const {
             return BBoolean(this->set != other.set);
         }
 

@@ -157,7 +157,7 @@ class Cruise_finite1_deterministic_exec {
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(false)),(BBoolean(true)));
                 this->_Cruise_finite1_deterministic.CCInitialisationFinished((BBoolean(true)),(BBoolean(false)));
-                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos, "RSpos")),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose, "ODclose")));
+                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos)),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose)));
                 this->_Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
                 this->_Cruise_finite1_deterministic.CruiseBecomesAllowed();
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
@@ -408,7 +408,7 @@ class Cruise_finite1_deterministic_exec {
                 this->_Cruise_finite1_deterministic.ExternalForcesBecomesExtreme();
                 this->_Cruise_finite1_deterministic.VehicleFallsBelowMaxCruiseSpeed();
                 this->_Cruise_finite1_deterministic.ExternalForcesBecomesNormal();
-                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos, "RSpos")),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose, "ODclose")));
+                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos)),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose)));
                 this->_Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
                 this->_Cruise_finite1_deterministic.CruiseBecomesAllowed();
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
@@ -808,7 +808,7 @@ class Cruise_finite1_deterministic_exec {
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(false)),(BBoolean(true)));
-                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos, "RSpos")),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose, "ODclose")));
+                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos)),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
                 this->_Cruise_finite1_deterministic.CCInitialisationFinished((BBoolean(true)),(BBoolean(false)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(false)),(BBoolean(true)));
@@ -890,7 +890,7 @@ class Cruise_finite1_deterministic_exec {
                 this->_Cruise_finite1_deterministic.ExternalForcesBecomesExtreme();
                 this->_Cruise_finite1_deterministic.VehicleFallsBelowMaxCruiseSpeed();
                 this->_Cruise_finite1_deterministic.ExternalForcesBecomesNormal();
-                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos, "RSpos")),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose, "ODclose")));
+                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseActive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos)),(Cruise_finite1_deterministic::ODset(Cruise_finite1_deterministic::ODset::ODclose)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(true)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(true)),(BBoolean(false)));
                 this->_Cruise_finite1_deterministic.SetCruiseSpeed((BBoolean(false)),(BBoolean(true)));
@@ -1350,7 +1350,7 @@ class Cruise_finite1_deterministic_exec {
                 this->_Cruise_finite1_deterministic.VehicleFallsBelowMaxCruiseSpeed();
                 this->_Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
                 this->_Cruise_finite1_deterministic.CruiseBecomesAllowed();
-                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseInactive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos, "RSpos")));
+                this->_Cruise_finite1_deterministic.ObstacleAppearsWhenCruiseInactive((Cruise_finite1_deterministic::RSset(Cruise_finite1_deterministic::RSset::RSpos)));
                 this->_Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
                 this->_Cruise_finite1_deterministic.VehicleExceedsMaxCruiseSpeed();
                 this->_Cruise_finite1_deterministic.CruiseBecomesAllowed();

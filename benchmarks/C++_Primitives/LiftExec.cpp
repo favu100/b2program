@@ -45,13 +45,6 @@ class LiftExec {
                 counter = counter.plus((BInteger(1)));
             }
         }
-
-        BInteger getCounter() {
-            BInteger out;
-            out = counter;
-            return out;
-        }
-
 };
 
 int main() {

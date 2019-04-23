@@ -176,7 +176,7 @@ class BSet : public BObject {
         }
 
      	template<typename K = typename T::value_type>
-     	BSet<K> intersect() {
+     	BSet<K> intersect() const {
      	    if(this->size() == 0) {
      	        return BSet<K>();
      	    }
@@ -226,7 +226,7 @@ class BSet : public BObject {
         }
 
      	template<typename K = typename T::value_type>
-     	BSet<K> _union() {
+     	BSet<K> _union() const {
      	    BSet<K> result;
             for(const T& s : this->set) {
                 result = result._union((BSet<K>) s);
@@ -244,19 +244,19 @@ class BSet : public BObject {
         }
 
 
-        BInteger card() {
+        BInteger card() const {
             return BInteger(set.size());
         }
 
-        BBoolean elementOf(const T& object) {
+        BBoolean elementOf(const T& object) const {
             return BBoolean(set.count(object) > 0);
         }
 
-        BBoolean notElementOf(const T& object) {
+        BBoolean notElementOf(const T& object) const {
             return BBoolean(set.count(object) == 0);
         }
 
-        BBoolean subset(const BSet<T>& set) {
+        BBoolean subset(const BSet<T>& set) const {
             for (const T& obj : this->set) {
                 if(set.set.count(obj) == 0) {
                     return BBoolean(false);
@@ -265,7 +265,7 @@ class BSet : public BObject {
             return BBoolean(true);
         }
 
-        BBoolean notSubset(const BSet<T>& set) {
+        BBoolean notSubset(const BSet<T>& set) const {
             for (const T& obj : this->set) {
                 if(set.set.count(obj) == 0) {
                     return BBoolean(true);
@@ -274,7 +274,7 @@ class BSet : public BObject {
             return BBoolean(false);
         }
 
-        BBoolean strictSubset(const BSet<T>& set) {
+        BBoolean strictSubset(const BSet<T>& set) const {
             if(this->set.size() != set.size()) {
                 for (const T& obj : this->set) {
                     if(set.set.count(obj) == 0) {
@@ -286,7 +286,7 @@ class BSet : public BObject {
             return BBoolean(false);
         }
 
-        BBoolean strictNotSubset(const BSet<T>& set) {
+        BBoolean strictNotSubset(const BSet<T>& set) const {
             if(this->set.size() != set.size()) {
                 for (const T& obj : this->set) {
                     if(set.set.count(obj) == 0) {
@@ -298,7 +298,7 @@ class BSet : public BObject {
             return BBoolean(false);
         }
 
-    	BSet<BSet<T>> pow() {
+    	BSet<BSet<T>> pow() const {
     		BSet<BSet<T>> result = BSet<BSet<T>>();
     		BSet<T> start = BSet<T>();
     		queue<BSet<T>> q = queue<BSet<T>>();
@@ -319,19 +319,19 @@ class BSet : public BObject {
     		return result;
     	}
 
-    	BSet<BSet<T>> pow1() {
+    	BSet<BSet<T>> pow1() const {
     		return this->pow().difference(BSet<BSet<T>>(BSet<T>()));
     	}
 
-    	BSet<BSet<T>> fin() {
+    	BSet<BSet<T>> fin() const {
     		return this->pow();
     	}
 
-    	BSet<BSet<T>> fin1() {
+    	BSet<BSet<T>> fin1() const {
     		return this->pow1();
     	}
 
-        BInteger min() {
+        BInteger min() const {
             BInteger result;
             int i = 0;
             for(const T& obj : this->set) {
@@ -347,7 +347,7 @@ class BSet : public BObject {
             return result;
         }
 
-        BInteger max() {
+        BInteger max() const {
             BInteger result;
             int i = 0;
             for(const T& obj : this->set) {
@@ -363,7 +363,7 @@ class BSet : public BObject {
             return result;
         }
 
-        T nondeterminism() {
+        T nondeterminism() const {
 		    int index = rand() % set.size();
 		    typename immer::set<T,Hash, HashEqual>::const_iterator it = std::next(set.begin(), index);
 		    return *it;
@@ -377,11 +377,11 @@ class BSet : public BObject {
             return o1.set == o2.set;
         }
 
-        BBoolean equal(const BSet<T>& other) {
+        BBoolean equal(const BSet<T>& other) const {
             return BBoolean(this->set == other.set);
         }
 
-        BBoolean unequal(const BSet<T>& other) {
+        BBoolean unequal(const BSet<T>& other) const {
             return BBoolean(this->set != other.set);
         }
 

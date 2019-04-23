@@ -64,27 +64,27 @@ class BInteger : public BObject {
         }
 
 
-        BBoolean lessEqual(const BInteger& o) {
+        BBoolean lessEqual(const BInteger& o) const {
             return value <= o.value;
         }
 
-        BBoolean greaterEqual(const BInteger& o) {
+        BBoolean greaterEqual(const BInteger& o) const {
             return value >= o.value;
         }
 
-        BBoolean less(const BInteger& o) {
+        BBoolean less(const BInteger& o) const {
             return value < o.value;
         }
 
-        BBoolean greater(const BInteger& o) {
+        BBoolean greater(const BInteger& o) const {
             return value > o.value;
         }
 
-        BBoolean equal(const BInteger& o) {
+        BBoolean equal(const BInteger& o) const {
             return value == o.value;
         }
 
-        BBoolean unequal(const BInteger& o) {
+        BBoolean unequal(const BInteger& o) const {
             return value != o.value;
         }
 
@@ -114,7 +114,7 @@ class BInteger : public BObject {
             return value.doubleValue();
         }*/
 
-        BInteger plus(const BInteger& o) {
+        BInteger plus(const BInteger& o) const {
             return BInteger(value + o.value);
         }
 
@@ -126,19 +126,19 @@ class BInteger : public BObject {
             return value.toString();
         }*/
 
-        BInteger minus(const BInteger& o) {
+        BInteger minus(const BInteger& o) const {
             return BInteger(value - o.value);
         }
 
-        BInteger multiply(const BInteger& o) {
+        BInteger multiply(const BInteger& o) const {
             return BInteger(value * o.value);
         }
 
-        BInteger divide(const BInteger& o) {
+        BInteger divide(const BInteger& o) const {
             return BInteger(value / o.value);
         }
 
-        BInteger modulo(const BInteger& o) {
+        BInteger modulo(const BInteger& o) const {
             return BInteger(value % o.value);
         }
 
@@ -154,11 +154,11 @@ class BInteger : public BObject {
             return new BInteger(value.xor(o.value));
         }*/
 
-        BInteger succ() {
+        BInteger succ() const {
             return BInteger(value + 1);
         }
 
-        BInteger pred() {
+        BInteger pred() const {
             return BInteger(value - 1);
         }
 
@@ -174,11 +174,11 @@ class BInteger : public BObject {
             return equals(o);
         }*/
 
-        BInteger negative() {
+        BInteger negative() const {
             return BInteger(-value);
         }
 
-        BInteger positive() {
+        BInteger positive() const {
             return *this;
         }
 

@@ -33,12 +33,6 @@ public class LiftExec {
         }
     }
 
-    public BInteger getCounter() {
-        BInteger out = null;
-        out = counter;
-        return out;
-    }
-
     public static void main(String[] args) {
         LiftExec exec = new LiftExec();
         exec.simulate();

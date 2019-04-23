@@ -84,55 +84,55 @@ class BBoolean : public BObject {
 		    return value;
 	    }
 
-        BBoolean _or(const BBoolean& other) {
+        BBoolean _or(const BBoolean& other) const {
             return value || other.value;
         }
 
-        BBoolean _or(bool other) {
+        BBoolean _or(bool other) const {
             return value || other;
         }
 
-        BBoolean _xor(const BBoolean& other) {
+        BBoolean _xor(const BBoolean& other) const {
             return value ^ other.value;
         }
 
-        BBoolean _xor(bool other) {
+        BBoolean _xor(bool other) const {
             return value ^ other;
         }
 
-        BBoolean _and(const BBoolean& other) {
+        BBoolean _and(const BBoolean& other) const {
             return value && other.value;
         }
 
-        BBoolean _and(bool other) {
+        BBoolean _and(bool other) const {
             return value && other;
         }
 
-        BBoolean _not() {
+        BBoolean _not() const {
             return !value;
         }
 
-        BBoolean implies(const BBoolean& other) {
+        BBoolean implies(const BBoolean& other) const {
             return !value || other.value;
         }
 
-        BBoolean implies(bool other) {
+        BBoolean implies(bool other) const {
             return !value || other;
         }
 
-        BBoolean equivalent(bool other) {
+        BBoolean equivalent(bool other) const {
             return value == other;
         }
 
-        BBoolean equivalent(const BBoolean& other) {
+        BBoolean equivalent(const BBoolean& other) const {
             return value == other.value;
         }
 
-        BBoolean equal(const BBoolean& other) {
+        BBoolean equal(const BBoolean& other) const {
             return value == other.value;
         }
 
-        BBoolean unequal(const BBoolean& other) {
+        BBoolean unequal(const BBoolean& other) const {
             return value != other.value;
         }
 

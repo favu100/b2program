@@ -179,11 +179,11 @@ class <name> : public BObject {
             this->value = type;
         }
 
-        BBoolean equal(const <name>& o) {
+        BBoolean equal(const <name>& o) const {
             return value == o.value;
         }
 
-        BBoolean unequal(const <name>& o) {
+        BBoolean unequal(const <name>& o) const {
             return value != o.value;
         }
 
@@ -245,7 +245,7 @@ values() ::= <<
 >>
 
 parameter(type, identifier) ::= <<
-<type> <identifier>
+const <type>& <identifier>
 >>
 
 parallel(loads, others) ::=<<

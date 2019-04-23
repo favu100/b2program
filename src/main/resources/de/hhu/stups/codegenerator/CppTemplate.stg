@@ -175,7 +175,7 @@ class <name> : public BObject {
 
         <name>(){}
 
-        <name>(<name>_type type) {
+        <name>(const <name>_type& type) {
             this->value = type;
         }
 

@@ -98,9 +98,9 @@ set_comprehension(type, identifier, isRelation, otherIterationConstructs, compre
 >>
 
 set_comprehension_predicate(set, element, predicate, isRelation) ::= <<
- if((<predicate>).booleanValue()) {
-     <set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
- }
+if((<predicate>).booleanValue()) {
+    <set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
+}
 >>
 
 lambda(type, identifier, otherIterationConstructs, lambda) ::= <<

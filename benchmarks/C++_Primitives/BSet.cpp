@@ -392,7 +392,16 @@ class BSet : public BObject {
         }
 
         int hashCode() const {
-            return 0;
+            int result = 0;
+            int i = 0;
+            for(const T& s : this->set) {
+                if(i == 0) {
+                    result = s.hashCode();
+                }
+                result = result ^ (s.hashCode() << 1);
+                ++i;
+            }
+            return result;
         }
 
         friend std::ostream& operator<<(std::ostream &strm, const BSet<T>& set) {

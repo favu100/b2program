@@ -8,13 +8,13 @@ OUTPUT ?= runtimes.txt
 
 CPPC ?= clang++
 IMMERFLAGS=-DIMMER_NO_THREAD_SAFETY
-CPPFLAGS ?= -std=c++14 -O1 -march=native $(IMMERFLAGS)
+CPPFLAGS ?= -std=c++14 -O2 -march=native $(IMMERFLAGS)
 
 %.exec : %.cpp
 	$(CPPC) $(CPPFLAGS) -o $@ $<
 
 % : %.exec
-	gtime -f "%C %E" -ao $(OUTPUT) ./$<
+	gtime -f "%C %E %M" -ao $(OUTPUT) ./$<
 
 clean:
 	rm -f *.exec

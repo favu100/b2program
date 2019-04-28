@@ -11,7 +11,7 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
-import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.BecomesElementOfSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ChoiceSubstitutionNode;
@@ -21,7 +21,6 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
-import de.prob.parser.ast.types.BoolType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -193,38 +192,6 @@ public class SubstitutionGenerator {
             otherChoices.add(choice.render());
         }
         return otherChoices;
-    }
-
-    public String generateAnyParameters(List<DeclarationNode> parameters, DeclarationNode parameter,
-                                        PredicateNode predicateNode, SubstitutionNode substitutionNode, int index, int length) {
-        ST substitution = currentGroup.getInstanceOf("any");
-        TemplateHandler.add(substitution, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(substitution, "type", typeGenerator.generate(parameter.getType()));
-        TemplateHandler.add(substitution, "identifier", nameHandler.handle(parameter.getName()));
-        String set;
-        if(!(parameter.getType() instanceof BoolType)) {
-            set = nameHandler.handleIdentifier(parameter.getType().toString(), NameHandler.IdentifierHandlingEnum.VARIABLES);
-        } else {
-            set = expressionGenerator.generateBooleans();
-        }
-        TemplateHandler.add(substitution, "set", set);
-        TemplateHandler.add(substitution, "isBool", parameter.getType() instanceof BoolType);
-        TemplateHandler.add(substitution, "index", index);
-        String body;
-        if(index == length - 1) {
-            body = generateAnyBody(predicateNode, substitutionNode);
-        } else {
-            body = generateAnyParameters(parameters, parameters.get(index + 1), predicateNode, substitutionNode, index + 1, length);
-        }
-        TemplateHandler.add(substitution, "body", body);
-        return substitution.render();
-    }
-
-    private String generateAnyBody(PredicateNode predicateNode, SubstitutionNode substitutionNode) {
-        ST body = currentGroup.getInstanceOf("any_body");
-        TemplateHandler.add(body, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
-        TemplateHandler.add(body, "body", machineGenerator.visitSubstitutionNode(substitutionNode, null));
-        return body.render();
     }
 
     /*
@@ -493,6 +460,11 @@ public class SubstitutionGenerator {
         TemplateHandler.add(declaration, "type", typeGenerator.generate(identifier.getType()));
         TemplateHandler.add(declaration, "identifier", identifierGenerator.generateVarDeclaration(identifier.getName(), true));
         return declaration.render();
+    }
+
+    public String visitAnySubstitutionNode(AnySubstitutionNode node) {
+        iterationConstructHandler.inspectSubstitution(node).getIterationsMapCode().values();
+        return iterationConstructHandler.getIterationsMapCode().get(node.toString());
     }
 
     public int getCurrentLocalScope() {

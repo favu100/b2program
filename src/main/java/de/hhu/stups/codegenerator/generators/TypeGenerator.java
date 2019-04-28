@@ -19,12 +19,9 @@ public class TypeGenerator {
 
     private final NameHandler nameHandler;
 
-    private final boolean useBigInteger;
-
-    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
+    public TypeGenerator(final STGroup group, final NameHandler nameHandler) {
         this.group = group;
         this.nameHandler = nameHandler;
-        this.useBigInteger = useBigInteger;
     }
 
     /*

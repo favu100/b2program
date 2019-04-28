@@ -29,6 +29,7 @@ import de.prob.parser.ast.nodes.substitution.BecomesSuchThatSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ChoiceSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ConditionSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.IfOrSelectSubstitutionsNode;
+import de.prob.parser.ast.nodes.substitution.LetSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
@@ -60,6 +61,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final QuantifiedExpressionGenerator quantifiedExpressionGenerator;
 
+    private final AnySubstitutionGenerator anySubstitutionGenerator;
+
     private final ImportGenerator importGenerator;
 
     private final HashMap<String, String> iterationsMapCode;
@@ -76,6 +79,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
@@ -170,7 +174,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     @Override
-    public Void visitVarSubstitutionNode(VarSubstitutionNode varSubstitutionNode, Void aVoid) {
+    public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
         return null;
     }
 
@@ -198,41 +202,50 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     @Override
-    public Void visitSkipSubstitutionNode(SkipSubstitutionNode skipSubstitutionNode, Void aVoid) {
+    public Void visitSkipSubstitutionNode(SkipSubstitutionNode node, Void expected) {
         return null;
     }
 
     @Override
-    public Void visitConditionSubstitutionNode(ConditionSubstitutionNode conditionSubstitutionNode, Void aVoid) {
+    public Void visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
         return null;
     }
 
     @Override
-    public Void visitAnySubstitution(AnySubstitutionNode anySubstitutionNode, Void aVoid) {
+    public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
+        iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(node));
+        iterationConstructHandler.incrementIterationConstructCounter();
         return null;
     }
 
     @Override
-    public Void visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node, Void aVoid) {
+    public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
+        iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody())));
+        iterationConstructHandler.incrementIterationConstructCounter();
+        return null;
+    }
+
+    @Override
+    public Void visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node, Void expected) {
         node.getIdentifiers().forEach(id -> visitExprNode(id, null));
         visitExprNode(node.getExpression(), null);
         return null;
     }
 
     @Override
-    public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void aVoid) {
+    public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
         node.getIdentifiers().forEach(id -> visitExprNode(id, null));
         visitPredicateNode(node.getPredicate(), null);
         return null;
     }
 
     @Override
-    public Void visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode operationCallSubstitutionNode, Void aVoid) {
+    public Void visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode operationCallSubstitutionNode, Void expected) {
         return null;
     }
 
     @Override
-    public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode choiceSubstitutionNode, Void aVoid) {
+    public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode choiceSubstitutionNode, Void expected) {
         return null;
     }
 
@@ -253,6 +266,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         iterationsMapCode.put(node, code);
     }
 
+    private void addIteration(String node, String code) {
+        iterationsMapCode.put(node, code);
+    }
+
     public HashMap<String, String> getIterationsMapCode() {
         return iterationsMapCode;
     }
@@ -268,8 +285,19 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         iterationConstructHandler.setIterationConstructGenerator(this);
     }
 
+    public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations) {
+        this.addBoundedVariables(declarations);
+        iterationPredicateGenerator.checkPredicate(predicate, declarations);
+        iterationConstructHandler.setIterationConstructGenerator(this);
+    }
+
     public void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
         this.addIteration(node, identifier, result);
+        this.clearBoundedVariables(declarations);
+    }
+
+    public void addGeneration(String node, List<DeclarationNode> declarations, String result) {
+        this.addIteration(node, result);
         this.clearBoundedVariables(declarations);
     }
 }

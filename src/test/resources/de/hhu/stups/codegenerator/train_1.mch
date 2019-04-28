@@ -78,7 +78,7 @@ OPERATIONS
 
     ANY r
     WHERE
-        /* @grd1 */ r /: resrt
+        /* @grd1 */ r : ROUTES \ resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN

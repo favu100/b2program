@@ -24,6 +24,7 @@ import de.prob.parser.ast.nodes.substitution.BecomesSuchThatSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ChoiceSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ConditionSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.IfOrSelectSubstitutionsNode;
+import de.prob.parser.ast.nodes.substitution.LetSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
@@ -233,6 +234,16 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         ignoredVariables.addAll(locals);
         visitPredicateNode(node.getWherePredicate(), expected);
         visitSubstitutionNode(node.getThenSubstitution(), expected);
+        ignoredVariables.removeAll(locals);
+        return null;
+    }
+
+    @Override
+    public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
+        List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
+        visitPredicateNode(node.getPredicate(), expected);
+        visitSubstitutionNode(node.getBody(), expected);
         ignoredVariables.removeAll(locals);
         return null;
     }

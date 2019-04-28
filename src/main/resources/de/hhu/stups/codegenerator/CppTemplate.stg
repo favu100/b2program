@@ -370,11 +370,9 @@ else {
 }
 >>
 
-any(type, identifier, set, body, index) ::= <<
-for(int _<index>_i = 0; _<index>_i \< (<set>.size()); _<index>_i++) {
-    <type> <identifier> = *(std::next(<set>.begin(), _<index>_i));
-    <body>
-}
+any(otherIterationConstructs, body) ::= <<
+<otherIterationConstructs>
+<body>
 >>
 
 any_body(predicate, body) ::= <<

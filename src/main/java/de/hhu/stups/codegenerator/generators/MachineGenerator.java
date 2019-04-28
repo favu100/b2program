@@ -32,6 +32,7 @@ import de.prob.parser.ast.nodes.substitution.BecomesSuchThatSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ChoiceSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ConditionSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.IfOrSelectSubstitutionsNode;
+import de.prob.parser.ast.nodes.substitution.LetSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
@@ -99,7 +100,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.nameHandler = new NameHandler(currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler);
-		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, useBigInteger);
+		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
@@ -281,7 +282,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	@Override
 	public String visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-		return substitutionGenerator.generateAnyParameters(node.getParameters(), node.getParameters().get(0), node.getWherePredicate(), node.getThenSubstitution(), 0, node.getParameters().size());
+		return substitutionGenerator.visitAnySubstitutionNode(node);
+	}
+
+	@Override
+	public String visitLetSubstitution(LetSubstitutionNode node, Void expected) {
+		return substitutionGenerator.visitAnySubstitutionNode(new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody()));
 	}
 
 	@Override

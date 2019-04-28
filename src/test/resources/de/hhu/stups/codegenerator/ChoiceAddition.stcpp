@@ -1,6 +1,5 @@
 int main() {
     Choice choice;
     choice.calculate(BInteger(3));
-    cout << choice.getRes();
     return 0;
 }

@@ -6,6 +6,7 @@ import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public class IterationConstructHandler {
 
     public IterationConstructGenerator inspectPredicate(IterationConstructGenerator iterationConstructGenerator, PredicateNode predicate) {
         iterationConstructGenerator.visitPredicateNode(predicate, null);
+        iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
@@ -65,6 +67,9 @@ public class IterationConstructHandler {
 
     public IterationConstructGenerator inspectPredicates(IterationConstructGenerator iterationConstructGenerator, List<PredicateNode> predicates) {
         predicates.forEach(predicate -> iterationConstructGenerator.visitPredicateNode(predicate, null));
+        if(currentIterationConstructGenerator != null) {
+            iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+        }
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
@@ -75,12 +80,29 @@ public class IterationConstructHandler {
 
     public IterationConstructGenerator inspectExpression(IterationConstructGenerator iterationConstructGenerator, ExprNode expression) {
         iterationConstructGenerator.visitExprNode(expression, null);
+        if(currentIterationConstructGenerator != null) {
+            iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+        }
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
 
     public IterationConstructGenerator inspectExpression(ExprNode expression) {
         return inspectExpression(new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator), expression);
+    }
+
+
+    public IterationConstructGenerator inspectSubstitution(IterationConstructGenerator iterationConstructGenerator, SubstitutionNode substitution) {
+        iterationConstructGenerator.visitSubstitutionNode(substitution, null);
+        if(currentIterationConstructGenerator != null) {
+            iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+        }
+        this.setIterationConstructGenerator(iterationConstructGenerator);
+        return iterationConstructGenerator;
+    }
+
+    public IterationConstructGenerator inspectSubstitution(SubstitutionNode substitution) {
+        return inspectSubstitution(new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator), substitution);
     }
 
 

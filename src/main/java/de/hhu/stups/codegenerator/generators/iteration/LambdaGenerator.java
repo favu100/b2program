@@ -86,7 +86,6 @@ public class LambdaGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
 
-
         String innerBody = generateLambdaExpression(predicate, leftType, rightType, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName());
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 

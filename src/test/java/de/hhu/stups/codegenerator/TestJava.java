@@ -1006,6 +1006,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testLetSubstitution() throws Exception {
+		testJava("LetSubstitution", "LetSubstitution", "LetSubstitutionAddition.stjava", true);
+	}
+
+	@Test
 	public void testIfExpression() throws Exception {
 		testJava("IfExpression", "IfExpression", "IfExpressionAddition.stjava", true);
 	}

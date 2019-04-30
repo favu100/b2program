@@ -57,11 +57,12 @@ public class AnySubstitutionGenerator {
         return result;
     }
 
-    private String generateAnyBody(PredicateNode predicateNode, SubstitutionNode substitutionNode) {
+    private String generateAnyBody(PredicateNode predicateNode, SubstitutionNode substitutionNode, boolean inLoop) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "body", machineGenerator.visitSubstitutionNode(substitutionNode, null));
+        TemplateHandler.add(template, "inLoop", inLoop);
         return template.render();
     }
 
@@ -76,7 +77,9 @@ public class AnySubstitutionGenerator {
     private void generateBody(ST template, PredicateNode predicate, SubstitutionNode substitution, List<DeclarationNode> declarations) {
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateAnyBody(predicate, substitution);
+        boolean inLoop = iterationPredicateGenerator.isInLoop();
+        iterationPredicateGenerator.reset();
+        String innerBody = generateAnyBody(predicate, substitution, inLoop);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

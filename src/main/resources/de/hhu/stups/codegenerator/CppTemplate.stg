@@ -387,10 +387,10 @@ any(otherIterationConstructs, body) ::= <<
 <body>
 >>
 
-any_body(predicate, body) ::= <<
+any_body(predicate, body, inLoop) ::= <<
 if(<predicate>.booleanValue()) {
     <body>
-    break;
+    <if(inLoop)>break;<endif>
 }
 >>
 

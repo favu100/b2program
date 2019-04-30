@@ -1067,6 +1067,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testLetSubstitution() throws Exception {
+		testCpp("LetSubstitution", "LetSubstitution", "LetSubstitutionAddition.stcpp", true);
+	}
+
+	@Test
 	public void testIfExpression() throws Exception {
 		testCpp("IfExpression", "IfExpression", "IfExpressionAddition.stcpp", true);
 	}

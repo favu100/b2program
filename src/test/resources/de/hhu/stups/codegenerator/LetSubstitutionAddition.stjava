@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    LetSubstitution let = new LetSubstitution();
+    let.calculate();
+    System.out.println(let.getRes());
+}

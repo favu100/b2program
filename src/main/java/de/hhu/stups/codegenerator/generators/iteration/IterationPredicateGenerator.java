@@ -26,10 +26,13 @@ public class IterationPredicateGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private boolean inLoop;
+
     public IterationPredicateGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
+        this.inLoop = false;
     }
 
     public ST generateEnumeration(ST template, DeclarationNode declarationNode) {
@@ -110,12 +113,16 @@ public class IterationPredicateGenerator {
             }
             if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
                 enumerationTemplate = getElementOfTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                inLoop = true;
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
                 enumerationTemplate = getEqualTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                inLoop = false;
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION) {
                 enumerationTemplate = getSubsetTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                inLoop = true;
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
                 enumerationTemplate = getSubsetNeqTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                inLoop = true;
             } else {
                 throw new RuntimeException("Other operations within predicate node not supported yet");
             }
@@ -139,4 +146,11 @@ public class IterationPredicateGenerator {
         return lastEnumeration;
     }
 
+    public boolean isInLoop() {
+        return inLoop;
+    }
+
+    public void reset() {
+        inLoop = false;
+    }
 }

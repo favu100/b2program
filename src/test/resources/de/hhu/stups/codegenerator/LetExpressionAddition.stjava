@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    LetExpression let = new LetExpression();
+    let.calculate();
+    System.out.println(let.getRes());
+}

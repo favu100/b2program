@@ -1,5 +1,5 @@
 int main() {
-    IfAndPredicates iff;
+    IfPredicate iff;
     iff.calculate();
     cout << iff.getRes();
     return 0;

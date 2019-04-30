@@ -1,5 +1,5 @@
 public static void main(String[] args) {
-    IfAndPredicates iff = new IfAndPredicates();
+    IfExpression iff = new IfExpression();
     iff.calculate();
     System.out.println(iff.getRes());
 }

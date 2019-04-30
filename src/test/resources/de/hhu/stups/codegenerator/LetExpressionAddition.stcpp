@@ -1,0 +1,6 @@
+int main() {
+    LetExpression let;
+    let.calculate();
+    cout << let.getRes();
+    return 0;
+}

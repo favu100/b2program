@@ -995,6 +995,27 @@ public class TestJava {
 	}
 
 	@Test
+	public void testLetExpression() throws Exception {
+		testJava("LetExpression", "LetExpression", "LetExpressionAddition.stjava", true);
+	}
+
+
+	@Test
+	public void testLetPredicate() throws Exception {
+		testJava("LetPredicate", "LetPredicate", "LetPredicateAddition.stjava", true);
+	}
+
+	@Test
+	public void testIfExpression() throws Exception {
+		testJava("IfExpression", "IfExpression", "IfExpressionAddition.stjava", true);
+	}
+
+	@Test
+	public void testIfPredicate() throws Exception {
+		testJava("IfPredicate", "IfPredicate", "IfPredicateAddition.stjava", true);
+	}
+
+	@Test
 	public void testLambda() throws Exception {
 		testJava("Lambda", "Lambda", "LambdaAddition.stjava", true);
 	}

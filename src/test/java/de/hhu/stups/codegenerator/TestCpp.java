@@ -1056,6 +1056,28 @@ public class TestCpp {
 
 
 	@Test
+	public void testLetExpression() throws Exception {
+		testCpp("LetExpression", "LetExpression", "LetExpressionAddition.stcpp", true);
+	}
+
+
+	@Test
+	public void testLetPredicate() throws Exception {
+		testCpp("LetPredicate", "LetPredicate", "LetPredicateAddition.stcpp", true);
+	}
+
+	@Test
+	public void testIfExpression() throws Exception {
+		testCpp("IfExpression", "IfExpression", "IfExpressionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testIfPredicate() throws Exception {
+		testCpp("IfPredicate", "IfPredicate", "IfPredicateAddition.stcpp", true);
+	}
+
+
+	@Test
 	public void testGeneralizedUnion() throws Exception {
 		testCpp("GeneralizedUnion");
 	}

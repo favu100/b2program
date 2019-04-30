@@ -4,7 +4,9 @@ import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.IfExpressionNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
+import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -14,6 +16,8 @@ import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
 import de.prob.parser.ast.nodes.ltl.LTLPrefixOperatorNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
+import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
+import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -199,6 +203,22 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
     }
 
     @Override
+    public Void visitIfExpressionNode(IfExpressionNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), expected);
+        visitExprNode(node.getThenExpression(), expected);
+        visitExprNode(node.getElseExpression(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitIfPredicateNode(IfPredicateNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), expected);
+        visitPredicateNode(node.getThenPredicate(), expected);
+        visitPredicateNode(node.getElsePredicate(), expected);
+        return null;
+    }
+
+    @Override
     public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expected) {
         this.onLeftHandSide = true;
         node.getLeftSide().forEach(lhs -> visitExprNode(lhs, expected));
@@ -244,6 +264,26 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         ignoredVariables.addAll(locals);
         visitPredicateNode(node.getPredicate(), expected);
         visitSubstitutionNode(node.getBody(), expected);
+        ignoredVariables.removeAll(locals);
+        return null;
+    }
+
+    @Override
+    public Void visitLetExpressionNode(LetExpressionNode node, Void expected) {
+        List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
+        visitPredicateNode(node.getPredicate(), expected);
+        visitExprNode(node.getExpression(), expected);
+        ignoredVariables.removeAll(locals);
+        return null;
+    }
+
+    @Override
+    public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
+        List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
+        visitPredicateNode(node.getWherePredicate(), expected);
+        visitPredicateNode(node.getPredicate(), expected);
         ignoredVariables.removeAll(locals);
         return null;
     }

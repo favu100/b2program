@@ -8,7 +8,9 @@ import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.IfExpressionNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
+import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -18,6 +20,8 @@ import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
 import de.prob.parser.ast.nodes.ltl.LTLPrefixOperatorNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
+import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
+import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
@@ -63,6 +67,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final AnySubstitutionGenerator anySubstitutionGenerator;
 
+    private final LetExpressionPredicateGenerator letExpressionPredicateGenerator;
+
     private final ImportGenerator importGenerator;
 
     private final HashMap<String, String> iterationsMapCode;
@@ -80,6 +86,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.letExpressionPredicateGenerator = new LetExpressionPredicateGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
@@ -195,6 +202,16 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     @Override
+    public Void visitIfExpressionNode(IfExpressionNode node, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitIfPredicateNode(IfPredicateNode node, Void expected) {
+        return null;
+    }
+
+    @Override
     public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void aVoid) {
         node.getLeftSide().forEach(lhs -> visitExprNode(lhs, null));
         node.getRightSide().forEach(rhs -> visitExprNode(rhs, null));
@@ -221,6 +238,20 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     @Override
     public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody())));
+        iterationConstructHandler.incrementIterationConstructCounter();
+        return null;
+    }
+
+    @Override
+    public Void visitLetExpressionNode(LetExpressionNode node, Void expected) {
+        iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetExpression(node));
+        iterationConstructHandler.incrementIterationConstructCounter();
+        return null;
+    }
+
+    @Override
+    public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
+        iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetPredicate(node));
         iterationConstructHandler.incrementIterationConstructCounter();
         return null;
     }

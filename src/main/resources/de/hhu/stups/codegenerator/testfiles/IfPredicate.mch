@@ -1,0 +1,13 @@
+MACHINE IfPredicate
+
+VARIABLES  x,y
+
+INVARIANT  x : INTEGER & y : BOOL
+
+INITIALISATION x := 1 || y := TRUE
+
+OPERATIONS
+
+	calculate = IF IF x > 0 THEN 1=1 ELSE 1=2 END THEN y := TRUE END
+
+END

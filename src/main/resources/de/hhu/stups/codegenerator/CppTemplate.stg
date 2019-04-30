@@ -98,6 +98,14 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
+let_expression_predicate(body) ::= <<
+<body>
+>>
+
+let_expression_predicate_body(type, identifier, val) ::= <<
+<type> <identifier> = <val>;
+>>
+
 set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
 <type> <identifier> = <type>();
 <otherIterationConstructs>
@@ -145,6 +153,10 @@ quantified_expression_evaluation(predicate, identifier, operation, expression) :
 if((<predicate>).booleanValue()) {
     <identifier> = <identifier>.<operation>(<expression>);
 }
+>>
+
+if_expression_predicate(predicate, ifThen, ifElse) ::= <<
+<predicate>.booleanValue() ? <ifThen> : <ifElse>
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<

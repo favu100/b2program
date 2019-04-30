@@ -91,6 +91,14 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
+let_expression_predicate(body) ::= <<
+<body>
+>>
+
+let_expression_predicate_body(type, identifier, val) ::= <<
+<type> <identifier> = <val>;
+>>
+
 set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
 <type> <identifier> = new <if(isRelation)>BRelation<else>BSet<endif>\<>();
 <otherIterationConstructs>
@@ -138,6 +146,10 @@ quantified_expression_evaluation(predicate, identifier, operation, expression) :
 if((<predicate>).booleanValue()) {
     <identifier> = <identifier>.<operation>(<expression>);
 }
+>>
+
+if_expression_predicate(predicate, ifThen, ifElse) ::= <<
+<predicate>.booleanValue() ? <ifThen> : <ifElse>
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
@@ -329,6 +341,7 @@ if((<predicate>).booleanValue()) {
     break;
 }
 >>
+
 
 while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
 <iterationConstruct1; separator="\n">

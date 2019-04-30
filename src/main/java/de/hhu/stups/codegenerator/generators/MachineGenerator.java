@@ -12,7 +12,9 @@ import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.IfExpressionNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
+import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -22,6 +24,8 @@ import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
 import de.prob.parser.ast.nodes.ltl.LTLPrefixOperatorNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
+import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
+import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -228,7 +232,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	@Override
-	public String visitLambdaNode(LambdaNode node, Void aVoid) {
+	public String visitLambdaNode(LambdaNode node, Void expected) {
 		return expressionGenerator.visitLambdaNode(node);
 	}
 
@@ -263,6 +267,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	@Override
+	public String visitIfExpressionNode(IfExpressionNode node, Void expected) {
+		return expressionGenerator.visitIfExpressionNode(node);
+	}
+
+	@Override
+	public String visitIfPredicateNode(IfPredicateNode node, Void expected) {
+		return predicateGenerator.visitIfPredicateNode(node);
+	}
+
+	@Override
 	public String visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
 		return substitutionGenerator.visitChoiceSubstitutionNode(node, expected);
 	}
@@ -288,6 +302,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	@Override
 	public String visitLetSubstitution(LetSubstitutionNode node, Void expected) {
 		return substitutionGenerator.visitAnySubstitutionNode(new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody()));
+	}
+
+	@Override
+	public String visitLetExpressionNode(LetExpressionNode node, Void aVoid) {
+		return expressionGenerator.visitLetExpressionNode(node);
+	}
+
+	@Override
+	public String visitLetPredicateNode(LetPredicateNode node, Void expected) {
+		return predicateGenerator.visitLetPredicateNode(node);
 	}
 
 	@Override

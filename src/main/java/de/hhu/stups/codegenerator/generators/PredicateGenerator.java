@@ -4,6 +4,8 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
+import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -203,6 +205,18 @@ public class PredicateGenerator {
         ST val = currentGroup.getInstanceOf("boolean_val");
         TemplateHandler.add(val, "val", operator == PredicateOperatorNode.PredicateOperator.TRUE);
         return val.render();
+    }
+
+    public String visitIfPredicateNode(IfPredicateNode node) {
+        ST template = currentGroup.getInstanceOf("if_expression_predicate");
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), null));
+        TemplateHandler.add(template, "ifThen", machineGenerator.visitPredicateNode(node.getThenPredicate(), null));
+        TemplateHandler.add(template, "ifElse", machineGenerator.visitPredicateNode(node.getElsePredicate(), null));
+        return template.render();
+    }
+
+    public String visitLetPredicateNode(LetPredicateNode node) {
+        return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

@@ -8,7 +8,9 @@ import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.IfExpressionNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
+import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -190,6 +192,10 @@ public class ExpressionGenerator {
             return visitSetComprehensionNode((SetComprehensionNode) node);
         } else if(node instanceof LambdaNode) {
             return visitLambdaNode((LambdaNode) node);
+        } else if(node instanceof IfExpressionNode) {
+            return visitIfExpressionNode((IfExpressionNode) node);
+        } else if(node instanceof LetExpressionNode) {
+            return visitLetExpressionNode((LetExpressionNode) node);
         }
         throw new RuntimeException("Given node is not implemented: " + node.getClass());
     }
@@ -596,6 +602,18 @@ public class ExpressionGenerator {
     }
 
     public String visitLambdaNode(LambdaNode node) {
+        return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
+    }
+
+    public String visitIfExpressionNode(IfExpressionNode node) {
+        ST template = currentGroup.getInstanceOf("if_expression_predicate");
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), null));
+        TemplateHandler.add(template, "ifThen", machineGenerator.visitExprNode(node.getThenExpression(), null));
+        TemplateHandler.add(template, "ifElse", machineGenerator.visitExprNode(node.getElseExpression(), null));
+        return template.render();
+    }
+
+    public String visitLetExpressionNode(LetExpressionNode node) {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 

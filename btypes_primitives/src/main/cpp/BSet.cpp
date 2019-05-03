@@ -248,6 +248,10 @@ class BSet : public BObject {
             return BInteger(set.size());
         }
 
+        BInteger size() const {
+            return BInteger(set.size());
+        }
+
         BBoolean elementOf(const T& object) const {
             return BBoolean(set.count(object) > 0);
         }

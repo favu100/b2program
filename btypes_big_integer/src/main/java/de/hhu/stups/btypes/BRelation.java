@@ -53,6 +53,10 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return new BInteger(COUNT.invoke(this.set).toString());
 	}
 
+	public BInteger _size() {
+		return new BInteger(COUNT.invoke(this.set).toString());
+	}
+
 	public BBoolean elementOf(BTuple<S,T> object) {
 		return new BBoolean(this.set.contains(object));
 	}

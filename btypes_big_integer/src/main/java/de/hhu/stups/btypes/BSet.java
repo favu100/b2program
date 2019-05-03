@@ -196,6 +196,10 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BInteger(COUNT.invoke(this.set).toString());
 	}
 
+	public BInteger _size() {
+		return new BInteger(COUNT.invoke(this.set).toString());
+	}
+
 	public BBoolean elementOf(T object) {
 		return new BBoolean(this.set.contains(object));
 	}

@@ -378,7 +378,7 @@ public class ExpressionGenerator {
                 operatorName = "permutate";
                 break;
             case SIZE:
-                operatorName = "card";
+                operatorName = "size";
                 break;
             case REV:
                 operatorName = "reverse";

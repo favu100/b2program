@@ -68,6 +68,10 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BInteger(set.size());
         }
 
+        BInteger size() const {
+            return BInteger(set.size());
+        }
+
         BRelation<S,T> _union(const BRelation<S,T>& set) const {
             if(this->size() > set.size()) {
                 immer::set<BTuple<S,T>,Hash, HashEqual> result = this->set;

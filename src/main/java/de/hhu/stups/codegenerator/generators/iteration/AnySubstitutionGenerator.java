@@ -10,6 +10,7 @@ import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -44,11 +45,12 @@ public class AnySubstitutionGenerator {
         List<DeclarationNode> declarations = node.getParameters();
 
         ST template = group.getInstanceOf("any");
-        generateOtherIterationConstructs(template, predicate);
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
-        generateBody(template, predicate, substitution, declarations);
+        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -57,29 +59,34 @@ public class AnySubstitutionGenerator {
         return result;
     }
 
-    private String generateAnyBody(PredicateNode predicateNode, SubstitutionNode substitutionNode, boolean inLoop) {
+    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, boolean inLoop) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("any_body");
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "body", machineGenerator.visitSubstitutionNode(substitutionNode, null));
         TemplateHandler.add(template, "inLoop", inLoop);
         return template.render();
     }
 
-    private void generateOtherIterationConstructs(ST template, PredicateNode predicate) {
-        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
+    private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
+        otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
+        for (String key : iterationConstructGenerator.getIterationsMapIdentifier().keySet()) {
+            otherConstructsGenerator.getIterationsMapIdentifier().put(key, iterationConstructGenerator.getIterationsMapIdentifier().get(key));
+        }
+        iterationConstructHandler.inspectPredicate(otherConstructsGenerator, predicate);
         for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
             iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
         }
-        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+        return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
-    private void generateBody(ST template, PredicateNode predicate, SubstitutionNode substitution, List<DeclarationNode> declarations) {
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, List<DeclarationNode> declarations) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         boolean inLoop = iterationPredicateGenerator.isInLoop();
         iterationPredicateGenerator.reset();
-        String innerBody = generateAnyBody(predicate, substitution, inLoop);
+        String innerBody = generateAnyBody(otherConstructs, predicate, substitution, inLoop);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

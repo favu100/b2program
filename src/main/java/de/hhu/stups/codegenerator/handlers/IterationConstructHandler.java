@@ -54,55 +54,59 @@ public class IterationConstructHandler {
         iterationConstructCounter++;
     }
 
+    public IterationConstructGenerator getNewIterationConstructGenerator() {
+        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator);
+    }
+
     public IterationConstructGenerator inspectPredicate(IterationConstructGenerator iterationConstructGenerator, PredicateNode predicate) {
         iterationConstructGenerator.visitPredicateNode(predicate, null);
-        iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+        iterationConstructGenerator.getAllBoundedVariables().addAll(this.currentIterationConstructGenerator.getAllBoundedVariables());
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
 
     public IterationConstructGenerator inspectPredicate(PredicateNode predicate) {
-        return inspectPredicate(new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator), predicate);
+        return inspectPredicate(getNewIterationConstructGenerator(), predicate);
     }
 
     public IterationConstructGenerator inspectPredicates(IterationConstructGenerator iterationConstructGenerator, List<PredicateNode> predicates) {
         predicates.forEach(predicate -> iterationConstructGenerator.visitPredicateNode(predicate, null));
         if(currentIterationConstructGenerator != null) {
-            iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+            iterationConstructGenerator.getAllBoundedVariables().addAll(this.currentIterationConstructGenerator.getAllBoundedVariables());
         }
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
 
     public IterationConstructGenerator inspectPredicates(List<PredicateNode> predicates) {
-        return inspectPredicates(new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator), predicates);
+        return inspectPredicates(getNewIterationConstructGenerator(), predicates);
     }
 
     public IterationConstructGenerator inspectExpression(IterationConstructGenerator iterationConstructGenerator, ExprNode expression) {
         iterationConstructGenerator.visitExprNode(expression, null);
         if(currentIterationConstructGenerator != null) {
-            iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+            iterationConstructGenerator.getAllBoundedVariables().addAll(this.currentIterationConstructGenerator.getAllBoundedVariables());
         }
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
 
     public IterationConstructGenerator inspectExpression(ExprNode expression) {
-        return inspectExpression(new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator), expression);
+        return inspectExpression(getNewIterationConstructGenerator(), expression);
     }
 
 
     public IterationConstructGenerator inspectSubstitution(IterationConstructGenerator iterationConstructGenerator, SubstitutionNode substitution) {
         iterationConstructGenerator.visitSubstitutionNode(substitution, null);
         if(currentIterationConstructGenerator != null) {
-            iterationConstructGenerator.getBoundedVariables().addAll(this.currentIterationConstructGenerator.getBoundedVariables());
+            iterationConstructGenerator.getAllBoundedVariables().addAll(this.currentIterationConstructGenerator.getAllBoundedVariables());
         }
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }
 
     public IterationConstructGenerator inspectSubstitution(SubstitutionNode substitution) {
-        return inspectSubstitution(new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator), substitution);
+        return inspectSubstitution(getNewIterationConstructGenerator(), substitution);
     }
 
 

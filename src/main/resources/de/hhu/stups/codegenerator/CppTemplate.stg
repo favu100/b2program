@@ -75,24 +75,28 @@ set_declaration(identifier, type, enums) ::= <<
 #define <identifier> <set_enumeration("", type, "", enums, false)>
 >>
 
-iteration_construct_enumeration(type, identifier, set, body) ::= <<
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
 for(<type> <identifier> : <set>) {
     <body>
 }
 >>
 
-iteration_construct_assignment(type, identifier, expression, body) ::= <<
-<type> <identifier> = <expression>;
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+<type> <identifier> = <set>;
 <body>
 >>
 
-iteration_construct_subset(type, identifier, set, body) ::= <<
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
 for(<type> <identifier> : <set>.pow()) {
     <body>
 }
 >>
 
-iteration_construct_subsetneq(type, identifier, set, body) ::= <<
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
 for(<type> <identifier> : <set>.pow().difference(<set>)) {
     <body>
 }
@@ -102,54 +106,55 @@ let_expression_predicate(body) ::= <<
 <body>
 >>
 
-let_expression_predicate_body(type, identifier, val) ::= <<
+let_expression_predicate_body(otherIterationConstructs, type, identifier, val) ::= <<
+<otherIterationConstructs>
 <type> <identifier> = <val>;
 >>
 
-set_comprehension(type, identifier, isRelation, otherIterationConstructs, comprehension) ::= <<
+set_comprehension(type, identifier, isRelation, comprehension) ::= <<
 <type> <identifier> = <type>();
-<otherIterationConstructs>
 <comprehension>
 >>
 
-set_comprehension_predicate(set, type, element, predicate, isRelation) ::= <<
+set_comprehension_predicate(otherIterationConstructs, set, type, element, predicate, isRelation) ::= <<
+<otherIterationConstructs>
 if((<predicate>).booleanValue()) {
     <set> = <set>._union(<type>(<element>));
 }
 >>
 
-lambda(type, identifier, otherIterationConstructs, lambda) ::= <<
+lambda(type, identifier, lambda) ::= <<
 <type> <identifier> = <type>();
-<otherIterationConstructs>
 <lambda>
 >>
 
-lambda_expression(relation, leftType, rightType, element, expression, predicate) ::= <<
+lambda_expression(otherIterationConstructs, relation, leftType, rightType, element, expression, predicate) ::= <<
+<otherIterationConstructs>
 if((<predicate>).booleanValue()) {
     <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 }
 >>
 
-quantified_predicate(identifier, forall, otherIterationConstructs, predicate) ::= <<
+quantified_predicate(identifier, forall, predicate) ::= <<
 BBoolean <identifier> = BBoolean(<if(forall)>true<else>false<endif>);
-<otherIterationConstructs>
 <predicate>
 >>
 
-quantified_predicate_evaluation(identifier, predicate, forall) ::= <<
+quantified_predicate_evaluation(otherIterationConstructs, identifier, predicate, forall) ::= <<
+<otherIterationConstructs>
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     <identifier> = BBoolean(<if(forall)>false<else>true<endif>);
     break;
 }
 >>
 
-quantified_expression(identifier, identity, setType, otherIterationConstructs, evaluation, isInteger) ::= <<
+quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
 <if(isInteger)>BInteger <identifier> = BInteger(<identity>);<else>BSet\<<setType>\> <identifier> = BSet\<<setType>\>();<endif>
-<otherIterationConstructs>
 <evaluation>
 >>
 
-quantified_expression_evaluation(predicate, identifier, operation, expression) ::= <<
+quantified_expression_evaluation(otherIterationConstructs, predicate, identifier, operation, expression) ::= <<
+<otherIterationConstructs>
 if((<predicate>).booleanValue()) {
     <identifier> = <identifier>.<operation>(<expression>);
 }
@@ -382,12 +387,12 @@ else {
 }
 >>
 
-any(otherIterationConstructs, body) ::= <<
-<otherIterationConstructs>
+any(body) ::= <<
 <body>
 >>
 
-any_body(predicate, body, inLoop) ::= <<
+any_body(otherIterationConstructs, predicate, body, inLoop) ::= <<
+<otherIterationConstructs>
 if(<predicate>.booleanValue()) {
     <body>
     <if(inLoop)>break;<endif>

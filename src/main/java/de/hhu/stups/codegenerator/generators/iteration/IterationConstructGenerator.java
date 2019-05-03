@@ -77,10 +77,12 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final List<String> boundedVariables;
 
+    private final List<String> allBoundedVariables;
+
     public IterationConstructGenerator(final IterationConstructHandler iterationConstructHandler, final MachineGenerator machineGenerator, final NameHandler nameHandler, final STGroup group,
                                        final TypeGenerator typeGenerator, final ImportGenerator importGenerator) {
         this.iterationConstructHandler = iterationConstructHandler;
-        this.iterationPredicateGenerator = new IterationPredicateGenerator(group, machineGenerator, typeGenerator);
+        this.iterationPredicateGenerator = new IterationPredicateGenerator(group, machineGenerator, typeGenerator, iterationConstructHandler);
         this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
@@ -91,6 +93,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
         this.boundedVariables = new ArrayList<>();
+        this.allBoundedVariables = new ArrayList<>();
     }
 
 
@@ -281,15 +284,22 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     private void addBoundedVariables(List<DeclarationNode> declarations) {
+        boundedVariables.clear();
         boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        allBoundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
     }
 
     private void clearBoundedVariables(List<DeclarationNode> declarations) {
-        boundedVariables.removeAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
+        boundedVariables.clear();
+        allBoundedVariables.removeAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
     }
 
     public List<String> getBoundedVariables() {
         return boundedVariables;
+    }
+
+    public List<String> getAllBoundedVariables() {
+        return allBoundedVariables;
     }
 
     private void addIteration(String node, String identifier, String code) {

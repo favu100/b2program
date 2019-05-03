@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
+import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
@@ -26,12 +27,16 @@ public class IterationPredicateGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final IterationConstructHandler iterationConstructHandler;
+
     private boolean inLoop;
 
-    public IterationPredicateGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator) {
+    public IterationPredicateGenerator(final STGroup group, final MachineGenerator machineGenerator,
+                                       final TypeGenerator typeGenerator, final IterationConstructHandler iterationConstructHandler) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
+        this.iterationConstructHandler = iterationConstructHandler;
         this.inLoop = false;
     }
 
@@ -68,39 +73,31 @@ public class IterationPredicateGenerator {
         }
     }
 
-    private ST getElementOfTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+    private ST getElementOfTemplate(DeclarationNode declarationNode, ExprNode lhs) {
         checkEnumerationPredicate(lhs, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_enumeration");
-        ST enumerationTemplate = generateEnumeration(template, declarationNode);
-        TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
-        return enumerationTemplate;
+        return generateEnumeration(template, declarationNode);
     }
 
-    private ST getEqualTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+    private ST getEqualTemplate(DeclarationNode declarationNode, ExprNode lhs) {
         checkEnumerationPredicate(lhs, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_assignment");
-        ST enumerationTemplate = generateEnumeration(template, declarationNode);
-        TemplateHandler.add(enumerationTemplate, "expression", machineGenerator.visitExprNode(rhs, null));
-        return enumerationTemplate;
+        return generateEnumeration(template, declarationNode);
     }
 
-    private ST getSubsetTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+    private ST getSubsetTemplate(DeclarationNode declarationNode, ExprNode lhs) {
         checkEnumerationPredicate(lhs, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_subset");
-        ST enumerationTemplate = generateEnumeration(template, declarationNode);
-        TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
-        return enumerationTemplate;
+        return generateEnumeration(template, declarationNode);
     }
 
-    private ST getSubsetNeqTemplate(DeclarationNode declarationNode, ExprNode lhs, ExprNode rhs) {
+    private ST getSubsetNeqTemplate(DeclarationNode declarationNode, ExprNode lhs) {
         checkEnumerationPredicate(lhs, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_subsetneq");
-        ST enumerationTemplate = generateEnumeration(template, declarationNode);
-        TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(rhs, null));
-        return enumerationTemplate;
+        return generateEnumeration(template, declarationNode);
     }
 
-    public List<ST> getEnumerationTemplates(List<DeclarationNode> declarations, PredicateNode predicate) {
+    public List<ST> getEnumerationTemplates(IterationConstructGenerator iterationConstructGenerator, List<DeclarationNode> declarations, PredicateNode predicate) {
         ST enumerationTemplate = null;
         List<ST> enumerationTemplates = new ArrayList<>();
         for(int i = 0; i < declarations.size(); i++) {
@@ -112,20 +109,22 @@ public class IterationPredicateGenerator {
                 innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
             }
             if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-                enumerationTemplate = getElementOfTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                enumerationTemplate = getElementOfTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0));
                 inLoop = true;
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
-                enumerationTemplate = getEqualTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                enumerationTemplate = getEqualTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0));
                 inLoop = false;
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION) {
-                enumerationTemplate = getSubsetTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                enumerationTemplate = getSubsetTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0));
                 inLoop = true;
             } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
-                enumerationTemplate = getSubsetNeqTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0), innerPredicate.getExpressionNodes().get(1));
+                enumerationTemplate = getSubsetNeqTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0));
                 inLoop = true;
             } else {
                 throw new RuntimeException("Other operations within predicate node not supported yet");
             }
+            generateOtherIterationConstructs(iterationConstructGenerator, enumerationTemplate, innerPredicate);
+            TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(innerPredicate.getExpressionNodes().get(1), null));
             enumerationTemplates.add(enumerationTemplate);
         }
         return enumerationTemplates;
@@ -146,6 +145,14 @@ public class IterationPredicateGenerator {
         return lastEnumeration;
     }
 
+    private void generateOtherIterationConstructs(IterationConstructGenerator iterationConstructGenerator, ST template, PredicateNode predicate) {
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
+        for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
+            iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
+        }
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+    }
+
     public boolean isInLoop() {
         return inLoop;
     }
@@ -153,4 +160,5 @@ public class IterationPredicateGenerator {
     public void reset() {
         inLoop = false;
     }
+
 }

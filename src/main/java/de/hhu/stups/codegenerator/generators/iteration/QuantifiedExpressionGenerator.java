@@ -14,6 +14,7 @@ import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.Collection;
 import java.util.List;
 
 import static de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode.QuantifiedExpressionOperator.PI;
@@ -57,15 +58,17 @@ public class QuantifiedExpressionGenerator {
         ExprNode expression = node.getExpressionNode();
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_expression");
-        generateOtherIterationConstructs(template, predicate, expression);
+
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        Collection<String> otherConstructs = generateOtherIterationConstructs(predicate, expression);
 
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = isInteger ? "_ic_integer_" + iterationConstructCounter : "_ic_set_"+ iterationConstructCounter;
 
-        generateBody(template, identifier, node, predicate, expression, declarations);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, node, predicate, expression, declarations);
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
         machineGenerator.leaveIterationConstruct();
@@ -101,24 +104,26 @@ public class QuantifiedExpressionGenerator {
         return nameHandler.handle(operation);
     }
 
-    private void generateOtherIterationConstructs(ST template, PredicateNode predicate, ExprNode expression) {
-        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectExpression(
-                iterationConstructHandler.inspectPredicate(predicate), expression);
+    private Collection<String> generateOtherIterationConstructs(PredicateNode predicate, ExprNode expression) {
+        IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
+        otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
+        for (String key : iterationConstructGenerator.getIterationsMapIdentifier().keySet()) {
+            otherConstructsGenerator.getIterationsMapIdentifier().put(key, iterationConstructGenerator.getIterationsMapIdentifier().get(key));
+        }
+        iterationConstructHandler.inspectExpression(iterationConstructHandler.inspectPredicate(predicate), expression);
         for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
             iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
         }
-        TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
+        return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
-    private void generateBody(ST template, String identifier, QuantifiedExpressionNode node, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, QuantifiedExpressionNode node, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
 
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(declarations, predicate);
-
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        String innerBody = generateQuantifiedExpressionEvaluation(predicate, identifier, getOperation(operator), expression);
+        String innerBody = generateQuantifiedExpressionEvaluation(otherConstructs, predicate, identifier, getOperation(operator), expression);
         String evaluation = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "identifier", identifier);
@@ -130,9 +135,10 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "evaluation", evaluation);
     }
 
-    private String generateQuantifiedExpressionEvaluation(PredicateNode predicateNode, String identifier, String operation, ExprNode expression) {
+    private String generateQuantifiedExpressionEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, String operation, ExprNode expression) {
         //TODO only take end of predicate arguments
         ST template = group.getInstanceOf("quantified_expression_evaluation");
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "operation", operation);

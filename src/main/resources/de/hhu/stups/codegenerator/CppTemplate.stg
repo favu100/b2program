@@ -116,11 +116,15 @@ set_comprehension(type, identifier, isRelation, comprehension) ::= <<
 <comprehension>
 >>
 
-set_comprehension_predicate(otherIterationConstructs, set, type, element, predicate, isRelation) ::= <<
+set_comprehension_predicate(otherIterationConstructs, set, type, element, emptyPredicate, predicate, isRelation) ::= <<
 <otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>._union(<type>(<element>));
+<else>
 if((<predicate>).booleanValue()) {
     <set> = <set>._union(<type>(<element>));
 }
+<endif>
 >>
 
 lambda(type, identifier, lambda) ::= <<
@@ -128,11 +132,15 @@ lambda(type, identifier, lambda) ::= <<
 <lambda>
 >>
 
-lambda_expression(otherIterationConstructs, relation, leftType, rightType, element, expression, predicate) ::= <<
+lambda_expression(otherIterationConstructs, relation, leftType, rightType, element, expression, emptyPredicate, predicate) ::= <<
 <otherIterationConstructs>
+<if(emptyPredicate)>
+<relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
+<else>
 if((<predicate>).booleanValue()) {
     <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 }
+<endif>
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<
@@ -140,12 +148,17 @@ BBoolean <identifier> = BBoolean(<if(forall)>true<else>false<endif>);
 <predicate>
 >>
 
-quantified_predicate_evaluation(otherIterationConstructs, identifier, predicate, forall) ::= <<
+quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
 <otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = BBoolean(<if(forall)>false<else>true<endif>);
+break;
+<else>
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     <identifier> = BBoolean(<if(forall)>false<else>true<endif>);
     break;
 }
+<endif>
 >>
 
 quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
@@ -153,11 +166,15 @@ quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= 
 <evaluation>
 >>
 
-quantified_expression_evaluation(otherIterationConstructs, predicate, identifier, operation, expression) ::= <<
+quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
 <otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = <identifier>.<operation>(<expression>);
+<else>
 if((<predicate>).booleanValue()) {
     <identifier> = <identifier>.<operation>(<expression>);
 }
+<endif>
 >>
 
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
@@ -391,12 +408,17 @@ any(body) ::= <<
 <body>
 >>
 
-any_body(otherIterationConstructs, predicate, body, inLoop) ::= <<
+any_body(otherIterationConstructs, emptyPredicate, predicate, body, inLoop) ::= <<
 <otherIterationConstructs>
+<if(emptyPredicate)>
+<body>
+<if(inLoop)>break;<endif>
+<else>
 if(<predicate>.booleanValue()) {
     <body>
     <if(inLoop)>break;<endif>
 }
+<endif>
 >>
 
 becomes_such_that(loads, body) ::= <<
@@ -404,12 +426,17 @@ becomes_such_that(loads, body) ::= <<
 <body>
 >>
 
-becomes_such_that_body(otherIterationConstructs, predicate, stores, inLoop) ::= <<
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, inLoop) ::= <<
 <otherIterationConstructs>
+<if(emptyPredicate)>
+<stores>
+<if(inLoop)>break;<endif>
+<else>
 if((<predicate>).booleanValue()) {
     <stores>
     <if(inLoop)>break;<endif>
 }
+<endif>
 >>
 
 becomes_such_that_load(type, lhs, rhs) ::= <<

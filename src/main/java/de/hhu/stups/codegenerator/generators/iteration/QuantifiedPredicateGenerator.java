@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
 import de.prob.parser.ast.types.BType;
 import org.stringtemplate.v4.ST;
@@ -76,7 +77,7 @@ public class QuantifiedPredicateGenerator {
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean forAll, PredicateNode predicate, List<DeclarationNode> declarations) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        String innerBody = generateQuantifiedPredicateEvaluation(otherConstructs, predicate, identifier, forAll);
+        String innerBody = generateQuantifiedPredicateEvaluation(otherConstructs, predicate, identifier, forAll, declarations.size());
         String predicateString = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "identifier", identifier);
@@ -84,11 +85,12 @@ public class QuantifiedPredicateGenerator {
         TemplateHandler.add(template, "predicate", predicateString);
     }
 
-    private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, boolean forAll) {
-        //TODO only take end of predicate arguments
+    private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, boolean forAll, int numberDeclarations) {
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
         ST template = group.getInstanceOf("quantified_predicate_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);
         return template.render();

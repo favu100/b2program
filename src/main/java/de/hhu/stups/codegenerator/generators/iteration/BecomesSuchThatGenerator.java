@@ -8,6 +8,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.substitution.BecomesSuchThatSubstitutionNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -72,10 +73,12 @@ public class BecomesSuchThatGenerator {
     }
 
     private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode predicateNode, boolean inLoop) {
-        //TODO only take end of predicate arguments
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size());
         ST template = group.getInstanceOf("becomes_such_that_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+
+        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
 
         List<String> stores = identifiers.stream().map(this::generateStore).collect(Collectors.toList());
         TemplateHandler.add(template, "stores", stores);
@@ -117,6 +120,7 @@ public class BecomesSuchThatGenerator {
         IdentifierExprNode rhs = new IdentifierExprNode(node.getSourceCodePosition(), node.getName(), false);
         rhs.setDeclarationNode(node.getDeclarationNode());
         rhs.setType(node.getType());
+        rhs.setParent(node.getParent());
         ST template = group.getInstanceOf("becomes_such_that_load");
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(template, "lhs", machineGenerator.visitExprNode(node, null));

@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
@@ -89,7 +90,7 @@ public class LambdaGenerator {
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode predicate, String leftType, String rightType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName());
+        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName(), declarations.size());
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
@@ -97,11 +98,12 @@ public class LambdaGenerator {
         TemplateHandler.add(template, "lambda", lambda);
     }
 
-    public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName) {
-        //TODO only take end of predicate arguments
+    public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, int numberDeclarations) {
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "leftType", leftType);
         TemplateHandler.add(template, "rightType", rightType);
         TemplateHandler.add(template, "relation", relationName);

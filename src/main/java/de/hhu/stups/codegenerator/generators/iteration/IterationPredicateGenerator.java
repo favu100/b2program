@@ -73,6 +73,25 @@ public class IterationPredicateGenerator {
         }
     }
 
+    public PredicateNode subpredicate(PredicateNode predicate, int n) {
+        PredicateNode result;
+        if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+            result = new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, new ArrayList<>());;
+            result.setParent(predicate.getParent());
+            result.setType(predicate.getType());
+            return result;
+        } else {
+            PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
+            PredicateOperatorNode.PredicateOperator operator = ((PredicateOperatorNode) predicate).getOperator();
+            int size = predicateOperatorNode.getPredicateArguments().size();
+            List<PredicateNode> predicates = predicateOperatorNode.getPredicateArguments().subList(n, size);
+            result = new PredicateOperatorNode(predicate.getSourceCodePosition(), operator, predicates);
+            result.setParent(predicate.getParent());
+            result.setType(predicate.getType());
+        }
+        return result;
+    }
+
     private ST getElementOfTemplate(DeclarationNode declarationNode, ExprNode lhs) {
         checkEnumerationPredicate(lhs, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_enumeration");

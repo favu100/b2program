@@ -59,7 +59,7 @@ public class LetExpressionPredicateGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_let_"+ iterationConstructCounter;
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, type, predicate, expression, declarations);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, type, expression);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -84,7 +84,7 @@ public class LetExpressionPredicateGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_let_"+ iterationConstructCounter;
 
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, type, letPredicate, thenPredicate, declarations);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, type, thenPredicate);
 
         String result = template.render();
 
@@ -107,8 +107,7 @@ public class LetExpressionPredicateGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
-    private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, PredicateNode predicateNode, ExprNode exprNode) {
-        //TODO only take end of predicate arguments
+    private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, ExprNode exprNode) {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "identifier", identifier);
@@ -117,8 +116,7 @@ public class LetExpressionPredicateGenerator {
         return template.render();
     }
 
-    private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, PredicateNode predicateNode, PredicateNode thenPredicateNode) {
-        //TODO only take end of predicate arguments
+    private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, PredicateNode thenPredicateNode) {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "identifier", identifier);
@@ -127,16 +125,16 @@ public class LetExpressionPredicateGenerator {
         return template.render();
     }
 
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, PredicateNode letPredicate, PredicateNode thenPredicate, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, PredicateNode thenPredicate) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateLetBody(otherConstructs, identifier, type, letPredicate, thenPredicate);
+        String innerBody = generateLetBody(otherConstructs, identifier, type, thenPredicate);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }
 
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, ExprNode expression) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateLetBody(otherConstructs, identifier, type, predicate, expression);
+        String innerBody = generateLetBody(otherConstructs, identifier, type, expression);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

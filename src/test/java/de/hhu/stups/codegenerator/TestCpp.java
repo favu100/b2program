@@ -1072,6 +1072,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testChoiceByPredicate() throws Exception {
+		testCpp("ChoiceByPredicate");
+	}
+
+	@Test
 	public void testIfExpression() throws Exception {
 		testCpp("IfExpression", "IfExpression", "IfExpressionAddition.stcpp", true);
 	}

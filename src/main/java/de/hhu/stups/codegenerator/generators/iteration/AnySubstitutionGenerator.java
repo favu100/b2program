@@ -50,7 +50,7 @@ public class AnySubstitutionGenerator {
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
-        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations);
+        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -82,7 +82,7 @@ public class AnySubstitutionGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         boolean inLoop = iterationPredicateGenerator.isInLoop();
         iterationPredicateGenerator.reset();

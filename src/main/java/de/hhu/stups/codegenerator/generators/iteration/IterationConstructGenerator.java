@@ -69,6 +69,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final LetExpressionPredicateGenerator letExpressionPredicateGenerator;
 
+    private final BecomesSuchThatGenerator becomesSuchThatGenerator;
+
     private final ImportGenerator importGenerator;
 
     private final HashMap<String, String> iterationsMapCode;
@@ -89,6 +91,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.letExpressionPredicateGenerator = new LetExpressionPredicateGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.becomesSuchThatGenerator = new BecomesSuchThatGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
@@ -268,8 +271,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     @Override
     public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
-        node.getIdentifiers().forEach(id -> visitExprNode(id, null));
-        visitPredicateNode(node.getPredicate(), null);
+        iterationsMapCode.put(node.toString(), becomesSuchThatGenerator.generateBecomesSuchThat(node));
+        iterationConstructHandler.incrementIterationConstructCounter();
         return null;
     }
 

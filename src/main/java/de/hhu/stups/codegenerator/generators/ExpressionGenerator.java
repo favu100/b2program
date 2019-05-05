@@ -214,6 +214,9 @@ public class ExpressionGenerator {
     * This function generates code for an identifier from the belonging AST node.
     */
     public String visitIdentifierExprNode(IdentifierExprNode node) {
+        if(node.isPrimed()) {
+            return "_primed_" + node.getName();
+        }
         if(machineGenerator.isInIterationConstruct() && iterationConstructHandler.getCurrentIterationConstructGenerator().getAllBoundedVariables().contains(node.getName())) {
             return "_ic_" + node.getName();
         }

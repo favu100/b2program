@@ -329,12 +329,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return substitutionGenerator.visitBecomesElementOfSubstitutionNode(node);
 	}
 
-	/*
-	* Code is not generated from the becomes such that substitution in the given subset of B.
-	*/
 	@Override
 	public String visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
-		throw new RuntimeException("Given node is not implemented: " + node.getClass());
+		return substitutionGenerator.visitBecomesSuchThatSubstitutionNode(node);
 	}
 
 	/*
@@ -408,5 +405,15 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return iterationConstructDepth > 0;
 	}
 
+	public void resetIterationConstruct() {
+		iterationConstructDepth = 0;
+	}
 
+	public int getIterationConstructDepth() {
+		return iterationConstructDepth;
+	}
+
+	public void setIterationConstructDepth(int iterationConstructDepth) {
+		this.iterationConstructDepth = iterationConstructDepth;
+	}
 }

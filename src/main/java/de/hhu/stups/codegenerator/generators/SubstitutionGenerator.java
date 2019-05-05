@@ -14,6 +14,7 @@ import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.BecomesElementOfSubstitutionNode;
+import de.prob.parser.ast.nodes.substitution.BecomesSuchThatSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ChoiceSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.IfOrSelectSubstitutionsNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
@@ -463,7 +464,12 @@ public class SubstitutionGenerator {
     }
 
     public String visitAnySubstitutionNode(AnySubstitutionNode node) {
-        iterationConstructHandler.inspectSubstitution(node).getIterationsMapCode().values();
+        iterationConstructHandler.inspectSubstitution(node);
+        return iterationConstructHandler.getIterationsMapCode().get(node.toString());
+    }
+
+    public String visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node) {
+        iterationConstructHandler.inspectSubstitution(node);
         return iterationConstructHandler.getIterationsMapCode().get(node.toString());
     }
 

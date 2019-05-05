@@ -399,6 +399,27 @@ if(<predicate>.booleanValue()) {
 }
 >>
 
+becomes_such_that(loads, body) ::= <<
+<loads; separator="\n">
+<body>
+>>
+
+becomes_such_that_body(otherIterationConstructs, predicate, stores, inLoop) ::= <<
+<otherIterationConstructs>
+if((<predicate>).booleanValue()) {
+    <stores>
+    <if(inLoop)>break;<endif>
+}
+>>
+
+becomes_such_that_load(type, lhs, rhs) ::= <<
+<type> <lhs> = <rhs>;
+>>
+
+becomes_such_that_store(lhs, rhs) ::= <<
+<lhs> = <rhs>;
+>>
+
 while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
 <iterationConstruct1; separator="\n">
 while((<predicate>).booleanValue()) {

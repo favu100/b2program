@@ -161,4 +161,8 @@ public class IterationPredicateGenerator {
         inLoop = false;
     }
 
+    public void inLoop() {
+        inLoop = true;
+    }
+
 }

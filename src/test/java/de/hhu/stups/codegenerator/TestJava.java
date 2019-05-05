@@ -1011,6 +1011,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testChoiceByPredicate() throws Exception {
+		testJava("ChoiceByPredicate");
+	}
+
+	@Test
 	public void testIfExpression() throws Exception {
 		testJava("IfExpression", "IfExpression", "IfExpressionAddition.stjava", true);
 	}

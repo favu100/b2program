@@ -68,7 +68,7 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BInteger(set.size());
         }
 
-        BInteger size() const {
+        BInteger _size() const {
             return BInteger(set.size());
         }
 

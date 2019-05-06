@@ -1,7 +1,7 @@
 keywords() ::= <<
 Asm, auto, and, and_eq, bool, bitor, bitand, break, case, catch, char, class, compl, const, const_cast, continue, default, #define, delete, do, double, dynamic_cast, else, enum, exit(), explicit, export
 extern, extern "C", false, float, for, union, unsigned, using, friend, goto, if, inline, int, long, mutable, virtual, namespace, new, not, not_eq, operator, or, or_eq, private, protected, public, register, void, reinterpret_cast,
-return, short, signed, sizeof, static, static_cast, volatile, struct, switch, template, this, throw, true, try, typedef, typeid, union, unsigned, using, wchar_t, while, xor, xor_eq
+return, short, signed, sizeof, static, static_cast, volatile, struct, switch, template, this, throw, true, try, typedef, typeid, union, unsigned, using, wchar_t, while, xor, xor_eq, size
 >>
 
 

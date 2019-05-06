@@ -248,7 +248,7 @@ class BSet : public BObject {
             return BInteger(set.size());
         }
 
-        BInteger size() const {
+        BInteger _size() const {
             return BInteger(set.size());
         }
 

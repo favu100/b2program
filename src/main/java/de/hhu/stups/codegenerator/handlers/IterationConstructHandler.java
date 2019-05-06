@@ -60,7 +60,9 @@ public class IterationConstructHandler {
 
     public IterationConstructGenerator inspectPredicate(IterationConstructGenerator iterationConstructGenerator, PredicateNode predicate) {
         iterationConstructGenerator.visitPredicateNode(predicate, null);
-        iterationConstructGenerator.getAllBoundedVariables().addAll(this.currentIterationConstructGenerator.getAllBoundedVariables());
+        if(currentIterationConstructGenerator != null) {
+            iterationConstructGenerator.getAllBoundedVariables().addAll(this.currentIterationConstructGenerator.getAllBoundedVariables());
+        }
         this.setIterationConstructGenerator(iterationConstructGenerator);
         return iterationConstructGenerator;
     }

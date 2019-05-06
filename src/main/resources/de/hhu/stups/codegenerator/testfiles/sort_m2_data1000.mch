@@ -8,8 +8,7 @@ ABSTRACT_VARIABLES
   j,
   k,
   l,
-  g,
-  visited
+  g
 /* PROMOTED OPERATIONS
   progress,
   prog1,
@@ -31,7 +30,6 @@ INVARIANT
 //  & /* @sort_m1:inv4_m1  */ !(i_f,j_f).(i_f : 1 .. k - 1 & j_f : i_f + 1 .. n => g(i_f) < g(j_f))
   & /* @sort_m1:inv5_m1  */ l : NATURAL
   & /* @sort_m0:inv1  */ g : NATURAL <-> NATURAL
-  & visited : POW(INTEGER)
 ASSERTIONS
   /* @sort_m1:thm1_m1  */ !(a_f,b_f).(a_f : 1 .. n & (b_f : 1 .. n & a_f /= b_f) => g <+ ({a_f |-> g(b_f)} <+ {b_f |-> g(a_f)}) = ({a_f,b_f} <<| g) \/ {a_f |-> g(b_f),b_f |-> g(a_f)});
   /* @sort_m1:thm2_m1  */ !(a_f,b_f).(a_f : 1 .. n & (b_f : 1 .. n & a_f /= b_f) => {a_f |-> g(b_f),b_f |-> g(a_f)} : 1 .. n >+> NATURAL);
@@ -48,8 +46,6 @@ INITIALISATION
          l := 1
       ||
          j := 1
-      ||
-         visited := {}
     END
 OPERATIONS
   progress = 
@@ -64,8 +60,6 @@ OPERATIONS
          j := k + 1
       ||
          l := k + 1
-      ||
-         visited := visited \/ {1}
     END;
   
   prog1 = 
@@ -77,8 +71,6 @@ OPERATIONS
          l := l
       ||
          j := j + 1
-      ||
-         visited := visited \/ {2}
     END;
   
   prog2 = 
@@ -90,15 +82,12 @@ OPERATIONS
          j := j + 1
       ||
          l := j + 1
-      ||
-         visited := visited \/ {3}
     END;
   
   final_evt = 
     SELECT 
         /* @sort_m2_data400:grd1  */ k = n
     THEN 
-      skip ||
-      visited := visited \/ {4}
+      skip
     END
 END

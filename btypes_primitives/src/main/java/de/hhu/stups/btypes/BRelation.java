@@ -38,31 +38,24 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	}
 
 	public BRelation<S,T> intersect(BRelation<S,T> set) {
-		return new BRelation<>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
+		return fromSet(super.intersect(set));
 	}
 
 	public BRelation<S,T> difference(BRelation<S,T>set) {
-		return new BRelation<>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
+		return fromSet(super.difference(set));
 	}
 
 	public BRelation<S,T> union(BRelation<S,T> set) {
-		return new BRelation<>((PersistentHashSet) UNION.invoke(this.set, set.set));
+		return fromSet(super.union(set));
 	}
 
-	public BInteger card() {
-		return new BInteger((int) COUNT.invoke(this.set));
+	private static <S,T> BRelation<S,T> fromSet(BSet<BTuple<S,T>> set) {
+		return new BRelation<>(set.set);
 	}
+
 
 	public BInteger _size() {
 		return new BInteger((int) COUNT.invoke(this.set));
-	}
-
-	public BBoolean elementOf(BTuple<S,T> object) {
-		return new BBoolean(this.set.contains(object));
-	}
-
-	public BBoolean notElementOf(BTuple<S,T> object) {
-		return new BBoolean(!this.set.contains(object));
 	}
 
 	public BBoolean equal(BRelation<S,T> o) {
@@ -71,11 +64,6 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 
 	public BBoolean unequal(BRelation<S,T> o) {
 		return new BBoolean(!equals(o));
-	}
-
-	public BTuple<S,T> nondeterminism() {
-		int index = (int) Math.floor(Math.random() * set.size());
-		return toArray()[index];
 	}
 
 	public BSet<T> relationImage(BSet<S> domain) {

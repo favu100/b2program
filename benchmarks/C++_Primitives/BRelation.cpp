@@ -20,25 +20,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         typedef S left_type;
         typedef T right_type;
 
-        struct Hash {
-            public:
-                size_t operator()(const BTuple<S,T>& obj) const {
-                    return obj.hashCode();
-                }
-        };
-
-        struct HashEqual {
-            public:
-                bool operator()(const BTuple<S,T>& obj1, const BTuple<S,T>& obj2) const {
-
-                    if (obj1 == obj2)
-                        return true;
-                    else
-                        return false;
-                }
-        };
-
-        BRelation<S,T>(const immer::set<BTuple<S,T>, Hash, HashEqual>& elements) {
+        BRelation<S,T>(const immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>& elements) {
             this->set = elements;
         }
 
@@ -47,49 +29,33 @@ class BRelation : public BSet<BTuple<S,T>> {
           this->set = var(args...);
         }
 
-        immer::set<BTuple<S,T>, BRelation<S,T>::Hash, BRelation<S,T>::HashEqual> var() {
-          return immer::set<BTuple<S,T>, BRelation<S,T>::Hash, BRelation<S,T>::HashEqual>();
+        immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> var() {
+          return immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>();
         }
 
         template<typename R, typename... Args>
-        immer::set<BTuple<S,T>, BRelation<S,T>::Hash, BRelation<S,T>::HashEqual> var(const R& first, const Args&... args) {
+        immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> var(const R& first, const Args&... args) {
           return var(args...).insert(first);
         }
 
         BRelation<S,T>() {
-            this->set = immer::set<BTuple<S,T>, typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual>();
+            this->set = immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>();
         }
 
         BRelation<S,T>(const BRelation<S,T>& set) {
             this->set = set.set;
         }
 
-        BInteger card() const {
-            return BInteger(set.size());
+        BRelation<S,T>(const BSet<BTuple<S,T>>& set) {
+            immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> otherSet = set.getSet();
+            this->set = immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>();
+            for(const BTuple<S,T>& tuple : otherSet) {
+                this->set = this->set.insert(tuple);
+            }
         }
 
         BInteger _size() const {
-            return BInteger(set.size());
-        }
-
-        BRelation<S,T> _union(const BRelation<S,T>& set) const {
-            if(this->size() > set.size()) {
-                immer::set<BTuple<S,T>,Hash, HashEqual> result = this->set;
-                for (const BTuple<S,T>& obj : set.set) {
-                    if(result.count(obj) == 0) {
-                        result = std::move(result).insert(obj);
-                    }
-                }
-                return BRelation(result);
-            } else {
-                immer::set<BTuple<S,T>,Hash, HashEqual> result = set.set;
-                for (const BTuple<S,T>& obj : this->set) {
-                    if(result.count(obj) == 0) {
-                        result = std::move(result).insert(obj);
-                    }
-                }
-                return BRelation(result);
-            }
+            return BInteger(this->set.size());
         }
 
         BSet<T> relationImage(const BSet<S>& domain) const {
@@ -137,7 +103,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         }
 
         BRelation<S,T> domainRestriction(const BSet<S>& arg) const {
-            immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
+            immer::set<BTuple<S,T>,typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> result;
             for(const BTuple<S,T>& tuple : this->set) {
                 if(arg.contains(tuple.projection1())) {
                     result = result.insert(tuple);
@@ -147,7 +113,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         }
 
         BRelation<S,T> domainSubstraction(const BSet<S>& arg) const {
-            immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
+            immer::set<BTuple<S,T>,typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> result;
             for(const BTuple<S,T>& tuple : this->set) {
                 if(!arg.contains(tuple.projection1())) {
                     result = result.insert(tuple);
@@ -157,7 +123,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         }
 
         BRelation<S,T> rangeRestriction(const BSet<T>& arg) const {
-            immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
+            immer::set<BTuple<S,T>,typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> result;
             for(const BTuple<S,T>& tuple : this->set) {
                 if(arg.contains(tuple.projection2())) {
                     result = result.insert(tuple);
@@ -167,7 +133,7 @@ class BRelation : public BSet<BTuple<S,T>> {
         }
 
         BRelation<S,T> rangeSubstraction(const BSet<T>& arg) const {
-            immer::set<BTuple<S,T>,typename BRelation<S,T>::Hash, typename BRelation<S,T>::HashEqual> result;
+            immer::set<BTuple<S,T>,typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> result;
             for(const BTuple<S,T>& tuple : this->set) {
                 if(!arg.contains(tuple.projection2())) {
                     result = result.insert(tuple);
@@ -185,11 +151,11 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	T last() const {
-    		return functionCall((S) card());
+    		return functionCall((S) this->card());
     	}
 
     	BRelation<S,T> reverse() const {
-    		BInteger size = card();
+    		BInteger size = this->card();
     		BRelation<S,T> result = BRelation<S,T>();
     		for(BInteger i = BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
     			result = result._union(BRelation<S,T>(BTuple<S,T>((S) i, (T) functionCall((S) size.minus(i).succ()))));
@@ -198,7 +164,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	BRelation<S,T> front() const {
-    		return domainSubstraction(BSet<S>((S) card()));
+    		return domainSubstraction(BSet<S>((S) this->card()));
     	}
 
     	BRelation<S,T> tail() const {
@@ -233,7 +199,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,T> concat(const BRelation<S,T>& arg) const {
     		BRelation<S,T> result = *this;
-    		BInteger size = card();
+    		BInteger size = this->card();
     		for(const BTuple<S,T>& tuple : arg.set) {
     			result = result._union(BRelation<S,T>(BTuple<S,T>((S) size.plus((BInteger) tuple.projection1()), tuple.projection2())));
     		}
@@ -251,7 +217,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	BRelation<S,T> append(const T& arg) {
-    		BInteger size = card();
+    		BInteger size = this->card();
     		return _union(BRelation<S,T>(BTuple<S,T>((S) size.succ(), arg)));
     	}
 
@@ -390,6 +356,14 @@ class BRelation : public BSet<BTuple<S,T>> {
             this->set = other.set;
         }
 
+        void operator =(const BSet<BTuple<S,T>>& other) {
+            immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> otherSet = other.getSet();
+            this->set = immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>();
+            for(const BTuple<S,T>& tuple : otherSet) {
+                this->set = this->set.insert(tuple);
+            }
+        }
+
         friend bool operator !=(const BRelation<S,T>& o1, const BRelation<S,T>& o2) {
             return o1.set != o2.set;
         }
@@ -406,23 +380,9 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BBoolean(this->set != other.set);
         }
 
-
-        int hashCode() const {
-            int result = 0;
-            int i = 0;
-            for(const BTuple<S,T>& s : this->set) {
-                if(i == 0) {
-                    result = s.hashCode();
-                }
-                result = result ^ (s.hashCode() << 1);
-                ++i;
-            }
-            return result;
-        }
-
         friend std::ostream& operator<<(std::ostream &strm, const BRelation<S,T>& rel) {
             strm << "{";
-            typename immer::set<BTuple<S,T>,Hash, HashEqual>::const_iterator it = rel.begin();
+            typename immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>::const_iterator it = rel.begin();
             while(it != rel.end()) {
                 BTuple<S,T> tuple = *it;
                 strm << tuple;
@@ -435,17 +395,13 @@ class BRelation : public BSet<BTuple<S,T>> {
             return strm;
         }
 
-        typename immer::set<BTuple<S,T>,Hash, HashEqual>::const_iterator begin() const {
-            return set.begin();
+        typename immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>::const_iterator begin() const {
+            return this->set.begin();
         }
 
-        typename immer::set<BTuple<S,T>,Hash, HashEqual>::const_iterator end() const {
-            return set.end();
+        typename immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>::const_iterator end() const {
+            return this->set.end();
         }
-
-        protected:
-            immer::set<BTuple<S,T>,Hash, HashEqual> set;
-
 };
 
 #endif

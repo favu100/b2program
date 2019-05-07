@@ -169,7 +169,7 @@ class BSet : public BObject {
             immer::set<T,Hash, HashEqual> result = this->set;
             for (const T& obj : this->set) {
                 if(set.set.count(obj) == 0) {
-                    result = std::move(result).erase(obj);
+                    result = result.erase(obj);
                 }
             }
             return BSet(result);
@@ -199,18 +199,20 @@ class BSet : public BObject {
             immer::set<T, Hash, HashEqual> result = this->set;
             for (const T& obj : set.set) {
                 if(result.count(obj) == 1) {
-                    result = std::move(result).erase(obj);
+                    result = result.erase(obj);
                 }
             }
             return BSet(result);
         }
 
         BSet<T> _union(const BSet<T>& set) const {
-            if(this->size() > set.size()) {
+            int thisSize = this->size();
+            int otherSize = set.size();
+            if(thisSize > otherSize) {
                 immer::set<T,Hash, HashEqual> result = this->set;
                 for (const T& obj : set.set) {
                     if(result.count(obj) == 0) {
-                        result = std::move(result).insert(obj);
+                        result = result.insert(obj);
                     }
                 }
                 return BSet(result);
@@ -218,7 +220,7 @@ class BSet : public BObject {
                 immer::set<T,Hash, HashEqual> result = set.set;
                 for (const T& obj : this->set) {
                     if(result.count(obj) == 0) {
-                        result = std::move(result).insert(obj);
+                        result = result.insert(obj);
                     }
                 }
                 return BSet(result);
@@ -311,7 +313,7 @@ class BSet : public BObject {
     		while(!q.empty()) {
     			BSet<T> currentSet = q.front();
     			q.pop();
-    			for(T element : this->set) {
+    			for(const T& element : this->set) {
     				BSet<T> nextSet = currentSet._union(BSet<T>(element));
     				int previousSize = result.size();
     				result = result._union(BSet<BSet<T>>(nextSet));

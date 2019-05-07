@@ -210,7 +210,7 @@ class BSet : public BObject {
                 immer::set<T,Hash, HashEqual> result = this->set;
                 for (const T& obj : set.set) {
                     if(result.count(obj) == 0) {
-                        result = std::move(result).insert(obj);
+                        result = result.insert(obj);
                     }
                 }
                 return BSet(result);
@@ -218,7 +218,7 @@ class BSet : public BObject {
                 immer::set<T,Hash, HashEqual> result = set.set;
                 for (const T& obj : this->set) {
                     if(result.count(obj) == 0) {
-                        result = std::move(result).insert(obj);
+                        result = result.insert(obj);
                     }
                 }
                 return BSet(result);

@@ -1,6 +1,6 @@
-MACHINE sort_m2_data1000_exec
+MACHINE sort_m2_data1000_asserts_exec
 
-INCLUDES sort_m2_data1000
+INCLUDES sort_m2_data1000_asserts
 
 VARIABLES counter, sorted
 

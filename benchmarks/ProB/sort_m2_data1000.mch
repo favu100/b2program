@@ -16,7 +16,7 @@ ABSTRACT_VARIABLES
   final_evt */
 PROPERTIES
     n : INTEGER
-  & n = 2000
+  & n = 1000
   & /* @sort_c0:axm1  */ n > 0
   & /* @sort_c0:axm2  */ f : 1 .. n >-> NATURAL
   & /* @sort_c0_data100:prob_f  */ f = %i.(i : 1 .. n| 15000 - i)

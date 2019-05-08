@@ -31,9 +31,9 @@ class sort_m2_data1000_exec {
         }
 
         void simulate() {
-            while((sorted.less((BInteger(1000)))).booleanValue()) {
+            while((sorted.less((BInteger(500)))).booleanValue()) {
                 counter = (BInteger(0));
-                while((counter.less((BInteger(1999)).minus((BInteger(2)).multiply(sorted)))).booleanValue()) {
+                while((counter.less((BInteger(999)).minus((BInteger(2)).multiply(sorted)))).booleanValue()) {
                     this->_sort_m2_data1000.prog2();
                     counter = counter.plus((BInteger(1)));
                 }
@@ -45,9 +45,9 @@ class sort_m2_data1000_exec {
                 this->_sort_m2_data1000.progress();
                 sorted = sorted.plus((BInteger(1)));
             }
-            while((sorted.less((BInteger(1999)))).booleanValue()) {
+            while((sorted.less((BInteger(999)))).booleanValue()) {
                 counter = (BInteger(0));
-                while((counter.less((BInteger(1999)).minus(sorted))).booleanValue()) {
+                while((counter.less((BInteger(999)).minus(sorted))).booleanValue()) {
                     this->_sort_m2_data1000.prog1();
                     counter = counter.plus((BInteger(1)));
                 }

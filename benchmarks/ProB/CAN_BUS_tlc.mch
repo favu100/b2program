@@ -29,25 +29,25 @@ VARIABLES
   T3_readvalue,
   T3_state
 INVARIANT
-   T2v : INT &
+   T2v : INTEGER &
    T3_evaluated : BOOL &
    T3_enabled : BOOL &
    T1_state : T1state &
    T2_state : T2state &
    T3_state : T3state &
-   T1_writevalue : INT &
-   T2_writevalue : INT &
-   T2_readvalue : INT &
-   T1_timer : NAT &
-   T2_timer : NAT &
+   T1_writevalue : INTEGER &
+   T2_writevalue : INTEGER &
+   T2_readvalue : INTEGER &
+   T1_timer : NATURAL &
+   T2_timer : NATURAL &
    T2_mode : T2mode &
-   BUSvalue : INT &
+   BUSvalue : INTEGER &
    BUSpriority : NATSET &
-   T3_readvalue : INT &
+   T3_readvalue : INTEGER &
    T3_readpriority : NATSET &
    T2_readpriority : NATSET &
-   BUSwrite : NATSET +-> INT &
-   /*BUSwrite : FIN(NATSET*INT) &*/
+   BUSwrite : NATSET +-> INTEGER &
+   /*BUSwrite : FIN(NATSET*INTEGER) &*/
    BUSwrite /= {} &
    0 : dom(BUSwrite)
 INITIALISATION

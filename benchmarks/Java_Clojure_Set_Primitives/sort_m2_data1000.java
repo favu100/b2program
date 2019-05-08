@@ -20,12 +20,12 @@ public class sort_m2_data1000 {
 
     public sort_m2_data1000() {
         BRelation<BInteger, BInteger> _ic_set_0 = new BRelation<>();
-        for(BInteger _ic_i : BSet.interval(new BInteger(1),new BInteger(2000))) {
+        for(BInteger _ic_i : BSet.interval(new BInteger(1),new BInteger(1000))) {
             _ic_set_0 = _ic_set_0.union(new BRelation<>(new BTuple<>(_ic_i, new BInteger(15000).minus(_ic_i))));
 
         }
         f = _ic_set_0;
-        n = new BInteger(2000);
+        n = new BInteger(1000);
         g = f;
         k = new BInteger(1);
         l = new BInteger(1);

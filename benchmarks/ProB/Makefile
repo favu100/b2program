@@ -8,7 +8,7 @@ PROBCLI=./probcli.sh
 OUTPUT ?= runtimes.txt
 
 % :
-	gtime -f "%C %E %M" -ao $(OUTPUT) $(PROBCLI) $@.mch -noass -noinv -nogoal -p COMPRESSION TRUE -init -execute 1
+	gtime -f "%C %E %M" -ao $(OUTPUT) $(PROBCLI) $@.mch -init -execute 1 -noass -noinv -nogoal -p COMPRESSION TRUE
 
 clean:
 	rm *.prob

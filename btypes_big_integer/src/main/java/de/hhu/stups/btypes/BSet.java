@@ -264,18 +264,29 @@ public class BSet<T> implements BObject, Set<T> {
 		throw new RuntimeException("Maximum does not exist");
 	}
 
-	public BSet<BSet<T>> pow() {
-		BSet<BSet<T>> result = new BSet<BSet<T>>();
-		BSet<T> start = new BSet<T>();
-		Queue<BSet<T>> queue = new LinkedList<>();
+	@SuppressWarnings("unchecked")
+	public <K extends BSet<T>> BSet<K> pow() {
+		BSet<K> result = new BSet<K>();
+		K start = null;
+		if(this.getClass() == BSet.class) {
+			start = (K) new BSet<T>();
+		} else {
+			start = (K) new BRelation<>();
+		}
+		Queue<K> queue = new LinkedList<>();
 		queue.add(start);
-		result = result.union(new BSet<BSet<T>>(start));
+		result = result.union(new BSet<K>(start));
 		while(!queue.isEmpty()) {
-			BSet<T> currentSet = queue.remove();
+			K currentSet = queue.remove();
 			for(T element : this) {
-				BSet<T> nextSet = currentSet.union(new BSet<T>(element));
+				K nextSet = null;
+				if(this.getClass() == BSet.class) {
+					nextSet = (K) currentSet.union(new BSet<T>(element));
+				} else {
+					nextSet = (K) currentSet.union(BRelation.fromSet(new BSet(element)));
+				}
 				int previousSize = result.size();
-				result = result.union(new BSet<BSet<T>>(nextSet));
+				result = result.union(new BSet<K>(nextSet));
 				if(previousSize < result.size()) {
 					queue.add(nextSet);
 				}
@@ -284,15 +295,20 @@ public class BSet<T> implements BObject, Set<T> {
 		return result;
 	}
 
-	public BSet<BSet<T>> pow1() {
-		return this.pow().difference(new BSet<BSet<T>>(new BSet<T>()));
+	@SuppressWarnings("unchecked")
+	public <K extends BSet<T>> BSet<K> pow1() {
+		BSet<T> emptySet = new BSet<T>();
+		if(this.getClass() == BSet.class) {
+			return this.pow().difference(new BSet(emptySet));
+		}
+		return this.pow().difference(new BSet<>(BRelation.fromSet(new BSet())));
 	}
 
-	public BSet<BSet<T>> fin() {
+	public <K extends BSet<T>> BSet<K> fin() {
 		return this.pow();
 	}
 
-	public BSet<BSet<T>> fin1() {
+	public <K extends BSet<T>> BSet<K> fin1() {
 		return this.pow1();
 	}
 

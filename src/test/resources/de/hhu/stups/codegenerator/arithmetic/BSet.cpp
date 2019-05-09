@@ -15,6 +15,8 @@ template<typename T>
 class BSet : public BObject {
 
     public:
+
+        typedef BSet<T> current_type;
         typedef T value_type;
         typedef void left_type;
         typedef void right_type;
@@ -304,19 +306,20 @@ class BSet : public BObject {
             return BBoolean(false);
         }
 
-    	BSet<BSet<T>> pow() const {
-    		BSet<BSet<T>> result = BSet<BSet<T>>();
-    		BSet<T> start = BSet<T>();
-    		queue<BSet<T>> q = queue<BSet<T>>();
+        template<typename K = current_type>
+    	BSet<K> pow() const {
+    		BSet<K> result = BSet<K>();
+    		K start = K();
+    		queue<K> q = queue<K>();
     		q.push(start);
-    		result = result._union(BSet<BSet<T>>(start));
+    		result = result._union(BSet<K>(start));
     		while(!q.empty()) {
-    			BSet<T> currentSet = q.front();
+    			K currentSet = q.front();
     			q.pop();
     			for(const T& element : this->set) {
-    				BSet<T> nextSet = currentSet._union(BSet<T>(element));
+    				K nextSet = currentSet._union(K(element));
     				int previousSize = result.size();
-    				result = result._union(BSet<BSet<T>>(nextSet));
+    				result = result._union(BSet<K>(nextSet));
     				if(previousSize < result.size()) {
     					q.push(nextSet);
     				}
@@ -325,15 +328,19 @@ class BSet : public BObject {
     		return result;
     	}
 
-    	BSet<BSet<T>> pow1() const {
-    		return this->pow().difference(BSet<BSet<T>>(BSet<T>()));
+        template<typename K = current_type>
+    	BSet<K> pow1() const {
+            K emptySet = K();
+    		return this->pow().difference(BSet<K>(K()));
     	}
 
-    	BSet<BSet<T>> fin() const {
+        template<typename K = current_type>
+    	BSet<K> fin() const {
     		return this->pow();
     	}
 
-    	BSet<BSet<T>> fin1() const {
+        template<typename K = current_type>
+    	BSet<K> fin1() const {
     		return this->pow1();
     	}
 

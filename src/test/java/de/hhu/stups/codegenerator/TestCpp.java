@@ -1124,6 +1124,16 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testRelationPow() throws Exception {
+		testCpp("RelationPow", "RelationPow", "RelationPowAddition.stcpp", true);
+	}
+
+	@Test
+	public void testRelationPow1() throws Exception {
+		testCpp("RelationPow1", "RelationPow1", "RelationPow1Addition.stcpp", true);
+	}
+
+	@Test
 	public void testPow1() throws Exception {
 		testCpp("Pow1", "Pow1", "Pow1Addition.stcpp", true);
 	}

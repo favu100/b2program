@@ -1113,6 +1113,16 @@ public class TestJava {
 	}
 
 	@Test
+	public void testRelationPow() throws Exception {
+		testJava("RelationPow", "RelationPow", "RelationPowAddition.stjava", true);
+	}
+
+	@Test
+	public void testRelationPow1() throws Exception {
+		testJava("RelationPow1", "RelationPow1", "RelationPow1Addition.stjava", true);
+	}
+
+	@Test
 	public void testPow1() throws Exception {
 		testJava("Pow1", "Pow1", "Pow1Addition.stjava", true);
 	}

@@ -35,6 +35,8 @@ class BInteger : public BObject {
 	}*/
 
     public:
+
+        typedef BInteger current_type;
         typedef void value_type;
         typedef void left_type;
         typedef void right_type;

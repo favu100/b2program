@@ -13,6 +13,7 @@ class BRecord : public BObject {
 	    int counter;
 
 	public:
+	    typedef BRecord current_type;
 	    typedef void value_type;
         typedef void left_type;
         typedef void right_type;

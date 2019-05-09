@@ -197,6 +197,7 @@ set_enum_declaration(name,enums) ::= <<
 class <name> : public BObject {
     public:
 
+        typedef <name> current_type;
         typedef void value_type;
         typedef void left_type;
         typedef void right_type;

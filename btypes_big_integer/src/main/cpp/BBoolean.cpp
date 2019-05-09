@@ -62,6 +62,7 @@ class BBoolean : public BObject {
 	}*/
 
     public:
+        typedef BBoolean current_type;
         typedef void value_type;
         typedef void left_type;
         typedef void right_type;

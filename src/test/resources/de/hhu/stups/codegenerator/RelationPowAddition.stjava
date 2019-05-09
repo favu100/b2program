@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RelationPow pow = new RelationPow();
+    pow.calculate();
+    System.out.println(pow.getRes());
+}

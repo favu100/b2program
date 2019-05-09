@@ -1,0 +1,6 @@
+int main() {
+    RelationPow pow;
+    pow.calculate();
+    cout << pow.getRes();
+    return 0;
+}

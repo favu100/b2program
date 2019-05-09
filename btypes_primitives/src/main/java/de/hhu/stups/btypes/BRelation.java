@@ -51,8 +51,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return fromSet(super.union(set));
 	}
 
-
-	private static <S,T> BRelation<S,T> fromSet(BSet<BTuple<S,T>> set) {
+	public static <S,T> BRelation<S,T> fromSet(BSet<BTuple<S,T>> set) {
 		return new BRelation<S,T>(set.set);
 	}
 

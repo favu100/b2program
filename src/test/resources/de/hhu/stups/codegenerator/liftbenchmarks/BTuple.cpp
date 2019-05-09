@@ -15,6 +15,8 @@ class BTuple : public BObject {
 	    T rhs;
 
 	public:
+
+	    typedef BTuple<S,T> current_type;
 	    typedef void value_type;
         typedef S left_type;
         typedef T right_type;

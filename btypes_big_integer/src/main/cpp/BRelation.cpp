@@ -15,7 +15,7 @@ template<typename S, typename T>
 class BRelation : public BSet<BTuple<S,T>> {
 
     public:
-
+        typedef BRelation<S,T> current_type;
         typedef BTuple<S,T> value_type;
         typedef S left_type;
         typedef T right_type;
@@ -57,6 +57,44 @@ class BRelation : public BSet<BTuple<S,T>> {
         BInteger _size() const {
             return BInteger(this->set.size());
         }
+
+        template<typename K = current_type>
+    	BSet<K> pow() const {
+    		BSet<K> result = BSet<K>();
+    		K start = K();
+    		queue<K> q = queue<K>();
+    		q.push(start);
+    		result = result._union(BSet<K>(start));
+    		while(!q.empty()) {
+    			K currentSet = q.front();
+    			q.pop();
+    			for(const BTuple<S,T>& element : this->set) {
+    				K nextSet = currentSet._union(K(element));
+    				int previousSize = result.size();
+    				result = result._union(BSet<K>(nextSet));
+    				if(previousSize < result.size()) {
+    					q.push(nextSet);
+    				}
+    			}
+    		}
+    		return result;
+    	}
+
+        template<typename K = current_type>
+    	BSet<K> pow1() const {
+            K emptySet = K();
+    		return this->pow().difference(BSet<K>(K()));
+    	}
+
+        template<typename K = current_type>
+    	BSet<K> fin() const {
+    		return this->pow();
+    	}
+
+        template<typename K = current_type>
+    	BSet<K> fin1() const {
+    		return this->pow1();
+    	}
 
         BSet<T> relationImage(const BSet<S>& domain) const {
             immer::set<T,typename BSet<T>::Hash, typename BSet<T>::HashEqual> result;

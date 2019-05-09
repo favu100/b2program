@@ -16,6 +16,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     public:
 
+        typedef BRelation<S,T> current_type;
         typedef BTuple<S,T> value_type;
         typedef S left_type;
         typedef T right_type;
@@ -142,6 +143,44 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BRelation<S,T>(result);
         }
 
+        template<typename K = current_type>
+    	BSet<K> pow() const {
+    		BSet<K> result = BSet<K>();
+    		K start = K();
+    		queue<K> q = queue<K>();
+    		q.push(start);
+    		result = result._union(BSet<K>(start));
+    		while(!q.empty()) {
+    			K currentSet = q.front();
+    			q.pop();
+    			for(const BTuple<S,T>& element : this->set) {
+    				K nextSet = currentSet._union(K(element));
+    				int previousSize = result.size();
+    				result = result._union(BSet<K>(nextSet));
+    				if(previousSize < result.size()) {
+    					q.push(nextSet);
+    				}
+    			}
+    		}
+    		return result;
+    	}
+
+        template<typename K = current_type>
+    	BSet<K> pow1() const {
+            K emptySet = K();
+    		return this->pow().difference(BSet<K>(K()));
+    	}
+
+        template<typename K = current_type>
+    	BSet<K> fin() const {
+    		return this->pow();
+    	}
+
+        template<typename K = current_type>
+    	BSet<K> fin1() const {
+    		return this->pow1();
+    	}
+
         BRelation<S,T> override(const BRelation<S,T>& arg) const {
             return arg._union(this->domainSubstraction(arg.domain()));
         }
@@ -164,7 +203,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	BRelation<S,T> front() const {
-    		return domainSubstraction(BSet<S>((S) this->card()));
+    		return this->domainSubstraction(BSet<S>((S) this->card()));
     	}
 
     	BRelation<S,T> tail() const {
@@ -218,7 +257,7 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BRelation<S,T> append(const T& arg) {
     		BInteger size = this->card();
-    		return _union(BRelation<S,T>(BTuple<S,T>((S) size.succ(), arg)));
+    		return this->_union(BRelation<S,T>(BTuple<S,T>((S) size.succ(), arg)));
     	}
 
     	BRelation<S,T> prepend(const T& arg) {

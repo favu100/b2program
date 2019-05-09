@@ -1082,6 +1082,16 @@ public class TestJava {
 	}
 
 	@Test
+	public void testRelationGeneralizedUnion() throws Exception {
+		testJava("RelationGeneralizedUnion", "RelationGeneralizedUnion", "RelationGeneralizedUnionAddition.stjava", true);
+	}
+
+	@Test
+	public void testRelationGeneralizedIntersection() throws Exception {
+		testJava("RelationGeneralizedIntersection", "RelationGeneralizedIntersection", "RelationGeneralizedIntersectionAddition.stjava", true);
+	}
+
+	@Test
 	public void testGeneralizedIntersection() throws Exception {
 		testJava("GeneralizedIntersection");
 	}

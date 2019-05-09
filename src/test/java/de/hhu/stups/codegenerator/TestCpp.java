@@ -1093,6 +1093,17 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testRelationGeneralizedUnion() throws Exception {
+		testCpp("RelationGeneralizedUnion", "RelationGeneralizedUnion", "RelationGeneralizedUnionAddition.stcpp", true);
+	}
+
+	@Test
+	public void testRelationGeneralizedIntersection() throws Exception {
+		testCpp("RelationGeneralizedIntersection", "RelationGeneralizedIntersection", "RelationGeneralizedIntersectionAddition.stcpp", true);
+	}
+
+
+	@Test
 	public void testGeneralizedIntersection() throws Exception {
 		testCpp("GeneralizedIntersection");
 	}

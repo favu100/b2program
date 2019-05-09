@@ -176,19 +176,19 @@ class BSet : public BObject {
             return BSet(result);
         }
 
-     	template<typename K = typename T::value_type>
-     	BSet<K> intersect() const {
+     	template<typename K = value_type>
+     	K intersect() const {
      	    if(this->size() == 0) {
-     	        return BSet<K>();
+     	        return K();
      	    }
-     	    BSet<K> result;
+     	    K result;
      	    int i = 0;
             for(const T& s : this->set) {
                 if(i == 0) {
-                    result = (BSet<K>) s;
+                    result = K(s);
                 }
                 ++i;
-                result = result.intersect((BSet<K>)s);
+                result = result.intersect(K(s));
             }
             return result;
      	}
@@ -226,11 +226,11 @@ class BSet : public BObject {
             }
         }
 
-     	template<typename K = typename T::value_type>
-     	BSet<K> _union() const {
-     	    BSet<K> result;
+     	template<typename K = value_type>
+     	K _union() const {
+     	    K result;
             for(const T& s : this->set) {
-                result = result._union((BSet<K>) s);
+                result = result._union(K(s));
             }
             return result;
      	}

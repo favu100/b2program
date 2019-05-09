@@ -166,12 +166,20 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BObject> T intersect() {
 		if (set.isEmpty()) {
-			return (T) new BSet<K>();
+			if(this.getClass().getEnclosingClass() == BSet.class) {
+				return (T) new BSet<K>();
+			} else {
+				return (T) new BRelation();
+			}
 		} else {
-			return (T) this.set.stream()
-					.reduce((a,e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
+			if(this.getClass().getEnclosingClass() == BSet.class) {
+				return (T) this.set.stream()
+						.reduce((a, e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
+			} else {
+				return (T) this.set.stream()
+						.reduce((a, e) -> ((BRelation) a).intersect((BRelation) e)).get();
+			}
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -187,12 +195,20 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BObject> T union() {
 		if (set.isEmpty()) {
-			return (T) new BSet<K>();
+			if(this.getClass().getEnclosingClass() == BSet.class) {
+				return (T) new BSet<K>();
+			} else {
+				return (T) new BRelation();
+			}
 		} else {
-			return (T) this.set.stream()
-					.reduce((a,e) -> ((BSet<K>) a).union((BSet<K>) e)).get();
+			if(this.getClass().getEnclosingClass() == BSet.class) {
+				return (T) this.set.stream()
+						.reduce((a, e) -> ((BSet<K>) a).union((BSet<K>) e)).get();
+			} else {
+				return (T) this.set.stream()
+						.reduce((a, e) -> ((BRelation) a).union((BRelation) e)).get();
+			}
 		}
-
 	}
 
 	public static BSet<BInteger> interval(BInteger a, BInteger b) {

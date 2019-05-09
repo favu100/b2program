@@ -41,7 +41,10 @@ peds_r =
 peds_g =
 	SELECT tl_peds = red & tl_cars = red THEN
 		tl_peds := green
-	END
+	END;
+
+out <-- getCars = BEGIN out := tl_cars END;
+out <-- getPeds = BEGIN out := tl_peds END
 
       
 END

@@ -9,6 +9,7 @@ INITIALISATION floor := 0
 OPERATIONS
 
 	inc = PRE floor<100 THEN floor := floor + 1 END ;
-	dec = PRE floor>0 THEN floor := floor - 1 END
+	dec = PRE floor>0 THEN floor := floor - 1 END;
+	out <-- getFloor = BEGIN out := floor END
 
 END

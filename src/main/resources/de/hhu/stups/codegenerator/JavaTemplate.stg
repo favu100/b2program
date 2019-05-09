@@ -104,34 +104,34 @@ let_expression_predicate_body(otherIterationConstructs, type, identifier, val) :
 <type> <identifier> = <val>;
 >>
 
-set_comprehension(type, identifier, isRelation, comprehension) ::= <<
-<type> <identifier> = new <if(isRelation)>BRelation<else>BSet<endif>\<>();
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
+<type> <identifier> = new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>();
 <comprehension>
 >>
 
-set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation) ::= <<
+set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
+<set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
 <else>
 if((<predicate>).booleanValue()) {
-    <set> = <set>.union(new <if(isRelation)>BRelation<else>BSet<endif>\<>(<element>));
+    <set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
 }
 <endif>
 >>
 
-lambda(type, identifier, lambda) ::= <<
-<type> <identifier> = new BRelation\<>();
+lambda(type, identifier, lambda, leftType, rightType) ::= <<
+<type> <identifier> = new BRelation\<<leftType>, <rightType>\>();
 <lambda>
 >>
 
-lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate) ::= <<
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<relation> = <relation>.union(new BRelation\<>(new BTuple\<>(<element>, <expression>)));
+<relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
 <else>
 if((<predicate>).booleanValue()) {
-    <relation> = <relation>.union(new BRelation\<>(new BTuple\<>(<element>, <expression>)));
+    <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
 }
 <endif>
 >>
@@ -238,18 +238,18 @@ parallel_load(type, identifier) ::= <<
 <type> _ld_<identifier> = <identifier>;
 >>
 
-assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg) ::= <<
+assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg, leftType, rightType) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BTuple\<>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, arg, leftType, rightType) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<
@@ -356,7 +356,7 @@ any(body) ::= <<
 <body>
 >>
 
-any_body(emptyPredicate, predicate, body, inLoop) ::= <<
+any_body(otherIterationConstructs, emptyPredicate, predicate, body, inLoop) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <body>

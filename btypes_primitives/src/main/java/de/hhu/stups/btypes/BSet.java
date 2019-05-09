@@ -64,6 +64,7 @@ public class BSet<T> implements BObject, Set<T> {
 		this.set = elements;
 	}
 
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	public BSet(T... elements) {
 		this.set = (PersistentHashSet) SET.invoke(elements);
@@ -108,6 +109,7 @@ public class BSet<T> implements BObject, Set<T> {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
@@ -130,10 +132,12 @@ public class BSet<T> implements BObject, Set<T> {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("unchecked")
 	public T[] toArray() {
 		return (T[]) set.toArray();
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
 		return (T[]) set.toArray(a);
 	}
@@ -150,14 +154,16 @@ public class BSet<T> implements BObject, Set<T> {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Iterator<T> iterator() {
 		return set.iterator();
 	}
 
 	public BSet<T> intersect(BSet<T> set) {
-		return new BSet<>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
+		return new BSet<T>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
 	}
 
+	@SuppressWarnings("unchecked")
 	public <K extends BObject> T intersect() {
 		if (set.isEmpty()) {
 			return (T) new BSet<K>();
@@ -169,13 +175,14 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BSet<T> difference(BSet<T> set) {
-		return new BSet<>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
+		return new BSet<T>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
 	}
 
 	public BSet<T> union(BSet<T> set) {
-		return new BSet<>((PersistentHashSet) UNION.invoke(this.set, set.set));
+		return new BSet<T>((PersistentHashSet) UNION.invoke(this.set, set.set));
 	}
 
+	@SuppressWarnings("unchecked")
 	public <K extends BObject> T union() {
 		if (set.isEmpty()) {
 			return (T) new BSet<K>();
@@ -187,7 +194,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public static BSet<BInteger> interval(BInteger a, BInteger b) {
-		return new BSet<>((PersistentHashSet) SET.invoke(
+		return new BSet<BInteger>((PersistentHashSet) SET.invoke(
 				MAP.invoke(CREATE_INTEGER, RANGE.invoke(a.getValue(), INC.invoke(b.getValue())))));
 	}
 
@@ -237,6 +244,7 @@ public class BSet<T> implements BObject, Set<T> {
 		return toArray()[index];
 	}
 
+	@SuppressWarnings("unchecked")
 	public BInteger min() {
 		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).lessEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
 		if(result.isPresent()) {
@@ -245,6 +253,7 @@ public class BSet<T> implements BObject, Set<T> {
 		throw new RuntimeException("Minumum does not exist");
 	}
 
+	@SuppressWarnings("unchecked")
 	public BInteger max() {
 		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).greaterEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
 		if(result.isPresent()) {
@@ -254,17 +263,17 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BSet<BSet<T>> pow() {
-		BSet<BSet<T>> result = new BSet<>();
-		BSet<T> start = new BSet<>();
+		BSet<BSet<T>> result = new BSet<BSet<T>>();
+		BSet<T> start = new BSet<T>();
 		Queue<BSet<T>> queue = new LinkedList<>();
 		queue.add(start);
-		result = result.union(new BSet<>(start));
+		result = result.union(new BSet<BSet<T>>(start));
 		while(!queue.isEmpty()) {
 			BSet<T> currentSet = queue.remove();
 			for(T element : this) {
-				BSet<T> nextSet = currentSet.union(new BSet<>(element));
+				BSet<T> nextSet = currentSet.union(new BSet<T>(element));
 				int previousSize = result.size();
-				result = result.union(new BSet<>(nextSet));
+				result = result.union(new BSet<BSet<T>>(nextSet));
 				if(previousSize < result.size()) {
 					queue.add(nextSet);
 				}
@@ -274,7 +283,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BSet<BSet<T>> pow1() {
-		return this.pow().difference(new BSet<>(new BSet<>()));
+		return this.pow().difference(new BSet<BSet<T>>(new BSet<T>()));
 	}
 
 	public BSet<BSet<T>> fin() {
@@ -286,10 +295,10 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public <S> BRelation<T,S> cartesianProduct(BSet<S> set) {
-		BRelation<T,S> result = new BRelation<>();
+		BRelation<T,S> result = new BRelation<T,S>();
 		for(T e1 : this) {
 			for(S e2 : set) {
-				result = result.union(new BRelation<>(new BTuple<>(e1,e2)));
+				result = result.union(new BRelation<T,S>(new BTuple<T,S>(e1,e2)));
 			}
 		}
 		return result;

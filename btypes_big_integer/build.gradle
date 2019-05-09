@@ -32,6 +32,10 @@ task fatJar(type: Jar) {
     with jar
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

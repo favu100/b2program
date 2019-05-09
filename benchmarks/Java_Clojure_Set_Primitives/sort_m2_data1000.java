@@ -19,9 +19,9 @@ public class sort_m2_data1000 {
     private BRelation<BInteger, BInteger> g;
 
     public sort_m2_data1000() {
-        BRelation<BInteger, BInteger> _ic_set_0 = new BRelation<>();
+        BRelation<BInteger, BInteger> _ic_set_0 = new BRelation<BInteger, BInteger>();
         for(BInteger _ic_i : BSet.interval(new BInteger(1),new BInteger(1000))) {
-            _ic_set_0 = _ic_set_0.union(new BRelation<>(new BTuple<>(_ic_i, new BInteger(15000).minus(_ic_i))));
+            _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple<>(_ic_i, new BInteger(1500).minus(_ic_i))));
 
         }
         f = _ic_set_0;

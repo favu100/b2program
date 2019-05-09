@@ -111,7 +111,7 @@ let_expression_predicate_body(otherIterationConstructs, type, identifier, val) :
 <type> <identifier> = <val>;
 >>
 
-set_comprehension(type, identifier, isRelation, comprehension) ::= <<
+set_comprehension(type, identifier, comprehension) ::= <<
 <type> <identifier> = <type>();
 <comprehension>
 >>

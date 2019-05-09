@@ -4436,7 +4436,6 @@ OPERATIONS
             T1SendResult(3, 1);
             T1Wait(2);
             Update(5);
-
             T3Evaluate;
             T3Read(5, 0);
             T3ReleaseBus(4);
@@ -4453,7 +4452,6 @@ OPERATIONS
             T2Evaluate;
             T2ReadBus(5, 0);
             T2Complete;
-
             T3Evaluate;
             T2ReleaseBus(5);
             T2Wait(3);
@@ -4469,7 +4467,6 @@ OPERATIONS
             T1SendResult(3, 0);
             T1Wait(2);
             Update(4);
-
             T3Evaluate;
             T3Read(4, 0);
             T3Poll;
@@ -4479,7 +4476,6 @@ OPERATIONS
             T1Calculate(1);
             T1SendResult(3, 1);
             T2Evaluate;
-
             T3Evaluate;
             T1Wait(2);
             T2ReadBus(4, 0);
@@ -4490,7 +4486,6 @@ OPERATIONS
             T3Wait;
             T2Wait(3);
             Update(5);
-
             T3Evaluate;
             T3Read(5, 0);
             T3ReleaseBus(4);
@@ -4505,7 +4500,6 @@ OPERATIONS
             T3Wait;
             Update(5);
             T2Evaluate;
-
             T3Evaluate;
             T2ReadBus(5, 0);
             T2Complete;
@@ -4523,14 +4517,12 @@ OPERATIONS
             T1Wait(2);
             T3Wait;
             Update(4);
-
             WHILE counter < 300000 DO
                 T3Evaluate;
                 T3Read(4, 0);
                 T3Poll;
                 T3Wait;
                 Update(4);
-
                 T3Evaluate;
                 T2Evaluate;
                 T3Read(4, 0);
@@ -4545,7 +4537,6 @@ OPERATIONS
                 T2Wait(3);
                 T1Wait(2);
                 Update(5);
-
                 T3Evaluate;
                 T3Read(5, 0);
                 T3ReleaseBus(4);
@@ -4560,7 +4551,6 @@ OPERATIONS
                 T3Wait;
                 Update(5);
                 T2Evaluate;
-
                 T3Evaluate;
                 T2ReadBus(5, 0);
                 T2Complete;

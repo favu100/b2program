@@ -68,8 +68,8 @@ public class SetComprehensionGenerator {
         return result;
     }
 
-    private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode predicateNode, String type, String setName, String elementName, int numberDeclarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
+    private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size());
         ST template = group.getInstanceOf("set_comprehension_predicate");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
@@ -77,6 +77,15 @@ public class SetComprehensionGenerator {
         TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);
         TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
+        if(declarations.size() == 1) {
+            DeclarationNode declarationNode = declarations.get(0);
+            TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
+        } else {
+            DeclarationNode left = declarations.get(0);
+            DeclarationNode right = declarations.get(1);
+            TemplateHandler.add(template, "leftType", typeGenerator.generate(left.getType()));
+            TemplateHandler.add(template, "rightType", typeGenerator.generate(right.getType()));
+        }
         TemplateHandler.add(template, "element", elementName);
         return template.render();
     }
@@ -101,9 +110,18 @@ public class SetComprehensionGenerator {
 
         String generatedType = typeGenerator.generate(type);
 
-        String innerBody = generateSetComprehensionPredicate(otherConstructs, predicate, generatedType, identifier, elementName, declarations.size());
+        String innerBody = generateSetComprehensionPredicate(otherConstructs, predicate, generatedType, identifier, elementName, declarations);
         String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
+        if(declarations.size() == 1) {
+            DeclarationNode declarationNode = declarations.get(0);
+            TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
+        } else {
+            DeclarationNode left = declarations.get(0);
+            DeclarationNode right = declarations.get(1);
+            TemplateHandler.add(template, "leftType", typeGenerator.generate(left.getType()));
+            TemplateHandler.add(template, "rightType", typeGenerator.generate(right.getType()));
+        }
         TemplateHandler.add(template, "type", generatedType);
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "isRelation", isRelation);

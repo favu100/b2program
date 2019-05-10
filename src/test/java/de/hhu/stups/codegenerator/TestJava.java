@@ -166,6 +166,12 @@ public class TestJava {
 	}
 
 	@Test
+	public void testNondeterminism2() throws Exception {
+		testJava("Nondeterminism2", "Nondeterminism2", "Nondeterminism2Addition.stjava", true);
+	}
+
+
+	@Test
 	public void testMapFunction() throws Exception {
 		testJava("MapFunction", "MapFunction", "MapFunctionAddition.stjava", true);
 	}

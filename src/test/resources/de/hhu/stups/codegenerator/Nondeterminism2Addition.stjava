@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Nondeterminism2 nondeterminism = new Nondeterminism2();
+    nondeterminism.calculate();
+    System.out.println(nondeterminism.getRes());
+}

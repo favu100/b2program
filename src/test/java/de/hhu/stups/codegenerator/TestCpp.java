@@ -176,6 +176,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testNondeterminism2() throws Exception {
+		testCpp("Nondeterminism2", "Nondeterminism2", "Nondeterminism2Addition.stCpp", true);
+	}
+
+	@Test
 	public void testMapFunction() throws Exception {
 		testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stCpp", true);
 	}

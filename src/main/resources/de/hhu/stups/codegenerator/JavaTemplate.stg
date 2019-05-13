@@ -30,9 +30,9 @@ public class <machine> {
 
 >>
 
-initialization(machine, body, constants_initializations, values) ::= <<
+initialization(machine, properties, values, body) ::= <<
 public <machine>() {
-    <constants_initializations; separator="\n">
+    <properties; separator="\n">
     <values>
     <body>
 }

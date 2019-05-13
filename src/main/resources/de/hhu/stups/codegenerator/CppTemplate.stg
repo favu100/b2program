@@ -45,9 +45,9 @@ class <machine> {
 #endif
 >>
 
-initialization(machine, body, constants_initializations, values) ::= <<
+initialization(machine, properties, values, body) ::= <<
 <machine>() {
-    <constants_initializations; separator="\n">
+    <properties; separator="\n">
     <values; separator="\n">
     <body>
 }

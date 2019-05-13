@@ -8,15 +8,9 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
-import de.prob.parser.ast.nodes.expression.ExprNode;
-import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
-import de.prob.parser.ast.nodes.predicate.PredicateNode;
-import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
-import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,62 +97,13 @@ public class DeclarationGenerator {
         return declaration.render();
     }
 
-    public String generateValues(MachineNode node) {
-        if(node.getValues().size() == 0) {
-            return "";
-        }
-        ST values = currentGroup.getInstanceOf("values");
-        List<String> assignments = node.getValues().stream()
-                .map(substitution -> machineGenerator.visitSubstitutionNode(substitution, null))
-                .collect(Collectors.toList());
-        TemplateHandler.add(values, "assignments", assignments);
-        return values.render();
-    }
-
     public List<String> generateConstantsDeclarations(MachineNode node) {
         return node.getConstants().stream()
                 .map(this::generateConstantDeclaration)
                 .collect(Collectors.toList());
     }
 
-    public List<String> generateConstantsInitializations(MachineNode node) {
-        return node.getConstants().stream()
-                .map(constant -> generateConstantInitialization(node, constant))
-                .collect(Collectors.toList());
-    }
-
-    private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
-        ST initialization = currentGroup.getInstanceOf("constant_initialization");
-        TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        List<PredicateNode> equalProperties = extractEqualProperties(node, constant);
-        if(equalProperties.isEmpty()) {
-            return "";
-        }
-        ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
-        TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
-        TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
-        return initialization.render();
-    }
-
-    private List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
-        List<PredicateNode> propertiesNodes = new ArrayList<>();
-        if(node.getProperties() != null) {
-            if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {
-                propertiesNodes.add(node.getProperties());
-            } else {
-                PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
-                propertiesNodes.addAll(properties.getPredicateArguments());
-            }
-        }
-        return propertiesNodes.stream()
-                .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
-                        && ((PredicateOperatorWithExprArgsNode) prop).getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL
-                        && ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0) instanceof IdentifierExprNode
-                        && ((IdentifierExprNode) ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0)).getName().equals(constant.getName()))
-                .collect(Collectors.toList());
-    }
-
-    private String generateConstantDeclaration(DeclarationNode constant) {
+    public String generateConstantDeclaration(DeclarationNode constant) {
         ST declaration = currentGroup.getInstanceOf("constant_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));

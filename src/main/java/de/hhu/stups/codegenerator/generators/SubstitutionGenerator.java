@@ -11,6 +11,9 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.BecomesElementOfSubstitutionNode;
@@ -88,17 +91,67 @@ public class SubstitutionGenerator {
     * This function generates code for the initialization for the given AST node of the machine.
     */
     public String visitInitialization(MachineNode node) {
+        String machineName = nameHandler.handle(node.getName());
         ST initialization = currentGroup.getInstanceOf("initialization");
-        TemplateHandler.add(initialization, "machine", nameHandler.handle(node.getName()));
+        TemplateHandler.add(initialization, "machine", machineName);
         TemplateHandler.add(initialization, "machines", node.getMachineReferences().stream()
                 .map(reference -> nameHandler.handle(reference.getMachineNode().getName()))
                 .collect(Collectors.toList()));
-        TemplateHandler.add(initialization, "constants_initializations", declarationGenerator.generateConstantsInitializations(node));
-        TemplateHandler.add(initialization, "values", declarationGenerator.generateValues(node));
+        TemplateHandler.add(initialization, "properties", generateConstantsInitializations(node));
+        TemplateHandler.add(initialization, "values", generateValues(node));
         if(node.getInitialisation() != null) {
             TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
         }
         return initialization.render();
+    }
+
+    public String generateValues(MachineNode node) {
+        if(node.getValues().size() == 0) {
+            return "";
+        }
+        ST values = currentGroup.getInstanceOf("values");
+        List<String> assignments = node.getValues().stream()
+                .map(substitution -> machineGenerator.visitSubstitutionNode(substitution, null))
+                .collect(Collectors.toList());
+        TemplateHandler.add(values, "assignments", assignments);
+        return values.render();
+    }
+
+    public List<String> generateConstantsInitializations(MachineNode node) {
+        return node.getConstants().stream()
+                .map(constant -> generateConstantInitialization(node, constant))
+                .collect(Collectors.toList());
+    }
+
+    private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
+        ST initialization = currentGroup.getInstanceOf("constant_initialization");
+        TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        List<PredicateNode> equalProperties = extractEqualProperties(node, constant);
+        if(equalProperties.isEmpty()) {
+            return "";
+        }
+        ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
+        TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
+        TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+        return initialization.render();
+    }
+
+    private List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
+        List<PredicateNode> propertiesNodes = new ArrayList<>();
+        if(node.getProperties() != null) {
+            if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {
+                propertiesNodes.add(node.getProperties());
+            } else {
+                PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
+                propertiesNodes.addAll(properties.getPredicateArguments());
+            }
+        }
+        return propertiesNodes.stream()
+                .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
+                        && ((PredicateOperatorWithExprArgsNode) prop).getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL
+                        && ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0) instanceof IdentifierExprNode
+                        && ((IdentifierExprNode) ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0)).getName().equals(constant.getName()))
+                .collect(Collectors.toList());
     }
 
     /*

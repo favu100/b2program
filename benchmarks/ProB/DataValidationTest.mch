@@ -5,7 +5,7 @@ CONSTANTS
   n,
   ids, value, ids_for_value
 PROPERTIES
-  n = 20000 & // with n>20000 value is kept symbolic; investigate; run time jumps from 0.5 to 25 secs
+  n = 20001 & // with n>20000 value is kept symbolic
   ids = 1..n &
   value = %x.(x:1..n | x mod 100) &
   ids_for_value = value~
@@ -17,14 +17,16 @@ INVARIANT
 INITIALISATION counter := 0 || error := FALSE || checked := FALSE
 OPERATIONS
   Validate = BEGIN
-     WHILE counter < n DO
+     WHILE counter < 3000 DO
         counter := counter + 1;
         IF counter /: ids THEN
-           error := FALSE
-        ELSIF value(counter) /: 0..9 THEN
-           error := FALSE
+           error := TRUE
+        //ELSIF counter: 0..n & (counter mod 100) /: 0..99 THEN
+        //ELSIF counter|->100 : value  THEN 
+        ELSIF value(counter) /: 0..99 THEN
+           error := TRUE
         ELSIF card(ids_for_value[{value(counter)}]) < n/100 THEN
-           error := FALSE
+           error := TRUE
         END
         INVARIANT counter:INTEGER
         VARIANT n-counter

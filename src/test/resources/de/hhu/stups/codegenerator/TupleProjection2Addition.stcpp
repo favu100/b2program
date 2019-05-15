@@ -1,0 +1,8 @@
+int main() {
+    TupleProjection2 projection2;
+    projection2.calculate();
+    cout << projection2.getRes();
+    cout << " ";
+    cout << projection2.getPair();
+    return 0;
+}

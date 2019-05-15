@@ -1,0 +1,6 @@
+public static void main(String[] args) {
+    TupleProjection1 projection = new TupleProjection1();
+    projection.calculate();
+    System.out.println(projection.getRes() + " ");
+    System.out.println(projection.getPair());
+}

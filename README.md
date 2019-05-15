@@ -47,7 +47,7 @@ Note:
   
   ### Compile the generated code in C++
   
-  1. Move all B types (see btypes_persistent or btypes_big_integer folder) files to same folder as the generated classes
+  1. Move all B types (see btypes_primitives or btypes_big_integer folder) files to same folder as the generated classes
   3. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
   4. Example: `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)

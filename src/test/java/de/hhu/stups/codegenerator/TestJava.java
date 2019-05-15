@@ -1179,8 +1179,18 @@ public class TestJava {
 	}
 
 	@Test
+	public void testTupleProjection1() throws Exception {
+		testJava("TupleProjection1", "TupleProjection1", "TupleProjection1Addition.stjava", true);
+	}
+
+	@Test
 	public void testProjection2() throws Exception {
 		testJava("Projection2", "Projection2", "Projection2Addition.stjava", true);
+	}
+
+	@Test
+	public void testTupleProjection2() throws Exception {
+		testJava("TupleProjection2", "TupleProjection2", "TupleProjection2Addition.stjava", true);
 	}
 
 	@Test

@@ -204,10 +204,24 @@ public class ExpressionGenerator {
     * This function generates code for an expression.
     */
     public String visitExprOperatorNode(ExpressionOperatorNode node) {
+        if(checkTupleProjections(node)) {
+            return generateTupleProjection(node);
+        }
         List<String> expressionList = node.getExpressionNodes().stream()
                 .map(this::visitExprNode)
                 .collect(Collectors.toList());
         return generateExpression(node, expressionList);
+    }
+
+    private boolean checkTupleProjections(ExpressionOperatorNode node) {
+        if(node.getOperator() == FUNCTION_CALL) {
+            ExprNode first = node.getExpressionNodes().get(0);
+            if(first instanceof ExpressionOperatorNode) {
+                ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) first).getOperator();
+                return operator == PRJ1 || operator == PRJ2;
+            }
+        }
+        return false;
     }
 
     /*
@@ -526,6 +540,14 @@ public class ExpressionGenerator {
         TemplateHandler.add(projection, "arg1", arguments.get(0));
         TemplateHandler.add(projection, "arg2", arguments.get(1));
         TemplateHandler.add(projection, "isProjection1", operator == PRJ1);
+        return projection.render();
+    }
+
+    private String generateTupleProjection(ExpressionOperatorNode node) {
+        ST projection = currentGroup.getInstanceOf("projection_tuple");
+        ExpressionOperatorNode function = (ExpressionOperatorNode) node.getExpressionNodes().get(0);
+        TemplateHandler.add(projection, "arg", visitExprNode(node.getExpressionNodes().get(1)));
+        TemplateHandler.add(projection, "isProjection1", function.getOperator() == PRJ1);
         return projection.render();
     }
 

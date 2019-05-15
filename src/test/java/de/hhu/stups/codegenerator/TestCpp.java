@@ -1190,8 +1190,18 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testTupleProjection1() throws Exception {
+		testCpp("TupleProjection1", "TupleProjection1", "TupleProjection1Addition.stcpp", true);
+	}
+
+	@Test
 	public void testProjection2() throws Exception {
 		testCpp("Projection2", "Projection2", "Projection2Addition.stcpp", true);
+	}
+
+	@Test
+	public void testTupleProjection2() throws Exception {
+		testCpp("TupleProjection2", "TupleProjection2", "TupleProjection2Addition.stcpp", true);
 	}
 
 	@Test

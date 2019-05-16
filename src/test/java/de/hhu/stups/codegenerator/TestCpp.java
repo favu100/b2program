@@ -1315,6 +1315,11 @@ public class TestCpp {
 		testCpp("Rel", "Rel", "RelAddition.stcpp", true);
 	}
 
+	@Test
+	public void testString() throws Exception {
+		testCpp("String");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

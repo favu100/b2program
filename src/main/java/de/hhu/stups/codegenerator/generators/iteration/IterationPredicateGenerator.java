@@ -140,7 +140,7 @@ public class IterationPredicateGenerator {
                 enumerationTemplate = getSubsetNeqTemplate(declarationNode, innerPredicate.getExpressionNodes().get(0));
                 inLoop = true;
             } else {
-                throw new RuntimeException("Other operations within predicate node not supported yet");
+                throw new RuntimeException("Other operations within predicate node are not supported");
             }
             generateOtherIterationConstructs(iterationConstructGenerator, enumerationTemplate, innerPredicate);
             TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(innerPredicate.getExpressionNodes().get(1), null));

@@ -143,6 +143,9 @@ public class SubstitutionGenerator {
                 propertiesNodes.add(node.getProperties());
             } else {
                 PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
+                if(properties.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
+                    throw new RuntimeException("Predicate for iteration must be a conjunction");
+                }
                 propertiesNodes.addAll(properties.getPredicateArguments());
             }
         }

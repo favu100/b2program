@@ -477,6 +477,10 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
+string(string) ::= <<
+(BString(<string>))
+>>
+
 operation_call_with_assignment_many_parameters(var, machine, function, args, this, assignments) ::= <<
 BRecord <var> = <operation_call_without_assignment(machine, function, args, this)>
 <assignments; separator="\n">

@@ -11,6 +11,7 @@ import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.SetType;
+import de.prob.parser.ast.types.StringType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -41,11 +42,14 @@ public class ImportGenerator {
     */
     public void addImport(BType type) {
         ST template = group.getInstanceOf("import_type");
-        if (type instanceof IntegerType) {
+        if(type instanceof IntegerType) {
             TemplateHandler.add(template, "type", "BInteger");
             imports.add(template.render());
-        } else if (type instanceof BoolType) {
+        } else if(type instanceof BoolType) {
             TemplateHandler.add(template, "type", "BBoolean");
+            imports.add(template.render());
+        } else if(type instanceof StringType) {
+            TemplateHandler.add(template, "type", "BString");
             imports.add(template.render());
         } else if(type instanceof SetType) {
             if(((SetType) type).getSubType() instanceof CoupleType) {

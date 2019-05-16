@@ -9,6 +9,7 @@ import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.SetType;
+import de.prob.parser.ast.types.StringType;
 import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -34,6 +35,9 @@ public class TypeGenerator {
             return template.render();
         } else if(type instanceof BoolType) {
             TemplateHandler.add(template, "type", "BBoolean");
+            return template.render();
+        } else if(type instanceof StringType) {
+            TemplateHandler.add(template, "type", "BString");
             return template.render();
         } else if(type instanceof SetType) {
             BType subType = ((SetType) type).getSubType();

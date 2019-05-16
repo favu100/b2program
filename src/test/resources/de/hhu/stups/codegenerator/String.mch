@@ -1,0 +1,13 @@
+MACHINE String
+
+VARIABLES  str
+
+INVARIANT  str : STRING /* NAT */
+
+INITIALISATION str := "Hallo"
+
+OPERATIONS
+
+	welt = PRE str : STRING THEN str := "Welt" END
+
+END

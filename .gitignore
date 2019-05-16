@@ -140,3 +140,5 @@ btypes_primitives/.settings/org.eclipse.jdt.core.prefs
 btypes_big_integer/.settings/org.eclipse.jdt.core.prefs
 .settings/org.eclipse.jdt.core.prefs
 .classpath
+
+src/main/resources/de/hhu/stups/codegenerator/testfiles/Rule_DB_Route_0001ori.mch

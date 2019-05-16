@@ -1304,6 +1304,11 @@ public class TestJava {
 		testJava("Rel", "Rel", "RelAddition.stjava", true);
 	}
 
+	@Test
+	public void testString() throws Exception {
+		testJava("String");
+	}
+
 
 	private void cleanUp(String path) {
 		File file = new File(path);

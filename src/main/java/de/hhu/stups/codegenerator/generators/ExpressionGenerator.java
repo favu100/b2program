@@ -14,6 +14,7 @@ import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
+import de.prob.parser.ast.nodes.expression.StringNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
@@ -169,6 +170,8 @@ public class ExpressionGenerator {
         importGenerator.addImport(node.getType());
         if (node instanceof NumberNode) {
             return visitNumberNode((NumberNode) node);
+        } else if(node instanceof StringNode) {
+            return visitStringNode((StringNode) node);
         } else if (node instanceof ExpressionOperatorNode) {
             return visitExprOperatorNode((ExpressionOperatorNode) node);
         } else if (node instanceof EnumeratedSetElementNode) {
@@ -248,6 +251,12 @@ public class ExpressionGenerator {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", node.getValue().toString());
         TemplateHandler.add(number, "useBigInteger", useBigInteger);
+        return number.render();
+    }
+
+    public String visitStringNode(StringNode node) {
+        ST number = currentGroup.getInstanceOf("string");
+        TemplateHandler.add(number, "string", node.getValue());
         return number.render();
     }
 

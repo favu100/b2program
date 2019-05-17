@@ -56,6 +56,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ID;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INSERT_FRONT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INSERT_TAIL;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERSECTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INTERVAL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.INVERSE_RELATION;
@@ -70,6 +71,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MINUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MOD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MULT;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.NAT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.OVERWRITE_RELATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARALLEL_PRODUCT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION;
@@ -304,6 +306,10 @@ public class ExpressionGenerator {
             return generateMinInt();
         } else if(node.getOperator() == MAXINT) {
             return generateMaxInt();
+        } else if(node.getOperator() == INT) {
+            return generateInt();
+        } else if(node.getOperator() == NAT) {
+            return generateNat();
         }
         throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
     }
@@ -674,11 +680,32 @@ public class ExpressionGenerator {
         return number.render();
     }
 
+    private String generateZero() {
+        ST number = currentGroup.getInstanceOf("number");
+        TemplateHandler.add(number, "number", 0);
+        TemplateHandler.add(number, "useBigInteger", useBigInteger);
+        return number.render();
+    }
+
     private String generateMaxInt() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", maxint);
         TemplateHandler.add(number, "useBigInteger", useBigInteger);
         return number.render();
+    }
+
+    private String generateInt() {
+        ST interval = currentGroup.getInstanceOf("interval");
+        TemplateHandler.add(interval, "arg1", generateMinInt());
+        TemplateHandler.add(interval, "arg2", generateMaxInt());
+        return interval.render();
+    }
+
+    private String generateNat() {
+        ST interval = currentGroup.getInstanceOf("interval");
+        TemplateHandler.add(interval, "arg1", generateZero());
+        TemplateHandler.add(interval, "arg2", generateMaxInt());
+        return interval.render();
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

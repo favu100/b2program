@@ -17,7 +17,7 @@ INVARIANT
 INITIALISATION counter := 0 || error := FALSE || checked := FALSE
 OPERATIONS
   Validate = BEGIN
-     WHILE counter < 3000 DO
+     WHILE counter < n DO
         counter := counter + 1;
         IF counter /: ids THEN
            error := TRUE

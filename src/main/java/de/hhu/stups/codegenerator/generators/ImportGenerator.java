@@ -26,14 +26,11 @@ public class ImportGenerator {
 
     private final NameHandler nameHandler;
 
-    private final boolean useBigInteger;
-
     private final Set<String> imports;
 
-    public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
+    public ImportGenerator(final STGroup group, final NameHandler nameHandler) {
         this.group = group;
         this.nameHandler = nameHandler;
-        this.useBigInteger = useBigInteger;
         this.imports = new HashSet<>();
     }
 

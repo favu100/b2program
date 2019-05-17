@@ -2,7 +2,7 @@ MACHINE String
 
 VARIABLES  str
 
-INVARIANT  str : STRING /* NAT */
+INVARIANT  str : STRING
 
 INITIALISATION str := "Hallo"
 

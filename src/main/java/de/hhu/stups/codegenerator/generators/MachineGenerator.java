@@ -93,7 +93,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private int iterationConstructDepth;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, Path addition) {
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, Path addition) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		if(addition != null) {
 			try {
@@ -106,11 +106,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler);
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler);
-		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
+		this.importGenerator = new ImportGenerator(currentGroup, nameHandler);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
-		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, nameHandler, importGenerator,
+		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
 																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler,

@@ -64,7 +64,9 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.ITERATE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.LAST;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MAX;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MAXINT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MIN;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MININT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MINUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MOD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MULT;
@@ -134,6 +136,10 @@ public class ExpressionGenerator {
 
     private final boolean useBigInteger;
 
+    private final String minint;
+
+    private final String maxint;
+
     private final ImportGenerator importGenerator;
 
     private final DeclarationGenerator declarationGenerator;
@@ -148,13 +154,15 @@ public class ExpressionGenerator {
 
     private final IterationConstructHandler iterationConstructHandler;
 
-    public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, final NameHandler nameHandler,
+    public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
                                final IterationConstructHandler iterationConstructHandler) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;
+        this.minint = minint;
+        this.maxint = maxint;
         this.nameHandler = nameHandler;
         this.importGenerator = importGenerator;
         this.declarationGenerator = declarationGenerator;
@@ -292,6 +300,10 @@ public class ExpressionGenerator {
             return generateTuple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
             return generateBooleans();
+        } else if(node.getOperator() == MININT) {
+            return generateMinInt();
+        } else if(node.getOperator() == MAXINT) {
+            return generateMaxInt();
         }
         throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
     }
@@ -651,8 +663,22 @@ public class ExpressionGenerator {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
-    public String generateBooleans() {
+    private String generateBooleans() {
         return currentGroup.getInstanceOf("bool").render();
+    }
+
+    private String generateMinInt() {
+        ST number = currentGroup.getInstanceOf("number");
+        TemplateHandler.add(number, "number", minint);
+        TemplateHandler.add(number, "useBigInteger", useBigInteger);
+        return number.render();
+    }
+
+    private String generateMaxInt() {
+        ST number = currentGroup.getInstanceOf("number");
+        TemplateHandler.add(number, "number", maxint);
+        TemplateHandler.add(number, "useBigInteger", useBigInteger);
+        return number.render();
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

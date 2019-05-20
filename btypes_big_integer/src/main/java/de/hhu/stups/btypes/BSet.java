@@ -337,4 +337,71 @@ public class BSet<T> implements BObject, Set<T> {
 		}
 		return result;
 	}
+
+	public BBoolean subsetOfInteger() {
+		for(T e : this) {
+			if(e instanceof BInteger) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean strictSubsetOfInteger() {
+		return subsetOfInteger();
+	}
+
+	public BBoolean notSubsetOfInteger() {
+		return subsetOfInteger().not();
+	}
+
+	public BBoolean notStrictSubsetOfInteger() {
+		return strictSubsetOfInteger().not();
+	}
+
+	public BBoolean subsetOfNatural() {
+		for(T e : this) {
+			BInteger element = (BInteger) e;
+			if(!element.isNatural().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean strictSubsetOfNatural() {
+		return subsetOfNatural();
+	}
+
+	public BBoolean notSubsetOfNatural() {
+		return subsetOfNatural().not();
+	}
+
+	public BBoolean notStrictSubsetOfNatural() {
+		return strictSubsetOfNatural().not();
+	}
+
+	public BBoolean subsetOfNatural1() {
+		for(T e : this) {
+			BInteger element = (BInteger) e;
+			if(!element.isNatural1().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean strictSubsetOfNatural1() {
+		return subsetOfNatural1();
+	}
+
+	public BBoolean notSubsetOfNatural1() {
+		return subsetOfNatural1().not();
+	}
+
+	public BBoolean notStrictSubsetOfNatural1() {
+		return strictSubsetOfNatural1().not();
+	}
 }

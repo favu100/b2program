@@ -167,4 +167,15 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
         return value;
     }
 
+    public BBoolean isInteger() {
+        return new BBoolean(true);
+    }
+
+    public BBoolean isNatural() {
+        return this.greaterEqual(new BInteger(0));
+    }
+
+    public BBoolean isNatural1() {
+        return this.greater(new BInteger(0));
+    }
 }

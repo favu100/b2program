@@ -48,7 +48,7 @@ public class TestJava {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false,true, null);
+		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), true, null);
 		Process process = Runtime.getRuntime()
 				.exec("javac -classpath btypes_persistent.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
@@ -71,7 +71,7 @@ public class TestJava {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false,true, addition);
+		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), true, addition);
 		Runtime runtime = Runtime.getRuntime();
 		Process compileProcess = runtime.exec("javac -cp btypes_persistent.jar " +
 				String.join(" ", javaFilePaths.stream()
@@ -1307,6 +1307,36 @@ public class TestJava {
 	@Test
 	public void testString() throws Exception {
 		testJava("String");
+	}
+
+	@Test
+	public void testInteger() throws Exception {
+		testJava("Integer");
+	}
+
+	@Test
+	public void testNatural() throws Exception {
+		testJava("Natural");
+	}
+
+	@Test
+	public void testNatural1() throws Exception {
+		testJava("Natural1");
+	}
+
+	@Test
+	public void testIntegerSubset() throws Exception {
+		testJava("IntegerSubset");
+	}
+
+	@Test
+	public void testNaturalSubset() throws Exception {
+		testJava("NaturalSubset");
+	}
+
+	@Test
+	public void testNatural1Subset() throws Exception {
+		testJava("Natural1Subset");
 	}
 
 

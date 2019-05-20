@@ -424,6 +424,10 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>new BInteger("<number>")<else>new BInteger(<number>)<endif>
 >>
 
+infinite_predicate(arg, operator) ::= <<
+<arg>.<operator>()
+>>
+
 string(string) ::= <<
 new BString(<string>);
 >>

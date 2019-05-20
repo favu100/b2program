@@ -4,6 +4,8 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.expression.ExprNode;
+import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
@@ -32,6 +34,13 @@ public class PredicateGenerator {
 
     private static final List<PredicateOperatorNode.PredicateOperator> PREDICATE_BOOLEANS =
             Arrays.asList(PredicateOperatorNode.PredicateOperator.TRUE, PredicateOperatorNode.PredicateOperator.FALSE);
+
+    private static final List<PredicateOperatorWithExprArgsNode.PredOperatorExprArgs> INFINITE_PREDICATE_OPERATORS =
+            Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION,
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_NON_INCLUSION);
+
+    private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1);
 
     private final STGroup currentGroup;
 
@@ -70,10 +79,25 @@ public class PredicateGenerator {
     */
     public String visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node) {
         importGenerator.addImport(node.getType());
+        if(checkInfinite(node)) {
+            return generateInfinite(node);
+        }
         List<String> expressionList = node.getExpressionNodes().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, null))
                 .collect(Collectors.toList());
         return operatorGenerator.generateBinary(node::getOperator, expressionList);
+    }
+
+    private boolean checkInfinite(PredicateOperatorWithExprArgsNode node) {
+        List<ExprNode> expressions = node.getExpressionNodes();
+        PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
+        if(expressions.size() == 2 && INFINITE_PREDICATE_OPERATORS.contains(operator)) {
+            ExprNode rhs = node.getExpressionNodes().get(1);
+            if(rhs instanceof ExpressionOperatorNode && INFINITE_EXPRESSIONS.contains(((ExpressionOperatorNode) rhs).getOperator())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -196,6 +220,130 @@ public class PredicateGenerator {
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template;
+    }
+
+    private String generateInfiniteInteger(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch (operator) {
+            case ELEMENT_OF:
+                operatorName = "isInteger";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInteger";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfInteger";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfInteger";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfInteger";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfInteger";
+                break;
+            case EQUAL:
+                operatorName = "equalInteger";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalInteger";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteNatural(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch (operator) {
+            case ELEMENT_OF:
+                operatorName = "isNatural";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotNatural";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfNatural";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfNatural";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfNatural";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfNatural";
+                break;
+            case EQUAL:
+                operatorName = "equalNatural";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalNatural";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteNatural1(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch (operator) {
+            case ELEMENT_OF:
+                operatorName = "isNatural1";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotNatural1";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfNatural1";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfNatural1";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfNatural1";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfNatural1";
+                break;
+            case EQUAL:
+                operatorName = "equalNatural1";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalNatural1";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfinite(PredicateOperatorWithExprArgsNode node) {
+        PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExprNode rhs = node.getExpressionNodes().get(1);
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
+        String operatorName;
+        switch(rhsOperator) {
+            case INTEGER:
+                operatorName = generateInfiniteInteger(operator);
+                break;
+            case NATURAL:
+                operatorName = generateInfiniteNatural(operator);
+                break;
+            case NATURAL1:
+                operatorName = generateInfiniteNatural1(operator);
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        return template.render();
     }
 
     /*

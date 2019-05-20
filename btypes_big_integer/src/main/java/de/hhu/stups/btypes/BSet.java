@@ -349,6 +349,30 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(true);
 	}
 
+	public BBoolean equalInteger() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean unequalInteger() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean equalNatural() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean unequalNatural() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean equalNatural1() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean unequalNatural1() {
+		return new BBoolean(true);
+	}
+
 	public BBoolean strictSubsetOfInteger() {
 		return subsetOfInteger();
 	}

@@ -477,6 +477,10 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
+infinite_predicate(arg, operator) ::= <<
+(<arg>.<operator>())
+>>
+
 string(string) ::= <<
 (BString(<string>))
 >>

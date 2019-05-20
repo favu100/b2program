@@ -1320,6 +1320,36 @@ public class TestCpp {
 		testCpp("String");
 	}
 
+	@Test
+	public void testInteger() throws Exception {
+		testCpp("Integer");
+	}
+
+	@Test
+	public void testNatural() throws Exception {
+		testCpp("Natural");
+	}
+
+	@Test
+	public void testNatural1() throws Exception {
+		testCpp("Natural1");
+	}
+
+	@Test
+	public void testIntegerSubset() throws Exception {
+		testCpp("IntegerSubset");
+	}
+
+	@Test
+	public void testNaturalSubset() throws Exception {
+		testCpp("NaturalSubset");
+	}
+
+	@Test
+	public void testNatural1Subset() throws Exception {
+		testCpp("Natural1Subset");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

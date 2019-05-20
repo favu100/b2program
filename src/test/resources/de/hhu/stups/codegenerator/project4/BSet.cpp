@@ -398,6 +398,97 @@ class BSet : public BObject {
             return BBoolean(this->set != other.set);
         }
 
+        BBoolean subsetOfInteger() {
+            for(T e : this->set) {
+                if(typeid(e) == typeid(BInteger)) {
+                    return BBoolean(true);
+                } else {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean strictSubsetOfInteger() {
+            return this->subsetOfInteger();
+        }
+
+        BBoolean notSubsetOfInteger() {
+            return this->subsetOfInteger()._not();
+        }
+
+        BBoolean equalInteger() {
+            return BBoolean(false);
+        }
+
+        BBoolean unequalInteger() {
+            return BBoolean(true);
+        }
+
+        BBoolean equalNatural() {
+            return BBoolean(false);
+        }
+
+        BBoolean unequalNatural() {
+            return BBoolean(true);
+        }
+
+         Boolean equalNatural1() {
+            return BBoolean(false);
+        }
+
+        BBoolean unequalNatural1() {
+            return BBoolean(true);
+        }
+
+        BBoolean notStrictSubsetOfInteger() {
+            return this->strictSubsetOfInteger()._not();
+        }
+
+        BBoolean subsetOfNatural() {
+            for(T e : this->set) {
+                BInteger element = (BInteger) e;
+                if(!element.isNatural().booleanValue()) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean strictSubsetOfNatural() {
+            return this->subsetOfNatural();
+        }
+
+        BBoolean notSubsetOfNatural() {
+            return this->subsetOfNatural()._not();
+        }
+
+        BBoolean notStrictSubsetOfNatural() {
+            return strictSubsetOfNatural()._not();
+        }
+
+        BBoolean subsetOfNatural1() {
+            for(T e : this->set) {
+                BInteger element = (BInteger) e;
+                if(!element.isNatural1().booleanValue()) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean strictSubsetOfNatural1() {
+            return this->subsetOfNatural1();
+        }
+
+        BBoolean notSubsetOfNatural1() {
+            return this->subsetOfNatural1()._not();
+        }
+
+        BBoolean notStrictSubsetOfNatural1() {
+            return this->strictSubsetOfNatural1()._not();
+        }
+
         void operator =(const BSet<T>& other) {
             this->set = other.set;
         }

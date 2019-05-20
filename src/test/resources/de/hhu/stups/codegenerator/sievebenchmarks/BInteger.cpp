@@ -217,5 +217,29 @@ class BInteger : public BObject {
         friend std::ostream& operator<<(std::ostream &strm, const BInteger &b) {
           return strm << b.value;
         }
+
+        BBoolean isInteger() {
+            return BBoolean(true);
+        }
+
+        BBoolean isNotInteger() {
+            return BBoolean(false);
+        }
+
+        BBoolean isNatural() {
+            return this->greaterEqual(BInteger(0));
+        }
+
+        BBoolean isNotNatural() {
+            return this->isNatural()._not();
+        }
+
+        BBoolean isNatural1() {
+            return this->greater(BInteger(0));
+        }
+
+        BBoolean isNotNatural1() {
+            return this->isNatural1()._not();
+        }
 };
 #endif

@@ -210,5 +210,29 @@ class BInteger : public BObject {
           return strm << b.value;
         }
 
+        BBoolean isInteger() {
+            return BBoolean(true);
+        }
+
+        BBoolean isNotInteger() {
+            return BBoolean(false);
+        }
+
+        BBoolean isNatural() {
+            return this->greaterEqual(BInteger(0));
+        }
+
+        BBoolean isNotNatural() {
+            return this->isNatural()._not();
+        }
+
+        BBoolean isNatural1() {
+            return this->greater(BInteger(0));
+        }
+
+        BBoolean isNotNatural1() {
+            return this->isNatural1()._not();
+        }
+
 };
 #endif

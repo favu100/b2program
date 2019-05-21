@@ -1326,13 +1326,28 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testPowInteger() throws Exception {
+		testCpp("PowInteger");
+	}
+
+	@Test
 	public void testNatural() throws Exception {
 		testCpp("Natural");
 	}
 
 	@Test
+	public void testPowNatural() throws Exception {
+		testCpp("PowNatural");
+	}
+
+	@Test
 	public void testNatural1() throws Exception {
 		testCpp("Natural1");
+	}
+
+	@Test
+	public void testPowNatural1() throws Exception {
+		testCpp("PowNatural1");
 	}
 
 	@Test

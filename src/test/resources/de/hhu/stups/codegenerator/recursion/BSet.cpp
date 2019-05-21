@@ -433,7 +433,7 @@ class BSet : public BObject {
             return BBoolean(true);
         }
 
-         Boolean equalNatural1() {
+        BBoolean equalNatural1() {
             return BBoolean(false);
         }
 

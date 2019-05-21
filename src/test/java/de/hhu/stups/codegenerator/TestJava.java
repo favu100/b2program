@@ -1315,13 +1315,28 @@ public class TestJava {
 	}
 
 	@Test
+	public void testPowInteger() throws Exception {
+		testJava("PowInteger");
+	}
+
+	@Test
 	public void testNatural() throws Exception {
 		testJava("Natural");
 	}
 
 	@Test
+	public void testPowNatural() throws Exception {
+		testJava("PowNatural");
+	}
+
+	@Test
 	public void testNatural1() throws Exception {
 		testJava("Natural1");
+	}
+
+	@Test
+	public void testPowNatural1() throws Exception {
+		testJava("PowNatural1");
 	}
 
 	@Test

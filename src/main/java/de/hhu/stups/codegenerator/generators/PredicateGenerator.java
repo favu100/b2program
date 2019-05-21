@@ -93,8 +93,16 @@ public class PredicateGenerator {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         if(expressions.size() == 2 && INFINITE_PREDICATE_OPERATORS.contains(operator)) {
             ExprNode rhs = node.getExpressionNodes().get(1);
-            if(rhs instanceof ExpressionOperatorNode && INFINITE_EXPRESSIONS.contains(((ExpressionOperatorNode) rhs).getOperator())) {
-                return true;
+            if(rhs instanceof ExpressionOperatorNode) {
+                ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
+                if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
+                    return true;
+                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
+                    ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
+                    if(innerRhs instanceof ExpressionOperatorNode && INFINITE_EXPRESSIONS.contains(((ExpressionOperatorNode) innerRhs).getOperator()) && operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -329,6 +337,10 @@ public class PredicateGenerator {
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
         String operatorName;
+        if (rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
+            operator = PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION;
+            rhsOperator = ((ExpressionOperatorNode) ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0)).getOperator();
+        }
         switch(rhsOperator) {
             case INTEGER:
                 operatorName = generateInfiniteInteger(operator);

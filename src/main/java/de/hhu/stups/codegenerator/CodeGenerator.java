@@ -12,6 +12,7 @@ import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -79,7 +80,13 @@ public class CodeGenerator {
 			return;
 		}
 		String addition = null;
-		//TODO: Ensure that MININT..MAXINT is a subinterval of INT in the supported programming languages
+		if(new BigInteger(minint).compareTo(new BigInteger(String.valueOf(Integer.MIN_VALUE))) == -1 ||
+				new BigInteger(maxint).compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
+			if(!useBigInteger) {
+				System.err.println("The given range of MININT..MAXINT must use big integers");
+				return;
+			}
+		}
 		if(args.length == 6) {
 			addition = args[5];
 		}

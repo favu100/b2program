@@ -368,4 +368,48 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		}
 		return result;
 	}
+
+	public BBoolean isTotal(BSet<S> domain) {
+		return this.domain().equal(domain);
+	}
+
+	public BBoolean isPartial(BSet<S> domain) {
+		return this.domain().strictSubset(domain);
+	}
+
+	public BBoolean isRelation() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean isFunction() {
+		BSet<S> visited = new BSet<>();
+		for(BTuple<S,T> couple : this) {
+			S element = couple.projection1();
+			if(visited.contains(element)) {
+				return new BBoolean(false);
+			}
+			visited = visited.union(new BSet<>(element));
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean isSurjection(BSet<T> range) {
+		return this.range().equal(range);
+	}
+
+	public BBoolean isInjection(BSet<S> domain) {
+		BSet<T> visited = new BSet<>();
+		for(BTuple<S,T> couple : this) {
+			T element = couple.projection2();
+			if(visited.contains(element)) {
+				return new BBoolean(false);
+			}
+			visited = visited.union(new BSet<>(element));
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean isBijection(BSet<S> domain, BSet<T> range) {
+		return isSurjection(range).and(isInjection(domain));
+	}
 }

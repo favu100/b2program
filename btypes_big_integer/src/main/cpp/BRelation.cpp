@@ -390,6 +390,50 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
+    	BBoolean isTotal(const BSet<S>& domain) {
+    		return this->domain().equal(domain);
+    	}
+
+    	BBoolean isPartial(const BSet<S>& domain) {
+    		return this->domain().strictSubset(domain);
+    	}
+
+    	BBoolean isRelation() {
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isFunction() {
+    		BSet<S> visited = BSet<S>();
+    		for(const BTuple<S,T>& couple : this->set) {
+    			S element = couple.projection1();
+    			if(visited.contains(element)) {
+    				return BBoolean(false);
+    			}
+    			visited = visited._union(BSet<S>(element));
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isSurjection(const BSet<T>& range) {
+    		return this->range().equal(range);
+    	}
+
+    	BBoolean isInjection(const BSet<S>& domain) {
+    		BSet<T> visited = BSet<T>();
+    		for(const BTuple<S,T>& couple : this->set) {
+    			T element = couple.projection2();
+    			if(visited.contains(element)) {
+    				return BBoolean(false);
+    			}
+    			visited = visited._union(BSet<T>(element));
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isBijection(const BSet<S>& domain, const BSet<T>& range) {
+    		return isSurjection(range)._and(isInjection(domain));
+    	}
+
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;
         }

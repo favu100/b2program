@@ -1354,6 +1354,65 @@ public class TestJava {
 		testJava("Natural1Subset");
 	}
 
+	@Test
+	public void testBijectionRelation() throws Exception {
+		testJava("BijectionRelation");
+	}
+
+	@Test
+	public void testIsRelation() throws Exception {
+		testJava("IsRelation");
+	}
+
+	@Test
+	public void testPartialBijection() throws Exception {
+		testJava("PartialBijection");
+	}
+
+	@Test
+	public void testPartialFunction() throws Exception {
+		testJava("PartialFunction");
+	}
+
+	@Test
+	public void testPartialInjection() throws Exception {
+		testJava("PartialInjection");
+	}
+
+	@Test
+	public void testPartialSurjection() throws Exception {
+		testJava("PartialSurjection");
+	}
+
+	@Test
+	public void testSurjectionRelation() throws Exception {
+		testJava("SurjectionRelation");
+	}
+
+	@Test
+	public void testTotalBijection() throws Exception {
+		testJava("TotalBijection");
+	}
+
+	@Test
+	public void testTotalFunction() throws Exception {
+		testJava("TotalFunction");
+	}
+
+	@Test
+	public void testTotalInjection() throws Exception {
+		testJava("TotalInjection");
+	}
+
+	@Test
+	public void testTotalRelation() throws Exception {
+		testJava("TotalRelation");
+	}
+
+	@Test
+	public void testTotalSurjection() throws Exception {
+		testJava("TotalSurjection");
+	}
 
 	private void cleanUp(String path) {
 		File file = new File(path);

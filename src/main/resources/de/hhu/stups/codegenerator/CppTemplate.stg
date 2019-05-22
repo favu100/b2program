@@ -481,6 +481,30 @@ infinite_predicate(arg, operator) ::= <<
 (<arg>.<operator>())
 >>
 
+relation_predicate(predicates) ::= <<
+<predicates>
+>>
+
+relation_total_partial(arg, operator, domain) ::= <<
+(<arg>.<operator>(<domain>))
+>>
+
+relation_function(arg, operator) ::= <<
+(<arg>.<operator>())
+>>
+
+relation_surjection(arg, range) ::= <<
+(<arg>.isSurjection(<range>))
+>>
+
+relation_injection(arg, domain) ::= <<
+(<arg>.isInjection(<domain>))
+>>
+
+relation_bijection(arg, domain, range) ::=<<
+(<arg>.isBijection(<domain>, <range>))
+>>
+
 string(string) ::= <<
 (BString(<string>))
 >>

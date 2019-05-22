@@ -1365,6 +1365,66 @@ public class TestCpp {
 		testCpp("Natural1Subset");
 	}
 
+	@Test
+	public void testBijectionRelation() throws Exception {
+		testCpp("BijectionRelation");
+	}
+
+	@Test
+	public void testIsRelation() throws Exception {
+		testCpp("IsRelation");
+	}
+
+	@Test
+	public void testPartialBijection() throws Exception {
+		testCpp("PartialBijection");
+	}
+
+	@Test
+	public void testPartialFunction() throws Exception {
+		testCpp("PartialFunction");
+	}
+
+	@Test
+	public void testPartialInjection() throws Exception {
+		testCpp("PartialInjection");
+	}
+
+	@Test
+	public void testPartialSurjection() throws Exception {
+		testCpp("PartialSurjection");
+	}
+
+	@Test
+	public void testSurjectionRelation() throws Exception {
+		testCpp("SurjectionRelation");
+	}
+
+	@Test
+	public void testTotalBijection() throws Exception {
+		testCpp("TotalBijection");
+	}
+
+	@Test
+	public void testTotalFunction() throws Exception {
+		testCpp("TotalFunction");
+	}
+
+	@Test
+	public void testTotalInjection() throws Exception {
+		testCpp("TotalInjection");
+	}
+
+	@Test
+	public void testTotalRelation() throws Exception {
+		testCpp("TotalRelation");
+	}
+
+	@Test
+	public void testTotalSurjection() throws Exception {
+		testCpp("TotalSurjection");
+	}
+	
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

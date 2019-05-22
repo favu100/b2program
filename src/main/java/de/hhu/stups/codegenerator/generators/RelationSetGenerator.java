@@ -129,7 +129,6 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
-        TemplateHandler.add(template, "domain", machineGenerator.visitExprNode(relation.getExpressionNodes().get(0), null));
         TemplateHandler.add(template, "range", machineGenerator.visitExprNode(relation.getExpressionNodes().get(1), null));
         return template.render();
     }

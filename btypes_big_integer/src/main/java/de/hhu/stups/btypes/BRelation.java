@@ -397,7 +397,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return this.range().equal(range);
 	}
 
-	public BBoolean isInjection(BSet<S> domain) {
+	public BBoolean isInjection() {
 		BSet<T> visited = new BSet<>();
 		for(BTuple<S,T> couple : this) {
 			T element = couple.projection2();
@@ -409,7 +409,7 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return new BBoolean(true);
 	}
 
-	public BBoolean isBijection(BSet<S> domain, BSet<T> range) {
-		return isSurjection(range).and(isInjection(domain));
+	public BBoolean isBijection(BSet<T> range) {
+		return isSurjection(range).and(isInjection());
 	}
 }

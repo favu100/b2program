@@ -497,12 +497,12 @@ relation_surjection(arg, range) ::= <<
 (<arg>.isSurjection(<range>))
 >>
 
-relation_injection(arg, domain) ::= <<
-(<arg>.isInjection(<domain>))
+relation_injection(arg) ::= <<
+(<arg>.isInjection())
 >>
 
-relation_bijection(arg, domain, range) ::=<<
-(<arg>.isBijection(<domain>, <range>))
+relation_bijection(arg, range) ::=<<
+(<arg>.isBijection(<range>))
 >>
 
 string(string) ::= <<

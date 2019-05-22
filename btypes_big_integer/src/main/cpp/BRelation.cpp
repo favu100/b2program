@@ -418,7 +418,7 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return this->range().equal(range);
     	}
 
-    	BBoolean isInjection(const BSet<S>& domain) {
+    	BBoolean isInjection() {
     		BSet<T> visited = BSet<T>();
     		for(const BTuple<S,T>& couple : this->set) {
     			T element = couple.projection2();
@@ -430,8 +430,8 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return BBoolean(true);
     	}
 
-    	BBoolean isBijection(const BSet<S>& domain, const BSet<T>& range) {
-    		return isSurjection(range)._and(isInjection(domain));
+    	BBoolean isBijection(const BSet<T>& range) {
+    		return isSurjection(range)._and(isInjection());
     	}
 
         void operator =(const BRelation<S,T>& other) {

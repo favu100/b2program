@@ -395,8 +395,32 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return this->domain().equal(domain);
     	}
 
+    	BBoolean isTotalInteger() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isTotalNatural() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isTotalNatural1() {
+    		return BBoolean(false);
+    	}
+
     	BBoolean isPartial(const BSet<S>& domain) {
     		return this->domain().strictSubset(domain);
+    	}
+
+    	BBoolean isPartialInteger() {
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isPartialNatural() {
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isPartialNatural1() {
+    		return BBoolean(true);
     	}
 
     	BBoolean isRelation() {
@@ -419,6 +443,18 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return this->range().equal(range);
     	}
 
+    	BBoolean isSurjectionInteger() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isSurjectionNatural() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isSurjectionNatural1() {
+    		return BBoolean(false);
+    	}
+
     	BBoolean isInjection() {
     		BSet<T> visited = BSet<T>();
     		for(const BTuple<S,T>& couple : this->set) {
@@ -433,6 +469,18 @@ class BRelation : public BSet<BTuple<S,T>> {
 
     	BBoolean isBijection(const BSet<T>& range) {
     		return isSurjection(range)._and(isInjection());
+    	}
+
+    	BBoolean isBijectionInteger() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isBijectionNatural() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isBijectionNatural1() {
+    		return BBoolean(false);
     	}
 
         void operator =(const BRelation<S,T>& other) {

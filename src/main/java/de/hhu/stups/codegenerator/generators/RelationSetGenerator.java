@@ -53,10 +53,13 @@ public class RelationSetGenerator {
 
     private final NameHandler nameHandler;
 
-    public RelationSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler) {
+    private final InfiniteNumberSetGenerator infiniteNumberSetGenerator;
+
+    public RelationSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler, InfiniteNumberSetGenerator infiniteNumberSetGenerator) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
+        this.infiniteNumberSetGenerator = infiniteNumberSetGenerator;
     }
 
     public boolean checkRelation(PredicateOperatorWithExprArgsNode node) {
@@ -97,25 +100,145 @@ public class RelationSetGenerator {
         return template.render();
     }
 
+    private String generateInfiniteTotalRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
+        String operatorName;
+        switch(domainOperator) {
+            case INTEGER:
+                operatorName = "isTotalInteger";
+                break;
+            case NATURAL:
+                operatorName = "isTotalNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isTotalNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    private String generateInfinitePartialRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
+        String operatorName;
+        switch(domainOperator) {
+            case INTEGER:
+                operatorName = "isPartialInteger";
+                break;
+            case NATURAL:
+                operatorName = "isPartialNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isPartialNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExpressionOperatorNode.ExpressionOperator domainOperator) {
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        if(TOTAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfiniteTotalRelation(domainOperator));
+        } else if(PARTIAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfinitePartialRelation(domainOperator));
+        } else {
+            return "";
+        }
+        return template.render();
+    }
+
     private String generateTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
-        ST template = currentGroup.getInstanceOf("relation_total_partial");
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
+        ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
+        ExprNode domain = relation.getExpressionNodes().get(0);
+        if(domain instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator domainOperator = ((ExpressionOperatorNode) domain).getOperator();
+            if(infiniteNumberSetGenerator.isInfiniteExpression(domainOperator)) {
+                return generateInfiniteTotalPartial(node, operator, domainOperator);
+            }
+        }
+
+        ST template = currentGroup.getInstanceOf("relation_total_partial");
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
-        if (TOTAL_EXPRESSIONS.contains(operator)) {
+        if(TOTAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isTotal");
         } else if(PARTIAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isPartial");
         } else {
             return "";
         }
-        ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
-        TemplateHandler.add(template, "domain", machineGenerator.visitExprNode(relation.getExpressionNodes().get(0), null));
+
+        TemplateHandler.add(template, "domain", machineGenerator.visitExprNode(domain, null));
+        return template.render();
+    }
+
+    private String generateInfiniteSurjection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+        String operatorName;
+        switch(rangeOperator) {
+            case INTEGER:
+                operatorName = "isSurjectionInteger";
+                break;
+            case NATURAL:
+                operatorName = "isSurjectionNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isSurjectionNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteBijection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+        String operatorName;
+        switch(rangeOperator) {
+            case INTEGER:
+                operatorName = "isBijectionInteger";
+                break;
+            case NATURAL:
+                operatorName = "isBijectionNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isBijectionNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        if(SURJECTIVE_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfiniteSurjection(rangeOperator));
+        } else if(BIJECTIVE_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfiniteBijection(rangeOperator));
+        } else {
+            return "";
+        }
         return template.render();
     }
 
     private String generateSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
-        ST template = null;
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExprNode rhs = node.getExpressionNodes().get(1);
+        ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
+        ExprNode range = relation.getExpressionNodes().get(1);
+        if(range instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator rangeOperator = ((ExpressionOperatorNode) range).getOperator();
+            if(infiniteNumberSetGenerator.isInfiniteExpression(rangeOperator)) {
+                return generateInfiniteSurjectionInjectionBijection(node, operator, rangeOperator);
+            }
+        }
+
+        ST template;
         if(SURJECTIVE_EXPRESSIONS.contains(operator)) {
             template = currentGroup.getInstanceOf("relation_surjection");
         } else if(INJECTIVE_EXPRESSIONS.contains(operator)) {
@@ -125,10 +248,7 @@ public class RelationSetGenerator {
         } else {
             return "";
         }
-        ExprNode lhs = node.getExpressionNodes().get(0);
-        ExprNode rhs = node.getExpressionNodes().get(1);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
-        ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         TemplateHandler.add(template, "range", machineGenerator.visitExprNode(relation.getExpressionNodes().get(1), null));
         return template.render();
     }

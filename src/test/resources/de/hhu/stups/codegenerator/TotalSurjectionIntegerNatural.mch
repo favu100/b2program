@@ -1,0 +1,13 @@
+MACHINE TotalSurjectionIntegerNatural
+
+VARIABLES  x
+
+INVARIANT  x : INTEGER <-> NATURAL
+
+INITIALISATION x := {1|->2, 2|->3}
+
+OPERATIONS
+
+	op1 = SELECT x : INTEGER -->> NATURAL THEN x := {1|->2} END
+
+END

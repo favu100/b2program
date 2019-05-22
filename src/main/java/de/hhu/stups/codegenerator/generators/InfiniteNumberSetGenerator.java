@@ -55,6 +55,10 @@ public class InfiniteNumberSetGenerator {
         return false;
     }
 
+    public boolean isInfiniteExpression(ExpressionOperatorNode.ExpressionOperator operator) {
+        return INFINITE_EXPRESSIONS.contains(operator);
+    }
+
     private String generateInfiniteInteger(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch (operator) {

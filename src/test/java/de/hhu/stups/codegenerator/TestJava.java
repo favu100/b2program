@@ -1414,6 +1414,137 @@ public class TestJava {
 		testJava("TotalSurjection");
 	}
 
+	@Test
+	public void testBijectionRelationInteger() throws Exception {
+		testJava("BijectionRelationInteger");
+	}
+
+	@Test
+	public void testBijectionRelationNatural() throws Exception {
+		testJava("BijectionRelationNatural");
+	}
+
+	@Test
+	public void testBijectionRelationNatural1() throws Exception {
+		testJava("BijectionRelationNatural1");
+	}
+
+	@Test
+	public void testIsRelationInteger() throws Exception {
+		testJava("IsRelationInteger");
+	}
+
+	@Test
+	public void testIsRelationNatural() throws Exception {
+		testJava("IsRelationNatural");
+	}
+
+	@Test
+	public void testIsRelationNatural1() throws Exception {
+		testJava("IsRelationNatural1");
+	}
+
+	@Test
+	public void testPartialBijectionIntegerNatural() throws Exception {
+		testJava("PartialBijectionIntegerNatural");
+	}
+
+	@Test
+	public void testPartialFunctionIntegerNatural1() throws Exception {
+		testJava("PartialFunctionIntegerNatural1");
+	}
+
+	@Test
+	public void testPartialInjectionInteger() throws Exception {
+		testJava("PartialInjectionInteger");
+	}
+
+	@Test
+	public void testPartialInjectionNatural() throws Exception {
+		testJava("PartialInjectionNatural");
+	}
+
+	@Test
+	public void testPartialInjectionNatural1() throws Exception {
+		testJava("PartialInjectionNatural1");
+	}
+
+	@Test
+	public void testPartialSurjectionIntegerNatural() throws Exception {
+		testJava("PartialSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testSurjectionRelationInteger() throws Exception {
+		testJava("SurjectionRelationInteger");
+	}
+
+	@Test
+	public void testSurjectionRelationNatural() throws Exception {
+		testJava("SurjectionRelationNatural");
+	}
+
+	@Test
+	public void testSurjectionRelationNatural1() throws Exception {
+		testJava("SurjectionRelationNatural1");
+	}
+
+	@Test
+	public void testTotalBijectionIntegerNatural1() throws Exception {
+		testJava("TotalBijectionIntegerNatural1");
+	}
+
+	@Test
+	public void testTotalFunctionInteger() throws Exception {
+		testJava("TotalFunctionInteger");
+	}
+
+	@Test
+	public void testTotalFunctionNatural() throws Exception {
+		testJava("TotalFunctionNatural");
+	}
+
+	@Test
+	public void testTotalFunctionNatural1() throws Exception {
+		testJava("TotalFunctionNatural1");
+	}
+
+	@Test
+	public void testTotalInjectionInteger() throws Exception {
+		testJava("TotalInjectionInteger");
+	}
+
+	@Test
+	public void testTotalInjectionNatural() throws Exception {
+		testJava("TotalInjectionNatural");
+	}
+
+	@Test
+	public void testTotalInjectionNatural1() throws Exception {
+		testJava("TotalInjectionNatural1");
+	}
+
+	@Test
+	public void testTotalRelationInteger() throws Exception {
+		testJava("TotalRelationInteger");
+	}
+
+	@Test
+	public void testTotalRelationNatural() throws Exception {
+		testJava("TotalRelationNatural");
+	}
+
+	@Test
+	public void testTotalRelationNatural1() throws Exception {
+		testJava("TotalRelationNatural1");
+	}
+
+	@Test
+	public void testTotalSurjectionIntegerNatural() throws Exception {
+		testJava("TotalSurjectionIntegerNatural");
+	}
+
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

@@ -1424,6 +1424,136 @@ public class TestCpp {
 	public void testTotalSurjection() throws Exception {
 		testCpp("TotalSurjection");
 	}
+
+	@Test
+	public void testBijectionRelationInteger() throws Exception {
+		testCpp("BijectionRelationInteger");
+	}
+
+	@Test
+	public void testBijectionRelationNatural() throws Exception {
+		testCpp("BijectionRelationNatural");
+	}
+
+	@Test
+	public void testBijectionRelationNatural1() throws Exception {
+		testCpp("BijectionRelationNatural1");
+	}
+
+	@Test
+	public void testIsRelationInteger() throws Exception {
+		testCpp("IsRelationInteger");
+	}
+
+	@Test
+	public void testIsRelationNatural() throws Exception {
+		testCpp("IsRelationNatural");
+	}
+
+	@Test
+	public void testIsRelationNatural1() throws Exception {
+		testCpp("IsRelationNatural1");
+	}
+
+	@Test
+	public void testPartialBijectionIntegerNatural() throws Exception {
+		testCpp("PartialBijectionIntegerNatural");
+	}
+
+	@Test
+	public void testPartialFunctionIntegerNatural1() throws Exception {
+		testCpp("PartialFunctionIntegerNatural1");
+	}
+
+	@Test
+	public void testPartialInjectionInteger() throws Exception {
+		testCpp("PartialInjectionInteger");
+	}
+
+	@Test
+	public void testPartialInjectionNatural() throws Exception {
+		testCpp("PartialInjectionNatural");
+	}
+
+	@Test
+	public void testPartialInjectionNatural1() throws Exception {
+		testCpp("PartialInjectionNatural1");
+	}
+
+	@Test
+	public void testPartialSurjectionIntegerNatural() throws Exception {
+		testCpp("PartialSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testSurjectionRelationInteger() throws Exception {
+		testCpp("SurjectionRelationInteger");
+	}
+
+	@Test
+	public void testSurjectionRelationNatural() throws Exception {
+		testCpp("SurjectionRelationNatural");
+	}
+
+	@Test
+	public void testSurjectionRelationNatural1() throws Exception {
+		testCpp("SurjectionRelationNatural1");
+	}
+
+	@Test
+	public void testTotalBijectionIntegerNatural1() throws Exception {
+		testCpp("TotalBijectionIntegerNatural1");
+	}
+
+	@Test
+	public void testTotalFunctionInteger() throws Exception {
+		testCpp("TotalFunctionInteger");
+	}
+
+	@Test
+	public void testTotalFunctionNatural() throws Exception {
+		testCpp("TotalFunctionNatural");
+	}
+
+	@Test
+	public void testTotalFunctionNatural1() throws Exception {
+		testCpp("TotalFunctionNatural1");
+	}
+
+	@Test
+	public void testTotalInjectionInteger() throws Exception {
+		testCpp("TotalInjectionInteger");
+	}
+
+	@Test
+	public void testTotalInjectionNatural() throws Exception {
+		testCpp("TotalInjectionNatural");
+	}
+
+	@Test
+	public void testTotalInjectionNatural1() throws Exception {
+		testCpp("TotalInjectionNatural1");
+	}
+
+	@Test
+	public void testTotalRelationInteger() throws Exception {
+		testCpp("TotalRelationInteger");
+	}
+
+	@Test
+	public void testTotalRelationNatural() throws Exception {
+		testCpp("TotalRelationNatural");
+	}
+
+	@Test
+	public void testTotalRelationNatural1() throws Exception {
+		testCpp("TotalRelationNatural1");
+	}
+
+	@Test
+	public void testTotalSurjectionIntegerNatural() throws Exception {
+		testCpp("TotalSurjectionIntegerNatural");
+	}
 	
 	private void cleanUp(String path) {
 		File file = new File(path);

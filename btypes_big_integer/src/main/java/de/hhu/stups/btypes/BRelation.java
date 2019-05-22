@@ -373,8 +373,32 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return this.domain().equal(domain);
 	}
 
+	public BBoolean isTotalInteger() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean isTotalNatural() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean isTotalNatural1() {
+		return new BBoolean(false);
+	}
+
 	public BBoolean isPartial(BSet<S> domain) {
 		return this.domain().strictSubset(domain);
+	}
+
+	public BBoolean isPartialInteger() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean isPartialNatural() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean isPartialNatural1() {
+		return new BBoolean(true);
 	}
 
 	public BBoolean isRelation() {
@@ -397,6 +421,18 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return this.range().equal(range);
 	}
 
+	public BBoolean isSurjectionInteger() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean isSurjectionNatural() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean isSurjectionNatural1() {
+		return new BBoolean(false);
+	}
+
 	public BBoolean isInjection() {
 		BSet<T> visited = new BSet<>();
 		for(BTuple<S,T> couple : this) {
@@ -411,5 +447,17 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 
 	public BBoolean isBijection(BSet<T> range) {
 		return isSurjection(range).and(isInjection());
+	}
+
+	public BBoolean isBijectionInteger() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean isBijectionNatural() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean isBijectionNatural1() {
+		return new BBoolean(false);
 	}
 }

@@ -391,6 +391,190 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return result;
     	}
 
+    	BBoolean isTotal(const BSet<S>& domain) {
+    		return this->domain().equal(domain);
+    	}
+
+    	BBoolean isTotalInteger() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isTotalNatural() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isTotalNatural1() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isPartial(const BSet<S>& domain) {
+    		return this->domain().strictSubset(domain);
+    	}
+
+    	BBoolean isPartialInteger() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger)) {
+    				return BBoolean(true);
+    			} else {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isPartialNatural() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger) element).isNatural().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isPartialNatural1() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkDomain(const BSet<S>& domain) {
+    		return this->domain().subset(domain);
+    	}
+
+    	BBoolean checkDomainInteger() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger)) {
+    				return BBoolean(true);
+    			} else {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkDomainNatural() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkDomainNatural1() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkRange(const BSet<T>& range) {
+    		return this->range().subset(range);
+    	}
+
+    	BBoolean checkRangeInteger() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BInteger)) {
+    				return BBoolean(true);
+    			} else {
+    				return BBoolean(false);
+    			}
+    		}
+    		return new BBoolean(true);
+    	}
+
+    	BBoolean checkRangeNatural() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkRangeNatural1() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isRelation() {
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isFunction() {
+    		BSet<S> visited = BSet<S>();
+    		for(const BTuple<S,T>& couple : this->set) {
+    			S element = couple.projection1();
+    			if(visited.contains(element)) {
+    				return BBoolean(false);
+    			}
+    			visited = visited._union(BSet<S>(element));
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isSurjection(const BSet<T>& range) {
+    		return this->range().equal(range);
+    	}
+
+    	BBoolean isSurjectionInteger() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isSurjectionNatural() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isSurjectionNatural1() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isInjection() {
+    		BSet<T> visited = BSet<T>();
+    		for(const BTuple<S,T>& couple : this->set) {
+    			T element = couple.projection2();
+    			if(visited.contains(element)) {
+    				return BBoolean(false);
+    			}
+    			visited = visited._union(BSet<T>(element));
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isBijection(const BSet<T>& range) {
+    		return isSurjection(range)._and(isInjection());
+    	}
+
+    	BBoolean isBijectionInteger() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isBijectionNatural() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isBijectionNatural1() {
+    		return BBoolean(false);
+    	}
+
         void operator =(const BRelation<S,T>& other) {
             this->set = other.set;
         }

@@ -42,7 +42,8 @@ public class RelationSetGenerator {
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION, ExpressionOperatorNode.ExpressionOperator.TOTAL_BIJECTION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> FUNCTION_EXPRESSIONS =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.PARTIAL_FUNCTION, ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION);
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.PARTIAL_FUNCTION, ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION, ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION, ExpressionOperatorNode.ExpressionOperator.PARTIAL_INJECTION,
+                            ExpressionOperatorNode.ExpressionOperator.TOTAL_SURJECTION, ExpressionOperatorNode.ExpressionOperator.PARTIAL_SURJECTION, ExpressionOperatorNode.ExpressionOperator.TOTAL_BIJECTION, ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> RELATION_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.SET_RELATION, ExpressionOperatorNode.ExpressionOperator.SURJECTION_RELATION, ExpressionOperatorNode.ExpressionOperator.TOTAL_RELATION, ExpressionOperatorNode.ExpressionOperator.TOTAL_SURJECTION_RELATION);
@@ -82,8 +83,10 @@ public class RelationSetGenerator {
         ST template = currentGroup.getInstanceOf("relation_predicate");
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
-        predicates.add(generateTotalPartial(node, rhsOperator));
+        predicates.add(checkDomain(node, rhsOperator));
+        predicates.add(checkRange(node, rhsOperator));
         predicates.add(generateRelationFunction(node, rhsOperator));
+        predicates.add(generateTotalPartial(node, rhsOperator));
         predicates.add(generateSurjectionInjectionBijection(node, rhsOperator));
         predicates = predicates.stream()
                 .filter(str -> !str.isEmpty())
@@ -99,6 +102,39 @@ public class RelationSetGenerator {
                                 }));
         return template.render();
     }
+
+    private String checkDomain(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExprNode rhs = node.getExpressionNodes().get(1);
+        ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
+        ExprNode domain = relation.getExpressionNodes().get(0);
+        if(infiniteNumberSetGenerator.isInfiniteExpression(domain)) {
+            return infiniteNumberSetGenerator.generateInfiniteDomainChecking(node, operator, domain);
+        }
+
+        ST template = currentGroup.getInstanceOf("relation_check_domain");
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        TemplateHandler.add(template, "domain", machineGenerator.visitExprNode(domain, null));
+
+        return template.render();
+    }
+
+    private String checkRange(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExprNode rhs = node.getExpressionNodes().get(1);
+        ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
+        ExprNode range = relation.getExpressionNodes().get(1);
+        if(infiniteNumberSetGenerator.isInfiniteExpression(range)) {
+            return infiniteNumberSetGenerator.generateInfiniteRangeChecking(node, operator, range);
+        }
+
+        ST template = currentGroup.getInstanceOf("relation_check_range");
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        TemplateHandler.add(template, "range", machineGenerator.visitExprNode(range, null));
+
+        return template.render();
+    }
+
 
     private String generateTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
         ExprNode lhs = node.getExpressionNodes().get(0);

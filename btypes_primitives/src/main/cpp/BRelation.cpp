@@ -412,14 +412,106 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	BBoolean isPartialInteger() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger)) {
+    				return BBoolean(true);
+    			} else {
+    				return BBoolean(false);
+    			}
+    		}
     		return BBoolean(true);
     	}
 
     	BBoolean isPartialNatural() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger) element).isNatural().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
     		return BBoolean(true);
     	}
 
     	BBoolean isPartialNatural1() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkDomain(const BSet<S>& domain) {
+    		return this->domain().subset(domain);
+    	}
+
+    	BBoolean checkDomainInteger() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger)) {
+    				return BBoolean(true);
+    			} else {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkDomainNatural() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkDomainNatural1() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkRange(const BSet<T>& range) {
+    		return this->range().subset(range);
+    	}
+
+    	BBoolean checkRangeInteger() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BInteger)) {
+    				return BBoolean(true);
+    			} else {
+    				return BBoolean(false);
+    			}
+    		}
+    		return new BBoolean(true);
+    	}
+
+    	BBoolean checkRangeNatural() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean checkRangeNatural1() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
     		return BBoolean(true);
     	}
 

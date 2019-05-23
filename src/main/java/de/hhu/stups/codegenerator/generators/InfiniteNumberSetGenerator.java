@@ -193,6 +193,52 @@ public class InfiniteNumberSetGenerator {
         return template.render();
     }
 
+    public String generateInfiniteDomainChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode domain) {
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExpressionOperatorNode.ExpressionOperator domainOperator = ((ExpressionOperatorNode) domain).getOperator();
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        String operatorName;
+        switch(domainOperator) {
+            case INTEGER:
+                operatorName = "checkDomainInteger";
+                break;
+            case NATURAL:
+                operatorName = "checkDomainNatural";
+                break;
+            case NATURAL1:
+                operatorName = "checkDomainNatural1";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        return template.render();
+    }
+
+    public String generateInfiniteRangeChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExpressionOperatorNode.ExpressionOperator rangeOperator = ((ExpressionOperatorNode) range).getOperator();
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        String operatorName;
+        switch(rangeOperator) {
+            case INTEGER:
+                operatorName = "checkRangeInteger";
+                break;
+            case NATURAL:
+                operatorName = "checkRangeNatural";
+                break;
+            case NATURAL1:
+                operatorName = "checkRangeNatural1";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        return template.render();
+    }
+
     private String generateInfiniteTotalRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
         String operatorName;
         switch(domainOperator) {

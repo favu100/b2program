@@ -390,14 +390,106 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 	}
 
 	public BBoolean isPartialInteger() {
+		for(BTuple<S,T> e : this) {
+			S element = e.projection1();
+			if(element instanceof BInteger) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
 		return new BBoolean(true);
 	}
 
 	public BBoolean isPartialNatural() {
+		for(BTuple<S,T> e : this) {
+			S element = e.projection1();
+			if(element instanceof BInteger && !((BInteger)element).isNatural().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
 		return new BBoolean(true);
 	}
 
 	public BBoolean isPartialNatural1() {
+		for(BTuple<S,T> e : this) {
+			S element = e.projection1();
+			if(element instanceof BInteger && !((BInteger)element).isNatural1().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean checkDomain(BSet<S> domain) {
+		return this.domain().subset(domain);
+	}
+
+	public BBoolean checkDomainInteger() {
+		for(BTuple<S,T> e : this) {
+			S element = e.projection1();
+			if(element instanceof BInteger) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean checkDomainNatural() {
+		for(BTuple<S,T> e : this) {
+			S element = e.projection1();
+			if(element instanceof BInteger && !((BInteger)element).isNatural().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean checkDomainNatural1() {
+		for(BTuple<S,T> e : this) {
+			S element = e.projection1();
+			if(element instanceof BInteger && !((BInteger)element).isNatural1().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean checkRange(BSet<T> range) {
+		return this.range().subset(range);
+	}
+
+	public BBoolean checkRangeInteger() {
+		for(BTuple<S,T> e : this) {
+			T element = e.projection2();
+			if(element instanceof BInteger) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean checkRangeNatural() {
+		for(BTuple<S,T> e : this) {
+			T element = e.projection2();
+			if(element instanceof BInteger && !((BInteger)element).isNatural().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean checkRangeNatural1() {
+		for(BTuple<S,T> e : this) {
+			T element = e.projection2();
+			if(element instanceof BInteger && !((BInteger)element).isNatural1().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
 		return new BBoolean(true);
 	}
 

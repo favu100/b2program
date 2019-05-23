@@ -485,6 +485,14 @@ relation_predicate(predicates) ::= <<
 <predicates>
 >>
 
+relation_check_domain(arg, domain) ::= <<
+(<arg>.checkDomain(<domain>))
+>>
+
+relation_check_range(arg, range) ::= <<
+(<arg>.checkRange(<range>))
+>>
+
 relation_total_partial(arg, operator, domain) ::= <<
 (<arg>.<operator>(<domain>))
 >>

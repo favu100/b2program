@@ -187,4 +187,104 @@ public class InfiniteNumberSetGenerator {
         return template.render();
     }
 
+    private String generateInfiniteTotalRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
+        String operatorName;
+        switch(domainOperator) {
+            case INTEGER:
+                operatorName = "isTotalInteger";
+                break;
+            case NATURAL:
+                operatorName = "isTotalNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isTotalNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    private String generateInfinitePartialRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
+        String operatorName;
+        switch(domainOperator) {
+            case INTEGER:
+                operatorName = "isPartialInteger";
+                break;
+            case NATURAL:
+                operatorName = "isPartialNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isPartialNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    public String generateInfiniteTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExpressionOperatorNode.ExpressionOperator domainOperator) {
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfiniteTotalRelation(domainOperator));
+        } else if(RelationSetGenerator.PARTIAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfinitePartialRelation(domainOperator));
+        } else {
+            return "";
+        }
+        return template.render();
+    }
+
+    private String generateInfiniteSurjection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+        String operatorName;
+        switch(rangeOperator) {
+            case INTEGER:
+                operatorName = "isSurjectionInteger";
+                break;
+            case NATURAL:
+                operatorName = "isSurjectionNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isSurjectionNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteBijection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+        String operatorName;
+        switch(rangeOperator) {
+            case INTEGER:
+                operatorName = "isBijectionInteger";
+                break;
+            case NATURAL:
+                operatorName = "isBijectionNatural";
+                break;
+            case NATURAL1:
+                operatorName = "isBijectionNatural1";
+                break;
+            default:
+                throw new RuntimeException("Argument of relation expressions are not supported");
+        }
+        return operatorName;
+    }
+
+    public String generateInfiniteSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+        ST template = currentGroup.getInstanceOf("infinite_predicate");
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        if(RelationSetGenerator.SURJECTIVE_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfiniteSurjection(rangeOperator));
+        } else if(RelationSetGenerator.BIJECTIVE_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", generateInfiniteBijection(rangeOperator));
+        } else {
+            return "";
+        }
+        return template.render();
+    }
+
 }

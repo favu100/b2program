@@ -23,6 +23,9 @@ public class InfiniteNumberSetGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1);
 
+    private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
+
     private final STGroup currentGroup;
 
     private final MachineGenerator machineGenerator;
@@ -44,7 +47,7 @@ public class InfiniteNumberSetGenerator {
                 ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
                 if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
                     return true;
-                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
+                } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
                     ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
                     if(innerRhs instanceof ExpressionOperatorNode && INFINITE_EXPRESSIONS.contains(((ExpressionOperatorNode) innerRhs).getOperator()) && operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
                         return true;

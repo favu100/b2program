@@ -48,6 +48,10 @@ public class RelationSetGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> RELATION_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.SET_RELATION, ExpressionOperatorNode.ExpressionOperator.SURJECTION_RELATION, ExpressionOperatorNode.ExpressionOperator.TOTAL_RELATION, ExpressionOperatorNode.ExpressionOperator.TOTAL_SURJECTION_RELATION);
 
+    private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
+
+
     private final STGroup currentGroup;
 
     private final MachineGenerator machineGenerator;
@@ -72,6 +76,11 @@ public class RelationSetGenerator {
                 ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
                 if(RELATION_FUNCTION_EXPRESSIONS.contains(rhsOperator)) {
                     return true;
+                } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
+                    ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
+                    if(innerRhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) innerRhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
+                        return true;
+                    }
                 }
             }
         }

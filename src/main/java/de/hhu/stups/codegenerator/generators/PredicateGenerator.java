@@ -4,6 +4,8 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.expression.ExprNode;
+import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
@@ -12,6 +14,7 @@ import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +35,10 @@ public class PredicateGenerator {
 
     private static final List<PredicateOperatorNode.PredicateOperator> PREDICATE_BOOLEANS =
             Arrays.asList(PredicateOperatorNode.PredicateOperator.TRUE, PredicateOperatorNode.PredicateOperator.FALSE);
+
+    private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
+
 
     private final STGroup currentGroup;
 
@@ -80,6 +87,17 @@ public class PredicateGenerator {
             return infiniteNumberSetGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
+            ExpressionOperatorNode lhs = (ExpressionOperatorNode) node.getExpressionNodes().get(0);
+            ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
+            if(POWER_SET_EXPRESSIONS.contains(rhs.getOperator())) {
+                List<ExprNode> expressions = new ArrayList<>();
+                ExprNode domain = rhs.getExpressionNodes().get(0);
+                ExprNode range = rhs.getExpressionNodes().get(1);
+                expressions.add(lhs);
+                expressions.add(new ExpressionOperatorNode(node.getSourceCodePosition(), Arrays.asList(domain, range), ExpressionOperatorNode.ExpressionOperator.SET_RELATION));
+                PredicateOperatorWithExprArgsNode powNode = new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
+                return relationSetGenerator.generateRelation(powNode);
+            }
             return relationSetGenerator.generateRelation(node);
         }
         List<String> expressionList = node.getExpressionNodes().stream()

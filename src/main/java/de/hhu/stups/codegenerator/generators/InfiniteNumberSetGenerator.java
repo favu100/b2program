@@ -55,8 +55,14 @@ public class InfiniteNumberSetGenerator {
         return false;
     }
 
-    public boolean isInfiniteExpression(ExpressionOperatorNode.ExpressionOperator operator) {
-        return INFINITE_EXPRESSIONS.contains(operator);
+    public boolean isInfiniteExpression(ExprNode expression) {
+        if(expression instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) expression).getOperator();
+            if(INFINITE_EXPRESSIONS.contains(operator)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String generateInfiniteInteger(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
@@ -223,9 +229,10 @@ public class InfiniteNumberSetGenerator {
         return operatorName;
     }
 
-    public String generateInfiniteTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExpressionOperatorNode.ExpressionOperator domainOperator) {
+    public String generateInfiniteTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode domain) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
+        ExpressionOperatorNode.ExpressionOperator domainOperator = ((ExpressionOperatorNode) domain).getOperator();
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", generateInfiniteTotalRelation(domainOperator));
@@ -273,9 +280,10 @@ public class InfiniteNumberSetGenerator {
         return operatorName;
     }
 
-    public String generateInfiniteSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExpressionOperatorNode.ExpressionOperator rangeOperator) {
+    public String generateInfiniteSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
+        ExpressionOperatorNode.ExpressionOperator rangeOperator = ((ExpressionOperatorNode) range).getOperator();
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(RelationSetGenerator.SURJECTIVE_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", generateInfiniteSurjection(rangeOperator));

@@ -105,11 +105,8 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode domain = relation.getExpressionNodes().get(0);
-        if(domain instanceof ExpressionOperatorNode) {
-            ExpressionOperatorNode.ExpressionOperator domainOperator = ((ExpressionOperatorNode) domain).getOperator();
-            if(infiniteNumberSetGenerator.isInfiniteExpression(domainOperator)) {
-                return infiniteNumberSetGenerator.generateInfiniteTotalPartial(node, operator, domainOperator);
-            }
+        if(infiniteNumberSetGenerator.isInfiniteExpression(domain)) {
+            return infiniteNumberSetGenerator.generateInfiniteTotalPartial(node, operator, domain);
         }
 
         ST template = currentGroup.getInstanceOf("relation_total_partial");
@@ -131,13 +128,9 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode range = relation.getExpressionNodes().get(1);
-        if(range instanceof ExpressionOperatorNode) {
-            ExpressionOperatorNode.ExpressionOperator rangeOperator = ((ExpressionOperatorNode) range).getOperator();
-            if(infiniteNumberSetGenerator.isInfiniteExpression(rangeOperator)) {
-                return infiniteNumberSetGenerator.generateInfiniteSurjectionInjectionBijection(node, operator, rangeOperator);
-            }
+        if(infiniteNumberSetGenerator.isInfiniteExpression(range)) {
+            return infiniteNumberSetGenerator.generateInfiniteSurjectionInjectionBijection(node, operator, range);
         }
-
         ST template;
         if(SURJECTIVE_EXPRESSIONS.contains(operator)) {
             template = currentGroup.getInstanceOf("relation_surjection");

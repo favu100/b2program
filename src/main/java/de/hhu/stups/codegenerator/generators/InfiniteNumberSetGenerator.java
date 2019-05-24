@@ -17,8 +17,8 @@ import java.util.List;
 public class InfiniteNumberSetGenerator {
 
     private static final List<PredicateOperatorWithExprArgsNode.PredOperatorExprArgs> INFINITE_PREDICATE_OPERATORS =
-            Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION,
-                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_NON_INCLUSION);
+            Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_EQUAL,
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_NON_INCLUSION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1);
@@ -70,7 +70,7 @@ public class InfiniteNumberSetGenerator {
 
     private String generateInfiniteInteger(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
-        switch (operator) {
+        switch(operator) {
             case ELEMENT_OF:
                 operatorName = "isInteger";
                 break;
@@ -288,6 +288,7 @@ public class InfiniteNumberSetGenerator {
         } else if(RelationSetGenerator.PARTIAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", generateInfinitePartialRelation(domainOperator));
         } else {
+            //Must be empty because predicate can be optional
             return "";
         }
         return template.render();
@@ -339,6 +340,7 @@ public class InfiniteNumberSetGenerator {
         } else if(RelationSetGenerator.BIJECTIVE_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", generateInfiniteBijection(rangeOperator));
         } else {
+            //Must be empty because predicate can be optional
             return "";
         }
         return template.render();

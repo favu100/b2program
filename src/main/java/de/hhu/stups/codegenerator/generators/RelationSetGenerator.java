@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class RelationSetGenerator {
 
     private static final List<PredicateOperatorWithExprArgsNode.PredOperatorExprArgs> RELATION_FUNCTION_PREDICATE_OPERATORS =
-            Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF);
+            Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> RELATION_FUNCTION_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.SET_RELATION, ExpressionOperatorNode.ExpressionOperator.SURJECTION_RELATION, ExpressionOperatorNode.ExpressionOperator.TOTAL_RELATION, ExpressionOperatorNode.ExpressionOperator.TOTAL_SURJECTION_RELATION,
@@ -88,6 +88,7 @@ public class RelationSetGenerator {
     }
 
     public String generateRelation(PredicateOperatorWithExprArgsNode node) {
+        PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         List<String> predicates = new ArrayList<>();
         ST template = currentGroup.getInstanceOf("relation_predicate");
         ExprNode rhs = node.getExpressionNodes().get(1);
@@ -101,6 +102,7 @@ public class RelationSetGenerator {
                 .filter(str -> !str.isEmpty())
                 .collect(Collectors.toList());
         String firstPredicate = predicates.get(0);
+        TemplateHandler.add(template, "checkElementOf", operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF);
         TemplateHandler.add(template, "predicates", predicates.subList(1, predicates.size()).stream()
                                 .reduce(firstPredicate, (a,e) -> {
                                     ST binary = currentGroup.getInstanceOf("binary");
@@ -161,6 +163,7 @@ public class RelationSetGenerator {
         } else if(PARTIAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isPartial");
         } else {
+            //Must be empty because predicate can be optional
             return "";
         }
 
@@ -184,6 +187,7 @@ public class RelationSetGenerator {
         } else if(BIJECTIVE_EXPRESSIONS.contains(operator)) {
             template = currentGroup.getInstanceOf("relation_bijection");
         } else {
+            //Must be empty because predicate can be optional
             return "";
         }
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
@@ -195,11 +199,12 @@ public class RelationSetGenerator {
         ST template = currentGroup.getInstanceOf("relation_function");
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
-        if (RELATION_EXPRESSIONS.contains(operator)) {
+        if(RELATION_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isRelation");
         } else if(FUNCTION_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isFunction");
         } else {
+            //Must be empty because predicate can be optional
             return "";
         }
         return template.render();

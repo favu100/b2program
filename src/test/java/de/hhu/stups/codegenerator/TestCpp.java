@@ -1376,6 +1376,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testIsNotRelation() throws Exception {
+		testCpp("IsNotRelation");
+	}
+
+	@Test
 	public void testPartialBijection() throws Exception {
 		testCpp("PartialBijection");
 	}

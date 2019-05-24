@@ -428,8 +428,8 @@ infinite_predicate(arg, operator) ::= <<
 <arg>.<operator>()
 >>
 
-relation_predicate(predicates) ::= <<
-<predicates>
+relation_predicate(predicates, checkElementOf) ::= <<
+<if(checkElementOf)><predicates><else><predicates>.not()<endif>
 >>
 
 relation_check_domain(arg, domain) ::= <<

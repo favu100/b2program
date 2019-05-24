@@ -87,7 +87,7 @@ public class PredicateGenerator {
             return infiniteNumberSetGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
-            ExpressionOperatorNode lhs = (ExpressionOperatorNode) node.getExpressionNodes().get(0);
+            ExprNode lhs = node.getExpressionNodes().get(0);
             ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
             if(POWER_SET_EXPRESSIONS.contains(rhs.getOperator())) {
                 List<ExprNode> expressions = new ArrayList<>();

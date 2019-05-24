@@ -1365,6 +1365,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testIsNotRelation() throws Exception {
+		testJava("IsNotRelation");
+	}
+
+	@Test
 	public void testPartialBijection() throws Exception {
 		testJava("PartialBijection");
 	}

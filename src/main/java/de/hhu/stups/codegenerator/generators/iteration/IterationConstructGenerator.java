@@ -15,6 +15,9 @@ import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
+import de.prob.parser.ast.nodes.expression.StringNode;
+import de.prob.parser.ast.nodes.RecordNode;
+import de.prob.parser.ast.nodes.StructNode;
 import de.prob.parser.ast.nodes.ltl.LTLBPredicateNode;
 import de.prob.parser.ast.nodes.ltl.LTLInfixOperatorNode;
 import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
@@ -289,6 +292,16 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     @Override
     public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode choiceSubstitutionNode, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitRecordNode(RecordNode node, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitStructNode(StructNode node, Void expected) {
         return null;
     }
 

@@ -19,6 +19,8 @@ import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
+import de.prob.parser.ast.nodes.RecordNode;
+import de.prob.parser.ast.nodes.StructNode;
 import de.prob.parser.ast.nodes.ltl.LTLBPredicateNode;
 import de.prob.parser.ast.nodes.ltl.LTLInfixOperatorNode;
 import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
@@ -385,6 +387,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	@Override
 	public String visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
 		return substitutionGenerator.visitVarSubstitutionNode(node, expected);
+	}
+
+	@Override
+	public String visitRecordNode(RecordNode node, Void expected) {
+		return "";
+	}
+
+	@Override
+	public String visitStructNode(StructNode node, Void expected) {
+		return "";
 	}
 
 	public NameHandler getNameHandler() {

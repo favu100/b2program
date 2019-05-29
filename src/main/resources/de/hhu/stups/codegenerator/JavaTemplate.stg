@@ -46,6 +46,9 @@ record_field_initialization(identifier) ::= <<
 this.<identifier> = <identifier>;
 >>
 
+record_assignment(identifier) ::= <<
+>>
+
 record(struct, parameters) ::= <<
 new <struct>(<parameters; separator=", ">)
 >>

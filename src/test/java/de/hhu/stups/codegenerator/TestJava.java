@@ -154,12 +154,6 @@ public class TestJava {
 		testJava("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stjava", true);
 	}
 
-	@Ignore
-	@Test
-	public void testRecords() throws Exception {
-		testJava("Records");
-	}
-
 	@Test
 	public void testNondeterminism() throws Exception {
 		testJava("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stjava", true);
@@ -1547,6 +1541,11 @@ public class TestJava {
 	@Test
 	public void testTotalSurjectionIntegerNatural() throws Exception {
 		testJava("TotalSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testRecords() throws Exception {
+		testJava("Records");
 	}
 
 

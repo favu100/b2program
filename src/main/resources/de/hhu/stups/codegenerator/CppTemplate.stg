@@ -48,7 +48,7 @@ class <machine> {
 #endif
 >>
 
-struct(name, declarations, parameters, initializations) ::= <<
+struct(name, declarations, parameters, initializations, assignments) ::= <<
 class <name> : public BObject {
     private:
         <declarations; separator="\n">
@@ -62,7 +62,18 @@ class <name> : public BObject {
         <name>(<parameters; separator=", ">) {
             <initializations; separator="\n">
         }
-}
+
+        <name>() {
+        }
+
+        void operator =(const <name>& other) {
+            <assignments; separator="\n">
+        }
+};
+>>
+
+record_assignment(identifier) ::= <<
+this-><identifier> = other.<identifier>;
 >>
 
 record_field_initialization(identifier) ::= <<

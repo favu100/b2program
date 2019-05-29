@@ -164,12 +164,6 @@ public class TestCpp {
 		testCpp("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stCpp", true);
 	}
 
-	@Ignore
-	@Test
-	public void testRecords() throws Exception {
-		testCpp("Records");
-	}
-
 	@Test
 	public void testNondeterminism() throws Exception {
 		testCpp("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stCpp", true);
@@ -1559,7 +1553,12 @@ public class TestCpp {
 	public void testTotalSurjectionIntegerNatural() throws Exception {
 		testCpp("TotalSurjectionIntegerNatural");
 	}
-	
+
+	@Test
+	public void testRecords() throws Exception {
+		testCpp("Records");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

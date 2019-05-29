@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.analyzers;
 
+import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.MachineNode;
@@ -61,16 +62,19 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
     private final TypeGenerator typeGenerator;
 
+    private final ImportGenerator importGenerator;
+
     private Map<String, String> nodeToClassName;
 
     private List<RecordType> structs;
 
     private int counter = 0;
 
-    public RecordStructAnalyzer(STGroup group, TypeGenerator typeGenerator) {
+    public RecordStructAnalyzer(STGroup group, TypeGenerator typeGenerator, ImportGenerator importGenerator) {
         this.currentGroup = group;
         this.typeGenerator = typeGenerator;
         this.typeGenerator.setRecordStructAnalyzer(this);
+        this.importGenerator = importGenerator;
         this.nodeToClassName = new HashMap<>();
         this.structs = new ArrayList<>();
     }
@@ -337,6 +341,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         List<String> declarations = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
         List<String> initializations = new ArrayList<>();
+        List<String> assignments = new ArrayList<>();
         for(int i = 0; i < recordType.getIdentifiers().size(); i++) {
             ST declaration = currentGroup.getInstanceOf("global_declaration");
             BType type = recordType.getSubtypes().get(i);
@@ -355,10 +360,15 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
             ST initialization = currentGroup.getInstanceOf("record_field_initialization");
             TemplateHandler.add(initialization, "identifier", identifier);
             initializations.add(initialization.render());
+
+            ST assignment = currentGroup.getInstanceOf("record_assignment");
+            TemplateHandler.add(assignment, "identifier", identifier);
+            assignments.add(assignment.render());
         }
         TemplateHandler.add(struct, "declarations", declarations);
         TemplateHandler.add(struct, "parameters", parameters);
         TemplateHandler.add(struct, "initializations", initializations);
+        TemplateHandler.add(struct, "assignments", assignments);
         return struct.render();
     }
 
@@ -366,6 +376,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         if(nodeToClassName.containsKey(type.toString())) {
             return;
         }
+        importGenerator.addImport(type);
         String name = "_Struct" + counter;
         nodeToClassName.put(type.toString(), name);
         structs.add(type);

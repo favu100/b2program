@@ -5,6 +5,8 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
+import de.prob.parser.ast.nodes.RecordNode;
+import de.prob.parser.ast.nodes.StructNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -150,6 +152,8 @@ public class ExpressionGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final RecordStructGenerator recordStructGenerator;
+
     private SubstitutionGenerator substitutionGenerator;
 
     private OperatorGenerator operatorGenerator;
@@ -159,7 +163,7 @@ public class ExpressionGenerator {
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
-                               final IterationConstructHandler iterationConstructHandler) {
+                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;
@@ -171,6 +175,7 @@ public class ExpressionGenerator {
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
+        this.recordStructGenerator = recordStructGenerator;
     }
 
     /*
@@ -209,6 +214,10 @@ public class ExpressionGenerator {
             return visitIfExpressionNode((IfExpressionNode) node);
         } else if(node instanceof LetExpressionNode) {
             return visitLetExpressionNode((LetExpressionNode) node);
+        } else if(node instanceof RecordNode) {
+            return visitRecordNode((RecordNode) node);
+        } else if(node instanceof StructNode) {
+            return "";
         }
         throw new RuntimeException("Given node is not implemented: " + node.getClass());
     }
@@ -706,6 +715,10 @@ public class ExpressionGenerator {
         TemplateHandler.add(interval, "arg1", generateZero());
         TemplateHandler.add(interval, "arg2", generateMaxInt());
         return interval.render();
+    }
+
+    private String visitRecordNode(RecordNode node) {
+        return recordStructGenerator.visitRecordNode(node);
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

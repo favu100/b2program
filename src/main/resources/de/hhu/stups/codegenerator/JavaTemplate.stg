@@ -3,11 +3,13 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 <imports; separator="\n">
 import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
+
+    <structs; separator= "\n\n">
 
     <constants_declarations; separator="\n">
 
@@ -28,6 +30,24 @@ public class <machine> {
 
 }
 
+>>
+
+struct(name, declarations, parameters, initializations) ::= <<
+public static class <name> implements BObject {
+    <declarations; separator="\n">
+
+    public <name>(<parameters; separator=", ">) {
+        <initializations; separator="\n">
+    }
+}
+>>
+
+record_field_initialization(identifier) ::= <<
+this.<identifier> = <identifier>;
+>>
+
+record(struct, parameters) ::= <<
+new <struct>(<parameters; separator=", ">)
 >>
 
 initialization(machine, properties, values, body) ::= <<

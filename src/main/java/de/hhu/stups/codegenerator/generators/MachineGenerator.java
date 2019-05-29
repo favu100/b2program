@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
@@ -87,6 +88,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final ParallelConstructHandler parallelConstructHandler;
 
+	private final RecordStructAnalyzer recordStructAnalyzer;
+
+	private final RecordStructGenerator recordStructGenerator;
+
 	private STGroup currentGroup;
 
 	private MachineNode machineNode;
@@ -112,8 +117,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
+		this.recordStructAnalyzer = new RecordStructAnalyzer(currentGroup, typeGenerator);
+		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, recordStructAnalyzer);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
-															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler);
+															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
 																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler,
 																parallelConstructHandler);
@@ -127,6 +134,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	* This function generates code for the whole machine with the given AST node.
 	*/
 	public String generateMachine(MachineNode node) {
+		recordStructAnalyzer.visitMachineNode(node);
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
 		TemplateHandler.add(machine, "addition", addition);
@@ -158,6 +166,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
+		TemplateHandler.add(machine, "structs", recordStructAnalyzer.generateStructs());
 	}
 
 	private List<String> generateMethods(MachineNode node) {

@@ -15,7 +15,6 @@ import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
-import de.prob.parser.ast.nodes.expression.StringNode;
 import de.prob.parser.ast.nodes.RecordNode;
 import de.prob.parser.ast.nodes.StructNode;
 import de.prob.parser.ast.nodes.ltl.LTLBPredicateNode;

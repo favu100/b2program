@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(imports, includedMachines, machine, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 #include \<iostream>
 #include \<string>
 #include "BUtils.cpp"
@@ -20,6 +20,9 @@ using namespace std;
 class <machine> {
 
     public:
+
+        <structs; separator="\n\n">
+
         <enums; separator="\n\n">
 
     private:
@@ -43,6 +46,31 @@ class <machine> {
 <addition>
 
 #endif
+>>
+
+struct(name, declarations, parameters, initializations) ::= <<
+class <name> : public BObject {
+    private:
+        <declarations; separator="\n">
+
+    public:
+        typedef <name> current_type;
+        typedef void value_type;
+        typedef void left_type;
+        typedef void right_type;
+
+        <name>(<parameters; separator=", ">) {
+            <initializations; separator="\n">
+        }
+}
+>>
+
+record_field_initialization(identifier) ::= <<
+this-><identifier> = <identifier>;
+>>
+
+record(struct, parameters) ::= <<
+(<struct>(<parameters; separator=", ">))
 >>
 
 initialization(machine, properties, values, body) ::= <<

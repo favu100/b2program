@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.types.BType;
@@ -8,6 +9,7 @@ import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.IntegerType;
+import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.types.StringType;
 import de.prob.parser.ast.types.UntypedType;
@@ -19,6 +21,8 @@ public class TypeGenerator {
     private final STGroup group;
 
     private final NameHandler nameHandler;
+
+    private RecordStructAnalyzer recordStructAnalyzer;
 
     public TypeGenerator(final STGroup group, final NameHandler nameHandler) {
         this.group = group;
@@ -58,6 +62,9 @@ public class TypeGenerator {
             TemplateHandler.add(template, "leftType", generate(((CoupleType) type).getLeft()));
             TemplateHandler.add(template, "rightType", generate(((CoupleType) type).getRight()));
             return template.render();
+        } else if(type instanceof RecordType) {
+            TemplateHandler.add(template, "type", recordStructAnalyzer.getStruct(type));
+            return template.render();
         } else if(type instanceof UntypedType) {
             return generateUntyped();
         }
@@ -71,4 +78,7 @@ public class TypeGenerator {
         return group.getInstanceOf("void").render();
     }
 
+    public void setRecordStructAnalyzer(RecordStructAnalyzer recordStructAnalyzer) {
+        this.recordStructAnalyzer = recordStructAnalyzer;
+    }
 }

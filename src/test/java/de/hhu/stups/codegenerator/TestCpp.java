@@ -1559,6 +1559,12 @@ public class TestCpp {
 		testCpp("Records");
 	}
 
+	@Test
+	public void testRecordsAccess() throws Exception {
+		testCpp("RecordsAccess");
+	}
+
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

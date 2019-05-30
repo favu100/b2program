@@ -1548,6 +1548,11 @@ public class TestJava {
 		testJava("Records");
 	}
 
+	@Test
+	public void testRecordsAccess() throws Exception {
+		testJava("RecordsAccess");
+	}
+
 
 	private void cleanUp(String path) {
 		File file = new File(path);

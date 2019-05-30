@@ -5,8 +5,6 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
-import de.prob.parser.ast.nodes.RecordNode;
-import de.prob.parser.ast.nodes.StructNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -15,8 +13,10 @@ import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
+import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
+import de.prob.parser.ast.nodes.expression.StructNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
@@ -152,7 +152,7 @@ public class ExpressionGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final RecordGenerator recordStructGenerator;
+    private final RecordGenerator recordGenerator;
 
     private SubstitutionGenerator substitutionGenerator;
 
@@ -163,7 +163,7 @@ public class ExpressionGenerator {
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
-                               final IterationConstructHandler iterationConstructHandler, final RecordGenerator recordStructGenerator) {
+                               final IterationConstructHandler iterationConstructHandler, final RecordGenerator recordGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;
@@ -175,7 +175,7 @@ public class ExpressionGenerator {
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
-        this.recordStructGenerator = recordStructGenerator;
+        this.recordGenerator = recordGenerator;
     }
 
     /*
@@ -718,7 +718,7 @@ public class ExpressionGenerator {
     }
 
     private String visitRecordNode(RecordNode node) {
-        return recordStructGenerator.visitRecordNode(node);
+        return recordGenerator.visitRecordNode(node);
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

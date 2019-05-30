@@ -18,10 +18,10 @@ import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
+import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
-import de.prob.parser.ast.nodes.RecordNode;
-import de.prob.parser.ast.nodes.StructNode;
+import de.prob.parser.ast.nodes.expression.StructNode;
 import de.prob.parser.ast.nodes.ltl.LTLBPredicateNode;
 import de.prob.parser.ast.nodes.ltl.LTLInfixOperatorNode;
 import de.prob.parser.ast.nodes.ltl.LTLKeywordNode;
@@ -90,7 +90,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final RecordStructAnalyzer recordStructAnalyzer;
 
-	private final RecordGenerator recordStructGenerator;
+	private final RecordGenerator recordGenerator;
 
 	private STGroup currentGroup;
 
@@ -118,9 +118,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(currentGroup, typeGenerator, importGenerator);
-		this.recordStructGenerator = new RecordGenerator(currentGroup, this, recordStructAnalyzer);
+		this.recordGenerator = new RecordGenerator(currentGroup, this, recordStructAnalyzer);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
-															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
+															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
 																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler,
 																parallelConstructHandler);

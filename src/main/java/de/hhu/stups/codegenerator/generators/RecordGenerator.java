@@ -2,7 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
-import de.prob.parser.ast.nodes.RecordNode;
+import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.RecordType;
 import org.stringtemplate.v4.ST;

@@ -48,7 +48,7 @@ class <machine> {
 #endif
 >>
 
-struct(name, declarations, parameters, initializations, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
+struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
 class <name> : public BObject {
     private:
         <declarations; separator="\n">
@@ -62,6 +62,8 @@ class <name> : public BObject {
         <name>(<parameters; separator=", ">) {
             <initializations; separator="\n">
         }
+
+        <functions; separator="\n">
 
         <name>() {
         }
@@ -99,6 +101,12 @@ class <name> : public BObject {
             return result;
         }
 };
+>>
+
+record_function(type, field) ::= <<
+<type> get_<field>() {
+    return this-><field>;
+}
 >>
 
 record_assignment(identifier) ::= <<

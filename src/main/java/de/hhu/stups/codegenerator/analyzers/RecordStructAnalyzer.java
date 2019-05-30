@@ -347,6 +347,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         List<String> declarations = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
         List<String> initializations = new ArrayList<>();
+        List<String> functions = new ArrayList<>();
         List<String> assignments = new ArrayList<>();
         List<String> equalPredicates = new ArrayList<>();
         List<String> unequalPredicates = new ArrayList<>();
@@ -356,6 +357,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
             BType type = recordType.getSubtypes().get(i);
             String identifier = recordType.getIdentifiers().get(i);
             declarations.add(generateDeclaration(type, identifier));
+            functions.add(generateFunction(type, identifier));
             parameters.add(generateStructParameter(type, identifier));
             initializations.add(generateInitialization(identifier));
             assignments.add(generateAssignment(identifier));
@@ -367,6 +369,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         TemplateHandler.add(struct, "declarations", declarations);
         TemplateHandler.add(struct, "parameters", parameters);
         TemplateHandler.add(struct, "initializations", initializations);
+        TemplateHandler.add(struct, "functions", functions);
         TemplateHandler.add(struct, "assignments", assignments);
         TemplateHandler.add(struct, "equalPredicates", equalPredicates);
         TemplateHandler.add(struct, "unequalPredicates", unequalPredicates);
@@ -394,6 +397,13 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         ST initialization = currentGroup.getInstanceOf("record_field_initialization");
         TemplateHandler.add(initialization, "identifier", identifier);
         return initialization.render();
+    }
+
+    private String generateFunction(BType type, String identifier) {
+        ST function = currentGroup.getInstanceOf("record_function");
+        TemplateHandler.add(function, "type", typeGenerator.generate(type));
+        TemplateHandler.add(function, "field", identifier);
+        return function.render();
     }
 
     private String generateAssignment(String identifier) {

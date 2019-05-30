@@ -33,13 +33,15 @@ public class <machine> {
 
 >>
 
-struct(name, declarations, parameters, initializations, equalPredicates, unequalPredicates, fields, values) ::= <<
+struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
 public static class <name> implements BObject {
     <declarations; separator="\n">
 
     public <name>(<parameters; separator=", ">) {
         <initializations; separator="\n">
     }
+
+    <functions; separator="\n">
 
     public BBoolean equal(<name> o) {
         return new BBoolean(<equalPredicates; separator=" && ">);
@@ -64,6 +66,12 @@ public static class <name> implements BObject {
     public int hashCode() {
         return Objects.hash(<fields; separator=", ">);
     }
+}
+>>
+
+record_function(type, field) ::= <<
+public <type> get_<field>() {
+    return this.<field>;
 }
 >>
 

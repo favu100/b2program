@@ -343,33 +343,45 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         List<String> initializations = new ArrayList<>();
         List<String> assignments = new ArrayList<>();
         for(int i = 0; i < recordType.getIdentifiers().size(); i++) {
-            ST declaration = currentGroup.getInstanceOf("global_declaration");
             BType type = recordType.getSubtypes().get(i);
             String identifier = recordType.getIdentifiers().get(i);
-
-            TemplateHandler.add(declaration, "type", typeGenerator.generate(type));
-            //TODO: Rewrite String to IdentifierExprNode
-            TemplateHandler.add(declaration, "identifier", identifier);
-            declarations.add(declaration.render());
-
-            ST parameter = currentGroup.getInstanceOf("parameter");
-            TemplateHandler.add(parameter, "type", typeGenerator.generate(type));
-            TemplateHandler.add(parameter, "identifier", identifier);
-            parameters.add(parameter.render());
-
-            ST initialization = currentGroup.getInstanceOf("record_field_initialization");
-            TemplateHandler.add(initialization, "identifier", identifier);
-            initializations.add(initialization.render());
-
-            ST assignment = currentGroup.getInstanceOf("record_assignment");
-            TemplateHandler.add(assignment, "identifier", identifier);
-            assignments.add(assignment.render());
+            declarations.add(generateDeclaration(type, identifier));
+            parameters.add(generateStructParameter(type, identifier));
+            initializations.add(generateInitialization(identifier));
+            assignments.add(generateAssignment(identifier));
         }
         TemplateHandler.add(struct, "declarations", declarations);
         TemplateHandler.add(struct, "parameters", parameters);
         TemplateHandler.add(struct, "initializations", initializations);
         TemplateHandler.add(struct, "assignments", assignments);
         return struct.render();
+    }
+
+    private String generateDeclaration(BType type, String identifier) {
+        ST declaration = currentGroup.getInstanceOf("global_declaration");
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(type));
+        //TODO: Rewrite String to IdentifierExprNode
+        TemplateHandler.add(declaration, "identifier", identifier);
+        return declaration.render();
+    }
+
+    private String generateStructParameter(BType type, String identifier) {
+        ST parameter = currentGroup.getInstanceOf("parameter");
+        TemplateHandler.add(parameter, "type", typeGenerator.generate(type));
+        TemplateHandler.add(parameter, "identifier", identifier);
+        return parameter.render();
+    }
+
+    private String generateInitialization(String identifier) {
+        ST initialization = currentGroup.getInstanceOf("record_field_initialization");
+        TemplateHandler.add(initialization, "identifier", identifier);
+        return initialization.render();
+    }
+
+    private String generateAssignment(String identifier) {
+        ST assignment = currentGroup.getInstanceOf("record_assignment");
+        TemplateHandler.add(assignment, "identifier", identifier);
+        return assignment.render();
     }
 
     public void createNewStruct(RecordType type) {

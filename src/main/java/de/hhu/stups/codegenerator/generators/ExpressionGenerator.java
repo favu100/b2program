@@ -152,7 +152,7 @@ public class ExpressionGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final RecordStructGenerator recordStructGenerator;
+    private final RecordGenerator recordStructGenerator;
 
     private SubstitutionGenerator substitutionGenerator;
 
@@ -163,7 +163,7 @@ public class ExpressionGenerator {
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
-                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator) {
+                               final IterationConstructHandler iterationConstructHandler, final RecordGenerator recordStructGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;

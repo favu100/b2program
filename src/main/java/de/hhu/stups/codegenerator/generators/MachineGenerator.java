@@ -90,7 +90,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final RecordStructAnalyzer recordStructAnalyzer;
 
-	private final RecordStructGenerator recordStructGenerator;
+	private final RecordGenerator recordStructGenerator;
 
 	private STGroup currentGroup;
 
@@ -118,7 +118,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(currentGroup, typeGenerator, importGenerator);
-		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, recordStructAnalyzer);
+		this.recordStructGenerator = new RecordGenerator(currentGroup, this, recordStructAnalyzer);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,

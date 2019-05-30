@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Created by fabian on 29.05.19.
  */
-public class RecordStructGenerator {
+public class RecordGenerator {
 
     private final STGroup currentGroup;
 
@@ -21,7 +21,7 @@ public class RecordStructGenerator {
 
     private final RecordStructAnalyzer recordStructAnalyzer;
 
-    public RecordStructGenerator(STGroup group, MachineGenerator machineGenerator, RecordStructAnalyzer recordStructAnalyzer) {
+    public RecordGenerator(STGroup group, MachineGenerator machineGenerator, RecordStructAnalyzer recordStructAnalyzer) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.recordStructAnalyzer = recordStructAnalyzer;

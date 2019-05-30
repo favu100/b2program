@@ -48,7 +48,7 @@ class <machine> {
 #endif
 >>
 
-struct(name, declarations, parameters, initializations, assignments) ::= <<
+struct(name, declarations, parameters, initializations, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
 class <name> : public BObject {
     private:
         <declarations; separator="\n">
@@ -69,11 +69,53 @@ class <name> : public BObject {
         void operator =(const <name>& other) {
             <assignments; separator="\n">
         }
+
+        BBoolean equal(const <name>& o) const {
+            return <equalPredicates; separator=" && ">;
+        }
+
+        BBoolean unequal(const <name>& o) const {
+            return <unequalPredicates; separator=" || ">;
+        }
+
+        friend bool operator ==(const <name>& p1, const <name>& p2) {
+            return (p1.equal(p2)).booleanValue();
+        }
+
+        friend bool operator !=(const <name>& p1, const <name>& p2) {
+            return (p1.unequal(p2)).booleanValue();
+        }
+
+        friend std::ostream& operator\<\<(std::ostream &strm, const <name>& e) {
+            strm \<\< "(";
+            <values; separator="\n">
+            strm \<\< ")";
+            return strm;
+        }
+
+        int hashCode() const {
+            int result = 1;
+            <fields: {field | result = 31 * result + (<field>.hashCode() \<\< 1);}; separator="\n">
+            return result;
+        }
 };
 >>
 
 record_assignment(identifier) ::= <<
 this-><identifier> = other.<identifier>;
+>>
+
+record_equal_predicate(field) ::= <<
+this-><field> == o.<field>
+>>
+
+record_unequal_predicate(field) ::= <<
+this-><field> != o.<field>
+>>
+
+record_field_to_string(identifier) ::= <<
+strm \<\< "<identifier> : ";
+strm \<\< e.<identifier>;
 >>
 
 record_field_initialization(identifier) ::= <<

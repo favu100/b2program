@@ -5,6 +5,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 
 machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 <imports; separator="\n">
+import java.util.Objects;
 import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
@@ -32,12 +33,36 @@ public class <machine> {
 
 >>
 
-struct(name, declarations, parameters, initializations) ::= <<
+struct(name, declarations, parameters, initializations, equalPredicates, unequalPredicates, fields, values) ::= <<
 public static class <name> implements BObject {
     <declarations; separator="\n">
 
     public <name>(<parameters; separator=", ">) {
         <initializations; separator="\n">
+    }
+
+    public BBoolean equal(<name> o) {
+        return new BBoolean(<equalPredicates; separator=" && ">);
+    }
+
+    public BBoolean unequal(<name> o) {
+        return new BBoolean(<unequalPredicates; separator=" || ">);
+    }
+
+    public String toString() {
+        return "(" + <values; separator=" + \",\" + "> + ")";
+    }
+
+    public boolean equals(Object other) {
+        if(!(other instanceof <name>)) {
+            return false;
+        }
+        <name> o = (<name>) other;
+        return <equalPredicates; separator= " && ">;
+    }
+
+    public int hashCode() {
+        return Objects.hash(<fields; separator=", ">);
     }
 }
 >>
@@ -47,6 +72,18 @@ this.<identifier> = <identifier>;
 >>
 
 record_assignment(identifier) ::= <<
+>>
+
+record_field_to_string(identifier) ::= <<
+"<identifier> : " + this.<identifier>
+>>
+
+record_equal_predicate(field) ::= <<
+this.<field> == o.<field>
+>>
+
+record_unequal_predicate(field) ::= <<
+this.<field> != o.<field>
 >>
 
 record(struct, parameters) ::= <<

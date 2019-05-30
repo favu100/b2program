@@ -342,6 +342,10 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         List<String> parameters = new ArrayList<>();
         List<String> initializations = new ArrayList<>();
         List<String> assignments = new ArrayList<>();
+        List<String> equalPredicates = new ArrayList<>();
+        List<String> unequalPredicates = new ArrayList<>();
+        List<String> fieldToStrings = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
         for(int i = 0; i < recordType.getIdentifiers().size(); i++) {
             BType type = recordType.getSubtypes().get(i);
             String identifier = recordType.getIdentifiers().get(i);
@@ -349,11 +353,19 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
             parameters.add(generateStructParameter(type, identifier));
             initializations.add(generateInitialization(identifier));
             assignments.add(generateAssignment(identifier));
+            equalPredicates.add(generateEqualPredicate(identifier));
+            unequalPredicates.add(generateUnequalPredicate(identifier));
+            fieldToStrings.add(generateFieldToStrings(identifier));
+            fields.add(identifier);
         }
         TemplateHandler.add(struct, "declarations", declarations);
         TemplateHandler.add(struct, "parameters", parameters);
         TemplateHandler.add(struct, "initializations", initializations);
         TemplateHandler.add(struct, "assignments", assignments);
+        TemplateHandler.add(struct, "equalPredicates", equalPredicates);
+        TemplateHandler.add(struct, "unequalPredicates", unequalPredicates);
+        TemplateHandler.add(struct, "values", fieldToStrings);
+        TemplateHandler.add(struct, "fields", fields);
         return struct.render();
     }
 
@@ -382,6 +394,24 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         ST assignment = currentGroup.getInstanceOf("record_assignment");
         TemplateHandler.add(assignment, "identifier", identifier);
         return assignment.render();
+    }
+
+    private String generateEqualPredicate(String identifier) {
+        ST binary = currentGroup.getInstanceOf("record_equal_predicate");
+        TemplateHandler.add(binary, "field", identifier);
+        return binary.render();
+    }
+
+    private String generateUnequalPredicate(String identifier) {
+        ST binary = currentGroup.getInstanceOf("record_unequal_predicate");
+        TemplateHandler.add(binary, "field", identifier);
+        return binary.render();
+    }
+
+    private String generateFieldToStrings(String identifier) {
+        ST fieldToString = currentGroup.getInstanceOf("record_field_to_string");
+        TemplateHandler.add(fieldToString, "identifier", identifier);
+        return fieldToString.render();
     }
 
     public void createNewStruct(RecordType type) {

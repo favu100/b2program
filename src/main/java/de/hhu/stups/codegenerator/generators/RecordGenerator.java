@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
 import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.RecordType;
@@ -38,6 +39,13 @@ public class RecordGenerator {
             .map(expression -> machineGenerator.visitExprNode(expression, null))
             .collect(Collectors.toList()));
         return record.render();
+    }
+
+    public String visitRecordFieldAccessNode(RecordFieldAccessNode node) {
+        ST fieldAccess = currentGroup.getInstanceOf("record_field_access");
+        TemplateHandler.add(fieldAccess, "record", machineGenerator.visitExprNode(node.getRecord(), null));
+        TemplateHandler.add(fieldAccess, "field", machineGenerator.visitExprNode(node.getIdentifier(), null));
+        return fieldAccess.render();
     }
 
 }

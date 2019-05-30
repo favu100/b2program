@@ -109,6 +109,10 @@ record_function(type, field) ::= <<
 }
 >>
 
+record_field_access(record, field) ::= <<
+(<record>.get_<field>())
+>>
+
 record_assignment(identifier) ::= <<
 this-><identifier> = other.<identifier>;
 >>

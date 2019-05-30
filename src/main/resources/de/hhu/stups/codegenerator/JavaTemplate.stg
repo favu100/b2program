@@ -75,6 +75,10 @@ public <type> get_<field>() {
 }
 >>
 
+record_field_access(record, field) ::= <<
+<record>.get_<field>()
+>>
+
 record_field_initialization(identifier) ::= <<
 this.<identifier> = <identifier>;
 >>

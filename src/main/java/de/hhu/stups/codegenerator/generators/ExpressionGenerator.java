@@ -13,6 +13,7 @@ import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
+import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
 import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
@@ -218,6 +219,8 @@ public class ExpressionGenerator {
             return visitRecordNode((RecordNode) node);
         } else if(node instanceof StructNode) {
             return "";
+        } else if(node instanceof RecordFieldAccessNode) {
+            return visitRecordFieldAccessNode((RecordFieldAccessNode) node);
         }
         throw new RuntimeException("Given node is not implemented: " + node.getClass());
     }
@@ -719,6 +722,10 @@ public class ExpressionGenerator {
 
     private String visitRecordNode(RecordNode node) {
         return recordGenerator.visitRecordNode(node);
+    }
+
+    private String visitRecordFieldAccessNode(RecordFieldAccessNode node) {
+        return recordGenerator.visitRecordFieldAccessNode(node);
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

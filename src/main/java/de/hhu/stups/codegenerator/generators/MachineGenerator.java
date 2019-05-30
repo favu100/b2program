@@ -411,8 +411,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	@Override
 	public String visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
-		//TODO
-		return "";
+		return expressionGenerator.visitExprNode(node);
 	}
 
 	public NameHandler getNameHandler() {

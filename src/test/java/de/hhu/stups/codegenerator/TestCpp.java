@@ -1564,6 +1564,11 @@ public class TestCpp {
 		testCpp("RecordsAccess");
 	}
 
+	@Test
+	public void testRecordsAccess2() throws Exception {
+		testCpp("RecordsAccess2");
+	}
+
 
 	private void cleanUp(String path) {
 		File file = new File(path);

@@ -63,7 +63,7 @@ class <name> : public BObject {
             <initializations; separator="\n">
         }
 
-        <functions; separator="\n">
+        <functions; separator="\n\n">
 
         <name>() {
         }
@@ -103,7 +103,7 @@ class <name> : public BObject {
 };
 >>
 
-record_function(type, field) ::= <<
+record_field_get(type, field) ::= <<
 <type> get_<field>() {
     return this-><field>;
 }
@@ -111,6 +111,12 @@ record_function(type, field) ::= <<
 
 record_field_access(record, field) ::= <<
 (<record>.get_<field>())
+>>
+
+record_field_override(name, field, type, val, parameters) ::= <<
+<name> override_<field>(const <type>& <field>) {
+    return <name>(<parameters; separator=", ">);
+}
 >>
 
 record_assignment(identifier) ::= <<
@@ -385,18 +391,18 @@ parallel_load(type, identifier) ::= <<
 <type> _ld_<identifier> = <identifier>;
 >>
 
-assignment(leftType, rightType, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg) ::= <<
+assignment(leftType, rightType, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, arg) ::= <<
+nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<

@@ -41,7 +41,7 @@ public static class <name> implements BObject {
         <initializations; separator="\n">
     }
 
-    <functions; separator="\n">
+    <functions; separator="\n\n">
 
     public BBoolean equal(<name> o) {
         return new BBoolean(<equalPredicates; separator=" && ">);
@@ -69,7 +69,7 @@ public static class <name> implements BObject {
 }
 >>
 
-record_function(type, field) ::= <<
+record_field_get(type, field) ::= <<
 public <type> get_<field>() {
     return this.<field>;
 }
@@ -77,6 +77,12 @@ public <type> get_<field>() {
 
 record_field_access(record, field) ::= <<
 <record>.get_<field>()
+>>
+
+record_field_override(name, field, type, val, parameters) ::= <<
+public <name> override_<field>(<type> <field>) {
+    return new <name>(<parameters; separator=", ">);
+}
 >>
 
 record_field_initialization(identifier) ::= <<
@@ -310,18 +316,18 @@ parallel_load(type, identifier) ::= <<
 <type> _ld_<identifier> = <identifier>;
 >>
 
-assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, arg, leftType, rightType) ::= <<
+assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<val>)));<endif>
 >>
 
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, arg, leftType, rightType) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 void() ::= <<

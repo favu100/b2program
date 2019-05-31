@@ -357,7 +357,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
             BType type = recordType.getSubtypes().get(i);
             String identifier = recordType.getIdentifiers().get(i);
             declarations.add(generateDeclaration(type, identifier));
-            functions.add(generateFunction(type, identifier));
+            functions.add(generateGetFunction(type, identifier));
             parameters.add(generateStructParameter(type, identifier));
             initializations.add(generateInitialization(identifier));
             assignments.add(generateAssignment(identifier));
@@ -366,6 +366,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
             fieldToStrings.add(generateFieldToStrings(identifier));
             fields.add(identifier);
         }
+        functions.addAll(generateOverwriteFunctions(recordType, nodeToClassName.get(recordType.toString())));
         TemplateHandler.add(struct, "declarations", declarations);
         TemplateHandler.add(struct, "parameters", parameters);
         TemplateHandler.add(struct, "initializations", initializations);
@@ -399,11 +400,25 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         return initialization.render();
     }
 
-    private String generateFunction(BType type, String identifier) {
-        ST function = currentGroup.getInstanceOf("record_function");
+    private String generateGetFunction(BType type, String identifier) {
+        ST function = currentGroup.getInstanceOf("record_field_get");
         TemplateHandler.add(function, "type", typeGenerator.generate(type));
         TemplateHandler.add(function, "field", identifier);
         return function.render();
+    }
+
+    private List<String> generateOverwriteFunctions(RecordType recordType, String name) {
+        List<String> functions = new ArrayList<>();
+        List<String> identifiers = recordType.getIdentifiers();
+        for(int i = 0; i < identifiers.size(); i++) {
+            ST function = currentGroup.getInstanceOf("record_field_override");
+            TemplateHandler.add(function, "name", name);
+            TemplateHandler.add(function, "field", identifiers.get(i));
+            TemplateHandler.add(function, "type", typeGenerator.generate(recordType.getSubtypes().get(i)));
+            TemplateHandler.add(function,"parameters", identifiers);
+            functions.add(function.render());
+        }
+        return functions;
     }
 
     private String generateAssignment(String identifier) {

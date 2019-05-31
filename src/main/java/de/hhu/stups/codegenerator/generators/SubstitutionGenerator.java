@@ -11,6 +11,7 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
@@ -394,20 +395,31 @@ public class SubstitutionGenerator {
         parallelConstructHandler.setLhsInParallel(true);
         IdentifierExprNode identifier = null;
         boolean isIdentifierLhs = false;
+        boolean isRecordLhs = false;
         parallelConstructHandler.setLhsInParallel(true);
         if(lhs instanceof IdentifierExprNode) {
             identifier = (IdentifierExprNode) lhs;
             isIdentifierLhs = true;
+            isRecordLhs = false;
         } else if(lhs instanceof ExpressionOperatorNode) {
             identifier = (IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
             isIdentifierLhs = false;
+            isRecordLhs = false;
             //TODO generate code for tuples as arguments
             ExprNode argument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
             TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));
             TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rhs.getType()));
+        } else if(lhs instanceof RecordFieldAccessNode) {
+            identifier = (IdentifierExprNode) ((RecordFieldAccessNode) lhs).getRecord();
+            isIdentifierLhs = false;
+            isRecordLhs = true;
+            //TODO: Check whether record access can be nested
+            ExprNode argument = ((RecordFieldAccessNode) lhs).getIdentifier();
+            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
         }
         TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
+        TemplateHandler.add(substitution, "isRecordAccessLhs", isRecordLhs);
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(identifier.getName()));
         parallelConstructHandler.setLhsInParallel(false);

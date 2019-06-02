@@ -61,5 +61,13 @@ class BString : public BObject {
         friend std::ostream& operator<<(std::ostream &strm, const BString &str) {
           return strm << str.value;
         }
+
+        BBoolean isString() {
+            return BBoolean(true);
+        }
+
+        BBoolean isNotString() {
+            return BBoolean(false);
+        }
 };
 #endif

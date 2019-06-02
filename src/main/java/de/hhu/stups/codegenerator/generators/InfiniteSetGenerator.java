@@ -14,14 +14,14 @@ import java.util.List;
 /**
  * Created by fabian on 21.05.19.
  */
-public class InfiniteNumberSetGenerator {
+public class InfiniteSetGenerator {
 
     private static final List<PredicateOperatorWithExprArgsNode.PredOperatorExprArgs> INFINITE_PREDICATE_OPERATORS =
             Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_EQUAL,
                     PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_NON_INCLUSION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1);
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
@@ -32,7 +32,7 @@ public class InfiniteNumberSetGenerator {
 
     private final NameHandler nameHandler;
 
-    public InfiniteNumberSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler) {
+    public InfiniteSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -167,6 +167,39 @@ public class InfiniteNumberSetGenerator {
         return operatorName;
     }
 
+    private String generateInfiniteString(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch (operator) {
+            case ELEMENT_OF:
+                operatorName = "isString";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotString";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfString";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfString";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfString";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfString";
+                break;
+            case EQUAL:
+                operatorName = "equalString";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalString";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     public String generateInfinite(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         ST template = currentGroup.getInstanceOf("infinite_predicate");
@@ -188,6 +221,9 @@ public class InfiniteNumberSetGenerator {
                 break;
             case NATURAL1:
                 operatorName = generateInfiniteNatural1(operator);
+                break;
+            case STRING:
+                operatorName = generateInfiniteString(operator);
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
@@ -212,6 +248,9 @@ public class InfiniteNumberSetGenerator {
             case NATURAL1:
                 operatorName = "checkDomainNatural1";
                 break;
+            case STRING:
+                operatorName = "checkDomainString";
+                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
@@ -235,6 +274,9 @@ public class InfiniteNumberSetGenerator {
             case NATURAL1:
                 operatorName = "checkRangeNatural1";
                 break;
+            case STRING:
+                operatorName = "checkRangeString";
+                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
@@ -254,6 +296,9 @@ public class InfiniteNumberSetGenerator {
             case NATURAL1:
                 operatorName = "isTotalNatural1";
                 break;
+            case STRING:
+                operatorName = "isTotalString";
+                break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");
         }
@@ -271,6 +316,9 @@ public class InfiniteNumberSetGenerator {
                 break;
             case NATURAL1:
                 operatorName = "isPartialNatural1";
+                break;
+            case STRING:
+                operatorName = "isPartialString";
                 break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");
@@ -306,6 +354,9 @@ public class InfiniteNumberSetGenerator {
             case NATURAL1:
                 operatorName = "isSurjectionNatural1";
                 break;
+            case STRING:
+                operatorName = "isSurjectionString";
+                break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");
         }
@@ -323,6 +374,9 @@ public class InfiniteNumberSetGenerator {
                 break;
             case NATURAL1:
                 operatorName = "isBijectionNatural1";
+                break;
+            case STRING:
+                operatorName = "isBijectionString";
                 break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");

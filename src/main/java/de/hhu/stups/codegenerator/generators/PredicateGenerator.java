@@ -50,7 +50,7 @@ public class PredicateGenerator {
 
     private final IterationConstructHandler iterationConstructHandler;
 
-    private final InfiniteNumberSetGenerator infiniteNumberSetGenerator;
+    private final InfiniteSetGenerator infiniteSetGenerator;
 
     private final RelationSetGenerator relationSetGenerator;
 
@@ -63,8 +63,8 @@ public class PredicateGenerator {
         this.nameHandler = nameHandler;
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
-        this.infiniteNumberSetGenerator = new InfiniteNumberSetGenerator(currentGroup, machineGenerator, nameHandler);
-        this.relationSetGenerator = new RelationSetGenerator(currentGroup, machineGenerator, nameHandler, infiniteNumberSetGenerator);
+        this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, machineGenerator, nameHandler);
+        this.relationSetGenerator = new RelationSetGenerator(currentGroup, machineGenerator, nameHandler, infiniteSetGenerator);
     }
 
     /*
@@ -83,8 +83,8 @@ public class PredicateGenerator {
     */
     public String visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node) {
         importGenerator.addImport(node.getType());
-        if(infiniteNumberSetGenerator.checkInfinite(node)) {
-            return infiniteNumberSetGenerator.generateInfinite(node);
+        if(infiniteSetGenerator.checkInfinite(node)) {
+            return infiniteSetGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
             ExprNode lhs = node.getExpressionNodes().get(0);

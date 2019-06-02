@@ -46,4 +46,12 @@ public class BString implements BObject {
 	public boolean isCase(Object o) {
 		return this.value.equals(o);
 	}
+
+	public BBoolean isString() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean isNotString() {
+		return new BBoolean(false);
+	}
 }

@@ -1315,6 +1315,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testString2() throws Exception {
+		testCpp("String2");
+	}
+
+	@Test
 	public void testInteger() throws Exception {
 		testCpp("Integer");
 	}
@@ -1357,6 +1362,11 @@ public class TestCpp {
 	@Test
 	public void testNatural1Subset() throws Exception {
 		testCpp("Natural1Subset");
+	}
+
+	@Test
+	public void testStringSubset() throws Exception {
+		testCpp("StringSubset");
 	}
 
 	@Test
@@ -1440,6 +1450,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testBijectionRelationString() throws Exception {
+		testCpp("BijectionRelationString");
+	}
+
+	@Test
 	public void testIsRelationInteger() throws Exception {
 		testCpp("IsRelationInteger");
 	}
@@ -1455,13 +1470,28 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testIsRelationString() throws Exception {
+		testCpp("IsRelationString");
+	}
+
+	@Test
 	public void testPartialBijectionIntegerNatural() throws Exception {
 		testCpp("PartialBijectionIntegerNatural");
 	}
 
 	@Test
+	public void testPartialBijectionString() throws Exception {
+		testCpp("PartialBijectionString");
+	}
+
+	@Test
 	public void testPartialFunctionIntegerNatural1() throws Exception {
 		testCpp("PartialFunctionIntegerNatural1");
+	}
+
+	@Test
+	public void testPartialFunctionString() throws Exception {
+		testCpp("PartialFunctionString");
 	}
 
 	@Test
@@ -1480,8 +1510,18 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testPartialInjectionString() throws Exception {
+		testCpp("PartialInjectionString");
+	}
+
+	@Test
 	public void testPartialSurjectionIntegerNatural() throws Exception {
 		testCpp("PartialSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testPartialSurjectionString() throws Exception {
+		testCpp("PartialSurjectionString");
 	}
 
 	@Test
@@ -1500,8 +1540,18 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testSurjectionRelationString() throws Exception {
+		testCpp("SurjectionRelationString");
+	}
+
+	@Test
 	public void testTotalBijectionIntegerNatural1() throws Exception {
 		testCpp("TotalBijectionIntegerNatural1");
+	}
+
+	@Test
+	public void testTotalBijectionString() throws Exception {
+		testCpp("TotalBijectionString");
 	}
 
 	@Test
@@ -1520,6 +1570,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testTotalFunctonString() throws Exception {
+		testCpp("TotalFunctionString");
+	}
+
+	@Test
 	public void testTotalInjectionInteger() throws Exception {
 		testCpp("TotalInjectionInteger");
 	}
@@ -1532,6 +1587,11 @@ public class TestCpp {
 	@Test
 	public void testTotalInjectionNatural1() throws Exception {
 		testCpp("TotalInjectionNatural1");
+	}
+
+	@Test
+	public void testTotalInjectionString() throws Exception {
+		testCpp("TotalInjectionString");
 	}
 
 	@Test
@@ -1550,8 +1610,18 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testTotalRelationString() throws Exception {
+		testCpp("TotalRelationString");
+	}
+
+	@Test
 	public void testTotalSurjectionIntegerNatural() throws Exception {
 		testCpp("TotalSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testTotalSurjectionString() throws Exception {
+		testCpp("TotalSurjectionString");
 	}
 
 	@Test

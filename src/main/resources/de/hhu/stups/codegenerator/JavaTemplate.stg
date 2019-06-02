@@ -534,7 +534,7 @@ relation_bijection(arg, range) ::=<<
 >>
 
 string(string) ::= <<
-new BString(<string>);
+new BString(<string>)
 >>
 
 operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<

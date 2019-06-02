@@ -5,6 +5,7 @@
 #include <cstdarg>
 #include <immer/set.hpp>
 #include "BInteger.cpp"
+#include "BString.cpp"
 
 #ifndef BSET_H
 #define BSET_H
@@ -484,6 +485,28 @@ class BSet : public BObject {
 
         BBoolean notStrictSubsetOfNatural1() {
             return this->strictSubsetOfNatural1()._not();
+        }
+
+        BBoolean subsetOfString() {
+            for(T e : this->set) {
+                BString element = (BString) e;
+                if(!element.isString().booleanValue()) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean strictSubsetOfString() {
+            return this->subsetOfString();
+        }
+
+        BBoolean notSubsetOfString() {
+            return this->subsetOfString()._not();
+        }
+
+        BBoolean notStrictSubsetOfString() {
+            return this->strictSubsetOfString()._not();
         }
 
         void operator =(const BSet<T>& other) {

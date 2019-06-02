@@ -1304,6 +1304,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testString2() throws Exception {
+		testJava("String2");
+	}
+
+	@Test
 	public void testInteger() throws Exception {
 		testJava("Integer");
 	}
@@ -1346,6 +1351,11 @@ public class TestJava {
 	@Test
 	public void testNatural1Subset() throws Exception {
 		testJava("Natural1Subset");
+	}
+
+	@Test
+	public void testStringSubset() throws Exception {
+		testJava("StringSubset");
 	}
 
 	@Test
@@ -1429,6 +1439,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testBijectionRelationString() throws Exception {
+		testJava("BijectionRelationString");
+	}
+
+	@Test
 	public void testIsRelationInteger() throws Exception {
 		testJava("IsRelationInteger");
 	}
@@ -1444,13 +1459,28 @@ public class TestJava {
 	}
 
 	@Test
+	public void testIsRelationString() throws Exception {
+		testJava("IsRelationString");
+	}
+
+	@Test
 	public void testPartialBijectionIntegerNatural() throws Exception {
 		testJava("PartialBijectionIntegerNatural");
 	}
 
 	@Test
+	public void testPartialBijectionString() throws Exception {
+		testJava("PartialBijectionString");
+	}
+
+	@Test
 	public void testPartialFunctionIntegerNatural1() throws Exception {
 		testJava("PartialFunctionIntegerNatural1");
+	}
+
+	@Test
+	public void testPartialFunctionString() throws Exception {
+		testJava("PartialFunctionString");
 	}
 
 	@Test
@@ -1469,8 +1499,18 @@ public class TestJava {
 	}
 
 	@Test
+	public void testPartialInjectionString() throws Exception {
+		testJava("PartialInjectionString");
+	}
+
+	@Test
 	public void testPartialSurjectionIntegerNatural() throws Exception {
 		testJava("PartialSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testPartialSurjectionString() throws Exception {
+		testJava("PartialSurjectionString");
 	}
 
 	@Test
@@ -1488,9 +1528,20 @@ public class TestJava {
 		testJava("SurjectionRelationNatural1");
 	}
 
+
+	@Test
+	public void testSurjectionRelationString() throws Exception {
+		testJava("SurjectionRelationString");
+	}
+
 	@Test
 	public void testTotalBijectionIntegerNatural1() throws Exception {
 		testJava("TotalBijectionIntegerNatural1");
+	}
+
+	@Test
+	public void testTotalBijectionString() throws Exception {
+		testJava("TotalBijectionString");
 	}
 
 	@Test
@@ -1509,6 +1560,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testTotalFunctionString() throws Exception {
+		testJava("TotalFunctionString");
+	}
+
+	@Test
 	public void testTotalInjectionInteger() throws Exception {
 		testJava("TotalInjectionInteger");
 	}
@@ -1521,6 +1577,11 @@ public class TestJava {
 	@Test
 	public void testTotalInjectionNatural1() throws Exception {
 		testJava("TotalInjectionNatural1");
+	}
+
+	@Test
+	public void testTotalInjectionString() throws Exception {
+		testJava("TotalInjectionString");
 	}
 
 	@Test
@@ -1539,8 +1600,18 @@ public class TestJava {
 	}
 
 	@Test
+	public void testTotalRelationString() throws Exception {
+		testJava("TotalRelationString");
+	}
+
+	@Test
 	public void testTotalSurjectionIntegerNatural() throws Exception {
 		testJava("TotalSurjectionIntegerNatural");
+	}
+
+	@Test
+	public void testTotalSurjectionString() throws Exception {
+		testJava("TotalSurjectionString");
 	}
 
 	@Test

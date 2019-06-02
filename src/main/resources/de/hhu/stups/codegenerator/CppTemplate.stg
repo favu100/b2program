@@ -450,10 +450,6 @@ tuple_create(leftType, rightType, arg1, arg2) ::= <<
 (BTuple\<<leftType>, <rightType> >(<arg1>, <arg2>))
 >>
 
-record_create(elements) ::= <<
-(BRecord(<elements; separator=", ">))
->>
-
 binary(arg1,operator,arg2) ::= <<
 <arg1>.<operator>(<arg2>)
 >>
@@ -616,19 +612,19 @@ string(string) ::= <<
 (BString(<string>))
 >>
 
-operation_call_with_assignment_many_parameters(var, machine, function, args, this, assignments) ::= <<
-BRecord <var> = <operation_call_without_assignment(machine, function, args, this)>
+operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
+<machine>::<struct> <var> = <operation_call_without_assignment(machineInstance, function, args, this)>
 <assignments; separator="\n">
 >>
 
-operation_call_assignment(identifier, type, var, index) ::= <<
-<identifier> = *(dynamic_cast\<<type>*>(&(<var>.get("<index>"))));
+operation_call_assignment(var, record, field) ::= <<
+<var> = <record>.get_<field>();
 >>
 
-operation_call_with_assignment_one_parameter(var, machine, function, args, this) ::= <<
-<var> = <operation_call_without_assignment(machine, function, args, this)>
+operation_call_with_assignment_one_parameter(var, machineInstance, function, args, this) ::= <<
+<var> = <operation_call_without_assignment(machineInstance, function, args, this)>
 >>
 
-operation_call_without_assignment(machine, function, args, this) ::= <<
-<if(this)>this-><else>this-><machine>.<endif><function>(<args; separator=",">);
+operation_call_without_assignment(machineInstance, function, args, this) ::= <<
+<if(this)>this-><else>this-><machineInstance>.<endif><function>(<args; separator=",">);
 >>

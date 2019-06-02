@@ -124,10 +124,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
 																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler,
-																parallelConstructHandler);
+																parallelConstructHandler, recordStructAnalyzer);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
-															typeGenerator, importGenerator);
+															typeGenerator, recordStructAnalyzer);
 		this.iterationConstructDepth = 0;
 	}
 
@@ -420,6 +420,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public DeclarationGenerator getDeclarationGenerator() {
 		return declarationGenerator;
+	}
+
+	public RecordStructAnalyzer getRecordStructAnalyzer() {
+		return recordStructAnalyzer;
 	}
 
 	public String getMachineName() {

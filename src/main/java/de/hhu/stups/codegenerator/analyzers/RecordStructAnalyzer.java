@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.analyzers;
 import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -69,6 +70,8 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
     private List<RecordType> structs;
 
+    private List<RecordType> generatedStructs;
+
     private int counter = 0;
 
     public RecordStructAnalyzer(STGroup group, TypeGenerator typeGenerator, ImportGenerator importGenerator) {
@@ -78,6 +81,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         this.importGenerator = importGenerator;
         this.nodeToClassName = new HashMap<>();
         this.structs = new ArrayList<>();
+        this.generatedStructs = new ArrayList<>();
     }
 
     public void visitMachineNode(MachineNode node) {
@@ -105,6 +109,9 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
     }
 
     public void visitOperationNode(OperationNode node) {
+        if(node.getOutputParams().size() > 1) {
+            createNewStruct(node);
+        }
         visitSubstitutionNode(node.getSubstitution(), null);
     }
 
@@ -336,7 +343,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
     }
 
     public List<String> generateStructs() {
-        return structs.stream()
+        return generatedStructs.stream()
                 .map(this::generateStruct)
                 .collect(Collectors.toList());
     }
@@ -453,10 +460,47 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         String name = "_Struct" + counter;
         nodeToClassName.put(type.toString(), name);
         structs.add(type);
+        generatedStructs.add(type);
+        counter++;
+    }
+
+    public void createNewStruct(OperationNode node) {
+        if(nodeToClassName.containsKey(node.toString())) {
+            return;
+        }
+        RecordType recordType = getRecordTypeFromOperation(node);
+        importGenerator.addImport(recordType);
+        String name = "_Struct" + counter;
+        structs.add(recordType);
+        generatedStructs.add(recordType);
+        nodeToClassName.put(recordType.toString(), name);
         counter++;
     }
 
     public String getStruct(BType recordType) {
         return nodeToClassName.get(recordType.toString());
+    }
+
+    public String getStruct(OperationNode node) {
+        return nodeToClassName.get(getRecordTypeFromOperation(node).toString());
+    }
+
+    private RecordType getRecordTypeFromOperation(OperationNode node) {
+        List<String> identifiers = node.getOutputParams()
+                .stream()
+                .map(DeclarationNode::getName).collect(Collectors.toList());
+        List<BType> types = node.getOutputParams()
+                .stream()
+                .map(DeclarationNode::getType)
+                .collect(Collectors.toList());
+        return new RecordType(identifiers, types);
+    }
+
+    public List<RecordType> getStructs() {
+        return structs;
+    }
+
+    public Map<String, String> getNodeToClassName() {
+        return nodeToClassName;
     }
 }

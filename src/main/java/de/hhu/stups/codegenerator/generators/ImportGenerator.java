@@ -80,13 +80,6 @@ public class ImportGenerator {
         }
     }
 
-    //TODO: Add Record Type to ANTLR Parser
-    public void addRecordImport() {
-        ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template,"type", "BRecord");
-        imports.add(template.render());
-    }
-
     public void addImportInIteration(BType type) {
         addImport(type);
         if(type instanceof SetType) {

@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
@@ -44,14 +45,14 @@ public class OperationGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final ImportGenerator importGenerator;
+    private final RecordStructAnalyzer recordStructAnalyzer;
 
     private final Map<String, String> machineFromOperation;
 
 
     public OperationGenerator(final STGroup group, final MachineGenerator machineGenerator, final SubstitutionGenerator substitutionGenerator,
                               final DeclarationGenerator declarationGenerator, final IdentifierGenerator identifierGenerator,
-                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final ImportGenerator importGenerator) {
+                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final RecordStructAnalyzer recordStructAnalyzer) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.declarationGenerator = declarationGenerator;
@@ -60,7 +61,7 @@ public class OperationGenerator {
         this.identifierGenerator = identifierGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
-        this.importGenerator = importGenerator;
+        this.recordStructAnalyzer = recordStructAnalyzer;
         this.machineFromOperation = new HashMap<>();
     }
 
@@ -98,7 +99,7 @@ public class OperationGenerator {
     */
     private ST generate(OperationNode node, List<String> globals) {
         ST operation = group.getInstanceOf("operation");
-        generateReturn(operation, node.getOutputParams());
+        generateReturn(operation, node);
         TemplateHandler.add(operation, "locals", declarationGenerator.generateDeclarations(node.getOutputParams()
                 .stream()
                 .filter(identifier -> !globals.contains(identifier.getName()))
@@ -109,9 +110,10 @@ public class OperationGenerator {
         return operation;
     }
 
-    private void generateReturn(ST operation, List<DeclarationNode> outputs) {
+    private void generateReturn(ST operation, OperationNode node) {
+        List<DeclarationNode> outputs = node.getOutputParams();
         if(outputs.size() > 1) {
-            generateReturnStatementRecord(operation, outputs);
+            generateReturnStatementRecord(operation, node);
         } else if(outputs.size() == 1) {
             generateReturnStatementIdentifier(operation, outputs);
         } else if(outputs.size() == 0) {
@@ -136,19 +138,19 @@ public class OperationGenerator {
         TemplateHandler.add(operation, "return", returnTemplate.render());
     }
 
-    private void generateReturnStatementRecord(ST operation, List<DeclarationNode> outputs) {
-        //TODO: Introduce Record Type in ANTLR Parser
-        importGenerator.addRecordImport();
-
-        TemplateHandler.add(operation, "returnType", "BRecord");
-
+    private void generateReturnStatementRecord(ST operation, OperationNode node) {
+        List<DeclarationNode> outputs = node.getOutputParams();
+        String struct = recordStructAnalyzer.getStruct(node);
+        TemplateHandler.add(operation, "returnType", struct);
+        //TODO
         List<String> identifiers = outputs.stream()
                 .map(DeclarationNode::getName)
                 .map(identifier -> nameHandler.handleIdentifier(identifier, FUNCTION_NAMES))
                 .collect(Collectors.toList());
 
-        ST recordTemplate = group.getInstanceOf("record_create");
-        TemplateHandler.add(recordTemplate, "elements", identifiers);
+        ST recordTemplate = group.getInstanceOf("record");
+        TemplateHandler.add(recordTemplate, "struct", struct);
+        TemplateHandler.add(recordTemplate, "parameters", identifiers);
         ST returnTemplate = group.getInstanceOf("return");
         TemplateHandler.add(returnTemplate, "identifier", recordTemplate.render());
         TemplateHandler.add(operation, "isTyped", true);

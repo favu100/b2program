@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator;
 
+import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.DeclarationGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
@@ -9,6 +10,7 @@ import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
+import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
 import java.io.IOException;
@@ -33,6 +35,8 @@ public class CodeGenerator {
 	private NameHandler nameHandler = null;
 
 	private DeclarationGenerator declarationGenerator = null;
+
+	private RecordStructAnalyzer recordStructAnalyzer = null;
 
 	/*
 	* Main function
@@ -145,10 +149,20 @@ public class CodeGenerator {
 			}
 		}
 
+		if(recordStructAnalyzer != null) {
+			List<RecordType> structs = recordStructAnalyzer.getStructs();
+			generator.getRecordStructAnalyzer().getStructs().addAll(structs);
+			Map<String, String> nodeToClassName = recordStructAnalyzer.getNodeToClassName();
+			for(String key : nodeToClassName.keySet()) {
+				generator.getRecordStructAnalyzer().getNodeToClassName().put(key, nodeToClassName.get(key));
+			}
+		}
+
 		String code = generator.generateMachine(node);
 
 		nameHandler = generator.getNameHandler();
 		declarationGenerator = generator.getDeclarationGenerator();
+		recordStructAnalyzer = generator.getRecordStructAnalyzer();
 
 
 		int lastIndexDot = path.toString().lastIndexOf(".");

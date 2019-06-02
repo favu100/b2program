@@ -2,12 +2,14 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
+import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -59,6 +61,8 @@ public class SubstitutionGenerator {
 
     private final ParallelConstructHandler parallelConstructHandler;
 
+    private final RecordStructAnalyzer recordStructAnalyzer;
+
     private int currentLocalScope;
 
     private int localScopes;
@@ -70,7 +74,8 @@ public class SubstitutionGenerator {
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                                  final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator, final ExpressionGenerator expressionGenerator,
                                  final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator,
-                                 final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler) {
+                                 final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
+                                 final RecordStructAnalyzer recordStructAnalyzer) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -82,6 +87,7 @@ public class SubstitutionGenerator {
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.parallelConstructHandler = parallelConstructHandler;
+        this.recordStructAnalyzer = recordStructAnalyzer;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -434,14 +440,15 @@ public class SubstitutionGenerator {
         String machineName = operationGenerator.getMachineFromOperation().get(operationName);
         ST functionCall = null;
         if(variables.size() > 1) {
-            functionCall = getOperationCallTemplateWithManyParameters(variables, node.getAssignedVariables());
+            functionCall = getOperationCallTemplateWithManyParameters(node, variables);
         } else if(variables.size() == 1) {
             functionCall = getOperationCallTemplateWithOneParameter(variables.get(0));
         } else if(variables.size() == 0) {
             functionCall = getOperationCallTemplateWithoutAssignment();
         }
         TemplateHandler.add(functionCall, "thisName", machineGenerator.getMachineName());
-        TemplateHandler.add(functionCall, "machine", nameHandler.handleIdentifier(machineName, NameHandler.IdentifierHandlingEnum.MACHINES));
+        TemplateHandler.add(functionCall, "machine", nameHandler.handle(machineName));
+        TemplateHandler.add(functionCall, "machineInstance", nameHandler.handleIdentifier(machineName, NameHandler.IdentifierHandlingEnum.MACHINES));
         TemplateHandler.add(functionCall, "function", nameHandler.handleIdentifier(operationName, NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
         TemplateHandler.add(functionCall, "args", node.getArguments().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, expected))
@@ -461,18 +468,17 @@ public class SubstitutionGenerator {
         return functionCall;
     }
 
-    private ST getOperationCallTemplateWithManyParameters(List<String> variables, List<ExprNode> assignedVariables) {
-        //TODO: Add Record Type to ANTLR Parser
-        importGenerator.addRecordImport();
+    private ST getOperationCallTemplateWithManyParameters(OperationCallSubstitutionNode node, List<String> variables) {
+        OperationNode operationNode = node.getOperationNode();
         ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
+        TemplateHandler.add(functionCall, "struct", recordStructAnalyzer.getStruct(operationNode));
         TemplateHandler.add(functionCall, "var", "_ld_record_" + recordCounter);
         List<String> assignments = new ArrayList<>();
         for(int i = 0; i < variables.size(); i++) {
             ST assignment = currentGroup.getInstanceOf("operation_call_assignment");
-            TemplateHandler.add(assignment, "identifier", variables.get(i));
-            TemplateHandler.add(assignment, "type", typeGenerator.generate(assignedVariables.get(i).getType()));
-            TemplateHandler.add(assignment, "var", "_ld_record_" + recordCounter);
-            TemplateHandler.add(assignment, "index", String.valueOf(i));
+            TemplateHandler.add(assignment, "var", variables.get(i));
+            TemplateHandler.add(assignment, "record", "_ld_record_" + recordCounter);
+            TemplateHandler.add(assignment, "field", operationNode.getOutputParams().get(i).getName());
             assignments.add(assignment.render());
         }
         recordCounter++;

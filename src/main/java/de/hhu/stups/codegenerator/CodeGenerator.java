@@ -45,7 +45,7 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=... -Pmaxint=... -Pfile = "de/hhu/stups/codegenerator/testfiles/Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, CodeGenerationException {
-		if(args.length < 5 || args.length > 6) {
+		if(args.length < 6 || args.length > 7) {
 			System.err.println("Wrong number of arguments");
 			return;
 		}
@@ -77,8 +77,9 @@ public class CodeGenerator {
 		}
 		String minint = args[2];
 		String maxint = args[3];
+		String deferredSetSize = args[4];
 		CodeGenerator codeGenerator = new CodeGenerator();
-		URL url = CodeGenerator.class.getClassLoader().getResource(args[4]);
+		URL url = CodeGenerator.class.getClassLoader().getResource(args[5]);
 		if(url == null) {
 			System.err.println("File not found");
 			return;
@@ -91,16 +92,16 @@ public class CodeGenerator {
 				return;
 			}
 		}
-		if(args.length == 6) {
-			addition = args[5];
+		if(args.length == 7) {
+			addition = args[6];
 		}
-		codeGenerator.generate(Paths.get(url.toURI()), mode, useBigInteger, minint, maxint, true, addition);
+		codeGenerator.generate(Paths.get(url.toURI()), mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
 	}
 
 	/*
 	* This function generates code from a given path for a machine, the target language and the information whether it is a main machine of a project
 	*/
-	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, boolean isMain, String addition) throws CodeGenerationException {
+	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean isMain, String addition) throws CodeGenerationException {
 		if(isMain) {
 			paths.clear();
 		}
@@ -114,18 +115,18 @@ public class CodeGenerator {
 			pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(project.getMainMachine().getName(), referenceNode.getMachineName());
 			Path currentPath = Paths.get(String.join("/", pathAsList));
 			if(!paths.contains(currentPath)) {
-				generate(currentPath, mode, useBigInteger, minint, maxint, false, null);
+				generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, false, null);
 			}
 		}
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null));
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null));
 		return paths;
 	}
 
 	/*
 	* This function generates code for a targeted programming language with creating the belonging file
 	*/
-	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, MachineNode node, Path addition) {
-		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, addition);
+	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, MachineNode node, Path addition) {
+		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, addition);
 		if(nameHandler != null) {
 			Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
 			for(String key : enumTypes.keySet()) {

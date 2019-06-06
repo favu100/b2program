@@ -101,7 +101,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private int iterationConstructDepth;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, Path addition) {
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		if(addition != null) {
 			try {
@@ -116,7 +116,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
-		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
+		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, deferredSetSize, iterationConstructHandler, typeGenerator, importGenerator, nameHandler);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(currentGroup, typeGenerator, importGenerator);
 		this.recordGenerator = new RecordGenerator(currentGroup, this, recordStructAnalyzer);

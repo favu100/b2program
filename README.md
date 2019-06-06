@@ -25,17 +25,19 @@ Note:
 
 ```bash
 # Java
-./gradlew run -Planguage="java" -Pbig_integer="true/false" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
 
 # Python
-./gradlew run -Planguage="python" -Pbig_integer="true/false" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
 
 # C
-./gradlew run -Planguage="c" -Pbig_integer="true/false" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
 
 # C++
-./gradlew run -Planguage="cpp" -Pbig_integer="true/false" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
 ```
+
+-Pminint and -Pmaxint are optional ([]). The default values cover 32-Bit Integers
 
 ### Compile the generated code in Java
 
@@ -45,11 +47,11 @@ Note:
 4. Example: `javac -cp btypes-all-2.9.12-SNAPSHOT.jar TrafficLightExec.java TrafficLight.java`
   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
   
-  ### Compile the generated code in C++
+### Compile the generated code in C++
   
-  1. Move all B types (see btypes_primitives or btypes_big_integer folder) files to same folder as the generated classes
-  3. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
-  4. Example: `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
+1. Move all B types (see btypes_primitives or btypes_big_integer folder) files to same folder as the generated classes
+2. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
+3. Example: `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
 
 ### Compile the generated code in C

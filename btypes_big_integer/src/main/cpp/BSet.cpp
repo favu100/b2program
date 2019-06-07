@@ -245,7 +245,6 @@ class BSet : public BObject {
             return BSet(result);
         }
 
-
         BInteger card() const {
             return BInteger(set.size());
         }

@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.handlers;
 
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -44,10 +45,13 @@ public class NameHandler {
 
     private Map<String, List<String>> enumTypes;
 
+    private List<String> deferredTypes;
+
     public NameHandler(final STGroup group) {
         this.group = group;
         this.globals = new ArrayList<>();
         this.enumTypes = new HashMap<>();
+        this.deferredTypes = new ArrayList<>();
         this.reservedMachines = new ArrayList<>();
         this.reservedMachinesWithIncludedMachines = new ArrayList<>();
         this.reservedMachinesAndFunctions = new ArrayList<>();
@@ -59,6 +63,7 @@ public class NameHandler {
     */
     public void initialize(MachineNode node) {
         node.getEnumeratedSets().forEach(set -> enumTypes.put(set.getSetDeclarationNode().getName(), set.getElementsAsStrings()));
+        deferredTypes.addAll(node.getDeferredSets().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         reservedMachines.addAll(node.getMachineReferences().stream()
                 .map(reference -> handle(reference.getMachineName()))
                 .collect(Collectors.toList()));
@@ -79,6 +84,9 @@ public class NameHandler {
 
         reservedMachinesAndFunctionsAndVariables.addAll(node.getEnumeratedSets().stream()
                 .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), FUNCTION_NAMES))
+                .collect(Collectors.toList()));
+        reservedMachinesAndFunctionsAndVariables.addAll(node.getDeferredSets().stream()
+                .map(set -> handleIdentifier(set.getName(), FUNCTION_NAMES))
                 .collect(Collectors.toList()));
 
         globals.addAll(reservedMachinesAndFunctionsAndVariables);
@@ -173,5 +181,9 @@ public class NameHandler {
 
     public Map<String, List<String>> getEnumTypes() {
         return enumTypes;
+    }
+
+    public List<String> getDeferredTypes() {
+        return deferredTypes;
     }
 }

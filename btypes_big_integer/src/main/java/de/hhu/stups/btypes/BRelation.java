@@ -369,6 +369,16 @@ public class BRelation<S,T> extends BSet<BTuple<S,T>> {
 		return result;
 	}
 
+	public static <S,T> BRelation<S,T> cartesianProduct(BSet<S> arg1, BSet<T> arg2) {
+		BRelation<S,T> result = new BRelation<S,T>();
+		for(S e1 : arg1) {
+			for(T e2 : arg2) {
+				result = result.union(new BRelation<S,T>(new BTuple<S,T>(e1,e2)));
+			}
+		}
+		return result;
+	}
+
 	public BBoolean isTotal(BSet<S> domain) {
 		return this.domain().equal(domain);
 	}

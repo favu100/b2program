@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.analyzers;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
+import de.hhu.stups.codegenerator.generators.IdentifierGenerator;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -61,11 +62,14 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     private final List<String> ignoredVariables;
 
+    private final IdentifierGenerator identifierGenerator;
+
     private boolean onLeftHandSide;
 
     private boolean onRightHandSide;
 
-    public ParallelConstructAnalyzer() {
+    public ParallelConstructAnalyzer(final IdentifierGenerator identifierGenerator) {
+        this.identifierGenerator = identifierGenerator;
         this.identifierOnLhsInParallel = new ArrayList<>();
         this.identifierOnRhsInParallel = new ArrayList<>();
         this.definedIdentifiersInParallel = new ArrayList<>();
@@ -238,6 +242,11 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         definedLoadsInParallel.addAll(identifierOnLhsInParallel.stream()
                 .filter(lhs -> identifierOnRhsInParallel.stream()
                         .map(IdentifierExprNode::getName)
+                        .collect(Collectors.toList())
+                        .contains(lhs.getName()))
+                .filter(lhs -> !identifierGenerator.getInputParams()
+                        .stream()
+                        .map(DeclarationNode::getName)
                         .collect(Collectors.toList())
                         .contains(lhs.getName()))
                 .collect(Collectors.toList()));

@@ -327,16 +327,6 @@ public class BSet<T> implements BObject, Set<T> {
 		return this.pow1();
 	}
 
-	public <S> BRelation<T,S> cartesianProduct(BSet<S> set) {
-		BRelation<T,S> result = new BRelation<T,S>();
-		for(T e1 : this) {
-			for(S e2 : set) {
-				result = result.union(new BRelation<T,S>(new BTuple<T,S>(e1,e2)));
-			}
-		}
-		return result;
-	}
-
 	public BBoolean subsetOfInteger() {
 		for(T e : this) {
 			if(e instanceof BInteger) {

@@ -132,6 +132,7 @@ public class CodeGenerator {
 			for(String key : enumTypes.keySet()) {
 				generator.getNameHandler().getEnumTypes().put(key, enumTypes.get(key));
 			}
+			generator.getNameHandler().getDeferredTypes().addAll(nameHandler.getDeferredTypes());
 			generator.getNameHandler().getReservedMachines().addAll(nameHandler.getReservedMachines());
 			generator.getNameHandler().getReservedMachinesAndFunctions().addAll(nameHandler.getReservedMachinesAndFunctions());
 			generator.getNameHandler().getReservedMachinesAndFunctionsAndVariables().addAll(nameHandler.getReservedMachinesAndFunctionsAndVariables());

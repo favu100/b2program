@@ -367,8 +367,12 @@ projection_tuple(arg, isProjection1) ::= <<
 <arg>.<if(isProjection1)>projection1<else>projection2<endif>()
 >>
 
-identity(type, arg) ::= <<
+identity(arg) ::= <<
 BRelation.identity(<arg>)
+>>
+
+cartesian_product(arg1, arg2) ::= <<
+BRelation.cartesianProduct(<arg1>, <arg2>)
 >>
 
 tuple_create(arg1, arg2) ::= <<

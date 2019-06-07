@@ -29,6 +29,8 @@ public class IdentifierGenerator {
 
     private final NameHandler nameHandler;
 
+    private List<DeclarationNode> inputParams;
+
     private List<DeclarationNode> outputParams;
 
     private Map<String, Integer> currentLocals;
@@ -45,6 +47,7 @@ public class IdentifierGenerator {
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.parallelConstructHandler = parallelConstructHandler;
+        this.inputParams = new ArrayList<>();
         this.outputParams = new ArrayList<>();
         this.currentLocals = new HashMap<>();
         this.maxLocals = new HashMap<>();
@@ -65,7 +68,8 @@ public class IdentifierGenerator {
 
     private boolean isReturn(IdentifierExprNode node) {
         return outputParams.stream()
-                .map(declarationNode -> nameHandler.getEnumTypes().keySet().contains(declarationNode.getName()) ?
+                .map(declarationNode -> nameHandler.getEnumTypes().keySet().contains(declarationNode.getName()) ||
+                                        nameHandler.getDeferredTypes().contains(declarationNode.getName()) ?
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
                 .collect(Collectors.toList())
@@ -94,7 +98,7 @@ public class IdentifierGenerator {
     private String generate(IdentifierExprNode node, boolean isReturn, boolean isPrivate, boolean isAssigned) {
         ST identifier = group.getInstanceOf("identifier");
         TemplateHandler.add(identifier, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(identifier, "identifier", node.getType() != null && nameHandler.getEnumTypes().keySet().contains(node.getName()) ?
+        TemplateHandler.add(identifier, "identifier", node.getType() != null && (nameHandler.getEnumTypes().keySet().contains(node.getName()) || nameHandler.getDeferredTypes().contains(node.getName())) ?
                 nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
                 nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(identifier, "isReturn", isReturn);
@@ -136,6 +140,7 @@ public class IdentifierGenerator {
     * This function sets the output paramters and calculates the generated local variables (collision problem between output parameters and local variables).
     */
     public void setParams(List<DeclarationNode> inputParams, List<DeclarationNode> outputParams){
+        this.inputParams = inputParams;
         this.outputParams = outputParams;
         this.currentLocals.clear();
         this.maxLocals.clear();
@@ -187,4 +192,7 @@ public class IdentifierGenerator {
         stackScope.pop();
     }
 
+    public List<DeclarationNode> getInputParams() {
+        return inputParams;
+    }
 }

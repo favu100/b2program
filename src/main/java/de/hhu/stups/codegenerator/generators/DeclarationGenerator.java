@@ -9,6 +9,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
+import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -211,6 +212,7 @@ public class DeclarationGenerator {
     }
 
     private String declareEnums(DeclarationNode node) {
+        importGenerator.addImport(((SetType) node.getType()).getSubType());
         ST enumDeclaration = currentGroup.getInstanceOf("set_enum_declaration");
         TemplateHandler.add(enumDeclaration, "name", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         List<String> elements = extractEnumsOfDeferredSet(node);

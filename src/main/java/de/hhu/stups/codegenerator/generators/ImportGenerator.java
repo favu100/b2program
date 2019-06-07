@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.RecordType;
@@ -67,6 +68,10 @@ public class ImportGenerator {
             imports.add(template.render());
             template = group.getInstanceOf("import_type");
             TemplateHandler.add(template, "type", "BBoolean");
+            imports.add(template.render());
+        } else if(type instanceof DeferredSetElementType) {
+            template = group.getInstanceOf("import_type");
+            TemplateHandler.add(template, "type", "BObject");
             imports.add(template.render());
         } else if(type instanceof CoupleType) {
             TemplateHandler.add(template, "type", "BTuple");

@@ -316,10 +316,10 @@ public class SubstitutionGenerator {
     private ParallelConstructAnalyzer getParallelConstructAnalyzer() {
         ParallelConstructAnalyzer parallelConstructAnalyzer;
         if(parallelConstructHandler.getParallelConstructAnalyzer() == null) {
-            parallelConstructAnalyzer = new ParallelConstructAnalyzer();
+            parallelConstructAnalyzer = new ParallelConstructAnalyzer(identifierGenerator);
             parallelConstructHandler.setParallelConstructAnalyzer(parallelConstructAnalyzer);
         } else {
-            parallelConstructAnalyzer = new ParallelConstructAnalyzer();
+            parallelConstructAnalyzer = new ParallelConstructAnalyzer(identifierGenerator);
             parallelConstructAnalyzer.getDefinedIdentifiersInParallel().addAll(parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel());
             parallelConstructAnalyzer.definedIdentifiersInCode().addAll(parallelConstructHandler.getParallelConstructAnalyzer().definedIdentifiersInCode());
             parallelConstructHandler.setParallelConstructAnalyzer(parallelConstructAnalyzer);

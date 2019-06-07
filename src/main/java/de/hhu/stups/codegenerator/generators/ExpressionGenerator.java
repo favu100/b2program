@@ -122,7 +122,7 @@ public class ExpressionGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
             Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
                     FUNCTION_CALL, OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
-                    RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, CARTESIAN_PRODUCT, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
+                    RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
                     TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
                     PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT);
 
@@ -195,11 +195,12 @@ public class ExpressionGenerator {
             return declarationGenerator.callEnum(element.getType().toString(), element.getDeclarationNode());
         } else if(node instanceof IdentifierExprNode) {
             Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
+            List<String> deferredTypes = nameHandler.getDeferredTypes();
             if(node.getType() == null) {
                 return ""; //TODO
             }
-            if(enumTypes.keySet().contains(node.getType().toString()) &&
-                    enumTypes.get(node.getType().toString()).contains(((IdentifierExprNode) node).getName())) {
+            if((enumTypes.keySet().contains(node.getType().toString()) &&
+                    enumTypes.get(node.getType().toString()).contains(((IdentifierExprNode) node).getName()))) {
                 return declarationGenerator.callEnum(node.getType().toString(), ((IdentifierExprNode) node).getDeclarationNode());
             }
             return visitIdentifierExprNode((IdentifierExprNode) node);
@@ -310,6 +311,8 @@ public class ExpressionGenerator {
             return generateProjection(node.getOperator(), ((SetType) node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType) node.getExpressionNodes().get(1).getType()).getSubType(), expressionList);
         } else if(node.getOperator() == ID) {
             return generateIdentity(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType());
+        } else if(node.getOperator() == CARTESIAN_PRODUCT) {
+            return generateCartesianProduct(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType) node.getExpressionNodes().get(1).getType()).getSubType());
         } else if(node.getOperator() == COUPLE) {
             return generateTuple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == BOOL) {
@@ -507,9 +510,6 @@ public class ExpressionGenerator {
             case COMPOSITION:
                 operatorName = "composition";
                 break;
-            case CARTESIAN_PRODUCT:
-                operatorName = "cartesianProduct";
-                break;
             case TOTAL_FUNCTION:
                 operatorName = "totalFunction";
                 break;
@@ -594,6 +594,15 @@ public class ExpressionGenerator {
         ST identity = currentGroup.getInstanceOf("identity");
         TemplateHandler.add(identity, "type", typeGenerator.generate(type));
         TemplateHandler.add(identity, "arg", expressionList.get(0));
+        return identity.render();
+    }
+
+    private String generateCartesianProduct(List<String> expressionList, BType leftType, BType rightType) {
+        ST identity = currentGroup.getInstanceOf("cartesian_product");
+        TemplateHandler.add(identity, "leftType", typeGenerator.generate(leftType));
+        TemplateHandler.add(identity, "rightType", typeGenerator.generate(rightType));
+        TemplateHandler.add(identity, "arg1", expressionList.get(0));
+        TemplateHandler.add(identity, "arg2", expressionList.get(1));
         return identity.render();
     }
 

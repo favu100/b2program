@@ -446,6 +446,10 @@ identity(type, arg) ::= <<
 (BRelation\<<type>, <type> >::identity(<arg>))
 >>
 
+cartesian_product(leftType, rightType, arg1, arg2) ::= <<
+(BRelation\<<leftType>, <rightType> >::cartesianProduct(<arg1>, <arg2>))
+>>
+
 tuple_create(leftType, rightType, arg1, arg2) ::= <<
 (BTuple\<<leftType>, <rightType> >(<arg1>, <arg2>))
 >>

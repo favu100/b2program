@@ -7,6 +7,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.RecordType;
@@ -55,6 +56,9 @@ public class TypeGenerator {
             }
             return template.render();
         } else if(type instanceof EnumeratedSetElementType) {
+            TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+            return template.render();
+        } else if(type instanceof DeferredSetElementType) {
             TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
             return template.render();
         } else if(type instanceof CoupleType) {

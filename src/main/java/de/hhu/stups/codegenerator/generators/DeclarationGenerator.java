@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.analyzers.DeferredSetSizeAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -35,7 +36,7 @@ public class DeclarationGenerator {
 
     private final Map<String, String> enumToMachine;
 
-    private final int deferredSetSize;
+    private final DeferredSetSizeAnalyzer deferredSetSizeAnalyzer;
 
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, String deferredSetSize, final IterationConstructHandler iterationConstructHandler,
@@ -48,7 +49,7 @@ public class DeclarationGenerator {
         this.nameHandler = nameHandler;
         this.setToEnum = new HashMap<>();
         this.enumToMachine = new HashMap<>();
-        this.deferredSetSize = Integer.parseInt(deferredSetSize);
+        this.deferredSetSizeAnalyzer = new DeferredSetSizeAnalyzer(Integer.parseInt(deferredSetSize));
     }
 
     /*
@@ -159,8 +160,16 @@ public class DeclarationGenerator {
     }
 
     private List<String> generateDeferredSetEnums(MachineNode node) {
-        //TODO: Implement
-        return new ArrayList<>();
+        node.getDeferredSets().forEach(set -> {
+            enumToMachine.put(set.getName(), node.getName());
+            setToEnum.put(set.getName(), extractEnumsOfDeferredSet(set).stream()
+                    .map(declaration -> callEnum(set.getName(), declaration))
+                    .collect(Collectors.toList()));
+
+        });
+        return node.getDeferredSets().stream()
+                .map(this::declareEnums)
+                .collect(Collectors.toList());
     }
 
     /*
@@ -182,8 +191,9 @@ public class DeclarationGenerator {
     }
 
     private List<String> generateDeferredSetDeclarations(MachineNode node) {
-        //TODO: Implement
-        return new ArrayList<>();
+        return node.getDeferredSets().stream()
+                .map(this::visitDeferredSetDeclaration)
+                .collect(Collectors.toList());
     }
 
     /*
@@ -200,19 +210,51 @@ public class DeclarationGenerator {
         return enumDeclaration.render();
     }
 
+    private String declareEnums(DeclarationNode node) {
+        ST enumDeclaration = currentGroup.getInstanceOf("set_enum_declaration");
+        TemplateHandler.add(enumDeclaration, "name", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        List<String> elements = extractEnumsOfDeferredSet(node);
+        List<String> enums = elements.stream()
+                .map(element -> nameHandler.handleEnum(element, elements))
+                .collect(Collectors.toList());
+        TemplateHandler.add(enumDeclaration, "enums", enums);
+        return enumDeclaration.render();
+    }
+
     /*
     * This function generates code with creating a BSet for an enumerated set from the belonging AST node and the belonging template.
     */
     public String visitEnumeratedSetDeclarationNode(EnumeratedSetDeclarationNode node) {
         importGenerator.addImport(node.getSetDeclarationNode().getType());
         ST setDeclaration = currentGroup.getInstanceOf("set_declaration");
-        TemplateHandler.add(setDeclaration, "identifier", nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES));
         TemplateHandler.add(setDeclaration, "type", nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(setDeclaration, "identifier", nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES));
         List<String> enums = node.getElements().stream()
                 .map(declaration -> callEnum(node.getSetDeclarationNode().getName(), declaration))
                 .collect(Collectors.toList());
         TemplateHandler.add(setDeclaration, "enums", enums);
         return setDeclaration.render();
+    }
+
+    private String visitDeferredSetDeclaration(DeclarationNode node) {
+        importGenerator.addImport(node.getType());
+        ST setDeclaration = currentGroup.getInstanceOf("set_declaration");
+        TemplateHandler.add(setDeclaration, "type", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(setDeclaration, "identifier", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES));
+        List<String> enums = extractEnumsOfDeferredSet(node).stream()
+                .map(declaration -> callEnum(node.getName(), declaration))
+                .collect(Collectors.toList());
+        TemplateHandler.add(setDeclaration, "enums", enums);
+        return setDeclaration.render();
+    }
+
+    private List<String> extractEnumsOfDeferredSet(DeclarationNode node) {
+        List<String> enums = new ArrayList<>();
+        String deferredSetName = node.getName();
+        for(int i = 1; i <= deferredSetSizeAnalyzer.getDefaultSetSize(); i++) {
+            enums.add(deferredSetName + i);
+        }
+        return enums;
     }
 
     /*
@@ -224,6 +266,15 @@ public class DeclarationGenerator {
         TemplateHandler.add(enumST, "machine", enumToMachine.get(setName));
         TemplateHandler.add(enumST, "class", nameHandler.handleIdentifier(setName, NameHandler.IdentifierHandlingEnum.MACHINES));
         TemplateHandler.add(enumST, "identifier", nameHandler.handleEnum(enumNode.getName(), setToEnum.get(setName)));
+        TemplateHandler.add(enumST, "isCurrentMachine", enumToMachine.get(setName).equals(machineGenerator.getMachineName()));
+        return enumST.render();
+    }
+
+    public String callEnum(String setName, String enumName) {
+        ST enumST = currentGroup.getInstanceOf("enum_call");;
+        TemplateHandler.add(enumST, "machine", enumToMachine.get(setName));
+        TemplateHandler.add(enumST, "class", nameHandler.handleIdentifier(setName, NameHandler.IdentifierHandlingEnum.MACHINES));
+        TemplateHandler.add(enumST, "identifier", nameHandler.handleEnum(enumName, setToEnum.get(setName)));
         TemplateHandler.add(enumST, "isCurrentMachine", enumToMachine.get(setName).equals(machineGenerator.getMachineName()));
         return enumST.render();
     }

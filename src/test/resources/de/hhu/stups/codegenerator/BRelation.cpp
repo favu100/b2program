@@ -69,12 +69,12 @@ class BRelation : public BSet<BTuple<S,T>> {
             return BSet<T>(result);
         }
 
-        template<typename S, typename T>
-        static BRelation<S,T> cartesianProduct(const BSet<S> arg1, const BSet<T>& set2) {
-            BRelation<S,T> result = BRelation<S,T>();
-            for(S e1 : set1.set) {
-                for(T e2 : set2.set) {
-                    result = result._union(BRelation<S,T>(BTuple<S,T>(e1,e2)));
+        template<typename R,typename A>
+        static BRelation<R,A> cartesianProduct(const BSet<R> arg1, const BSet<A>& arg2) {
+            BRelation<R,A> result = BRelation<R,A>();
+            for(R e1 : arg1.getSet()) {
+                for(A e2 : arg2.getSet()) {
+                    result = result._union(BRelation<R,A>(BTuple<R,A>(e1,e2)));
                 }
             }
             return result;

@@ -80,7 +80,9 @@ public class ImportGenerator {
             addImport(((CoupleType) type).getRight());
         } else if(type instanceof RecordType) {
             template = group.getInstanceOf("import_type");
-            TemplateHandler.add(template, "type", "BObject");
+            TemplateHandler.add(template, "type", "BStruct");
+            RecordType recordType = (RecordType) type;
+            recordType.getSubtypes().forEach(this::addImport);
             imports.add(template.render());
         }
     }

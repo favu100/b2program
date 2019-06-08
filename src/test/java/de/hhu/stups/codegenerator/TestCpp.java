@@ -1643,6 +1643,35 @@ public class TestCpp {
 		testCpp("RecordsAccess2");
 	}
 
+	@Test
+	public void testStructEqual() throws Exception {
+		testCpp("StructEqual");
+	}
+
+	@Test
+	public void testStructUnequal() throws Exception {
+		testCpp("StructUnequal");
+	}
+
+	@Test
+	public void testStructElementOf() throws Exception {
+		testCpp("StructElementOf");
+	}
+
+	@Test
+	public void testStructNotElementOf() throws Exception {
+		testCpp("StructNotElementOf");
+	}
+
+	@Test
+	public void testStructSubset() throws Exception {
+		testCpp("StructSubset");
+	}
+
+	@Test
+	public void testStructNotSubset() throws Exception {
+		testCpp("StructNotSubset");
+	}
 
 	private void cleanUp(String path) {
 		File file = new File(path);

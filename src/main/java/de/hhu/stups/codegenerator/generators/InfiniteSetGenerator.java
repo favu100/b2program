@@ -4,6 +4,7 @@ import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
+import de.prob.parser.ast.nodes.expression.StructNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -53,6 +54,8 @@ public class InfiniteSetGenerator {
                         return true;
                     }
                 }
+            } else if(rhs instanceof StructNode) {
+                return true;
             }
         }
         return false;
@@ -200,14 +203,52 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    private String generateInfiniteStruct(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch (operator) {
+            case ELEMENT_OF:
+                operatorName = "isRecord";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotRecord";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfStruct";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfStruct";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfStruct";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfStruct";
+                break;
+            case EQUAL:
+                operatorName = "equalStruct";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalStruct";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     public String generateInfinite(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
-        ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
         String operatorName;
+        if(rhs instanceof StructNode) {
+            operatorName = generateInfiniteStruct(operator);
+            TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+            return template.render();
+        }
+        ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
         if (rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
             operator = PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION;
             rhsOperator = ((ExpressionOperatorNode) ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0)).getOperator();

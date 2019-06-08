@@ -49,7 +49,7 @@ class <machine> {
 >>
 
 struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
-class <name> : public BObject {
+class <name> : public BStruct {
     private:
         <declarations; separator="\n">
 

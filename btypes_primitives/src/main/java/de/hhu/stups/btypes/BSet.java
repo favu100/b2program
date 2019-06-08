@@ -378,6 +378,14 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(true);
 	}
 
+	public BBoolean equalStruct() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean unequalStruct() {
+		return new BBoolean(true);
+	}
+
 	public BBoolean notStrictSubsetOfInteger() {
 		return strictSubsetOfInteger().not();
 	}
@@ -446,5 +454,28 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BBoolean notStrictSubsetOfString() {
 		return strictSubsetOfString().not();
+	}
+
+
+	public BBoolean subsetOfStruct() {
+		for(T e : this) {
+			BStruct element = (BStruct) e;
+			if(!element.isRecord().booleanValue()) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean strictSubsetOfStruct() {
+		return subsetOfStruct();
+	}
+
+	public BBoolean notSubsetOfStruct() {
+		return subsetOfStruct().not();
+	}
+
+	public BBoolean notStrictSubsetOfStruct() {
+		return strictSubsetOfStruct().not();
 	}
 }

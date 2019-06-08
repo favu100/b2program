@@ -34,7 +34,7 @@ public class <machine> {
 >>
 
 struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
-public static class <name> implements BObject {
+public static class <name> extends BStruct {
     <declarations; separator="\n">
 
     public <name>(<parameters; separator=", ">) {

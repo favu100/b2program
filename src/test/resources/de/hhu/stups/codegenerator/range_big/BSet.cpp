@@ -6,6 +6,7 @@
 #include <immer/set.hpp>
 #include "BInteger.cpp"
 #include "BString.cpp"
+#include "BStruct.cpp"
 
 #ifndef BSET_H
 #define BSET_H
@@ -442,6 +443,22 @@ class BSet : public BObject {
             return BBoolean(true);
         }
 
+        BBoolean equalString() {
+            return BBoolean(false);
+        }
+
+        BBoolean unequalString() {
+            return BBoolean(true);
+        }
+
+        BBoolean equalStruct() {
+            return BBoolean(false);
+        }
+
+        BBoolean unequalStruct() {
+            return BBoolean(true);
+        }
+
         BBoolean notStrictSubsetOfInteger() {
             return this->strictSubsetOfInteger()._not();
         }
@@ -510,6 +527,28 @@ class BSet : public BObject {
 
         BBoolean notStrictSubsetOfString() {
             return this->strictSubsetOfString()._not();
+        }
+
+        BBoolean subsetOfStruct() {
+            for(T e : this->set) {
+                BStruct element = (BStruct) e;
+                if(!element.isRecord().booleanValue()) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean strictSubsetOfStruct() {
+            return this->subsetOfStruct();
+        }
+
+        BBoolean notSubsetOfStruct() {
+            return this->subsetOfStruct()._not();
+        }
+
+        BBoolean notStrictSubsetOfStruct() {
+            return this->strictSubsetOfStruct()._not();
         }
 
         void operator =(const BSet<T>& other) {

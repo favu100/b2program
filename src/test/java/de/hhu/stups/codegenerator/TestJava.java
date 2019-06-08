@@ -1633,6 +1633,36 @@ public class TestJava {
 		testJava("RecordsAccess2");
 	}
 
+	@Test
+	public void testStructEqual() throws Exception {
+		testJava("StructEqual");
+	}
+
+	@Test
+	public void testStructUnequal() throws Exception {
+		testJava("StructUnequal");
+	}
+
+	@Test
+	public void testStructElementOf() throws Exception {
+		testJava("StructElementOf");
+	}
+
+	@Test
+	public void testStructNotElementOf() throws Exception {
+		testJava("StructNotElementOf");
+	}
+
+	@Test
+	public void testStructSubset() throws Exception {
+		testJava("StructSubset");
+	}
+
+	@Test
+	public void testStructNotSubset() throws Exception {
+		testJava("StructNotSubset");
+	}
+
 
 	private void cleanUp(String path) {
 		File file = new File(path);

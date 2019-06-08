@@ -1318,6 +1318,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testPowString() throws Exception {
+		testJava("PowString");
+	}
+
+	@Test
 	public void testNatural() throws Exception {
 		testJava("Natural");
 	}

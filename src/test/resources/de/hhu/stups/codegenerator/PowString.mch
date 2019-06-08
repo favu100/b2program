@@ -1,0 +1,13 @@
+MACHINE PowString
+
+VARIABLES  x
+
+INVARIANT  x : POW(STRING)
+
+INITIALISATION x := {"1","2","3"}
+
+OPERATIONS
+
+	op1 = SELECT x : POW(STRING) THEN x := {"1","2","3"} END
+
+END

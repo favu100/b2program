@@ -1329,6 +1329,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testPowString() throws Exception {
+		testCpp("PowString");
+	}
+
+	@Test
 	public void testNatural() throws Exception {
 		testCpp("Natural");
 	}

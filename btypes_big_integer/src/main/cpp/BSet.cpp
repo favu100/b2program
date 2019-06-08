@@ -438,6 +438,14 @@ class BSet : public BObject {
             return BBoolean(true);
         }
 
+        BBoolean equalString() {
+            return BBoolean(false);
+        }
+
+        BBoolean unequalString() {
+            return BBoolean(true);
+        }
+
         BBoolean notStrictSubsetOfInteger() {
             return this->strictSubsetOfInteger()._not();
         }

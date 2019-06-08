@@ -370,6 +370,14 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(true);
 	}
 
+	public BBoolean equalString() {
+		return new BBoolean(false);
+	}
+
+	public BBoolean unequalString() {
+		return new BBoolean(true);
+	}
+
 	public BBoolean notStrictSubsetOfInteger() {
 		return strictSubsetOfInteger().not();
 	}

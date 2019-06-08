@@ -1334,6 +1334,11 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testPowStruct() throws Exception {
+		testCpp("PowStruct");
+	}
+
+	@Test
 	public void testNatural() throws Exception {
 		testCpp("Natural");
 	}

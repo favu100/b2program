@@ -52,6 +52,8 @@ public class InfiniteSetGenerator {
                     ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
                     if(innerRhs instanceof ExpressionOperatorNode && INFINITE_EXPRESSIONS.contains(((ExpressionOperatorNode) innerRhs).getOperator()) && operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
                         return true;
+                    } else if(innerRhs instanceof StructNode) {
+                        return true;
                     }
                 }
             } else if(rhs instanceof StructNode) {
@@ -251,7 +253,14 @@ public class InfiniteSetGenerator {
         ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
         if (rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
             operator = PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION;
-            rhsOperator = ((ExpressionOperatorNode) ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0)).getOperator();
+            ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
+            if(innerRhs instanceof ExpressionOperatorNode) {
+                rhsOperator = ((ExpressionOperatorNode) innerRhs).getOperator();
+            } else if(innerRhs instanceof StructNode) {
+                operatorName = generateInfiniteStruct(operator);
+                TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+                return template.render();
+            }
         }
         switch(rhsOperator) {
             case INTEGER:

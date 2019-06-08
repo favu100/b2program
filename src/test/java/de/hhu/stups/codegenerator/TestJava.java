@@ -1323,6 +1323,11 @@ public class TestJava {
 	}
 
 	@Test
+	public void testPowStruct() throws Exception {
+		testJava("PowStruct");
+	}
+
+	@Test
 	public void testNatural() throws Exception {
 		testJava("Natural");
 	}

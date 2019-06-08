@@ -1668,6 +1668,65 @@ public class TestJava {
 		testJava("StructNotSubset");
 	}
 
+	@Test
+	public void testBijectionRelationStruct() throws Exception {
+		testJava("BijectionRelationStruct");
+	}
+
+	@Test
+	public void testIsRelationStruct() throws Exception {
+		testJava("IsRelationStruct");
+	}
+
+	@Test
+	public void testPartialBijectionStruct() throws Exception {
+		testJava("PartialBijectionStruct");
+	}
+
+	@Test
+	public void testPartialFunctionStruct() throws Exception {
+		testJava("PartialFunctionStruct");
+	}
+
+	@Test
+	public void testPartialInjectionStruct() throws Exception {
+		testJava("PartialInjectionStruct");
+	}
+
+	@Test
+	public void testPartialSurjectionStruct() throws Exception {
+		testJava("PartialSurjectionStruct");
+	}
+
+	@Test
+	public void testSurjectionRelationStruct() throws Exception {
+		testJava("SurjectionRelationStruct");
+	}
+
+	@Test
+	public void testTotalBijectionStruct() throws Exception {
+		testJava("TotalBijectionStruct");
+	}
+
+	@Test
+	public void testTotalFunctionStruct() throws Exception {
+		testJava("TotalFunctionStruct");
+	}
+
+	@Test
+	public void testTotalInjectionStruct() throws Exception {
+		testJava("TotalInjectionStruct");
+	}
+
+	@Test
+	public void testTotalRelationStruct() throws Exception {
+		testJava("TotalRelationStruct");
+	}
+
+	@Test
+	public void testTotalSurjectionStruct() throws Exception {
+		testJava("TotalSurjectionStruct");
+	}
 
 	private void cleanUp(String path) {
 		File file = new File(path);

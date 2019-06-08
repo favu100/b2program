@@ -1678,6 +1678,66 @@ public class TestCpp {
 		testCpp("StructNotSubset");
 	}
 
+	@Test
+	public void testBijectionRelationStruct() throws Exception {
+		testCpp("BijectionRelationStruct");
+	}
+
+	@Test
+	public void testIsRelationStruct() throws Exception {
+		testCpp("IsRelationStruct");
+	}
+
+	@Test
+	public void testPartialBijectionStruct() throws Exception {
+		testCpp("PartialBijectionStruct");
+	}
+
+	@Test
+	public void testPartialFunctionStruct() throws Exception {
+		testCpp("PartialFunctionStruct");
+	}
+
+	@Test
+	public void testPartialInjectionStruct() throws Exception {
+		testCpp("PartialInjectionStruct");
+	}
+
+	@Test
+	public void testPartialSurjectionStruct() throws Exception {
+		testCpp("PartialSurjectionStruct");
+	}
+
+	@Test
+	public void testSurjectionRelationStruct() throws Exception {
+		testCpp("SurjectionRelationStruct");
+	}
+
+	@Test
+	public void testTotalBijectionStruct() throws Exception {
+		testCpp("TotalBijectionStruct");
+	}
+
+	@Test
+	public void testTotalFunctionStruct() throws Exception {
+		testCpp("TotalFunctionStruct");
+	}
+
+	@Test
+	public void testTotalInjectionStruct() throws Exception {
+		testCpp("TotalInjectionStruct");
+	}
+
+	@Test
+	public void testTotalRelationStruct() throws Exception {
+		testCpp("TotalRelationStruct");
+	}
+
+	@Test
+	public void testTotalSurjectionStruct() throws Exception {
+		testCpp("TotalSurjectionStruct");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

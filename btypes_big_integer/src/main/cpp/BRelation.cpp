@@ -420,6 +420,10 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return BBoolean(false);
     	}
 
+    	BBoolean isTotalStruct() {
+    	    return BBoolean(false);
+    	}
+
     	BBoolean isPartial(const BSet<S>& domain) {
     		return this->domain().strictSubset(domain);
     	}
@@ -460,6 +464,16 @@ class BRelation : public BSet<BTuple<S,T>> {
     		for(BTuple<S,T> e : this->set) {
     			S element = e.projection1();
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
+    	BBoolean isPartialStruct() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
     			}
     		}
@@ -512,6 +526,16 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return BBoolean(true);
     	}
 
+    	BBoolean checkDomainStruct() {
+    		for(BTuple<S,T> e : this->set) {
+    			S element = e.projection1();
+    			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
     	BBoolean checkRange(const BSet<T>& range) {
     		return this->range().subset(range);
     	}
@@ -558,6 +582,16 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return BBoolean(true);
     	}
 
+    	BBoolean checkRangeStruct() {
+    		for(BTuple<S,T> e : this->set) {
+    			T element = e.projection2();
+    			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
+    				return BBoolean(false);
+    			}
+    		}
+    		return BBoolean(true);
+    	}
+
     	BBoolean isRelation() {
     		return BBoolean(true);
     	}
@@ -594,6 +628,10 @@ class BRelation : public BSet<BTuple<S,T>> {
     		return BBoolean(false);
     	}
 
+    	BBoolean isSurjectionStruct() {
+    		return BBoolean(false);
+    	}
+
     	BBoolean isInjection() {
     		BSet<T> visited = BSet<T>();
     		for(const BTuple<S,T>& couple : this->set) {
@@ -623,6 +661,10 @@ class BRelation : public BSet<BTuple<S,T>> {
     	}
 
     	BBoolean isBijectionString() {
+    		return BBoolean(false);
+    	}
+
+    	BBoolean isBijectionStruct() {
     		return BBoolean(false);
     	}
 

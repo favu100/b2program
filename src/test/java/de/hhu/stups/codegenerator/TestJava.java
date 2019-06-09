@@ -237,6 +237,26 @@ public class TestJava {
 	}
 
 	@Test
+	public void testProject5() throws Exception {
+		testJava("project5/Lift2");
+	}
+
+	@Test
+	public void testProject6() throws Exception {
+		testJava("project6/Lift2");
+	}
+
+	@Test
+	public void testProject7() throws Exception {
+		testJava("project7/Lift2");
+	}
+
+	@Test
+	public void testProject8() throws Exception {
+		testJava("project8/Lift2");
+	}
+
+	@Test
 	public void testLiftBenchmarks() throws Exception {
 		testJava("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stjava", true);
 	}

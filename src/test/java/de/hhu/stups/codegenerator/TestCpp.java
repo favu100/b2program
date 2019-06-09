@@ -246,6 +246,26 @@ public class TestCpp {
 	}
 
 	@Test
+	public void testProject5() throws Exception {
+		testCpp("project5/Lift2");
+	}
+
+	@Test
+	public void testProject6() throws Exception {
+		testCpp("project6/Lift2");
+	}
+
+	@Test
+	public void testProject7() throws Exception {
+		testCpp("project7/Lift2");
+	}
+
+	@Test
+	public void testProject8() throws Exception {
+		testCpp("project8/Lift2");
+	}
+
+	@Test
 	public void testLiftBenchmarks() throws Exception {
 		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stCpp", true);
 	}

@@ -1,7 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
-import de.hhu.stups.codegenerator.analyzers.DeferredSetSizeAnalyzer;
+import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -37,18 +37,18 @@ public class DeclarationGenerator {
 
     private final Map<String, String> enumToMachine;
 
-    private final DeferredSetSizeAnalyzer deferredSetSizeAnalyzer;
+    private final DeferredSetAnalyzer deferredSetAnalyzer;
 
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final IterationConstructHandler iterationConstructHandler,
-                                final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetSizeAnalyzer deferredSetSizeAnalyzer) {
+                                final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.typeGenerator = typeGenerator;
         this.importGenerator = importGenerator;
         this.nameHandler = nameHandler;
-        this.deferredSetSizeAnalyzer = deferredSetSizeAnalyzer;
+        this.deferredSetAnalyzer = deferredSetAnalyzer;
         this.setToEnum = new HashMap<>();
         this.enumToMachine = new HashMap<>();
     }
@@ -253,10 +253,10 @@ public class DeclarationGenerator {
     private List<String> extractEnumsOfDeferredSet(DeclarationNode node) {
         List<String> enums = new ArrayList<>();
         String deferredSetName = node.getName();
-        if(deferredSetSizeAnalyzer.isDeclaredByEnumeration(node)) {
-            enums.addAll(deferredSetSizeAnalyzer.getElements(node));
+        if(deferredSetAnalyzer.isDeclaredByEnumeration(node)) {
+            enums.addAll(deferredSetAnalyzer.getElements(node));
         } else {
-            for (int i = 1; i <= deferredSetSizeAnalyzer.getSetSize(node); i++) {
+            for (int i = 1; i <= deferredSetAnalyzer.getSetSize(node); i++) {
                 enums.add(deferredSetName + i);
             }
         }

@@ -2,7 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
-import de.hhu.stups.codegenerator.analyzers.DeferredSetSizeAnalyzer;
+import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
@@ -94,7 +94,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final RecordGenerator recordGenerator;
 
-	private final DeferredSetSizeAnalyzer deferredSetSizeAnalyzer;
+	private final DeferredSetAnalyzer deferredSetAnalyzer;
 
 	private STGroup currentGroup;
 
@@ -119,8 +119,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
-		this.deferredSetSizeAnalyzer = new DeferredSetSizeAnalyzer(Integer.parseInt(deferredSetSize));
-		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler, deferredSetSizeAnalyzer);
+		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
+		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(currentGroup, typeGenerator, importGenerator);
 		this.recordGenerator = new RecordGenerator(currentGroup, this, recordStructAnalyzer);
@@ -140,7 +140,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	public String generateMachine(MachineNode node) {
 		recordStructAnalyzer.visitMachineNode(node);
-		deferredSetSizeAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
+		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
 		TemplateHandler.add(machine, "addition", addition);

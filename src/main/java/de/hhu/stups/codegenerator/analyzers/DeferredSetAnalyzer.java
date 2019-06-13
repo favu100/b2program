@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Created by fabian on 06.06.19.
  */
-public class DeferredSetSizeAnalyzer {
+public class DeferredSetAnalyzer {
 
     private final int defaultSetSize;
 
@@ -28,7 +28,7 @@ public class DeferredSetSizeAnalyzer {
 
     private final List<String> deferredSetsWithDefaultSize;
 
-    public DeferredSetSizeAnalyzer(int defaultSetSize) {
+    public DeferredSetAnalyzer(int defaultSetSize) {
         this.defaultSetSize = defaultSetSize;
         this.setToSize = new HashMap<>();
         this.setToEnumeratedElements = new HashMap<>();

@@ -61,7 +61,7 @@ public class DeferredSetSizeAnalyzer {
             PredicateOperatorNode predicate = (PredicateOperatorNode) properties;
             for (PredicateNode conjunct: predicate.getPredicateArguments()) {
                 if(isRelevantConjunct(deferredSet, conjunct)) {
-                    int size = extractSizeFromConjunct(deferredSet, properties);
+                    int size = extractSizeFromConjunct(deferredSet, conjunct);
                     setToSize.put(deferredSet.getName(), size);
                     return;
                 }

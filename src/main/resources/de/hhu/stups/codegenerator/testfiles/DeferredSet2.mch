@@ -1,9 +1,11 @@
 MACHINE
-    DeferredSet
+    DeferredSet2
 
 SETS
     USERS
 
+PROPERTIES
+    card(USERS) = 16
 
 VARIABLES
     Users

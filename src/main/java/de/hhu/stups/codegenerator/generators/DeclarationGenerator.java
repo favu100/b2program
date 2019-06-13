@@ -40,17 +40,17 @@ public class DeclarationGenerator {
     private final DeferredSetSizeAnalyzer deferredSetSizeAnalyzer;
 
 
-    public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, String deferredSetSize, final IterationConstructHandler iterationConstructHandler,
-                                final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final NameHandler nameHandler) {
+    public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final IterationConstructHandler iterationConstructHandler,
+                                final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetSizeAnalyzer deferredSetSizeAnalyzer) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.typeGenerator = typeGenerator;
         this.importGenerator = importGenerator;
         this.nameHandler = nameHandler;
+        this.deferredSetSizeAnalyzer = deferredSetSizeAnalyzer;
         this.setToEnum = new HashMap<>();
         this.enumToMachine = new HashMap<>();
-        this.deferredSetSizeAnalyzer = new DeferredSetSizeAnalyzer(Integer.parseInt(deferredSetSize));
     }
 
     /*
@@ -253,7 +253,7 @@ public class DeclarationGenerator {
     private List<String> extractEnumsOfDeferredSet(DeclarationNode node) {
         List<String> enums = new ArrayList<>();
         String deferredSetName = node.getName();
-        for(int i = 1; i <= deferredSetSizeAnalyzer.getDefaultSetSize(); i++) {
+        for(int i = 1; i <= deferredSetSizeAnalyzer.getSetSize(node); i++) {
             enums.add(deferredSetName + i);
         }
         return enums;

@@ -253,8 +253,12 @@ public class DeclarationGenerator {
     private List<String> extractEnumsOfDeferredSet(DeclarationNode node) {
         List<String> enums = new ArrayList<>();
         String deferredSetName = node.getName();
-        for(int i = 1; i <= deferredSetSizeAnalyzer.getSetSize(node); i++) {
-            enums.add(deferredSetName + i);
+        if(deferredSetSizeAnalyzer.isDeclaredByEnumeration(node)) {
+            enums.addAll(deferredSetSizeAnalyzer.getElements(node));
+        } else {
+            for (int i = 1; i <= deferredSetSizeAnalyzer.getSetSize(node); i++) {
+                enums.add(deferredSetName + i);
+            }
         }
         return enums;
     }

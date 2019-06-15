@@ -153,7 +153,7 @@ public class ExpressionGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final RecordGenerator recordGenerator;
+    private final RecordStructGenerator recordStructGenerator;
 
     private SubstitutionGenerator substitutionGenerator;
 
@@ -164,7 +164,7 @@ public class ExpressionGenerator {
     public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
-                               final IterationConstructHandler iterationConstructHandler, final RecordGenerator recordGenerator) {
+                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;
@@ -176,7 +176,7 @@ public class ExpressionGenerator {
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
-        this.recordGenerator = recordGenerator;
+        this.recordStructGenerator = recordStructGenerator;
     }
 
     /*
@@ -730,11 +730,11 @@ public class ExpressionGenerator {
     }
 
     private String visitRecordNode(RecordNode node) {
-        return recordGenerator.visitRecordNode(node);
+        return recordStructGenerator.visitRecordNode(node);
     }
 
     private String visitRecordFieldAccessNode(RecordFieldAccessNode node) {
-        return recordGenerator.visitRecordFieldAccessNode(node);
+        return recordStructGenerator.visitRecordFieldAccessNode(node);
     }
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {

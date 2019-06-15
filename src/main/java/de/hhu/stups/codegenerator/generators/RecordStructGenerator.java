@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by fabian on 29.05.19.
  */
-public class RecordGenerator {
+public class RecordStructGenerator {
 
     private final STGroup currentGroup;
 
@@ -37,11 +37,11 @@ public class RecordGenerator {
 
     private int counter;
 
-    public RecordGenerator(STGroup group, MachineGenerator machineGenerator, TypeGenerator typeGenerator, ImportGenerator importGenerator) {
+    public RecordStructGenerator(STGroup group, MachineGenerator machineGenerator, TypeGenerator typeGenerator, ImportGenerator importGenerator) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
-        this.typeGenerator.setRecordGenerator(this);
+        this.typeGenerator.setRecordStructGenerator(this);
         this.importGenerator = importGenerator;
         this.structs = new ArrayList<>();
         this.generatedStructs = new ArrayList<>();

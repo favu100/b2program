@@ -22,7 +22,7 @@ public class TypeGenerator {
 
     private final NameHandler nameHandler;
 
-    private RecordGenerator  recordGenerator;
+    private RecordStructGenerator recordStructGenerator;
 
     public TypeGenerator(final STGroup group, final NameHandler nameHandler) {
         this.group = group;
@@ -82,7 +82,7 @@ public class TypeGenerator {
 
     private String generateBStruct(RecordType type) {
         ST template = group.getInstanceOf("type");
-        TemplateHandler.add(template, "type", recordGenerator.getStruct(type));
+        TemplateHandler.add(template, "type", recordStructGenerator.getStruct(type));
         return template.render();
     }
 
@@ -123,7 +123,7 @@ public class TypeGenerator {
         return group.getInstanceOf("void").render();
     }
 
-    public void setRecordGenerator(RecordGenerator recordGenerator) {
-        this.recordGenerator = recordGenerator;
+    public void setRecordStructGenerator(RecordStructGenerator recordStructGenerator) {
+        this.recordStructGenerator = recordStructGenerator;
     }
 }

@@ -44,14 +44,14 @@ public class OperationGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final RecordGenerator  recordGenerator;
+    private final RecordStructGenerator recordStructGenerator;
 
     private final Map<String, String> machineFromOperation;
 
 
     public OperationGenerator(final STGroup group, final MachineGenerator machineGenerator, final SubstitutionGenerator substitutionGenerator,
                               final DeclarationGenerator declarationGenerator, final IdentifierGenerator identifierGenerator,
-                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final RecordGenerator recordGenerator) {
+                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final RecordStructGenerator recordStructGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.declarationGenerator = declarationGenerator;
@@ -60,7 +60,7 @@ public class OperationGenerator {
         this.identifierGenerator = identifierGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
-        this.recordGenerator = recordGenerator;
+        this.recordStructGenerator = recordStructGenerator;
         this.machineFromOperation = new HashMap<>();
     }
 
@@ -139,7 +139,7 @@ public class OperationGenerator {
 
     private void generateReturnStatementRecord(ST operation, OperationNode node) {
         List<DeclarationNode> outputs = node.getOutputParams();
-        String struct = recordGenerator.getStruct(node);
+        String struct = recordStructGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
         //TODO
         List<String> identifiers = outputs.stream()

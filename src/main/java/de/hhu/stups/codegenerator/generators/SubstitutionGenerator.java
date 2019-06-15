@@ -48,19 +48,15 @@ public class SubstitutionGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final DeclarationGenerator declarationGenerator;
-
     private final ExpressionGenerator expressionGenerator;
 
     private final IdentifierGenerator identifierGenerator;
-
-    private final ImportGenerator importGenerator;
 
     private final IterationConstructHandler iterationConstructHandler;
 
     private final ParallelConstructHandler parallelConstructHandler;
 
-    private final RecordGenerator recordGenerator;
+    private final RecordStructGenerator recordStructGenerator;
 
     private int currentLocalScope;
 
@@ -71,22 +67,20 @@ public class SubstitutionGenerator {
     private int recordCounter;
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                                 final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator, final ExpressionGenerator expressionGenerator,
-                                 final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator,
+                                 final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator,
+                                 final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
-                                 final RecordGenerator recordGenerator) {
+                                 final RecordStructGenerator recordStructGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
-        this.declarationGenerator = declarationGenerator;
         this.expressionGenerator = expressionGenerator;
         this.expressionGenerator.setSubstitutionGenerator(this);
         this.identifierGenerator = identifierGenerator;
-        this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.parallelConstructHandler = parallelConstructHandler;
-        this.recordGenerator = recordGenerator;
+        this.recordStructGenerator = recordStructGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -470,7 +464,7 @@ public class SubstitutionGenerator {
     private ST getOperationCallTemplateWithManyParameters(OperationCallSubstitutionNode node, List<String> variables) {
         OperationNode operationNode = node.getOperationNode();
         ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
-        TemplateHandler.add(functionCall, "struct", recordGenerator.getStruct(operationNode));
+        TemplateHandler.add(functionCall, "struct", recordStructGenerator.getStruct(operationNode));
         TemplateHandler.add(functionCall, "var", "_ld_record_" + recordCounter);
         List<String> assignments = new ArrayList<>();
         for(int i = 0; i < variables.size(); i++) {

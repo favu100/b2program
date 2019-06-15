@@ -1,6 +1,6 @@
 package de.hhu.stups.codegenerator.analyzers;
 
-import de.hhu.stups.codegenerator.generators.RecordGenerator;
+import de.hhu.stups.codegenerator.generators.RecordStructGenerator;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -48,24 +48,24 @@ import de.prob.parser.ast.visitors.AbstractVisitor;
  */
 public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
-    private final RecordGenerator recordGenerator;
+    private final RecordStructGenerator recordStructGenerator;
 
-    public RecordStructAnalyzer(RecordGenerator recordGenerator) {
-        this.recordGenerator = recordGenerator;
+    public RecordStructAnalyzer(RecordStructGenerator recordStructGenerator) {
+        this.recordStructGenerator = recordStructGenerator;
     }
 
     public void visitMachineNode(MachineNode node) {
         node.getVariables().forEach(variable -> {
             //TODO: Check recursively for RecordType
             if(variable.getType() instanceof RecordType) {
-                recordGenerator.createNewStruct((RecordType) variable.getType());
+                recordStructGenerator.createNewStruct((RecordType) variable.getType());
             }
         });
 
         node.getConstants().forEach(constant -> {
             //TODO: Check recursively for RecordType
             if(constant.getType() instanceof RecordType) {
-                recordGenerator.createNewStruct((RecordType) constant.getType());
+                recordStructGenerator.createNewStruct((RecordType) constant.getType());
             }
         });
 
@@ -80,7 +80,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
     public void visitOperationNode(OperationNode node) {
         if(node.getOutputParams().size() > 1) {
-            recordGenerator.createNewStruct(node);
+            recordStructGenerator.createNewStruct(node);
         }
         visitSubstitutionNode(node.getSubstitution(), null);
     }
@@ -293,14 +293,14 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
-        recordGenerator.createNewStruct((RecordType) node.getType());
+        recordStructGenerator.createNewStruct((RecordType) node.getType());
         return null;
     }
 
     @Override
     public Void visitStructNode(StructNode node, Void expected) {
         RecordType recordType = (RecordType)((SetType)node.getType()).getSubType();
-        recordGenerator.createNewStruct(recordType);
+        recordStructGenerator.createNewStruct(recordType);
         return null;
     }
 

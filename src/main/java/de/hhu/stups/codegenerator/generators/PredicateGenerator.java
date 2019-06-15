@@ -87,23 +87,31 @@ public class PredicateGenerator {
             return infiniteSetGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
-            ExprNode lhs = node.getExpressionNodes().get(0);
-            ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
-            if(POWER_SET_EXPRESSIONS.contains(rhs.getOperator())) {
-                List<ExprNode> expressions = new ArrayList<>();
-                ExprNode domain = rhs.getExpressionNodes().get(0);
-                ExprNode range = rhs.getExpressionNodes().get(1);
-                expressions.add(lhs);
-                expressions.add(new ExpressionOperatorNode(node.getSourceCodePosition(), Arrays.asList(domain, range), ExpressionOperatorNode.ExpressionOperator.SET_RELATION));
-                PredicateOperatorWithExprArgsNode powNode = new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
-                return relationSetGenerator.generateRelation(powNode);
-            }
-            return relationSetGenerator.generateRelation(node);
+            generateRelationOnRhs(node);
         }
         List<String> expressionList = node.getExpressionNodes().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, null))
                 .collect(Collectors.toList());
         return operatorGenerator.generateBinary(node::getOperator, expressionList);
+    }
+
+    private String generateRelationOnRhs(PredicateOperatorWithExprArgsNode node) {
+        ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
+        if(POWER_SET_EXPRESSIONS.contains(rhs.getOperator())) {
+            return relationSetGenerator.generateRelation(transformPowNodeToRelationNode(node));
+        }
+        return relationSetGenerator.generateRelation(node);
+    }
+
+    private PredicateOperatorWithExprArgsNode transformPowNodeToRelationNode(PredicateOperatorWithExprArgsNode node) {
+        ExprNode lhs = node.getExpressionNodes().get(0);
+        ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
+        List<ExprNode> expressions = new ArrayList<>();
+        ExprNode domain = rhs.getExpressionNodes().get(0);
+        ExprNode range = rhs.getExpressionNodes().get(1);
+        expressions.add(lhs);
+        expressions.add(new ExpressionOperatorNode(node.getSourceCodePosition(), Arrays.asList(domain, range), ExpressionOperatorNode.ExpressionOperator.SET_RELATION));
+        return new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
     }
 
     /*

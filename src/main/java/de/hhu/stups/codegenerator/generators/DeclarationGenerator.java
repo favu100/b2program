@@ -2,7 +2,6 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
-import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
@@ -25,8 +24,6 @@ public class DeclarationGenerator {
 
     private final MachineGenerator machineGenerator;
 
-    private final IterationConstructHandler iterationConstructHandler;
-
     private final TypeGenerator typeGenerator;
 
     private final ImportGenerator importGenerator;
@@ -40,11 +37,10 @@ public class DeclarationGenerator {
     private final DeferredSetAnalyzer deferredSetAnalyzer;
 
 
-    public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final IterationConstructHandler iterationConstructHandler,
-                                final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer) {
+    public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
+                                final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
-        this.iterationConstructHandler = iterationConstructHandler;
         this.typeGenerator = typeGenerator;
         this.importGenerator = importGenerator;
         this.nameHandler = nameHandler;

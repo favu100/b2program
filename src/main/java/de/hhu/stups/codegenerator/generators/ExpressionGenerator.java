@@ -195,10 +195,10 @@ public class ExpressionGenerator {
             return declarationGenerator.callEnum(element.getType().toString(), element.getDeclarationNode());
         } else if(node instanceof IdentifierExprNode) {
             Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
-            List<String> deferredTypes = nameHandler.getDeferredTypes();
             if(node.getType() == null) {
                 return ""; //TODO
             }
+            //This is the case where the name of an enumerated set element is returned as an IdentifierExprNode
             if((enumTypes.keySet().contains(node.getType().toString()) &&
                     enumTypes.get(node.getType().toString()).contains(((IdentifierExprNode) node).getName()))) {
                 return declarationGenerator.callEnum(node.getType().toString(), ((IdentifierExprNode) node).getDeclarationNode());

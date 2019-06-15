@@ -34,45 +34,87 @@ public class TypeGenerator {
     * This function generates code for a type with the given type and the information whether the type is generated for casting an object
     */
     public String generate(BType type) {
-        ST template = group.getInstanceOf("type");
         if(type instanceof IntegerType) {
-            TemplateHandler.add(template, "type", "BInteger");
-            return template.render();
+            return generateBInteger();
         } else if(type instanceof BoolType) {
-            TemplateHandler.add(template, "type", "BBoolean");
-            return template.render();
+            return generateBBoolean();
         } else if(type instanceof StringType) {
-            TemplateHandler.add(template, "type", "BString");
-            return template.render();
+            return generateBString();
         } else if(type instanceof SetType) {
-            BType subType = ((SetType) type).getSubType();
-            if(subType instanceof CoupleType) {
-                template = group.getInstanceOf("relation_type");
-                TemplateHandler.add(template, "leftType", generate(((CoupleType) subType).getLeft()));
-                TemplateHandler.add(template, "rightType", generate(((CoupleType) subType).getRight()));
-            } else {
-                template = group.getInstanceOf("set_type");
-                TemplateHandler.add(template, "type", generate(subType));
-            }
-            return template.render();
+            return generateBSet((SetType) type);
         } else if(type instanceof EnumeratedSetElementType) {
-            TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-            return template.render();
+            return generateEnumeratedSetElement((EnumeratedSetElementType) type);
         } else if(type instanceof DeferredSetElementType) {
-            TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-            return template.render();
+            return generateDeferredSetElement((DeferredSetElementType) type);
         } else if(type instanceof CoupleType) {
-            template = group.getInstanceOf("tuple_type");
-            TemplateHandler.add(template, "leftType", generate(((CoupleType) type).getLeft()));
-            TemplateHandler.add(template, "rightType", generate(((CoupleType) type).getRight()));
-            return template.render();
+            generateBTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
-            TemplateHandler.add(template, "type", recordStructAnalyzer.getStruct(type));
-            return template.render();
+            generateBStruct((RecordType) type);
         } else if(type instanceof UntypedType) {
             return generateUntyped();
         }
         return "";
+    }
+
+    private String generateBInteger() {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "type", "BInteger");
+        return template.render();
+    }
+
+    private String generateBBoolean() {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "type", "BBoolean");
+        return template.render();
+    }
+
+    private String generateBString() {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "type", "BString");
+        return template.render();
+    }
+
+    private String generateBTuple(CoupleType type) {
+        ST template = group.getInstanceOf("tuple_type");
+        TemplateHandler.add(template, "leftType", generate(type.getLeft()));
+        TemplateHandler.add(template, "rightType", generate(type.getRight()));
+        return template.render();
+    }
+
+    private String generateBStruct(RecordType type) {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "type", recordStructAnalyzer.getStruct(type));
+        return template.render();
+    }
+
+    private String generateBSet(SetType type) {
+        BType subType = type.getSubType();
+        if(subType instanceof CoupleType) {
+            return generateBRelation((CoupleType) subType);
+        } else {
+            ST template = group.getInstanceOf("set_type");
+            TemplateHandler.add(template, "type", generate(subType));
+            return template.render();
+        }
+    }
+
+    private String generateBRelation(CoupleType type) {
+        ST template = group.getInstanceOf("relation_type");
+        TemplateHandler.add(template, "leftType", generate(type.getLeft()));
+        TemplateHandler.add(template, "rightType", generate(type.getRight()));
+        return template.render();
+    }
+
+    private String generateEnumeratedSetElement(EnumeratedSetElementType type) {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        return template.render();
+    }
+
+    private String generateDeferredSetElement(DeferredSetElementType type) {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        return template.render();
     }
 
     /*

@@ -40,50 +40,23 @@ public class ImportGenerator {
     * This function adds import for the types used in the generated code
     */
     public void addImport(BType type) {
-        ST template = group.getInstanceOf("import_type");
         if(type instanceof IntegerType) {
-            TemplateHandler.add(template, "type", "BInteger");
-            imports.add(template.render());
+            importBInteger();
         } else if(type instanceof BoolType) {
-            TemplateHandler.add(template, "type", "BBoolean");
-            imports.add(template.render());
+            importBBoolean();
         } else if(type instanceof StringType) {
-            TemplateHandler.add(template, "type", "BString");
-            imports.add(template.render());
+            importString();
         } else if(type instanceof SetType) {
-            if(((SetType) type).getSubType() instanceof CoupleType) {
-                TemplateHandler.add(template, "type", "BRelation");
-                imports.add(template.render());
-                CoupleType coupleType = (CoupleType) ((SetType) type).getSubType();
-                addImport(coupleType.getLeft());
-                addImport(coupleType.getRight());
-            } else {
-                TemplateHandler.add(template, "type", "BSet");
-                imports.add(template.render());
-                addImport(((SetType) type).getSubType());
-            }
+            importSetType((SetType) type);
         } else if(type instanceof EnumeratedSetElementType) {
-            template = group.getInstanceOf("import_type");
-            TemplateHandler.add(template, "type", "BObject");
-            imports.add(template.render());
-            template = group.getInstanceOf("import_type");
-            TemplateHandler.add(template, "type", "BBoolean");
-            imports.add(template.render());
+            importBObject();
+            importBBoolean();
         } else if(type instanceof DeferredSetElementType) {
-            template = group.getInstanceOf("import_type");
-            TemplateHandler.add(template, "type", "BObject");
-            imports.add(template.render());
+            importBObject();
         } else if(type instanceof CoupleType) {
-            TemplateHandler.add(template, "type", "BTuple");
-            imports.add(template.render());
-            addImport(((CoupleType) type).getLeft());
-            addImport(((CoupleType) type).getRight());
+            importTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
-            template = group.getInstanceOf("import_type");
-            TemplateHandler.add(template, "type", "BStruct");
-            RecordType recordType = (RecordType) type;
-            recordType.getSubtypes().forEach(this::addImport);
-            imports.add(template.render());
+            importStruct((RecordType) type);
         }
     }
 
@@ -107,6 +80,63 @@ public class ImportGenerator {
         return imp.render();
     }
 
+    private void importBInteger() {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BInteger");
+        imports.add(template.render());
+    }
+
+    private void importBObject() {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BObject");
+        imports.add(template.render());
+    }
+
+    private void importBBoolean() {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BBoolean");
+        imports.add(template.render());
+    }
+
+    private void importString() {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BString");
+        imports.add(template.render());
+    }
+
+    private void importTuple(CoupleType type) {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BTuple");
+        imports.add(template.render());
+        addImport(type.getLeft());
+        addImport(type.getRight());
+    }
+
+    private void importStruct(RecordType type) {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BStruct");
+        type.getSubtypes().forEach(this::addImport);
+        imports.add(template.render());
+    }
+
+    private void importSetType(SetType type) {
+        if(type.getSubType() instanceof CoupleType) {
+            importRelationType((CoupleType) type.getSubType());
+        } else {
+            ST template = group.getInstanceOf("import_type");
+            TemplateHandler.add(template, "type", "BSet");
+            imports.add(template.render());
+            addImport(type.getSubType());
+        }
+    }
+
+    private void importRelationType(CoupleType type) {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BRelation");
+        imports.add(template.render());
+        addImport(type.getLeft());
+        addImport(type.getRight());
+    }
 
     public Set<String> getImports() {
         return imports;

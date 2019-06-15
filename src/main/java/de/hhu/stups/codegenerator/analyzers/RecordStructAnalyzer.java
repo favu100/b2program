@@ -1,9 +1,6 @@
 package de.hhu.stups.codegenerator.analyzers;
 
-import de.hhu.stups.codegenerator.generators.ImportGenerator;
-import de.hhu.stups.codegenerator.generators.TypeGenerator;
-import de.hhu.stups.codegenerator.handlers.TemplateHandler;
-import de.prob.parser.ast.nodes.DeclarationNode;
+import de.hhu.stups.codegenerator.generators.RecordGenerator;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -42,60 +39,33 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
-import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by fabian on 29.05.19.
  */
 public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
-    private final STGroup currentGroup;
+    private final RecordGenerator recordGenerator;
 
-    private final TypeGenerator typeGenerator;
-
-    private final ImportGenerator importGenerator;
-
-    private Map<String, String> nodeToClassName;
-
-    private List<RecordType> structs;
-
-    private List<RecordType> generatedStructs;
-
-    private int counter = 0;
-
-    public RecordStructAnalyzer(STGroup group, TypeGenerator typeGenerator, ImportGenerator importGenerator) {
-        this.currentGroup = group;
-        this.typeGenerator = typeGenerator;
-        this.typeGenerator.setRecordStructAnalyzer(this);
-        this.importGenerator = importGenerator;
-        this.nodeToClassName = new HashMap<>();
-        this.structs = new ArrayList<>();
-        this.generatedStructs = new ArrayList<>();
+    public RecordStructAnalyzer(RecordGenerator recordGenerator) {
+        this.recordGenerator = recordGenerator;
     }
 
     public void visitMachineNode(MachineNode node) {
         node.getVariables().forEach(variable -> {
             //TODO: Check recursively for RecordType
             if(variable.getType() instanceof RecordType) {
-                createNewStruct((RecordType) variable.getType());
+                recordGenerator.createNewStruct((RecordType) variable.getType());
             }
         });
 
         node.getConstants().forEach(constant -> {
             //TODO: Check recursively for RecordType
             if(constant.getType() instanceof RecordType) {
-                createNewStruct((RecordType) constant.getType());
+                recordGenerator.createNewStruct((RecordType) constant.getType());
             }
         });
 
@@ -110,7 +80,7 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
     public void visitOperationNode(OperationNode node) {
         if(node.getOutputParams().size() > 1) {
-            createNewStruct(node);
+            recordGenerator.createNewStruct(node);
         }
         visitSubstitutionNode(node.getSubstitution(), null);
     }
@@ -323,17 +293,14 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
-        String type = node.getType().toString();
-        if(!nodeToClassName.containsKey(type)) {
-            createNewStruct((RecordType) node.getType());
-        }
+        recordGenerator.createNewStruct((RecordType) node.getType());
         return null;
     }
 
     @Override
     public Void visitStructNode(StructNode node, Void expected) {
         RecordType recordType = (RecordType)((SetType)node.getType()).getSubType();
-        createNewStruct(recordType);
+        recordGenerator.createNewStruct(recordType);
         return null;
     }
 
@@ -342,165 +309,5 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
-    public List<String> generateStructs() {
-        return generatedStructs.stream()
-                .map(this::generateStruct)
-                .collect(Collectors.toList());
-    }
 
-    private String generateStruct(RecordType recordType) {
-        ST struct = currentGroup.getInstanceOf("struct");
-        TemplateHandler.add(struct, "name", nodeToClassName.get(recordType.toString()));
-        List<String> declarations = new ArrayList<>();
-        List<String> parameters = new ArrayList<>();
-        List<String> initializations = new ArrayList<>();
-        List<String> functions = new ArrayList<>();
-        List<String> assignments = new ArrayList<>();
-        List<String> equalPredicates = new ArrayList<>();
-        List<String> unequalPredicates = new ArrayList<>();
-        List<String> fieldToStrings = new ArrayList<>();
-        List<String> fields = new ArrayList<>();
-        for(int i = 0; i < recordType.getIdentifiers().size(); i++) {
-            BType type = recordType.getSubtypes().get(i);
-            String identifier = recordType.getIdentifiers().get(i);
-            declarations.add(generateDeclaration(type, identifier));
-            functions.add(generateGetFunction(type, identifier));
-            parameters.add(generateStructParameter(type, identifier));
-            initializations.add(generateInitialization(identifier));
-            assignments.add(generateAssignment(identifier));
-            equalPredicates.add(generateEqualPredicate(identifier));
-            unequalPredicates.add(generateUnequalPredicate(identifier));
-            fieldToStrings.add(generateFieldToStrings(identifier));
-            fields.add(identifier);
-        }
-        functions.addAll(generateOverwriteFunctions(recordType, nodeToClassName.get(recordType.toString())));
-        TemplateHandler.add(struct, "declarations", declarations);
-        TemplateHandler.add(struct, "parameters", parameters);
-        TemplateHandler.add(struct, "initializations", initializations);
-        TemplateHandler.add(struct, "functions", functions);
-        TemplateHandler.add(struct, "assignments", assignments);
-        TemplateHandler.add(struct, "equalPredicates", equalPredicates);
-        TemplateHandler.add(struct, "unequalPredicates", unequalPredicates);
-        TemplateHandler.add(struct, "values", fieldToStrings);
-        TemplateHandler.add(struct, "fields", fields);
-        return struct.render();
-    }
-
-    private String generateDeclaration(BType type, String identifier) {
-        ST declaration = currentGroup.getInstanceOf("global_declaration");
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(type));
-        //TODO: Rewrite String to IdentifierExprNode
-        TemplateHandler.add(declaration, "identifier", identifier);
-        return declaration.render();
-    }
-
-    private String generateStructParameter(BType type, String identifier) {
-        ST parameter = currentGroup.getInstanceOf("parameter");
-        TemplateHandler.add(parameter, "type", typeGenerator.generate(type));
-        TemplateHandler.add(parameter, "identifier", identifier);
-        return parameter.render();
-    }
-
-    private String generateInitialization(String identifier) {
-        ST initialization = currentGroup.getInstanceOf("record_field_initialization");
-        TemplateHandler.add(initialization, "identifier", identifier);
-        return initialization.render();
-    }
-
-    private String generateGetFunction(BType type, String identifier) {
-        ST function = currentGroup.getInstanceOf("record_field_get");
-        TemplateHandler.add(function, "type", typeGenerator.generate(type));
-        TemplateHandler.add(function, "field", identifier);
-        return function.render();
-    }
-
-    private List<String> generateOverwriteFunctions(RecordType recordType, String name) {
-        List<String> functions = new ArrayList<>();
-        List<String> identifiers = recordType.getIdentifiers();
-        for(int i = 0; i < identifiers.size(); i++) {
-            ST function = currentGroup.getInstanceOf("record_field_override");
-            TemplateHandler.add(function, "name", name);
-            TemplateHandler.add(function, "field", identifiers.get(i));
-            TemplateHandler.add(function, "type", typeGenerator.generate(recordType.getSubtypes().get(i)));
-            TemplateHandler.add(function,"parameters", identifiers);
-            functions.add(function.render());
-        }
-        return functions;
-    }
-
-    private String generateAssignment(String identifier) {
-        ST assignment = currentGroup.getInstanceOf("record_assignment");
-        TemplateHandler.add(assignment, "identifier", identifier);
-        return assignment.render();
-    }
-
-    private String generateEqualPredicate(String identifier) {
-        ST binary = currentGroup.getInstanceOf("record_equal_predicate");
-        TemplateHandler.add(binary, "field", identifier);
-        return binary.render();
-    }
-
-    private String generateUnequalPredicate(String identifier) {
-        ST binary = currentGroup.getInstanceOf("record_unequal_predicate");
-        TemplateHandler.add(binary, "field", identifier);
-        return binary.render();
-    }
-
-    private String generateFieldToStrings(String identifier) {
-        ST fieldToString = currentGroup.getInstanceOf("record_field_to_string");
-        TemplateHandler.add(fieldToString, "identifier", identifier);
-        return fieldToString.render();
-    }
-
-    public void createNewStruct(RecordType type) {
-        if(nodeToClassName.containsKey(type.toString())) {
-            return;
-        }
-        importGenerator.addImport(type);
-        String name = "_Struct" + counter;
-        nodeToClassName.put(type.toString(), name);
-        structs.add(type);
-        generatedStructs.add(type);
-        counter++;
-    }
-
-    public void createNewStruct(OperationNode node) {
-        if(nodeToClassName.containsKey(node.toString())) {
-            return;
-        }
-        RecordType recordType = getRecordTypeFromOperation(node);
-        importGenerator.addImport(recordType);
-        String name = "_Struct" + counter;
-        structs.add(recordType);
-        generatedStructs.add(recordType);
-        nodeToClassName.put(recordType.toString(), name);
-        counter++;
-    }
-
-    public String getStruct(BType recordType) {
-        return nodeToClassName.get(recordType.toString());
-    }
-
-    public String getStruct(OperationNode node) {
-        return nodeToClassName.get(getRecordTypeFromOperation(node).toString());
-    }
-
-    private RecordType getRecordTypeFromOperation(OperationNode node) {
-        List<String> identifiers = node.getOutputParams()
-                .stream()
-                .map(DeclarationNode::getName).collect(Collectors.toList());
-        List<BType> types = node.getOutputParams()
-                .stream()
-                .map(DeclarationNode::getType)
-                .collect(Collectors.toList());
-        return new RecordType(identifiers, types);
-    }
-
-    public List<RecordType> getStructs() {
-        return structs;
-    }
-
-    public Map<String, String> getNodeToClassName() {
-        return nodeToClassName;
-    }
 }

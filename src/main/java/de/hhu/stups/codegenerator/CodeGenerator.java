@@ -1,9 +1,9 @@
 package de.hhu.stups.codegenerator;
 
-import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.DeclarationGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
+import de.hhu.stups.codegenerator.generators.RecordGenerator;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
@@ -36,7 +36,7 @@ public class CodeGenerator {
 
 	private DeclarationGenerator declarationGenerator = null;
 
-	private RecordStructAnalyzer recordStructAnalyzer = null;
+	private RecordGenerator recordGenerator = null;
 
 	/*
 	* Main function
@@ -151,12 +151,12 @@ public class CodeGenerator {
 			}
 		}
 
-		if(recordStructAnalyzer != null) {
-			List<RecordType> structs = recordStructAnalyzer.getStructs();
-			generator.getRecordStructAnalyzer().getStructs().addAll(structs);
-			Map<String, String> nodeToClassName = recordStructAnalyzer.getNodeToClassName();
+		if(recordGenerator != null) {
+			List<RecordType> structs = recordGenerator.getStructs();
+			generator.getRecordGenerator().getStructs().addAll(structs);
+			Map<String, String> nodeToClassName = recordGenerator.getNodeToClassName();
 			for(String key : nodeToClassName.keySet()) {
-				generator.getRecordStructAnalyzer().getNodeToClassName().put(key, nodeToClassName.get(key));
+				generator.getRecordGenerator().getNodeToClassName().put(key, nodeToClassName.get(key));
 			}
 		}
 
@@ -164,7 +164,7 @@ public class CodeGenerator {
 
 		nameHandler = generator.getNameHandler();
 		declarationGenerator = generator.getDeclarationGenerator();
-		recordStructAnalyzer = generator.getRecordStructAnalyzer();
+		recordGenerator = generator.getRecordGenerator();
 
 
 		int lastIndexDot = path.toString().lastIndexOf(".");

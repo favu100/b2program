@@ -122,16 +122,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, iterationConstructHandler, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
-		this.recordStructAnalyzer = new RecordStructAnalyzer(currentGroup, typeGenerator, importGenerator);
-		this.recordGenerator = new RecordGenerator(currentGroup, this, recordStructAnalyzer);
+		this.recordGenerator = new RecordGenerator(currentGroup, this, typeGenerator, importGenerator);
+		this.recordStructAnalyzer = new RecordStructAnalyzer(recordGenerator);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator, declarationGenerator,
 																expressionGenerator, identifierGenerator, importGenerator, iterationConstructHandler,
-																parallelConstructHandler, recordStructAnalyzer);
+																parallelConstructHandler, recordGenerator);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
-															typeGenerator, recordStructAnalyzer);
+															typeGenerator, recordGenerator);
 		this.iterationConstructDepth = 0;
 	}
 
@@ -172,7 +172,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
-		TemplateHandler.add(machine, "structs", recordStructAnalyzer.generateStructs());
+		TemplateHandler.add(machine, "structs", recordGenerator.generateStructs());
 	}
 
 	private List<String> generateMethods(MachineNode node) {
@@ -427,8 +427,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return declarationGenerator;
 	}
 
-	public RecordStructAnalyzer getRecordStructAnalyzer() {
-		return recordStructAnalyzer;
+	public RecordGenerator getRecordGenerator() {
+		return recordGenerator;
 	}
 
 	public String getMachineName() {

@@ -1,7 +1,6 @@
 package de.hhu.stups.codegenerator.generators;
 
 
-import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
@@ -45,14 +44,14 @@ public class OperationGenerator {
 
     private final TypeGenerator typeGenerator;
 
-    private final RecordStructAnalyzer recordStructAnalyzer;
+    private final RecordGenerator  recordGenerator;
 
     private final Map<String, String> machineFromOperation;
 
 
     public OperationGenerator(final STGroup group, final MachineGenerator machineGenerator, final SubstitutionGenerator substitutionGenerator,
                               final DeclarationGenerator declarationGenerator, final IdentifierGenerator identifierGenerator,
-                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final RecordStructAnalyzer recordStructAnalyzer) {
+                              final NameHandler nameHandler, final TypeGenerator typeGenerator, final RecordGenerator recordGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.declarationGenerator = declarationGenerator;
@@ -61,7 +60,7 @@ public class OperationGenerator {
         this.identifierGenerator = identifierGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
-        this.recordStructAnalyzer = recordStructAnalyzer;
+        this.recordGenerator = recordGenerator;
         this.machineFromOperation = new HashMap<>();
     }
 
@@ -140,7 +139,7 @@ public class OperationGenerator {
 
     private void generateReturnStatementRecord(ST operation, OperationNode node) {
         List<DeclarationNode> outputs = node.getOutputParams();
-        String struct = recordStructAnalyzer.getStruct(node);
+        String struct = recordGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
         //TODO
         List<String> identifiers = outputs.stream()

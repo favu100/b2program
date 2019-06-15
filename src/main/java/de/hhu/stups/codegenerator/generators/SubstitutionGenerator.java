@@ -2,7 +2,6 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
-import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
@@ -61,7 +60,7 @@ public class SubstitutionGenerator {
 
     private final ParallelConstructHandler parallelConstructHandler;
 
-    private final RecordStructAnalyzer recordStructAnalyzer;
+    private final RecordGenerator recordGenerator;
 
     private int currentLocalScope;
 
@@ -75,7 +74,7 @@ public class SubstitutionGenerator {
                                  final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator, final ExpressionGenerator expressionGenerator,
                                  final IdentifierGenerator identifierGenerator, final ImportGenerator importGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
-                                 final RecordStructAnalyzer recordStructAnalyzer) {
+                                 final RecordGenerator recordGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -87,7 +86,7 @@ public class SubstitutionGenerator {
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.parallelConstructHandler = parallelConstructHandler;
-        this.recordStructAnalyzer = recordStructAnalyzer;
+        this.recordGenerator = recordGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -471,7 +470,7 @@ public class SubstitutionGenerator {
     private ST getOperationCallTemplateWithManyParameters(OperationCallSubstitutionNode node, List<String> variables) {
         OperationNode operationNode = node.getOperationNode();
         ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
-        TemplateHandler.add(functionCall, "struct", recordStructAnalyzer.getStruct(operationNode));
+        TemplateHandler.add(functionCall, "struct", recordGenerator.getStruct(operationNode));
         TemplateHandler.add(functionCall, "var", "_ld_record_" + recordCounter);
         List<String> assignments = new ArrayList<>();
         for(int i = 0; i < variables.size(); i++) {

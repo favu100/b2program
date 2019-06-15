@@ -1,7 +1,6 @@
 package de.hhu.stups.codegenerator.generators;
 
 
-import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.types.BType;
@@ -23,7 +22,7 @@ public class TypeGenerator {
 
     private final NameHandler nameHandler;
 
-    private RecordStructAnalyzer recordStructAnalyzer;
+    private RecordGenerator  recordGenerator;
 
     public TypeGenerator(final STGroup group, final NameHandler nameHandler) {
         this.group = group;
@@ -47,9 +46,9 @@ public class TypeGenerator {
         } else if(type instanceof DeferredSetElementType) {
             return generateDeferredSetElement((DeferredSetElementType) type);
         } else if(type instanceof CoupleType) {
-            generateBTuple((CoupleType) type);
+            return generateBTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
-            generateBStruct((RecordType) type);
+            return generateBStruct((RecordType) type);
         } else if(type instanceof UntypedType) {
             return generateUntyped();
         }
@@ -83,7 +82,7 @@ public class TypeGenerator {
 
     private String generateBStruct(RecordType type) {
         ST template = group.getInstanceOf("type");
-        TemplateHandler.add(template, "type", recordStructAnalyzer.getStruct(type));
+        TemplateHandler.add(template, "type", recordGenerator.getStruct(type));
         return template.render();
     }
 
@@ -124,7 +123,7 @@ public class TypeGenerator {
         return group.getInstanceOf("void").render();
     }
 
-    public void setRecordStructAnalyzer(RecordStructAnalyzer recordStructAnalyzer) {
-        this.recordStructAnalyzer = recordStructAnalyzer;
+    public void setRecordGenerator(RecordGenerator recordGenerator) {
+        this.recordGenerator = recordGenerator;
     }
 }

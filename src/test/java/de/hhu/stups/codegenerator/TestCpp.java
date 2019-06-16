@@ -1758,6 +1758,26 @@ public class TestCpp {
 		testCpp("TotalSurjectionStruct");
 	}
 
+	@Test
+	public void testDeferredSet() throws Exception {
+		testCpp("DeferredSet");
+	}
+
+	@Test
+	public void testDeferredSet2() throws Exception {
+		testCpp("DeferredSet2");
+	}
+
+	@Test
+	public void testDeferredSet3() throws Exception {
+		testCpp("DeferredSet3");
+	}
+
+	@Test
+	public void testDeferredSet4() throws Exception {
+		testCpp("DeferredSet4");
+	}
+
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {

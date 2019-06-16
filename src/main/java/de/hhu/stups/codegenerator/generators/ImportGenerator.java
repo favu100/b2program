@@ -53,6 +53,7 @@ public class ImportGenerator {
             importBBoolean();
         } else if(type instanceof DeferredSetElementType) {
             importBObject();
+            importBBoolean();
         } else if(type instanceof CoupleType) {
             importTuple((CoupleType) type);
         } else if(type instanceof RecordType) {

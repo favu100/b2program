@@ -37,14 +37,9 @@ public class DeferredSetAnalyzer {
 
     public void analyze(List<DeclarationNode> deferredSets, PredicateNode properties) {
         if(properties == null || !isConjunction(properties)) {
-            for (DeclarationNode deferredSet : deferredSets) {
-                setToSize.put(deferredSet.getName(), getDefaultSetSize());
-            }
+            setDefaultSizeForDeferredSets(deferredSets);
         } else {
-            for (DeclarationNode deferredSet : deferredSets) {
-                analyzeSize(deferredSet, properties);
-                analyzeEnumeratedElements(deferredSet, properties);
-            }
+            analyzeDeferredSets(deferredSets, properties);
         }
     }
 
@@ -58,46 +53,73 @@ public class DeferredSetAnalyzer {
         return true;
     }
 
+    private void setDefaultSizeForDeferredSets(List<DeclarationNode> deferredSets) {
+        for (DeclarationNode deferredSet : deferredSets) {
+            setToSize.put(deferredSet.getName(), getDefaultSetSize());
+        }
+    }
+
+    private void analyzeDeferredSets(List<DeclarationNode> deferredSets, PredicateNode properties) {
+        for (DeclarationNode deferredSet : deferredSets) {
+            analyzeSize(deferredSet, properties);
+            analyzeEnumeratedElements(deferredSet, properties);
+        }
+    }
+
     private void analyzeSize(DeclarationNode deferredSet, PredicateNode properties) {
         if(properties instanceof PredicateOperatorWithExprArgsNode) {
-            if(isRelevantSizeConjunct(deferredSet, properties)) {
-                int size = extractSizeFromConjunct(deferredSet, properties);
-                setToSize.put(deferredSet.getName(), size);
-            } else {
-                setToSize.put(deferredSet.getName(), getDefaultSetSize());
-                deferredSetsWithDefaultSize.add(deferredSet.getName());
-            }
+            analyzeSize(deferredSet, (PredicateOperatorWithExprArgsNode) properties);
         } else if(properties instanceof PredicateOperatorNode) {
-            PredicateOperatorNode predicate = (PredicateOperatorNode) properties;
-            for (PredicateNode conjunct: predicate.getPredicateArguments()) {
-                if(isRelevantSizeConjunct(deferredSet, conjunct)) {
-                    int size = extractSizeFromConjunct(deferredSet, conjunct);
-                    setToSize.put(deferredSet.getName(), size);
-                    return;
-                }
-            }
+            analyzeSize(deferredSet, (PredicateOperatorNode) properties);
+        }
+    }
+
+    private void analyzeSize(DeclarationNode deferredSet, PredicateOperatorWithExprArgsNode properties) {
+        if(isRelevantSizeConjunct(deferredSet, properties)) {
+            int size = extractSizeFromConjunct(deferredSet, properties);
+            setToSize.put(deferredSet.getName(), size);
+        } else {
             setToSize.put(deferredSet.getName(), getDefaultSetSize());
             deferredSetsWithDefaultSize.add(deferredSet.getName());
         }
     }
 
-    private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateNode properties) {
-        if(properties instanceof PredicateOperatorWithExprArgsNode) {
-            if(isRelevantEnumeratedSetConjunct(deferredSet, properties)) {
-                List<String> enumeratedElements = extractEnumeratedElements(deferredSet, properties);
-                setToEnumeratedElements.put(deferredSet.getName(), enumeratedElements);
-            }
-        } else if(properties instanceof PredicateOperatorNode) {
-            PredicateOperatorNode predicate = (PredicateOperatorNode) properties;
-            for (PredicateNode conjunct: predicate.getPredicateArguments()) {
-                if(isRelevantEnumeratedSetConjunct(deferredSet, conjunct)) {
-                    List<String> enumeratedElements = extractEnumeratedElements(deferredSet, conjunct);
-                    setToEnumeratedElements.put(deferredSet.getName(), enumeratedElements);
-                    return;
-                }
+    private void analyzeSize(DeclarationNode deferredSet, PredicateOperatorNode properties) {
+        for (PredicateNode conjunct: properties.getPredicateArguments()) {
+            if(isRelevantSizeConjunct(deferredSet, conjunct)) {
+                int size = extractSizeFromConjunct(deferredSet, conjunct);
+                setToSize.put(deferredSet.getName(), size);
+                return;
             }
         }
+        setToSize.put(deferredSet.getName(), getDefaultSetSize());
+        deferredSetsWithDefaultSize.add(deferredSet.getName());
+    }
+
+    private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateNode properties) {
+        if(properties instanceof PredicateOperatorWithExprArgsNode) {
+            analyzeEnumeratedElements(deferredSet, (PredicateOperatorWithExprArgsNode) properties);
+        } else if(properties instanceof PredicateOperatorNode) {
+            analyzeEnumeratedElements(deferredSet, (PredicateOperatorNode) properties);
+        }
         checkEnumeratedElements(deferredSet);
+    }
+
+    private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateOperatorWithExprArgsNode properties) {
+        if(isRelevantEnumeratedSetConjunct(deferredSet, properties)) {
+            List<String> enumeratedElements = extractEnumeratedElements(deferredSet, properties);
+            setToEnumeratedElements.put(deferredSet.getName(), enumeratedElements);
+        }
+    }
+
+    private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateOperatorNode properties) {
+        for (PredicateNode conjunct: properties.getPredicateArguments()) {
+            if(isRelevantEnumeratedSetConjunct(deferredSet, conjunct)) {
+                List<String> enumeratedElements = extractEnumeratedElements(deferredSet, conjunct);
+                setToEnumeratedElements.put(deferredSet.getName(), enumeratedElements);
+                return;
+            }
+        }
     }
 
     private void checkEnumeratedElements(DeclarationNode deferredSet) {

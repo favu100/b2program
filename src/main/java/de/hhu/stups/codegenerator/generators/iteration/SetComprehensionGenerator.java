@@ -77,15 +77,7 @@ public class SetComprehensionGenerator {
         TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);
         TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
-        if(declarations.size() == 1) {
-            DeclarationNode declarationNode = declarations.get(0);
-            TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
-        } else {
-            DeclarationNode left = declarations.get(0);
-            DeclarationNode right = declarations.get(1);
-            TemplateHandler.add(template, "leftType", typeGenerator.generate(left.getType()));
-            TemplateHandler.add(template, "rightType", typeGenerator.generate(right.getType()));
-        }
+        generateSubType(template, declarations);
         TemplateHandler.add(template, "element", elementName);
         return template.render();
     }
@@ -112,7 +104,14 @@ public class SetComprehensionGenerator {
 
         String innerBody = generateSetComprehensionPredicate(otherConstructs, predicate, generatedType, identifier, elementName, declarations);
         String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        generateSubType(template, declarations);
+        TemplateHandler.add(template, "type", generatedType);
+        TemplateHandler.add(template, "identifier", identifier);
+        TemplateHandler.add(template, "isRelation", isRelation);
+        TemplateHandler.add(template, "comprehension", comprehension);
+    }
 
+    private void generateSubType(ST template, List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             DeclarationNode declarationNode = declarations.get(0);
             TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
@@ -122,10 +121,6 @@ public class SetComprehensionGenerator {
             TemplateHandler.add(template, "leftType", typeGenerator.generate(left.getType()));
             TemplateHandler.add(template, "rightType", typeGenerator.generate(right.getType()));
         }
-        TemplateHandler.add(template, "type", generatedType);
-        TemplateHandler.add(template, "identifier", identifier);
-        TemplateHandler.add(template, "isRelation", isRelation);
-        TemplateHandler.add(template, "comprehension", comprehension);
     }
 
     private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {

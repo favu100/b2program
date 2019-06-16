@@ -240,6 +240,12 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    private String generateInfiniteStruct(ST template, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName = generateInfiniteStruct(operator);
+        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        return template.render();
+    }
+
     public String generateInfinite(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         ST template = currentGroup.getInstanceOf("infinite_predicate");
@@ -248,9 +254,7 @@ public class InfiniteSetGenerator {
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         String operatorName;
         if(rhs instanceof StructNode) {
-            operatorName = generateInfiniteStruct(operator);
-            TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
-            return template.render();
+            return generateInfiniteStruct(template, operator);
         }
         ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
         if (rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
@@ -259,9 +263,7 @@ public class InfiniteSetGenerator {
             if(innerRhs instanceof ExpressionOperatorNode) {
                 rhsOperator = ((ExpressionOperatorNode) innerRhs).getOperator();
             } else if(innerRhs instanceof StructNode) {
-                operatorName = generateInfiniteStruct(operator);
-                TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
-                return template.render();
+                return generateInfiniteStruct(template, operator);
             }
         }
         switch(rhsOperator) {
@@ -288,12 +290,10 @@ public class InfiniteSetGenerator {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
-        String operatorName;
         if(domain instanceof StructNode) {
-            operatorName = "checkDomainStruct";
-            TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
-            return template.render();
+            return generateInfiniteDomainCheckingStruct(template);
         }
+        String operatorName;
         ExpressionOperatorNode.ExpressionOperator domainOperator = ((ExpressionOperatorNode) domain).getOperator();
         switch(domainOperator) {
             case INTEGER:
@@ -315,16 +315,20 @@ public class InfiniteSetGenerator {
         return template.render();
     }
 
+    private String generateInfiniteDomainCheckingStruct(ST template) {
+        String operatorName = "checkDomainStruct";
+        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        return template.render();
+    }
+
     public String generateInfiniteRangeChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
-        String operatorName;
         if(range instanceof StructNode) {
-            operatorName = "checkRangeStruct";
-            TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
-            return template.render();
+            return generateInfiniteRangeCheckingStruct(template);
         }
+        String operatorName;
         ExpressionOperatorNode.ExpressionOperator rangeOperator = ((ExpressionOperatorNode) range).getOperator();
         switch(rangeOperator) {
             case INTEGER:
@@ -342,6 +346,12 @@ public class InfiniteSetGenerator {
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
+        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        return template.render();
+    }
+
+    private String generateInfiniteRangeCheckingStruct(ST template) {
+        String operatorName = "checkRangeStruct";
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();
     }
@@ -393,16 +403,7 @@ public class InfiniteSetGenerator {
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(domain instanceof StructNode) {
-            if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
-                TemplateHandler.add(template, "operator", "isTotalStruct");
-                return template.render();
-            } else if(RelationSetGenerator.PARTIAL_EXPRESSIONS.contains(operator)) {
-                TemplateHandler.add(template, "operator", "isPartialStruct");
-                return template.render();
-            } else {
-                //Must be empty because predicate can be optional
-                return "";
-            }
+            return generateInfiniteTotalPartialStruct(template, operator);
         }
         ExpressionOperatorNode.ExpressionOperator domainOperator = ((ExpressionOperatorNode) domain).getOperator();
         if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
@@ -414,6 +415,19 @@ public class InfiniteSetGenerator {
             return "";
         }
         return template.render();
+    }
+
+    private String generateInfiniteTotalPartialStruct(ST template, ExpressionOperatorNode.ExpressionOperator operator) {
+        if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", "isTotalStruct");
+            return template.render();
+        } else if(RelationSetGenerator.PARTIAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", "isPartialStruct");
+            return template.render();
+        } else {
+            //Must be empty because predicate can be optional
+            return "";
+        }
     }
 
     private String generateInfiniteSurjection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
@@ -463,16 +477,7 @@ public class InfiniteSetGenerator {
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(range instanceof StructNode) {
-            if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
-                TemplateHandler.add(template, "operator", "isSurjectionStruct");
-                return template.render();
-            } else if(RelationSetGenerator.PARTIAL_EXPRESSIONS.contains(operator)) {
-                TemplateHandler.add(template, "operator", "isBijectionStruct");
-                return template.render();
-            } else {
-                //Must be empty because predicate can be optional
-                return "";
-            }
+            return generateInfiniteSurjectionInjectionBijectionStruct(template, operator);
         }
         ExpressionOperatorNode.ExpressionOperator rangeOperator = ((ExpressionOperatorNode) range).getOperator();
         if(RelationSetGenerator.SURJECTIVE_EXPRESSIONS.contains(operator)) {
@@ -484,6 +489,19 @@ public class InfiniteSetGenerator {
             return "";
         }
         return template.render();
+    }
+
+    private String generateInfiniteSurjectionInjectionBijectionStruct(ST template, ExpressionOperatorNode.ExpressionOperator operator) {
+        if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", "isSurjectionStruct");
+            return template.render();
+        } else if(RelationSetGenerator.PARTIAL_EXPRESSIONS.contains(operator)) {
+            TemplateHandler.add(template, "operator", "isBijectionStruct");
+            return template.render();
+        } else {
+            //Must be empty because predicate can be optional
+            return "";
+        }
     }
 
 }

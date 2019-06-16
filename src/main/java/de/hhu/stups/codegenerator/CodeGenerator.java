@@ -49,8 +49,24 @@ public class CodeGenerator {
 			System.err.println("Wrong number of arguments");
 			return;
 		}
+		GeneratorMode mode = getMode(args[0]);
+		boolean useBigInteger = useBigInteger(args[1]);
+		String minint = args[2];
+		String maxint = args[3];
+		String deferredSetSize = args[4];
+		CodeGenerator codeGenerator = new CodeGenerator();
+		URL url = CodeGenerator.class.getClassLoader().getResource(args[5]);
+		checkUrl(url);
+		checkIntegerRange(useBigInteger, minint, maxint);
+		String addition = null;
+		if(args.length == 7) {
+			addition = args[6];
+		}
+		codeGenerator.generate(Paths.get(url.toURI()), mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
+	}
+
+	private static GeneratorMode getMode(String languageOption) {
 		GeneratorMode mode = null;
-		String languageOption = args[0];
 		if("java".equals(languageOption)) {
 			mode = GeneratorMode.JAVA;
 		} else if("python".equals(languageOption)) {
@@ -62,40 +78,36 @@ public class CodeGenerator {
 		} else if("clojure".equals(languageOption)) {
 			mode = GeneratorMode.CLJ;
 		} else {
-			System.err.println("Wrong argument for language");
-			return;
+			throw new RuntimeException("Wrong argument for language");
 		}
-		String integerOption = args[1];
+		return mode;
+	}
+
+	private static boolean useBigInteger(String integerOption) {
 		boolean useBigInteger;
 		if("true".equals(integerOption)) {
 			useBigInteger = true;
 		} else if("false".equals(integerOption)) {
 			useBigInteger = false;
 		} else {
-			System.err.println("Wrong argument for choice of integers");
-			return;
+			throw new RuntimeException("Wrong argument for choice of integers");
 		}
-		String minint = args[2];
-		String maxint = args[3];
-		String deferredSetSize = args[4];
-		CodeGenerator codeGenerator = new CodeGenerator();
-		URL url = CodeGenerator.class.getClassLoader().getResource(args[5]);
+		return useBigInteger;
+	}
+
+	private static void checkUrl(URL url) {
 		if(url == null) {
-			System.err.println("File not found");
-			return;
+			throw new RuntimeException("File not found");
 		}
-		String addition = null;
+	}
+
+	private static void checkIntegerRange(boolean useBigInteger, String minint, String maxint) {
 		if(new BigInteger(minint).compareTo(new BigInteger(String.valueOf(Integer.MIN_VALUE))) == -1 ||
 				new BigInteger(maxint).compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
 			if(!useBigInteger) {
-				System.err.println("The given range of MININT..MAXINT must use big integers");
-				return;
+				throw new RuntimeException("The given range of MININT..MAXINT must use big integers");
 			}
 		}
-		if(args.length == 7) {
-			addition = args[6];
-		}
-		codeGenerator.generate(Paths.get(url.toURI()), mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
 	}
 
 	/*
@@ -111,6 +123,12 @@ public class CodeGenerator {
 		if(addition != null) {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
+		generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize);
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null));
+		return paths;
+	}
+
+	private void generateIncludedMachines(BProject project, String[] pathAsList, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize) {
 		for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
 			pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(project.getMainMachine().getName(), referenceNode.getMachineName());
 			Path currentPath = Paths.get(String.join("/", pathAsList));
@@ -118,8 +136,6 @@ public class CodeGenerator {
 				generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, false, null);
 			}
 		}
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null));
-		return paths;
 	}
 
 	/*
@@ -127,45 +143,11 @@ public class CodeGenerator {
 	*/
 	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, MachineNode node, Path addition) {
 		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, addition);
-		if(nameHandler != null) {
-			Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
-			for(String key : enumTypes.keySet()) {
-				generator.getNameHandler().getEnumTypes().put(key, enumTypes.get(key));
-			}
-			generator.getNameHandler().getDeferredTypes().addAll(nameHandler.getDeferredTypes());
-			generator.getNameHandler().getReservedMachines().addAll(nameHandler.getReservedMachines());
-			generator.getNameHandler().getReservedMachinesAndFunctions().addAll(nameHandler.getReservedMachinesAndFunctions());
-			generator.getNameHandler().getReservedMachinesAndFunctionsAndVariables().addAll(nameHandler.getReservedMachinesAndFunctionsAndVariables());
-			generator.getNameHandler().getReservedMachinesWithIncludedMachines().addAll(nameHandler.getReservedMachinesWithIncludedMachines());
-
-		}
-
-		if(declarationGenerator != null) {
-			Map<String, List<String>> setToEnum = declarationGenerator.getSetToEnum();
-			for(String key : setToEnum.keySet()) {
-				generator.getDeclarationGenerator().getSetToEnum().put(key, setToEnum.get(key));
-			}
-			Map<String, String> enumToMachine = declarationGenerator.getEnumToMachine();
-			for(String key : enumToMachine.keySet()) {
-				generator.getDeclarationGenerator().getEnumToMachine().put(key, enumToMachine.get(key));
-			}
-		}
-
-		if(recordStructGenerator != null) {
-			List<RecordType> structs = recordStructGenerator.getStructs();
-			generator.getRecordStructGenerator().getStructs().addAll(structs);
-			Map<String, String> nodeToClassName = recordStructGenerator.getNodeToClassName();
-			for(String key : nodeToClassName.keySet()) {
-				generator.getRecordStructGenerator().getNodeToClassName().put(key, nodeToClassName.get(key));
-			}
-		}
+		updateNameHandler(generator);
+		updateDeclarationGenerator(generator);
+		updateRecordStructGenerator(generator);
 
 		String code = generator.generateMachine(node);
-
-		nameHandler = generator.getNameHandler();
-		declarationGenerator = generator.getDeclarationGenerator();
-		recordStructGenerator = generator.getRecordStructGenerator();
-
 
 		int lastIndexDot = path.toString().lastIndexOf(".");
 		int lastIndexSlash = path.toString().lastIndexOf("/");
@@ -178,6 +160,48 @@ public class CodeGenerator {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void updateNameHandler(MachineGenerator generator) {
+		if(nameHandler != null) {
+			Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
+			for(String key : enumTypes.keySet()) {
+				generator.getNameHandler().getEnumTypes().put(key, enumTypes.get(key));
+			}
+			generator.getNameHandler().getDeferredTypes().addAll(nameHandler.getDeferredTypes());
+			generator.getNameHandler().getReservedMachines().addAll(nameHandler.getReservedMachines());
+			generator.getNameHandler().getReservedMachinesAndFunctions().addAll(nameHandler.getReservedMachinesAndFunctions());
+			generator.getNameHandler().getReservedMachinesAndFunctionsAndVariables().addAll(nameHandler.getReservedMachinesAndFunctionsAndVariables());
+			generator.getNameHandler().getReservedMachinesWithIncludedMachines().addAll(nameHandler.getReservedMachinesWithIncludedMachines());
+
+		}
+		nameHandler = generator.getNameHandler();
+	}
+
+	private void updateDeclarationGenerator(MachineGenerator generator) {
+		if(declarationGenerator != null) {
+			Map<String, List<String>> setToEnum = declarationGenerator.getSetToEnum();
+			for(String key : setToEnum.keySet()) {
+				generator.getDeclarationGenerator().getSetToEnum().put(key, setToEnum.get(key));
+			}
+			Map<String, String> enumToMachine = declarationGenerator.getEnumToMachine();
+			for(String key : enumToMachine.keySet()) {
+				generator.getDeclarationGenerator().getEnumToMachine().put(key, enumToMachine.get(key));
+			}
+		}
+		declarationGenerator = generator.getDeclarationGenerator();
+	}
+
+	private void updateRecordStructGenerator(MachineGenerator generator) {
+		if(recordStructGenerator != null) {
+			List<RecordType> structs = recordStructGenerator.getStructs();
+			generator.getRecordStructGenerator().getStructs().addAll(structs);
+			Map<String, String> nodeToClassName = recordStructGenerator.getNodeToClassName();
+			for(String key : nodeToClassName.keySet()) {
+				generator.getRecordStructGenerator().getNodeToClassName().put(key, nodeToClassName.get(key));
+			}
+		}
+		recordStructGenerator = generator.getRecordStructGenerator();
 	}
 
 	/*

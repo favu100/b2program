@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.analyzers;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -159,7 +160,7 @@ public class DeferredSetAnalyzer {
     private void checkEnumeratedElements(DeclarationNode deferredSet) {
         String name = deferredSet.getName();
         if(setToEnumeratedElements.keySet().contains(name) && deferredSetsWithDefaultSize.contains(name)) {
-            throw new RuntimeException("Declaration of deferred set as enumerated set must contain a conjunct ensuring the number of the set being equal to number of the enumeration");
+            throw new CodeGenerationException("Declaration of deferred set as enumerated set must contain a conjunct ensuring the number of the set being equal to number of the enumeration");
         }
     }
 

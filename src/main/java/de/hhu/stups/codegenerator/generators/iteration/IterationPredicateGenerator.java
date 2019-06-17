@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -56,12 +57,12 @@ public class IterationPredicateGenerator {
         if(!(predicate instanceof PredicateOperatorNode)) {
             //TODO
             if(declarations.size() != 1) {
-                throw new RuntimeException("Predicate for iteration must be a conjunction");
+                throw new CodeGenerationException("Predicate for iteration must be a conjunction");
             }
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
             if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                throw new RuntimeException("Predicate for iteration must be a conjunction");
+                throw new CodeGenerationException("Predicate for iteration must be a conjunction");
             } else {
                 checkPredicateIteration(declarations, predicateOperatorNode);
             }
@@ -75,7 +76,7 @@ public class IterationPredicateGenerator {
         for(int i = 0; i < declarations.size(); i++) {
             PredicateNode innerPredicate = predicate.getPredicateArguments().get(i);
             if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                throw new RuntimeException("First predicates must declare the set to iterate over");
+                throw new CodeGenerationException("First predicates must declare the set to iterate over");
             }
         }
     }
@@ -85,7 +86,7 @@ public class IterationPredicateGenerator {
     */
     private void checkEnumerationPredicate(ExprNode lhs, DeclarationNode declarationNode) {
         if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
-            throw new RuntimeException("The expression on the left-hand side of the first predicates must match the first identifier names");
+            throw new CodeGenerationException("The expression on the left-hand side of the first predicates must match the first identifier names");
         }
     }
 

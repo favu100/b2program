@@ -115,7 +115,7 @@ public class CodeGenerator {
 		if(new BigInteger(minint).compareTo(new BigInteger(String.valueOf(Integer.MIN_VALUE))) == -1 ||
 				new BigInteger(maxint).compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
 			if(!useBigInteger) {
-				throw new RuntimeException("The given range of MININT..MAXINT must use big integers");
+				throw new CodeGenerationException("The given range of MININT..MAXINT must use big integers");
 			}
 		}
 	}

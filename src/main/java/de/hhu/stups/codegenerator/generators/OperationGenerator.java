@@ -109,6 +109,9 @@ public class OperationGenerator {
         return operation;
     }
 
+    /*
+    * This function generates code for returning output parameters
+    */
     private void generateReturn(ST operation, OperationNode node) {
         List<DeclarationNode> outputs = node.getOutputParams();
         if(outputs.size() > 1) {
@@ -120,12 +123,18 @@ public class OperationGenerator {
         }
     }
 
+    /*
+    * This function generates code for empty output parameters
+    */
     private void generateVoidReturnStatement(ST operation) {
         TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
         TemplateHandler.add(operation, "return", group.getInstanceOf("no_return").render());
         TemplateHandler.add(operation, "isTyped", false);
     }
 
+    /*
+    * This function generates code for returning output parameters with one parameter
+    */
     private void generateReturnStatementIdentifier(ST operation, List<DeclarationNode> outputs) {
         BType type = outputs.get(0).getType();
         String identifier = outputs.get(0).getName();
@@ -137,6 +146,9 @@ public class OperationGenerator {
         TemplateHandler.add(operation, "return", returnTemplate.render());
     }
 
+    /*
+    * This function generates code for returning output parameters with more than one parameter
+    */
     private void generateReturnStatementRecord(ST operation, OperationNode node) {
         List<DeclarationNode> outputs = node.getOutputParams();
         String struct = recordStructGenerator.getStruct(node);

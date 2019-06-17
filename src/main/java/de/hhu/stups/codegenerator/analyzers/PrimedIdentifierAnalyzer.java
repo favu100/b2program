@@ -58,6 +58,9 @@ public class PrimedIdentifierAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * This function checks whether the given identifier is primed. If yes, then it is added to the list of primed identifiers
+    */
     @Override
     public Void visitIdentifierExprNode(IdentifierExprNode node, Void expected) {
         if(node.isPrimed()) {

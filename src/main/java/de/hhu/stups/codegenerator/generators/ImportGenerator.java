@@ -45,7 +45,7 @@ public class ImportGenerator {
         } else if(type instanceof BoolType) {
             importBBoolean();
         } else if(type instanceof StringType) {
-            importString();
+            importBString();
         } else if(type instanceof SetType) {
             importSetType((SetType) type);
         } else if(type instanceof EnumeratedSetElementType) {
@@ -61,6 +61,9 @@ public class ImportGenerator {
         }
     }
 
+    /*
+    * This function generates an import for a type and its subtype
+    */
     public void addImportInIteration(BType type) {
         addImport(type);
         if(type instanceof SetType) {
@@ -68,12 +71,18 @@ public class ImportGenerator {
         }
     }
 
+    /*
+    * This function generates code for import of other included machines
+    */
     public List<String> generateMachineImports(MachineNode node) {
         return node.getMachineReferences().stream()
                 .map(this::generateMachineImport)
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function generates code for an import of an included machine
+    */
     private String generateMachineImport(MachineReferenceNode reference) {
         ST imp = group.getInstanceOf("import_type");
         String machine = reference.getMachineName();
@@ -81,30 +90,45 @@ public class ImportGenerator {
         return imp.render();
     }
 
+    /*
+    * This function generates code for importing BInteger
+    */
     private void importBInteger() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BInteger");
         imports.add(template.render());
     }
 
+    /*
+    * This function generates code for importing BObject
+    */
     private void importBObject() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BObject");
         imports.add(template.render());
     }
 
+    /*
+    * This function generates code for importing BBoolean
+    */
     private void importBBoolean() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BBoolean");
         imports.add(template.render());
     }
 
-    private void importString() {
+    /*
+    * This function generates code for importing BString
+    */
+    private void importBString() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BString");
         imports.add(template.render());
     }
 
+    /*
+    * This function generates code for importing BTuple and its subtypes
+    */
     private void importTuple(CoupleType type) {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BTuple");
@@ -113,6 +137,9 @@ public class ImportGenerator {
         addImport(type.getRight());
     }
 
+    /*
+    * This function generates code for importing subtypes of the given struct
+    */
     private void importStruct(RecordType type) {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BStruct");
@@ -120,6 +147,9 @@ public class ImportGenerator {
         imports.add(template.render());
     }
 
+    /*
+    * This function generates code for importing BSet and its subtype
+    */
     private void importSetType(SetType type) {
         if(type.getSubType() instanceof CoupleType) {
             importRelationType((CoupleType) type.getSubType());
@@ -131,6 +161,9 @@ public class ImportGenerator {
         }
     }
 
+    /*
+    * This function generates code for importing subtypes of a relation
+    */
     private void importRelationType(CoupleType type) {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BRelation");

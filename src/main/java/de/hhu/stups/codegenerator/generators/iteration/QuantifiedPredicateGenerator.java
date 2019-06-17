@@ -38,6 +38,9 @@ public class QuantifiedPredicateGenerator {
         this.iterationPredicateGenerator = iterationPredicateGenerator;
     }
 
+    /*
+    * This function generates code for a quantified predicate from the belonging AST node
+    */
     public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicateNode();
@@ -61,6 +64,9 @@ public class QuantifiedPredicateGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for other iteration constructs used within the quantified predicate
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -74,6 +80,9 @@ public class QuantifiedPredicateGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the body of a quantified predicate
+    */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean forAll, PredicateNode predicate, List<DeclarationNode> declarations) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
@@ -85,6 +94,9 @@ public class QuantifiedPredicateGenerator {
         TemplateHandler.add(template, "predicate", predicateString);
     }
 
+    /*
+    * This function generates code for the evaluation of a quantified predicate
+    */
     private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, boolean forAll, int numberDeclarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
         ST template = group.getInstanceOf("quantified_predicate_evaluation");

@@ -39,6 +39,9 @@ public class AnySubstitutionGenerator {
         this.iterationPredicateGenerator = iterationPredicateGenerator;
     }
 
+    /*
+    * This function generates code for the ANY substitution from the belonging AST node
+    */
     public String generateAnySubstitution(AnySubstitutionNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getWherePredicate();
@@ -60,6 +63,9 @@ public class AnySubstitutionGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for the inner body of the ANY substitution
+    */
     private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, boolean inLoop, int numberDeclarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
         ST template = group.getInstanceOf("any_body");
@@ -71,6 +77,9 @@ public class AnySubstitutionGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for other iteration constructs within the ANY substitution from the given predicate
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -84,6 +93,9 @@ public class AnySubstitutionGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the body of the ANY substitution
+    */
     private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         boolean inLoop = iterationPredicateGenerator.isInLoop();

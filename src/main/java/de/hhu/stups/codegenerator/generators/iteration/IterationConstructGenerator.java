@@ -131,6 +131,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a quantified expression and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), quantifiedExpressionGenerator.generateQuantifiedExpression(node));
@@ -138,6 +142,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a set comprehension and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), setComprehensionGenerator.generateSetComprehension(node));
@@ -145,6 +153,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a lambda expression and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitLambdaNode(LambdaNode node, Void expected) {
         iterationsMapCode.put(node.toString(), lambdaGenerator.generateLambda(node));
@@ -189,6 +201,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a quantified predicate and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void aVoid) {
         iterationsMapCode.put(node.toString(), quantifiedPredicateGenerator.generateQuantifiedPredicate(node));
@@ -244,6 +260,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for an ANY substitution and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(node));
@@ -251,6 +271,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a let substitution and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody())));
@@ -258,6 +282,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a let expression and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitLetExpressionNode(LetExpressionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetExpression(node));
@@ -265,6 +293,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a let predicate and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
         iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetPredicate(node));
@@ -279,6 +311,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function generates code for a becomes such that substitution and stores it in the map of iteration constructs to code.
+    * It is needed for pre-generating code in other constructs.
+    */
     @Override
     public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
         iterationsMapCode.put(node.toString(), becomesSuchThatGenerator.generateBecomesSuchThat(node));
@@ -311,12 +347,18 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return null;
     }
 
+    /*
+    * This function add bounded variables from the given list of declarations
+    */
     private void addBoundedVariables(List<DeclarationNode> declarations) {
         boundedVariables.clear();
         boundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
         allBoundedVariables.addAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
     }
 
+    /*
+    * This function removes all variables from boundedn variables from the given list of declarations
+    */
     private void clearBoundedVariables(List<DeclarationNode> declarations) {
         boundedVariables.clear();
         allBoundedVariables.removeAll(declarations.stream().map(DeclarationNode::toString).collect(Collectors.toList()));
@@ -330,11 +372,17 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return allBoundedVariables;
     }
 
+    /*
+    * This function maps an iteration construct node to an identifier representing the iteration construct and code generated for the iteration construct.
+    */
     private void addIteration(String node, String identifier, String code) {
         iterationsMapIdentifier.put(node, identifier);
         iterationsMapCode.put(node, code);
     }
 
+    /*
+    * This functions maps an iteration construct node to code generated for this iteration construct
+    */
     private void addIteration(String node, String code) {
         iterationsMapCode.put(node, code);
     }
@@ -347,6 +395,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         return iterationsMapIdentifier;
     }
 
+    /*
+    * This function prepares code generation for an iteration construct by adding all bounded variables to the belonging list, checking the given predicate and add necessary imports.
+    */
     public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
         this.addBoundedVariables(declarations);
         iterationPredicateGenerator.checkPredicate(predicate, declarations);
@@ -354,17 +405,26 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         iterationConstructHandler.setIterationConstructGenerator(this);
     }
 
+    /*
+    * This function prepares code generation for an iteration construct by adding all bounded variables to the belonging list and checking the given predicate.
+    */
     public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations) {
         this.addBoundedVariables(declarations);
         iterationPredicateGenerator.checkPredicate(predicate, declarations);
         iterationConstructHandler.setIterationConstructGenerator(this);
     }
 
+    /*
+    * This function maps a iteration construct node to an identifier and code.
+    */
     public void addGeneration(String node, String identifier, List<DeclarationNode> declarations, String result) {
         this.addIteration(node, identifier, result);
         this.clearBoundedVariables(declarations);
     }
 
+    /*
+    * This function maps a iteration construct node to code.
+    */
     public void addGeneration(String node, List<DeclarationNode> declarations, String result) {
         this.addIteration(node, result);
         this.clearBoundedVariables(declarations);

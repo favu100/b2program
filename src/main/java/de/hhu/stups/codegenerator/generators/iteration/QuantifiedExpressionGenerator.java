@@ -52,6 +52,9 @@ public class QuantifiedExpressionGenerator {
         this.iterationPredicateGenerator = iterationPredicateGenerator;
     }
 
+    /*
+    * This function generates code for a quantified expression from the belonging AST node
+    */
     public String generateQuantifiedExpression(QuantifiedExpressionNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicateNode();
@@ -76,6 +79,9 @@ public class QuantifiedExpressionGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for the identity element from the belonging operator
+    */
     private String getIdentity(QuantifiedExpressionNode.QuantifiedExpressionOperator operator) {
         String identity = "";
         if(operator == SIGMA) {
@@ -86,6 +92,9 @@ public class QuantifiedExpressionGenerator {
         return identity;
     }
 
+    /*
+    * This function generates code for the given operator of a quantified expression
+    */
     private String getOperation(QuantifiedExpressionNode.QuantifiedExpressionOperator operator) {
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
         String operation;
@@ -105,6 +114,9 @@ public class QuantifiedExpressionGenerator {
         return nameHandler.handle(operation);
     }
 
+    /*
+    * This function generates code for other iteration constructs used within the quantified expression
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate, ExprNode expression) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -118,6 +130,9 @@ public class QuantifiedExpressionGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the body of the quantified expression
+    */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, QuantifiedExpressionNode node, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
@@ -136,6 +151,9 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "evaluation", evaluation);
     }
 
+    /*
+    * This function generates code for the evaluation of the quantified expression
+    */
     private String generateQuantifiedExpressionEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, String operation, ExprNode expression, int numberDeclarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
         ST template = group.getInstanceOf("quantified_expression_evaluation");

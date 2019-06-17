@@ -55,24 +55,36 @@ public class TypeGenerator {
         return "";
     }
 
+    /*
+    * This function generates code for BInteger
+    */
     private String generateBInteger() {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "type", "BInteger");
         return template.render();
     }
 
+    /*
+    * This function generates code for BBoolean
+    */
     private String generateBBoolean() {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "type", "BBoolean");
         return template.render();
     }
 
+    /*
+    * This function generates code for BString
+    */
     private String generateBString() {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "type", "BString");
         return template.render();
     }
 
+    /*
+    * This function generates code for BTuple and its subtypes from the given type
+    */
     private String generateBTuple(CoupleType type) {
         ST template = group.getInstanceOf("tuple_type");
         TemplateHandler.add(template, "leftType", generate(type.getLeft()));
@@ -80,12 +92,18 @@ public class TypeGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for a struct from the given type
+    */
     private String generateBStruct(RecordType type) {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "type", recordStructGenerator.getStruct(type));
         return template.render();
     }
 
+    /*
+    * This function generates code for BSet and its subtypes from the given type
+    */
     private String generateBSet(SetType type) {
         BType subType = type.getSubType();
         if(subType instanceof CoupleType) {
@@ -97,6 +115,9 @@ public class TypeGenerator {
         }
     }
 
+    /*
+    * This function generates code for the subtypes of a relation from the given couple type
+    */
     private String generateBRelation(CoupleType type) {
         ST template = group.getInstanceOf("relation_type");
         TemplateHandler.add(template, "leftType", generate(type.getLeft()));
@@ -104,12 +125,18 @@ public class TypeGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for the type of an enumerated set element
+    */
     private String generateEnumeratedSetElement(EnumeratedSetElementType type) {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();
     }
 
+    /*
+    * This function generates code for the type of an deferred set element
+    */
     private String generateDeferredSetElement(DeferredSetElementType type) {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));

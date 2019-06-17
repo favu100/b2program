@@ -46,6 +46,9 @@ public class LambdaGenerator {
         this.typeGenerator = typeGenerator;
     }
 
+    /*
+    * This function generates code for a lambda expression from the belonging AST node
+    */
     public String generateLambda(LambdaNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicate();
@@ -74,6 +77,9 @@ public class LambdaGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for other iteration constructs used within the lambda expression
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate, ExprNode expression) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -87,6 +93,9 @@ public class LambdaGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the inner body of the lambda expression
+    */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode predicate, String leftType, String rightType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
@@ -100,6 +109,9 @@ public class LambdaGenerator {
         TemplateHandler.add(template, "lambda", lambda);
     }
 
+    /*
+    * This function generates code for the expression representing the values the variables are mapped to within the lambda expression
+    */
     public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size());
         ST template = group.getInstanceOf("lambda_expression");

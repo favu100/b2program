@@ -99,12 +99,18 @@ public class DeclarationGenerator {
         return declaration.render();
     }
 
+    /*
+    * This function generates code for declarations of all constants from the given MachineNode
+    */
     public List<String> generateConstantsDeclarations(MachineNode node) {
         return node.getConstants().stream()
                 .map(this::generateConstantDeclaration)
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function generates code for a constant declaration from the belonging given DeclarationNode
+    */
     public String generateConstantDeclaration(DeclarationNode constant) {
         ST declaration = currentGroup.getInstanceOf("constant_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
@@ -144,6 +150,9 @@ public class DeclarationGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for declarations of all enumerated set elements
+    */
     private List<String> generateEnumeratedSetEnums(MachineNode node) {
         node.getEnumeratedSets().forEach(set -> {
             setToEnum.put(set.getSetDeclarationNode().getName(), set.getElements().stream()
@@ -156,6 +165,9 @@ public class DeclarationGenerator {
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function generates code for declarations of all deferred set elements
+    */
     private List<String> generateDeferredSetEnums(MachineNode node) {
         node.getDeferredSets().forEach(set -> {
             enumToMachine.put(set.getName(), node.getName());
@@ -181,12 +193,18 @@ public class DeclarationGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for all enumerated set declarations from the given MachineNode
+    */
     private List<String> generateEnumeratedSetDeclarations(MachineNode node) {
         return node.getEnumeratedSets().stream()
                 .map(this::visitEnumeratedSetDeclarationNode)
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function generates code for all deferred set declarations from the given MachineNode
+    */
     private List<String> generateDeferredSetDeclarations(MachineNode node) {
         return node.getDeferredSets().stream()
                 .map(this::visitDeferredSetDeclaration)
@@ -194,7 +212,7 @@ public class DeclarationGenerator {
     }
 
     /*
-    * This function generates code for declarating a enum for an enumerated set from the belonging AST node and the belonging template.
+    * This function generates code declaring an enum for an enumerated set from the belonging AST node and the belonging template.
     */
     private String declareEnums(EnumeratedSetDeclarationNode node) {
         importGenerator.addImport(node.getElements().get(0).getType());
@@ -207,6 +225,9 @@ public class DeclarationGenerator {
         return enumDeclaration.render();
     }
 
+    /*
+    * This function generates code for declaring an enum for a deferred set from the belonging AST node and the belonging template.
+    */
     private String declareEnums(DeclarationNode node) {
         importGenerator.addImport(((SetType) node.getType()).getSubType());
         ST enumDeclaration = currentGroup.getInstanceOf("set_enum_declaration");
@@ -234,6 +255,9 @@ public class DeclarationGenerator {
         return setDeclaration.render();
     }
 
+    /*
+    * This function generates code with creating a BSet for a deferred set from the belonging AST node and teh belonging template.
+    */
     private String visitDeferredSetDeclaration(DeclarationNode node) {
         importGenerator.addImport(node.getType());
         ST setDeclaration = currentGroup.getInstanceOf("set_declaration");
@@ -246,6 +270,9 @@ public class DeclarationGenerator {
         return setDeclaration.render();
     }
 
+    /*
+    * This function extracts all enum elements of a deferred set from the given DeclarationNode
+    */
     private List<String> extractEnumsOfDeferredSet(DeclarationNode node) {
         List<String> enums = new ArrayList<>();
         String deferredSetName = node.getName();
@@ -260,7 +287,7 @@ public class DeclarationGenerator {
     }
 
     /*
-    * This function generates code for calling enums from an enumerated from the belonging AST node,
+    * This function generates code for calling enums from an enumerated set from the belonging AST node,
     * template and the name of the enumerated set the enum belongs to.
     */
     public String callEnum(String setName, DeclarationNode enumNode) {
@@ -272,6 +299,9 @@ public class DeclarationGenerator {
         return enumST.render();
     }
 
+    /*
+    * This function generates code for calling enums from the name of an enumerated set from the belonging AST node, template and the name of the enumerated set the enum belongs to.
+    */
     public String callEnum(String setName, String enumName) {
         ST enumST = currentGroup.getInstanceOf("enum_call");;
         TemplateHandler.add(enumST, "machine", enumToMachine.get(setName));

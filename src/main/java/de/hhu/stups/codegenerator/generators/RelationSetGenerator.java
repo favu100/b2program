@@ -67,6 +67,9 @@ public class RelationSetGenerator {
         this.infiniteSetGenerator = infiniteSetGenerator;
     }
 
+    /*
+    * This function gets a predicate node and checks whether a set of relations is on the right-hand side of the predicate and whether code can be generated with the given operator.
+    */
     public boolean checkRelation(PredicateOperatorWithExprArgsNode node) {
         List<ExprNode> expressions = node.getExpressionNodes();
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
@@ -87,6 +90,9 @@ public class RelationSetGenerator {
         return false;
     }
 
+    /*
+    * This function generates code for a predicate containing a set of relations on the right-hand side
+    */
     public String generateRelation(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         List<String> predicates = new ArrayList<>();
@@ -114,6 +120,9 @@ public class RelationSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking the domain of a relation with a set of relations on the right-hand side
+    */
     private String checkDomain(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
@@ -130,6 +139,9 @@ public class RelationSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking the range of a relation with a set of relations on the right-hand side
+    */
     private String checkRange(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
@@ -147,6 +159,9 @@ public class RelationSetGenerator {
     }
 
 
+    /*
+    * This function generates code for checking total/partial relation with a set of relations on the right-hand side
+    */
     private String generateTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
@@ -171,6 +186,9 @@ public class RelationSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking surjective/injective/bijective relation with a set of relations on the right-hand side
+    */
     private String generateSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
@@ -195,6 +213,9 @@ public class RelationSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking a relation/function with a set of relations on the right-hand side
+    */
     private String generateRelationFunction(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator) {
         ST template = currentGroup.getInstanceOf("relation_function");
         ExprNode lhs = node.getExpressionNodes().get(0);

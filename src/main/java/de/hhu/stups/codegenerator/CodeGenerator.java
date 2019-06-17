@@ -65,6 +65,9 @@ public class CodeGenerator {
 		codeGenerator.generate(Paths.get(url.toURI()), mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
 	}
 
+	/*
+	* This function extracts the generator mode representing the language code should be generated from from the given string
+	*/
 	private static GeneratorMode getMode(String languageOption) {
 		GeneratorMode mode = null;
 		if("java".equals(languageOption)) {
@@ -83,6 +86,10 @@ public class CodeGenerator {
 		return mode;
 	}
 
+
+	/*
+	* This functon extracts boolean for using big integer from the given string
+	*/
 	private static boolean useBigInteger(String integerOption) {
 		boolean useBigInteger;
 		if("true".equals(integerOption)) {
@@ -101,6 +108,9 @@ public class CodeGenerator {
 		}
 	}
 
+	/*
+	*  This function checks the integer range from the given options for MININT, MAXINT and using big integer
+	*/
 	private static void checkIntegerRange(boolean useBigInteger, String minint, String maxint) {
 		if(new BigInteger(minint).compareTo(new BigInteger(String.valueOf(Integer.MIN_VALUE))) == -1 ||
 				new BigInteger(maxint).compareTo(new BigInteger(String.valueOf(Integer.MAX_VALUE))) == 1) {
@@ -128,6 +138,9 @@ public class CodeGenerator {
 		return paths;
 	}
 
+	/*
+	* This function generates code for all included machines from the given options
+	*/
 	private void generateIncludedMachines(BProject project, String[] pathAsList, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize) {
 		for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
 			pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(project.getMainMachine().getName(), referenceNode.getMachineName());
@@ -162,6 +175,9 @@ public class CodeGenerator {
 		}
 	}
 
+	/*
+	* This function updates the NameHandler for other machines in the hierarchy. This is needed because variables from included machines can be using by the machines they are included by.
+	*/
 	private void updateNameHandler(MachineGenerator generator) {
 		if(nameHandler != null) {
 			Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
@@ -178,6 +194,9 @@ public class CodeGenerator {
 		nameHandler = generator.getNameHandler();
 	}
 
+	/*
+	* This function updates the DeclarationGenerator for other machines in the hierarchy. This is needed because variables from included machines can be using by the machines they are included by.
+	*/
 	private void updateDeclarationGenerator(MachineGenerator generator) {
 		if(declarationGenerator != null) {
 			Map<String, List<String>> setToEnum = declarationGenerator.getSetToEnum();
@@ -192,6 +211,10 @@ public class CodeGenerator {
 		declarationGenerator = generator.getDeclarationGenerator();
 	}
 
+
+	/*
+	* This function updates the RecordStructGenerator for other machines in the hierarchy. This is needed because variables from included machines can be using by the machines they are included by.
+	*/
 	private void updateRecordStructGenerator(MachineGenerator generator) {
 		if(recordStructGenerator != null) {
 			List<RecordType> structs = recordStructGenerator.getStructs();

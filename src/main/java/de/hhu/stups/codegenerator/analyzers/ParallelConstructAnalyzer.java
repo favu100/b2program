@@ -86,6 +86,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * This function adds an identifier to the list of relevant identifiers on the left-hand side or right-hand side of a parallel substitution.
+    * This information is needed to analyze parallel constructs for parallel substitutions
+    */
     @Override
     public Void visitIdentifierExprNode(IdentifierExprNode node, Void expected) {
         if(ignoredVariables.contains(node.getName())) {
@@ -180,6 +184,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * When visiting a VAR substitution, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+    * This is done by this function.
+    */
     @Override
     public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
         List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -231,6 +239,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * This function analyzes identifiers on the left-hand side and right-hand side of an assignment from the belonging AST node.
+    */
     @Override
     public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expected) {
         this.onLeftHandSide = true;
@@ -266,6 +277,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * When visiting an ANY substitution, bounded variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+    * This is done by this function.
+    */
     @Override
     public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
         List<String> locals = node.getParameters().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -276,6 +291,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * When visiting a LET substitution, bounded variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+    * This is done by this function.
+    */
     @Override
     public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
         List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -286,6 +305,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * When visiting a LET expression, bounded variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+    * This is done by this function.
+    */
     @Override
     public Void visitLetExpressionNode(LetExpressionNode node, Void expected) {
         List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -296,6 +319,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * When visiting a LET predicate, bounded variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+    * This is done by this function.
+    */
     @Override
     public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
         List<String> locals = node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -346,6 +373,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * This function is invoked when all parallel constructs are left during visiting AST nodes
+    */
     public void resetParallel() {
         definedLoadsInParallel.clear();
     }

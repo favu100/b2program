@@ -46,6 +46,9 @@ public class BecomesSuchThatGenerator {
         this.iterationPredicateGenerator = iterationPredicateGenerator;
     }
 
+    /*
+    * This function generates code for the becomes such that substitution
+    */
     public String generateBecomesSuchThat(BecomesSuchThatSubstitutionNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicate();
@@ -72,6 +75,9 @@ public class BecomesSuchThatGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for the inner body of the becomes such that substitution
+    */
     private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode predicateNode, boolean inLoop) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size());
         ST template = group.getInstanceOf("becomes_such_that_body");
@@ -87,6 +93,9 @@ public class BecomesSuchThatGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for other iteration constructs within the becomes such that substitution from the given predicate
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -100,6 +109,9 @@ public class BecomesSuchThatGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the body of the becomes such that substitution
+    */
     private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, List<IdentifierExprNode> identifiers) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         boolean inLoop = iterationPredicateGenerator.isInLoop();
@@ -109,6 +121,9 @@ public class BecomesSuchThatGenerator {
         TemplateHandler.add(template, "body", body);
     }
 
+    /*
+    * This function generates code for loads of all primed identifiers used in the becomes such that substitution from the given template and predicate
+    */
     private void generateLoads(ST template, PredicateNode predicate) {
         PrimedIdentifierAnalyzer primedAnalyzer = new PrimedIdentifierAnalyzer();
         primedAnalyzer.visitPredicateNode(predicate, null);
@@ -116,6 +131,9 @@ public class BecomesSuchThatGenerator {
         TemplateHandler.add(template, "loads", loads);
     }
 
+    /*
+    * This function generates code for loading a pried identifier used in the becomes such that substitution from the given AST node for an identifier
+    */
     private String generateLoad(IdentifierExprNode node) {
         IdentifierExprNode rhs = new IdentifierExprNode(node.getSourceCodePosition(), node.getName(), false);
         rhs.setDeclarationNode(node.getDeclarationNode());
@@ -128,6 +146,9 @@ public class BecomesSuchThatGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for storing a value to an identifier at the end of the becomes such that substitution from the given AST node for an identifier
+    */
     private String generateStore(IdentifierExprNode node) {
         ST template = group.getInstanceOf("becomes_such_that_store");
         TemplateHandler.add(template, "type", typeGenerator.generate(node.getType()));

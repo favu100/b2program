@@ -175,6 +175,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
 
+	/*
+	* This function generates code for functions for programming languages where functions must be declared before implementation from the given AST node for the machine.
+	*/
 	private List<String> generateMethods(MachineNode node) {
 		ST method = currentGroup.getInstanceOf("method");
 		TemplateHandler.add(method, "operationName", "initialize");
@@ -188,6 +191,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return result;
 	}
 
+	/*
+	* This function generates code for a function for programming languages where functions must be declared before implementation from the given AST node for the machine.
+	*/
 	private String generateMethod(OperationNode node) {
 		ST method = currentGroup.getInstanceOf("method");
 		TemplateHandler.add(method, "operationName", nameHandler.handle(node.getName()));
@@ -435,17 +441,27 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return machineNode.getName();
 	}
 
+	/*
+	* This function must be invoked when the next level for an iteration construct is entered
+	*/
 	public void inIterationConstruct() {
 		iterationConstructDepth++;
 	}
 
+	/*
+	* This function must be invoked when the current level for an iteration construct is left.
+	*/
 	public void leaveIterationConstruct() {
 		iterationConstructDepth--;
 	}
 
+	/*
+	* This function checks whether the current visited construct is within an iteration construct
+	*/
 	public boolean isInIterationConstruct() {
 		return iterationConstructDepth > 0;
 	}
+
 
 	public void resetIterationConstruct() {
 		iterationConstructDepth = 0;

@@ -25,7 +25,6 @@ public class PredicateGenerator {
     /*
     * Hard-coded lists for identifying the type of the operators for predicates
     */
-
     private static final List<PredicateOperatorNode.PredicateOperator> BINARY_PREDICATE_OPERATORS =
             Arrays.asList(PredicateOperatorNode.PredicateOperator.AND, PredicateOperatorNode.PredicateOperator.OR,
                     PredicateOperatorNode.PredicateOperator.IMPLIES, PredicateOperatorNode.PredicateOperator.EQUIVALENCE);
@@ -95,6 +94,9 @@ public class PredicateGenerator {
         return operatorGenerator.generateBinary(node::getOperator, expressionList);
     }
 
+    /*
+    * This function generates code for predicates with a relation on the right-hand side
+    */
     private String generateRelationOnRhs(PredicateOperatorWithExprArgsNode node) {
         ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
         if(POWER_SET_EXPRESSIONS.contains(rhs.getOperator())) {
@@ -103,6 +105,9 @@ public class PredicateGenerator {
         return relationSetGenerator.generateRelation(node);
     }
 
+    /*
+    * This function transforms the right-hand side with a POW node to a relation node
+    */
     private PredicateOperatorWithExprArgsNode transformPowNodeToRelationNode(PredicateOperatorWithExprArgsNode node) {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
@@ -245,6 +250,9 @@ public class PredicateGenerator {
         return val.render();
     }
 
+    /*
+    * This function generates code for the if predicate
+    */
     public String visitIfPredicateNode(IfPredicateNode node) {
         ST template = currentGroup.getInstanceOf("if_expression_predicate");
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), null));
@@ -253,6 +261,9 @@ public class PredicateGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for let predicates by invoking pre-generated code from IterationConstructHandler
+    */
     public String visitLetPredicateNode(LetPredicateNode node) {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }

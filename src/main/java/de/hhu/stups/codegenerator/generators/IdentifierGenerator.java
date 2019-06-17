@@ -66,6 +66,9 @@ public class IdentifierGenerator {
         return generate(node, isReturn, isPrivate, isAssigned);
     }
 
+    /*
+    * This function checks whether the given identifier is an output parameter
+    */
     private boolean isReturn(IdentifierExprNode node) {
         return outputParams.stream()
                 .map(declarationNode -> nameHandler.getEnumTypes().keySet().contains(declarationNode.getName()) ||
@@ -76,6 +79,9 @@ public class IdentifierGenerator {
                 .contains(node.toString());
     }
 
+    /*
+    * This function checks where the given identifier is assigned to a variable in the given parent.
+    */
     public boolean isAssigned(IdentifierExprNode node, Node parent) {
         boolean isAssigned = false;
         if(parent instanceof BecomesElementOfSubstitutionNode) {
@@ -128,6 +134,9 @@ public class IdentifierGenerator {
         return identifier.render();
     }
 
+    /*
+    * This function checks whether the name of an identifier is used on the left-hand side and on the right-hand side of an assignment
+    */
     private boolean rhsOnLhs(String name) {
         return !parallelConstructHandler.isLhsInParallel() && parallelConstructHandler.getParallelConstructAnalyzer() != null && parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel()
                 .stream()

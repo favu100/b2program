@@ -39,6 +39,9 @@ public class InfiniteSetGenerator {
         this.nameHandler = nameHandler;
     }
 
+    /*
+    * This function checks whether the given predicate contains an infinite epxression on the right-hand side
+    */
     public boolean checkInfinite(PredicateOperatorWithExprArgsNode node) {
         List<ExprNode> expressions = node.getExpressionNodes();
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
@@ -63,6 +66,9 @@ public class InfiniteSetGenerator {
         return false;
     }
 
+    /*
+    * This function checks whether the given expression is infinite
+    */
     public boolean isInfiniteExpression(ExprNode expression) {
         if(expression instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) expression).getOperator();
@@ -75,6 +81,9 @@ public class InfiniteSetGenerator {
         return false;
     }
 
+    /*
+    * This function generates code an operation name for a predicate with INTEGER on the right-hand side
+    */
     private String generateInfiniteInteger(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch(operator) {
@@ -108,6 +117,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code an operation name for a predicate with NATURAL on the right-hand side
+    */
     private String generateInfiniteNatural(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch (operator) {
@@ -141,6 +153,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code an operation name for a predicate with NATURAL1 on the right-hand side
+    */
     private String generateInfiniteNatural1(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch (operator) {
@@ -174,6 +189,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code an operation name for a predicate with STRING on the right-hand side
+    */
     private String generateInfiniteString(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch (operator) {
@@ -207,6 +225,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code an operation name for a predicate with a struct on the right-hand side
+    */
     private String generateInfiniteStruct(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch (operator) {
@@ -240,12 +261,18 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code for a struct on the right-hand side of a predicate
+    */
     private String generateInfiniteStruct(ST template, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName = generateInfiniteStruct(operator);
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();
     }
 
+    /*
+    * This function generates code for an infinite expression on the right-hand side of a predicate
+    */
     public String generateInfinite(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         ST template = currentGroup.getInstanceOf("infinite_predicate");
@@ -286,6 +313,9 @@ public class InfiniteSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking the domain of a relation. The domain is infinite. So the set of relations is not evaluated
+    */
     public String generateInfiniteDomainChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode domain) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
@@ -315,12 +345,18 @@ public class InfiniteSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking the domain of a relation. In this case, the domain of the relation is a struct. The set of relations is not evaluated.
+    */
     private String generateInfiniteDomainCheckingStruct(ST template) {
         String operatorName = "checkDomainStruct";
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();
     }
 
+    /*
+    * This function generates code for checking the range of a relation. The range is infinite. So the set of relations is not evaluated.
+    */
     public String generateInfiniteRangeChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
@@ -350,12 +386,18 @@ public class InfiniteSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for checking the range of a relation. In this case, the range of the relation is a struct. The set of relations is not evaluated.
+    */
     private String generateInfiniteRangeCheckingStruct(ST template) {
         String operatorName = "checkRangeStruct";
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();
     }
 
+    /*
+    * This function generates code for checking whether a relation is total. The domain is infinite. So the set of relations is not evaluated.
+    */
     private String generateInfiniteTotalRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
         String operatorName;
         switch(domainOperator) {
@@ -377,6 +419,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code for checking whether a relation is partial. The domain is infinite. So the set of relations is not evaluated.
+    */
     private String generateInfinitePartialRelation(ExpressionOperatorNode.ExpressionOperator domainOperator) {
         String operatorName;
         switch(domainOperator) {
@@ -398,6 +443,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code for a total/partial set of relations. As the domain is infinite, the set of relations is not evaluated.
+    */
     public String generateInfiniteTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode domain) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
@@ -417,6 +465,9 @@ public class InfiniteSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for a total/partial set of relations. As the domain is infinite, the set of relations is not evaluated.
+    */
     private String generateInfiniteTotalPartialStruct(ST template, ExpressionOperatorNode.ExpressionOperator operator) {
         if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isTotalStruct");
@@ -430,6 +481,9 @@ public class InfiniteSetGenerator {
         }
     }
 
+    /*
+    * This function generates code for checking whether a relation is surjective. The range is infinite. So the set of relations is not evaluated.
+    */
     private String generateInfiniteSurjection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
         String operatorName;
         switch(rangeOperator) {
@@ -451,6 +505,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code for checking whether a relation is bijective. The range and domain are infinite. So the set of relations is not evaluated.
+    */
     private String generateInfiniteBijection(ExpressionOperatorNode.ExpressionOperator rangeOperator) {
         String operatorName;
         switch(rangeOperator) {
@@ -472,6 +529,9 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    /*
+    * This function generates code for a surjective/injective/bijective set of relations. As the domain or range is infinite, the set of relations is not evaluated.
+    */
     public String generateInfiniteSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         ExprNode lhs = node.getExpressionNodes().get(0);
@@ -491,6 +551,9 @@ public class InfiniteSetGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for a surjective/injective/bijective set of relations containing structs. As the domain or range is infinite, the set of relations is not evaluated.
+    */
     private String generateInfiniteSurjectionInjectionBijectionStruct(ST template, ExpressionOperatorNode.ExpressionOperator operator) {
         if(RelationSetGenerator.TOTAL_EXPRESSIONS.contains(operator)) {
             TemplateHandler.add(template, "operator", "isSurjectionStruct");

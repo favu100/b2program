@@ -105,6 +105,9 @@ public class SubstitutionGenerator {
         return initialization.render();
     }
 
+    /*
+    * This function generates code for the VALUES clause from the given AST node of a machine
+    */
     public String generateValues(MachineNode node) {
         if(node.getValues().size() == 0) {
             return "";
@@ -117,12 +120,18 @@ public class SubstitutionGenerator {
         return values.render();
     }
 
+    /*
+    * This function generates code for initiailizing all constants from the given AST node of a machine
+    */
     public List<String> generateConstantsInitializations(MachineNode node) {
         return node.getConstants().stream()
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function generates code for the initialization of a constant
+    */
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
@@ -136,6 +145,9 @@ public class SubstitutionGenerator {
         return initialization.render();
     }
 
+    /*
+    * This function extracts all relevant conjuncts in the PROPERTIES clause to assign a value to a constant
+    */
     private List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
         return extractProperties(node).stream()
                 .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
@@ -145,6 +157,10 @@ public class SubstitutionGenerator {
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function extracts all conjuncts of the PROPERTIES clause. If the PROPERTIES clause is not a conjunction, it might not be analyzable by this code generator.
+    * In this case, an exception is thrown.
+    */
     private List<PredicateNode> extractProperties(MachineNode node) {
         List<PredicateNode> propertiesNodes = new ArrayList<>();
         if(node.getProperties() != null) {
@@ -229,6 +245,9 @@ public class SubstitutionGenerator {
     }
 
 
+    /*
+    * This function generates code for a choice substitution from the belonging AST node.
+    */
     public String visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
         ST choice = currentGroup.getInstanceOf("choice");
         int length = node.getSubstitutions().size();
@@ -244,6 +263,9 @@ public class SubstitutionGenerator {
         return choice.render();
     }
 
+    /*
+    * This function generates code for the other choices in the choice substitution
+    */
     private List<String> generateOtherChoices(ChoiceSubstitutionNode node) {
         List<String> otherChoices = new ArrayList<>();
         for (int i = 1; i < node.getSubstitutions().size() - 1; i++) {
@@ -285,9 +307,7 @@ public class SubstitutionGenerator {
     }
 
     /*
-    * This function generates code for sequential substitution and throws an exception for parallel substitutions as
-    * code generation for parallel subsitutition is not supported in the given subset of B.
-    * Therefore the belonging AST node is used.
+    * This function generates code for sequential substitution from the belonging AST node
     */
     public String visitListSubstitutionNode(ListSubstitutionNode node) {
         if(node.getOperator() == ListSubstitutionNode.ListOperator.Parallel) {
@@ -296,6 +316,9 @@ public class SubstitutionGenerator {
         return visitSequentialSubstitutionNode(node);
     }
 
+    /*
+    * This function generates code for a parallel substituion from the belonging AST node
+    */
     private String visitParallelSubstitutionNode(ListSubstitutionNode node) {
         //TODO Implement handling iteration construct
         //TODO implement parallel execution of operation call from included machine
@@ -310,6 +333,9 @@ public class SubstitutionGenerator {
         return substitutions.render();
     }
 
+    /*
+    * This function updates the current ParallelConstructAnalyzer
+    */
     private ParallelConstructAnalyzer getParallelConstructAnalyzer() {
         ParallelConstructAnalyzer parallelConstructAnalyzer;
         if(parallelConstructHandler.getParallelConstructAnalyzer() == null) {
@@ -324,6 +350,9 @@ public class SubstitutionGenerator {
         return parallelConstructAnalyzer;
     }
 
+    /*
+    * This function generates code for all necessary loads of variables before generating code for a parallel substitution
+    */
     private void generateParallelLoads(ST substitutions, ParallelConstructAnalyzer parallelConstructAnalyzer, ListSubstitutionNode node) {
         parallelConstructAnalyzer.visitSubstitutionNode(node, null);
         parallelConstructHandler.setLhsInParallel(true);
@@ -335,6 +364,9 @@ public class SubstitutionGenerator {
         parallelConstructAnalyzer.resetParallel();
     }
 
+    /*
+    * This function generates code for all assignments of variables within a parallel substitution
+    */
     private void generateParallelSubstitutions(ST substitutions, ParallelConstructAnalyzer parallelConstructAnalyzer, ListSubstitutionNode node) {
         List<String> others = node.getSubstitutions().stream()
                 .map(subs -> machineGenerator.visitSubstitutionNode(subs, null))
@@ -343,12 +375,18 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitutions, "others", others);
     }
 
+    /*
+    * This function resets the nesting level of the ParallelConstructHandler
+    */
     private void resetParallelConstructAnalyzer() {
         if(parallelNestingLevel == 0) {
             parallelConstructHandler.setParallelConstructAnalyzer(null);
         }
     }
 
+    /*
+    * This function generates code for a parallel load from the given AST node
+    */
     private String visitParallelLoad(ExprNode expr) {
         String identifier = machineGenerator.visitExprNode(expr, null);
         List<String> identifiersInCode = parallelConstructHandler.getParallelConstructAnalyzer().definedIdentifiersInCode();
@@ -375,6 +413,9 @@ public class SubstitutionGenerator {
         return String.join("\n", substitutionCodes);
     }
 
+    /*
+    * This function generates code for a becomes element of substitution with the belonging AST node
+    */
     public String visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node) {
         ST substitutions = currentGroup.getInstanceOf("assignments");
         List<String> assignments = new ArrayList<>();
@@ -385,6 +426,9 @@ public class SubstitutionGenerator {
         return substitutions.render();
     }
 
+    /*
+    * This function generates code for a nondeterministic assignment
+    */
     private String generateNondeterminism(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
         generateAssignmentBody(substitution, lhs, rhs);
@@ -392,6 +436,9 @@ public class SubstitutionGenerator {
         return substitution.render();
     }
 
+    /*
+    * This function generates code for the body of an assignment
+    */
     private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs) {
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
@@ -409,6 +456,9 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(identifier, null));
     }
 
+    /*
+    * This function extracts the changed identifier from the left-hand side of an assignment
+    */
     private IdentifierExprNode getIdentifierOnLhs(ExprNode lhs) {
         IdentifierExprNode identifier = null;
         if(lhs instanceof IdentifierExprNode) {
@@ -421,6 +471,9 @@ public class SubstitutionGenerator {
         return identifier;
     }
 
+    /*
+    * This function generates code for the argument of an assignment
+    */
     private void generateAssignmentArgument(ST substitution, ExprNode lhs, ExprNode rhs) {
         if(lhs instanceof ExpressionOperatorNode) {
             //TODO generate code for tuples as arguments
@@ -435,6 +488,9 @@ public class SubstitutionGenerator {
         }
     }
 
+    /*
+    * This function generates code for an operation call substitution from the belonging AST node
+    */
     public String visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode node, Void expected) {
         List<String> variables = node.getAssignedVariables().stream()
                 .map(var -> machineGenerator.visitExprNode(var, expected))
@@ -453,6 +509,9 @@ public class SubstitutionGenerator {
         return functionCall.render();
     }
 
+    /*
+    * This function gets the needed template for an operation call. It dependes on the size of the return parameters.
+    */
     private ST getOperationCallTemplate(OperationCallSubstitutionNode node, List<String> variables) {
         ST functionCall = null;
         if(variables.size() > 1) {
@@ -465,10 +524,16 @@ public class SubstitutionGenerator {
         return functionCall;
     }
 
+    /*
+    * This function returns the template for an operation call without assignment
+    */
     private ST getOperationCallTemplateWithoutAssignment() {
         return currentGroup.getInstanceOf("operation_call_without_assignment");
     }
 
+    /*
+    * This function returns the template for an operation call with assignment with one parameter
+    */
     private ST getOperationCallTemplateWithOneParameter(String variable) {
         ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_one_parameter");
         TemplateHandler.add(functionCall, "var", variable);
@@ -476,6 +541,9 @@ public class SubstitutionGenerator {
         return functionCall;
     }
 
+    /*
+    * This function returns the template for an operation call with assignment with many parameters
+    */
     private ST getOperationCallTemplateWithManyParameters(OperationCallSubstitutionNode node, List<String> variables) {
         OperationNode operationNode = node.getOperationNode();
         ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
@@ -545,11 +613,17 @@ public class SubstitutionGenerator {
         return declaration.render();
     }
 
+    /*
+    * This function generates code for an ANY substitution from the belonging AST node
+    */
     public String visitAnySubstitutionNode(AnySubstitutionNode node) {
         iterationConstructHandler.inspectSubstitution(node);
         return iterationConstructHandler.getIterationsMapCode().get(node.toString());
     }
 
+    /*
+    * This function generates code for a becomes such that substitution from the belonging AST node
+    */
     public String visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node) {
         iterationConstructHandler.inspectSubstitution(node);
         return iterationConstructHandler.getIterationsMapCode().get(node.toString());

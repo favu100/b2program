@@ -44,6 +44,9 @@ public class LetExpressionPredicateGenerator {
         this.iterationPredicateGenerator = iterationPredicateGenerator;
     }
 
+    /*
+    * This function generates code for a let expression from the belonging AST node
+    */
     public String generateLetExpression(LetExpressionNode node) {
         machineGenerator.inIterationConstruct();
         BType type = node.getType();
@@ -68,6 +71,9 @@ public class LetExpressionPredicateGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for a let predicate from the belonging AST node
+    */
     public String generateLetPredicate(LetPredicateNode node) {
         machineGenerator.inIterationConstruct();
         BType type = node.getType();
@@ -94,6 +100,9 @@ public class LetExpressionPredicateGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for other iteration constructs used within a let expression or a let predicate
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -107,6 +116,9 @@ public class LetExpressionPredicateGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the inner body of a let expression
+    */
     private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, ExprNode exprNode) {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
@@ -116,6 +128,9 @@ public class LetExpressionPredicateGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for the inner body of a let predicate
+    */
     private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, PredicateNode thenPredicateNode) {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
@@ -125,6 +140,9 @@ public class LetExpressionPredicateGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for the body of a let predicate
+    */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, PredicateNode thenPredicate) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateLetBody(otherConstructs, identifier, type, thenPredicate);
@@ -132,6 +150,9 @@ public class LetExpressionPredicateGenerator {
         TemplateHandler.add(template, "body", body);
     }
 
+    /*
+    * This function generates code for the body of a let expression
+    */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, ExprNode expression) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateLetBody(otherConstructs, identifier, type, expression);

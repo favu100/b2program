@@ -277,6 +277,9 @@ public class ExpressionGenerator {
         return number.render();
     }
 
+    /*
+    * This function generates code for a string from the given StringNode and the belonging template
+    */
     public String visitStringNode(StringNode node) {
         ST number = currentGroup.getInstanceOf("string");
         TemplateHandler.add(number, "string", node.getValue());
@@ -572,6 +575,9 @@ public class ExpressionGenerator {
         return interval.render();
     }
 
+    /*
+    * This function generates code for a projection function from the given semantic information
+    */
     private String generateProjection(ExpressionOperatorNode.ExpressionOperator operator, BType domainType, BType rangeType, List<String> arguments) {
         ST projection = currentGroup.getInstanceOf("projection");
         TemplateHandler.add(projection, "domainType", typeGenerator.generate(domainType));
@@ -582,6 +588,10 @@ public class ExpressionGenerator {
         return projection.render();
     }
 
+
+    /*
+    * This function generates code for calling projection on a tuple directly
+    */
     private String generateTupleProjection(ExpressionOperatorNode node) {
         ST projection = currentGroup.getInstanceOf("projection_tuple");
         ExpressionOperatorNode function = (ExpressionOperatorNode) node.getExpressionNodes().get(0);
@@ -590,6 +600,9 @@ public class ExpressionGenerator {
         return projection.render();
     }
 
+    /*
+    * This function generates code for identity function from the given semantic information
+    */
     private String generateIdentity(List<String> expressionList, BType type) {
         ST identity = currentGroup.getInstanceOf("identity");
         TemplateHandler.add(identity, "type", typeGenerator.generate(type));
@@ -597,6 +610,9 @@ public class ExpressionGenerator {
         return identity.render();
     }
 
+    /*
+    * This function generates code for cartesian product from the given semantic information
+    */
     private String generateCartesianProduct(List<String> expressionList, BType leftType, BType rightType) {
         ST identity = currentGroup.getInstanceOf("cartesian_product");
         TemplateHandler.add(identity, "leftType", typeGenerator.generate(leftType));
@@ -636,6 +652,9 @@ public class ExpressionGenerator {
     }
 
 
+    /*
+    * This function generates code for sequence enumeration from the given semantic information
+    */
     private String generateSeqEnumeration(BType type, List<String> expressions) {
         ST enumeration = currentGroup.getInstanceOf("seq_enumeration");
         BType subType = ((SetType) type).getSubType();
@@ -666,18 +685,30 @@ public class ExpressionGenerator {
         return val.render();
     }
 
+    /*
+    * This function generates code for quantified expressions by invoking pre-generated code from IterationConstructHandler
+    */
     public String visitQuantifiedExpressionNode(QuantifiedExpressionNode node) {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
+    /*
+    * This function generates code for set comprehensions by invoking pre-generated code from IterationConstructHandler
+    */
     public String visitSetComprehensionNode(SetComprehensionNode node) {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
+    /*
+    * This function generates code for lambda expressions by invoking pre-generated code from IterationConstructHandler
+    */
     public String visitLambdaNode(LambdaNode node) {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
+    /*
+    * This functon generates code for if expressions.
+    */
     public String visitIfExpressionNode(IfExpressionNode node) {
         ST template = currentGroup.getInstanceOf("if_expression_predicate");
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), null));
@@ -686,14 +717,23 @@ public class ExpressionGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for let expressions by invoking pre-generated code from IterationConstructHandler
+    */
     public String visitLetExpressionNode(LetExpressionNode node) {
         return iterationConstructHandler.getIterationsMapIdentifier().get(node.toString());
     }
 
+    /*
+    * This function generates code for BOOL
+    */
     private String generateBooleans() {
         return currentGroup.getInstanceOf("bool").render();
     }
 
+    /*
+    * This function generates code for MININT
+    */
     private String generateMinInt() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", minint);
@@ -701,6 +741,9 @@ public class ExpressionGenerator {
         return number.render();
     }
 
+    /*
+    * This function generates code for 0
+    */
     private String generateZero() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", 0);
@@ -708,6 +751,9 @@ public class ExpressionGenerator {
         return number.render();
     }
 
+    /*
+    * This function generates code for MAXINT
+    */
     private String generateMaxInt() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", maxint);
@@ -715,6 +761,9 @@ public class ExpressionGenerator {
         return number.render();
     }
 
+    /*
+    * This function generates code for INT
+    */
     private String generateInt() {
         ST interval = currentGroup.getInstanceOf("interval");
         TemplateHandler.add(interval, "arg1", generateMinInt());
@@ -722,6 +771,9 @@ public class ExpressionGenerator {
         return interval.render();
     }
 
+    /*
+    * This function generates code for NAT
+    */
     private String generateNat() {
         ST interval = currentGroup.getInstanceOf("interval");
         TemplateHandler.add(interval, "arg1", generateZero());
@@ -729,10 +781,16 @@ public class ExpressionGenerator {
         return interval.render();
     }
 
+    /*
+    * This function generates code for a record by invoking the belonging function in RecordStructGenerator
+    */
     private String visitRecordNode(RecordNode node) {
         return recordStructGenerator.visitRecordNode(node);
     }
 
+    /*
+    * This function generates code for a record field access by invoking the belonging function in RecordStructGenerator
+    */
     private String visitRecordFieldAccessNode(RecordFieldAccessNode node) {
         return recordStructGenerator.visitRecordFieldAccessNode(node);
     }

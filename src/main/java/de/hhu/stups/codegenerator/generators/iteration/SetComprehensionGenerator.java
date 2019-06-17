@@ -43,6 +43,9 @@ public class SetComprehensionGenerator {
         this.typeGenerator = typeGenerator;
     }
 
+    /*
+    * This function generates code for a set comprehension from the belonging AST node
+    */
     public String generateSetComprehension(SetComprehensionNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicateNode();
@@ -68,6 +71,9 @@ public class SetComprehensionGenerator {
         return result;
     }
 
+    /*
+    * This function generates code for the predicate of a set comprehension
+    */
     private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size());
         ST template = group.getInstanceOf("set_comprehension_predicate");
@@ -82,6 +88,9 @@ public class SetComprehensionGenerator {
         return template.render();
     }
 
+    /*
+    * This function generates code for other iteration constructs within a set comprehension
+    */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
@@ -95,6 +104,9 @@ public class SetComprehensionGenerator {
         return otherConstructsGenerator.getIterationsMapCode().values();
     }
 
+    /*
+    * This function generates code for the body of a set comprehension
+    */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean isRelation, PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
@@ -111,6 +123,9 @@ public class SetComprehensionGenerator {
         TemplateHandler.add(template, "comprehension", comprehension);
     }
 
+    /*
+    * This function generates code for the type of the set comprehension from the given semantic information
+    */
     private void generateSubType(ST template, List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             DeclarationNode declarationNode = declarations.get(0);
@@ -123,6 +138,9 @@ public class SetComprehensionGenerator {
         }
     }
 
+    /*
+    * This function extracts the resulted element of a set comprehension from the given semantic information
+    */
     private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             return "_ic_" + declarations.get(declarations.size() - 1).getName();

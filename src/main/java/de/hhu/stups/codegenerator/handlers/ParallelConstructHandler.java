@@ -5,6 +5,10 @@ import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
 /**
  * Created by fabian on 04.03.19.
  */
+
+/*
+* This class stores the information about whether the current visited part of the AST is the left-hand side on an assignment
+*/
 public class ParallelConstructHandler {
 
     private ParallelConstructAnalyzer parallelConstructAnalyzer;

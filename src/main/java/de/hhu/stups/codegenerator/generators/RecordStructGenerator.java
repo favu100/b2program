@@ -50,6 +50,9 @@ public class RecordStructGenerator {
 
     }
 
+    /*
+    * This function generates code for a record with the belonging AST node
+    */
     public String visitRecordNode(RecordNode node) {
         ST record = currentGroup.getInstanceOf("record");
         BType type = node.getType();
@@ -62,6 +65,9 @@ public class RecordStructGenerator {
         return record.render();
     }
 
+    /*
+    * This function generates code for a record field access with the belonging AST node
+    */
     public String visitRecordFieldAccessNode(RecordFieldAccessNode node) {
         ST fieldAccess = currentGroup.getInstanceOf("record_field_access");
         TemplateHandler.add(fieldAccess, "record", machineGenerator.visitExprNode(node.getRecord(), null));
@@ -70,12 +76,18 @@ public class RecordStructGenerator {
     }
 
 
+    /*
+    * This function generates code for all structs
+    */
     public List<String> generateStructs() {
         return generatedStructs.stream()
                 .map(this::generateStruct)
                 .collect(Collectors.toList());
     }
 
+    /*
+    * This function generates code for a struct from the given record type
+    */
     private String generateStruct(RecordType recordType) {
         ST struct = currentGroup.getInstanceOf("struct");
         TemplateHandler.add(struct, "name", nodeToClassName.get(recordType.toString()));
@@ -114,6 +126,9 @@ public class RecordStructGenerator {
         return struct.render();
     }
 
+    /*
+    * This function generates code for the declaration of identifier with a record type
+    */
     private String generateDeclaration(BType type, String identifier) {
         ST declaration = currentGroup.getInstanceOf("global_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(type));
@@ -122,6 +137,9 @@ public class RecordStructGenerator {
         return declaration.render();
     }
 
+    /*
+    * This function generates code for a parameter of a struct
+    */
     private String generateStructParameter(BType type, String identifier) {
         ST parameter = currentGroup.getInstanceOf("parameter");
         TemplateHandler.add(parameter, "type", typeGenerator.generate(type));
@@ -129,12 +147,18 @@ public class RecordStructGenerator {
         return parameter.render();
     }
 
+    /*
+    * This function generates code for the initialization of a record field
+    */
     private String generateInitialization(String identifier) {
         ST initialization = currentGroup.getInstanceOf("record_field_initialization");
         TemplateHandler.add(initialization, "identifier", identifier);
         return initialization.render();
     }
 
+    /*
+    * This function generates code for a getter function or a struct
+    */
     private String generateGetFunction(BType type, String identifier) {
         ST function = currentGroup.getInstanceOf("record_field_get");
         TemplateHandler.add(function, "type", typeGenerator.generate(type));
@@ -142,6 +166,9 @@ public class RecordStructGenerator {
         return function.render();
     }
 
+    /*
+    * This function generates code for a function overriding a record field in a struct. The generated function ensures immutability
+    */
     private List<String> generateOverwriteFunctions(RecordType recordType, String name) {
         List<String> functions = new ArrayList<>();
         List<String> identifiers = recordType.getIdentifiers();
@@ -156,30 +183,45 @@ public class RecordStructGenerator {
         return functions;
     }
 
+    /*
+    * This function generates code for assigning an identifier to another identifier representing a record
+    */
     private String generateAssignment(String identifier) {
         ST assignment = currentGroup.getInstanceOf("record_assignment");
         TemplateHandler.add(assignment, "identifier", identifier);
         return assignment.render();
     }
 
+    /*
+    * This function generates code for checking equality of a field in two records
+    */
     private String generateEqualPredicate(String identifier) {
         ST binary = currentGroup.getInstanceOf("record_equal_predicate");
         TemplateHandler.add(binary, "field", identifier);
         return binary.render();
     }
 
+    /*
+    * This function generates code for checking inequality of a field in two records
+    */
     private String generateUnequalPredicate(String identifier) {
         ST binary = currentGroup.getInstanceOf("record_unequal_predicate");
         TemplateHandler.add(binary, "field", identifier);
         return binary.render();
     }
 
+    /*
+    * This function generates the toString function in a struct
+    */
     private String generateFieldToStrings(String identifier) {
         ST fieldToString = currentGroup.getInstanceOf("record_field_to_string");
         TemplateHandler.add(fieldToString, "identifier", identifier);
         return fieldToString.render();
     }
 
+    /*
+    * This function creates a struct, generates code for it and adds it to the belonging HashMap from the given record type. The implementation of a struct is then used in a template later.
+    */
     public void createNewStruct(RecordType type) {
         if(nodeToClassName.containsKey(type.toString())) {
             return;
@@ -192,6 +234,10 @@ public class RecordStructGenerator {
         counter++;
     }
 
+    /*
+    * This function creates a struct, generates code for it and adds it to the belonging HashMap from the given node representing an operation. Output parameters of an operation with more than one output parameter are generated using a struct.
+    * The implementation of a struct is then used in a template later.
+    */
     public void createNewStruct(OperationNode node) {
         if(nodeToClassName.containsKey(node.toString())) {
             return;
@@ -205,14 +251,23 @@ public class RecordStructGenerator {
         counter++;
     }
 
+    /*
+    * This function returns a class name representing a struct for the given record type
+    */
     public String getStruct(BType recordType) {
         return nodeToClassName.get(recordType.toString());
     }
 
+    /*
+    * This function returns to class name representing a struct for the output parameters of the given node representing an operation
+    */
     public String getStruct(OperationNode node) {
         return nodeToClassName.get(getRecordTypeFromOperation(node).toString());
     }
 
+    /*
+    * This function extracts a record type from the output parameters of the given node representing an operation.
+    */
     private RecordType getRecordTypeFromOperation(OperationNode node) {
         List<String> identifiers = node.getOutputParams()
                 .stream()

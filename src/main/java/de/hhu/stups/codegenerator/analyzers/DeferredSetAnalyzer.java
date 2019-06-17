@@ -35,6 +35,9 @@ public class DeferredSetAnalyzer {
         this.deferredSetsWithDefaultSize = new ArrayList<>();
     }
 
+    /*
+    * This function analyzes the given list of deferred sets with the given predicate representing a PROPERTIES clause
+    */
     public void analyze(List<DeclarationNode> deferredSets, PredicateNode properties) {
         if(properties == null || !isConjunction(properties)) {
             setDefaultSizeForDeferredSets(deferredSets);
@@ -43,6 +46,9 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function checks whether the given predicate is a conjunction
+    */
     private boolean isConjunction(PredicateNode predicate) {
         if(predicate instanceof PredicateOperatorNode) {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
@@ -53,12 +59,18 @@ public class DeferredSetAnalyzer {
         return true;
     }
 
+    /*
+    * This function sets the default set size for a deferred set for the given list of deferred sets
+    */
     private void setDefaultSizeForDeferredSets(List<DeclarationNode> deferredSets) {
         for (DeclarationNode deferredSet : deferredSets) {
             setToSize.put(deferredSet.getName(), getDefaultSetSize());
         }
     }
 
+    /*
+    * This function extracts the size and enumerated elements of the given list of deferred sets with the help of the given predicate representing the PROPERTIES clause
+    */
     private void analyzeDeferredSets(List<DeclarationNode> deferredSets, PredicateNode properties) {
         for (DeclarationNode deferredSet : deferredSets) {
             analyzeSize(deferredSet, properties);
@@ -66,6 +78,9 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function extracts the size of the given deferred set with the given predicate representing the PROPERTIES clause
+    */
     private void analyzeSize(DeclarationNode deferredSet, PredicateNode properties) {
         if(properties instanceof PredicateOperatorWithExprArgsNode) {
             analyzeSize(deferredSet, (PredicateOperatorWithExprArgsNode) properties);
@@ -74,6 +89,9 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function extracts the size of the given deferred set with the given predicate as PredicateOperatorWithExprArgsNode representing the PROPERTIES clause
+    */
     private void analyzeSize(DeclarationNode deferredSet, PredicateOperatorWithExprArgsNode properties) {
         if(isRelevantSizeConjunct(deferredSet, properties)) {
             int size = extractSizeFromConjunct(deferredSet, properties);
@@ -84,6 +102,9 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function extracts the size of the given deferred set with the given predicate as PredicateOperatorNode representing the PROPERTIES clause
+    */
     private void analyzeSize(DeclarationNode deferredSet, PredicateOperatorNode properties) {
         for (PredicateNode conjunct: properties.getPredicateArguments()) {
             if(isRelevantSizeConjunct(deferredSet, conjunct)) {
@@ -96,6 +117,10 @@ public class DeferredSetAnalyzer {
         deferredSetsWithDefaultSize.add(deferredSet.getName());
     }
 
+    /*
+    * This function extracts the enumerated elements of the given deferred set with the given predicate representing the PROPERTIES clause.
+    * Finally, it checks the enumerated elements for correctness.
+    */
     private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateNode properties) {
         if(properties instanceof PredicateOperatorWithExprArgsNode) {
             analyzeEnumeratedElements(deferredSet, (PredicateOperatorWithExprArgsNode) properties);
@@ -105,6 +130,9 @@ public class DeferredSetAnalyzer {
         checkEnumeratedElements(deferredSet);
     }
 
+    /*
+    * This function extracts the enumerated elements of the given deferred set with the given predicate as PredicateOperatorWithExprArgsNode representing the PROPERTIES clause.
+    */
     private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateOperatorWithExprArgsNode properties) {
         if(isRelevantEnumeratedSetConjunct(deferredSet, properties)) {
             List<String> enumeratedElements = extractEnumeratedElements(deferredSet, properties);
@@ -112,6 +140,9 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function extracts the enumerated elements of the given deferred set with the given predicate as PredicateOperatorNode representing the PROPERTIES clause.
+    */
     private void analyzeEnumeratedElements(DeclarationNode deferredSet, PredicateOperatorNode properties) {
         for (PredicateNode conjunct: properties.getPredicateArguments()) {
             if(isRelevantEnumeratedSetConjunct(deferredSet, conjunct)) {
@@ -122,6 +153,9 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function checks the size and enumerated elements of the given deferred set.
+    */
     private void checkEnumeratedElements(DeclarationNode deferredSet) {
         String name = deferredSet.getName();
         if(setToEnumeratedElements.keySet().contains(name) && deferredSetsWithDefaultSize.contains(name)) {
@@ -129,10 +163,16 @@ public class DeferredSetAnalyzer {
         }
     }
 
+    /*
+    * This function checks whether the enumerated elements of the given deferred set is declared by an enumeration
+    */
     public boolean isDeclaredByEnumeration(DeclarationNode node) {
         return setToEnumeratedElements.containsKey(node.getName());
     }
 
+    /*
+    * This function checks whether the given predicate is a relevant conjunct for extracting the size of the given deferred set
+    */
     private boolean isRelevantSizeConjunct(DeclarationNode deferredSet, PredicateNode predicate) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode pred = (PredicateOperatorWithExprArgsNode) predicate;
@@ -155,6 +195,9 @@ public class DeferredSetAnalyzer {
         return false;
     }
 
+    /*
+    * This function checks whether the given predicate is a relevant conjunct for extracting the enumerated elements of the given deferred set
+    */
     private boolean isRelevantEnumeratedSetConjunct(DeclarationNode deferredSet, PredicateNode predicate) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode pred = (PredicateOperatorWithExprArgsNode) predicate;
@@ -171,6 +214,9 @@ public class DeferredSetAnalyzer {
         return false;
     }
 
+    /*
+    * This function extracts the size of the given deferred set from the given predicate
+    */
     private int extractSizeFromConjunct(DeclarationNode deferredSet, PredicateNode predicate) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode pred = (PredicateOperatorWithExprArgsNode) predicate;
@@ -193,6 +239,9 @@ public class DeferredSetAnalyzer {
         return -1;
     }
 
+    /*
+    * This function extracts the enumerated elements of the given deferred set from the given predicate
+    */
     private List<String> extractEnumeratedElements(DeclarationNode deferredSet, PredicateNode predicate) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode pred = (PredicateOperatorWithExprArgsNode) predicate;
@@ -212,10 +261,16 @@ public class DeferredSetAnalyzer {
         return null;
     }
 
+    /*
+    * This function returns the size of the given deferred set represented by a DeclarationNode
+    */
     public int getSetSize(DeclarationNode node) {
         return setToSize.get(node.getName());
     }
 
+    /*
+    * This function returns the enumerated elements of the given deferred set represented by a DeclarationNode
+    */
     public List<String> getElements(DeclarationNode node) {
         return setToEnumeratedElements.get(node.getName());
     }

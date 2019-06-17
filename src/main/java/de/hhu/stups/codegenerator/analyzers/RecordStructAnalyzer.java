@@ -54,6 +54,10 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         this.recordStructGenerator = recordStructGenerator;
     }
 
+    /*
+    * This function analyzes records and structs from the given AST node representing a machine. It then analyze the child nodes recursively.
+    * It also visits the VARIABLES and CONSTANTS clause and create a struct if there are newly declared records and structs in these clauses.
+    */
     public void visitMachineNode(MachineNode node) {
         node.getVariables().forEach(variable -> {
             //TODO: Check recursively for RecordType
@@ -78,6 +82,9 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         visitPredicateNode(node.getInvariant(), null);
     }
 
+    /*
+    * If an operation returns more than one output parameter, then a struct is generated for the output parameters of this operation. It is needed to generate operation call with assignments containing many output parameters.
+    */
     public void visitOperationNode(OperationNode node) {
         if(node.getOutputParams().size() > 1) {
             recordStructGenerator.createNewStruct(node);
@@ -291,12 +298,18 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+    * This function creates a struct from the visited AST node representing a record.
+    */
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
         recordStructGenerator.createNewStruct((RecordType) node.getType());
         return null;
     }
 
+    /*
+    * This function creates a struct from the visited AST node representing a struct
+    */
     @Override
     public Void visitStructNode(StructNode node, Void expected) {
         RecordType recordType = (RecordType)((SetType)node.getType()).getSubType();

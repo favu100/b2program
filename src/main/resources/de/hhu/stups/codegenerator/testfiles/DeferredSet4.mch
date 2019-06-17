@@ -12,16 +12,18 @@ PROPERTIES
     card(USERS) = 3
 
 VARIABLES
-    Users
+    Users, current
 
 
 INVARIANT
-    Users <: USERS
+    Users <: USERS &
+    current : USERS
 
 
 
 INITIALISATION
-    Users := {}
+    Users := {} ||
+    current := a
 
 
 OPERATIONS
@@ -29,7 +31,8 @@ OPERATIONS
     PRE
         user:USERS & user/:Users
     THEN
-        Users := Users \/ {user}
+        Users := Users \/ {user} ||
+        current := b
     END
 
 END

@@ -58,6 +58,8 @@ public class SubstitutionGenerator {
 
     private final RecordStructGenerator recordStructGenerator;
 
+    private final DeclarationGenerator declarationGenerator;
+
     private int currentLocalScope;
 
     private int localScopes;
@@ -70,7 +72,7 @@ public class SubstitutionGenerator {
                                  final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator,
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
-                                 final RecordStructGenerator recordStructGenerator) {
+                                 final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -81,6 +83,7 @@ public class SubstitutionGenerator {
         this.iterationConstructHandler = iterationConstructHandler;
         this.parallelConstructHandler = parallelConstructHandler;
         this.recordStructGenerator = recordStructGenerator;
+        this.declarationGenerator = declarationGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -124,9 +127,13 @@ public class SubstitutionGenerator {
     * This function generates code for initiailizing all constants from the given AST node of a machine
     */
     public List<String> generateConstantsInitializations(MachineNode node) {
-        return node.getConstants().stream()
+        List<String> constantsInitializations = node.getConstants().stream()
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList());
+        constantsInitializations.addAll(node.getConstants().stream()
+                .map(this::generateConstantFromDeferredSet)
+                .collect(Collectors.toList()));
+        return constantsInitializations;
     }
 
     /*
@@ -142,6 +149,13 @@ public class SubstitutionGenerator {
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
         TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+        return initialization.render();
+    }
+
+    private String generateConstantFromDeferredSet(DeclarationNode constant) {
+        ST initialization = currentGroup.getInstanceOf("constant_initialization");
+        TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(initialization, "val", declarationGenerator.callEnum(constant.getType().toString(), constant));
         return initialization.render();
     }
 

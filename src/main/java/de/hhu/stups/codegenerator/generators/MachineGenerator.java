@@ -128,7 +128,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
 																expressionGenerator, identifierGenerator, iterationConstructHandler,
-																parallelConstructHandler, recordStructGenerator);
+																parallelConstructHandler, recordStructGenerator, declarationGenerator);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);

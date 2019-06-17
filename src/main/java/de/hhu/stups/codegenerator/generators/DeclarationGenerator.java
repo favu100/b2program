@@ -287,8 +287,8 @@ public class DeclarationGenerator {
     }
 
     /*
-    * This function generates code for calling enums from an enumerated set from the belonging AST node,
-    * template and the name of the enumerated set the enum belongs to.
+    * This function generates code for calling enums from an enumerated set/deferred set from the belonging AST node,
+    * template and the name of the enumerated set/deferred set the enum belongs to.
     */
     public String callEnum(String setName, DeclarationNode enumNode) {
         ST enumST = currentGroup.getInstanceOf("enum_call");

@@ -4,9 +4,11 @@ import de.hhu.stups.btypes.BTuple;
 import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
 import de.hhu.stups.btypes.BUtils;
 
 public class Train_1_beebook_deterministic {
+
 
     private final BRelation<ROUTES, BLOCKS> fst;
     private final BRelation<ROUTES, BLOCKS> lst;
@@ -79,7 +81,7 @@ public class Train_1_beebook_deterministic {
         BRelation<BLOCKS, ROUTES> _ic_set_0 = new BRelation<BLOCKS, ROUTES>();
         for(BLOCKS _ic_b : _BLOCKS) {
             for(ROUTES _ic_r : _ROUTES) {
-                if((nxt.domain().elementOf(_ic_r).and(nxt.functionCall(_ic_r).domain().elementOf(_ic_b).or(nxt.functionCall(_ic_r).range().elementOf(_ic_b)))).booleanValue()) {
+                if((new BBoolean(nxt.domain().elementOf(_ic_r).booleanValue() && new BBoolean(nxt.functionCall(_ic_r).domain().elementOf(_ic_b).booleanValue() || nxt.functionCall(_ic_r).range().elementOf(_ic_b).booleanValue()).booleanValue())).booleanValue()) {
                     _ic_set_0 = _ic_set_0.union(new BRelation<BLOCKS, ROUTES>(new BTuple<>(_ic_b, _ic_r)));
                 }
 

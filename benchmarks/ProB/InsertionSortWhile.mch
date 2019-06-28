@@ -7,7 +7,7 @@ INVARIANT
  arr:seq(NATURAL) & sorted : BOOL &
  (sorted=TRUE
    => !x.(x:2..n => arr(x-1) <= arr(x)))
-INITIALISATION arr:= random_permutation(1..n) // random_permutation_seq(%x.(x:1..n|n-x))
+INITIALISATION arr:= %i.(i : 1 .. n|n - i)
               || sorted := FALSE
 OPERATIONS
   Sort = SELECT sorted=FALSE THEN

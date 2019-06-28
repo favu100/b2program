@@ -16,9 +16,12 @@ using namespace std;
 class Train_1_beebook_deterministic {
 
     public:
+
+
         class BLOCKS : public BObject {
             public:
 
+                typedef BLOCKS current_type;
                 typedef void value_type;
                 typedef void left_type;
                 typedef void right_type;
@@ -48,11 +51,11 @@ class Train_1_beebook_deterministic {
                     this->value = type;
                 }
 
-                BBoolean equal(const BLOCKS& o) {
+                BBoolean equal(const BLOCKS& o) const {
                     return value == o.value;
                 }
 
-                BBoolean unequal(const BLOCKS& o) {
+                BBoolean unequal(const BLOCKS& o) const {
                     return value != o.value;
                 }
 
@@ -95,6 +98,7 @@ class Train_1_beebook_deterministic {
         class ROUTES : public BObject {
             public:
 
+                typedef ROUTES current_type;
                 typedef void value_type;
                 typedef void left_type;
                 typedef void right_type;
@@ -120,11 +124,11 @@ class Train_1_beebook_deterministic {
                     this->value = type;
                 }
 
-                BBoolean equal(const ROUTES& o) {
+                BBoolean equal(const ROUTES& o) const {
                     return value == o.value;
                 }
 
-                BBoolean unequal(const ROUTES& o) {
+                BBoolean unequal(const ROUTES& o) const {
                     return value != o.value;
                 }
 
@@ -189,9 +193,10 @@ class Train_1_beebook_deterministic {
             BRelation<BLOCKS, ROUTES > _ic_set_0 = BRelation<BLOCKS, ROUTES >();
             for(BLOCKS _ic_b : _BLOCKS) {
                 for(ROUTES _ic_r : _ROUTES) {
-                    if((_BLOCKS.elementOf(_ic_b)._and(_ROUTES.elementOf(_ic_r))._and(nxt.domain().elementOf(_ic_r)._and(nxt.functionCall(_ic_r).domain().elementOf(_ic_b)._or(nxt.functionCall(_ic_r).range().elementOf(_ic_b))))).booleanValue()) {
+                    if(((BBoolean(nxt.domain().elementOf(_ic_r).booleanValue() && (BBoolean(nxt.functionCall(_ic_r).domain().elementOf(_ic_b).booleanValue() || nxt.functionCall(_ic_r).range().elementOf(_ic_b).booleanValue())).booleanValue()))).booleanValue()) {
                         _ic_set_0 = _ic_set_0._union(BRelation<BLOCKS, ROUTES >((BTuple<BLOCKS, ROUTES >(_ic_b, _ic_r))));
                     }
+
                 }
             }
             rtbl = _ic_set_0;

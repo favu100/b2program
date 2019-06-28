@@ -1,9 +1,11 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
 import de.hhu.stups.btypes.BUtils;
 
 public class Sieve {
+
 
 
 
@@ -14,14 +16,14 @@ public class Sieve {
     private BInteger limit;
 
     public Sieve() {
-        numbers = BSet.interval(new BInteger(2),new BInteger(2000000));
+        numbers = BSet.interval(new BInteger(2),new BInteger(1000000));
         cur = new BInteger(2);
-        limit = new BInteger(2000000);
+        limit = new BInteger(1000000);
     }
 
     public BInteger ComputeNumberOfPrimes() {
         BInteger res = null;
-        while((cur.greater(new BInteger(1)).and(cur.multiply(cur).lessEqual(limit))).booleanValue()) {
+        while((new BBoolean(cur.greater(new BInteger(1)).booleanValue() && cur.multiply(cur).lessEqual(limit).booleanValue())).booleanValue()) {
             if((numbers.elementOf(cur)).booleanValue()) {
                 BInteger n = null;
                 BSet<BInteger> set = null;
@@ -39,9 +41,6 @@ public class Sieve {
         return res;
     }
 
-    public static void main(String[] args) {
-        Sieve exec = new Sieve();
-        exec.ComputeNumberOfPrimes();
-    }
+
 
 }

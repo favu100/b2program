@@ -169,25 +169,23 @@ public class PredicateGenerator {
     * This functions gets the template for binary predicates and replaces the placeholder with the given operator.
     */
     public ST generateBinary(PredicateOperatorNode.PredicateOperator operator) {
-        ST template = currentGroup.getInstanceOf("binary");
-        String operatorName;
+        ST template;
         switch(operator) {
             case AND:
-                operatorName = "and";
+                template = currentGroup.getInstanceOf("and");
                 break;
             case OR:
-                operatorName = "or";
+                template = currentGroup.getInstanceOf("or");
                 break;
             case IMPLIES:
-                operatorName = "implies";
+                template = currentGroup.getInstanceOf("implies");
                 break;
             case EQUIVALENCE:
-                operatorName = "equivalent";
+                template = currentGroup.getInstanceOf("equivalent");
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
-        TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template;
     }
 

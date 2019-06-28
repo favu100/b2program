@@ -16,6 +16,8 @@ class sort_m2_data1000 {
 
     public:
 
+
+
     private:
 
         BRelation<BInteger, BInteger > f;
@@ -33,7 +35,7 @@ class sort_m2_data1000 {
         sort_m2_data1000() {
             BRelation<BInteger, BInteger > _ic_set_0 = BRelation<BInteger, BInteger >();
             for(BInteger _ic_i : (BSet<BInteger>::interval((BInteger(1)),(BInteger(1000))))) {
-                _ic_set_0 = _ic_set_0._union(BRelation<BInteger, BInteger>(BTuple<BInteger, BInteger>(_ic_i, (BInteger(10500)).minus(_ic_i))));
+                _ic_set_0 = _ic_set_0._union(BRelation<BInteger, BInteger>(BTuple<BInteger, BInteger>(_ic_i, (BInteger(1500)).minus(_ic_i))));
 
             }
             f = _ic_set_0;
@@ -45,7 +47,7 @@ class sort_m2_data1000 {
         }
 
         void progress() {
-            if((k.unequal(n)._and(j.equal(n))).booleanValue()) {
+            if(((BBoolean(k.unequal(n).booleanValue() && j.equal(n).booleanValue()))).booleanValue()) {
                 BRelation<BInteger, BInteger > _ld_g = g;
                 BInteger _ld_k = k;
                 BInteger _ld_l = l;
@@ -57,7 +59,7 @@ class sort_m2_data1000 {
         }
 
         void prog1() {
-            if((k.unequal(n)._and(j.unequal(n))._and(g.functionCall(l).lessEqual(g.functionCall(j.plus((BInteger(1))))))).booleanValue()) {
+            if(((BBoolean((BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue())).booleanValue() && g.functionCall(l).lessEqual(g.functionCall(j.plus((BInteger(1))))).booleanValue()))).booleanValue()) {
                 BInteger _ld_j = j;
                 BInteger _ld_l = l;
                 l = _ld_l;
@@ -66,7 +68,7 @@ class sort_m2_data1000 {
         }
 
         void prog2() {
-            if((k.unequal(n)._and(j.unequal(n))._and(g.functionCall(l).greater(g.functionCall(j.plus((BInteger(1))))))).booleanValue()) {
+            if(((BBoolean((BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue())).booleanValue() && g.functionCall(l).greater(g.functionCall(j.plus((BInteger(1))))).booleanValue()))).booleanValue()) {
                 BInteger _ld_j = j;
                 j = _ld_j.plus((BInteger(1)));
                 l = _ld_j.plus((BInteger(1)));

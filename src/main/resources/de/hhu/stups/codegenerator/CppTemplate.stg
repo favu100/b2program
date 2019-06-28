@@ -458,6 +458,22 @@ binary(arg1,operator,arg2) ::= <<
 <arg1>.<operator>(<arg2>)
 >>
 
+or(arg1, arg2) ::= <<
+(BBoolean(<arg1>.booleanValue() || <arg2>.booleanValue()))
+>>
+
+and(arg1, arg2) ::= <<
+(BBoolean(<arg1>.booleanValue() && <arg2>.booleanValue()))
+>>
+
+implies(arg1, arg2) ::= <<
+(BBoolean(!<arg1>.booleanValue() || <arg2>.booleanValue()))
+>>
+
+equivalent(arg1, arg2) ::= <<
+(BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue || <arg1>.booleanValue())))
+>>
+
 unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>

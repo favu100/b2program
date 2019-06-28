@@ -14,6 +14,8 @@ class Sieve {
 
     public:
 
+
+
     private:
 
 
@@ -26,14 +28,14 @@ class Sieve {
     public:
 
         Sieve() {
-            numbers = (BSet<BInteger>::interval((BInteger(2)),(BInteger(2000000))));
+            numbers = (BSet<BInteger>::interval((BInteger(2)),(BInteger(1000000))));
             cur = (BInteger(2));
-            limit = (BInteger(2000000));
+            limit = (BInteger(1000000));
         }
 
         BInteger ComputeNumberOfPrimes() {
             BInteger res;
-            while((cur.greater((BInteger(1)))._and(cur.multiply(cur).lessEqual(limit))).booleanValue()) {
+            while(((BBoolean(cur.greater((BInteger(1))).booleanValue() && cur.multiply(cur).lessEqual(limit).booleanValue()))).booleanValue()) {
                 if((numbers.elementOf(cur)).booleanValue()) {
                     BInteger n;
                     BSet<BInteger > set;
@@ -52,11 +54,6 @@ class Sieve {
         }
 
 };
-
-int main() {
-    Sieve sieve;
-    sieve.ComputeNumberOfPrimes();
-}
 
 
 #endif

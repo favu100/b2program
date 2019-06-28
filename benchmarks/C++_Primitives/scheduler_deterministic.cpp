@@ -13,9 +13,12 @@ using namespace std;
 class scheduler_deterministic {
 
     public:
+
+
         class PID : public BObject {
             public:
 
+                typedef PID current_type;
                 typedef void value_type;
                 typedef void left_type;
                 typedef void right_type;
@@ -34,11 +37,11 @@ class scheduler_deterministic {
                     this->value = type;
                 }
 
-                BBoolean equal(const PID& o) {
+                BBoolean equal(const PID& o) const {
                     return value == o.value;
                 }
 
-                BBoolean unequal(const PID& o) {
+                BBoolean unequal(const PID& o) const {
                     return value != o.value;
                 }
 
@@ -86,7 +89,7 @@ class scheduler_deterministic {
         }
 
         void _new(const PID& pp) {
-            if((_PID.elementOf(pp)._and(active.notElementOf(pp))._and(_ready._union(waiting).notElementOf(pp))).booleanValue()) {
+            if(((BBoolean((BBoolean(_PID.elementOf(pp).booleanValue() && active.notElementOf(pp).booleanValue())).booleanValue() && _ready._union(waiting).notElementOf(pp).booleanValue()))).booleanValue()) {
                 waiting = waiting._union((BSet<PID >(pp)));
             }
         }

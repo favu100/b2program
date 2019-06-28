@@ -14,9 +14,12 @@ using namespace std;
 class Cruise_finite1_deterministic {
 
     public:
+
+
         class RSset : public BObject {
             public:
 
+                typedef RSset current_type;
                 typedef void value_type;
                 typedef void left_type;
                 typedef void right_type;
@@ -36,11 +39,11 @@ class Cruise_finite1_deterministic {
                     this->value = type;
                 }
 
-                BBoolean equal(const RSset& o) {
+                BBoolean equal(const RSset& o) const {
                     return value == o.value;
                 }
 
-                BBoolean unequal(const RSset& o) {
+                BBoolean unequal(const RSset& o) const {
                     return value != o.value;
                 }
 
@@ -73,6 +76,7 @@ class Cruise_finite1_deterministic {
         class ODset : public BObject {
             public:
 
+                typedef ODset current_type;
                 typedef void value_type;
                 typedef void left_type;
                 typedef void right_type;
@@ -91,11 +95,11 @@ class Cruise_finite1_deterministic {
                     this->value = type;
                 }
 
-                BBoolean equal(const ODset& o) {
+                BBoolean equal(const ODset& o) const {
                     return value == o.value;
                 }
 
-                BBoolean unequal(const ODset& o) {
+                BBoolean unequal(const ODset& o) const {
                     return value != o.value;
                 }
 
@@ -221,13 +225,13 @@ class Cruise_finite1_deterministic {
         }
 
         void CCInitialisationDelayFinished() {
-            if((CCInitialisationInProgress.equal((BBoolean(true)))._and(VehicleTryKeepSpeed.equal((BBoolean(true)))._or(VehicleTryKeepTimeGap.equal((BBoolean(true))))._or(ObstacleStatusJustChanged.equal((BBoolean(true))))._or(CruiseSpeedChangeInProgress.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODnone))).implies(VehicleTryKeepSpeed.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepTimeGap.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODveryclose)))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepTimeGap.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose))))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepSpeed.equal((BBoolean(true)))))).booleanValue()) {
+            if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(CCInitialisationInProgress.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue()) {
                 CCInitialisationInProgress = (BBoolean(true));
             }
         }
 
         void CruiseSpeedChangeFinished(const BBoolean& vtks, const BBoolean& vtktg) {
-            if(((BOOL).elementOf(vtks)._and((BOOL).elementOf(vtktg))._and(vtks.equal((BBoolean(true)))._or(vtktg.equal((BBoolean(true))))._or(ObstacleStatusJustChanged.equal((BBoolean(true))))._or(CCInitialisationInProgress.equal((BBoolean(true)))))._and(ObstaclePresent.equal((BBoolean(false))).implies(vtktg.equal((BBoolean(false)))))._and(ObstacleDistance.equal((ODset(ODset::ODnone))).implies(vtks.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CCInitialisationInProgress.equal((BBoolean(false)))).implies(vtktg.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODveryclose)))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CCInitialisationInProgress.equal((BBoolean(false)))).implies(vtktg.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose))))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CCInitialisationInProgress.equal((BBoolean(false)))).implies(vtks.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal)))._and(ObstacleDistance.equal((ODset(ODset::ODnone)))).implies(vtktg.equal((BBoolean(false)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg)))._and(ObstacleDistance.equal((ODset(ODset::ODnone)))).implies(vtktg.equal((BBoolean(false)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose)))).implies(vtktg.equal((BBoolean(false)))))).booleanValue()) {
+            if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BOOL).elementOf(vtks).booleanValue() && (BOOL).elementOf(vtktg).booleanValue())).booleanValue() && (BBoolean((BBoolean((BBoolean(vtks.equal((BBoolean(true))).booleanValue() || vtktg.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || vtks.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || vtks.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue()))).booleanValue()) {
                 if((CruiseSpeedChangeInProgress.equal((BBoolean(true)))).booleanValue()) {
                     VehicleTryKeepTimeGap = vtktg;
                     VehicleTryKeepSpeed = vtks;
@@ -236,7 +240,7 @@ class Cruise_finite1_deterministic {
         }
 
         void CruiseSpeedChangeDelayFinished() {
-            if((CruiseSpeedChangeInProgress.equal((BBoolean(true)))._and(VehicleTryKeepSpeed.equal((BBoolean(true)))._or(VehicleTryKeepTimeGap.equal((BBoolean(true))))._or(ObstacleStatusJustChanged.equal((BBoolean(true))))._or(CCInitialisationInProgress.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODnone))).implies(VehicleTryKeepSpeed.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CCInitialisationInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepTimeGap.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODveryclose)))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CCInitialisationInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepTimeGap.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose))))._and(ObstacleStatusJustChanged.equal((BBoolean(false))))._and(CCInitialisationInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepSpeed.equal((BBoolean(true)))))).booleanValue()) {
+            if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue()) {
                 CruiseSpeedChangeInProgress = (BBoolean(true));
             }
         }
@@ -264,25 +268,25 @@ class Cruise_finite1_deterministic {
         }
 
         void ExternalForcesBecomesNormal() {
-            if((CruiseActive.equal((BBoolean(true)))._and(VehicleCanKeepSpeed.equal((BBoolean(false))))).booleanValue()) {
+            if(((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
                 VehicleCanKeepSpeed = (BBoolean(true));
             }
         }
 
         void VehicleLeavesCruiseSpeed() {
-            if((VehicleAtCruiseSpeed.equal((BBoolean(true)))._and(VehicleCanKeepSpeed.equal((BBoolean(false)))._and(VehicleTryKeepSpeed.equal((BBoolean(true)))))._and(VehicleTryKeepSpeed.equal((BBoolean(false))))).booleanValue()) {
+            if(((BBoolean((BBoolean(VehicleAtCruiseSpeed.equal((BBoolean(true))).booleanValue() && (BBoolean(VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue() && VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && VehicleTryKeepSpeed.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
                 VehicleAtCruiseSpeed = (BBoolean(false));
             }
         }
 
         void VehicleReachesCruiseSpeed() {
-            if((CruiseActive.equal((BBoolean(true)))._and(VehicleAtCruiseSpeed.equal((BBoolean(false))))._and(SpeedAboveMax.equal((BBoolean(false))))).booleanValue()) {
+            if(((BBoolean((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && VehicleAtCruiseSpeed.equal((BBoolean(false))).booleanValue())).booleanValue() && SpeedAboveMax.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
                 VehicleAtCruiseSpeed = (BBoolean(true));
             }
         }
 
         void VehicleExceedsMaxCruiseSpeed() {
-            if((SpeedAboveMax.equal((BBoolean(false)))._and(CruiseActive.equal((BBoolean(false)))._or(VehicleCanKeepSpeed.equal((BBoolean(false))))._or(ObstacleStatusJustChanged.equal((BBoolean(false)))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false))))._not()))).booleanValue()) {
+            if(((BBoolean(SpeedAboveMax.equal((BBoolean(false))).booleanValue() && (BBoolean((BBoolean(CruiseActive.equal((BBoolean(false))).booleanValue() || VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue())).booleanValue() || (BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue()))._not().booleanValue())).booleanValue()))).booleanValue()) {
                 SpeedAboveMax = (BBoolean(true));
                 VehicleAtCruiseSpeed = (BBoolean(false));
             }
@@ -291,21 +295,21 @@ class Cruise_finite1_deterministic {
         void VehicleFallsBelowMaxCruiseSpeed() {
             if((SpeedAboveMax.equal((BBoolean(true)))).booleanValue()) {
                 SpeedAboveMax = (BBoolean(false));
-                if((CruiseActive.equal((BBoolean(true)))._and(CruiseSpeedAtMax.equal((BBoolean(true))))).booleanValue()) {
+                if(((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && CruiseSpeedAtMax.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
                     VehicleAtCruiseSpeed = (BBoolean(true));
                 } 
             }
         }
 
         void ObstacleDistanceBecomesVeryClose() {
-            if((ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))))).booleanValue()) {
+            if(((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue()))).booleanValue()) {
                 ObstacleDistance = (ODset(ODset::ODveryclose));
                 ObstacleStatusJustChanged = (BBoolean(true));
             }
         }
 
         void ObstacleDistanceBecomesClose() {
-            if((ObstaclePresent.equal((BBoolean(true)))._and(CruiseActive.equal((BBoolean(true))))._and(ObstacleDistance.equal((ODset(ODset::ODveryclose)))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))))._or(ObstacleDistance.equal((ODset(ODset::ODnone)))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))))))).booleanValue()) {
+            if(((BBoolean((BBoolean(ObstaclePresent.equal((BBoolean(true))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue())).booleanValue() || (BBoolean(ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
                 ObstacleDistance = (ODset(ODset::ODclose));
                 ObstacleStatusJustChanged = (BBoolean(true));
                 if((ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))).booleanValue()) {
@@ -315,7 +319,7 @@ class Cruise_finite1_deterministic {
         }
 
         void ObstacleDistanceBecomesBig() {
-            if((ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))))).booleanValue()) {
+            if(((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue()))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
                 ObstacleDistance = (ODset(ODset::ODnone));
                 VehicleTryKeepTimeGap = (BBoolean(false));
@@ -323,7 +327,7 @@ class Cruise_finite1_deterministic {
         }
 
         void ObstacleStartsTravelFaster() {
-            if((ObstaclePresent.equal((BBoolean(true)))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))))).booleanValue()) {
+            if(((BBoolean(ObstaclePresent.equal((BBoolean(true))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue()))).booleanValue()) {
                 ObstacleRelativeSpeed = (RSset(RSset::RSpos));
                 if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                     ObstacleStatusJustChanged = (BBoolean(true));
@@ -362,7 +366,7 @@ class Cruise_finite1_deterministic {
         }
 
         void ObstacleAppearsWhenCruiseActive(const RSset& ors, const ODset& od) {
-            if((ObstaclePresent.equal((BBoolean(false)))._and(CruiseActive.equal((BBoolean(true))))).booleanValue()) {
+            if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
                 ObstaclePresent = (BBoolean(true));
                 ObstacleStatusJustChanged = (BBoolean(true));
                 ObstacleRelativeSpeed = ors;
@@ -371,7 +375,7 @@ class Cruise_finite1_deterministic {
         }
 
         void ObstacleAppearsWhenCruiseInactive(const RSset& ors) {
-            if((ObstaclePresent.equal((BBoolean(false)))._and(CruiseActive.equal((BBoolean(false))))).booleanValue()) {
+            if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
                 ObstaclePresent = (BBoolean(true));
                 ObstacleRelativeSpeed = ors;
                 ObstacleDistance = (ODset(ODset::ODnone));
@@ -391,7 +395,7 @@ class Cruise_finite1_deterministic {
         }
 
         void VehicleManageObstacle(const BBoolean& vtks, const BBoolean& vtktg) {
-            if(((BOOL).elementOf(vtks)._and((BOOL).elementOf(vtktg))._and(vtks.equal((BBoolean(true)))._or(vtktg.equal((BBoolean(true))))._or(CCInitialisationInProgress.equal((BBoolean(true))))._or(CruiseSpeedChangeInProgress.equal((BBoolean(true)))))._and(ObstaclePresent.equal((BBoolean(false))).implies(vtktg.equal((BBoolean(false)))))._and(ObstacleDistance.equal((ODset(ODset::ODnone))).implies(vtks.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(vtktg.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODveryclose)))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(vtktg.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose))))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(vtks.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal)))._and(ObstacleDistance.equal((ODset(ODset::ODnone)))).implies(vtktg.equal((BBoolean(false)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg)))._and(ObstacleDistance.equal((ODset(ODset::ODnone)))).implies(vtktg.equal((BBoolean(false)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose)))).implies(vtktg.equal((BBoolean(false)))))).booleanValue()) {
+            if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BOOL).elementOf(vtks).booleanValue() && (BOOL).elementOf(vtktg).booleanValue())).booleanValue() && (BBoolean((BBoolean((BBoolean(vtks.equal((BBoolean(true))).booleanValue() || vtktg.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || vtks.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || vtks.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || vtktg.equal((BBoolean(false))).booleanValue())).booleanValue()))).booleanValue()) {
                 if((ObstacleStatusJustChanged.equal((BBoolean(true)))).booleanValue()) {
                     VehicleTryKeepTimeGap = vtktg;
                     VehicleTryKeepSpeed = vtks;
@@ -400,7 +404,7 @@ class Cruise_finite1_deterministic {
         }
 
         void ObstacleBecomesOld() {
-            if((ObstacleStatusJustChanged.equal((BBoolean(true)))._and(VehicleTryKeepSpeed.equal((BBoolean(true)))._or(VehicleTryKeepTimeGap.equal((BBoolean(true))))._or(CCInitialisationInProgress.equal((BBoolean(true))))._or(CruiseSpeedChangeInProgress.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODnone))).implies(VehicleTryKeepSpeed.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODclose)))._and(ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepTimeGap.equal((BBoolean(true)))))._and(ObstacleDistance.equal((ODset(ODset::ODveryclose)))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepTimeGap.equal((BBoolean(true)))))._and(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))._and(ObstacleDistance.unequal((ODset(ODset::ODveryclose))))._and(CCInitialisationInProgress.equal((BBoolean(false))))._and(CruiseSpeedChangeInProgress.equal((BBoolean(false)))).implies(VehicleTryKeepSpeed.equal((BBoolean(true)))))).booleanValue()) {
+            if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(false));
             }
         }

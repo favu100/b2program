@@ -1,9 +1,11 @@
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
 import de.hhu.stups.btypes.BUtils;
 
 public class scheduler_deterministic {
+
 
 
 
@@ -34,7 +36,7 @@ public class scheduler_deterministic {
     }
 
     public void _new(PID pp) {
-        if((_PID.elementOf(pp).and(active.notElementOf(pp)).and(_ready.union(waiting).notElementOf(pp))).booleanValue()) {
+        if((new BBoolean(new BBoolean(_PID.elementOf(pp).booleanValue() && active.notElementOf(pp).booleanValue()).booleanValue() && _ready.union(waiting).notElementOf(pp).booleanValue())).booleanValue()) {
             waiting = waiting.union(new BSet<PID>(pp));
         }
     }

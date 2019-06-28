@@ -37,7 +37,7 @@ public class InsertionSortWhile {
                 BInteger j = null;
                 key = arr.functionCall(i);
                 j = i.minus(new BInteger(1));
-                while((j.greaterEqual(new BInteger(1)).and(arr.functionCall(j).greater(key))).booleanValue()) {
+                while((new BBoolean(j.greaterEqual(new BInteger(1)).booleanValue() && arr.functionCall(j).greater(key).booleanValue())).booleanValue()) {
                     arr = arr.override(new BRelation<BInteger, BInteger>(new BTuple<>(j.plus(new BInteger(1)),arr.functionCall(j))));
                     j = j.minus(new BInteger(1));
                 }
@@ -48,6 +48,9 @@ public class InsertionSortWhile {
         }
     }
 
-
+    public static void main(String[] args) {
+        InsertionSortWhile exec = new InsertionSortWhile();
+        exec.Sort();
+    }
 
 }

@@ -3,9 +3,11 @@ import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BTuple;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
 import de.hhu.stups.btypes.BUtils;
 
 public class sort_m2_data1000 {
+
 
     private final BRelation<BInteger, BInteger> f;
     private final BInteger n;
@@ -33,7 +35,7 @@ public class sort_m2_data1000 {
     }
 
     public void progress() {
-        if((k.unequal(n).and(j.equal(n))).booleanValue()) {
+        if((new BBoolean(k.unequal(n).booleanValue() && j.equal(n).booleanValue())).booleanValue()) {
             BRelation<BInteger, BInteger> _ld_g = g;
             BInteger _ld_k = k;
             BInteger _ld_l = l;
@@ -45,7 +47,7 @@ public class sort_m2_data1000 {
     }
 
     public void prog1() {
-        if((k.unequal(n).and(j.unequal(n)).and(g.functionCall(l).lessEqual(g.functionCall(j.plus(new BInteger("1")))))).booleanValue()) {
+        if((new BBoolean(new BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue()).booleanValue() && g.functionCall(l).lessEqual(g.functionCall(j.plus(new BInteger("1")))).booleanValue())).booleanValue()) {
             BInteger _ld_j = j;
             BInteger _ld_l = l;
             l = _ld_l;
@@ -54,7 +56,7 @@ public class sort_m2_data1000 {
     }
 
     public void prog2() {
-        if((k.unequal(n).and(j.unequal(n)).and(g.functionCall(l).greater(g.functionCall(j.plus(new BInteger("1")))))).booleanValue()) {
+        if((new BBoolean(new BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue()).booleanValue() && g.functionCall(l).greater(g.functionCall(j.plus(new BInteger("1")))).booleanValue())).booleanValue()) {
             BInteger _ld_j = j;
             j = _ld_j.plus(new BInteger("1"));
             l = _ld_j.plus(new BInteger("1"));

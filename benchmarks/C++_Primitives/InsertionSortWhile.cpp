@@ -49,7 +49,7 @@ class InsertionSortWhile {
                     BInteger j;
                     key = arr.functionCall(i);
                     j = i.minus((BInteger(1)));
-                    while((j.greaterEqual((BInteger(1)))._and(arr.functionCall(j).greater(key))).booleanValue()) {
+                    while(((BBoolean(j.greaterEqual((BInteger(1))).booleanValue() && arr.functionCall(j).greater(key).booleanValue()))).booleanValue()) {
                         arr = arr.override(BRelation<BInteger, BInteger>(BTuple<BInteger, BInteger>(j.plus((BInteger(1))),arr.functionCall(j))));
                         j = j.minus((BInteger(1)));
                     }
@@ -62,5 +62,10 @@ class InsertionSortWhile {
 
 };
 
+int main() {
+    InsertionSortWhile exec;
+    exec.Sort();
+    return 0;
+}
 
 #endif

@@ -131,6 +131,7 @@ public class SubstitutionGenerator {
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList());
         constantsInitializations.addAll(node.getConstants().stream()
+                .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
                 .map(this::generateConstantFromDeferredSet)
                 .collect(Collectors.toList()));
         return constantsInitializations;

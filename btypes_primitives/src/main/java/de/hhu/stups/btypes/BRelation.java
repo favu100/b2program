@@ -310,8 +310,17 @@ public class BRelation<S,T> {
 
 	@SuppressWarnings("unchecked")
 	public BSet<S> domain() {
+		PersistentHashMap thisMap = this.map;
 		PersistentHashSet set = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
-		return new BSet<S>(set);
+		PersistentHashSet resultSet = set;
+		for(Object obj : set) {
+			S domainElement = (S) obj;
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
+			if(range.size() == 0) {
+				resultSet = DIFFERENCE.invoke(resultSet, SET.invoke(SEQ.invoke(LIST.invoke(domainElement))));
+			}
+		}
+		return new BSet<S>(resultSet);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -317,7 +317,7 @@ public class BRelation<S,T> {
 			S domainElement = (S) obj;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
 			if(range.size() == 0) {
-				resultSet = DIFFERENCE.invoke(resultSet, SET.invoke(SEQ.invoke(LIST.invoke(domainElement))));
+				resultSet = (PersistentHashSet) DIFFERENCE.invoke(resultSet, SET.invoke(SEQ.invoke(LIST.invoke(domainElement))));
 			}
 		}
 		return new BSet<S>(resultSet);

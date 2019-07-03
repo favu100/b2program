@@ -207,7 +207,6 @@ public class BSet<T> implements BObject, Set<T> {
 						.reduce((a, e) -> ((BRelation) a).union((BRelation) e)).get();
 			}
 		}
-
 	}
 
 	public static BSet<BInteger> interval(BInteger a, BInteger b) {
@@ -282,24 +281,14 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BSet<T>> BSet<K> pow() {
 		BSet<K> result = new BSet<K>();
-		K start = null;
-		if(this.getClass() == BSet.class) {
-			start = (K) new BSet<T>();
-		} else {
-			start = (K) new BRelation<>();
-		}
+		K start = (K) new BSet<T>();
 		Queue<K> queue = new LinkedList<>();
 		queue.add(start);
 		result = result.union(new BSet<K>(start));
 		while(!queue.isEmpty()) {
 			K currentSet = queue.remove();
 			for(T element : this) {
-				K nextSet = null;
-				if(this.getClass() == BSet.class) {
-					nextSet = (K) currentSet.union(new BSet<T>(element));
-				} else {
-					nextSet = (K) currentSet.union(BRelation.fromSet(new BSet(element)));
-				}
+				K nextSet = (K) currentSet.union(new BSet<T>(element));
 				int previousSize = result.size();
 				result = result.union(new BSet<K>(nextSet));
 				if(previousSize < result.size()) {
@@ -313,10 +302,7 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BSet<T>> BSet<K> pow1() {
 		BSet<T> emptySet = new BSet<T>();
-		if(this.getClass() == BSet.class) {
-			return this.pow().difference(new BSet(emptySet));
-		}
-		return this.pow().difference(new BSet<>(BRelation.fromSet(new BSet())));
+		return this.pow().difference(new BSet(emptySet));
 	}
 
 	public <K extends BSet<T>> BSet<K> fin() {
@@ -477,5 +463,9 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BBoolean notStrictSubsetOfStruct() {
 		return strictSubsetOfStruct().not();
+	}
+
+	public PersistentHashSet getSet() {
+		return set;
 	}
 }

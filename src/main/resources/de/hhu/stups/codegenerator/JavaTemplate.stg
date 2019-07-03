@@ -396,7 +396,7 @@ new BBoolean(!<arg1>.booleanValue() || <arg2>.booleanValue())
 >>
 
 equivalent(arg1, arg2) ::= <<
-new BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue || <arg1>.booleanValue()))
+new BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue() || <arg1>.booleanValue()))
 >>
 
 unary(operator, obj, args) ::= <<

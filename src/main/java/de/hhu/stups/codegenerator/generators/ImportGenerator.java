@@ -58,6 +58,7 @@ public class ImportGenerator {
             importTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
             importStruct((RecordType) type);
+            importBBoolean();
         }
     }
 

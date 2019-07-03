@@ -194,7 +194,7 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 	}
 
 	public BBoolean isNatural() {
-		return this.greaterEqual(new BInteger(0));
+		return this.greaterEqual(new BInteger("0"));
 	}
 
 	public BBoolean isNotNatural() {
@@ -202,7 +202,7 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 	}
 
 	public BBoolean isNatural1() {
-		return this.greater(new BInteger(0));
+		return this.greater(new BInteger("0"));
 	}
 
 	public BBoolean isNotNatural1() {

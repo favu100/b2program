@@ -86,7 +86,7 @@ public class PredicateGenerator {
             return infiniteSetGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
-            generateRelationOnRhs(node);
+            return generateRelationOnRhs(node);
         }
         List<String> expressionList = node.getExpressionNodes().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, null))

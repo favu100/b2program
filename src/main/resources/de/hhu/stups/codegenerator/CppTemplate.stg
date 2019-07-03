@@ -471,7 +471,7 @@ implies(arg1, arg2) ::= <<
 >>
 
 equivalent(arg1, arg2) ::= <<
-(BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue || <arg1>.booleanValue())))
+(BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue() || <arg1>.booleanValue())))
 >>
 
 unary(operator, obj, args) ::= <<

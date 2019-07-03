@@ -64,6 +64,7 @@ public class BSet<T> implements BObject, Set<T> {
 		this.set = elements;
 	}
 
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	public BSet(T... elements) {
 		this.set = (PersistentHashSet) SET.invoke(elements);
@@ -158,7 +159,6 @@ public class BSet<T> implements BObject, Set<T> {
 		return set.iterator();
 	}
 
-	@SuppressWarnings("unchecked")
 	public BSet<T> intersect(BSet<T> set) {
 		return new BSet<T>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
 	}
@@ -182,12 +182,10 @@ public class BSet<T> implements BObject, Set<T> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public BSet<T> difference(BSet<T> set) {
 		return new BSet<T>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
 	}
 
-	@SuppressWarnings("unchecked")
 	public BSet<T> union(BSet<T> set) {
 		return new BSet<T>((PersistentHashSet) UNION.invoke(this.set, set.set));
 	}
@@ -218,11 +216,11 @@ public class BSet<T> implements BObject, Set<T> {
 
 
 	public BInteger card() {
-		return new BInteger(COUNT.invoke(this.set).toString());
+		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
 	}
 
 	public BInteger _size() {
-		return new BInteger(COUNT.invoke(this.set).toString());
+		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
 	}
 
 	public BBoolean elementOf(T object) {
@@ -283,24 +281,14 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BSet<T>> BSet<K> pow() {
 		BSet<K> result = new BSet<K>();
-		K start = null;
-		if(this.getClass() == BSet.class) {
-			start = (K) new BSet<T>();
-		} else {
-			start = (K) new BRelation<>();
-		}
+		K start = (K) new BSet<T>();
 		Queue<K> queue = new LinkedList<>();
 		queue.add(start);
 		result = result.union(new BSet<K>(start));
 		while(!queue.isEmpty()) {
 			K currentSet = queue.remove();
 			for(T element : this) {
-				K nextSet = null;
-				if(this.getClass() == BSet.class) {
-					nextSet = (K) currentSet.union(new BSet<T>(element));
-				} else {
-					nextSet = (K) currentSet.union(BRelation.fromSet(new BSet(element)));
-				}
+				K nextSet = (K) currentSet.union(new BSet<T>(element));
 				int previousSize = result.size();
 				result = result.union(new BSet<K>(nextSet));
 				if(previousSize < result.size()) {
@@ -314,10 +302,7 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BSet<T>> BSet<K> pow1() {
 		BSet<T> emptySet = new BSet<T>();
-		if(this.getClass() == BSet.class) {
-			return this.pow().difference(new BSet(emptySet));
-		}
-		return this.pow().difference(new BSet<>(BRelation.fromSet(new BSet())));
+		return this.pow().difference(new BSet(emptySet));
 	}
 
 	public <K extends BSet<T>> BSet<K> fin() {
@@ -337,6 +322,14 @@ public class BSet<T> implements BObject, Set<T> {
 			}
 		}
 		return new BBoolean(true);
+	}
+
+	public BBoolean strictSubsetOfInteger() {
+		return subsetOfInteger();
+	}
+
+	public BBoolean notSubsetOfInteger() {
+		return subsetOfInteger().not();
 	}
 
 	public BBoolean equalInteger() {
@@ -377,14 +370,6 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BBoolean unequalStruct() {
 		return new BBoolean(true);
-	}
-
-	public BBoolean strictSubsetOfInteger() {
-		return subsetOfInteger();
-	}
-
-	public BBoolean notSubsetOfInteger() {
-		return subsetOfInteger().not();
 	}
 
 	public BBoolean notStrictSubsetOfInteger() {
@@ -435,7 +420,6 @@ public class BSet<T> implements BObject, Set<T> {
 		return strictSubsetOfNatural1().not();
 	}
 
-
 	public BBoolean subsetOfString() {
 		for(T e : this) {
 			BString element = (BString) e;
@@ -458,6 +442,7 @@ public class BSet<T> implements BObject, Set<T> {
 		return strictSubsetOfString().not();
 	}
 
+
 	public BBoolean subsetOfStruct() {
 		for(T e : this) {
 			BStruct element = (BStruct) e;
@@ -478,5 +463,9 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BBoolean notStrictSubsetOfStruct() {
 		return strictSubsetOfStruct().not();
+	}
+
+	public PersistentHashSet getSet() {
+		return set;
 	}
 }

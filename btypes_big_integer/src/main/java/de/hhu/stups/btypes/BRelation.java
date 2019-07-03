@@ -168,11 +168,9 @@ public class BRelation<S,T> {
 	public BRelation<S,T> union(BRelation<S,T> relation) {
 		PersistentHashMap otherMap = relation.map;
 		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(otherMap));
-		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
-		PersistentHashSet unionDomain = (PersistentHashSet) UNION.invoke(thisDomain, otherDomain);
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : unionDomain) {
+		for(Object obj : otherDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
@@ -226,7 +224,18 @@ public class BRelation<S,T> {
 	}
 
 	public BBoolean notElementOf(BTuple<S,T> object) {
-		return this.elementOf(object).not();
+		S prj1 = object.projection1();
+		T prj2 = object.projection2();
+
+		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+
+		if(!domain.contains(prj1)) {
+			return new BBoolean(true);
+		}
+
+		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
+
+		return new BBoolean(!range.contains(prj2));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -234,6 +243,9 @@ public class BRelation<S,T> {
 		PersistentHashSet resultSet = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
 		for(S domainElement: domain) {
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
+			if(thisRangeSet == null) {
+				continue;
+			}
 			resultSet = (PersistentHashSet) UNION.invoke(resultSet, thisRangeSet);
 		}
 		return new BSet<T>(resultSet);
@@ -243,6 +255,9 @@ public class BRelation<S,T> {
 	@SuppressWarnings("unchecked")
 	public T functionCall(S arg) {
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, arg);
+		if(range == null) {
+			throw new RuntimeException("Argument is not in the domain of this relation");
+		}
 		for(Object element : range) {
 			return (T) element;
 		}

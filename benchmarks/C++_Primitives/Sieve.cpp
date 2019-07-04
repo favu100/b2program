@@ -55,5 +55,10 @@ class Sieve {
 
 };
 
+int main() {
+    Sieve sieve;
+    sieve.ComputeNumberOfPrimes();
+    return 0;
+}
 
 #endif

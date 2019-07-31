@@ -318,19 +318,15 @@ parallel_load(type, identifier) ::= <<
 
 assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<val>)));<endif>
+<if(isIdentifierLhs)><identifier> = <val>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
 >>
 
-function_call_range_element(expr, val) ::= <<
-<expr>.override(<val>)
+function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
+<expr>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<val>)))
 >>
 
-function_call_nested(expr, arg) ::= <<
-<expr>.functionCall(<arg>)
->>
-
-function_call_inner_element(leftType, rightType, arg, val) ::= <<
-new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<val>))
+function_call_nested(expr, arg, isNested) ::= <<
+<if(!isNested)><expr><else><expr>.functionCall(<arg>)<endif>
 >>
 
 assignments(assignments) ::= <<

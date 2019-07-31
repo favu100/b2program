@@ -332,27 +332,45 @@ public class SubstitutionGenerator {
     private String getNestedFunctionCall(ExprNode lhs, ExprNode rhs) {
         List<ST> templates = new ArrayList<>();
 
-        ST innerElement = currentGroup.getInstanceOf("function_call_inner_element");
-        ExprNode lastArgument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
-        TemplateHandler.add(innerElement, "leftType", typeGenerator.generate(lastArgument.getType()));
-        TemplateHandler.add(innerElement, "rightType", typeGenerator.generate(rhs.getType()));
-        TemplateHandler.add(innerElement, "arg", machineGenerator.visitExprNode(lastArgument, null));
-        TemplateHandler.add(innerElement, "val", machineGenerator.visitExprNode(rhs, null));
-        templates.add(innerElement);
-        ExprNode innerExpression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
-        while(innerExpression instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) innerExpression).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
-            ExprNode nextInnerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);
+        ExprNode innerExpression = lhs;
+
+        List<ExprNode> arguments = new ArrayList<>();
+        List<BType> leftTypes = new ArrayList<>();
+        List<BType> rightTypes = new ArrayList<>();
+
+        boolean isNested = false;
+
+        while (innerExpression instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) innerExpression).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
+            ExprNode innerArgument = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(1);
+            leftTypes.add(innerArgument.getType());
+            rightTypes.add(innerExpression.getType());
+            arguments.add(innerArgument);
+
+            innerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);;
+
             ST template = currentGroup.getInstanceOf("function_call_nested");
-            TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(nextInnerExpression, null));
-            TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(1), null));
-            templates.add(0, template);
-            innerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);
+            if(isNested) {
+                TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(innerExpression, null));
+            } else {
+                TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(rhs, null));
+            }
+            TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(innerArgument, null));
+            TemplateHandler.add(template, "isNested", isNested);
+            templates.add(template);
+            isNested = true;
         }
+
+        final List<Integer> i = new ArrayList<>(Collections.singletonList(0));
+
         Optional<ST> resultSTOptional = templates.stream()
                 .reduce((a,e) -> {
                     ST template = currentGroup.getInstanceOf("function_call_range_element");
-                    TemplateHandler.add(template, "expr", a.render());
-                    TemplateHandler.add(template, "val", e.render());
+                    TemplateHandler.add(template, "expr", e.render());
+                    TemplateHandler.add(template, "leftType", typeGenerator.generate(leftTypes.get(i.get(0))));
+                    TemplateHandler.add(template, "rightType", typeGenerator.generate(rightTypes.get(i.get(0))));
+                    TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(arguments.get(i.get(0)), null));
+                    TemplateHandler.add(template, "val", a.render());
+                    i.set(0, i.get(0) + 1);
                     return template;
                 });
         if(resultSTOptional.isPresent()) {
@@ -364,11 +382,12 @@ public class SubstitutionGenerator {
     /*
      * This function generates code for the argument of an assignment
      */
-    private void generateAssignmentArgument(ST substitution, ExprNode lhs, ExprNode rhs) {
+    private void generateAssignmentArgument(ST substitution, ExprNode lhs) {
         if(lhs instanceof ExpressionOperatorNode) {
             //TODO generate code for tuples as arguments
             ExprNode argument = getInnerArgument(lhs);
             IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
+
             BType rightType = ((CoupleType)((SetType) identifier.getType()).getSubType()).getRight();
 
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
@@ -392,7 +411,7 @@ public class SubstitutionGenerator {
         boolean isIdentifierLhs = lhs instanceof IdentifierExprNode;
         boolean isRecordLhs = lhs instanceof RecordFieldAccessNode;
         parallelConstructHandler.setLhsInParallel(true);
-        generateAssignmentArgument(substitution, lhs, rhs);
+        generateAssignmentArgument(substitution, lhs);
         TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
         TemplateHandler.add(substitution, "isRecordAccessLhs", isRecordLhs);
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));
@@ -527,7 +546,12 @@ public class SubstitutionGenerator {
     private String generateNondeterminism(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
         generateAssignmentBody(substitution, lhs, rhs);
-        TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
+        if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
+            TemplateHandler.add(substitution, "set", getNestedFunctionCall(lhs, rhs));
+        } else {
+            TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
+        }
+
         return substitution.render();
     }
 
@@ -546,7 +570,12 @@ public class SubstitutionGenerator {
                 identifier = getIdentifierOnLhs(expression);
             }
         } else if(lhs instanceof RecordFieldAccessNode) {
-            identifier = (IdentifierExprNode) ((RecordFieldAccessNode) lhs).getRecord();
+            ExprNode expression = ((RecordFieldAccessNode) lhs).getRecord();
+            if(expression instanceof IdentifierExprNode) {
+                identifier = (IdentifierExprNode) expression;
+            } else {
+                identifier = getIdentifierOnLhs(expression);
+            }
         }
         return identifier;
     }

@@ -323,6 +323,8 @@ public class SubstitutionGenerator {
         generateAssignmentBody(substitution, lhs, rhs);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "val", getNestedFunctionCall(lhs, rhs));
+        } else if(lhs instanceof RecordFieldAccessNode) {
+            TemplateHandler.add(substitution, "val", getNestedRecordAccess(lhs, rhs));
         } else {
             TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
         }
@@ -346,7 +348,7 @@ public class SubstitutionGenerator {
             rightTypes.add(innerExpression.getType());
             arguments.add(innerArgument);
 
-            innerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);;
+            innerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);
 
             ST template = currentGroup.getInstanceOf("function_call_nested");
             if(isNested) {
@@ -376,7 +378,50 @@ public class SubstitutionGenerator {
         if(resultSTOptional.isPresent()) {
             return resultSTOptional.get().render();
         }
-        throw new RuntimeException("Error during evaluating function call");
+        throw new RuntimeException("Error during code generation for function call");
+    }
+
+    private String getNestedRecordAccess(ExprNode lhs, ExprNode rhs) {
+        List<ST> templates = new ArrayList<>();
+
+        ExprNode innerExpression = lhs;
+
+        List<ExprNode> arguments = new ArrayList<>();
+
+        boolean isNested = false;
+
+        while (innerExpression instanceof RecordFieldAccessNode) {
+            ExprNode innerArgument = ((RecordFieldAccessNode) innerExpression).getIdentifier();
+            arguments.add(innerArgument);
+
+            innerExpression = ((RecordFieldAccessNode) innerExpression).getRecord();
+
+            ST template = currentGroup.getInstanceOf("record_access_nested");
+            if(isNested) {
+                TemplateHandler.add(template, "record", machineGenerator.visitExprNode(innerExpression, null));
+            } else {
+                TemplateHandler.add(template, "record", machineGenerator.visitExprNode(rhs, null));
+            }
+            TemplateHandler.add(template, "field", machineGenerator.visitExprNode(innerArgument, null));
+            TemplateHandler.add(template, "isNested", isNested);
+            templates.add(template);
+            isNested = true;
+        }
+        final List<Integer> i = new ArrayList<>(Collections.singletonList(0));
+
+        Optional<ST> resultSTOptional = templates.stream()
+                .reduce((a,e) -> {
+                    ST template = currentGroup.getInstanceOf("record_access_element");
+                    TemplateHandler.add(template, "expr", e.render());
+                    TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(arguments.get(i.get(0)), null));
+                    TemplateHandler.add(template, "val", a.render());
+                    i.set(0, i.get(0) + 1);
+                    return template;
+                });
+        if(resultSTOptional.isPresent()) {
+            return resultSTOptional.get().render();
+        }
+        throw new RuntimeException("Error during code generation for record access");
     }
 
     /*
@@ -395,7 +440,7 @@ public class SubstitutionGenerator {
             TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rightType));
         } else if(lhs instanceof RecordFieldAccessNode) {
             //TODO: Check whether record access can be nested
-            ExprNode argument = ((RecordFieldAccessNode) lhs).getIdentifier();
+            ExprNode argument = getInnerArgument(lhs);
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
         }
     }
@@ -586,6 +631,13 @@ public class SubstitutionGenerator {
             ExprNode expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
             if(expression instanceof IdentifierExprNode) {
                 result = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
+            } else {
+                result = getInnerArgument(expression);
+            }
+        } else if(lhs instanceof RecordFieldAccessNode) {
+            ExprNode expression = ((RecordFieldAccessNode) lhs).getRecord();
+            if(expression instanceof IdentifierExprNode) {
+                result = ((RecordFieldAccessNode) lhs).getIdentifier();
             } else {
                 result = getInnerArgument(expression);
             }

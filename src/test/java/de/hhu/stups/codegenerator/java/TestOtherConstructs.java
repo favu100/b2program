@@ -120,7 +120,17 @@ public class TestOtherConstructs extends TestJava {
 
     @Test
     public void testRecordAccessNested() throws Exception {
-        testJava("RecordAccessNested");
+        testJava("RecordAccessNested", "RecordAccessNested", "RecordAccessNested.stjava", true);
+    }
+
+    @Test
+    public void testRecordAccessNested2() throws Exception {
+        testJava("RecordAccessNested2", "RecordAccessNested2", "RecordAccessNested2.stjava", true);
+    }
+
+    @Test
+    public void testRecordAccessNested3() throws Exception {
+        testJava("RecordAccessNested3", "RecordAccessNested3", "RecordAccessNested3.stjava", true);
     }
 
     @Test

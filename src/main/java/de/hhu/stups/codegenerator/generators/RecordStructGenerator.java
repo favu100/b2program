@@ -229,8 +229,8 @@ public class RecordStructGenerator {
         importGenerator.addImport(type);
         String name = "_Struct" + counter;
         nodeToClassName.put(type.toString(), name);
-        structs.add(type);
-        generatedStructs.add(type);
+        structs.add(0, type);
+        generatedStructs.add(0, type);
         counter++;
     }
 
@@ -245,8 +245,8 @@ public class RecordStructGenerator {
         RecordType recordType = getRecordTypeFromOperation(node);
         importGenerator.addImport(recordType);
         String name = "_Struct" + counter;
-        structs.add(recordType);
-        generatedStructs.add(recordType);
+        structs.add(0, recordType);
+        generatedStructs.add(0, recordType);
         nodeToClassName.put(recordType.toString(), name);
         counter++;
     }

@@ -120,7 +120,17 @@ public class TestOtherConstructs extends TestCpp {
 
     @Test
     public void testRecordAccessNested() throws Exception {
-        testCpp("RecordAccessNested");
+        testCpp("RecordAccessNested", "RecordAccessNested", "RecordAccessNested.stcpp", true);
+    }
+
+    @Test
+    public void testRecordAccessNested2() throws Exception {
+        testCpp("RecordAccessNested2", "RecordAccessNested2", "RecordAccessNested2.stcpp", true);
+    }
+
+    @Test
+    public void testRecordAccessNested3() throws Exception {
+        testCpp("RecordAccessNested3", "RecordAccessNested3", "RecordAccessNested3.stcpp", true);
     }
 
     @Test

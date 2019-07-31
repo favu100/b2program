@@ -113,6 +113,14 @@ record_field_access(record, field) ::= <<
 (<record>.get_<field>())
 >>
 
+record_access_nested(record, field, isNested) ::= <<
+(<if(!isNested)><record><else><record>.get_<field>()<endif>)
+>>
+
+record_access_element(expr, arg, val) ::= <<
+(<expr>.override_<arg>(<val>))
+>>
+
 record_field_override(name, field, type, val, parameters) ::= <<
 <name> override_<field>(const <type>& <field>) {
     return <name>(<parameters; separator=", ">);

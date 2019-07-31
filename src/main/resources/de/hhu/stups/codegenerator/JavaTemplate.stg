@@ -79,6 +79,14 @@ record_field_access(record, field) ::= <<
 <record>.get_<field>()
 >>
 
+record_access_nested(record, field, isNested) ::= <<
+<if(!isNested)><record><else><record>.get_<field>()<endif>
+>>
+
+record_access_element(expr, arg, val) ::= <<
+<expr>.override_<arg>(<val>)
+>>
+
 record_field_override(name, field, type, val, parameters) ::= <<
 public <name> override_<field>(<type> <field>) {
     return new <name>(<parameters; separator=", ">);

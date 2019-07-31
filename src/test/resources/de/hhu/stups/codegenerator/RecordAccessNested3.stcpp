@@ -1,0 +1,6 @@
+int main() {
+    RecordAccessNested3 record;
+    record.calculate();
+    cout << record.getRes();
+    return 0;
+}

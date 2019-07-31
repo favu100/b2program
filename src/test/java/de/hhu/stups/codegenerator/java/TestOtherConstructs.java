@@ -119,6 +119,16 @@ public class TestOtherConstructs extends TestJava {
     }
 
     @Test
+    public void testRecordAccessNested() throws Exception {
+        testJava("RecordAccessNested");
+    }
+
+    @Test
+    public void testFunctionCallAccessNested() throws Exception {
+        testJava("FunctionCallAccessNested", "FunctionCallAccessNested", "FunctionCallAccessNested.stjava", true);
+    }
+
+    @Test
     public void testDeferredSet() throws Exception {
         testJava("DeferredSet");
     }

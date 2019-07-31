@@ -321,6 +321,18 @@ assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifie
 <if(isIdentifierLhs)><identifier> = <val>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<val>)));<endif>
 >>
 
+function_call_range_element(expr, val) ::= <<
+<expr>.override(<val>)
+>>
+
+function_call_nested(expr, arg) ::= <<
+<expr>.functionCall(<arg>)
+>>
+
+function_call_inner_element(leftType, rightType, arg, val) ::= <<
+new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<val>))
+>>
+
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>

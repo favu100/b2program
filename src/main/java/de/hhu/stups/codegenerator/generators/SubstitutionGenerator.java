@@ -27,12 +27,16 @@ import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
+import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -317,8 +321,84 @@ public class SubstitutionGenerator {
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("assignment");
         generateAssignmentBody(substitution, lhs, rhs);
-        TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
+        if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
+            TemplateHandler.add(substitution, "val", getNestedFunctionCall(lhs, rhs));
+        } else {
+            TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
+        }
         return substitution.render();
+    }
+
+    private String getNestedFunctionCall(ExprNode lhs, ExprNode rhs) {
+        List<ST> templates = new ArrayList<>();
+
+        ST innerElement = currentGroup.getInstanceOf("function_call_inner_element");
+        ExprNode lastArgument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
+        TemplateHandler.add(innerElement, "leftType", typeGenerator.generate(lastArgument.getType()));
+        TemplateHandler.add(innerElement, "rightType", typeGenerator.generate(rhs.getType()));
+        TemplateHandler.add(innerElement, "arg", machineGenerator.visitExprNode(lastArgument, null));
+        TemplateHandler.add(innerElement, "val", machineGenerator.visitExprNode(rhs, null));
+        templates.add(innerElement);
+        ExprNode innerExpression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+        while(innerExpression instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) innerExpression).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
+            ExprNode nextInnerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);
+            ST template = currentGroup.getInstanceOf("function_call_nested");
+            TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(nextInnerExpression, null));
+            TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(1), null));
+            templates.add(0, template);
+            innerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);
+        }
+        Optional<ST> resultSTOptional = templates.stream()
+                .reduce((a,e) -> {
+                    ST template = currentGroup.getInstanceOf("function_call_range_element");
+                    TemplateHandler.add(template, "expr", a.render());
+                    TemplateHandler.add(template, "val", e.render());
+                    return template;
+                });
+        if(resultSTOptional.isPresent()) {
+            return resultSTOptional.get().render();
+        }
+        throw new RuntimeException("Error during evaluating function call");
+    }
+
+    /*
+     * This function generates code for the argument of an assignment
+     */
+    private void generateAssignmentArgument(ST substitution, ExprNode lhs, ExprNode rhs) {
+        if(lhs instanceof ExpressionOperatorNode) {
+            //TODO generate code for tuples as arguments
+            ExprNode argument = getInnerArgument(lhs);
+            IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
+            BType rightType = ((CoupleType)((SetType) identifier.getType()).getSubType()).getRight();
+
+            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
+            TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));
+            TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rightType));
+        } else if(lhs instanceof RecordFieldAccessNode) {
+            //TODO: Check whether record access can be nested
+            ExprNode argument = ((RecordFieldAccessNode) lhs).getIdentifier();
+            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
+        }
+    }
+
+    /*
+     * This function generates code for the body of an assignment
+     */
+    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs) {
+        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
+        TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
+        parallelConstructHandler.setLhsInParallel(true);
+        IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
+        boolean isIdentifierLhs = lhs instanceof IdentifierExprNode;
+        boolean isRecordLhs = lhs instanceof RecordFieldAccessNode;
+        parallelConstructHandler.setLhsInParallel(true);
+        generateAssignmentArgument(substitution, lhs, rhs);
+        TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
+        TemplateHandler.add(substitution, "isRecordAccessLhs", isRecordLhs);
+        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));
+        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(identifier.getName()));
+        parallelConstructHandler.setLhsInParallel(false);
+        TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(identifier, null));
     }
 
     /*
@@ -452,26 +532,6 @@ public class SubstitutionGenerator {
     }
 
     /*
-    * This function generates code for the body of an assignment
-    */
-    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs) {
-        TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
-        TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
-        parallelConstructHandler.setLhsInParallel(true);
-        IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
-        boolean isIdentifierLhs = lhs instanceof IdentifierExprNode;
-        boolean isRecordLhs = lhs instanceof RecordFieldAccessNode;
-        parallelConstructHandler.setLhsInParallel(true);
-        generateAssignmentArgument(substitution, lhs, rhs);
-        TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
-        TemplateHandler.add(substitution, "isRecordAccessLhs", isRecordLhs);
-        TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));
-        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(identifier.getName()));
-        parallelConstructHandler.setLhsInParallel(false);
-        TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(identifier, null));
-    }
-
-    /*
     * This function extracts the changed identifier from the left-hand side of an assignment
     */
     private IdentifierExprNode getIdentifierOnLhs(ExprNode lhs) {
@@ -479,28 +539,29 @@ public class SubstitutionGenerator {
         if(lhs instanceof IdentifierExprNode) {
             identifier = (IdentifierExprNode) lhs;
         } else if(lhs instanceof ExpressionOperatorNode) {
-            identifier = (IdentifierExprNode) ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+            ExprNode expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+            if(expression instanceof IdentifierExprNode) {
+                identifier = (IdentifierExprNode) expression;
+            } else {
+                identifier = getIdentifierOnLhs(expression);
+            }
         } else if(lhs instanceof RecordFieldAccessNode) {
             identifier = (IdentifierExprNode) ((RecordFieldAccessNode) lhs).getRecord();
         }
         return identifier;
     }
 
-    /*
-    * This function generates code for the argument of an assignment
-    */
-    private void generateAssignmentArgument(ST substitution, ExprNode lhs, ExprNode rhs) {
+    private ExprNode getInnerArgument(ExprNode lhs) {
+        ExprNode result = null;
         if(lhs instanceof ExpressionOperatorNode) {
-            //TODO generate code for tuples as arguments
-            ExprNode argument = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
-            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
-            TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));
-            TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rhs.getType()));
-        } else if(lhs instanceof RecordFieldAccessNode) {
-            //TODO: Check whether record access can be nested
-            ExprNode argument = ((RecordFieldAccessNode) lhs).getIdentifier();
-            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
+            ExprNode expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+            if(expression instanceof IdentifierExprNode) {
+                result = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
+            } else {
+                result = getInnerArgument(expression);
+            }
         }
+        return result;
     }
 
     /*
@@ -533,7 +594,7 @@ public class SubstitutionGenerator {
             functionCall = getOperationCallTemplateWithManyParameters(node, variables);
         } else if(variables.size() == 1) {
             functionCall = getOperationCallTemplateWithOneParameter(variables.get(0));
-        } else if(variables.size() == 0) {
+        } else {
             functionCall = getOperationCallTemplateWithoutAssignment();
         }
         return functionCall;

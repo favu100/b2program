@@ -45,10 +45,9 @@ public class TestClojure {
         testClojure("LocalDeclaration");
     }
 
-    @Ignore
     @Test
     public void testRefinement() throws Exception {
-        // TODO VAR-Node
+        //TODO: Type checking of concrete variables
         testClojure("RefinementMachine");
     }
 
@@ -141,10 +140,8 @@ public class TestClojure {
         testClojure("Bakery0");
     }
 
-    @Ignore
     @Test
     public void testGCD() throws Exception {
-        // TODO
         testClojure("GCD");
     }
 
@@ -164,17 +161,13 @@ public class TestClojure {
         testClojure("TravelAgency");
     }
 
-    @Ignore
     @Test
     public void testPhonebook() throws Exception {
-        // TODO
         testClojure("phonebook");
     }
 
-    @Ignore
     @Test
     public void testPhonebook6() throws Exception {
-        // TODO
         testClojure("phonebook6");
     }
 

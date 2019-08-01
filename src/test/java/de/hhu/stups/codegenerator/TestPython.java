@@ -43,10 +43,9 @@ public class TestPython {
 		testPython("LocalDeclaration");
 	}
 
-	@Ignore
 	@Test
 	public void testRefinement() throws Exception {
-		// TODO VAR-Node
+		//TODO: Type checking of concrete variables
 		testPython("RefinementMachine");
 	}
 
@@ -139,10 +138,8 @@ public class TestPython {
 		testPython("Bakery0");
 	}
 
-	@Ignore
 	@Test
 	public void testGCD() throws Exception {
-		// TODO
 		testPython("GCD");
 	}
 
@@ -162,17 +159,13 @@ public class TestPython {
 		testPython("TravelAgency");
 	}
 
-	@Ignore
 	@Test
 	public void testPhonebook() throws Exception {
-		// TODO
 		testPython("phonebook");
 	}
 
-	@Ignore
 	@Test
 	public void testPhonebook6() throws Exception {
-		// TODO
 		testPython("phonebook6");
 	}
 

@@ -13,10 +13,8 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
         if (obj == null)
             return false;
         if (obj instanceof BInteger) {
-            //TODO: other numbers
             return this.compareTo((BInteger) obj) == 0;
         }
-        // assert getClass() != obj.getClass()
         return false;
     }
 

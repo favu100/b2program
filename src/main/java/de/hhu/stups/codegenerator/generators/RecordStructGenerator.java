@@ -132,7 +132,6 @@ public class RecordStructGenerator {
     private String generateDeclaration(BType type, String identifier) {
         ST declaration = currentGroup.getInstanceOf("global_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(type));
-        //TODO: Rewrite String to IdentifierExprNode
         TemplateHandler.add(declaration, "identifier", identifier);
         return declaration.render();
     }

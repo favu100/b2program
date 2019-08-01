@@ -49,10 +49,9 @@ public class TestC {
         testC("LocalDeclaration");
     }
 
-    @Ignore
     @Test
     public void testRefinement() throws Exception {
-        // TODO VAR-Node
+        //TODO: Type checking of concrete variables
         testC("RefinementMachine");
     }
 
@@ -145,10 +144,8 @@ public class TestC {
         testC("Bakery0");
     }
 
-    @Ignore
     @Test
     public void testGCD() throws Exception {
-        // TODO
         testC("GCD");
     }
 
@@ -168,17 +165,13 @@ public class TestC {
         testC("TravelAgency");
     }
 
-    @Ignore
     @Test
     public void testPhonebook() throws Exception {
-        // TODO
         testC("phonebook");
     }
 
-    @Ignore
     @Test
     public void testPhonebook6() throws Exception {
-        // TODO
         testC("phonebook6");
     }
 

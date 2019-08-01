@@ -25,10 +25,9 @@ public class TestMachines extends TestCpp {
         testCpp("LocalDeclaration");
     }
 
-    @Ignore
     @Test
     public void testRefinement() throws Exception {
-        // TODO VAR-Node
+        //TODO: Type checking of concrete variables
         testCpp("RefinementMachine");
     }
 
@@ -67,17 +66,13 @@ public class TestMachines extends TestCpp {
         testCpp("TrafficLight", "TrafficLight", "TrafficLightAddition.stCpp", true);
     }
 
-    @Ignore
     @Test
     public void testPhonebook() throws Exception {
-        // TODO
         testCpp("phonebook");
     }
 
-    @Ignore
     @Test
     public void testPhonebook6() throws Exception {
-        // TODO
         testCpp("phonebook6");
     }
 

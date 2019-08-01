@@ -453,7 +453,6 @@ public class SubstitutionGenerator {
             TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));
             TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rightType));
         } else if(lhs instanceof RecordFieldAccessNode) {
-            //TODO: Check whether record access can be nested
             ExprNode argument = getInnerArgument(lhs);
             TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
         }
@@ -494,7 +493,7 @@ public class SubstitutionGenerator {
     */
     private String visitParallelSubstitutionNode(ListSubstitutionNode node) {
         //TODO Implement handling iteration construct
-        //TODO implement parallel execution of operation call from included machine
+        //TODO implement parallel execution of operation call from included machine or do not allow such an operation call
         parallelNestingLevel++;
         ST substitutions = currentGroup.getInstanceOf("parallel");
         TemplateHandler.add(substitutions, "machine", nameHandler.handle(machineGenerator.getMachineName()));

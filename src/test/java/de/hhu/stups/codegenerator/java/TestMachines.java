@@ -25,10 +25,9 @@ public class TestMachines extends TestJava {
         testJava("LocalDeclaration");
     }
 
-    @Ignore
     @Test
     public void testRefinement() throws Exception {
-        // TODO VAR-Node
+        //TODO: Type checking of concrete variables
         testJava("RefinementMachine");
     }
 
@@ -67,17 +66,13 @@ public class TestMachines extends TestJava {
         testJava("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
     }
 
-    @Ignore
     @Test
     public void testPhonebook() throws Exception {
-        // TODO
         testJava("phonebook");
     }
 
-    @Ignore
     @Test
     public void testPhonebook6() throws Exception {
-        // TODO
         testJava("phonebook6");
     }
 

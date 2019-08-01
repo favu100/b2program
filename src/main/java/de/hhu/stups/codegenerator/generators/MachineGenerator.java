@@ -200,7 +200,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(method, "argsTypes", node.getParams().stream()
 				.map(param -> typeGenerator.generate(param.getType()))
 				.collect(Collectors.toList()));
-		//TODO: generate method for many return parameters
+		//TODO: generate method for many return parameters (Clojure issue)
 		if(node.getOutputParams().size() > 0) {
 			TemplateHandler.add(method, "returnType", typeGenerator.generate(node.getOutputParams().get(0).getType()));
 		} else {

@@ -36,7 +36,6 @@ import org.stringtemplate.v4.STGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -331,15 +330,15 @@ public class SubstitutionGenerator {
         return substitution.render();
     }
 
+    /*
+    * This function generates code for the top-level assigned range element of a nested function call on the left-hand side of an assignment
+    */
     private String getNestedFunctionCall(ExprNode lhs, ExprNode rhs) {
         List<ST> templates = new ArrayList<>();
-
         ExprNode innerExpression = lhs;
-
         List<ExprNode> arguments = new ArrayList<>();
         List<BType> leftTypes = new ArrayList<>();
         List<BType> rightTypes = new ArrayList<>();
-
         boolean isNested = false;
 
         while (innerExpression instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) innerExpression).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
@@ -347,81 +346,96 @@ public class SubstitutionGenerator {
             leftTypes.add(innerArgument.getType());
             rightTypes.add(innerExpression.getType());
             arguments.add(innerArgument);
-
             innerExpression = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(0);
-
-            ST template = currentGroup.getInstanceOf("function_call_nested");
-            if(isNested) {
-                TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(innerExpression, null));
-            } else {
-                TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(rhs, null));
-            }
-            TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(innerArgument, null));
-            TemplateHandler.add(template, "isNested", isNested);
-            templates.add(template);
+            templates.add(generateNestedFunctionCall(innerExpression, innerArgument, rhs, isNested));
             isNested = true;
         }
 
-        final List<Integer> i = new ArrayList<>(Collections.singletonList(0));
+        ST resultST = templates.get(0);
 
-        Optional<ST> resultSTOptional = templates.stream()
-                .reduce((a,e) -> {
-                    ST template = currentGroup.getInstanceOf("function_call_range_element");
-                    TemplateHandler.add(template, "expr", e.render());
-                    TemplateHandler.add(template, "leftType", typeGenerator.generate(leftTypes.get(i.get(0))));
-                    TemplateHandler.add(template, "rightType", typeGenerator.generate(rightTypes.get(i.get(0))));
-                    TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(arguments.get(i.get(0)), null));
-                    TemplateHandler.add(template, "val", a.render());
-                    i.set(0, i.get(0) + 1);
-                    return template;
-                });
-        if(resultSTOptional.isPresent()) {
-            return resultSTOptional.get().render();
+        for(int i = 0; i < templates.size() - 1; i++) {
+            resultST = generateFunctionCallRangeElement(resultST, templates.get(i+1), leftTypes.get(i), rightTypes.get(i), arguments.get(i));
         }
-        throw new RuntimeException("Error during code generation for function call");
+        return resultST.render();
     }
 
+    /*
+    * This function calculates one step of calculating the final result for the top-level assigned range element of a nested function call on the left-hand side of an assignment
+    */
+    private ST generateFunctionCallRangeElement(ST currentTemplate, ST nextTemplate, BType leftType, BType rightType, ExprNode argument) {
+        ST template = currentGroup.getInstanceOf("function_call_range_element");
+        TemplateHandler.add(template, "expr", nextTemplate.render());
+        TemplateHandler.add(template, "leftType", typeGenerator.generate(leftType));
+        TemplateHandler.add(template, "rightType", typeGenerator.generate(rightType));
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(argument, null));
+        TemplateHandler.add(template, "val", currentTemplate.render());
+        return template;
+    }
+
+    /*
+    * This function calculates one inner function call that must be overridden by a relation where the inner construct contains the new range element that the nested function call is assigned to.
+    */
+    private ST generateNestedFunctionCall(ExprNode innerExpression, ExprNode innerArgument, ExprNode rhs, boolean isNested) {
+        ST template = currentGroup.getInstanceOf("function_call_nested");
+        if(isNested) {
+            TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(innerExpression, null));
+        } else {
+            TemplateHandler.add(template, "expr", machineGenerator.visitExprNode(rhs, null));
+        }
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(innerArgument, null));
+        TemplateHandler.add(template, "isNested", isNested);
+        return template;
+    }
+
+    /*
+     * This function generates code for the top-level assigned element of a nested record access on the left-hand side of an assignment
+     */
     private String getNestedRecordAccess(ExprNode lhs, ExprNode rhs) {
         List<ST> templates = new ArrayList<>();
-
         ExprNode innerExpression = lhs;
-
         List<ExprNode> arguments = new ArrayList<>();
-
         boolean isNested = false;
 
         while (innerExpression instanceof RecordFieldAccessNode) {
             ExprNode innerArgument = ((RecordFieldAccessNode) innerExpression).getIdentifier();
             arguments.add(innerArgument);
-
             innerExpression = ((RecordFieldAccessNode) innerExpression).getRecord();
-
-            ST template = currentGroup.getInstanceOf("record_access_nested");
-            if(isNested) {
-                TemplateHandler.add(template, "record", machineGenerator.visitExprNode(innerExpression, null));
-            } else {
-                TemplateHandler.add(template, "record", machineGenerator.visitExprNode(rhs, null));
-            }
-            TemplateHandler.add(template, "field", machineGenerator.visitExprNode(innerArgument, null));
-            TemplateHandler.add(template, "isNested", isNested);
-            templates.add(template);
+            templates.add(generatedNestedRecordAccess(innerExpression, innerArgument, rhs, isNested));
             isNested = true;
         }
-        final List<Integer> i = new ArrayList<>(Collections.singletonList(0));
 
-        Optional<ST> resultSTOptional = templates.stream()
-                .reduce((a,e) -> {
-                    ST template = currentGroup.getInstanceOf("record_access_element");
-                    TemplateHandler.add(template, "expr", e.render());
-                    TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(arguments.get(i.get(0)), null));
-                    TemplateHandler.add(template, "val", a.render());
-                    i.set(0, i.get(0) + 1);
-                    return template;
-                });
-        if(resultSTOptional.isPresent()) {
-            return resultSTOptional.get().render();
+        ST resultST = templates.get(0);
+
+        for(int i = 0; i < templates.size() - 1; i++) {
+            resultST = generateRecordAccessElement(resultST, templates.get(i+1), arguments.get(i));
         }
-        throw new RuntimeException("Error during code generation for record access");
+        return resultST.render();
+    }
+
+    /*
+     * This function calculates one step of calculating the final result for the top-level assigned element of a nested record access on the left-hand side of an assignment
+     */
+    private ST generateRecordAccessElement(ST currentTemplate, ST nextTemplate, ExprNode argument) {
+        ST template = currentGroup.getInstanceOf("record_access_element");
+        TemplateHandler.add(template, "expr", nextTemplate.render());
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(argument, null));
+        TemplateHandler.add(template, "val", currentTemplate.render());
+        return template;
+    }
+
+    /*
+     * This function calculates one inner record access that must be overridden by the next inner construct with containing the new element that the nested record access is assigned to.
+     */
+    private ST generatedNestedRecordAccess(ExprNode innerExpression, ExprNode innerArgument, ExprNode rhs, boolean isNested) {
+        ST template = currentGroup.getInstanceOf("record_access_nested");
+        if(isNested) {
+            TemplateHandler.add(template, "record", machineGenerator.visitExprNode(innerExpression, null));
+        } else {
+            TemplateHandler.add(template, "record", machineGenerator.visitExprNode(rhs, null));
+        }
+        TemplateHandler.add(template, "field", machineGenerator.visitExprNode(innerArgument, null));
+        TemplateHandler.add(template, "isNested", isNested);
+        return template;
     }
 
     /*
@@ -604,45 +618,38 @@ public class SubstitutionGenerator {
     * This function extracts the changed identifier from the left-hand side of an assignment
     */
     private IdentifierExprNode getIdentifierOnLhs(ExprNode lhs) {
-        IdentifierExprNode identifier = null;
+        ExprNode expression = null;
         if(lhs instanceof IdentifierExprNode) {
-            identifier = (IdentifierExprNode) lhs;
+            return (IdentifierExprNode) lhs;
         } else if(lhs instanceof ExpressionOperatorNode) {
-            ExprNode expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
-            if(expression instanceof IdentifierExprNode) {
-                identifier = (IdentifierExprNode) expression;
-            } else {
-                identifier = getIdentifierOnLhs(expression);
-            }
+            expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
         } else if(lhs instanceof RecordFieldAccessNode) {
-            ExprNode expression = ((RecordFieldAccessNode) lhs).getRecord();
-            if(expression instanceof IdentifierExprNode) {
-                identifier = (IdentifierExprNode) expression;
-            } else {
-                identifier = getIdentifierOnLhs(expression);
-            }
+            expression = ((RecordFieldAccessNode) lhs).getRecord();
         }
-        return identifier;
+        if(expression instanceof IdentifierExprNode) {
+            return (IdentifierExprNode) expression;
+        } else {
+            return getIdentifierOnLhs(expression);
+        }
     }
 
+    /*
+    * This function extracts the inner argument from a nested construct on the left-hand side of an assignment
+    */
     private ExprNode getInnerArgument(ExprNode lhs) {
-        ExprNode result = null;
+        ExprNode expression = null;
         if(lhs instanceof ExpressionOperatorNode) {
-            ExprNode expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+            expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
             if(expression instanceof IdentifierExprNode) {
-                result = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
-            } else {
-                result = getInnerArgument(expression);
+                return ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
             }
         } else if(lhs instanceof RecordFieldAccessNode) {
-            ExprNode expression = ((RecordFieldAccessNode) lhs).getRecord();
+            expression = ((RecordFieldAccessNode) lhs).getRecord();
             if(expression instanceof IdentifierExprNode) {
-                result = ((RecordFieldAccessNode) lhs).getIdentifier();
-            } else {
-                result = getInnerArgument(expression);
+                return ((RecordFieldAccessNode) lhs).getIdentifier();
             }
         }
-        return result;
+        return getInnerArgument(expression);
     }
 
     /*

@@ -118,7 +118,7 @@ public class OperationGenerator {
             generateReturnStatementRecord(operation, node);
         } else if(outputs.size() == 1) {
             generateReturnStatementIdentifier(operation, outputs);
-        } else if(outputs.size() == 0) {
+        } else {
             generateVoidReturnStatement(operation);
         }
     }
@@ -153,7 +153,6 @@ public class OperationGenerator {
         List<DeclarationNode> outputs = node.getOutputParams();
         String struct = recordStructGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
-        //TODO
         List<String> identifiers = outputs.stream()
                 .map(DeclarationNode::getName)
                 .map(identifier -> nameHandler.handleIdentifier(identifier, FUNCTION_NAMES))

@@ -148,6 +148,20 @@ public class TestOtherConstructs extends TestJava {
         testJava("FunctionCallAccessNested3", "FunctionCallAccessNested3", "FunctionCallAccessNested3.stjava", true);
     }
 
+    @Test
+    public void testFunctionCallAccessNested4() throws Exception {
+        testJava("FunctionCallAccessNested4", "FunctionCallAccessNested4", "FunctionCallAccessNested4.stjava", true);
+    }
+
+    @Test
+    public void testFunctionCallAccessNested5() throws Exception {
+        testJava("FunctionCallAccessNested5", "FunctionCallAccessNested5", "FunctionCallAccessNested5.stjava", true);
+    }
+
+    @Test
+    public void testFunctionCallAccessNested6() throws Exception {
+        testJava("FunctionCallAccessNested6", "FunctionCallAccessNested6", "FunctionCallAccessNested6.stjava", true);
+    }
 
     @Test
     public void testDeferredSet() throws Exception {

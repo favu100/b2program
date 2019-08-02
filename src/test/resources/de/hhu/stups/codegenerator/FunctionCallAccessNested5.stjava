@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    FunctionCallAccessNested5 functional = new FunctionCallAccessNested5();
+    functional.calculate();
+    System.out.println(functional.getRes());
+}

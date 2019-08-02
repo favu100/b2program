@@ -121,7 +121,7 @@ public class ExpressionGenerator {
     */
     private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
             Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
-                    FUNCTION_CALL, OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
+                    OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
                     RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
                     TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
                     PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT);
@@ -315,6 +315,8 @@ public class ExpressionGenerator {
             return generateCartesianProduct(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType) node.getExpressionNodes().get(1).getType()).getSubType());
         } else if(node.getOperator() == COUPLE) {
             return generateTuple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
+        } else if(node.getOperator() == FUNCTION_CALL) {
+            return generateFunctionCall(node.getExpressionNodes());
         } else if(node.getOperator() == BOOL) {
             return generateBooleans();
         } else if(node.getOperator() == MININT) {
@@ -480,9 +482,6 @@ public class ExpressionGenerator {
             case SET_SUBTRACTION:
                 operatorName = "difference";
                 break;
-            case FUNCTION_CALL:
-                operatorName = "functionCall";
-                break;
             case RELATIONAL_IMAGE:
                 operatorName = "relationImage";
                 break;
@@ -570,6 +569,27 @@ public class ExpressionGenerator {
         TemplateHandler.add(interval, "arg1", arguments.get(0));
         TemplateHandler.add(interval, "arg2", arguments.get(1));
         return interval.render();
+    }
+
+    private String generateFunctionCall(List<ExprNode> expressions) {
+        ST functionCall = currentGroup.getInstanceOf("binary");
+        ExprNode lhs = expressions.get(0);
+        ExprNode argument = getArgumentFromExpressions(expressions.subList(1, expressions.size()));
+        TemplateHandler.add(functionCall, "arg1", machineGenerator.visitExprNode(lhs, null));
+        TemplateHandler.add(functionCall, "arg2", machineGenerator.visitExprNode(argument, null));
+        TemplateHandler.add(functionCall, "operator", "functionCall");
+        return functionCall.render();
+    }
+
+    public ExprNode getArgumentFromExpressions(List<ExprNode> expressions) {
+        ExprNode result = expressions.get(0);
+        for(int i = 1; i < expressions.size(); i++) {
+            ExprNode rhsElement = expressions.get(i);
+            BType leftType = result.getType();
+            result = new ExpressionOperatorNode(result.getSourceCodePosition(), Arrays.asList(result, rhsElement), ExpressionOperatorNode.ExpressionOperator.COUPLE);
+            result.setType(new CoupleType(leftType, rhsElement.getType()));
+        }
+        return result;
     }
 
     /*

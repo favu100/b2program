@@ -1,0 +1,6 @@
+int main() {
+    FunctionCallAccessNested6 functional;
+    functional.calculate();
+    cout << functional.getRes();
+    return 0;
+}

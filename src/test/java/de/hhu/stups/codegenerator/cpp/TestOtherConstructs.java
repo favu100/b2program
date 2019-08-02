@@ -148,6 +148,20 @@ public class TestOtherConstructs extends TestCpp {
         testCpp("FunctionCallAccessNested3", "FunctionCallAccessNested3", "FunctionCallAccessNested3.stcpp", true);
     }
 
+    @Test
+    public void testFunctionCallAccessNested4() throws Exception {
+        testCpp("FunctionCallAccessNested4", "FunctionCallAccessNested4", "FunctionCallAccessNested4.stcpp", true);
+    }
+
+    @Test
+    public void testFunctionCallAccessNested5() throws Exception {
+        testCpp("FunctionCallAccessNested5", "FunctionCallAccessNested5", "FunctionCallAccessNested5.stcpp", true);
+    }
+
+    @Test
+    public void testFunctionCallAccessNested6() throws Exception {
+        testCpp("FunctionCallAccessNested6", "FunctionCallAccessNested6", "FunctionCallAccessNested6.stcpp", true);
+    }
 
     @Test
     public void testDeferredSet() throws Exception {

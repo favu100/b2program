@@ -342,7 +342,8 @@ public class SubstitutionGenerator {
         boolean isNested = false;
 
         while (innerExpression instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) innerExpression).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
-            ExprNode innerArgument = ((ExpressionOperatorNode) innerExpression).getExpressionNodes().get(1);
+            List<ExprNode> expressions = ((ExpressionOperatorNode) innerExpression).getExpressionNodes();
+            ExprNode innerArgument = expressionGenerator.getArgumentFromExpressions(expressions.subList(1, expressions.size()));
             leftTypes.add(innerArgument.getType());
             rightTypes.add(innerExpression.getType());
             arguments.add(innerArgument);
@@ -443,7 +444,6 @@ public class SubstitutionGenerator {
      */
     private void generateAssignmentArgument(ST substitution, ExprNode lhs) {
         if(lhs instanceof ExpressionOperatorNode) {
-            //TODO generate code for tuples as arguments
             ExprNode argument = getInnerArgument(lhs);
             IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
 
@@ -606,6 +606,8 @@ public class SubstitutionGenerator {
         generateAssignmentBody(substitution, lhs, rhs);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "set", getNestedFunctionCall(lhs, rhs));
+        } else if(lhs instanceof RecordFieldAccessNode) {
+            TemplateHandler.add(substitution, "set", getNestedRecordAccess(lhs, rhs));
         } else {
             TemplateHandler.add(substitution, "set", machineGenerator.visitExprNode(rhs, null));
         }
@@ -640,7 +642,8 @@ public class SubstitutionGenerator {
         if(lhs instanceof ExpressionOperatorNode) {
             expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
             if(expression instanceof IdentifierExprNode) {
-                return ((ExpressionOperatorNode) lhs).getExpressionNodes().get(1);
+                List<ExprNode> expressions = ((ExpressionOperatorNode) lhs).getExpressionNodes();
+                return expressionGenerator.getArgumentFromExpressions(expressions.subList(1, expressions.size()));
             }
         } else if(lhs instanceof RecordFieldAccessNode) {
             expression = ((RecordFieldAccessNode) lhs).getRecord();
@@ -660,31 +663,31 @@ public class SubstitutionGenerator {
                 .collect(Collectors.toList());
         String operationName = node.getOperationNode().getName();
         String machineName = operationGenerator.getMachineFromOperation().get(operationName);
-        ST functionCall = getOperationCallTemplate(node, variables);
-        TemplateHandler.add(functionCall, "thisName", machineGenerator.getMachineName());
-        TemplateHandler.add(functionCall, "machine", nameHandler.handle(machineName));
-        TemplateHandler.add(functionCall, "machineInstance", nameHandler.handleIdentifier(machineName, NameHandler.IdentifierHandlingEnum.MACHINES));
-        TemplateHandler.add(functionCall, "function", nameHandler.handleIdentifier(operationName, NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
-        TemplateHandler.add(functionCall, "args", node.getArguments().stream()
+        ST operationCall = getOperationCallTemplate(node, variables);
+        TemplateHandler.add(operationCall, "thisName", machineGenerator.getMachineName());
+        TemplateHandler.add(operationCall, "machine", nameHandler.handle(machineName));
+        TemplateHandler.add(operationCall, "machineInstance", nameHandler.handleIdentifier(machineName, NameHandler.IdentifierHandlingEnum.MACHINES));
+        TemplateHandler.add(operationCall, "function", nameHandler.handleIdentifier(operationName, NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
+        TemplateHandler.add(operationCall, "args", node.getArguments().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, expected))
                 .collect(Collectors.toList()));
-        TemplateHandler.add(functionCall,"this", machineName.equals(machineGenerator.getMachineName()));
-        return functionCall.render();
+        TemplateHandler.add(operationCall,"this", machineName.equals(machineGenerator.getMachineName()));
+        return operationCall.render();
     }
 
     /*
     * This function gets the needed template for an operation call. It dependes on the size of the return parameters.
     */
     private ST getOperationCallTemplate(OperationCallSubstitutionNode node, List<String> variables) {
-        ST functionCall = null;
+        ST operationCall = null;
         if(variables.size() > 1) {
-            functionCall = getOperationCallTemplateWithManyParameters(node, variables);
+            operationCall = getOperationCallTemplateWithManyParameters(node, variables);
         } else if(variables.size() == 1) {
-            functionCall = getOperationCallTemplateWithOneParameter(variables.get(0));
+            operationCall = getOperationCallTemplateWithOneParameter(variables.get(0));
         } else {
-            functionCall = getOperationCallTemplateWithoutAssignment();
+            operationCall = getOperationCallTemplateWithoutAssignment();
         }
-        return functionCall;
+        return operationCall;
     }
 
     /*
@@ -698,10 +701,10 @@ public class SubstitutionGenerator {
     * This function returns the template for an operation call with assignment with one parameter
     */
     private ST getOperationCallTemplateWithOneParameter(String variable) {
-        ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_one_parameter");
-        TemplateHandler.add(functionCall, "var", variable);
-        TemplateHandler.add(functionCall, "isPrivate", nameHandler.getGlobals().contains(variable));
-        return functionCall;
+        ST operationCall = currentGroup.getInstanceOf("operation_call_with_assignment_one_parameter");
+        TemplateHandler.add(operationCall, "var", variable);
+        TemplateHandler.add(operationCall, "isPrivate", nameHandler.getGlobals().contains(variable));
+        return operationCall;
     }
 
     /*
@@ -709,9 +712,9 @@ public class SubstitutionGenerator {
     */
     private ST getOperationCallTemplateWithManyParameters(OperationCallSubstitutionNode node, List<String> variables) {
         OperationNode operationNode = node.getOperationNode();
-        ST functionCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
-        TemplateHandler.add(functionCall, "struct", recordStructGenerator.getStruct(operationNode));
-        TemplateHandler.add(functionCall, "var", "_ld_record_" + recordCounter);
+        ST operationCall = currentGroup.getInstanceOf("operation_call_with_assignment_many_parameters");
+        TemplateHandler.add(operationCall, "struct", recordStructGenerator.getStruct(operationNode));
+        TemplateHandler.add(operationCall, "var", "_ld_record_" + recordCounter);
         List<String> assignments = new ArrayList<>();
         for(int i = 0; i < variables.size(); i++) {
             ST assignment = currentGroup.getInstanceOf("operation_call_assignment");
@@ -721,8 +724,8 @@ public class SubstitutionGenerator {
             assignments.add(assignment.render());
         }
         recordCounter++;
-        TemplateHandler.add(functionCall, "assignments", assignments);
-        return functionCall;
+        TemplateHandler.add(operationCall, "assignments", assignments);
+        return operationCall;
     }
 
     /*

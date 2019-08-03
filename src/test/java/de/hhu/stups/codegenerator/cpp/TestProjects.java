@@ -55,4 +55,10 @@ public class TestProjects extends TestCpp {
     public void testProject10() throws Exception {
         testCpp("project10/Lift2");
     }
+
+    @Test
+    public void testRefinement() throws Exception {
+        //TODO: Type checking of concrete variables
+        testCpp("refinement/RefinementMachine");
+    }
 }

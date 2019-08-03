@@ -50,12 +50,6 @@ public class TestC {
     }
 
     @Test
-    public void testRefinement() throws Exception {
-        //TODO: Type checking of concrete variables
-        testC("RefinementMachine");
-    }
-
-    @Test
     public void testEnumSets() throws Exception {
         testC("EnumSets");
     }

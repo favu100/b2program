@@ -55,4 +55,10 @@ public class TestProjects extends TestJava {
     public void testProject10() throws Exception {
         testJava("project10/Lift2");
     }
+
+    @Test
+    public void testRefinement() throws Exception {
+        //TODO: Type checking of concrete variables
+        testJava("refinement/RefinementMachine");
+    }
 }

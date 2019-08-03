@@ -26,12 +26,6 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
-    public void testRefinement() throws Exception {
-        //TODO: Type checking of concrete variables
-        testCpp("RefinementMachine");
-    }
-
-    @Test
     public void testCounter() throws Exception {
         testCpp("Counter", "Counter", "CounterAddition.stCpp", true);
     }

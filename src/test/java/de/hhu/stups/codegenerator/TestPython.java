@@ -44,12 +44,6 @@ public class TestPython {
 	}
 
 	@Test
-	public void testRefinement() throws Exception {
-		//TODO: Type checking of concrete variables
-		testPython("RefinementMachine");
-	}
-
-	@Test
 	public void testEnumSets() throws Exception {
 		testPython("EnumSets");
 	}

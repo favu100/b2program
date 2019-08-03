@@ -26,12 +26,6 @@ public class TestMachines extends TestJava {
     }
 
     @Test
-    public void testRefinement() throws Exception {
-        //TODO: Type checking of concrete variables
-        testJava("RefinementMachine");
-    }
-
-    @Test
     public void testCounter() throws Exception {
         testJava("Counter", "Counter", "CounterAddition.stjava", true);
     }

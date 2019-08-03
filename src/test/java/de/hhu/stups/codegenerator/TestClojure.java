@@ -46,12 +46,6 @@ public class TestClojure {
     }
 
     @Test
-    public void testRefinement() throws Exception {
-        //TODO: Type checking of concrete variables
-        testClojure("RefinementMachine");
-    }
-
-    @Test
     public void testEnumSets() throws Exception {
         testClojure("EnumSets");
     }

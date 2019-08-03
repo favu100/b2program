@@ -119,6 +119,11 @@ public class TestOtherConstructs extends TestCpp {
     }
 
     @Test
+    public void testRecordsAccess3() throws Exception {
+        testCpp("RecordsAccess3", "RecordsAccess3", "RecordsAccess3.stcpp", true);
+    }
+
+    @Test
     public void testRecordAccessNested() throws Exception {
         testCpp("RecordAccessNested", "RecordAccessNested", "RecordAccessNested.stcpp", true);
     }
@@ -161,6 +166,11 @@ public class TestOtherConstructs extends TestCpp {
     @Test
     public void testFunctionCallAccessNested6() throws Exception {
         testCpp("FunctionCallAccessNested6", "FunctionCallAccessNested6", "FunctionCallAccessNested6.stcpp", true);
+    }
+
+    @Test
+    public void testFunctionCallAccessNested7() throws Exception {
+        testCpp("FunctionCallAccessNested7", "FunctionCallAccessNested7", "FunctionCallAccessNested7.stcpp", true);
     }
 
     @Test

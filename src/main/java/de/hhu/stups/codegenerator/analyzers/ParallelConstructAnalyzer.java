@@ -367,7 +367,6 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
-        //TODO Check identifier on LHS
         return null;
     }
 
@@ -378,7 +377,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
-        //TODO Check identifier on LHS
+        visitExprNode(node.getRecord(), expected);
         return null;
     }
 

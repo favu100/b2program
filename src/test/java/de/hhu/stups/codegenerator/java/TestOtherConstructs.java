@@ -119,6 +119,11 @@ public class TestOtherConstructs extends TestJava {
     }
 
     @Test
+    public void testRecordsAccess3() throws Exception {
+        testJava("RecordsAccess3", "RecordsAccess3", "RecordsAccess3.stjava", true);
+    }
+
+    @Test
     public void testRecordAccessNested() throws Exception {
         testJava("RecordAccessNested", "RecordAccessNested", "RecordAccessNested.stjava", true);
     }
@@ -161,6 +166,11 @@ public class TestOtherConstructs extends TestJava {
     @Test
     public void testFunctionCallAccessNested6() throws Exception {
         testJava("FunctionCallAccessNested6", "FunctionCallAccessNested6", "FunctionCallAccessNested6.stjava", true);
+    }
+
+    @Test
+    public void testFunctionCallAccessNested7() throws Exception {
+        testJava("FunctionCallAccessNested7", "FunctionCallAccessNested7", "FunctionCallAccessNested7.stjava", true);
     }
 
     @Test

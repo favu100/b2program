@@ -55,7 +55,6 @@ public class IterationPredicateGenerator {
     */
     public void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations) {
         if(!(predicate instanceof PredicateOperatorNode)) {
-            //TODO
             if(declarations.size() != 1) {
                 throw new CodeGenerationException("Predicate for iteration must be a conjunction");
             }

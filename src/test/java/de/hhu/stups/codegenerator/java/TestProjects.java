@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.java;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Test;
 
 public class TestProjects extends TestJava {
@@ -18,6 +19,11 @@ public class TestProjects extends TestJava {
     @Test
     public void testProject3() throws Exception {
         testJava("project3/A");
+    }
+
+    @Test(expected = CodeGenerationException.class)
+    public void testProject4() throws Exception {
+        testJava("project4/A");
     }
 
     @Test

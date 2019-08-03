@@ -73,13 +73,17 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
             }
         });
 
-        visitSubstitutionNode(node.getInitialisation(), null);
+        if(node.getInitialisation() != null) {
+            visitSubstitutionNode(node.getInitialisation(), null);
+        }
         node.getOperations().forEach(this::visitOperationNode);
         node.getValues().forEach(substitution -> visitSubstitutionNode(substitution, null));
         if(node.getProperties() != null) {
             visitPredicateNode(node.getProperties(), null);
         }
-        visitPredicateNode(node.getInvariant(), null);
+        if(node.getInvariant() != null) {
+            visitPredicateNode(node.getInvariant(), null);
+        }
     }
 
     /*

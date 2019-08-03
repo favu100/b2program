@@ -40,6 +40,11 @@ public class TestQuantifiedConstructs extends TestJava {
     }
 
     @Test
+    public void testSetComprehension8() throws Exception {
+        testJava("SetComprehension8", "SetComprehension8", "SetComprehension8Addition.stjava", true);
+    }
+
+    @Test
     public void testLambda() throws Exception {
         testJava("Lambda", "Lambda", "LambdaAddition.stjava", true);
     }

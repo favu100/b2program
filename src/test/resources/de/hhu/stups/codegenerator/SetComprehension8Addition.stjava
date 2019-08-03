@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SetComprehension8 set = new SetComprehension8();
+    set.calculate();
+    System.out.println(set.getRes());
+}

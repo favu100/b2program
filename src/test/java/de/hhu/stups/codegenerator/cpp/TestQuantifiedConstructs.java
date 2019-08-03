@@ -40,6 +40,11 @@ public class TestQuantifiedConstructs extends TestCpp {
     }
 
     @Test
+    public void testSetComprehension8() throws Exception {
+        testCpp("SetComprehension8", "SetComprehension8", "SetComprehension8Addition.stcpp", true);
+    }
+
+    @Test
     public void testLambda() throws Exception {
         testCpp("Lambda", "Lambda", "LambdaAddition.stcpp", true);
     }

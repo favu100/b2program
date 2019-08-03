@@ -492,7 +492,6 @@ public class SubstitutionGenerator {
     * This function generates code for a parallel substituion from the belonging AST node
     */
     private String visitParallelSubstitutionNode(ListSubstitutionNode node) {
-        //TODO Implement handling iteration construct
         parallelNestingLevel++;
         ST substitutions = currentGroup.getInstanceOf("parallel");
         TemplateHandler.add(substitutions, "machine", nameHandler.handle(machineGenerator.getMachineName()));

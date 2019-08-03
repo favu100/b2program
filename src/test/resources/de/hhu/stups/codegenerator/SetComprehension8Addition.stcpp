@@ -1,0 +1,6 @@
+int main() {
+    SetComprehension8 set;
+    set.calculate();
+    cout << set.getRes();
+    return 0;
+}

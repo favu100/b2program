@@ -9,9 +9,11 @@ import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.CoupleType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -131,11 +133,20 @@ public class SetComprehensionGenerator {
             DeclarationNode declarationNode = declarations.get(0);
             TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
         } else {
-            DeclarationNode left = declarations.get(0);
-            DeclarationNode right = declarations.get(1);
-            TemplateHandler.add(template, "leftType", typeGenerator.generate(left.getType()));
-            TemplateHandler.add(template, "rightType", typeGenerator.generate(right.getType()));
+            CoupleType type = extractTypeFromDeclarations(declarations);
+            BType leftType = type.getLeft();
+            BType rightType = type.getRight();
+            TemplateHandler.add(template, "leftType", typeGenerator.generate(leftType));
+            TemplateHandler.add(template, "rightType", typeGenerator.generate(rightType));
         }
+    }
+
+    private CoupleType extractTypeFromDeclarations(List<DeclarationNode> declarations) {
+        CoupleType result = new CoupleType(declarations.get(0).getType(), declarations.get(1).getType());
+        for(int i = 2; i < declarations.size(); i++) {
+            result = new CoupleType(result, declarations.get(i).getType());
+        }
+        return result;
     }
 
     /*
@@ -143,24 +154,33 @@ public class SetComprehensionGenerator {
     */
     private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
-            return "_ic_" + declarations.get(declarations.size() - 1).getName();
+            return "_ic_" + declarations.get(0).getName();
         } else {
-            ST firstTuple = group.getInstanceOf("tuple_create");
-            DeclarationNode left = declarations.get(0);
-            DeclarationNode right = declarations.get(1);
-            TemplateHandler.add(firstTuple, "leftType", typeGenerator.generate(left.getType()));
-            TemplateHandler.add(firstTuple, "rightType", typeGenerator.generate(right.getType()));
-            TemplateHandler.add(firstTuple, "arg1", "_ic_" + left.getName());
-            TemplateHandler.add(firstTuple, "arg2", "_ic_" + right.getName());
-            return declarations.subList(2, declarations.size()).stream()
-                    .map(DeclarationNode::getName)
-                    .reduce(firstTuple.render(), (a,e) -> {
-                        //TODO: implement type placeholder for C++
-                        ST tuple = group.getInstanceOf("tuple_create");
-                        TemplateHandler.add(tuple, "arg1", a);
-                        TemplateHandler.add(tuple, "arg2", "_ic_" + e);
-                        return tuple.render();
-                    });
+            String result = "";
+
+            BType type = extractTypeFromDeclarations(declarations);
+            List<CoupleType> types = new ArrayList<>();
+
+            while(type instanceof CoupleType) {
+                types.add(0, (CoupleType) type);
+                type = ((CoupleType) type).getLeft();
+            }
+
+            for(int i = 0; i < types.size(); i++) {
+                ST tuple = group.getInstanceOf("tuple_create");
+                BType leftType = types.get(i).getLeft();
+                BType rightType = types.get(i).getRight();
+                TemplateHandler.add(tuple, "leftType", typeGenerator.generate(leftType));
+                TemplateHandler.add(tuple, "rightType", typeGenerator.generate(rightType));
+                if(i == 0) {
+                    TemplateHandler.add(tuple, "arg1", "_ic_" + declarations.get(i).getName());
+                } else {
+                    TemplateHandler.add(tuple, "arg1", result);
+                }
+                TemplateHandler.add(tuple, "arg2", "_ic_" + declarations.get(i+1).getName());
+                result = tuple.render();
+            }
+            return result;
         }
     }
 

@@ -60,14 +60,12 @@ public class RecordStructAnalyzer implements AbstractVisitor<Void, Void> {
     */
     public void visitMachineNode(MachineNode node) {
         node.getVariables().forEach(variable -> {
-            //TODO: Check recursively for RecordType
             if(variable.getType() instanceof RecordType) {
                 recordStructGenerator.createNewStruct((RecordType) variable.getType());
             }
         });
 
         node.getConstants().forEach(constant -> {
-            //TODO: Check recursively for RecordType
             if(constant.getType() instanceof RecordType) {
                 recordStructGenerator.createNewStruct((RecordType) constant.getType());
             }

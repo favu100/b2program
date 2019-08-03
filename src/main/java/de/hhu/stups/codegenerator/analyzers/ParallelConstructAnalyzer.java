@@ -128,16 +128,20 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
-        //TODO: bounded variables
+        List<String> locals = node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
         visitPredicateNode(node.getPredicateNode(), expected);
+        ignoredVariables.removeAll(locals);
         return null;
     }
 
     @Override
     public Void visitLambdaNode(LambdaNode node, Void expected) {
-        //TODO: bounded variables
+        List<String> locals = node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
         visitPredicateNode(node.getPredicate(), expected);
         visitExprNode(node.getExpression(), expected);
+        ignoredVariables.removeAll(locals);
         return null;
     }
 
@@ -180,7 +184,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
+        List<String> locals = node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
         visitPredicateNode(node.getPredicateNode(), expected);
+        ignoredVariables.removeAll(locals);
         return null;
     }
 
@@ -360,6 +367,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
+        //TODO Check identifier on LHS
         return null;
     }
 
@@ -370,6 +378,7 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
+        //TODO Check identifier on LHS
         return null;
     }
 

@@ -109,8 +109,8 @@ P is a conjunction of n conjuncts where the i-th conjunct must constraint xi for
 | S /<<: T                     | Not Strict Subset of                       |
 | union(S)                     | Generalized Union over Sets of Sets        |
 | inter(S)                     | Generalized Intersection over Sets of Sets |
-| UNION(z1,...,zn).(P|E)       | Generalized Union with Predicate           |
-| INTER(z1,...,zn).(P|E)       | Generalized Intersection with Predicate    |
+| `UNION(z1,...,zn).(P|E)`     | Generalized Union with Predicate           |
+| `INTER(z1,...,zn).(P|E) `    | Generalized Intersection with Predicate    |
 
 Restriction: Set comprehesions, generalized unions and generalized intersections are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
 The i-th conjunct must constraint xi for each i in {1,...,n}.
@@ -141,8 +141,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | m / n                          | Division                                      |
 | m ** n                         | Power                                         |
 | m mod n                        | Remainder of Division                         |
-| PI(z1,...,zn).(P|E)            | Set product                                   |
-| SIGMA(z1,...,zn).(P|E)         | Set summation                                 |
+| `PI(z1,...,zn).(P|E)`          | Set product                                   |
+| `SIGMA(z1,...,zn).(P|E)`       | Set summation                                 |
 | succ(n)                        | Successor                                     |
 | pred(n)                        | Predecessor                                   |
 
@@ -162,16 +162,16 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | dom(r)              | Domain of Relation                                    |
 | range(r)            | Range of Relation                                     |
 | id(S)               | Identity Relation                                     |
-| S <| r              | Domain Restriction                                    |
-| S <<| r             | Domain Substraction                                   |
-| r |> S              | Range Restriction                                     |
-| r |>> S             | Range Substraction                                    |
+| `S <| r`            | Domain Restriction                                    |
+| `S <<| r`           | Domain Substraction                                   |
+| `r |> S`            | Range Restriction                                     |
+| `r |>> S`           | Range Substraction                                    |
 | r~                  | Inverse of Relation                                   |
 | r[S]                | Relational Image                                      |
 | r1 <+ r2            | Relational Overriding                                 |
 | r1 >< r2            | Direct Product                                        |
 | (r1 ; r2)           | Relational Composition                                |
-| (r1 || r2)          | Parallel Product                                      |
+| `(r1 || r2)`        | Parallel Product                                      |
 | prj1(S,T)           | Projection Function                                   |
 | prj2(S,T)           | Projection Function                                   |
 | closure1(r)         | Transitive Closure                                    |

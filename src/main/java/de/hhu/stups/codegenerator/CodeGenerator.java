@@ -15,8 +15,8 @@ import de.prob.parser.ast.visitors.TypeErrorException;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,9 +42,9 @@ public class CodeGenerator {
 	* Main function
 	* First argument : Option for programming language
 	* Second argument : Path for the main machine code should be generated for
-	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=... -Pmaxint=... -Pfile = "de/hhu/stups/codegenerator/testfiles/Lift.mch"
+	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pfile = "Lift.mch"
 	*/
-	public static void main(String[] args) throws URISyntaxException, CodeGenerationException {
+	public static void main(String[] args) throws URISyntaxException, MalformedURLException, CodeGenerationException {
 		if(args.length < 6 || args.length > 7) {
 			System.err.println("Wrong number of arguments");
 			return;
@@ -55,14 +55,14 @@ public class CodeGenerator {
 		String maxint = args[3];
 		String deferredSetSize = args[4];
 		CodeGenerator codeGenerator = new CodeGenerator();
-		URL url = CodeGenerator.class.getClassLoader().getResource(args[5]);
-		checkUrl(url);
+		Path path = Paths.get(args[5]);
+		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;
 		if(args.length == 7) {
 			addition = args[6];
 		}
-		codeGenerator.generate(Paths.get(url.toURI()), mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
 	}
 
 	/*
@@ -102,8 +102,8 @@ public class CodeGenerator {
 		return useBigInteger;
 	}
 
-	private static void checkUrl(URL url) {
-		if(url == null) {
+	private static void checkPath(Path path) {
+		if(path == null) {
 			throw new RuntimeException("File not found");
 		}
 	}

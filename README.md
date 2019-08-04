@@ -10,8 +10,6 @@ Note:
 * The implementation of the B types in C++ uses persistent set from:
   https://github.com/arximboldi/immer
 * The library must first be installed before the generated C++ code can be used.
-* The generated code in Python is not supported as the implementations of needed
-  B Types are missed.
 * The generated code for C works for a subset of the generated code that works
   for Java and C++.
 * Sets and couples are not supported for C.
@@ -25,19 +23,19 @@ Note:
 
 ```bash
 # Java
-./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 
 # Python
-./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 
 # C
-./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 
 # C++
-./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="de/hhu/stups/codegenerator/testfiles/Lift.mch"
+./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 ```
 
--Pminint and -Pmaxint are optional ([]). The default values cover 32-Bit Integers
+-Pminint and -Pmaxint are optional. The default values cover 32-Bit Integers
 
 ### Compile the generated code in Java
 

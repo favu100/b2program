@@ -567,4 +567,6 @@ public class InfiniteSetGenerator {
         }
     }
 
+    //TODO: Maybe support set of sequences
+
 }

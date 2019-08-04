@@ -5,6 +5,26 @@ programming languages.
 
 A subset of B is supported for Java and C++ now. The work for code generation for Python, Clojure and C has begun but not continued.
 
+## Supported subset of B
+
+### Machine sections:
+
+| SETS               |            S (Deferred Set)            |
+|--------------------|:--------------------------------------:|
+|                    |   T = {e1, e2, ...} (Enumerated Set)   |
+| CONSTANTS          |                x,y, ...                |
+| CONCRETE_CONSTANTS |               cx, cy, ...              |
+| PROPERTIES         |                                        |
+| VARIABLES          | x,y, ...                               |
+| CONCRETE_VARIABLES | cx, cy, ...                            |
+| INVARIANT          | P (Logical Predicate)                  |
+| ASSERTIONS         | P1;...;P2 (List Of Logical Predicates) |
+| INITIALISATION     |                                        |
+| OPERATIONS         |                                        |
+
+Note that code is not generated from INVARIANT and ASSERTIONS. These constructs are used for verifying the machine only.
+
+
 Note:
 
 * The implementation of the B types in C++ uses persistent set from:

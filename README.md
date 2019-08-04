@@ -193,7 +193,7 @@ Restriction: Set of Relation mostly grows up very fast. They are only supported 
 | S >+> T             | Partial Injection                 |
 | S >+>> T            | Partial Bijection                 |
 | S >->> T            | Total Bijection                   |
-| %(x1,...,xn).(P|E)  | Lambda Abstraction                |
+| %(x1,...,xn).(P\|E) | Lambda Abstraction                |
 | f(E)                | Function Application              |
 | f(E1,...,EN)        | Function Application with Couples |
 
@@ -217,8 +217,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | front(S)            | Front of Sequence                      |
 | tail(S)             | Tail of Sequence                       |
 | conc(S)             | Concatenation of Sequence of Sequences |
-| s /|\ n             | Take first n elements of sequence      |
-| s \|/ n             | Drop first n elements of sequence      |
+| s /\|\ n            | Take first n elements of sequence      |
+| s \\|/ n            | Drop first n elements of sequence      |
 
 
 ### Records:
@@ -261,7 +261,7 @@ Restriction: STRING is a infinite set. It is only supported on the right-hand si
 | x :: S                                            | Choice from Set                                          |
 | x : (P)                                           | Choice by Predicate                                      |
 | x <-- OP(X)                                       | Operation Call and Assignment of Return Value            |
-| G || H                                            | Parallel Substitution                                    |
+| G \|\| H                                          | Parallel Substitution                                    |
 | G ; H                                             | Sequential Substitution                                  |
 | ANY x1,...,xn WHERE P THEN G END                  | Non Deterministic Choice                                 |
 | LET x1,...,xn BE x1=E1 & ... & xn = En IN G END   | Let Substitution                                         |

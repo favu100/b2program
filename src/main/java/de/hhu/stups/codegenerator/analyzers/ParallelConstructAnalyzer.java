@@ -367,10 +367,10 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
-        /*List<String> locals = node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        List<String> locals = node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList());
         ignoredVariables.addAll(locals);
         node.getExpressions().forEach(expr -> visitExprNode(expr, expected));
-        ignoredVariables.removeAll(locals);*/
+        ignoredVariables.removeAll(locals);
         return null;
     }
 

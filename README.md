@@ -17,7 +17,7 @@ Note:
   The only types that are implemented for C are BInteger and BBoolean.
   An example where code generation for C works is the machine Lift.
 
-## Supported subset of B
+## Supported Subset of B
 
 ### Machine sections:
 

@@ -394,11 +394,11 @@ public class SubstitutionGenerator {
     private String getNestedRecordAccess(ExprNode lhs, ExprNode rhs) {
         List<ST> templates = new ArrayList<>();
         ExprNode innerExpression = lhs;
-        List<ExprNode> arguments = new ArrayList<>();
+        List<DeclarationNode> arguments = new ArrayList<>();
         boolean isNested = false;
 
         while (innerExpression instanceof RecordFieldAccessNode) {
-            ExprNode innerArgument = ((RecordFieldAccessNode) innerExpression).getIdentifier();
+            DeclarationNode innerArgument = ((RecordFieldAccessNode) innerExpression).getIdentifier();
             arguments.add(innerArgument);
             innerExpression = ((RecordFieldAccessNode) innerExpression).getRecord();
             templates.add(generatedNestedRecordAccess(innerExpression, innerArgument, rhs, isNested));
@@ -416,10 +416,10 @@ public class SubstitutionGenerator {
     /*
      * This function calculates one step of calculating the final result for the top-level assigned element of a nested record access on the left-hand side of an assignment
      */
-    private ST generateRecordAccessElement(ST currentTemplate, ST nextTemplate, ExprNode argument) {
+    private ST generateRecordAccessElement(ST currentTemplate, ST nextTemplate, DeclarationNode argument) {
         ST template = currentGroup.getInstanceOf("record_access_element");
         TemplateHandler.add(template, "expr", nextTemplate.render());
-        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(argument, null));
+        TemplateHandler.add(template, "arg", nameHandler.handleIdentifier(argument.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(template, "val", currentTemplate.render());
         return template;
     }
@@ -427,14 +427,14 @@ public class SubstitutionGenerator {
     /*
      * This function calculates one inner record access that must be overridden by the next inner construct with containing the new element that the nested record access is assigned to.
      */
-    private ST generatedNestedRecordAccess(ExprNode innerExpression, ExprNode innerArgument, ExprNode rhs, boolean isNested) {
+    private ST generatedNestedRecordAccess(ExprNode innerExpression, DeclarationNode innerArgument, ExprNode rhs, boolean isNested) {
         ST template = currentGroup.getInstanceOf("record_access_nested");
         if(isNested) {
             TemplateHandler.add(template, "record", machineGenerator.visitExprNode(innerExpression, null));
         } else {
             TemplateHandler.add(template, "record", machineGenerator.visitExprNode(rhs, null));
         }
-        TemplateHandler.add(template, "field", machineGenerator.visitExprNode(innerArgument, null));
+        TemplateHandler.add(template, "field", nameHandler.handleIdentifier(innerArgument.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(template, "isNested", isNested);
         return template;
     }
@@ -444,7 +444,7 @@ public class SubstitutionGenerator {
      */
     private void generateAssignmentArgument(ST substitution, ExprNode lhs) {
         if(lhs instanceof ExpressionOperatorNode) {
-            ExprNode argument = getInnerArgument(lhs);
+            ExprNode argument = getInnerArgumentOfFunctionCall(lhs);
             IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
 
             BType rightType = ((CoupleType)((SetType) identifier.getType()).getSubType()).getRight();
@@ -453,8 +453,8 @@ public class SubstitutionGenerator {
             TemplateHandler.add(substitution, "leftType", typeGenerator.generate(argument.getType()));
             TemplateHandler.add(substitution, "rightType", typeGenerator.generate(rightType));
         } else if(lhs instanceof RecordFieldAccessNode) {
-            ExprNode argument = getInnerArgument(lhs);
-            TemplateHandler.add(substitution, "arg", machineGenerator.visitExprNode(argument, null));
+            DeclarationNode argument = getInnerArgumentOfRecordAccess(lhs);
+            TemplateHandler.add(substitution, "arg", nameHandler.handleIdentifier(argument.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         }
     }
 
@@ -633,9 +633,9 @@ public class SubstitutionGenerator {
     }
 
     /*
-    * This function extracts the inner argument from a nested construct on the left-hand side of an assignment
+    * This function extracts the inner argument from a nested function call on the left-hand side of an assignment
     */
-    private ExprNode getInnerArgument(ExprNode lhs) {
+    private ExprNode getInnerArgumentOfFunctionCall(ExprNode lhs) {
         ExprNode expression = null;
         if(lhs instanceof ExpressionOperatorNode) {
             expression = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
@@ -643,13 +643,22 @@ public class SubstitutionGenerator {
                 List<ExprNode> expressions = ((ExpressionOperatorNode) lhs).getExpressionNodes();
                 return expressionGenerator.getArgumentFromExpressions(expressions.subList(1, expressions.size()));
             }
-        } else if(lhs instanceof RecordFieldAccessNode) {
+        }
+        return getInnerArgumentOfFunctionCall(expression);
+    }
+
+    /*
+     * This function extracts the inner argument from a nested record access on the left-hand side of an assignment
+     */
+    private DeclarationNode getInnerArgumentOfRecordAccess(ExprNode lhs) {
+        ExprNode expression = null;
+        if(lhs instanceof RecordFieldAccessNode) {
             expression = ((RecordFieldAccessNode) lhs).getRecord();
             if(expression instanceof IdentifierExprNode) {
                 return ((RecordFieldAccessNode) lhs).getIdentifier();
             }
         }
-        return getInnerArgument(expression);
+        return getInnerArgumentOfRecordAccess(expression);
     }
 
     /*

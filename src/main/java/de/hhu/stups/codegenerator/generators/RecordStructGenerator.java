@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators;
 
+import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.OperationNode;
@@ -29,6 +30,8 @@ public class RecordStructGenerator {
 
     private final ImportGenerator importGenerator;
 
+    private final NameHandler nameHandler;
+
     private Map<String, String> nodeToClassName;
 
     private List<RecordType> structs;
@@ -37,12 +40,14 @@ public class RecordStructGenerator {
 
     private int counter;
 
-    public RecordStructGenerator(STGroup group, MachineGenerator machineGenerator, TypeGenerator typeGenerator, ImportGenerator importGenerator) {
+    public RecordStructGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
+                                 final ImportGenerator importGenerator, final NameHandler nameHandler) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
         this.typeGenerator.setRecordStructGenerator(this);
         this.importGenerator = importGenerator;
+        this.nameHandler = nameHandler;
         this.structs = new ArrayList<>();
         this.generatedStructs = new ArrayList<>();
         this.nodeToClassName = new HashMap<>();
@@ -71,7 +76,7 @@ public class RecordStructGenerator {
     public String visitRecordFieldAccessNode(RecordFieldAccessNode node) {
         ST fieldAccess = currentGroup.getInstanceOf("record_field_access");
         TemplateHandler.add(fieldAccess, "record", machineGenerator.visitExprNode(node.getRecord(), null));
-        TemplateHandler.add(fieldAccess, "field", machineGenerator.visitExprNode(node.getIdentifier(), null));
+        TemplateHandler.add(fieldAccess, "field", nameHandler.handleIdentifier(node.getIdentifier().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return fieldAccess.render();
     }
 
@@ -270,7 +275,7 @@ public class RecordStructGenerator {
     private RecordType getRecordTypeFromOperation(OperationNode node) {
         List<String> identifiers = node.getOutputParams()
                 .stream()
-                .map(DeclarationNode::getName).collect(Collectors.toList());
+                .map(declaration -> nameHandler.handleIdentifier(declaration.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)).collect(Collectors.toList());
         List<BType> types = node.getOutputParams()
                 .stream()
                 .map(DeclarationNode::getType)

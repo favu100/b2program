@@ -122,7 +122,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
-		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator);
+		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(recordStructGenerator);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);

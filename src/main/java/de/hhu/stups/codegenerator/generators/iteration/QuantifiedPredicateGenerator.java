@@ -97,6 +97,7 @@ public class QuantifiedPredicateGenerator {
     /*
     * This function generates code for the evaluation of a quantified predicate
     */
+    //TODO: Check universal quantification
     private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, boolean forAll, int numberDeclarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
         ST template = group.getInstanceOf("quantified_predicate_evaluation");

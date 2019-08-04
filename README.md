@@ -5,6 +5,18 @@ programming languages.
 
 A subset of B is supported for Java and C++ now. The work for code generation for Python, Clojure and C has begun but not continued.
 
+Note:
+
+* The implementation of the B types in C++ uses persistent set from:
+  https://github.com/arximboldi/immer
+* The library must first be installed before the generated C++ code can be used.
+* The generated code for C works for a subset of the generated code that works
+  for Java and C++.
+* Sets and couples are not supported for C.
+  Including other machines is not supported in C, too.
+  The only types that are implemented for C are BInteger and BBoolean.
+  An example where code generation for C works is the machine Lift.
+
 ## Supported subset of B
 
 ### Machine sections:
@@ -24,19 +36,6 @@ A subset of B is supported for Java and C++ now. The work for code generation fo
 | OPERATIONS         |                                        |
 
 Note that code is not generated from INVARIANT and ASSERTIONS. These constructs are used for verifying the machine only.
-
-
-Note:
-
-* The implementation of the B types in C++ uses persistent set from:
-  https://github.com/arximboldi/immer
-* The library must first be installed before the generated C++ code can be used.
-* The generated code for C works for a subset of the generated code that works
-  for Java and C++.
-* Sets and couples are not supported for C.
-  Including other machines is not supported in C, too.
-  The only types that are implemented for C are BInteger and BBoolean.
-  An example where code generation for C works is the machine Lift.
 
 ## Usage
 

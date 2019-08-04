@@ -182,7 +182,111 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 
 Restriction: Set of Relation mostly grows up very fast. They are only supported on the right-hand side of a set predicate.
 
+### Functions:
 
+| Function Expression | Meaning                           |
+|---------------------|-----------------------------------|
+| S +-> T             | Partial Function                  |
+| S --> T             | Total Function                    |
+| S +->> T            | Partial Surjection                |
+| S -->> T            | Total Surjection                  |
+| S >+> T             | Partial Injection                 |
+| S >+>> T            | Partial Bijection                 |
+| S >->> T            | Total Bijection                   |
+| %(x1,...,xn).(P|E)  | Lambda Abstraction                |
+| f(E)                | Function Application              |
+| f(E1,...,EN)        | Function Application with Couples |
+
+Restriction: Lambda expressions are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
+The i-th conjunct must constraint xi for each i in {1,...,n}.
+
+### Sequences:
+
+| Sequence Expression | Meaning                                |
+|---------------------|----------------------------------------|
+| <> or []            | Empty Sequence                         |
+| [E]                 | Singleton Sequence                     |
+| [E1,...,EN]         | Sequence with N elements               |
+| size(S)             | Size of Sequence                       |
+| s^t                 | Concatenation                          |
+| E -> s              | Prepend element                        |
+| s <- E              | Append element                         |
+| rev(S)              | Reverse of Sequence                    |
+| first(S)            | First Element                          |
+| last(S)             | Last Element                           |
+| front(S)            | Front of Sequence                      |
+| tail(S)             | Tail of Sequence                       |
+| conc(S)             | Concatenation of Sequence of Sequences |
+| s /|\ n             | Take first n elements of sequence      |
+| s \|/ n             | Drop first n elements of sequence      |
+
+
+### Records:
+
+| Record/Struct expression  | Meaning                                          |
+|---------------------------|--------------------------------------------------|
+| struct(ID1:T1,...,IDN:TN) | Set of Records with Given Fields and Field Types |
+| rec(ID1:E1,...,IDN:EN)    | Record with Given Field Names and Values         |
+| E'ID                      | Get value of field with name ID                  |
+
+Nested record accesses are also supported.
+
+
+### Strings:
+
+| String Expression | Meaning            |
+|-------------------|--------------------|
+| "string"          | String Value       |
+| STRING            | Set of All Strings |
+
+Restriction: STRING is a infinite set. It is only supported on the right-hand side of a set predicate.
+
+
+### LET and IF-THEN-ELSE Expression and Predicate:
+
+| Expression or Predicate                           | Notes                                   |
+|---------------------------------------------------|-----------------------------------------|
+| IF P THEN E1 ELSE E2 END                          | E1 and E2 are expressions or predicates |
+| LET x1,...,xn BE x1 = E1 & ... & xn = En IN E END | E is a predicate or a expression        |
+
+
+### Substitution:
+
+| Substitution                                      | Meaning                                                  |
+|---------------------------------------------------|----------------------------------------------------------|
+| skip                                              | No Operation                                             |
+| x := E                                            | Assignment                                               |
+| f(X) := E                                         | Functional Override                                      |
+| f'ID := E                                         | Record Access                                            |
+| x :: S                                            | Choice from Set                                          |
+| x : (P)                                           | Choice by Predicate                                      |
+| x <-- OP(X)                                       | Operation Call and Assignment of Return Value            |
+| G || H                                            | Parallel Substitution                                    |
+| G ; H                                             | Sequential Substitution                                  |
+| ANY x1,...,xn WHERE P THEN G END                  | Non Deterministic Choice                                 |
+| LET x1,...,xn BE x1=E1 & ... & xn = En IN G END   | Let Substitution                                         |
+| VAR x1,...,xn IN G END                            | Generate local variables                                 |
+| PRE P THEN G END                                  | Substitution with Precondition                           |
+| ASSERT P THEN G END                               | Substitution with Assertion                              |
+| CHOICE G or H END                                 | Choice Substitution                                      |
+| IF P THEN G END                                   | IF Substitution                                          |
+| IF P THEN G ELSE H                                | IF-THEN-ELSE Substitution                                |
+| IF P1 THEN G1 ELSIF P2 THEN G2 ... ELSE Gn END    | IF-THEN-ELSE Substitution with Many Else Branches        |
+| SELECT P THEN G WHEN .. WHEN Q THEN H END         | SELECT Substitution with Many Branches                   |
+| SELECT P THEN G WHEN .. WHEN Q THEN H ELSE I END  | SELECT Substitution with Many Branches and a Else Branch |
+| CASE E OF EITHER m THEN G or n THEN H ... END END | CASE substitution                                        |
+
+Functional Override and Record Access with assignment can be nested.
+
+Preconditions and Assertions are constructs that are relevant for verification. They are ignored at code generation.
+
+Assignments, Operation Calls, Choice from Set and Choice By Predicate can contain many variables on the left-hand side.
+Furthermore Choice By Predicate can use previous values of variables.
+
+Restriction: Choice by Predicates are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
+The i-th conjunct must constraint xi for each i in {1,...,n}.
+
+Comments are ignored during code generation. Furthermore trees and pragmas are not supported by B2Program.
 
 
 ## Usage

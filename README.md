@@ -9,8 +9,9 @@ A subset of B is supported for Java and C++ now. The work for code generation fo
 
 ### Machine sections:
 
+| Machine Section    | Usage                                  |
+|--------------------|----------------------------------------|
 | SETS               |            S (Deferred Set)            |
-|--------------------|:--------------------------------------:|
 |                    |   T = {e1, e2, ...} (Enumerated Set)   |
 | CONSTANTS          |                x,y, ...                |
 | CONCRETE_CONSTANTS |               cx, cy, ...              |

@@ -22,7 +22,8 @@ public class InfiniteSetGenerator {
                     PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_NON_INCLUSION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
+                    ExpressionOperatorNode.ExpressionOperator.SEQ, ExpressionOperatorNode.ExpressionOperator.SEQ1, ExpressionOperatorNode.ExpressionOperator.ISEQ, ExpressionOperatorNode.ExpressionOperator.ISEQ1, ExpressionOperatorNode.ExpressionOperator.PERM);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
@@ -261,6 +262,171 @@ public class InfiniteSetGenerator {
         return operatorName;
     }
 
+    private String generateInfiniteSeq(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isSeq";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotSeq";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfSeq";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfSeq";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfSeq";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfSeq";
+                break;
+            case EQUAL:
+                operatorName = "equalSeq";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalSeq";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteSeq1(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isSeq1";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotSeq1";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfSeq1";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfSeq1";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfSeq1";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfSeq1";
+                break;
+            case EQUAL:
+                operatorName = "equalSeq1";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalSeq1";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteISeq(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isISeq";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotISeq";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfISeq";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfISeq";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfISeq";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfISeq";
+                break;
+            case EQUAL:
+                operatorName = "equalISeq";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalISeq";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfiniteISeq1(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isISeq1";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotISeq1";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfISeq1";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfISeq1";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfISeq1";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfISeq1";
+                break;
+            case EQUAL:
+                operatorName = "equalISeq1";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalISeq1";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateInfinitePerm(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isPerm";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotPerm";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfPerm";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfPerm";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfPerm";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfPerm";
+                break;
+            case EQUAL:
+                operatorName = "equalPerm";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalPerm";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     /*
     * This function generates code for a struct on the right-hand side of a predicate
     */
@@ -305,6 +471,21 @@ public class InfiniteSetGenerator {
                 break;
             case STRING:
                 operatorName = generateInfiniteString(operator);
+                break;
+            case SEQ:
+                operatorName = generateInfiniteSeq(operator);
+                break;
+            case SEQ1:
+                operatorName = generateInfiniteSeq1(operator);
+                break;
+            case ISEQ:
+                operatorName = generateInfiniteISeq(operator);
+                break;
+            case ISEQ1:
+                operatorName = generateInfiniteISeq1(operator);
+                break;
+            case PERM:
+                operatorName = generateInfinitePerm(operator);
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);

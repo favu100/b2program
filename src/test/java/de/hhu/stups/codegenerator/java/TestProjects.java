@@ -58,7 +58,7 @@ public class TestProjects extends TestJava {
 
     @Test
     public void testRefinement() throws Exception {
-        //TODO: Type checking of adapter variables from abstract machine
+        //TODO: Type checking of variables from abstract machine
         testJava("refinement/RefinementMachine");
     }
 }

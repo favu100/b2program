@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.java;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Test;
 
 public class TestQuantifiedConstructs extends TestJava {
@@ -44,6 +45,11 @@ public class TestQuantifiedConstructs extends TestJava {
         testJava("SetComprehension8", "SetComprehension8", "SetComprehension8Addition.stjava", true);
     }
 
+    @Test(expected = CodeGenerationException.class)
+    public void testSetComprehension9() throws Exception {
+        testJava("SetComprehension9", "SetComprehension9", "SetComprehension9Addition.stjava", true);
+    }
+
     @Test
     public void testLambda() throws Exception {
         testJava("Lambda", "Lambda", "LambdaAddition.stjava", true);
@@ -67,6 +73,26 @@ public class TestQuantifiedConstructs extends TestJava {
     @Test
     public void testQuantifiedPredicate3() throws Exception {
         testJava("QuantifiedPredicate3", "QuantifiedPredicate3", "QuantifiedPredicate3Addition.stjava", true);
+    }
+
+    @Test
+    public void testQuantifiedPredicate4() throws Exception {
+        testJava("QuantifiedPredicate4", "QuantifiedPredicate4", "QuantifiedPredicate4Addition.stjava", true);
+    }
+
+    @Test(expected = CodeGenerationException.class)
+    public void testQuantifiedPredicate5() throws Exception {
+        testJava("QuantifiedPredicate5", "QuantifiedPredicate5", "QuantifiedPredicate5Addition.stjava", true);
+    }
+
+    @Test(expected = CodeGenerationException.class)
+    public void testQuantifiedPredicate6() throws Exception {
+        testJava("QuantifiedPredicate6", "QuantifiedPredicate6", "QuantifiedPredicate6Addition.stjava", true);
+    }
+
+    @Test
+    public void testQuantifiedPredicate7() throws Exception {
+        testJava("QuantifiedPredicate7", "QuantifiedPredicate7", "QuantifiedPredicate7Addition.stjava", true);
     }
 
     @Test

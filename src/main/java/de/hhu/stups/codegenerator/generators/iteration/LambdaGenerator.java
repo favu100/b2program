@@ -57,10 +57,10 @@ public class LambdaGenerator {
         BType type = node.getType();
 
         ST template = group.getInstanceOf("lambda");
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate, expression);
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
@@ -113,7 +113,7 @@ public class LambdaGenerator {
     * This function generates code for the expression representing the values the variables are mapped to within the lambda expression
     */
     public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size());
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

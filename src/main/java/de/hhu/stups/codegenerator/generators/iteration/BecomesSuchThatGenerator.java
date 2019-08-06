@@ -62,8 +62,8 @@ public class BecomesSuchThatGenerator {
 
         generateLoads(template, predicate);
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations);
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
         generateBody(template, otherConstructs, enumerationTemplates, predicate, node.getIdentifiers());
@@ -79,7 +79,7 @@ public class BecomesSuchThatGenerator {
     * This function generates code for the inner body of the becomes such that substitution
     */
     private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode predicateNode, boolean inLoop) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size());
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size(), false);
         ST template = group.getInstanceOf("becomes_such_that_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
 

@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.cpp;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Test;
 
 public class TestQuantifiedConstructs extends TestCpp {
@@ -44,6 +45,11 @@ public class TestQuantifiedConstructs extends TestCpp {
         testCpp("SetComprehension8", "SetComprehension8", "SetComprehension8Addition.stcpp", true);
     }
 
+    @Test(expected = CodeGenerationException.class)
+    public void testSetComprehension9() throws Exception {
+        testCpp("SetComprehension9", "SetComprehension8", "SetComprehension8Addition.stcpp", true);
+    }
+
     @Test
     public void testLambda() throws Exception {
         testCpp("Lambda", "Lambda", "LambdaAddition.stcpp", true);
@@ -67,6 +73,26 @@ public class TestQuantifiedConstructs extends TestCpp {
     @Test
     public void testQuantifiedPredicate3() throws Exception {
         testCpp("QuantifiedPredicate3", "QuantifiedPredicate3", "QuantifiedPredicate3Addition.stcpp", true);
+    }
+
+    @Test
+    public void testQuantifiedPredicate4() throws Exception {
+        testCpp("QuantifiedPredicate4", "QuantifiedPredicate4", "QuantifiedPredicate4Addition.stcpp", true);
+    }
+
+    @Test(expected = CodeGenerationException.class)
+    public void testQuantifiedPredicate5() throws Exception {
+        testCpp("QuantifiedPredicate5", "QuantifiedPredicate5", "QuantifiedPredicate5Addition.stcpp", true);
+    }
+
+    @Test(expected = CodeGenerationException.class)
+    public void testQuantifiedPredicate6() throws Exception {
+        testCpp("QuantifiedPredicate6", "QuantifiedPredicate6", "QuantifiedPredicate6Addition.stcpp", true);
+    }
+
+    @Test
+    public void testQuantifiedPredicate7() throws Exception {
+        testCpp("QuantifiedPredicate7", "QuantifiedPredicate7", "QuantifiedPredicate7Addition.stcpp", true);
     }
 
     @Test

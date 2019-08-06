@@ -56,8 +56,8 @@ public class LetExpressionPredicateGenerator {
 
         ST template = group.getInstanceOf("let_expression_predicate");
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations);
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
@@ -83,8 +83,8 @@ public class LetExpressionPredicateGenerator {
 
         ST template = group.getInstanceOf("let_expression_predicate");
 
-        iterationConstructGenerator.prepareGeneration(letPredicate, declarations);
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, letPredicate);
+        iterationConstructGenerator.prepareGeneration(letPredicate, declarations, false);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, letPredicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(letPredicate);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();

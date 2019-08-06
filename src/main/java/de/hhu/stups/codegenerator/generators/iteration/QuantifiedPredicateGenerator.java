@@ -48,11 +48,13 @@ public class QuantifiedPredicateGenerator {
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_predicate");
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
+
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type, forAll);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, forAll);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
-        boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
+
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_boolean_"+ iterationConstructCounter;
@@ -97,12 +99,11 @@ public class QuantifiedPredicateGenerator {
     /*
     * This function generates code for the evaluation of a quantified predicate
     */
-    //TODO: Check universal quantification
     private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, boolean forAll, int numberDeclarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, forAll);
         ST template = group.getInstanceOf("quantified_predicate_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "emptyPredicate", subpredicate instanceof PredicateOperatorNode && ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);

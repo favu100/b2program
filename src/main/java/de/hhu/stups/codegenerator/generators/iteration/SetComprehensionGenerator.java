@@ -56,9 +56,9 @@ public class SetComprehensionGenerator {
 
         ST template = group.getInstanceOf("set_comprehension");
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
 
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
@@ -77,7 +77,7 @@ public class SetComprehensionGenerator {
     * This function generates code for the predicate of a set comprehension
     */
     private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size());
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
         ST template = group.getInstanceOf("set_comprehension_predicate");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

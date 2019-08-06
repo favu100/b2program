@@ -53,16 +53,25 @@ public class IterationPredicateGenerator {
     /*
     * This function checks whether the predicate is a conjunction and whether first predicate declares a set to iterate over for a bounded variable
     */
-    public void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations) {
+    public void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations, boolean universalQuantification) {
         if(!(predicate instanceof PredicateOperatorNode)) {
+            if(universalQuantification) {
+                throw new CodeGenerationException("Predicate for universal quantification must contain an implication at top-level");
+            }
             if(declarations.size() != 1) {
                 throw new CodeGenerationException("Predicate for iteration must be a conjunction");
             }
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
-            if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                throw new CodeGenerationException("Predicate for iteration must be a conjunction");
+            if(universalQuantification) {
+                if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.IMPLIES) {
+                    throw new CodeGenerationException("Predicate for universal quantification must contain an implicaton at top-level");
+                }
+                checkPredicate(predicateOperatorNode.getPredicateArguments().get(0), declarations, false);
             } else {
+                if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
+                    throw new CodeGenerationException("Predicate for iteration must be a conjunction");
+                }
                 checkPredicateIteration(declarations, predicateOperatorNode);
             }
         }
@@ -92,12 +101,24 @@ public class IterationPredicateGenerator {
     /*
     * This function returns the subpredicate of the last n conjuncts of the given predicate
     */
-    public PredicateNode subpredicate(PredicateNode predicate, int n) {
+    public PredicateNode subpredicate(PredicateNode predicate, int n, boolean universalQuantification) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             return subpredicate((PredicateOperatorWithExprArgsNode) predicate);
-        } else {
+        } else if(predicate instanceof PredicateOperatorNode) {
+            if(universalQuantification) {
+                List<PredicateNode> subpredicates = new ArrayList<>();
+                PredicateNode leftPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                PredicateNode rightPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(1);
+                if(leftPredicate instanceof PredicateOperatorWithExprArgsNode || (leftPredicate instanceof PredicateOperatorNode && ((PredicateOperatorNode) leftPredicate).getPredicateArguments().size() <= n)) {
+                    return rightPredicate;
+                }
+                subpredicates.add(subpredicate((PredicateOperatorNode) leftPredicate, n));
+                subpredicates.add(rightPredicate);
+                return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, subpredicates);
+            }
             return subpredicate((PredicateOperatorNode) predicate, n);
         }
+        throw new RuntimeException("Given predicate is not supported");
     }
 
     /*
@@ -166,12 +187,25 @@ public class IterationPredicateGenerator {
     /*
     * This function returns all templates for enumeration in the whole iteration construct from the given list of declarations representing bounded variables and the given predicate
     */
-    public List<ST> getEnumerationTemplates(IterationConstructGenerator iterationConstructGenerator, List<DeclarationNode> declarations, PredicateNode predicate) {
+    public List<ST> getEnumerationTemplates(IterationConstructGenerator iterationConstructGenerator, List<DeclarationNode> declarations, PredicateNode predicate, boolean universalQuantification) {
         ST enumerationTemplate = null;
         List<ST> enumerationTemplates = new ArrayList<>();
         for(int i = 0; i < declarations.size(); i++) {
             DeclarationNode declarationNode = declarations.get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+            PredicateOperatorWithExprArgsNode innerPredicate = null;
+            if(universalQuantification) {
+                if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                } else if(predicate instanceof PredicateOperatorNode) {
+                    if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
+                       innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                    } else {
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(i);
+                    }
+                }
+            } else {
+                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+            }
             enumerationTemplate = getEnumerationTemplate(declarationNode, innerPredicate);
             generateOtherIterationConstructs(iterationConstructGenerator, enumerationTemplate, innerPredicate);
             TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(innerPredicate.getExpressionNodes().get(1), null));

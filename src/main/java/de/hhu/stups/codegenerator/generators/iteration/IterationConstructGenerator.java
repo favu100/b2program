@@ -398,9 +398,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     /*
     * This function prepares code generation for an iteration construct by adding all bounded variables to the belonging list, checking the given predicate and add necessary imports.
     */
-    public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
+    public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, BType type, boolean universalQuantification) {
         this.addBoundedVariables(declarations);
-        iterationPredicateGenerator.checkPredicate(predicate, declarations);
+        iterationPredicateGenerator.checkPredicate(predicate, declarations, universalQuantification);
         importGenerator.addImportInIteration(type);
         iterationConstructHandler.setIterationConstructGenerator(this);
     }
@@ -408,9 +408,9 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     /*
     * This function prepares code generation for an iteration construct by adding all bounded variables to the belonging list and checking the given predicate.
     */
-    public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations) {
+    public void prepareGeneration(PredicateNode predicate, List<DeclarationNode> declarations, boolean universalQuantification) {
         this.addBoundedVariables(declarations);
-        iterationPredicateGenerator.checkPredicate(predicate, declarations);
+        iterationPredicateGenerator.checkPredicate(predicate, declarations, universalQuantification);
         iterationConstructHandler.setIterationConstructGenerator(this);
     }
 

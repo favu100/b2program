@@ -50,8 +50,8 @@ public class AnySubstitutionGenerator {
 
         ST template = group.getInstanceOf("any");
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations);
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
         generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations.size());
@@ -67,7 +67,7 @@ public class AnySubstitutionGenerator {
     * This function generates code for the inner body of the ANY substitution
     */
     private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, boolean inLoop, int numberDeclarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, false);
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

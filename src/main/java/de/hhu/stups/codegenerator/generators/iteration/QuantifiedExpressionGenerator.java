@@ -63,8 +63,8 @@ public class QuantifiedExpressionGenerator {
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_expression");
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, type);
-        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
+        List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate, expression);
 
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
@@ -155,7 +155,7 @@ public class QuantifiedExpressionGenerator {
     * This function generates code for the evaluation of the quantified expression
     */
     private String generateQuantifiedExpressionEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, String operation, ExprNode expression, int numberDeclarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, false);
         ST template = group.getInstanceOf("quantified_expression_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

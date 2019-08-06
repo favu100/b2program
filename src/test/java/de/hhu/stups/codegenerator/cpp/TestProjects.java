@@ -58,7 +58,7 @@ public class TestProjects extends TestCpp {
 
     @Test
     public void testRefinement() throws Exception {
-        //TODO: Type checking of adapter variables from abstract machine
+        //TODO: Type checking of variables from abstract machine
         testCpp("refinement/RefinementMachine");
     }
 }

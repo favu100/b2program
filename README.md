@@ -220,6 +220,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | s /\|\ n            | Take first n elements of sequence      |
 | s \\|/ n            | Drop first n elements of sequence      |
 
+The following constructs are not supported for code generation: seq(S), seq1(S), iseq(S), iseq1(S) and perm(S).
+They are only allowed in the predicate of constructs for verification such as invariant or precondition.
 
 ### Records:
 

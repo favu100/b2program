@@ -236,6 +236,9 @@ public class ExpressionGenerator {
         return generateExpression(node, expressionList);
     }
 
+    /*
+    * This function checks whether the given expression node is a couple projection
+    */
     private boolean checkTupleProjections(ExpressionOperatorNode node) {
         if(node.getOperator() == FUNCTION_CALL) {
             ExprNode first = node.getExpressionNodes().get(0);
@@ -571,6 +574,9 @@ public class ExpressionGenerator {
         return interval.render();
     }
 
+    /*
+    * This function generates code for a function call
+    */
     private String generateFunctionCall(List<ExprNode> expressions) {
         ST functionCall = currentGroup.getInstanceOf("binary");
         ExprNode lhs = expressions.get(0);
@@ -581,6 +587,9 @@ public class ExpressionGenerator {
         return functionCall.render();
     }
 
+    /*
+    * This function gets the argument of a function call from a list of expression nodes.
+    */
     public ExprNode getArgumentFromExpressions(List<ExprNode> expressions) {
         ExprNode result = expressions.get(0);
         for(int i = 1; i < expressions.size(); i++) {

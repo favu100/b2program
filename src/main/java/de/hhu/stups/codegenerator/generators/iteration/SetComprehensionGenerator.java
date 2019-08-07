@@ -141,6 +141,9 @@ public class SetComprehensionGenerator {
         }
     }
 
+    /*
+    * This function extracts the couple type from a list of declarations
+    */
     private CoupleType extractTypeFromDeclarations(List<DeclarationNode> declarations) {
         CoupleType result = new CoupleType(declarations.get(0).getType(), declarations.get(1).getType());
         for(int i = 2; i < declarations.size(); i++) {

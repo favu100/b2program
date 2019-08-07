@@ -101,7 +101,7 @@ public class CodeGenerator {
 		}
 		return useBigInteger;
 	}
-
+	
 	private static void checkPath(Path path) {
 		if(path == null) {
 			throw new RuntimeException("File not found");

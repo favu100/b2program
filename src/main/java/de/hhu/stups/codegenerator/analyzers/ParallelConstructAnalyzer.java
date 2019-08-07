@@ -119,13 +119,22 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+     * When visiting a quantified expression, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+     */
     @Override
     public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
+        List<String> locals = node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+        ignoredVariables.addAll(locals);
         visitPredicateNode(node.getPredicateNode(), expected);
         visitExprNode(node.getExpressionNode(), expected);
+        ignoredVariables.removeAll(locals);
         return null;
     }
 
+    /*
+     * When visiting a set comprehension, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+     */
     @Override
     public Void visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
         List<String> locals = node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -135,6 +144,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+     * When visiting a lambda expression, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+     */
     @Override
     public Void visitLambdaNode(LambdaNode node, Void expected) {
         List<String> locals = node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -182,6 +194,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+     * When visiting a quantified predicates, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+     */
     @Override
     public Void visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
         List<String> locals = node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList());
@@ -193,7 +208,6 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     /*
     * When visiting a VAR substitution, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
-    * This is done by this function.
     */
     @Override
     public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
@@ -365,6 +379,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
         return null;
     }
 
+    /*
+     * When visiting a record node, local variables are added to ignored variables as they are not relevant for variables in a parallel substitution.
+     */
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
         List<String> locals = node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList());

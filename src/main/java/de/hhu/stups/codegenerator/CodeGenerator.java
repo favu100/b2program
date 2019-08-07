@@ -1,16 +1,12 @@
 package de.hhu.stups.codegenerator;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
-import de.hhu.stups.codegenerator.generators.DeclarationGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
-import de.hhu.stups.codegenerator.generators.RecordStructGenerator;
-import de.hhu.stups.codegenerator.handlers.NameHandler;
+import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;
 import de.prob.parser.ast.nodes.MachineNode;
-import de.prob.parser.ast.nodes.MachineReferenceNode;
-import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
 import java.io.IOException;
@@ -23,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -32,11 +27,11 @@ public class CodeGenerator {
 
 	private List<Path> paths = new ArrayList<>();
 
-	private NameHandler nameHandler = null;
+	private final MachineReferenceGenerator machineReferenceGenerator;
 
-	private DeclarationGenerator declarationGenerator = null;
-
-	private RecordStructGenerator recordStructGenerator = null;
+	public CodeGenerator() {
+		this.machineReferenceGenerator = new MachineReferenceGenerator(this);
+	}
 
 	/*
 	* Main function
@@ -101,7 +96,7 @@ public class CodeGenerator {
 		}
 		return useBigInteger;
 	}
-	
+
 	private static void checkPath(Path path) {
 		if(path == null) {
 			throw new RuntimeException("File not found");
@@ -133,22 +128,9 @@ public class CodeGenerator {
 		if(addition != null) {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
-		generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize);
+		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize);
 		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null));
 		return paths;
-	}
-
-	/*
-	* This function generates code for all included machines from the given options
-	*/
-	private void generateIncludedMachines(BProject project, String[] pathAsList, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize) {
-		for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
-			pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(project.getMainMachine().getName(), referenceNode.getMachineName());
-			Path currentPath = Paths.get(String.join("/", pathAsList));
-			if(!paths.contains(currentPath)) {
-				generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, false, null);
-			}
-		}
 	}
 
 	/*
@@ -156,9 +138,9 @@ public class CodeGenerator {
 	*/
 	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, MachineNode node, Path addition) {
 		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, addition);
-		updateNameHandler(generator);
-		updateDeclarationGenerator(generator);
-		updateRecordStructGenerator(generator);
+		machineReferenceGenerator.updateNameHandler(generator);
+		machineReferenceGenerator.updateDeclarationGenerator(generator);
+		machineReferenceGenerator.updateRecordStructGenerator(generator);
 
 		String code = generator.generateMachine(node);
 
@@ -176,58 +158,6 @@ public class CodeGenerator {
 	}
 
 	/*
-	* This function updates the NameHandler for other machines in the hierarchy. This is needed because variables from included machines can be using by the machines they are included by.
-	*/
-	private void updateNameHandler(MachineGenerator generator) {
-		if(nameHandler != null) {
-			Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
-			for(String key : enumTypes.keySet()) {
-				generator.getNameHandler().getEnumTypes().put(key, enumTypes.get(key));
-			}
-			generator.getNameHandler().getDeferredTypes().addAll(nameHandler.getDeferredTypes());
-			generator.getNameHandler().getReservedMachines().addAll(nameHandler.getReservedMachines());
-			generator.getNameHandler().getReservedMachinesAndFunctions().addAll(nameHandler.getReservedMachinesAndFunctions());
-			generator.getNameHandler().getReservedMachinesAndFunctionsAndVariables().addAll(nameHandler.getReservedMachinesAndFunctionsAndVariables());
-			generator.getNameHandler().getReservedMachinesWithIncludedMachines().addAll(nameHandler.getReservedMachinesWithIncludedMachines());
-
-		}
-		nameHandler = generator.getNameHandler();
-	}
-
-	/*
-	* This function updates the DeclarationGenerator for other machines in the hierarchy. This is needed because variables from included machines can be using by the machines they are included by.
-	*/
-	private void updateDeclarationGenerator(MachineGenerator generator) {
-		if(declarationGenerator != null) {
-			Map<String, List<String>> setToEnum = declarationGenerator.getSetToEnum();
-			for(String key : setToEnum.keySet()) {
-				generator.getDeclarationGenerator().getSetToEnum().put(key, setToEnum.get(key));
-			}
-			Map<String, String> enumToMachine = declarationGenerator.getEnumToMachine();
-			for(String key : enumToMachine.keySet()) {
-				generator.getDeclarationGenerator().getEnumToMachine().put(key, enumToMachine.get(key));
-			}
-		}
-		declarationGenerator = generator.getDeclarationGenerator();
-	}
-
-
-	/*
-	* This function updates the RecordStructGenerator for other machines in the hierarchy. This is needed because variables from included machines can be using by the machines they are included by.
-	*/
-	private void updateRecordStructGenerator(MachineGenerator generator) {
-		if(recordStructGenerator != null) {
-			List<RecordType> structs = recordStructGenerator.getStructs();
-			generator.getRecordStructGenerator().getStructs().addAll(structs);
-			Map<String, String> nodeToClassName = recordStructGenerator.getNodeToClassName();
-			for(String key : nodeToClassName.keySet()) {
-				generator.getRecordStructGenerator().getNodeToClassName().put(key, nodeToClassName.get(key));
-			}
-		}
-		recordStructGenerator = generator.getRecordStructGenerator();
-	}
-
-	/*
 	* This function executes parsing and semantic checkings on a project
 	*/
 	private BProject parseProject(Path path) throws CodeGenerationException {
@@ -239,6 +169,10 @@ public class CodeGenerator {
 			throw new CodeGenerationException(e.getMessage());
 		}
 		return project;
+	}
+
+	public List<Path> getPaths() {
+		return paths;
 	}
 
 }

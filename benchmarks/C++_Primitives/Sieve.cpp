@@ -57,7 +57,7 @@ class Sieve {
 
 int main() {
     Sieve sieve;
-    sieve.ComputeNumberOfPrimes();
+    cout << sieve.ComputeNumberOfPrimes();
     return 0;
 }
 

@@ -12,56 +12,12 @@ class BBoolean : public BObject {
 	private:
 	    bool value;
 
-    /*
-	public static boolean parseBoolean(String s) {
-		return Boolean.parseBoolean(s);
-	}*/
-
-	/*public int compareTo(bool b) {
-		return value.compareTo(b);
-	}*/
-
-	/*public static Boolean valueOf(string s) {
-		return Boolean.valueOf(s);
-	}*/
-
-	/*public static int compare(boolean x, boolean y) {
-		return Boolean.compare(x, y);
-	}*/
-
-	/*public static boolean getBoolean(String name) {
-		return Boolean.getBoolean(name);
-	}*/
-
-	/*@Override
-	public String toString() {
-		return value.toString();
-	}
-
-	@Override
-	public int hashCode() {
-		return value.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return value.equals(obj);
-	}*/
-
-	/*BBoolean(string s) {
-		this.value = new Boolean(s);
-	}*/
-
-	/* groovy operator overloading support */
-	/*@SuppressWarnings("rawtypes")
-	Object asType(Class clazz) {
-		if (clazz == new Boolean(true).getClass()) {
-			return this.booleanValue();
-		}
-		return this;
-	}*/
-
     public:
+
+        typedef BBoolean current_type;
+        typedef void value_type;
+        typedef void left_type;
+        typedef void right_type;
 
     	BBoolean(bool val) {
     		value = val;
@@ -81,55 +37,55 @@ class BBoolean : public BObject {
 		    return value;
 	    }
 
-        BBoolean _or(const BBoolean& other) {
+        BBoolean _or(const BBoolean& other) const {
             return value || other.value;
         }
 
-        BBoolean _or(bool other) {
+        BBoolean _or(bool other) const {
             return value || other;
         }
 
-        BBoolean _xor(const BBoolean& other) {
+        BBoolean _xor(const BBoolean& other) const {
             return value ^ other.value;
         }
 
-        BBoolean _xor(bool other) {
+        BBoolean _xor(bool other) const {
             return value ^ other;
         }
 
-        BBoolean _and(const BBoolean& other) {
+        BBoolean _and(const BBoolean& other) const {
             return value && other.value;
         }
 
-        BBoolean _and(bool other) {
+        BBoolean _and(bool other) const {
             return value && other;
         }
 
-        BBoolean _not() {
+        BBoolean _not() const {
             return !value;
         }
 
-        BBoolean implies(const BBoolean& other) {
+        BBoolean implies(const BBoolean& other) const {
             return !value || other.value;
         }
 
-        BBoolean implies(bool other) {
+        BBoolean implies(bool other) const {
             return !value || other;
         }
 
-        BBoolean equivalent(bool other) {
+        BBoolean equivalent(bool other) const {
             return value == other;
         }
 
-        BBoolean equivalent(const BBoolean& other) {
+        BBoolean equivalent(const BBoolean& other) const {
             return value == other.value;
         }
 
-        BBoolean equal(const BBoolean& other) {
+        BBoolean equal(const BBoolean& other) const {
             return value == other.value;
         }
 
-        BBoolean unequal(const BBoolean& other) {
+        BBoolean unequal(const BBoolean& other) const {
             return value != other.value;
         }
 
@@ -151,6 +107,10 @@ class BBoolean : public BObject {
 
         int hashCode() const {
             return value == true ? 1 : 0;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const BBoolean &b) {
+          return strm << toString(b.value);
         }
 };
 #endif

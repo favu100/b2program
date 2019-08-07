@@ -64,31 +64,5 @@ class BTuple : public BObject {
           return strm << "(" << b.lhs << " |-> " << b.rhs << ")";
         }
 
-        /*BTuple operator() {
-            return *this;
-        }*/
-
-	/*public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-
-        BTuple bObjects = (BTuple) o;
-		// elements is never null
-		return bObjects.getFirst().equals(this.first) && bObjects.getSecond().equals(this.second);
-	}
-
-	public int hashCode() {
-		return Objects.hash(first, second);
-	}
-
-	@Override
-	public java.lang.String toString() {
-		return "(" + this.getFirst() + " |-> " + this.getSecond() + ')';
-	}*/
-
 };
 #endif

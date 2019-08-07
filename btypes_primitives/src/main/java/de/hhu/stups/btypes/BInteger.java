@@ -118,21 +118,6 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
         return new BInteger(this.value % o.value);
     }
 
-    /*@Override
-    public BNumber or(BNumber o) {
-        return null;
-    }
-
-    @Override
-    public BNumber and(BNumber o) {
-        return null;
-    }
-
-    @Override
-    public BNumber xor(BNumber o) {
-        return null;
-    }*/
-
     public BInteger succ() {
         return new BInteger(this.value + 1);
     }

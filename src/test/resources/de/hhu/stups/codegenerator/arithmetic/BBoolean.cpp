@@ -12,55 +12,6 @@ class BBoolean : public BObject {
 	private:
 	    bool value;
 
-    /*
-	public static boolean parseBoolean(String s) {
-		return Boolean.parseBoolean(s);
-	}*/
-
-	/*public int compareTo(bool b) {
-		return value.compareTo(b);
-	}*/
-
-	/*public static Boolean valueOf(string s) {
-		return Boolean.valueOf(s);
-	}*/
-
-	/*public static int compare(boolean x, boolean y) {
-		return Boolean.compare(x, y);
-	}*/
-
-	/*public static boolean getBoolean(String name) {
-		return Boolean.getBoolean(name);
-	}*/
-
-	/*@Override
-	public String toString() {
-		return value.toString();
-	}
-
-	@Override
-	public int hashCode() {
-		return value.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return value.equals(obj);
-	}*/
-
-	/*BBoolean(string s) {
-		this.value = new Boolean(s);
-	}*/
-
-	/* groovy operator overloading support */
-	/*@SuppressWarnings("rawtypes")
-	Object asType(Class clazz) {
-		if (clazz == new Boolean(true).getClass()) {
-			return this.booleanValue();
-		}
-		return this;
-	}*/
-
     public:
 
         typedef BBoolean current_type;

@@ -62,41 +62,6 @@ class BSet : public BObject {
             this->set = immer::set<T,Hash, HashEqual>();
         }
 
-        /*BSet<T>(const BSet<T>& set) {
-            this->set = set.set;
-        }*/
-
-	/*public BSet(java.util.Set<BObject> elements) {
-		this.set = HashTreePSet.from(elements);
-	}
-
-	public BSet(PSet<BObject> elements) {
-		this.set = elements;
-	}
-
-	public BSet(BObject... elements) {
-		this.set = HashTreePSet.from(Arrays.asList(elements));
-	}*/
-
-	/*public static LinkedHashSet<BObject> newStorage() {
-		return new LinkedHashSet<>();
-	}
-
-	public java.lang.String toString() {
-		Iterator<BObject> it = this.iterator();
-		StringBuffer sb = new StringBuffer();
-		sb.append("{");
-		while (it.hasNext()) {
-			BObject b = (BObject) it.next();
-			sb.append(b.toString());
-			if (it.hasNext()) {
-				sb.append(", ");
-			}
-		}
-		sb.append("}");
-		return sb.toString();
-	}*/
-
         int size() const {
             return set.size();
         }
@@ -108,65 +73,6 @@ class BSet : public BObject {
         bool contains(const T& o) const {
             return set.count(o) > 0;
         }
-
-        /*boolean add(BObject bObject) {
-            throw new UnsupportedOperationException();
-        }
-
-        boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        void clear() {
-            throw new UnsupportedOperationException();
-        }*/
-
-        /*boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            BSet bObjects = (BSet) o;
-
-            if (!set.equals(bObjects.set))
-                return false;
-
-            return true;
-        }
-
-        int hashCode() {
-            return set.hashCode();
-        }
-
-        boolean removeAll(Collection<?> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        Object[] toArray() {
-            return set.toArray();
-        }
-
-        <T> T[] toArray(T[] a) {
-            return set.toArray(a);
-        }
-
-        boolean containsAll(Collection<?> c) {
-            return set.containsAll(c);
-        }
-
-        boolean addAll(Collection<? extends BObject> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        boolean retainAll(Collection<?> c) {
-            throw new UnsupportedOperationException();
-        }
-
-        Iterator<BObject> iterator() {
-            return set.iterator();
-        }*/
-
 
         BSet<T> intersect(const BSet<T>& set) const {
             immer::set<T,Hash, HashEqual> result = this->set;

@@ -353,4 +353,4 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 ## Performance
 
 Analysis of the Performance is described in
-[benchmarks/README.md](microbenchmarks/README.md).
+[benchmarks/README.md](benchmarks/README.md).

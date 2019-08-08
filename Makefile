@@ -2,5 +2,4 @@ all: btypes
 
 .PHONY: btypes
 btypes:
-	./gradlew btypes:assemble
-	cp btypes/build/libs/B2Program-btypes.jar .
+	cd btypes_primitives && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../btypes_persistent.jar && cd ..

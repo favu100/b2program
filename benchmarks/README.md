@@ -1,3 +1,11 @@
+# Benchmarks
+
+## Execution
+
+Executing benchmarks is done by executing ``make`` in each of the directories.
+
+## Results
+
 | Machines          |             | ProB      | Java BI   | Java PI   | C++ PI -O1 | C++ PI -O2 |
 |-------------------|-------------|-----------|-----------|-----------|------------|------------|
 | Lift              | **Runtime** | > 1800    | 156.63    | 27.43     | 78.42      | 0.00       |

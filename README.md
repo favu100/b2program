@@ -16,6 +16,7 @@ Note:
   Including other machines is not supported in C, too.
   The only types that are implemented for C are BInteger and BBoolean.
   An example where code generation for C works is the machine Lift.
+* Executing all tests requires executing ´make´ before
 
 ## Supported Subset of B
 

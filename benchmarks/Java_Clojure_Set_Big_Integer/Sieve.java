@@ -41,6 +41,9 @@ public class Sieve {
         return res;
     }
 
-
+    public static void main(String[] args) {
+        Sieve sieve = new Sieve();
+        sieve.ComputeNumberOfPrimes();
+    }
 
 }

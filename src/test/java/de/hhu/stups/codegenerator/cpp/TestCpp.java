@@ -56,7 +56,7 @@ public class TestCpp {
 		cppFilePaths.forEach(path -> {
 			try {
 				Process process = Runtime.getRuntime()
-						.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + path.toFile().getAbsoluteFile().toString());
+						.exec("g++ -Ibtypes.o -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + path.toFile().getAbsoluteFile().toString());
 				writeInputToSystem(process.getErrorStream());
 				writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 				process.waitFor();
@@ -86,7 +86,7 @@ public class TestCpp {
 		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
 
 		Process compileProcess = runtime
-				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " out/test/resources/de/hhu/stups/codegenerator/" + machine + ".cpp" + " BString.cpp BStruct.cpp BInteger.cpp BBoolean.cpp");
+				.exec("clang++ -Ibtypes.o -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o" + machineName + ".exec" + " out/test/resources/de/hhu/stups/codegenerator/" + machine + ".cpp");
 		compileProcess.waitFor();
 
 		String error = streamToString(compileProcess.getErrorStream());

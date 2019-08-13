@@ -1,0 +1,8 @@
+cmake_minimum_required (VERSION 2.6)
+project (BTypes)
+enable_language(CXX)
+
+include_directories ("${PROJECT_SOURCE_DIR}/btypes_primitives")
+include_directories ("${PROJECT_SOURCE_DIR}/btypes_big_integer")
+install (FILES "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BBoolean.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BInteger.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BObject.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BRelation.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BSet.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BString.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BStruct.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BTuple.hpp" "${PROJECT_SOURCE_DIR}/btypes_primitives/src/main/cpp/BUtils.hpp" DESTINATION include/btypes_primitives)
+install (FILES "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BBoolean.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BInteger.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BObject.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BRelation.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BSet.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BString.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BStruct.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BTuple.hpp" "${PROJECT_SOURCE_DIR}/btypes_big_integer/src/main/cpp/BUtils.hpp" DESTINATION include/btypes_big_integer)

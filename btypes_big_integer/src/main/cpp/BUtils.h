@@ -1,6 +1,6 @@
 #include <iostream>
-#include "BSet.cpp"
-#include "BBoolean.cpp"
+#include "BSet.h"
+#include "BBoolean.h"
 
 using namespace std;
 

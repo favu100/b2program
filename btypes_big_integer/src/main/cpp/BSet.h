@@ -4,9 +4,9 @@
 #include <vector>
 #include <cstdarg>
 #include <immer/set.hpp>
-#include "BInteger.cpp"
-#include "BString.cpp"
-#include "BStruct.cpp"
+#include "BInteger.h"
+#include "BString.h"
+#include "BStruct.h"
 
 #ifndef BSET_H
 #define BSET_H

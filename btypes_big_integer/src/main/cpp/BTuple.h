@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "BBoolean.cpp"
+#include "BBoolean.h"
 
 using namespace std;
 

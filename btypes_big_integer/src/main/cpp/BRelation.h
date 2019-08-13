@@ -3,9 +3,9 @@
 #include <cstdarg>
 #include <immer/set.hpp>
 #include <immer/map.hpp>
-#include "BTuple.cpp"
-#include "BSet.cpp"
-#include "BStruct.cpp"
+#include "BTuple.h"
+#include "BSet.h"
+#include "BStruct.h"
 
 #ifndef BRELATION_H
 #define BRELATION_H

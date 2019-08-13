@@ -1,115 +1,82 @@
 #include <iostream>
 #include <string>
-#include "BObject.cpp"
-
-using namespace std;
+#include "BBoolean.h"
 
 
-#ifndef BBOOLEAN_H
-#define BBOOLEAN_H
+BBoolean::BBoolean(bool val) {
+    value = val;
+}
 
-class BBoolean : public BObject {
-	private:
-	    bool value;
+BBoolean::BBoolean(){};
 
-    public:
-        typedef BBoolean current_type;
-        typedef void value_type;
-        typedef void left_type;
-        typedef void right_type;
+BBoolean::BBoolean(const BBoolean& val) {
+    value = val.value;
+}
 
-    	BBoolean(bool val) {
-    		value = val;
-    	}
+bool BBoolean::booleanValue() const {
+    return value;
+}
 
-    	BBoolean(){};
+BBoolean BBoolean::_or(const BBoolean& other) const {
+    return value || other.value;
+}
 
-    	BBoolean(const BBoolean& val) {
-    	    value = val.value;
-    	}
+BBoolean BBoolean::_or(bool other) const {
+    return value || other;
+}
 
-    	static string toString(bool b) {
-    		return b ? "true" : "false";
-    	}
+BBoolean BBoolean::_xor(const BBoolean& other) const {
+    return value ^ other.value;
+}
 
-	    bool booleanValue() const {
-		    return value;
-	    }
+BBoolean BBoolean::_xor(bool other) const {
+    return value ^ other;
+}
 
-        BBoolean _or(const BBoolean& other) const {
-            return value || other.value;
-        }
+BBoolean BBoolean::_and(const BBoolean& other) const {
+    return value && other.value;
+}
 
-        BBoolean _or(bool other) const {
-            return value || other;
-        }
+BBoolean BBoolean::_and(bool other) const {
+    return value && other;
+}
 
-        BBoolean _xor(const BBoolean& other) const {
-            return value ^ other.value;
-        }
+BBoolean BBoolean::_not() const {
+    return !value;
+}
 
-        BBoolean _xor(bool other) const {
-            return value ^ other;
-        }
+BBoolean BBoolean::implies(const BBoolean& other) const {
+    return !value || other.value;
+}
 
-        BBoolean _and(const BBoolean& other) const {
-            return value && other.value;
-        }
+BBoolean BBoolean::implies(bool other) const {
+    return !value || other;
+}
 
-        BBoolean _and(bool other) const {
-            return value && other;
-        }
+BBoolean BBoolean::equivalent(bool other) const {
+    return value == other;
+}
 
-        BBoolean _not() const {
-            return !value;
-        }
+BBoolean BBoolean::equivalent(const BBoolean& other) const {
+    return value == other.value;
+}
 
-        BBoolean implies(const BBoolean& other) const {
-            return !value || other.value;
-        }
+BBoolean BBoolean::equal(const BBoolean& other) const {
+    return value == other.value;
+}
 
-        BBoolean implies(bool other) const {
-            return !value || other;
-        }
+BBoolean BBoolean::unequal(const BBoolean& other) const {
+    return value != other.value;
+}
 
-        BBoolean equivalent(bool other) const {
-            return value == other;
-        }
+bool BBoolean::operator <(const BBoolean& other) {
+    return value != other.value;
+}
 
-        BBoolean equivalent(const BBoolean& other) const {
-            return value == other.value;
-        }
+void BBoolean::operator =(const BBoolean& other) {
+    value = other.value;
+}
 
-        BBoolean equal(const BBoolean& other) const {
-            return value == other.value;
-        }
-
-        BBoolean unequal(const BBoolean& other) const {
-            return value != other.value;
-        }
-
-        friend bool operator !=(const BBoolean& o1, const BBoolean& o2) {
-            return o1.value != o2.value;
-        }
-
-        friend bool operator ==(const BBoolean& o1, const BBoolean& o2) {
-            return o1.value == o2.value;
-        }
-
-        bool operator <(const BBoolean& other) {
-            return value != other.value;
-        }
-
-        void operator =(const BBoolean& other) {
-            value = other.value;
-        }
-
-        int hashCode() const {
-            return value == true ? 1 : 0;
-        }
-
-        friend std::ostream& operator<<(std::ostream &strm, const BBoolean &b) {
-          return strm << toString(b.value);
-        }
-};
-#endif
+int BBoolean::hashCode() const {
+    return value == true ? 1 : 0;
+}

@@ -4,7 +4,7 @@
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
 #include <btypes_primitives/BObject.hpp>
-#include "Cruise_finite1_deterministic.cpp"
+#include "Cruise_finite1_deterministic.hpp"
 
 #ifndef Cruise_finite1_deterministic_exec_H
 #define Cruise_finite1_deterministic_exec_H

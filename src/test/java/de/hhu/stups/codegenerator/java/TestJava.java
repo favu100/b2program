@@ -48,7 +48,7 @@ public class TestJava {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, null);
+		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, null, false);
 		Process process = Runtime.getRuntime()
 				.exec("javac -classpath btypes_persistent.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
@@ -71,7 +71,7 @@ public class TestJava {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, addition);
+		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.JAVA, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, addition, false);
 		Runtime runtime = Runtime.getRuntime();
 		Process compileProcess = runtime.exec("javac -cp btypes_persistent.jar " +
 				String.join(" ", javaFilePaths.stream()

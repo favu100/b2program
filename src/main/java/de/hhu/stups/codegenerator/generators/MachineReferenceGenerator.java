@@ -34,7 +34,7 @@ public class MachineReferenceGenerator {
             pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(project.getMainMachine().getName(), referenceNode.getMachineName());
             Path currentPath = Paths.get(String.join("/", pathAsList));
             if(!codeGenerator.getPaths().contains(currentPath)) {
-                codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, false, null);
+                codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, false, null, true);
             }
         }
     }

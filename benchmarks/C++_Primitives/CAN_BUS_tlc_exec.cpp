@@ -3,7 +3,7 @@
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
-#include "CAN_BUS_tlc.cpp"
+#include "CAN_BUS_tlc.hpp"
 
 #ifndef CAN_BUS_tlc_exec_H
 #define CAN_BUS_tlc_exec_H

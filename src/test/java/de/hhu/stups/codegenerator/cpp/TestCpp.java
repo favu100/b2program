@@ -13,8 +13,6 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -50,28 +48,14 @@ public class TestCpp {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, null);
+		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, null, false);
 
-
-		cppFilePaths.forEach(path -> {
-			try {
-				Process process = Runtime.getRuntime()
-						.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + path.toFile().getAbsoluteFile().toString());
-				writeInputToSystem(process.getErrorStream());
-				writeInputToOutput(process.getErrorStream(), process.getOutputStream());
-				process.waitFor();
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-			}
-		});
-
-		Set<File> oFiles = cppFilePaths.stream()
-				.map(path -> new File(path.getParent().toFile(), machine + ".o"))
-				.collect(Collectors.toSet());
-
-		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
-		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
-		//cFilePaths.forEach(path -> cleanUp(path.toString()));
+		Process process = Runtime.getRuntime()
+				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+		writeInputToSystem(process.getErrorStream());
+		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
+		process.waitFor();
+		//cleanUp(cppFilePaths.get(0).toString());
 	}
 
 
@@ -79,7 +63,7 @@ public class TestCpp {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, addition);
+		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, addition, false);
 
 		Runtime runtime = Runtime.getRuntime();
 
@@ -112,14 +96,7 @@ public class TestCpp {
 		System.out.println("Assert: " + result + " = " + expectedOutput);
 
 		assertEquals(result, expectedOutput);
-
-		Set<File> execFiles = cppFilePaths.stream()
-				.map(path -> new File(path.getParent().toFile(), machine + ".exec"))
-				.collect(Collectors.toSet());
-
-		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
-		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
-		//cFilePaths.forEach(path -> cleanUp(path.toString()));
+		//cleanUp(mainPath.toString());
 	}
 
 	private void cleanUp(String path) {

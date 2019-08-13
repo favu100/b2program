@@ -57,7 +57,7 @@ public class CodeGenerator {
 		if(args.length == 7) {
 			addition = args[6];
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, true, addition);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, true, addition, false);
 	}
 
 	/*
@@ -118,7 +118,7 @@ public class CodeGenerator {
 	/*
 	* This function generates code from a given path for a machine, the target language and the information whether it is a main machine of a project
 	*/
-	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean isMain, String addition) throws CodeGenerationException {
+	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException {
 		if(isMain) {
 			paths.clear();
 		}
@@ -129,14 +129,14 @@ public class CodeGenerator {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
 		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null));
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null, isIncludedMachine));
 		return paths;
 	}
 
 	/*
 	* This function generates code for a targeted programming language with creating the belonging file
 	*/
-	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, MachineNode node, Path addition) {
+	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, MachineNode node, Path addition, boolean isIncludedMachine) {
 		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, addition);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
@@ -148,7 +148,12 @@ public class CodeGenerator {
 		int lastIndexSlash = path.toString().lastIndexOf("/");
 
 		String fileName = path.toString().substring(lastIndexSlash + 1, lastIndexDot);
-		Path newPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + "." + mode.name().toLowerCase());
+		Path newPath;
+		if(mode == GeneratorMode.CPP && isIncludedMachine) {
+			newPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + ".hpp");
+		} else {
+			newPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + "." + mode.name().toLowerCase());
+		}
 		try {
 			return Files.write(newPath, code.getBytes(), Files.exists(newPath) ? TRUNCATE_EXISTING : CREATE_NEW);
 		} catch (IOException e) {

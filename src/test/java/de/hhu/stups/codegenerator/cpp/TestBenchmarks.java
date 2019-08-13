@@ -349,7 +349,6 @@ public class TestBenchmarks extends TestCpp {
 		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stCpp", true);
 	}
 
-
 	@Test
 	public void testSieveBenchmarks() throws Exception {
 		testCpp("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stCpp", true);

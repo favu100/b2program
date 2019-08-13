@@ -3,7 +3,7 @@
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
-#include "TrafficLight.cpp"
+#include "TrafficLight.hpp"
 
 #ifndef TrafficLightExec_H
 #define TrafficLightExec_H

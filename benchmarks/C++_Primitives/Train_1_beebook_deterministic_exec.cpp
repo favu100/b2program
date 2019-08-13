@@ -4,7 +4,7 @@
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
 #include <btypes_primitives/BObject.hpp>
-#include "Train_1_beebook_deterministic.cpp"
+#include "Train_1_beebook_deterministic.hpp"
 
 #ifndef Train_1_beebook_deterministic_exec_H
 #define Train_1_beebook_deterministic_exec_H

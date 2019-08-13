@@ -4,7 +4,7 @@
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
 #include <btypes_primitives/BObject.hpp>
-#include "scheduler_deterministic.cpp"
+#include "scheduler_deterministic.hpp"
 
 #ifndef scheduler_deterministic_exec_H
 #define scheduler_deterministic_exec_H

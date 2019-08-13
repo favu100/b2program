@@ -4,7 +4,7 @@
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
 #include <btypes_primitives/BTuple.hpp>
-#include "Lift.cpp"
+#include "Lift.hpp"
 
 #ifndef LiftExec_H
 #define LiftExec_H

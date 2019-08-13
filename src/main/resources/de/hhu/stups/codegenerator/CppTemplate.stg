@@ -446,7 +446,7 @@ import_type(type, useBigInteger) ::= <<
 >>
 
 import_machine(machine) ::= <<
-#include "<machine>.cpp"
+#include "<machine>.hpp"
 >>
 
 

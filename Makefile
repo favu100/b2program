@@ -1,5 +1,8 @@
-all: btypes
+all: install btypes
 
-.PHONY: btypes
+.PHONY: install btypes
+install:
+	cp btypes_primitives/src/main/cpp/*.hpp /usr/local/include/btypes_primitives/ & cp btypes_big_integer/src/main/cpp/*.hpp /usr/local/include/btypes_big_integer/
+
 btypes:
-	cd btypes_primitives && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../btypes_persistent.jar && cd .. & cp btypes_primitives/src/main/cpp/*.cpp ./ & cp btypes_primitives/src/main/cpp/*.hpp ./ & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BInteger.cpp & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BBoolean.cpp & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BString.cpp & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BStruct.cpp & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BTuple.hpp & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BSet.hpp & clang++ -std=c++14 -O2 -flto -march=native -DIMMER_NO_THREAD_SAFETY -c BRelation.hpp & ar rcs btypes.o BBoolean.o BInteger.o BSet.hpp.gch BString.o BStruct.o BTuple.hpp.gch BRelation.hpp.gch
+	cd btypes_primitives && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../btypes_persistent.jar && cd ..

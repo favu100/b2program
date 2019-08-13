@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include "BUtils.h"
-#include "BInteger.h"
-#include "BBoolean.h"
+#include "BUtils.hpp"
+#include "BInteger.hpp"
+#include "BBoolean.hpp"
 #include "CAN_BUS_tlc.cpp"
 
 #ifndef CAN_BUS_tlc_exec_H

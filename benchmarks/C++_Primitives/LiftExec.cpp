@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.h"
-#include "BInteger.h"
-#include "BBoolean.h"
-#include "BTuple.h"
+#include "BUtils.hpp"
+#include "BInteger.hpp"
+#include "BBoolean.hpp"
+#include "BTuple.hpp"
 #include "Lift.cpp"
 
 #ifndef LiftExec_H

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "BInteger.h"
+#include "BInteger.hpp"
 
 
 BInteger::BInteger(const int& val) {

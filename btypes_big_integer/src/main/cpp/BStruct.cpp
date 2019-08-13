@@ -1,4 +1,4 @@
-#include "BStruct.h"
+#include "BStruct.hpp"
 
 
 BBoolean BStruct::isRecord() {

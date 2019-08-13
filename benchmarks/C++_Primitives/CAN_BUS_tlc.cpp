@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
-#include "BUtils.h"
-#include "BSet.h"
-#include "BTuple.h"
-#include "BObject.h"
-#include "BBoolean.h"
-#include "BInteger.h"
-#include "BRelation.h"
+#include "BUtils.hpp"
+#include "BSet.hpp"
+#include "BTuple.hpp"
+#include "BObject.hpp"
+#include "BBoolean.hpp"
+#include "BInteger.hpp"
+#include "BRelation.hpp"
 
 #ifndef CAN_BUS_tlc_H
 #define CAN_BUS_tlc_H

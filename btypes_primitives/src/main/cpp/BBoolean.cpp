@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "BBoolean.h"
+#include "BBoolean.hpp"
 
 
 BBoolean::BBoolean(bool val) {

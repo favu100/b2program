@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "BString.h"
+#include "BString.hpp"
 
 BString::BString(std::string val) {
     value = val;

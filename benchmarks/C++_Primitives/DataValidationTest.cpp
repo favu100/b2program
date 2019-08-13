@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-#include "BUtils.h"
-#include "BSet.h"
-#include "BTuple.h"
-#include "BInteger.h"
-#include "BBoolean.h"
-#include "BRelation.h"
+#include "BUtils.hpp"
+#include "BSet.hpp"
+#include "BTuple.hpp"
+#include "BInteger.hpp"
+#include "BBoolean.hpp"
+#include "BRelation.hpp"
 
 #ifndef DataValidationTest_H
 #define DataValidationTest_H

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include "BUtils.h"
-#include "BInteger.h"
-#include "BBoolean.h"
+#include "BUtils.hpp"
+#include "BInteger.hpp"
+#include "BBoolean.hpp"
 #include "TrafficLight.cpp"
 
 #ifndef TrafficLightExec_H

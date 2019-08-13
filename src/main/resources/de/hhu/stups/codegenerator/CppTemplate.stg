@@ -8,7 +8,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
 #include \<iostream>
 #include \<string>
-#include "BUtils.h"
+#include "BUtils.hpp"
 <imports; separator="\n">
 <includedMachines; separator="\n">
 
@@ -442,7 +442,7 @@ BRelation\<<leftType>, <rightType> >
 >>
 
 import_type(type) ::= <<
-#include "<type>.h"
+#include "<type>.hpp"
 >>
 
 import_machine(machine) ::= <<

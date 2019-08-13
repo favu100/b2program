@@ -1,5 +1,4 @@
-#include "BBoolean.hpp"
-
+#include <typeinfo>
 #ifndef BSTRUCT_H
 #define BSTRUCT_H
 
@@ -15,8 +14,12 @@ class BStruct {
             return 0;
         };
 
-        BBoolean isRecord();
+        BBoolean isRecord() {
+            return BBoolean(true);
+        }
 
-        BBoolean isNotRecord();
+        BBoolean isNotRecord() {
+            return BBoolean(false);
+        }
 };
 #endif

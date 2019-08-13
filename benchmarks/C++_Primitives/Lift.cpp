@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include "BUtils.hpp"
-#include "BInteger.hpp"
+#include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/BInteger.hpp>
 
 #ifndef Lift_H
 #define Lift_H

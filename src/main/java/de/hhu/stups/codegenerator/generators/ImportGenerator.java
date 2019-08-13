@@ -30,10 +30,13 @@ public class ImportGenerator {
 
     private final Set<String> imports;
 
-    public ImportGenerator(final STGroup group, final NameHandler nameHandler) {
+    private final boolean useBigInteger;
+
+    public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
         this.group = group;
         this.nameHandler = nameHandler;
         this.imports = new HashSet<>();
+        this.useBigInteger = useBigInteger;
     }
 
     /*
@@ -97,6 +100,7 @@ public class ImportGenerator {
     private void importBInteger() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BInteger");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
     }
 
@@ -106,6 +110,7 @@ public class ImportGenerator {
     private void importBObject() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BObject");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
     }
 
@@ -115,6 +120,7 @@ public class ImportGenerator {
     private void importBBoolean() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BBoolean");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
     }
 
@@ -124,6 +130,7 @@ public class ImportGenerator {
     private void importBString() {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BString");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
     }
 
@@ -133,6 +140,7 @@ public class ImportGenerator {
     private void importTuple(CoupleType type) {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BTuple");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
         addImport(type.getLeft());
         addImport(type.getRight());
@@ -144,6 +152,7 @@ public class ImportGenerator {
     private void importStruct(RecordType type) {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BStruct");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         type.getSubtypes().forEach(this::addImport);
         imports.add(template.render());
     }
@@ -157,6 +166,7 @@ public class ImportGenerator {
         } else {
             ST template = group.getInstanceOf("import_type");
             TemplateHandler.add(template, "type", "BSet");
+            TemplateHandler.add(template, "useBigInteger", useBigInteger);
             imports.add(template.render());
             addImport(type.getSubType());
         }
@@ -168,6 +178,7 @@ public class ImportGenerator {
     private void importRelationType(CoupleType type) {
         ST template = group.getInstanceOf("import_type");
         TemplateHandler.add(template, "type", "BRelation");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
         addImport(type.getLeft());
         addImport(type.getRight());

@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-#include "BUtils.hpp"
-#include "BSet.hpp"
-#include "BTuple.hpp"
-#include "BInteger.hpp"
-#include "BBoolean.hpp"
-#include "BRelation.hpp"
+#include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/BSet.hpp>
+#include <btypes_primitives/BTuple.hpp>
+#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BRelation.hpp>
 
 #ifndef DataValidationTest_H
 #define DataValidationTest_H

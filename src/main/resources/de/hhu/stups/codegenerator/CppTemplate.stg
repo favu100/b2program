@@ -5,10 +5,10 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger) ::= <<
 #include \<iostream>
 #include \<string>
-#include "BUtils.hpp"
+<if(useBigInteger)>#include \<btypes_big_integer/BUtils.hpp><else>#include \<btypes_primitives/BUtils.hpp><endif>
 <imports; separator="\n">
 <includedMachines; separator="\n">
 
@@ -441,8 +441,8 @@ relation_type(leftType, rightType) ::=<<
 BRelation\<<leftType>, <rightType> >
 >>
 
-import_type(type) ::= <<
-#include "<type>.hpp"
+import_type(type, useBigInteger) ::= <<
+<if(useBigInteger)>#include \<btypes_big_integer/<type>.hpp><else>#include \<btypes_primitives/<type>.hpp><endif>
 >>
 
 import_machine(machine) ::= <<

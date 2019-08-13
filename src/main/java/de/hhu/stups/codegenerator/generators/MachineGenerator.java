@@ -96,6 +96,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final DeferredSetAnalyzer deferredSetAnalyzer;
 
+	private final boolean useBigInteger;
+
 	private STGroup currentGroup;
 
 	private MachineNode machineNode;
@@ -106,6 +108,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
+		this.useBigInteger = useBigInteger;
 		if(addition != null) {
 			try {
 				this.addition = new String(Files.readAllBytes(addition));
@@ -117,7 +120,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler);
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler);
-		this.importGenerator = new ImportGenerator(currentGroup, nameHandler);
+		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
@@ -143,6 +146,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
+		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
 		TemplateHandler.add(machine, "imports", importGenerator.getImports());
 		TemplateHandler.add(machine, "methods", generateMethods(node));

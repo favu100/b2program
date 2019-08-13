@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.hpp"
-#include "BSet.hpp"
-#include "BInteger.hpp"
-#include "BBoolean.hpp"
+#include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/BSet.hpp>
+#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/BBoolean.hpp>
 
 #ifndef Sieve_H
 #define Sieve_H

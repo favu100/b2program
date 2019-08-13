@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
-#include "BUtils.hpp"
-#include "BSet.hpp"
-#include "BObject.hpp"
-#include "BBoolean.hpp"
-#include "BInteger.hpp"
+#include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/BSet.hpp>
+#include <btypes_primitives/BObject.hpp>
+#include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BInteger.hpp>
 
 #ifndef Cruise_finite1_deterministic_H
 #define Cruise_finite1_deterministic_H

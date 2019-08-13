@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#include "BUtils.hpp"
-#include "BInteger.hpp"
-#include "BBoolean.hpp"
+#include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/BBoolean.hpp>
 #include "sort_m2_data1000.cpp"
 
 #ifndef sort_m2_data1000_exec_H

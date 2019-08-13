@@ -18,6 +18,16 @@ Note:
   An example where code generation for C works is the machine Lift.
 * Executing all tests requires executing `make` before
 
+## Install C++ B Types
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+Make sure that the immer library and gmpxx library (for big integers) are installed before.
+
+
 ## Supported Subset of B
 
 ### Machine sections:

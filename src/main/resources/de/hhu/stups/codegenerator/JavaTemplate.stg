@@ -370,6 +370,10 @@ import_type(type) ::= <<
 import de.hhu.stups.btypes.<type>;
 >>
 
+import_machine(machine) ::= <<
+import de.hhu.stups.btypes.<machine>;
+>>
+
 
 interval(arg1, arg2) ::= <<
 BSet.interval(<arg1>,<arg2>)

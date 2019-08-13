@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.cpp"
-#include "BInteger.cpp"
-#include "BBoolean.cpp"
-#include "BObject.cpp"
+#include "BUtils.h"
+#include "BInteger.h"
+#include "BBoolean.h"
+#include "BObject.h"
 #include "Train_1_beebook_deterministic.cpp"
 
 #ifndef Train_1_beebook_deterministic_exec_H

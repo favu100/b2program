@@ -85,9 +85,9 @@ public class ImportGenerator {
     * This function generates code for an import of an included machine
     */
     private String generateMachineImport(MachineReferenceNode reference) {
-        ST imp = group.getInstanceOf("import_type");
+        ST imp = group.getInstanceOf("import_machine");
         String machine = reference.getMachineName();
-        TemplateHandler.add(imp, "type", nameHandler.handle(machine));
+        TemplateHandler.add(imp, "machine", nameHandler.handle(machine));
         return imp.render();
     }
 

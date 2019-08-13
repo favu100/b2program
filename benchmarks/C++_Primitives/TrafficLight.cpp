@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.cpp"
-#include "BSet.cpp"
-#include "BObject.cpp"
-#include "BBoolean.cpp"
+#include "BUtils.h"
+#include "BSet.h"
+#include "BObject.h"
+#include "BBoolean.h"
 
 #ifndef TrafficLight_H
 #define TrafficLight_H

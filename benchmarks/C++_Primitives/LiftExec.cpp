@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.cpp"
-#include "BInteger.cpp"
-#include "BBoolean.cpp"
+#include "BUtils.h"
+#include "BInteger.h"
+#include "BBoolean.h"
+#include "BTuple.h"
 #include "Lift.cpp"
 
 #ifndef LiftExec_H
@@ -22,10 +23,13 @@ class LiftExec {
 
         BInteger counter;
 
+        BTuple<BInteger, BInteger> tuple;
+
     public:
 
         LiftExec() {
             counter = (BInteger(0));
+            tuple = (BTuple<BInteger, BInteger>(counter, counter));
         }
 
         void simulate() {

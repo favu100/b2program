@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.cpp"
-#include "BInteger.cpp"
-#include "BBoolean.cpp"
-#include "BObject.cpp"
+#include "BUtils.h"
+#include "BInteger.h"
+#include "BBoolean.h"
+#include "BObject.h"
 #include "Cruise_finite1_deterministic.cpp"
 
 #ifndef Cruise_finite1_deterministic_exec_H

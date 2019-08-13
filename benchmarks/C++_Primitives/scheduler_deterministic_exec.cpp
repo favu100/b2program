@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
-#include "BUtils.cpp"
-#include "BInteger.cpp"
-#include "BBoolean.cpp"
-#include "BObject.cpp"
+#include "BUtils.h"
+#include "BInteger.h"
+#include "BBoolean.h"
+#include "BObject.h"
 #include "scheduler_deterministic.cpp"
 
 #ifndef scheduler_deterministic_exec_H

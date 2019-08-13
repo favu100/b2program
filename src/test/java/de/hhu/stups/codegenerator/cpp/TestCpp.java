@@ -86,7 +86,7 @@ public class TestCpp {
 		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
 
 		Process compileProcess = runtime
-				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " out/test/resources/de/hhu/stups/codegenerator/" + machine + ".cpp");
+				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " out/test/resources/de/hhu/stups/codegenerator/" + machine + ".cpp" + " out/test/resources/de/hhu/stups/codegenerator/BString.cpp out/test/resources/de/hhu/stups/codegenerator/BStruct.cpp out/test/resources/de/hhu/stups/codegenerator/BInteger.cpp out/test/resources/de/hhu/stups/codegenerator/BBoolean.cpp");
 		compileProcess.waitFor();
 
 		String error = streamToString(compileProcess.getErrorStream());

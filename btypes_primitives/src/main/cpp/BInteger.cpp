@@ -1,150 +1,121 @@
 #include <iostream>
 #include <string>
-#include "BBoolean.cpp"
-
-#ifndef BINTEGER_H
-#define BINTEGER_H
-
-using namespace std;
-
-class BInteger : public BObject {
-	private:
-	    int value;
-
-    public:
-
-        typedef BInteger current_type;
-        typedef void value_type;
-        typedef void left_type;
-        typedef void right_type;
-
-        BInteger(const int& val) {
-            value = val;
-        }
-
-        int intValue() const {
-            return value;
-        }
-
-        BInteger(){};
-
-        BInteger(const BInteger& val) {
-            value = val.value;
-        }
-
-        int compareTo(const BInteger& o) const {
-            return value - o.value;
-        }
-
-        BBoolean lessEqual(const BInteger& o) const {
-            return compareTo(o) <= 0;
-        }
+#include "BInteger.h"
 
 
-        BBoolean greaterEqual(const BInteger& o) const {
-            return compareTo(o) >= 0;
-        }
+BInteger::BInteger(const int& val) {
+    value = val;
+}
 
-        BBoolean less(const BInteger& o) const {
-            return compareTo(o) < 0;
-        }
+int BInteger::intValue() const {
+    return value;
+}
 
-        BBoolean greater(const BInteger& o) const {
-            return compareTo(o) > 0;
-        }
+BInteger::BInteger(){};
 
-        BBoolean equal(const BInteger& o) const {
-            return compareTo(o) == 0;
-        }
+BInteger::BInteger(const BInteger& val) {
+    value = val.value;
+}
 
-        BBoolean unequal(const BInteger& o) const {
-            return compareTo(o) != 0;
-        }
+int BInteger::compareTo(const BInteger& o) const {
+    return value - o.value;
+}
 
-        BInteger plus(const BInteger& o) const {
-            return value + o.value;
-        }
+BBoolean BInteger::lessEqual(const BInteger& o) const {
+    return compareTo(o) <= 0;
+}
 
-        BInteger minus(const BInteger& o) const {
-            return value - o.value;
-        }
+BBoolean BInteger::greaterEqual(const BInteger& o) const {
+    return compareTo(o) >= 0;
+}
 
-        BInteger multiply(const BInteger& o) const {
-            return value * o.value;
-        }
+BBoolean BInteger::less(const BInteger& o) const {
+    return compareTo(o) < 0;
+}
 
-        BInteger power(const BInteger& o) const {
-            return value ^ o.value;
-        }
+BBoolean BInteger::greater(const BInteger& o) const {
+    return compareTo(o) > 0;
+}
 
-        BInteger divide(const BInteger& o) const {
-            return value / o.value;
-        }
+BBoolean BInteger::equal(const BInteger& o) const {
+    return compareTo(o) == 0;
+}
 
-        BInteger modulo(const BInteger& o) const {
-            return value % o.value;
-        }
-        BInteger succ() const {
-            return value + 1;
-        }
+BBoolean BInteger::unequal(const BInteger& o) const {
+    return compareTo(o) != 0;
+}
 
-        BInteger pred() const {
-            return value - 1;
-        }
+BInteger BInteger::plus(const BInteger& o) const {
+    return value + o.value;
+}
 
-        BInteger negative() const {
-            return -value;
-        }
+BInteger BInteger::minus(const BInteger& o) const {
+    return value - o.value;
+}
 
-        BInteger positive() const {
-            return *this;
-        }
+BInteger BInteger::multiply(const BInteger& o) const {
+    return value * o.value;
+}
 
-        friend bool operator !=(const BInteger& o1, const BInteger& o2) {
-            return o1.value != o2.value;
-        }
+BInteger BInteger::power(const BInteger& o) const {
+    return value ^ o.value;
+}
 
-        friend bool operator ==(const BInteger& o1, const BInteger& o2) {
-            return o1.value == o2.value;
-        }
+BInteger BInteger::divide(const BInteger& o) const {
+    return value / o.value;
+}
 
-        void operator =(const BInteger& other) {
-            this->value = other.value;
-        }
+BInteger BInteger::modulo(const BInteger& o) const {
+    return value % o.value;
+}
 
-        int hashCode() const {
-            int prime = 31;
-            int result = 1;
-            result = prime * result + value;
-            return result;
-        }
+BInteger BInteger::succ() const {
+    return value + 1;
+}
 
-        friend std::ostream& operator<<(std::ostream &strm, const BInteger &b) {
-          return strm << b.value;
-        }
+BInteger BInteger::pred() const {
+    return value - 1;
+}
 
-        BBoolean isInteger() {
-            return BBoolean(true);
-        }
+BInteger BInteger::negative() const {
+    return -value;
+}
 
-        BBoolean isNotInteger() {
-            return BBoolean(false);
-        }
+BInteger BInteger::positive() const {
+    return *this;
+}
 
-        BBoolean isNatural() {
-            return this->greaterEqual(BInteger(0));
-        }
+void BInteger::operator =(const BInteger& other) {
+    this->value = other.value;
+}
 
-        BBoolean isNotNatural() {
-            return this->isNatural()._not();
-        }
+int BInteger::hashCode() const {
+    int prime = 31;
+    int result = 1;
+    result = prime * result + value;
+    return result;
+}
 
-        BBoolean isNatural1() {
-            return this->greater(BInteger(0));
-        }
+BBoolean BInteger::isInteger() {
+    return BBoolean(true);
+}
 
-        BBoolean isNotNatural1() {
-            return this->isNatural1()._not();
-        }
-};
-#endif
+BBoolean BInteger::isNotInteger() {
+    return BBoolean(false);
+}
+
+BBoolean BInteger::isNatural() {
+    return this->greaterEqual(BInteger(0));
+}
+
+BBoolean BInteger::isNotNatural() {
+    return this->isNatural()._not();
+}
+
+BBoolean BInteger::isNatural1() {
+    return this->greater(BInteger(0));
+}
+
+BBoolean BInteger::isNotNatural1() {
+    return this->isNatural1()._not();
+}

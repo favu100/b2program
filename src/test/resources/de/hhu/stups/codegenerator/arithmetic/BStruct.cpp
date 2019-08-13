@@ -1,25 +1,10 @@
-#include <typeinfo>
-#ifndef BSTRUCT_H
-#define BSTRUCT_H
+#include "BStruct.h"
 
-class BStruct {
 
-    public:
+BBoolean BStruct::isRecord() {
+    return BBoolean(true);
+}
 
-        friend bool operator !=(const BStruct& p1, const BStruct& p2);
-
-        friend bool operator ==(const BStruct& p1, const BStruct& p2);
-
-        virtual int hashCode() {
-            return 0;
-        };
-
-        BBoolean isRecord() {
-            return BBoolean(true);
-        }
-
-        BBoolean isNotRecord() {
-            return BBoolean(false);
-        }
-};
-#endif
+BBoolean BStruct::isNotRecord() {
+    return BBoolean(false);
+}

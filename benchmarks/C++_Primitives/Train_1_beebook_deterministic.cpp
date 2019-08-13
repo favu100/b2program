@@ -182,7 +182,6 @@ class Train_1_beebook_deterministic {
         BSet<BLOCKS > resbl;
         BSet<ROUTES > resrt;
         BRelation<BLOCKS, ROUTES > rsrtbl;
-        BSet<BInteger > visited;
 
     public:
 
@@ -207,83 +206,66 @@ class Train_1_beebook_deterministic {
             TRK = (BRelation<BLOCKS, BLOCKS >());
             frm = (BSet<ROUTES >());
             LBT = (BSet<BLOCKS >());
-            visited = (BSet<BInteger >());
         }
 
         void route_reservation(const ROUTES& r) {
             BRelation<BLOCKS, ROUTES > _ld_rsrtbl = rsrtbl;
-            BSet<BInteger > _ld_visited = visited;
             BSet<ROUTES > _ld_resrt = resrt;
             BSet<BLOCKS > _ld_resbl = resbl;
             resrt = _ld_resrt._union((BSet<ROUTES >(r)));
             rsrtbl = _ld_rsrtbl._union(rtbl.rangeRestriction((BSet<ROUTES >(r))));
             resbl = _ld_resbl._union(rtbl.inverse().relationImage((BSet<ROUTES >(r))));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(1)))));
         }
 
         void route_freeing(const ROUTES& r) {
             BSet<ROUTES > _ld_frm = frm;
-            BSet<BInteger > _ld_visited = visited;
             BSet<ROUTES > _ld_resrt = resrt;
             resrt = _ld_resrt.difference((BSet<ROUTES >(r)));
             frm = _ld_frm.difference((BSet<ROUTES >(r)));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(2)))));
         }
 
         void FRONT_MOVE_1(const ROUTES& r) {
             BSet<BLOCKS > _ld_LBT = LBT;
             BSet<BLOCKS > _ld_OCC = OCC;
-            BSet<BInteger > _ld_visited = visited;
             OCC = _ld_OCC._union((BSet<BLOCKS >(fst.functionCall(r))));
             LBT = _ld_LBT._union((BSet<BLOCKS >(fst.functionCall(r))));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(3)))));
         }
 
         void FRONT_MOVE_2(const BLOCKS& b) {
             BSet<BLOCKS > _ld_OCC = OCC;
-            BSet<BInteger > _ld_visited = visited;
             OCC = _ld_OCC._union((BSet<BLOCKS >(TRK.functionCall(b))));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(4)))));
         }
 
         void BACK_MOVE_1(const BLOCKS& b) {
             BSet<BLOCKS > _ld_LBT = LBT;
             BSet<BLOCKS > _ld_OCC = OCC;
             BRelation<BLOCKS, ROUTES > _ld_rsrtbl = rsrtbl;
-            BSet<BInteger > _ld_visited = visited;
             BSet<BLOCKS > _ld_resbl = resbl;
             OCC = _ld_OCC.difference((BSet<BLOCKS >(b)));
             rsrtbl = _ld_rsrtbl.domainSubstraction((BSet<BLOCKS >(b)));
             resbl = _ld_resbl.difference((BSet<BLOCKS >(b)));
             LBT = _ld_LBT.difference((BSet<BLOCKS >(b)));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(5)))));
         }
 
         void BACK_MOVE_2(const BLOCKS& b) {
             BSet<BLOCKS > _ld_LBT = LBT;
             BSet<BLOCKS > _ld_OCC = OCC;
             BRelation<BLOCKS, ROUTES > _ld_rsrtbl = rsrtbl;
-            BSet<BInteger > _ld_visited = visited;
             BSet<BLOCKS > _ld_resbl = resbl;
             OCC = _ld_OCC.difference((BSet<BLOCKS >(b)));
             rsrtbl = _ld_rsrtbl.domainSubstraction((BSet<BLOCKS >(b)));
             resbl = _ld_resbl.difference((BSet<BLOCKS >(b)));
             LBT = _ld_LBT.difference((BSet<BLOCKS >(b)))._union((BSet<BLOCKS >(TRK.functionCall(b))));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(6)))));
         }
 
         void point_positionning(const ROUTES& r) {
-            BSet<BInteger > _ld_visited = visited;
             BRelation<BLOCKS, BLOCKS > _ld_TRK = TRK;
             TRK = _ld_TRK.domainSubstraction(nxt.functionCall(r).domain()).rangeSubstraction(nxt.functionCall(r).range())._union(nxt.functionCall(r));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(7)))));
         }
 
         void route_formation(const ROUTES& r) {
             BSet<ROUTES > _ld_frm = frm;
-            BSet<BInteger > _ld_visited = visited;
             frm = _ld_frm._union((BSet<ROUTES >(r)));
-            visited = _ld_visited._union((BSet<BInteger >((BInteger(8)))));
         }
 
 };

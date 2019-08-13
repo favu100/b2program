@@ -72,7 +72,6 @@ public class Train_1_beebook_deterministic {
     private BSet<BLOCKS> resbl;
     private BSet<ROUTES> resrt;
     private BRelation<BLOCKS, ROUTES> rsrtbl;
-    private BSet<BInteger> visited;
 
     public Train_1_beebook_deterministic() {
         fst = new BRelation<ROUTES, BLOCKS>(new BTuple<>(ROUTES.R1, BLOCKS.L), new BTuple<>(ROUTES.R2, BLOCKS.L), new BTuple<>(ROUTES.R3, BLOCKS.L), new BTuple<>(ROUTES.R4, BLOCKS.M), new BTuple<>(ROUTES.R5, BLOCKS.M), new BTuple<>(ROUTES.R6, BLOCKS.C), new BTuple<>(ROUTES.R7, BLOCKS.G), new BTuple<>(ROUTES.R8, BLOCKS.N), new BTuple<>(ROUTES.R9, BLOCKS.G), new BTuple<>(ROUTES.R10, BLOCKS.N));
@@ -95,87 +94,70 @@ public class Train_1_beebook_deterministic {
         TRK = new BRelation<BLOCKS, BLOCKS>();
         frm = new BSet<ROUTES>();
         LBT = new BSet<BLOCKS>();
-        visited = new BSet<BInteger>();
     }
 
     public void route_reservation(ROUTES r) {
         BSet<ROUTES> _ld_resrt = resrt;
-        BSet<BInteger> _ld_visited = visited;
         BRelation<BLOCKS, ROUTES> _ld_rsrtbl = rsrtbl;
         BSet<BLOCKS> _ld_resbl = resbl;
         resrt = _ld_resrt.union(new BSet<ROUTES>(r));
         rsrtbl = _ld_rsrtbl.union(rtbl.rangeRestriction(new BSet<ROUTES>(r)));
         resbl = _ld_resbl.union(rtbl.inverse().relationImage(new BSet<ROUTES>(r)));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("1")));
     }
 
     public void route_freeing(ROUTES r) {
         BSet<ROUTES> _ld_resrt = resrt;
         BSet<ROUTES> _ld_frm = frm;
-        BSet<BInteger> _ld_visited = visited;
         resrt = _ld_resrt.difference(new BSet<ROUTES>(r));
         frm = _ld_frm.difference(new BSet<ROUTES>(r));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("2")));
     }
 
     public void FRONT_MOVE_1(ROUTES r) {
         BSet<BLOCKS> _ld_OCC = OCC;
 
         BSet<BLOCKS> _ld_LBT = LBT;
-        BSet<BInteger> _ld_visited = visited;
         OCC = _ld_OCC.union(new BSet<BLOCKS>(fst.functionCall(r)));
         LBT = _ld_LBT.union(new BSet<BLOCKS>(fst.functionCall(r)));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("3")));
     }
 
     public void FRONT_MOVE_2(BLOCKS b) {
         BSet<BLOCKS> _ld_OCC = OCC;
 
-        BSet<BInteger> _ld_visited = visited;
         OCC = _ld_OCC.union(new BSet<BLOCKS>(TRK.functionCall(b)));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("4")));
     }
 
     public void BACK_MOVE_1(BLOCKS b) {
         BSet<BLOCKS> _ld_OCC = OCC;
 
         BSet<BLOCKS> _ld_LBT = LBT;
-        BSet<BInteger> _ld_visited = visited;
         BRelation<BLOCKS, ROUTES> _ld_rsrtbl = rsrtbl;
         BSet<BLOCKS> _ld_resbl = resbl;
         OCC = _ld_OCC.difference(new BSet<BLOCKS>(b));
         rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
         resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
         LBT = _ld_LBT.difference(new BSet<BLOCKS>(b));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("5")));
     }
 
     public void BACK_MOVE_2(BLOCKS b) {
         BSet<BLOCKS> _ld_OCC = OCC;
 
         BSet<BLOCKS> _ld_LBT = LBT;
-        BSet<BInteger> _ld_visited = visited;
         BRelation<BLOCKS, ROUTES> _ld_rsrtbl = rsrtbl;
         BSet<BLOCKS> _ld_resbl = resbl;
         OCC = _ld_OCC.difference(new BSet<BLOCKS>(b));
         rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
         resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
         LBT = _ld_LBT.difference(new BSet<BLOCKS>(b)).union(new BSet<BLOCKS>(TRK.functionCall(b)));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("6")));
     }
 
     public void point_positionning(ROUTES r) {
         BRelation<BLOCKS, BLOCKS> _ld_TRK = TRK;
-        BSet<BInteger> _ld_visited = visited;
         TRK = _ld_TRK.domainSubstraction(nxt.functionCall(r).domain()).rangeSubstraction(nxt.functionCall(r).range()).union(nxt.functionCall(r));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("7")));
     }
 
     public void route_formation(ROUTES r) {
         BSet<ROUTES> _ld_frm = frm;
-        BSet<BInteger> _ld_visited = visited;
         frm = _ld_frm.union(new BSet<ROUTES>(r));
-        visited = _ld_visited.union(new BSet<BInteger>(new BInteger("8")));
     }
 
 

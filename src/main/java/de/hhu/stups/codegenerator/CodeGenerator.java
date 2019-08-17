@@ -37,7 +37,7 @@ public class CodeGenerator {
 	* Main function
 	* First argument : Option for programming language
 	* Second argument : Path for the main machine code should be generated for
-	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pfile = "Lift.mch"
+	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, MalformedURLException, CodeGenerationException {
 		if(args.length < 6 || args.length > 7) {

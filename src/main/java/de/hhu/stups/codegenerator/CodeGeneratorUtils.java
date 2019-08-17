@@ -1,6 +1,5 @@
 package de.hhu.stups.codegenerator;
 
-import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
@@ -21,24 +20,20 @@ public class CodeGeneratorUtils {
     /*
     * Template groups for the supported programming languages
     */
-    private static final STGroup JAVA_GROUP = new STGroupFile(MachineGenerator.class.getClassLoader()
-            .getResource("de/hhu/stups/codegenerator/JavaTemplate.stg").getFile());
-
-    private static final STGroup C_GROUP = new STGroupFile(
-            MachineGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/CTemplate.stg").getFile());
-
-    private static final STGroup CPP_GROUP = new STGroupFile(
-            MachineGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/CppTemplate.stg").getFile());
-
-    private static final STGroup PYTHON_GROUP = new STGroupFile(
-            MachineGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/PythonTemplate.stg").getFile());
-
-    private static final STGroup CLJ_GROUP = new STGroupFile(
-            MachineGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/ClojureTemplate.stg").getFile());
+    private static final STGroup JAVA_GROUP;
+    private static final STGroup C_GROUP;
+    private static final STGroup CPP_GROUP;
+    private static final STGroup PYTHON_GROUP;
+    private static final STGroup CLJ_GROUP;
 
     private static final Map<GeneratorMode, STGroup> TEMPLATE_MAP = new HashMap<>();
 
     static {
+        JAVA_GROUP = new STGroupFile("de/hhu/stups/codegenerator/JavaTemplate.stg");
+        C_GROUP = new STGroupFile("de/hhu/stups/codegenerator/CTemplate.stg");
+        CPP_GROUP = new STGroupFile("de/hhu/stups/codegenerator/CppTemplate.stg");
+        PYTHON_GROUP = new STGroupFile("de/hhu/stups/codegenerator/PythonTemplate.stg");
+        CLJ_GROUP = new STGroupFile("de/hhu/stups/codegenerator/ClojureTemplate.stg");
         TEMPLATE_MAP.put(JAVA, JAVA_GROUP);
         TEMPLATE_MAP.put(C, C_GROUP);
         TEMPLATE_MAP.put(CPP, CPP_GROUP);

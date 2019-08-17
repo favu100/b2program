@@ -27,19 +27,31 @@ repositories {
 
 dependencies {
     antlr "org.antlr:antlr4:4.7"
-    compile group: 'org.antlr', name: 'stringtemplate', version: '3.2'
+    compile group: 'org.antlr', name: 'ST4', version: '4.1'
     // antlr parser dependency
-    implementation 'com.github.hhu-stups:antlr-parser:-SNAPSHOT' // https://github.com/hhu-stups/antlr-parser'
+    compile 'com.github.hhu-stups:antlr-parser:-SNAPSHOT' // https://github.com/hhu-stups/antlr-parser'
 
     testCompile 'junit:junit:4.8.2'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'de.hhu.stups.codegenerator.CodeGenerator'
+        )
+    }
+}
+
 task fatJar(type: Jar) {
     baseName = project.name + '-all'
+    manifest {
+        attributes(
+                'Main-Class': 'de.hhu.stups.codegenerator.CodeGenerator'
+        )
+    }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
-
 
 
 sourceCompatibility = 1.8

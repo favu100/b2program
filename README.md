@@ -306,9 +306,14 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 
 ### Starting the code generator
 
+#### Gradle
+
 ```bash
 # Java
 ./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
+
+# C++
+./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 
 # Python
 ./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
@@ -316,15 +321,35 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 # C
 ./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 
-# C++
-./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
 ```
 
 -Pminint and -Pmaxint are optional. The default values cover 32-Bit Integers
 
+#### JAR-File
+
+1. Run `./gradlew fatJar` to build the JAR-file
+2. Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as the machine
+3. Generate code from the machine
+
+```bash
+# Java
+java -jar B2Program-all-0.1.0-SNAPSHOT java <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+
+# C++
+java -jar B2Program-all-0.1.0-SNAPSHOT cpp <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+
+# Python
+java -jar B2Program-all-0.1.0-SNAPSHOT python <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+
+# C
+java -jar B2Program-all-0.1.0-SNAPSHOT c <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+```
+
+Note that minint and maxint are not optional when using JAR-File.
+
 ### Compile the generated code in Java
 
-1. Run `./gradlew build` in project btypes_persistent or btypes_big_integer
+1. Run `./gradlew fatJar` in project btypes_persistent or btypes_big_integer
 2. Move `btypes-all-2.9.12-SNAPSHOT.jar` to same folder as the generated classes
 3. `javac -cp btypes-all-2.9.12-SNAPSHOT.jar <files....>`
 4. Example: `javac -cp btypes-all-2.9.12-SNAPSHOT.jar TrafficLightExec.java TrafficLight.java`
@@ -360,6 +385,8 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 1. Write a main function in the generated main file
 2. `./main.c`
 3. Example: `./Lift`
+
+
 
 ## Performance
 

@@ -564,9 +564,8 @@ G( e(CruiseOff) => O [CruiseBecomesNotAllowed])  -> FALSE
     THEN
         ObstacleStatusJustChanged:= FALSE
     END
-	
-END
 
+END
 /*
 CTL:
   e(b(\'SetCruiseSpeed\'/0))

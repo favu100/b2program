@@ -42,6 +42,7 @@ public class DeclarationGenerator {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
+        this.typeGenerator.setDeclarationGenerator(this);
         this.importGenerator = importGenerator;
         this.nameHandler = nameHandler;
         this.deferredSetAnalyzer = deferredSetAnalyzer;

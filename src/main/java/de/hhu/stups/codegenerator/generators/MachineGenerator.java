@@ -106,7 +106,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private int iterationConstructDepth;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition) {
+	private boolean isIncludedMachine;
+
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition, boolean isIncludedMachine) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.useBigInteger = useBigInteger;
 		if(addition != null) {
@@ -118,12 +120,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		}
 		this.nameHandler = new NameHandler(currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
-		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler);
-		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler);
+		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
+        this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(recordStructGenerator);
@@ -136,6 +138,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
 		this.iterationConstructDepth = 0;
+		this.isIncludedMachine = isIncludedMachine;
 	}
 
 	/*
@@ -176,7 +179,27 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
+		TemplateHandler.add(machine, "getters", isIncludedMachine ? generateGetters(node.getVariables()) : new ArrayList<>());
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
+	}
+
+	/*
+	* This function generates code for all getters for variables if the machine is an included machine
+	*/
+	private List<String> generateGetters(List<DeclarationNode> variables) {
+		return variables.stream()
+				.map(this::generateGetter)
+				.collect(Collectors.toList());
+	}
+
+	/*
+	* This function generates code for the given variable if the machine is an included machine
+	*/
+	private String generateGetter(DeclarationNode variable) {
+		ST getter = currentGroup.getInstanceOf("getter");
+		TemplateHandler.add(getter, "variable", nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+		TemplateHandler.add(getter, "returnType", typeGenerator.generate(variable.getType()));
+		return getter.render();
 	}
 
 	/*

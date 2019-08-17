@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters) ::= <<
 #include \<iostream>
 #include \<string>
 <if(useBigInteger)>#include \<btypes_big_integer/BUtils.hpp><else>#include \<btypes_primitives/BUtils.hpp><endif>
@@ -41,11 +41,18 @@ class <machine> {
 
         <operations; separator="\n\n">
 
+        <getters; separator="\n\n">
 };
 
 <addition>
 
 #endif
+>>
+
+getter(returnType, variable) ::= <<
+<returnType> _get_<variable>() {
+    return <variable>;
+}
 >>
 
 struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
@@ -425,8 +432,8 @@ void() ::= <<
 void
 >>
 
-type(type) ::= <<
-<type>
+type(type, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>::<endif><type>
 >>
 
 tuple_type(leftType, rightType) ::=<<
@@ -604,8 +611,8 @@ boolean_val(val) ::= <<
 <if(val)>(BBoolean(true))<else>(BBoolean(false))<endif>
 >>
 
-identifier(identifier, isReturn, isPrivate, rhsOnLhs) ::= <<
-<if(rhsOnLhs)>_ld_<identifier><else><identifier><endif>
+identifier(identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<

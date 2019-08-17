@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition) ::= <<
+machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, getters) ::= <<
 <imports; separator="\n">
 import java.util.Objects;
 import de.hhu.stups.btypes.BUtils;
@@ -26,11 +26,18 @@ public class <machine> {
 
     <operations; separator="\n\n">
 
+    <getters; separator="\n\n">
 
     <addition>
 
 }
 
+>>
+
+getter(returnType, variable) ::= <<
+<returnType> _get_<variable>() {
+    return <variable>;
+}
 >>
 
 struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
@@ -350,8 +357,8 @@ void() ::= <<
 void
 >>
 
-type(type) ::= <<
-<type>
+type(type, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><type>
 >>
 
 tuple_type(leftType, rightType) ::= <<
@@ -529,8 +536,8 @@ boolean_val(val) ::= <<
 <if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
 >>
 
-identifier(identifier, rhsOnLhs) ::= <<
-<if(rhsOnLhs)>_ld_<identifier><else><identifier><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<

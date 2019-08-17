@@ -22,11 +22,17 @@ public class TypeGenerator {
 
     private final NameHandler nameHandler;
 
+    private final MachineGenerator machineGenerator;
+
+    private DeclarationGenerator declarationGenerator;
+
     private RecordStructGenerator recordStructGenerator;
 
-    public TypeGenerator(final STGroup group, final NameHandler nameHandler) {
+    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator) {
         this.group = group;
         this.nameHandler = nameHandler;
+        this.machineGenerator = machineGenerator;
+        this.declarationGenerator = null;
     }
 
     /*
@@ -60,6 +66,7 @@ public class TypeGenerator {
     */
     private String generateBInteger() {
         ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "fromOtherMachine", false);
         TemplateHandler.add(template, "type", "BInteger");
         return template.render();
     }
@@ -69,6 +76,7 @@ public class TypeGenerator {
     */
     private String generateBBoolean() {
         ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "fromOtherMachine", false);
         TemplateHandler.add(template, "type", "BBoolean");
         return template.render();
     }
@@ -78,6 +86,7 @@ public class TypeGenerator {
     */
     private String generateBString() {
         ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "fromOtherMachine", false);
         TemplateHandler.add(template, "type", "BString");
         return template.render();
     }
@@ -110,6 +119,7 @@ public class TypeGenerator {
             return generateBRelation((CoupleType) subType);
         } else {
             ST template = group.getInstanceOf("set_type");
+            TemplateHandler.add(template, "fromOtherMachine", false);
             TemplateHandler.add(template, "type", generate(subType));
             return template.render();
         }
@@ -130,6 +140,8 @@ public class TypeGenerator {
     */
     private String generateEnumeratedSetElement(EnumeratedSetElementType type) {
         ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "fromOtherMachine", !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
+        TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();
     }
@@ -139,6 +151,8 @@ public class TypeGenerator {
     */
     private String generateDeferredSetElement(DeferredSetElementType type) {
         ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "fromOtherMachine", !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
+        TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();
     }
@@ -153,4 +167,9 @@ public class TypeGenerator {
     public void setRecordStructGenerator(RecordStructGenerator recordStructGenerator) {
         this.recordStructGenerator = recordStructGenerator;
     }
+
+    public void setDeclarationGenerator(DeclarationGenerator declarationGenerator) {
+        this.declarationGenerator = declarationGenerator;
+    }
+
 }

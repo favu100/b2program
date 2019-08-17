@@ -41,12 +41,15 @@ public class IdentifierGenerator {
 
     private final ParallelConstructHandler parallelConstructHandler;
 
+    private final DeclarationGenerator declarationGenerator;
+
     public IdentifierGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                               final ParallelConstructHandler parallelConstructHandler) {
+                               final ParallelConstructHandler parallelConstructHandler, final DeclarationGenerator declarationGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.parallelConstructHandler = parallelConstructHandler;
+        this.declarationGenerator = declarationGenerator;
         this.inputParams = new ArrayList<>();
         this.outputParams = new ArrayList<>();
         this.currentLocals = new HashMap<>();
@@ -111,6 +114,9 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
+        boolean fromOtherMachine = !node.getDeclarationNode().getSurroundingMachineNode().getName().equals(machineGenerator.getMachineName());
+        TemplateHandler.add(identifier, "fromOtherMachine", fromOtherMachine);
+        TemplateHandler.add(identifier, "otherMachine", nameHandler.handleIdentifier(node.getDeclarationNode().getSurroundingMachineNode().getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
         return identifier.render();
     }
 
@@ -131,6 +137,7 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isPrivate", false);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(name));
+        TemplateHandler.add(identifier, "fromOtherMachine", false);
         return identifier.render();
     }
 

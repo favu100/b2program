@@ -1375,6 +1375,66 @@ OPERATIONS
 	        counter := counter + 1
 	INVARIANT 1 = 1
     VARIANT 100 - counter
+	END;
+
+	out <-- getCruiseAllowed = BEGIN
+	    out := CruiseAllowed
+	END;
+
+	out <-- getCruiseActive = BEGIN
+	    out := CruiseActive
+	END;
+
+	out <-- getVehicleAtCruiseSpeed = BEGIN
+	    out := VehicleAtCruiseSpeed
+	END;
+
+	out <-- getVehicleCanKeepSpeed = BEGIN
+	    out := VehicleCanKeepSpeed
+	END;
+
+	out <-- getVehicleTryKeepSpeed = BEGIN
+	    out := VehicleTryKeepSpeed
+	END;
+
+	out <-- getSpeedAboveMax = BEGIN
+	    out := SpeedAboveMax
+	END;
+
+	out <-- getVehicleTryKeepTimeGap = BEGIN
+	    out := VehicleTryKeepTimeGap
+	END;
+
+	out <-- getNumberOfSetCruise = BEGIN
+	    out := NumberOfSetCruise
+	END;
+
+	out <-- getCruiseSpeedAtMax = BEGIN
+	    out := CruiseSpeedAtMax
+	END;
+
+	out <-- getObstacleDistance = BEGIN
+	    out := ObstacleDistance
+	END;
+
+	out <-- getObstacleStatusJustChanged = BEGIN
+	    out := ObstacleStatusJustChanged
+	END;
+
+	out <-- getCCInitialisationInProgress = BEGIN
+	    out := CCInitialisationInProgress
+	END;
+
+	out <-- getCruiseSpeedChangeInProgress = BEGIN
+	    out := CruiseSpeedChangeInProgress
+	END;
+
+	out <-- getObstaclePresent = BEGIN
+	    out := ObstaclePresent
+	END;
+
+	out <-- getObstacleRelativeSpeed = BEGIN
+	    out := ObstacleRelativeSpeed
 	END
 
 END

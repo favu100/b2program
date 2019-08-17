@@ -359,7 +359,7 @@ Note that minint and maxint are not optional when using JAR-File.
   
 1. Move all B types (see btypes_primitives or btypes_big_integer folder) files to same folder as the generated classes
 2. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
-3. Example: `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
+3. Example: `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
 
 ### Compile the generated code in C
@@ -386,7 +386,100 @@ Note that minint and maxint are not optional when using JAR-File.
 2. `./main.c`
 3. Example: `./Lift`
 
+## Steps from B Model to Output of the Generated Code
 
+### Example 1: LiftExec
+
+The machine LiftExec includes the machine Lift. Lift consists of operation to lift up and lift down.
+LiftExec navigates Lift by executing its operations. The only operation `calculate`in LiftExec lifts Lift up to the highest floor and then to the lowest floor 10.000.000 times.
+
+#### Java
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `LiftExec.mch` and `Lift.mch`
+* Generate code for `LiftExec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 LiftExec.mch ```
+* Write a main method in `LiftExec.java` 
+```java
+public static void main(String[] args) {
+    LiftExec lift = new LiftExec();
+    lift.simulate();
+    System.out.println(lift.getCounter());
+}
+```
+
+* Build B types in btypes_primitives or btypes_big_integer with `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primtives and move it to this folder
+* Move `btypes-all-2.9.12-SNAPSHOT.jar` to the same folder as the generated classes
+* Compile `LiftExec.java` and `Lift.java` with `javac -cp btypes-all-2.9.12-SNAPSHOT.jar LiftExec.java Lift.java`
+* Execute the compiled file for `LiftExec.java` with `java -cp :btypes-all-2.9.12-SNAPSHOT.jar LiftExec`
+
+#### C++
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `LiftExec.mch` and `Lift.mch`
+* Generate code for `LiftExec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 LiftExec.mch ```
+* Write a main method in `LiftExec.cpp` 
+```cpp
+int main() {
+    LiftExec exec;
+    exec.simulate();
+    return 0;
+}
+```
+
+* Install C++ B types with
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+* Compile `LiftExec.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o LiftExec.exec LiftExec.cpp`
+* Execute `LiftExec.exec` with `./LiftExec`
+
+
+### Example 2: Cruise_finite1_deterministic_exec
+The machine Cruise_finite1_deterministic_exec includes the machine Cruise_finite1_deterministic. 
+Cruise_finite1_deterministic_exec contains an operation for executing a cycle in the state space of Cruise_finite1_deterministic 100.000 times.
+
+#### Java
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 Cruise_finite1_deterministic.mch ```
+* Write a main method in `Cruise_finite1_deterministic_exec.java`
+```java
+public static void main(String[] args) {
+    Cruise_finite1_deterministic_exec exec = new Cruise_finite1_deterministic_exec();
+    exec.simulate();
+}
+```
+
+* Build B types in btypes_primitives or btypes_big_integer with `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primtives and move it to this folder
+* Move `btypes-all-2.9.12-SNAPSHOT.jar` to the same folder as the generated classes
+* Compile `Cruise_finite1_deterministic_exec.java` and `Cruise_finite1_deterministic.java` with `javac -cp btypes-all-2.9.12-SNAPSHOT.jar Cruise_finite1_deterministic_exec.java Cruise_finite1_deterministic.java`
+* Execute the compiled file for `Cruise_finite1_deterministic_exec.java` with `java -cp :btypes-all-2.9.12-SNAPSHOT.jar Cruise_finite1_deterministic_exec`
+
+#### C++
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 Cruise_finite1_deterministic_exec.mch ```
+* Write a main method in `Cruise_finite1_deterministic_exec.cpp` 
+```cpp
+int main() {
+    Cruise_finite1_deterministic_exec exec;
+    exec.simulate();
+    return 0;
+}
+```
+
+* Install C++ B types with
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+* Compile `Cruise_finite1_deterministic_exec.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic_exec.exec Cruise_finite1_deterministic_exec.cpp`
+* Execute `Cruise_finite1_deterministic_exec.exec` with `./Cruise_finite1_deterministic_exec`
 
 ## Performance
 

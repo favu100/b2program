@@ -140,7 +140,7 @@ public class TypeGenerator {
     */
     private String generateEnumeratedSetElement(EnumeratedSetElementType type) {
         ST template = group.getInstanceOf("type");
-        TemplateHandler.add(template, "fromOtherMachine", !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
+        TemplateHandler.add(template, "fromOtherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()) != null && !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
         TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();
@@ -151,7 +151,7 @@ public class TypeGenerator {
     */
     private String generateDeferredSetElement(DeferredSetElementType type) {
         ST template = group.getInstanceOf("type");
-        TemplateHandler.add(template, "fromOtherMachine", !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
+        TemplateHandler.add(template, "fromOtherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()) != null && !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
         TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();

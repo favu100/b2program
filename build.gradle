@@ -34,6 +34,13 @@ dependencies {
     testCompile 'junit:junit:4.8.2'
 }
 
+task fatJar(type: Jar) {
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

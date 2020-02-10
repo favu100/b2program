@@ -123,7 +123,7 @@ public class QuantifiedExpressionGenerator {
         for (String key : iterationConstructGenerator.getIterationsMapIdentifier().keySet()) {
             otherConstructsGenerator.getIterationsMapIdentifier().put(key, iterationConstructGenerator.getIterationsMapIdentifier().get(key));
         }
-        iterationConstructHandler.inspectExpression(iterationConstructHandler.inspectPredicate(predicate), expression);
+        iterationConstructHandler.inspectExpression(iterationConstructHandler.inspectPredicate(otherConstructsGenerator, predicate), expression);
         for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
             iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
         }

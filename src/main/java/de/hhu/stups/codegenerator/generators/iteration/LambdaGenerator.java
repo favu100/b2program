@@ -86,7 +86,7 @@ public class LambdaGenerator {
         for (String key : iterationConstructGenerator.getIterationsMapIdentifier().keySet()) {
             otherConstructsGenerator.getIterationsMapIdentifier().put(key, iterationConstructGenerator.getIterationsMapIdentifier().get(key));
         }
-        iterationConstructHandler.inspectExpression(iterationConstructHandler.inspectPredicate(predicate), expression);
+        iterationConstructHandler.inspectExpression(iterationConstructHandler.inspectPredicate(otherConstructsGenerator, predicate), expression);
         for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {
             iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
         }
@@ -101,7 +101,6 @@ public class LambdaGenerator {
 
         String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName(), declarations);
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
-
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "leftType", typeGenerator.generate(declarations.get(0).getType()));

@@ -198,8 +198,10 @@ for(<type> <identifier> : <set>) {
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-<type> <identifier> = <set>;
-<body>
+for(<type> <identifier> : {<set>}) {
+    <body>
+}
+
 >>
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<

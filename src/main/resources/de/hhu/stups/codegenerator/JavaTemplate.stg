@@ -6,6 +6,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, getters) ::= <<
 <imports; separator="\n">
 import java.util.Objects;
+import java.util.Arrays;
 import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
@@ -170,8 +171,10 @@ for(<type> <identifier> : <set>) {
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-<type> <identifier> = <set>;
-<body>
+for(<type> <identifier> : Arrays.asList(<set>)) {
+    <body>
+}
+
 >>
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<

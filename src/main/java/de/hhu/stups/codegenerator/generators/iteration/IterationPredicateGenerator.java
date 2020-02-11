@@ -46,7 +46,7 @@ public class IterationPredicateGenerator {
     */
     public ST generateEnumeration(ST template, DeclarationNode declarationNode) {
         TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
-        TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName());
+        TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName() + "_" + machineGenerator.getIterationConstructDepth());
         return template;
     }
 
@@ -264,25 +264,6 @@ public class IterationPredicateGenerator {
             iterationConstructGenerator.getIterationsMapIdentifier().put(key, otherConstructsGenerator.getIterationsMapIdentifier().get(key));
         }
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructsGenerator.getIterationsMapCode().values());
-    }
-
-    public boolean isInLoop() {
-        return inLoop;
-    }
-
-    /*
-    * This function should be invoked when leaving a loop in an iteration construct
-    */
-    public void reset() {
-        inLoop = false;
-    }
-
-
-    /*
-    * This function should be invoked when entering a loop in an iteration construct
-    */
-    public void inLoop() {
-        inLoop = true;
     }
 
 }

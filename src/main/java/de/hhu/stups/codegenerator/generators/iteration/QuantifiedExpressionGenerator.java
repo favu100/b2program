@@ -56,7 +56,7 @@ public class QuantifiedExpressionGenerator {
     * This function generates code for a quantified expression from the belonging AST node
     */
     public String generateQuantifiedExpression(QuantifiedExpressionNode node) {
-        machineGenerator.inIterationConstruct();
+        machineGenerator.inIterationConstruct(node.getDeclarationList());
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         ExprNode expression = node.getExpressionNode();
@@ -75,7 +75,7 @@ public class QuantifiedExpressionGenerator {
         generateBody(template, enumerationTemplates, otherConstructs, identifier, node, predicate, expression, declarations);
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
-        machineGenerator.leaveIterationConstruct();
+        machineGenerator.leaveIterationConstruct(node.getDeclarationList());
         return result;
     }
 

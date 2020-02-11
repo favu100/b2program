@@ -48,7 +48,7 @@ public class LetExpressionPredicateGenerator {
     * This function generates code for a let expression from the belonging AST node
     */
     public String generateLetExpression(LetExpressionNode node) {
-        machineGenerator.inIterationConstruct();
+        machineGenerator.inIterationConstruct(node.getLocalIdentifiers());
         BType type = node.getType();
         PredicateNode predicate = node.getPredicate();
         ExprNode expression = node.getExpression();
@@ -67,7 +67,7 @@ public class LetExpressionPredicateGenerator {
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
 
-        machineGenerator.leaveIterationConstruct();
+        machineGenerator.leaveIterationConstruct(node.getLocalIdentifiers());
         return result;
     }
 
@@ -75,7 +75,7 @@ public class LetExpressionPredicateGenerator {
     * This function generates code for a let predicate from the belonging AST node
     */
     public String generateLetPredicate(LetPredicateNode node) {
-        machineGenerator.inIterationConstruct();
+        machineGenerator.inIterationConstruct(node.getLocalIdentifiers());
         BType type = node.getType();
         PredicateNode letPredicate = node.getWherePredicate();
         PredicateNode thenPredicate = node.getPredicate();
@@ -96,7 +96,7 @@ public class LetExpressionPredicateGenerator {
 
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
 
-        machineGenerator.leaveIterationConstruct();
+        machineGenerator.leaveIterationConstruct(node.getLocalIdentifiers());
         return result;
     }
 

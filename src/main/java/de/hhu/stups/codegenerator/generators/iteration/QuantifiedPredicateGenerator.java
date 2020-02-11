@@ -42,7 +42,7 @@ public class QuantifiedPredicateGenerator {
     * This function generates code for a quantified predicate from the belonging AST node
     */
     public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
-        machineGenerator.inIterationConstruct();
+        machineGenerator.inIterationConstruct(node.getDeclarationList());
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
@@ -62,7 +62,7 @@ public class QuantifiedPredicateGenerator {
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
-        machineGenerator.leaveIterationConstruct();
+        machineGenerator.leaveIterationConstruct(node.getDeclarationList());
         return result;
     }
 

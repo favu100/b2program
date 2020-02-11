@@ -50,7 +50,7 @@ public class LambdaGenerator {
     * This function generates code for a lambda expression from the belonging AST node
     */
     public String generateLambda(LambdaNode node) {
-        machineGenerator.inIterationConstruct();
+        machineGenerator.inIterationConstruct(node.getDeclarations());
         PredicateNode predicate = node.getPredicate();
         List<DeclarationNode> declarations = node.getDeclarations();
         ExprNode expression = node.getExpression();
@@ -73,7 +73,7 @@ public class LambdaGenerator {
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
-        machineGenerator.leaveIterationConstruct();
+        machineGenerator.leaveIterationConstruct(node.getDeclarations());
         return result;
     }
 
@@ -98,8 +98,8 @@ public class LambdaGenerator {
     */
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode predicate, String leftType, String rightType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-
-        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, "_ic_" + declarations.get(declarations.size() - 1).getName(), declarations);
+        String name = declarations.get(declarations.size() - 1).getName();
+        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name), declarations);
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);

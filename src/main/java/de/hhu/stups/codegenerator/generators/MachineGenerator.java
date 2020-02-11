@@ -57,7 +57,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /*
@@ -98,6 +100,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final boolean useBigInteger;
 
+	private final Map<String, Integer> boundedVariablesDepth;
+
 	private STGroup currentGroup;
 
 	private MachineNode machineNode;
@@ -111,6 +115,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition, boolean isIncludedMachine) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.useBigInteger = useBigInteger;
+		this.boundedVariablesDepth = new HashMap<>();
 		if(addition != null) {
 			try {
 				this.addition = new String(Files.readAllBytes(addition));
@@ -471,6 +476,19 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	/*
 	* This function must be invoked when the next level for an iteration construct is entered
 	*/
+	public void inIterationConstruct(List<DeclarationNode> boundedVariables) {
+		for(DeclarationNode variable : boundedVariables) {
+			String name = variable.getName();
+			if(boundedVariablesDepth.containsKey(name)) {
+				int depth = boundedVariablesDepth.get(name);
+				boundedVariablesDepth.put(name, depth + 1);
+			} else {
+				boundedVariablesDepth.put(name, 1);
+			}
+		}
+		iterationConstructDepth++;
+	}
+
 	public void inIterationConstruct() {
 		iterationConstructDepth++;
 	}
@@ -478,8 +496,25 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	/*
 	* This function must be invoked when the current level for an iteration construct is left.
 	*/
+	public void leaveIterationConstruct(List<DeclarationNode> boundedVariables) {
+		for(DeclarationNode variable : boundedVariables) {
+			String name = variable.getName();
+			int depth = boundedVariablesDepth.get(name);
+			if(depth == 1) {
+				boundedVariablesDepth.remove(name);
+			} else {
+				boundedVariablesDepth.put(name, depth - 1);
+			}
+		}
+		iterationConstructDepth--;
+	}
+
 	public void leaveIterationConstruct() {
 		iterationConstructDepth--;
+	}
+
+	public Map<String, Integer> getBoundedVariablesDepth() {
+		return boundedVariablesDepth;
 	}
 
 	/*
@@ -492,6 +527,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public void resetIterationConstruct() {
 		iterationConstructDepth = 0;
+		this.boundedVariablesDepth.clear();
 	}
 
 	public int getIterationConstructDepth() {

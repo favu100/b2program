@@ -49,7 +49,7 @@ public class SetComprehensionGenerator {
     * This function generates code for a set comprehension from the belonging AST node
     */
     public String generateSetComprehension(SetComprehensionNode node) {
-        machineGenerator.inIterationConstruct();
+        machineGenerator.inIterationConstruct(node.getDeclarationList());
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
@@ -69,7 +69,7 @@ public class SetComprehensionGenerator {
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
 
-        machineGenerator.leaveIterationConstruct();
+        machineGenerator.leaveIterationConstruct(node.getDeclarationList());
         return result;
     }
 
@@ -157,7 +157,8 @@ public class SetComprehensionGenerator {
     */
     private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
-            return "_ic_" + declarations.get(0).getName();
+            String name = declarations.get(0).getName();
+            return "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name);
         } else {
             String result = "";
 
@@ -176,11 +177,13 @@ public class SetComprehensionGenerator {
                 TemplateHandler.add(tuple, "leftType", typeGenerator.generate(leftType));
                 TemplateHandler.add(tuple, "rightType", typeGenerator.generate(rightType));
                 if(i == 0) {
-                    TemplateHandler.add(tuple, "arg1", "_ic_" + declarations.get(i).getName());
+                    String name = declarations.get(i).getName();
+                    TemplateHandler.add(tuple, "arg1", "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
                 } else {
                     TemplateHandler.add(tuple, "arg1", result);
                 }
-                TemplateHandler.add(tuple, "arg2", "_ic_" + declarations.get(i+1).getName());
+                String name = declarations.get(i+1).getName();
+                TemplateHandler.add(tuple, "arg2", "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
                 result = tuple.render();
             }
             return result;

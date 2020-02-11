@@ -483,15 +483,15 @@ any(body) ::= <<
 <body>
 >>
 
-any_body(otherIterationConstructs, emptyPredicate, predicate, body, inLoop) ::= <<
+any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <body>
-<if(inLoop)>break;<endif>
+break;
 <else>
 if((<predicate>).booleanValue()) {
     <body>
-    <if(inLoop)>break;<endif>
+    break;
 }
 <endif>
 >>
@@ -501,15 +501,15 @@ becomes_such_that(loads, body) ::= <<
 <body>
 >>
 
-becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, inLoop) ::= <<
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <stores>
-<if(inLoop)>break;<endif>
+break;
 <else>
 if((<predicate>).booleanValue()) {
     <stores>
-    <if(inLoop)>break;<endif>
+    break;
 }
 <endif>
 >>

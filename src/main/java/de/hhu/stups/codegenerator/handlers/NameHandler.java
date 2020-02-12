@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.handlers;
 
+import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import org.stringtemplate.v4.ST;
@@ -31,6 +32,8 @@ public class NameHandler {
         VARIABLES;
     }
 
+    private final MachineGenerator machineGenerator;
+
     private final STGroup group;
 
     private List<String> globals;
@@ -47,7 +50,8 @@ public class NameHandler {
 
     private List<String> deferredTypes;
 
-    public NameHandler(final STGroup group) {
+    public NameHandler(final MachineGenerator machineGenerator, final STGroup group) {
+        this.machineGenerator = machineGenerator;
         this.group = group;
         this.globals = new ArrayList<>();
         this.enumTypes = new HashMap<>();
@@ -62,7 +66,13 @@ public class NameHandler {
     * This functions initializes different levels for handling collisions between identifiers and keywords
     */
     public void initialize(MachineNode node) {
-        node.getEnumeratedSets().forEach(set -> enumTypes.put(set.getSetDeclarationNode().getName(), set.getElementsAsStrings()));
+        node.getEnumeratedSets().forEach(set -> {
+            if(node.getPrefix() != null && !node.equals(machineGenerator.getMachineNode())) {
+                enumTypes.put(node.getPrefix() + "." + set.getSetDeclarationNode().getName(), set.getElementsAsStrings());
+            } else {
+                enumTypes.put(set.getSetDeclarationNode().getName(), set.getElementsAsStrings());
+            }
+        });
         deferredTypes.addAll(node.getDeferredSets().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         reservedMachines.addAll(node.getMachineReferences().stream()
                 .map(reference -> handle(reference.getMachineName()))

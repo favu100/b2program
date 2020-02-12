@@ -46,7 +46,7 @@ public class IterationPredicateGenerator {
     */
     public ST generateEnumeration(ST template, DeclarationNode declarationNode) {
         TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
-        TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName() + "_" + machineGenerator.getIterationConstructDepth());
+        TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(declarationNode.getName()));
         return template;
     }
 

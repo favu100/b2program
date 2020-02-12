@@ -123,7 +123,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 				e.printStackTrace();
 			}
 		}
-		this.nameHandler = new NameHandler(currentGroup);
+		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
@@ -536,5 +536,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public void setIterationConstructDepth(int iterationConstructDepth) {
 		this.iterationConstructDepth = iterationConstructDepth;
+	}
+
+	public MachineNode getMachineNode() {
+		return machineNode;
 	}
 }

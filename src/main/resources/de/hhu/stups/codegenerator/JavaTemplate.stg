@@ -191,13 +191,14 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
-let_expression_predicate(body) ::= <<
+let_expression_predicate(type, identifier, body) ::= <<
+<type> <identifier> = null;
 <body>
 >>
 
-let_expression_predicate_body(otherIterationConstructs, type, identifier, val) ::= <<
+let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
 <otherIterationConstructs>
-<type> <identifier> = <val>;
+<identifier> = <val>;
 >>
 
 set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<

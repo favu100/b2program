@@ -70,7 +70,13 @@ public class OperationGenerator {
     public void mapOperationsToMachine(MachineNode node) {
         node.getMachineReferences()
                 .forEach(reference -> reference.getMachineNode().getOperations()
-                        .forEach(operation -> machineFromOperation.put(operation.getName(), reference.getMachineName())));
+                .forEach(operation -> {
+                    if(reference.getPrefix() != null) {
+                        machineFromOperation.put(operation.getName(), reference.getPrefix());
+                    } else {
+                        machineFromOperation.put(operation.getName(), reference.getMachineName());
+                    }
+                }));
     }
 
     /*

@@ -18,7 +18,6 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,10 +77,10 @@ public class ImportGenerator {
     /*
     * This function generates code for import of other included machines
     */
-    public List<String> generateMachineImports(MachineNode node) {
+    public Set<String> generateMachineImports(MachineNode node) {
         return node.getMachineReferences().stream()
                 .map(this::generateMachineImport)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     /*

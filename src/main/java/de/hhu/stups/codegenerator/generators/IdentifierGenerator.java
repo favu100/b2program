@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
@@ -107,16 +108,20 @@ public class IdentifierGenerator {
     private String generate(IdentifierExprNode node, boolean isReturn, boolean isPrivate, boolean isAssigned) {
         ST identifier = group.getInstanceOf("identifier");
         TemplateHandler.add(identifier, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(identifier, "identifier", node.getType() != null && (nameHandler.getEnumTypes().keySet().contains(node.getName()) || nameHandler.getDeferredTypes().contains(node.getName())) ?
-                nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
-                nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        String nodeName = node.getName();
+        String[] nodeNameAsList = nodeName.split("\\.");
+        String variable = nodeNameAsList[nodeNameAsList.length - 1];
+        TemplateHandler.add(identifier, "identifier", node.getType() != null && (nameHandler.getEnumTypes().keySet().contains(nodeName) || nameHandler.getDeferredTypes().contains(nodeName)) ?
+                nameHandler.handleIdentifier(variable, NameHandler.IdentifierHandlingEnum.VARIABLES) :
+                nameHandler.handleIdentifier(variable, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
-        boolean fromOtherMachine = !node.getDeclarationNode().getSurroundingMachineNode().getName().equals(machineGenerator.getMachineName());
+        boolean fromOtherMachine = node.getDeclarationNode() == null || !node.getDeclarationNode().getSurroundingMachineNode().equals(machineGenerator.getMachineNode());
         TemplateHandler.add(identifier, "fromOtherMachine", fromOtherMachine);
-        TemplateHandler.add(identifier, "otherMachine", nameHandler.handleIdentifier(node.getDeclarationNode().getSurroundingMachineNode().getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
+        MachineNode otherMachine = node.getDeclarationNode().getSurroundingMachineNode();
+        TemplateHandler.add(identifier, "otherMachine", nameHandler.handleIdentifier(otherMachine.getPrefix() != null ? otherMachine.getPrefix() : otherMachine.getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
         return identifier.render();
     }
 
@@ -210,5 +215,9 @@ public class IdentifierGenerator {
 
     public List<DeclarationNode> getInputParams() {
         return inputParams;
+    }
+
+    public Map<String, Integer> getCurrentLocals() {
+        return currentLocals;
     }
 }

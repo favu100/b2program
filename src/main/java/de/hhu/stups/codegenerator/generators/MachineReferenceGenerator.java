@@ -30,8 +30,10 @@ public class MachineReferenceGenerator {
     * This function generates code for all included machines from the given options
     */
     public void generateIncludedMachines(BProject project, String[] pathAsList, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize) {
+        String last = project.getMainMachine().getName();
         for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
-            pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(project.getMainMachine().getName(), referenceNode.getMachineName());
+            pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(last, referenceNode.getMachineName());
+            last = referenceNode.getMachineName();
             Path currentPath = Paths.get(String.join("/", pathAsList));
             if(!codeGenerator.getPaths().contains(currentPath)) {
                 codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, false, null, true);

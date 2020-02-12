@@ -56,7 +56,7 @@ public class LetExpressionPredicateGenerator {
 
         ST template = group.getInstanceOf("let_expression_predicate");
 
-        iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
+        iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
@@ -83,7 +83,7 @@ public class LetExpressionPredicateGenerator {
 
         ST template = group.getInstanceOf("let_expression_predicate");
 
-        iterationConstructGenerator.prepareGeneration(letPredicate, declarations, false);
+        iterationConstructGenerator.prepareGeneration(letPredicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, letPredicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(letPredicate);
 
@@ -123,7 +123,6 @@ public class LetExpressionPredicateGenerator {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "identifier", identifier);
-        TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "val", machineGenerator.visitExprNode(exprNode, null));
         return template.render();
     }
@@ -135,7 +134,6 @@ public class LetExpressionPredicateGenerator {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "identifier", identifier);
-        TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "val", machineGenerator.visitPredicateNode(thenPredicateNode, null));
         return template.render();
     }
@@ -147,6 +145,8 @@ public class LetExpressionPredicateGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateLetBody(otherConstructs, identifier, type, thenPredicate);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "body", body);
     }
 
@@ -157,6 +157,8 @@ public class LetExpressionPredicateGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateLetBody(otherConstructs, identifier, type, expression);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "body", body);
     }
 

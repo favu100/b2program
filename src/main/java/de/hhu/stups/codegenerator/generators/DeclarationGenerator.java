@@ -134,8 +134,9 @@ public class DeclarationGenerator {
     private String generateIncludeDeclaration(MachineReferenceNode reference) {
         ST declaration = currentGroup.getInstanceOf("include_declaration");
         String machine = reference.getMachineName();
+        String referenceName = reference.getPrefix() != null ? reference.getPrefix() : reference.getMachineName();
         TemplateHandler.add(declaration, "type", nameHandler.handle(machine));
-        TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(machine, NameHandler.IdentifierHandlingEnum.MACHINES));
+        TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(referenceName, NameHandler.IdentifierHandlingEnum.MACHINES));
         return declaration.render();
     }
 

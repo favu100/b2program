@@ -196,8 +196,10 @@ public class ExpressionGenerator {
         } else if(node instanceof IdentifierExprNode) {
             Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
             //This is the case where the name of an enumerated set element is returned as an IdentifierExprNode
+            String nodeName = ((IdentifierExprNode) node).getName();
+            String[] nodeNameAsList = nodeName.split("\\.");
             if((enumTypes.keySet().contains(node.getType().toString()) &&
-                    enumTypes.get(node.getType().toString()).contains(((IdentifierExprNode) node).getName()))) {
+                    enumTypes.get(node.getType().toString()).contains(nodeNameAsList[nodeNameAsList.length - 1]))) {
                 return declarationGenerator.callEnum(node.getType().toString(), ((IdentifierExprNode) node).getDeclarationNode());
             }
             return visitIdentifierExprNode((IdentifierExprNode) node);
@@ -258,9 +260,9 @@ public class ExpressionGenerator {
             return "_primed_" + node.getName();
         }
         if(machineGenerator.isInIterationConstruct() && iterationConstructHandler.getCurrentIterationConstructGenerator().getAllBoundedVariables().contains(node.getName())) {
-            return "_ic_" + node.getName();
+            return "_ic_" + node.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(node.getName());
         }
-        if(substitutionGenerator.getCurrentLocalScope() > 0) {
+        if(substitutionGenerator.getCurrentLocalScope() > 0 && identifierGenerator.getCurrentLocals().containsKey(node.getName())) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
             return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned);
         }

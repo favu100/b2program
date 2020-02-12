@@ -1,4 +1,4 @@
-MACHINE TotalInjectionStruct
+MACHINE TotalSurjectionStruct
 
 VARIABLES  x
 

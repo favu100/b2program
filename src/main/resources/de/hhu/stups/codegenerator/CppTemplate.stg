@@ -295,7 +295,7 @@ if((<predicate>).booleanValue()) {
 >>
 
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
-<predicate>.booleanValue() ? <ifThen> : <ifElse>
+((<predicate>).booleanValue() ? <ifThen> : <ifElse>)
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<

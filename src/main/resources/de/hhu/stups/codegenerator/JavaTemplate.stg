@@ -268,7 +268,7 @@ if((<predicate>).booleanValue()) {
 >>
 
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
-<predicate>.booleanValue() ? <ifThen> : <ifElse>
+(<predicate>.booleanValue() ? <ifThen> : <ifElse>)
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<

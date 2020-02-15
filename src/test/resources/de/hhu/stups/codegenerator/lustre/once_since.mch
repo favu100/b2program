@@ -23,12 +23,8 @@ OPERATIONS
         PRE
             ((once_since_param_C : BOOL) & (once_since_param_A : BOOL))
         THEN
-            VAR once_since_C_history, once_since_A_history, once_since_tmp_0_history, once_since_onceCsinceA_history, once_since_tmp_1_history IN
-                once_since_C_history := once_since_var_C; 
-                once_since_A_history := once_since_var_A; 
+            VAR once_since_tmp_0_history IN
                 once_since_tmp_0_history := once_since_var_tmp_0; 
-                once_since_onceCsinceA_history := once_since_var_onceCsinceA; 
-                once_since_tmp_1_history := once_since_var_tmp_1; 
                 once_since_var_C(once_since_ref) := bool((once_since_param_C = TRUE)); 
                 once_since_var_A(once_since_ref) := bool((once_since_param_A = TRUE)); 
                 IF (once_since_tmp_0_history /= {}) THEN 

@@ -24,15 +24,9 @@ OPERATIONS
         PRE
             ((expr_list4_param_x : INTEGER) & (expr_list4_param_y : INTEGER))
         THEN
-            VAR expr_list4_tmp_0_history, expr_list4_b_history, expr_list4_a_history, expr_list4_x_history, expr_list4_tmp_2_history, expr_list4_tmp_1_history, expr_list4_tmp_3_history, expr_list4_y_history IN
+            VAR expr_list4_tmp_0_history, expr_list4_tmp_2_history IN
                 expr_list4_tmp_0_history := expr_list4_var_tmp_0; 
-                expr_list4_b_history := expr_list4_var_b; 
-                expr_list4_a_history := expr_list4_var_a; 
-                expr_list4_x_history := expr_list4_var_x; 
                 expr_list4_tmp_2_history := expr_list4_var_tmp_2; 
-                expr_list4_tmp_1_history := expr_list4_var_tmp_1; 
-                expr_list4_tmp_3_history := expr_list4_var_tmp_3; 
-                expr_list4_y_history := expr_list4_var_y; 
                 expr_list4_var_x(expr_list4_ref) := expr_list4_param_x; 
                 expr_list4_var_y(expr_list4_ref) := expr_list4_param_y; 
                 IF (expr_list4_var_x /= {}) THEN 

@@ -19,10 +19,8 @@ OPERATIONS
         PRE
             (node_call_pre5_param_x : INTEGER)
         THEN
-            VAR node_call_pre5_x_history, node_call_pre5_tmp_0_history, node_call_pre5_z_history IN
-                node_call_pre5_x_history := node_call_pre5_var_x; 
+            VAR node_call_pre5_tmp_0_history IN
                 node_call_pre5_tmp_0_history := node_call_pre5_var_tmp_0; 
-                node_call_pre5_z_history := node_call_pre5_var_z; 
                 node_call_pre5_var_x(node_call_pre5_ref) := node_call_pre5_param_x; 
                 IF (node_call_pre5_var_x /= {}) THEN 
                     node_call_pre5_var_tmp_0(node_call_pre5_ref) := node_call_pre5_var_x(node_call_pre5_ref)

@@ -21,32 +21,24 @@ OPERATIONS
         PRE
             (When4_param_clock : BOOL)
         THEN
-            VAR When4_clock_history, When4_a_history, When4_b_history, When4_res_history, When4_tmp_0_history IN
-                When4_clock_history := When4_var_clock; 
-                When4_a_history := When4_var_a; 
-                When4_b_history := When4_var_b; 
-                When4_res_history := When4_var_res; 
-                When4_tmp_0_history := When4_var_tmp_0; 
-                When4_var_clock(When4_ref) := bool((When4_param_clock = TRUE)); 
-                When4_var_a(When4_ref) := 1; 
-                When4_var_b(When4_ref) := 2; 
-                IF (((When4_is_initialisation(When4_clock___basic__) = TRUE) => (When4_var_a /= {})) or (not((When4_is_initialisation(When4_clock___basic__) = TRUE)) => (When4_var_b /= {}))) THEN 
-                    When4_var_tmp_0(When4_ref) := IF (When4_is_initialisation(When4_clock___basic__) = TRUE) THEN When4_var_a(When4_ref) ELSE When4_var_b(When4_ref) END
+            When4_var_clock(When4_ref) := bool((When4_param_clock = TRUE)); 
+            When4_var_a(When4_ref) := 1; 
+            When4_var_b(When4_ref) := 2; 
+            IF (((When4_is_initialisation(When4_clock___basic__) = TRUE) => (When4_var_a /= {})) or (not((When4_is_initialisation(When4_clock___basic__) = TRUE)) => (When4_var_b /= {}))) THEN 
+                When4_var_tmp_0(When4_ref) := IF (When4_is_initialisation(When4_clock___basic__) = TRUE) THEN When4_var_a(When4_ref) ELSE When4_var_b(When4_ref) END
+            ELSE 
+                When4_var_tmp_0 := {}
+            END; 
+            IF (When4_var_clock(When4_ref) = TRUE) THEN 
+                IF (When4_var_tmp_0 /= {}) THEN 
+                    When4_var_res(When4_ref) := When4_var_tmp_0(When4_ref)
                 ELSE 
-                    When4_var_tmp_0 := {}
-                END; 
-                IF (When4_var_clock(When4_ref) = TRUE) THEN 
-                    IF (When4_var_tmp_0 /= {}) THEN 
-                        When4_var_res(When4_ref) := When4_var_tmp_0(When4_ref)
-                    ELSE 
-                        When4_var_res := {}
-                    END
-                END; 
-                When4_is_initialisation(When4_clock___basic__) := FALSE; 
-                IF (When4_var_clock(When4_ref) = TRUE) THEN 
-                    When4_is_initialisation(When4_clock_clock) := FALSE
+                    When4_var_res := {}
                 END
-
+            END; 
+            When4_is_initialisation(When4_clock___basic__) := FALSE; 
+            IF (When4_var_clock(When4_ref) = TRUE) THEN 
+                When4_is_initialisation(When4_clock_clock) := FALSE
             END
 
         END;

@@ -38,27 +38,9 @@ OPERATIONS
         PRE
             ((UMS_verif_param_on_A : BOOL) & ((UMS_verif_param_on_B : BOOL) & ((UMS_verif_param_on_C : BOOL) & ((UMS_verif_param_ack_AB : BOOL) & (UMS_verif_param_ack_BC : BOOL)))))
         THEN
-            VAR UMS_verif_grant_access_history, UMS_verif_do_BC_history, UMS_verif_ack_BC_history, UMS_verif_ack_AB_history, UMS_verif_do_AB_history, UMS_verif_exclusive_req_history, UMS_verif_empty_section_history, UMS_verif_on_B_history, UMS_verif_no_collision_history, UMS_verif_grant_exit_history, UMS_verif_no_derail_BC_history, UMS_verif_no_derail_AB_history, UMS_verif_on_A_history, UMS_verif_tmp_0_history, UMS_verif_only_on_B_history, UMS_verif_on_C_history, UMS_verif_property_history, UMS_verif_tmp_2_history, UMS_verif_tmp_1_history, UMS_verif_tmp_3_history IN
-                UMS_verif_grant_access_history := UMS_verif_var_grant_access; 
-                UMS_verif_do_BC_history := UMS_verif_var_do_BC; 
-                UMS_verif_ack_BC_history := UMS_verif_var_ack_BC; 
-                UMS_verif_ack_AB_history := UMS_verif_var_ack_AB; 
-                UMS_verif_do_AB_history := UMS_verif_var_do_AB; 
-                UMS_verif_exclusive_req_history := UMS_verif_var_exclusive_req; 
-                UMS_verif_empty_section_history := UMS_verif_var_empty_section; 
-                UMS_verif_on_B_history := UMS_verif_var_on_B; 
-                UMS_verif_no_collision_history := UMS_verif_var_no_collision; 
-                UMS_verif_grant_exit_history := UMS_verif_var_grant_exit; 
-                UMS_verif_no_derail_BC_history := UMS_verif_var_no_derail_BC; 
-                UMS_verif_no_derail_AB_history := UMS_verif_var_no_derail_AB; 
-                UMS_verif_on_A_history := UMS_verif_var_on_A; 
+            VAR UMS_verif_tmp_0_history, UMS_verif_tmp_2_history IN
                 UMS_verif_tmp_0_history := UMS_verif_var_tmp_0; 
-                UMS_verif_only_on_B_history := UMS_verif_var_only_on_B; 
-                UMS_verif_on_C_history := UMS_verif_var_on_C; 
-                UMS_verif_property_history := UMS_verif_var_property; 
                 UMS_verif_tmp_2_history := UMS_verif_var_tmp_2; 
-                UMS_verif_tmp_1_history := UMS_verif_var_tmp_1; 
-                UMS_verif_tmp_3_history := UMS_verif_var_tmp_3; 
                 UMS_verif_var_on_A(UMS_verif_ref) := bool((UMS_verif_param_on_A = TRUE)); 
                 UMS_verif_var_on_B(UMS_verif_ref) := bool((UMS_verif_param_on_B = TRUE)); 
                 UMS_verif_var_on_C(UMS_verif_ref) := bool((UMS_verif_param_on_C = TRUE)); 
@@ -193,7 +175,6 @@ OPERATIONS
         out <-- getGrant_Exit = BEGIN out := UMS_verif_var_grant_exit END;
         out <-- getDo_AB = BEGIN out := UMS_verif_var_do_AB END;
         out <-- getDo_BC = BEGIN out := UMS_verif_var_do_BC END
-
 
 
 END

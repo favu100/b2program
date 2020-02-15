@@ -20,11 +20,8 @@ OPERATIONS
         PRE
             (after_param_A : BOOL)
         THEN
-            VAR after_afterA_history, after_A_history, after_tmp_0_history, after_tmp_1_history IN
-                after_afterA_history := after_var_afterA; 
-                after_A_history := after_var_A; 
+            VAR after_tmp_0_history IN
                 after_tmp_0_history := after_var_tmp_0; 
-                after_tmp_1_history := after_var_tmp_1; 
                 after_var_A(after_ref) := bool((after_param_A = TRUE)); 
                 IF (after_tmp_0_history /= {}) THEN 
                     after_var_tmp_1(after_ref) := bool((after_tmp_0_history(after_ref) = TRUE))

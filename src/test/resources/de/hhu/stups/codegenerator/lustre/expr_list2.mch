@@ -27,74 +27,60 @@ OPERATIONS
         PRE
             ((expr_list2_param_x : INTEGER) & ((expr_list2_param_y : INTEGER) & (expr_list2_param_clock : BOOL)))
         THEN
-            VAR expr_list2_tmp_3_history, expr_list2_clock_history, expr_list2_b_history, expr_list2_a_history, expr_list2_tmp_1_history, expr_list2_tmp_0_history, expr_list2_tmp_2_history, expr_list2_x_history, expr_list2_tmp_4_history, expr_list2_tmp_5_history, expr_list2_y_history IN
-                expr_list2_tmp_3_history := expr_list2_var_tmp_3; 
-                expr_list2_clock_history := expr_list2_var_clock; 
-                expr_list2_b_history := expr_list2_var_b; 
-                expr_list2_a_history := expr_list2_var_a; 
-                expr_list2_tmp_1_history := expr_list2_var_tmp_1; 
-                expr_list2_tmp_0_history := expr_list2_var_tmp_0; 
-                expr_list2_tmp_2_history := expr_list2_var_tmp_2; 
-                expr_list2_x_history := expr_list2_var_x; 
-                expr_list2_tmp_4_history := expr_list2_var_tmp_4; 
-                expr_list2_tmp_5_history := expr_list2_var_tmp_5; 
-                expr_list2_y_history := expr_list2_var_y; 
-                expr_list2_var_x(expr_list2_ref) := expr_list2_param_x; 
-                expr_list2_var_y(expr_list2_ref) := expr_list2_param_y; 
-                expr_list2_var_clock(expr_list2_ref) := bool((expr_list2_param_clock = TRUE)); 
-                IF (expr_list2_var_x /= {}) THEN 
-                    expr_list2_var_tmp_0(expr_list2_ref) := expr_list2_var_x(expr_list2_ref)
+            expr_list2_var_x(expr_list2_ref) := expr_list2_param_x; 
+            expr_list2_var_y(expr_list2_ref) := expr_list2_param_y; 
+            expr_list2_var_clock(expr_list2_ref) := bool((expr_list2_param_clock = TRUE)); 
+            IF (expr_list2_var_x /= {}) THEN 
+                expr_list2_var_tmp_0(expr_list2_ref) := expr_list2_var_x(expr_list2_ref)
+            ELSE 
+                expr_list2_var_tmp_0 := {}
+            END; 
+            IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
+                IF (expr_list2_var_tmp_0 /= {}) THEN 
+                    expr_list2_var_tmp_1(expr_list2_ref) := expr_list2_var_tmp_0(expr_list2_ref)
                 ELSE 
-                    expr_list2_var_tmp_0 := {}
-                END; 
-                IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
-                    IF (expr_list2_var_tmp_0 /= {}) THEN 
-                        expr_list2_var_tmp_1(expr_list2_ref) := expr_list2_var_tmp_0(expr_list2_ref)
-                    ELSE 
-                        expr_list2_var_tmp_1 := {}
-                    END
-                END; 
-                IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
-                    IF (expr_list2_var_tmp_1 /= {}) THEN 
-                        expr_list2_var_tmp_2(expr_list2_ref) := expr_list2_var_tmp_1(expr_list2_ref)
-                    ELSE 
-                        expr_list2_var_tmp_2 := {}
-                    END
-                END; 
-                IF (expr_list2_var_tmp_2 /= {}) THEN 
-                    expr_list2_var_a(expr_list2_ref) := expr_list2_var_tmp_2(expr_list2_ref)
-                ELSE 
-                    expr_list2_var_a := {}
-                END; 
-                IF (expr_list2_var_y /= {}) THEN 
-                    expr_list2_var_tmp_3(expr_list2_ref) := expr_list2_var_y(expr_list2_ref)
-                ELSE 
-                    expr_list2_var_tmp_3 := {}
-                END; 
-                IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
-                    IF (expr_list2_var_tmp_3 /= {}) THEN 
-                        expr_list2_var_tmp_4(expr_list2_ref) := expr_list2_var_tmp_3(expr_list2_ref)
-                    ELSE 
-                        expr_list2_var_tmp_4 := {}
-                    END
-                END; 
-                IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
-                    IF (expr_list2_var_tmp_4 /= {}) THEN 
-                        expr_list2_var_tmp_5(expr_list2_ref) := expr_list2_var_tmp_4(expr_list2_ref)
-                    ELSE 
-                        expr_list2_var_tmp_5 := {}
-                    END
-                END; 
-                IF (expr_list2_var_tmp_5 /= {}) THEN 
-                    expr_list2_var_b(expr_list2_ref) := expr_list2_var_tmp_5(expr_list2_ref)
-                ELSE 
-                    expr_list2_var_b := {}
-                END; 
-                expr_list2_is_initialisation(expr_list2_clock___basic__) := FALSE; 
-                IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
-                    expr_list2_is_initialisation(expr_list2_clock_clock) := FALSE
+                    expr_list2_var_tmp_1 := {}
                 END
-
+            END; 
+            IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
+                IF (expr_list2_var_tmp_1 /= {}) THEN 
+                    expr_list2_var_tmp_2(expr_list2_ref) := expr_list2_var_tmp_1(expr_list2_ref)
+                ELSE 
+                    expr_list2_var_tmp_2 := {}
+                END
+            END; 
+            IF (expr_list2_var_tmp_2 /= {}) THEN 
+                expr_list2_var_a(expr_list2_ref) := expr_list2_var_tmp_2(expr_list2_ref)
+            ELSE 
+                expr_list2_var_a := {}
+            END; 
+            IF (expr_list2_var_y /= {}) THEN 
+                expr_list2_var_tmp_3(expr_list2_ref) := expr_list2_var_y(expr_list2_ref)
+            ELSE 
+                expr_list2_var_tmp_3 := {}
+            END; 
+            IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
+                IF (expr_list2_var_tmp_3 /= {}) THEN 
+                    expr_list2_var_tmp_4(expr_list2_ref) := expr_list2_var_tmp_3(expr_list2_ref)
+                ELSE 
+                    expr_list2_var_tmp_4 := {}
+                END
+            END; 
+            IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
+                IF (expr_list2_var_tmp_4 /= {}) THEN 
+                    expr_list2_var_tmp_5(expr_list2_ref) := expr_list2_var_tmp_4(expr_list2_ref)
+                ELSE 
+                    expr_list2_var_tmp_5 := {}
+                END
+            END; 
+            IF (expr_list2_var_tmp_5 /= {}) THEN 
+                expr_list2_var_b(expr_list2_ref) := expr_list2_var_tmp_5(expr_list2_ref)
+            ELSE 
+                expr_list2_var_b := {}
+            END; 
+            expr_list2_is_initialisation(expr_list2_clock___basic__) := FALSE; 
+            IF (expr_list2_var_clock(expr_list2_ref) = TRUE) THEN 
+                expr_list2_is_initialisation(expr_list2_clock_clock) := FALSE
             END
 
         END;

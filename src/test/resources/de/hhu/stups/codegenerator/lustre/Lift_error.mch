@@ -24,15 +24,8 @@ OPERATIONS
         PRE
             ((Lift_error_param_up : BOOL) & (Lift_error_param_down : BOOL))
         THEN
-            VAR Lift_error_exec_up_history, Lift_error_down_history, Lift_error_exec_down_history, Lift_error_old_floor_history, Lift_error_floor_history, Lift_error_tmp_1_history, Lift_error_tmp_0_history, Lift_error_up_history IN
-                Lift_error_exec_up_history := Lift_error_var_exec_up; 
-                Lift_error_down_history := Lift_error_var_down; 
-                Lift_error_exec_down_history := Lift_error_var_exec_down; 
-                Lift_error_old_floor_history := Lift_error_var_old_floor; 
-                Lift_error_floor_history := Lift_error_var_floor; 
-                Lift_error_tmp_1_history := Lift_error_var_tmp_1; 
+            VAR Lift_error_tmp_0_history IN
                 Lift_error_tmp_0_history := Lift_error_var_tmp_0; 
-                Lift_error_up_history := Lift_error_var_up; 
                 Lift_error_var_up(Lift_error_ref) := bool((Lift_error_param_up = TRUE)); 
                 Lift_error_var_down(Lift_error_ref) := bool((Lift_error_param_down = TRUE)); 
                 IF (Lift_error_tmp_0_history /= {}) THEN 

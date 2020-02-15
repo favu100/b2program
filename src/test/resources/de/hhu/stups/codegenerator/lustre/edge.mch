@@ -20,11 +20,8 @@ OPERATIONS
         PRE
             (edge_param_X : BOOL)
         THEN
-            VAR edge_X_history, edge_EDGE_history, edge_tmp_0_history, edge_tmp_1_history IN
-                edge_X_history := edge_var_X; 
-                edge_EDGE_history := edge_var_EDGE; 
+            VAR edge_tmp_0_history IN
                 edge_tmp_0_history := edge_var_tmp_0; 
-                edge_tmp_1_history := edge_var_tmp_1; 
                 edge_var_X(edge_ref) := bool((edge_param_X = TRUE)); 
                 IF (edge_var_X /= {}) THEN 
                     edge_var_tmp_0(edge_ref) := bool((edge_var_X(edge_ref) = TRUE))

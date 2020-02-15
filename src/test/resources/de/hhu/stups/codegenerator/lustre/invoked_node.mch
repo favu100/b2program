@@ -20,11 +20,8 @@ OPERATIONS
         PRE
             (invoked_node_param_x : BOOL)
         THEN
-            VAR invoked_node_tmp_0_history, invoked_node_res_history, invoked_node_x_history, invoked_node_tmp_1_history IN
+            VAR invoked_node_tmp_0_history IN
                 invoked_node_tmp_0_history := invoked_node_var_tmp_0; 
-                invoked_node_res_history := invoked_node_var_res; 
-                invoked_node_x_history := invoked_node_var_x; 
-                invoked_node_tmp_1_history := invoked_node_var_tmp_1; 
                 invoked_node_var_x(invoked_node_ref) := bool((invoked_node_param_x = TRUE)); 
                 IF (invoked_node_tmp_0_history /= {}) THEN 
                     invoked_node_var_tmp_1(invoked_node_ref) := invoked_node_tmp_0_history(invoked_node_ref)

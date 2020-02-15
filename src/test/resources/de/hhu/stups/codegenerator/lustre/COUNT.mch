@@ -20,11 +20,8 @@ OPERATIONS
         PRE
             (COUNT_param_incr : INTEGER)
         THEN
-            VAR COUNT_n_history, COUNT_incr_history, COUNT_tmp_0_history, COUNT_tmp_1_history IN
-                COUNT_n_history := COUNT_var_n; 
-                COUNT_incr_history := COUNT_var_incr; 
+            VAR COUNT_tmp_0_history IN
                 COUNT_tmp_0_history := COUNT_var_tmp_0; 
-                COUNT_tmp_1_history := COUNT_var_tmp_1; 
                 COUNT_var_incr(COUNT_ref) := COUNT_param_incr; 
                 IF (COUNT_tmp_0_history /= {}) THEN 
                     COUNT_var_tmp_1(COUNT_ref) := COUNT_tmp_0_history(COUNT_ref)

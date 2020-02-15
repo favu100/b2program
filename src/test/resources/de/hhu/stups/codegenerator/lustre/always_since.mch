@@ -23,12 +23,8 @@ OPERATIONS
         PRE
             ((always_since_param_B : BOOL) & (always_since_param_A : BOOL))
         THEN
-            VAR always_since_B_history, always_since_A_history, always_since_tmp_0_history, always_since_alwaysBsinceA_history, always_since_tmp_1_history IN
-                always_since_B_history := always_since_var_B; 
-                always_since_A_history := always_since_var_A; 
+            VAR always_since_tmp_0_history IN
                 always_since_tmp_0_history := always_since_var_tmp_0; 
-                always_since_alwaysBsinceA_history := always_since_var_alwaysBsinceA; 
-                always_since_tmp_1_history := always_since_var_tmp_1; 
                 always_since_var_B(always_since_ref) := bool((always_since_param_B = TRUE)); 
                 always_since_var_A(always_since_ref) := bool((always_since_param_A = TRUE)); 
                 IF (always_since_tmp_0_history /= {}) THEN 

@@ -24,15 +24,9 @@ OPERATIONS
         PRE
             ((STABLE_param_set : BOOL) & (STABLE_param_delay : INTEGER))
         THEN
-            VAR STABLE_level_history, STABLE_delay_history, STABLE_count_history, STABLE_tmp_0_history, STABLE_set_history, STABLE_tmp_2_history, STABLE_tmp_1_history, STABLE_tmp_3_history IN
-                STABLE_level_history := STABLE_var_level; 
-                STABLE_delay_history := STABLE_var_delay; 
-                STABLE_count_history := STABLE_var_count; 
+            VAR STABLE_tmp_0_history, STABLE_tmp_2_history IN
                 STABLE_tmp_0_history := STABLE_var_tmp_0; 
-                STABLE_set_history := STABLE_var_set; 
                 STABLE_tmp_2_history := STABLE_var_tmp_2; 
-                STABLE_tmp_1_history := STABLE_var_tmp_1; 
-                STABLE_tmp_3_history := STABLE_var_tmp_3; 
                 STABLE_var_set(STABLE_ref) := bool((STABLE_param_set = TRUE)); 
                 STABLE_var_delay(STABLE_ref) := STABLE_param_delay; 
                 IF (STABLE_tmp_0_history /= {}) THEN 

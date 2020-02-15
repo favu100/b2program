@@ -21,10 +21,8 @@ OPERATIONS
         PRE
             (node_call_pre2_param_x : INTEGER)
         THEN
-            VAR node_call_pre2_x_history, node_call_pre2_tmp_0_history, node_call_pre2_z_history IN
-                node_call_pre2_x_history := node_call_pre2_var_x; 
+            VAR node_call_pre2_tmp_0_history IN
                 node_call_pre2_tmp_0_history := node_call_pre2_var_tmp_0; 
-                node_call_pre2_z_history := node_call_pre2_var_z; 
                 node_call_pre2_var_x(node_call_pre2_ref) := node_call_pre2_param_x; 
                 IF (node_call_pre2_var_x /= {}) THEN 
                     Node_3.node_call_pre3_clock_step(node_call_pre2_var_x(node_call_pre2_ref))

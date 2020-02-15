@@ -24,15 +24,9 @@ OPERATIONS
         PRE
             ((SLOW_STABLE_param_set : BOOL) & (SLOW_STABLE_param_delay : INTEGER))
         THEN
-            VAR SLOW_STABLE_level_history, SLOW_STABLE_delay_history, SLOW_STABLE_count_history, SLOW_STABLE_tmp_0_history, SLOW_STABLE_set_history, SLOW_STABLE_tmp_2_history, SLOW_STABLE_tmp_1_history, SLOW_STABLE_tmp_3_history IN
-                SLOW_STABLE_level_history := SLOW_STABLE_var_level; 
-                SLOW_STABLE_delay_history := SLOW_STABLE_var_delay; 
-                SLOW_STABLE_count_history := SLOW_STABLE_var_count; 
+            VAR SLOW_STABLE_tmp_0_history, SLOW_STABLE_tmp_2_history IN
                 SLOW_STABLE_tmp_0_history := SLOW_STABLE_var_tmp_0; 
-                SLOW_STABLE_set_history := SLOW_STABLE_var_set; 
                 SLOW_STABLE_tmp_2_history := SLOW_STABLE_var_tmp_2; 
-                SLOW_STABLE_tmp_1_history := SLOW_STABLE_var_tmp_1; 
-                SLOW_STABLE_tmp_3_history := SLOW_STABLE_var_tmp_3; 
                 SLOW_STABLE_var_set(SLOW_STABLE_ref) := bool((SLOW_STABLE_param_set = TRUE)); 
                 SLOW_STABLE_var_delay(SLOW_STABLE_ref) := SLOW_STABLE_param_delay; 
                 IF (SLOW_STABLE_tmp_0_history /= {}) THEN 

@@ -19,24 +19,18 @@ OPERATIONS
         PRE
             (other_node_param_x : INTEGER)
         THEN
-            VAR other_node_b_history, other_node_a_history, other_node_x_history IN
-                other_node_b_history := other_node_var_b; 
-                other_node_a_history := other_node_var_a; 
-                other_node_x_history := other_node_var_x; 
-                other_node_var_x(other_node_ref) := other_node_param_x; 
-                IF (other_node_var_x /= {}) THEN 
-                    other_node_var_a(other_node_ref) := other_node_var_x(other_node_ref)
-                ELSE 
-                    other_node_var_a := {}
-                END; 
-                IF (other_node_var_x /= {}) THEN 
-                    other_node_var_b(other_node_ref) := other_node_var_x(other_node_ref)
-                ELSE 
-                    other_node_var_b := {}
-                END; 
-                other_node_is_initialisation(other_node_clock___basic__) := FALSE
-
-            END
+            other_node_var_x(other_node_ref) := other_node_param_x; 
+            IF (other_node_var_x /= {}) THEN 
+                other_node_var_a(other_node_ref) := other_node_var_x(other_node_ref)
+            ELSE 
+                other_node_var_a := {}
+            END; 
+            IF (other_node_var_x /= {}) THEN 
+                other_node_var_b(other_node_ref) := other_node_var_x(other_node_ref)
+            ELSE 
+                other_node_var_b := {}
+            END; 
+            other_node_is_initialisation(other_node_clock___basic__) := FALSE
 
         END
 

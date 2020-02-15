@@ -19,10 +19,8 @@ OPERATIONS
         PRE
             (Pre3_param_x : BOOL)
         THEN
-            VAR Pre3_tmp_0_history, Pre3_a_history, Pre3_x_history IN
+            VAR Pre3_tmp_0_history IN
                 Pre3_tmp_0_history := Pre3_var_tmp_0; 
-                Pre3_a_history := Pre3_var_a; 
-                Pre3_x_history := Pre3_var_x; 
                 Pre3_var_x(Pre3_ref) := bool((Pre3_param_x = TRUE)); 
                 Pre3_var_tmp_0(Pre3_ref) := 1; 
                 IF (Pre3_tmp_0_history /= {}) THEN 

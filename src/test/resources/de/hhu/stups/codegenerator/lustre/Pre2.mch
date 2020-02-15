@@ -35,26 +35,10 @@ OPERATIONS
         PRE
             ((Pre2_param_clock1 : BOOL) & (Pre2_param_clock2 : BOOL))
         THEN
-            VAR Pre2_tmp_2_history, Pre2_tmp_0_history, Pre2_res1_history, Pre2_clock2_history, Pre2_clock1_history, Pre2_res_history, Pre2_res2_history, Pre2_tmp_11_history, Pre2_tmp_1_history, Pre2_tmp_10_history, Pre2_tmp_12_history, Pre2_tmp_13_history, Pre2_tmp_6_history, Pre2_tmp_4_history, Pre2_tmp_3_history, Pre2_tmp_5_history, Pre2_tmp_8_history, Pre2_tmp_7_history, Pre2_tmp_9_history IN
-                Pre2_tmp_2_history := Pre2_var_tmp_2; 
+            VAR Pre2_tmp_0_history, Pre2_tmp_6_history, Pre2_tmp_12_history IN
                 Pre2_tmp_0_history := Pre2_var_tmp_0; 
-                Pre2_res1_history := Pre2_var_res1; 
-                Pre2_clock2_history := Pre2_var_clock2; 
-                Pre2_clock1_history := Pre2_var_clock1; 
-                Pre2_res_history := Pre2_var_res; 
-                Pre2_res2_history := Pre2_var_res2; 
-                Pre2_tmp_11_history := Pre2_var_tmp_11; 
-                Pre2_tmp_1_history := Pre2_var_tmp_1; 
-                Pre2_tmp_10_history := Pre2_var_tmp_10; 
-                Pre2_tmp_12_history := Pre2_var_tmp_12; 
-                Pre2_tmp_13_history := Pre2_var_tmp_13; 
                 Pre2_tmp_6_history := Pre2_var_tmp_6; 
-                Pre2_tmp_4_history := Pre2_var_tmp_4; 
-                Pre2_tmp_3_history := Pre2_var_tmp_3; 
-                Pre2_tmp_5_history := Pre2_var_tmp_5; 
-                Pre2_tmp_8_history := Pre2_var_tmp_8; 
-                Pre2_tmp_7_history := Pre2_var_tmp_7; 
-                Pre2_tmp_9_history := Pre2_var_tmp_9; 
+                Pre2_tmp_12_history := Pre2_var_tmp_12; 
                 Pre2_var_clock1(Pre2_ref) := bool((Pre2_param_clock1 = TRUE)); 
                 Pre2_var_clock2(Pre2_ref) := bool((Pre2_param_clock2 = TRUE)); 
                 IF (Pre2_tmp_0_history /= {}) THEN 

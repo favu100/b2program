@@ -32,22 +32,9 @@ OPERATIONS
         PRE
             (Pre6_param_B : BOOL)
         THEN
-            VAR Pre6_tmp_2_history, Pre6_res1_history, Pre6_B_history, Pre6_X_history, Pre6_tmp_0_history, Pre6_res2_history, Pre6_tmp_10_history, Pre6_tmp_1_history, Pre6_tmp_11_history, Pre6_tmp_6_history, Pre6_tmp_4_history, Pre6_tmp_3_history, Pre6_tmp_5_history, Pre6_tmp_8_history, Pre6_tmp_7_history, Pre6_tmp_9_history IN
-                Pre6_tmp_2_history := Pre6_var_tmp_2; 
-                Pre6_res1_history := Pre6_var_res1; 
-                Pre6_B_history := Pre6_var_B; 
-                Pre6_X_history := Pre6_var_X; 
+            VAR Pre6_tmp_0_history, Pre6_tmp_2_history, Pre6_tmp_9_history IN
                 Pre6_tmp_0_history := Pre6_var_tmp_0; 
-                Pre6_res2_history := Pre6_var_res2; 
-                Pre6_tmp_10_history := Pre6_var_tmp_10; 
-                Pre6_tmp_1_history := Pre6_var_tmp_1; 
-                Pre6_tmp_11_history := Pre6_var_tmp_11; 
-                Pre6_tmp_6_history := Pre6_var_tmp_6; 
-                Pre6_tmp_4_history := Pre6_var_tmp_4; 
-                Pre6_tmp_3_history := Pre6_var_tmp_3; 
-                Pre6_tmp_5_history := Pre6_var_tmp_5; 
-                Pre6_tmp_8_history := Pre6_var_tmp_8; 
-                Pre6_tmp_7_history := Pre6_var_tmp_7; 
+                Pre6_tmp_2_history := Pre6_var_tmp_2; 
                 Pre6_tmp_9_history := Pre6_var_tmp_9; 
                 Pre6_var_B(Pre6_ref) := bool((Pre6_param_B = TRUE)); 
                 IF (Pre6_tmp_0_history /= {}) THEN 

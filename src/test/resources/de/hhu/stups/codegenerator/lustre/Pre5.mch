@@ -28,18 +28,9 @@ OPERATIONS
         PRE
             (Pre5_param_B : BOOL)
         THEN
-            VAR Pre5_tmp_2_history, Pre5_res1_history, Pre5_B_history, Pre5_X_history, Pre5_tmp_0_history, Pre5_res2_history, Pre5_tmp_1_history, Pre5_tmp_4_history, Pre5_tmp_3_history, Pre5_tmp_6_history, Pre5_tmp_5_history, Pre5_tmp_7_history IN
-                Pre5_tmp_2_history := Pre5_var_tmp_2; 
-                Pre5_res1_history := Pre5_var_res1; 
-                Pre5_B_history := Pre5_var_B; 
-                Pre5_X_history := Pre5_var_X; 
+            VAR Pre5_tmp_0_history, Pre5_tmp_2_history, Pre5_tmp_7_history IN
                 Pre5_tmp_0_history := Pre5_var_tmp_0; 
-                Pre5_res2_history := Pre5_var_res2; 
-                Pre5_tmp_1_history := Pre5_var_tmp_1; 
-                Pre5_tmp_4_history := Pre5_var_tmp_4; 
-                Pre5_tmp_3_history := Pre5_var_tmp_3; 
-                Pre5_tmp_6_history := Pre5_var_tmp_6; 
-                Pre5_tmp_5_history := Pre5_var_tmp_5; 
+                Pre5_tmp_2_history := Pre5_var_tmp_2; 
                 Pre5_tmp_7_history := Pre5_var_tmp_7; 
                 Pre5_var_B(Pre5_ref) := bool((Pre5_param_B = TRUE)); 
                 IF (Pre5_tmp_0_history /= {}) THEN 

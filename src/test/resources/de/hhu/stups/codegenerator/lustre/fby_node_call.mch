@@ -18,18 +18,13 @@ OPERATIONS
         PRE
             (fby_node_call_param_x : INTEGER)
         THEN
-            VAR fby_node_call_x_history, fby_node_call_z_history IN
-                fby_node_call_x_history := fby_node_call_var_x; 
-                fby_node_call_z_history := fby_node_call_var_z; 
-                fby_node_call_var_x(fby_node_call_ref) := fby_node_call_param_x; 
-                IF (fby_node_call_var_x /= {}) THEN 
-                    fby_node_call_var_z(fby_node_call_ref) := fby_node_call_var_x(fby_node_call_ref)
-                ELSE 
-                    fby_node_call_var_z := {}
-                END; 
-                fby_node_call_is_initialisation(fby_node_call_clock___basic__) := FALSE
-
-            END
+            fby_node_call_var_x(fby_node_call_ref) := fby_node_call_param_x; 
+            IF (fby_node_call_var_x /= {}) THEN 
+                fby_node_call_var_z(fby_node_call_ref) := fby_node_call_var_x(fby_node_call_ref)
+            ELSE 
+                fby_node_call_var_z := {}
+            END; 
+            fby_node_call_is_initialisation(fby_node_call_clock___basic__) := FALSE
 
         END
 

@@ -43,34 +43,17 @@ OPERATIONS
         PRE
             ((Pre_param_x : INTEGER) & (Pre_param_y : INTEGER))
         THEN
-            VAR Pre_tmp_3_history, Pre_tmp_0_history, Pre_c_history, Pre_b_history, Pre_a_history, Pre_e_history, Pre_d_history, Pre_tmp_16_history, Pre_tmp_12_history, Pre_tmp_10_history, Pre_tmp_1_history, Pre_tmp_11_history, Pre_tmp_14_history, Pre_tmp_13_history, Pre_tmp_15_history, Pre_tmp_18_history, Pre_tmp_17_history, Pre_tmp_2_history, Pre_tmp_19_history, Pre_tmp_6_history, Pre_tmp_5_history, Pre_tmp_4_history, Pre_x_history, Pre_tmp_8_history, Pre_tmp_7_history, Pre_tmp_9_history, Pre_y_history IN
-                Pre_tmp_3_history := Pre_var_tmp_3; 
+            VAR Pre_tmp_0_history, Pre_tmp_2_history, Pre_tmp_4_history, Pre_tmp_6_history, Pre_tmp_8_history, Pre_tmp_10_history, Pre_tmp_12_history, Pre_tmp_14_history, Pre_tmp_16_history, Pre_tmp_18_history IN
                 Pre_tmp_0_history := Pre_var_tmp_0; 
-                Pre_c_history := Pre_var_c; 
-                Pre_b_history := Pre_var_b; 
-                Pre_a_history := Pre_var_a; 
-                Pre_e_history := Pre_var_e; 
-                Pre_d_history := Pre_var_d; 
-                Pre_tmp_16_history := Pre_var_tmp_16; 
-                Pre_tmp_12_history := Pre_var_tmp_12; 
-                Pre_tmp_10_history := Pre_var_tmp_10; 
-                Pre_tmp_1_history := Pre_var_tmp_1; 
-                Pre_tmp_11_history := Pre_var_tmp_11; 
-                Pre_tmp_14_history := Pre_var_tmp_14; 
-                Pre_tmp_13_history := Pre_var_tmp_13; 
-                Pre_tmp_15_history := Pre_var_tmp_15; 
-                Pre_tmp_18_history := Pre_var_tmp_18; 
-                Pre_tmp_17_history := Pre_var_tmp_17; 
                 Pre_tmp_2_history := Pre_var_tmp_2; 
-                Pre_tmp_19_history := Pre_var_tmp_19; 
-                Pre_tmp_6_history := Pre_var_tmp_6; 
-                Pre_tmp_5_history := Pre_var_tmp_5; 
                 Pre_tmp_4_history := Pre_var_tmp_4; 
-                Pre_x_history := Pre_var_x; 
+                Pre_tmp_6_history := Pre_var_tmp_6; 
                 Pre_tmp_8_history := Pre_var_tmp_8; 
-                Pre_tmp_7_history := Pre_var_tmp_7; 
-                Pre_tmp_9_history := Pre_var_tmp_9; 
-                Pre_y_history := Pre_var_y; 
+                Pre_tmp_10_history := Pre_var_tmp_10; 
+                Pre_tmp_12_history := Pre_var_tmp_12; 
+                Pre_tmp_14_history := Pre_var_tmp_14; 
+                Pre_tmp_16_history := Pre_var_tmp_16; 
+                Pre_tmp_18_history := Pre_var_tmp_18; 
                 Pre_var_x(Pre_ref) := Pre_param_x; 
                 Pre_var_y(Pre_ref) := Pre_param_y; 
                 IF (Pre_var_x /= {}) THEN 

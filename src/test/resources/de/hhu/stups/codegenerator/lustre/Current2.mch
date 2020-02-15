@@ -29,20 +29,8 @@ OPERATIONS
         PRE
             ((Current2_param_clock1 : BOOL) & (Current2_param_clock2 : BOOL))
         THEN
-            VAR Current2_tmp_2_history, Current2_res1_history, Current2_clock2_history, Current2_clock1_history, Current2_res_history, Current2_tmp_0_history, Current2_res2_history, Current2_tmp_1_history, Current2_tmp_4_history, Current2_tmp_3_history, Current2_tmp_6_history, Current2_tmp_5_history, Current2_tmp_7_history IN
-                Current2_tmp_2_history := Current2_var_tmp_2; 
-                Current2_res1_history := Current2_var_res1; 
-                Current2_clock2_history := Current2_var_clock2; 
-                Current2_clock1_history := Current2_var_clock1; 
-                Current2_res_history := Current2_var_res; 
+            VAR Current2_tmp_0_history IN
                 Current2_tmp_0_history := Current2_var_tmp_0; 
-                Current2_res2_history := Current2_var_res2; 
-                Current2_tmp_1_history := Current2_var_tmp_1; 
-                Current2_tmp_4_history := Current2_var_tmp_4; 
-                Current2_tmp_3_history := Current2_var_tmp_3; 
-                Current2_tmp_6_history := Current2_var_tmp_6; 
-                Current2_tmp_5_history := Current2_var_tmp_5; 
-                Current2_tmp_7_history := Current2_var_tmp_7; 
                 Current2_var_clock1(Current2_ref) := bool((Current2_param_clock1 = TRUE)); 
                 Current2_var_clock2(Current2_ref) := bool((Current2_param_clock2 = TRUE)); 
                 IF (Current2_tmp_0_history /= {}) THEN 

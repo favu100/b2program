@@ -1,0 +1,13 @@
+int main() {
+    expr_list2 program;
+    program.expr_list2_clock_step(BInteger(1), BInteger(2), BBoolean(true));
+    cout << program.getA() << "\n";
+    cout << program.getB() << "\n";
+    program.expr_list2_clock_step(BInteger(3), BInteger(4), BBoolean(false));
+    cout << program.getA() << "\n";
+    cout << program.getB() << "\n";
+    program.expr_list2_clock_step(BInteger(0), BInteger(-1), BBoolean(true));
+    cout << program.getA() << "\n";
+    cout << program.getB() << "\n";
+    return 0;
+}

@@ -1,0 +1,10 @@
+int main() {
+    Lift_verif_error lift;
+    lift.Lift_verif_error_clock_step(BBoolean(true), BBoolean(false));
+    cout << lift.getOK() << "\n";
+    for(int i = 0; i < 100; i++) {
+        lift.Lift_verif_error_clock_step(BBoolean(true), BBoolean(false));
+    }
+    cout << lift.getOK() << "\n";
+    return 0;
+}

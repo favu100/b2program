@@ -1,0 +1,6 @@
+public static void main(String[] args) {
+    expr_list program = new expr_list();
+    program.expr_list_clock_step(new BInteger(1), new BInteger(2));
+    System.out.println(program.getA());
+    System.out.println(program.getB());
+}

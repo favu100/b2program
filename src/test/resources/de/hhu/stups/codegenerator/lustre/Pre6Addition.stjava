@@ -1,0 +1,21 @@
+public static void main(String [] args) {
+    Pre6 pre = new Pre6();
+    pre.Pre6_clock_step(new BBoolean(true));
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.Pre6_clock_step(new BBoolean(false));
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.Pre6_clock_step(new BBoolean(true));
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.Pre6_clock_step(new BBoolean(false));
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.Pre6_clock_step(new BBoolean(false));
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.Pre6_clock_step(new BBoolean(true));
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+}

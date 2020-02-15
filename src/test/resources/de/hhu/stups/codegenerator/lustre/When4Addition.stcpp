@@ -1,0 +1,10 @@
+int main() {
+    When4 when;
+    when.When4_clock_step(BBoolean(false));
+    cout << when.getRes() << "\n";
+    when.When4_clock_step(BBoolean(true));
+    cout << when.getRes() << "\n";
+    when.When4_clock_step(BBoolean(false));
+    cout << when.getRes() << "\n";
+    return 0;
+}

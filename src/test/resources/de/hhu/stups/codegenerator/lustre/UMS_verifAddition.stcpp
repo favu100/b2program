@@ -1,0 +1,34 @@
+int main() {
+    UMS_verif ums;
+    ums.UMS_verif_clock_step(BBoolean(false), BBoolean(false), BBoolean(false), BBoolean(true), BBoolean(false));
+    cout << ums.getGrant_Access() << "\n";
+    cout << ums.getGrant_Exit() << "\n";
+    cout << ums.getDo_AB() << "\n";
+    cout << ums.getDo_BC() << "\n";
+    ums.UMS_verif_clock_step(BBoolean(true), BBoolean(false), BBoolean(false), BBoolean(true), BBoolean(false));
+    cout << ums.getGrant_Access() << "\n";
+    cout << ums.getGrant_Exit() << "\n";
+    cout << ums.getDo_AB() << "\n";
+    cout << ums.getDo_BC() << "\n";
+    ums.UMS_verif_clock_step(BBoolean(false), BBoolean(true), BBoolean(false), BBoolean(false), BBoolean(false));
+    cout << ums.getGrant_Access() << "\n";
+    cout << ums.getGrant_Exit() << "\n";
+    cout << ums.getDo_AB() << "\n";
+    cout << ums.getDo_BC() << "\n";
+    ums.UMS_verif_clock_step(BBoolean(false), BBoolean(true), BBoolean(false), BBoolean(false), BBoolean(true));
+    cout << ums.getGrant_Access() << "\n";
+    cout << ums.getGrant_Exit() << "\n";
+    cout << ums.getDo_AB() << "\n";
+    cout << ums.getDo_BC() << "\n";
+    ums.UMS_verif_clock_step(BBoolean(false), BBoolean(false), BBoolean(true), BBoolean(false), BBoolean(true));
+    cout << ums.getGrant_Access() << "\n";
+    cout << ums.getGrant_Exit() << "\n";
+    cout << ums.getDo_AB() << "\n";
+    cout << ums.getDo_BC() << "\n";
+    ums.UMS_verif_clock_step(BBoolean(false), BBoolean(false), BBoolean(false), BBoolean(false), BBoolean(false));
+    cout << ums.getGrant_Access() << "\n";
+    cout << ums.getGrant_Exit() << "\n";
+    cout << ums.getDo_AB() << "\n";
+    cout << ums.getDo_BC() << "\n";
+    return 0;
+}

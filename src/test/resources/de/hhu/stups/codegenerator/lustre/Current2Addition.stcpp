@@ -1,0 +1,36 @@
+int main() {
+    Current2 current;
+    current.Current2_clock_step(BBoolean(true), BBoolean(true));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(true), BBoolean(true));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(true), BBoolean(false));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(true), BBoolean(false));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(false), BBoolean(true));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(false), BBoolean(true));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(false), BBoolean(false));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    current.Current2_clock_step(BBoolean(false), BBoolean(false));
+    cout << current.getRes() << "\n";
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    return 0;
+}

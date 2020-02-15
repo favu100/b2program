@@ -1,0 +1,12 @@
+int main() {
+    Pre program;
+    program.Pre_clock_step(BInteger(1), BInteger(0));
+    cout << program.getD() << "\n";
+    program.Pre_clock_step(BInteger(2), BInteger(0));
+    cout << program.getD() << "\n";
+    program.Pre_clock_step(BInteger(3), BInteger(0));
+    cout << program.getD() << "\n";
+    program.Pre_clock_step(BInteger(4), BInteger(0));
+    cout << program.getD() << "\n";
+    return 0;
+}

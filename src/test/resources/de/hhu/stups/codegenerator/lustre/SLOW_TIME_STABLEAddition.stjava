@@ -1,0 +1,15 @@
+public static void main(String[] args) {
+    SLOW_TIME_STABLE program = new SLOW_TIME_STABLE();
+    program.SLOW_TIME_STABLE_clock_step(new BBoolean(true), new BBoolean(true), new BInteger(3));
+    System.out.println(program.getLevel());
+    program.SLOW_TIME_STABLE_clock_step(new BBoolean(false), new BBoolean(false), new BInteger(3));
+    System.out.println(program.getLevel());
+    program.SLOW_TIME_STABLE_clock_step(new BBoolean(false), new BBoolean(false), new BInteger(3));
+    System.out.println(program.getLevel());
+    program.SLOW_TIME_STABLE_clock_step(new BBoolean(false), new BBoolean(true), new BInteger(3));
+    System.out.println(program.getLevel());
+    program.SLOW_TIME_STABLE_clock_step(new BBoolean(false), new BBoolean(true), new BInteger(3));
+    System.out.println(program.getLevel());
+    program.SLOW_TIME_STABLE_clock_step(new BBoolean(false), new BBoolean(true), new BInteger(3));
+    System.out.println(program.getLevel());
+}

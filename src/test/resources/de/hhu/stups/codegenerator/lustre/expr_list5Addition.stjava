@@ -1,0 +1,9 @@
+public static void main(String[] args) {
+    expr_list5 program = new expr_list5();
+    program.expr_list5_clock_step(new BInteger(3));
+    System.out.println(program.getA());
+    System.out.println(program.getB());
+    program.expr_list5_clock_step(new BInteger(4));
+    System.out.println(program.getA());
+    System.out.println(program.getB());
+}

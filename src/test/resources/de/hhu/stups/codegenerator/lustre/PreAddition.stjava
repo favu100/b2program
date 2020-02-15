@@ -1,0 +1,11 @@
+public static void main(String [] args) {
+    Pre program = new Pre();
+    program.Pre_clock_step(new BInteger(1), new BInteger(0));
+    System.out.println(program.getD());
+    program.Pre_clock_step(new BInteger(2), new BInteger(0));
+    System.out.println(program.getD());
+    program.Pre_clock_step(new BInteger(3), new BInteger(0));
+    System.out.println(program.getD());
+    program.Pre_clock_step(new BInteger(4), new BInteger(0));
+    System.out.println(program.getD());
+}

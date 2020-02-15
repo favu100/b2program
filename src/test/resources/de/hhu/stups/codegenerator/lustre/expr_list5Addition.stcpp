@@ -1,0 +1,10 @@
+int main() {
+    expr_list5 program;
+    program.expr_list5_clock_step(BInteger(3));
+    cout << program.getA() << "\n";
+    cout << program.getB() << "\n";
+    program.expr_list5_clock_step(BInteger(4));
+    cout << program.getA() << "\n";
+    cout << program.getB() << "\n";
+    return 0;
+}

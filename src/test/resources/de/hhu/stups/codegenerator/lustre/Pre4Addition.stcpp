@@ -1,0 +1,16 @@
+int main() {
+    Pre4 pre;
+    pre.Pre4_clock_step(BInteger(1));
+    cout << pre.getZ() << "\n";
+    pre.Pre4_clock_step(BInteger(2));
+    cout << pre.getZ() << "\n";
+    pre.Pre4_clock_step(BInteger(3));
+    cout << pre.getZ() << "\n";
+    pre.Pre4_clock_step(BInteger(4));
+    cout << pre.getZ() << "\n";
+    pre.Pre4_clock_step(BInteger(0));
+    cout << pre.getZ() << "\n";
+    pre.Pre4_clock_step(BInteger(-1));
+    cout << pre.getZ() << "\n";
+    return 0;
+}

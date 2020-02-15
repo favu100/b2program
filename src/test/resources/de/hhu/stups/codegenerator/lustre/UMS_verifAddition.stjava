@@ -1,0 +1,33 @@
+public static void main(String[] args) {
+    UMS_verif ums = new UMS_verif();
+    ums.UMS_verif_clock_step(new BBoolean(false), new BBoolean(false), new BBoolean(false), new BBoolean(true), new BBoolean(false));
+    System.out.println(ums.getGrant_Access());
+    System.out.println(ums.getGrant_Exit());
+    System.out.println(ums.getDo_AB());
+    System.out.println(ums.getDo_BC());
+    ums.UMS_verif_clock_step(new BBoolean(true), new BBoolean(false), new BBoolean(false), new BBoolean(true), new BBoolean(false));
+    System.out.println(ums.getGrant_Access());
+    System.out.println(ums.getGrant_Exit());
+    System.out.println(ums.getDo_AB());
+    System.out.println(ums.getDo_BC());
+    ums.UMS_verif_clock_step(new BBoolean(false), new BBoolean(true), new BBoolean(false), new BBoolean(false), new BBoolean(false));
+    System.out.println(ums.getGrant_Access());
+    System.out.println(ums.getGrant_Exit());
+    System.out.println(ums.getDo_AB());
+    System.out.println(ums.getDo_BC());
+    ums.UMS_verif_clock_step(new BBoolean(false), new BBoolean(true), new BBoolean(false), new BBoolean(false), new BBoolean(true));
+    System.out.println(ums.getGrant_Access());
+    System.out.println(ums.getGrant_Exit());
+    System.out.println(ums.getDo_AB());
+    System.out.println(ums.getDo_BC());
+    ums.UMS_verif_clock_step(new BBoolean(false), new BBoolean(false), new BBoolean(true), new BBoolean(false), new BBoolean(true));
+    System.out.println(ums.getGrant_Access());
+    System.out.println(ums.getGrant_Exit());
+    System.out.println(ums.getDo_AB());
+    System.out.println(ums.getDo_BC());
+    ums.UMS_verif_clock_step(new BBoolean(false), new BBoolean(false), new BBoolean(false), new BBoolean(false), new BBoolean(false));
+    System.out.println(ums.getGrant_Access());
+    System.out.println(ums.getGrant_Exit());
+    System.out.println(ums.getDo_AB());
+    System.out.println(ums.getDo_BC());
+}

@@ -1,0 +1,12 @@
+public static void main(String[] args) {
+    expr_list3 program = new expr_list3();
+    program.expr_list3_clock_step(new BInteger(1), new BInteger(2), new BBoolean(true));
+    System.out.println(program.getA());
+    System.out.println(program.getB());
+    program.expr_list3_clock_step(new BInteger(3), new BInteger(4), new BBoolean(false));
+    System.out.println(program.getA());
+    System.out.println(program.getB());
+    program.expr_list3_clock_step(new BInteger(0), new BInteger(-1), new BBoolean(true));
+    System.out.println(program.getA());
+    System.out.println(program.getB());
+}

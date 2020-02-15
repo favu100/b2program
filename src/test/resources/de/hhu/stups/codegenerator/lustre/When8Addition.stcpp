@@ -1,0 +1,20 @@
+int main() {
+    When8 when;
+    when.When8_clock_step(BBoolean(true), BBoolean(true));
+    cout << when.getRes() << "\n";
+    cout << when.getRes1() << "\n";
+    cout << when.getRes2() << "\n";
+    when.When8_clock_step(BBoolean(true), BBoolean(false));
+    cout << when.getRes() << "\n";
+    cout << when.getRes1() << "\n";
+    cout << when.getRes2() << "\n";
+    when.When8_clock_step(BBoolean(false), BBoolean(true));
+    cout << when.getRes() << "\n";
+    cout << when.getRes1() << "\n";
+    cout << when.getRes2() << "\n";
+    when.When8_clock_step(BBoolean(false), BBoolean(false));
+    cout << when.getRes() << "\n";
+    cout << when.getRes1() << "\n";
+    cout << when.getRes2() << "\n";
+    return 0;
+}

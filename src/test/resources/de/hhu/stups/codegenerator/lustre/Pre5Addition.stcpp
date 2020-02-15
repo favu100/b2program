@@ -1,0 +1,22 @@
+int main() {
+    Pre5 pre;
+    pre.Pre5_clock_step(BBoolean(true));
+    cout << pre.getRes1() << "\n";
+    cout << pre.getRes2() << "\n";
+    pre.Pre5_clock_step(BBoolean(false));
+    cout << pre.getRes1() << "\n";
+    cout << pre.getRes2() << "\n";
+    pre.Pre5_clock_step(BBoolean(true));
+    cout << pre.getRes1() << "\n";
+    cout << pre.getRes2() << "\n";
+    pre.Pre5_clock_step(BBoolean(false));
+    cout << pre.getRes1() << "\n";
+    cout << pre.getRes2() << "\n";
+    pre.Pre5_clock_step(BBoolean(false));
+    cout << pre.getRes1() << "\n";
+    cout << pre.getRes2() << "\n";
+    pre.Pre5_clock_step(BBoolean(true));
+    cout << pre.getRes1() << "\n";
+    cout << pre.getRes2() << "\n";
+    return 0;
+}

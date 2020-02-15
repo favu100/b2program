@@ -1,0 +1,8 @@
+int main() {
+    Pre3 pre;
+    pre.Pre3_clock_step(BBoolean(true));
+    cout << pre.getA() << "\n";
+    pre.Pre3_clock_step(BBoolean(true));
+    cout << pre.getA() << "\n";
+    return 0;
+}

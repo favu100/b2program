@@ -1,0 +1,7 @@
+int main() {
+    expr_list program;
+    program.expr_list_clock_step(BInteger(1), BInteger(2));
+    cout << program.getA() << "\n";
+    cout << program.getB() << "\n";
+    return 0;
+}

@@ -179,6 +179,7 @@ public class ImportGenerator {
         TemplateHandler.add(template, "type", "BRelation");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
+        addImport(type);
         addImport(type.getLeft());
         addImport(type.getRight());
     }

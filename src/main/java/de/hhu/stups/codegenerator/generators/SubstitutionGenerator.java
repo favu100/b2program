@@ -669,7 +669,13 @@ public class SubstitutionGenerator {
                 .map(var -> machineGenerator.visitExprNode(var, expected))
                 .collect(Collectors.toList());
         String operationName = node.getOperationNode().getName();
-        String machineName = operationGenerator.getMachineFromOperation().get(operationName);
+        String machineName;
+        if (node.getNames().size() > 1) {
+            List<String> prefixStrings = node.getNames().subList(0, node.getNames().size() - 1);
+            machineName = String.join(".", prefixStrings);
+        } else {
+            machineName = operationGenerator.getMachineFromOperation().get(operationName);
+        }
         ST operationCall = getOperationCallTemplate(node, variables);
         TemplateHandler.add(operationCall, "thisName", machineGenerator.getMachineName());
         TemplateHandler.add(operationCall, "machine", nameHandler.handle(machineName));

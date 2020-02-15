@@ -71,9 +71,7 @@ public class OperationGenerator {
         node.getMachineReferences()
                 .forEach(reference -> reference.getMachineNode().getOperations()
                 .forEach(operation -> {
-                    if(reference.getPrefix() != null) {
-                        machineFromOperation.put(operation.getName(), reference.getPrefix());
-                    } else {
+                    if(reference.getPrefix() == null) {
                         machineFromOperation.put(operation.getName(), reference.getMachineName());
                     }
                 }));

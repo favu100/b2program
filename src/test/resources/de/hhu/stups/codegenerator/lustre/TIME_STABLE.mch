@@ -2,11 +2,13 @@ MACHINE TIME_STABLE
 
 INCLUDES Node_1.STABLE
 
+SEES LibraryLustre
+
 VARIABLES TIME_STABLE_is_initialisation, TIME_STABLE_var_second, TIME_STABLE_var_delay, TIME_STABLE_var_ck, TIME_STABLE_var_level, TIME_STABLE_var_tmp_2, TIME_STABLE_var_tmp_0, TIME_STABLE_var_set, TIME_STABLE_var_tmp_1, TIME_STABLE_var_tmp_4, TIME_STABLE_var_tmp_3
 
-SETS TIME_STABLE_clocks = {TIME_STABLE_clock___basic__, TIME_STABLE_clock_ck}; TIME_STABLE_refs = {TIME_STABLE_ref}
+SETS TIME_STABLE_clocks = {TIME_STABLE_clock___basic__, TIME_STABLE_clock_ck}
 
-INVARIANT ((TIME_STABLE_is_initialisation : TIME_STABLE_clocks --> BOOL) & ((TIME_STABLE_var_second : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_delay : TIME_STABLE_refs +-> INTEGER) & ((TIME_STABLE_var_ck : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_level : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_tmp_2 : TIME_STABLE_refs +-> INTEGER) & ((TIME_STABLE_var_tmp_0 : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_set : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_tmp_1 : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_tmp_4 : TIME_STABLE_refs +-> BOOL) & ((TIME_STABLE_var_tmp_3 : TIME_STABLE_refs +-> INTEGER) & (((TIME_STABLE_is_initialisation(TIME_STABLE_clock___basic__) = FALSE) => (TIME_STABLE_var_level /= {})) & ((TIME_STABLE_is_initialisation(TIME_STABLE_clock_ck) = FALSE) => (TIME_STABLE_var_ck /= {}))))))))))))))
+INVARIANT ((TIME_STABLE_is_initialisation : TIME_STABLE_clocks --> BOOL) & ((TIME_STABLE_var_second : REF +-> BOOL) & ((TIME_STABLE_var_delay : REF +-> INTEGER) & ((TIME_STABLE_var_ck : REF +-> BOOL) & ((TIME_STABLE_var_level : REF +-> BOOL) & ((TIME_STABLE_var_tmp_2 : REF +-> INTEGER) & ((TIME_STABLE_var_tmp_0 : REF +-> BOOL) & ((TIME_STABLE_var_set : REF +-> BOOL) & ((TIME_STABLE_var_tmp_1 : REF +-> BOOL) & ((TIME_STABLE_var_tmp_4 : REF +-> BOOL) & ((TIME_STABLE_var_tmp_3 : REF +-> INTEGER) & (((TIME_STABLE_is_initialisation(TIME_STABLE_clock___basic__) = FALSE) => (TIME_STABLE_var_level /= {})) & ((TIME_STABLE_is_initialisation(TIME_STABLE_clock_ck) = FALSE) => (TIME_STABLE_var_ck /= {}))))))))))))))
 
 INITIALISATION 
     TIME_STABLE_is_initialisation := (TIME_STABLE_clocks * {TRUE}); 
@@ -26,57 +28,27 @@ OPERATIONS
 
     TIME_STABLE_clock_step(TIME_STABLE_param_set, TIME_STABLE_param_second, TIME_STABLE_param_delay) = 
         PRE
-            ((TIME_STABLE_param_set : BOOL) & ((TIME_STABLE_param_second : BOOL) & (TIME_STABLE_param_delay : INTEGER)))
+            ((TIME_STABLE_param_set : REF --> BOOL) & ((TIME_STABLE_param_second : REF --> BOOL) & (TIME_STABLE_param_delay : REF --> INTEGER)))
         THEN
-            TIME_STABLE_var_set(TIME_STABLE_ref) := bool((TIME_STABLE_param_set = TRUE)); 
-            TIME_STABLE_var_second(TIME_STABLE_ref) := bool((TIME_STABLE_param_second = TRUE)); 
-            TIME_STABLE_var_delay(TIME_STABLE_ref) := TIME_STABLE_param_delay; 
-            IF (TIME_STABLE_var_set /= {}) THEN 
-                TIME_STABLE_var_tmp_0(TIME_STABLE_ref) := bool((TIME_STABLE_var_set(TIME_STABLE_ref) = TRUE))
-            ELSE 
-                TIME_STABLE_var_tmp_0 := {}
+            TIME_STABLE_var_set := TIME_STABLE_param_set; 
+            TIME_STABLE_var_second := TIME_STABLE_param_second; 
+            TIME_STABLE_var_delay := TIME_STABLE_param_delay; 
+            TIME_STABLE_var_tmp_0 := TIME_STABLE_var_set; 
+            TIME_STABLE_var_tmp_2 := TIME_STABLE_var_delay; 
+            TIME_STABLE_var_ck := l_fby_boolean(TIME_STABLE_is_initialisation(TIME_STABLE_clock___basic__) |-> {ref |-> TRUE} |-> l_or(TIME_STABLE_var_set |-> TIME_STABLE_var_second)); 
+            IF (TIME_STABLE_var_ck = {ref |-> TRUE}) THEN 
+                TIME_STABLE_var_tmp_1 := TIME_STABLE_var_tmp_0
             END; 
-            IF (TIME_STABLE_var_delay /= {}) THEN 
-                TIME_STABLE_var_tmp_2(TIME_STABLE_ref) := TIME_STABLE_var_delay(TIME_STABLE_ref)
-            ELSE 
-                TIME_STABLE_var_tmp_2 := {}
+            IF (TIME_STABLE_var_ck = {ref |-> TRUE}) THEN 
+                TIME_STABLE_var_tmp_3 := TIME_STABLE_var_tmp_2
             END; 
-            IF (not((TIME_STABLE_is_initialisation(TIME_STABLE_clock___basic__) = TRUE)) => ((TIME_STABLE_var_set /= {}) & (TIME_STABLE_var_second /= {}))) THEN 
-                TIME_STABLE_var_ck(TIME_STABLE_ref) := bool((IF (TIME_STABLE_is_initialisation(TIME_STABLE_clock___basic__) = TRUE) THEN TRUE ELSE bool(((TIME_STABLE_var_set(TIME_STABLE_ref) = TRUE) or (TIME_STABLE_var_second(TIME_STABLE_ref) = TRUE))) END = TRUE))
-            ELSE 
-                TIME_STABLE_var_ck := {}
+            Node_1.STABLE_clock_step(TIME_STABLE_var_tmp_1, TIME_STABLE_var_tmp_3); 
+            IF (TIME_STABLE_var_ck = {ref |-> TRUE}) THEN 
+                TIME_STABLE_var_tmp_4 := Node_1.STABLE_var_level
             END; 
-            IF (TIME_STABLE_var_ck(TIME_STABLE_ref) = TRUE) THEN 
-                IF (TIME_STABLE_var_tmp_0 /= {}) THEN 
-                    TIME_STABLE_var_tmp_1(TIME_STABLE_ref) := bool((TIME_STABLE_var_tmp_0(TIME_STABLE_ref) = TRUE))
-                ELSE 
-                    TIME_STABLE_var_tmp_1 := {}
-                END
-            END; 
-            IF (TIME_STABLE_var_ck(TIME_STABLE_ref) = TRUE) THEN 
-                IF (TIME_STABLE_var_tmp_2 /= {}) THEN 
-                    TIME_STABLE_var_tmp_3(TIME_STABLE_ref) := TIME_STABLE_var_tmp_2(TIME_STABLE_ref)
-                ELSE 
-                    TIME_STABLE_var_tmp_3 := {}
-                END
-            END; 
-            IF ((TIME_STABLE_var_tmp_1 /= {}) & (TIME_STABLE_var_tmp_3 /= {})) THEN 
-                Node_1.STABLE_clock_step(TIME_STABLE_var_tmp_1(TIME_STABLE_ref), TIME_STABLE_var_tmp_3(TIME_STABLE_ref))
-            END; 
-            IF (TIME_STABLE_var_ck(TIME_STABLE_ref) = TRUE) THEN 
-                IF (Node_1.STABLE_var_level /= {}) THEN 
-                    TIME_STABLE_var_tmp_4(TIME_STABLE_ref) := bool((Node_1.STABLE_var_level(STABLE_ref) = TRUE))
-                ELSE 
-                    TIME_STABLE_var_tmp_4 := {}
-                END
-            END; 
-            IF (TIME_STABLE_var_tmp_4 /= {}) THEN 
-                TIME_STABLE_var_level(TIME_STABLE_ref) := bool((TIME_STABLE_var_tmp_4(TIME_STABLE_ref) = TRUE))
-            ELSE 
-                TIME_STABLE_var_level := {}
-            END; 
+            TIME_STABLE_var_level := TIME_STABLE_var_tmp_4; 
             TIME_STABLE_is_initialisation(TIME_STABLE_clock___basic__) := FALSE; 
-            IF (TIME_STABLE_var_ck(TIME_STABLE_ref) = TRUE) THEN 
+            IF (TIME_STABLE_var_ck = {ref |-> TRUE}) THEN 
                 TIME_STABLE_is_initialisation(TIME_STABLE_clock_ck) := FALSE
             END
 

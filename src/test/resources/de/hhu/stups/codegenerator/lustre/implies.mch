@@ -1,10 +1,12 @@
 MACHINE implies
 
+SEES LibraryLustre
+
 VARIABLES implies_is_initialisation, implies_var_AimpliesB, implies_var_A, implies_var_B
 
-SETS implies_clocks = {implies_clock___basic__}; implies_refs = {implies_ref}
+SETS implies_clocks = {implies_clock___basic__}
 
-INVARIANT ((implies_is_initialisation : implies_clocks --> BOOL) & ((implies_var_AimpliesB : implies_refs +-> BOOL) & ((implies_var_A : implies_refs +-> BOOL) & (implies_var_B : implies_refs +-> BOOL))))
+INVARIANT ((implies_is_initialisation : implies_clocks --> BOOL) & ((implies_var_AimpliesB : REF +-> BOOL) & ((implies_var_A : REF +-> BOOL) & (implies_var_B : REF +-> BOOL))))
 
 INITIALISATION 
     implies_is_initialisation := (implies_clocks * {TRUE}); 
@@ -17,15 +19,11 @@ OPERATIONS
 
     implies_clock_step(implies_param_A, implies_param_B) = 
         PRE
-            ((implies_param_A : BOOL) & (implies_param_B : BOOL))
+            ((implies_param_A : REF +-> BOOL) & (implies_param_B : REF +-> BOOL))
         THEN
-            implies_var_A(implies_ref) := bool((implies_param_A = TRUE)); 
-            implies_var_B(implies_ref) := bool((implies_param_B = TRUE)); 
-            IF ((implies_var_A /= {}) & (implies_var_B /= {})) THEN 
-                implies_var_AimpliesB(implies_ref) := bool((not((implies_var_A(implies_ref) = TRUE)) or (implies_var_B(implies_ref) = TRUE)))
-            ELSE 
-                implies_var_AimpliesB := {}
-            END; 
+            implies_var_A := implies_param_A; 
+            implies_var_B := implies_param_B; 
+            implies_var_AimpliesB := l_or(l_not(implies_var_A) |-> implies_var_B); 
             implies_is_initialisation(implies_clock___basic__) := FALSE
 
         END

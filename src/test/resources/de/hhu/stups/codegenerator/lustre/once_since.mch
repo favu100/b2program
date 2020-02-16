@@ -2,11 +2,13 @@ MACHINE once_since
 
 INCLUDES Node_20.after
 
+SEES LibraryLustre
+
 VARIABLES once_since_is_initialisation, once_since_var_C, once_since_var_A, once_since_var_tmp_0, once_since_var_onceCsinceA, once_since_var_tmp_1
 
-SETS once_since_clocks = {once_since_clock___basic__}; once_since_refs = {once_since_ref}
+SETS once_since_clocks = {once_since_clock___basic__}
 
-INVARIANT ((once_since_is_initialisation : once_since_clocks --> BOOL) & ((once_since_var_C : once_since_refs +-> BOOL) & ((once_since_var_A : once_since_refs +-> BOOL) & ((once_since_var_tmp_0 : once_since_refs +-> BOOL) & ((once_since_var_onceCsinceA : once_since_refs +-> BOOL) & (once_since_var_tmp_1 : once_since_refs +-> BOOL))))))
+INVARIANT ((once_since_is_initialisation : once_since_clocks --> BOOL) & ((once_since_var_C : REF +-> BOOL) & ((once_since_var_A : REF +-> BOOL) & ((once_since_var_tmp_0 : REF +-> BOOL) & ((once_since_var_onceCsinceA : REF +-> BOOL) & (once_since_var_tmp_1 : REF +-> BOOL))))))
 
 INITIALISATION 
     once_since_is_initialisation := (once_since_clocks * {TRUE}); 
@@ -21,30 +23,16 @@ OPERATIONS
 
     once_since_clock_step(once_since_param_C, once_since_param_A) = 
         PRE
-            ((once_since_param_C : BOOL) & (once_since_param_A : BOOL))
+            ((once_since_param_C : REF +-> BOOL) & (once_since_param_A : REF +-> BOOL))
         THEN
             VAR once_since_tmp_0_history IN
                 once_since_tmp_0_history := once_since_var_tmp_0; 
-                once_since_var_C(once_since_ref) := bool((once_since_param_C = TRUE)); 
-                once_since_var_A(once_since_ref) := bool((once_since_param_A = TRUE)); 
-                IF (once_since_tmp_0_history /= {}) THEN 
-                    once_since_var_tmp_1(once_since_ref) := bool((once_since_tmp_0_history(once_since_ref) = TRUE))
-                ELSE 
-                    once_since_var_tmp_1 := {}
-                END; 
-                IF (once_since_var_A /= {}) THEN 
-                    Node_20.after_clock_step(once_since_var_A(once_since_ref))
-                END; 
-                IF ((once_since_var_A /= {}) & (((once_since_var_A(once_since_ref) = TRUE) => (once_since_var_C /= {})) or (not((once_since_var_A(once_since_ref) = TRUE)) => ((Node_20.after_var_afterA /= {}) & ((Node_20.after_var_afterA(after_ref) = TRUE) => ((once_since_var_C /= {}) & (once_since_var_tmp_1 /= {}))))))) THEN 
-                    once_since_var_onceCsinceA(once_since_ref) := bool((IF (once_since_var_A(once_since_ref) = TRUE) THEN bool((once_since_var_C(once_since_ref) = TRUE)) ELSE bool((IF (Node_20.after_var_afterA(after_ref) = TRUE) THEN bool(((once_since_var_C(once_since_ref) = TRUE) or (once_since_var_tmp_1(once_since_ref) = TRUE))) ELSE TRUE END = TRUE)) END = TRUE))
-                ELSE 
-                    once_since_var_onceCsinceA := {}
-                END; 
-                IF (once_since_var_onceCsinceA /= {}) THEN 
-                    once_since_var_tmp_0(once_since_ref) := bool((once_since_var_onceCsinceA(once_since_ref) = TRUE))
-                ELSE 
-                    once_since_var_tmp_0 := {}
-                END; 
+                once_since_var_C := once_since_param_C; 
+                once_since_var_A := once_since_param_A; 
+                once_since_var_tmp_1 := once_since_tmp_0_history; 
+                Node_20.after_clock_step(once_since_var_A); 
+                once_since_var_onceCsinceA := l_if_then_else_boolean(once_since_var_A |-> once_since_var_C |-> l_if_then_else_boolean(Node_20.after_var_afterA |-> l_or(once_since_var_C |-> once_since_var_tmp_1) |-> {ref |-> TRUE})); 
+                once_since_var_tmp_0 := once_since_var_onceCsinceA; 
                 once_since_is_initialisation(once_since_clock___basic__) := FALSE
 
             END

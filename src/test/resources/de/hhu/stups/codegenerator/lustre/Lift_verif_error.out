@@ -1,2 +1,2 @@
-{(Lift_verif_error_ref |-> true)}
-{(Lift_verif_error_ref |-> false)}
+{(ref |-> true)}
+{(ref |-> false)}

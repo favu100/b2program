@@ -1,6 +1,6 @@
-{(TIME_STABLE_ref |-> true)}
-{(TIME_STABLE_ref |-> true)}
-{(TIME_STABLE_ref |-> true)}
-{(TIME_STABLE_ref |-> true)}
-{(TIME_STABLE_ref |-> true)}
-{(TIME_STABLE_ref |-> false)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> false)}

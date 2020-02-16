@@ -1,8 +1,8 @@
 int main() {
     Pre3 pre;
-    pre.Pre3_clock_step(BBoolean(true));
+    pre.Pre3_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
     cout << pre.getA() << "\n";
-    pre.Pre3_clock_step(BBoolean(true));
+    pre.Pre3_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
     cout << pre.getA() << "\n";
     return 0;
 }

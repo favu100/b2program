@@ -1,18 +1,18 @@
 int main() {
     Pre2 pre;
-    pre.Pre2_clock_step(BBoolean(true), BBoolean(true));
+    pre.Pre2_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
     cout << pre.getRes() << "\n";
     cout << pre.getRes1() << "\n";
     cout << pre.getRes2() << "\n";
-    pre.Pre2_clock_step(BBoolean(true), BBoolean(true));
+    pre.Pre2_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
     cout << pre.getRes() << "\n";
     cout << pre.getRes1() << "\n";
     cout << pre.getRes2() << "\n";
-    pre.Pre2_clock_step(BBoolean(true), BBoolean(false));
+    pre.Pre2_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
     cout << pre.getRes() << "\n";
     cout << pre.getRes1() << "\n";
     cout << pre.getRes2() << "\n";
-    pre.Pre2_clock_step(BBoolean(false), BBoolean(true));
+    pre.Pre2_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
     cout << pre.getRes() << "\n";
     cout << pre.getRes1() << "\n";
     cout << pre.getRes2() << "\n";

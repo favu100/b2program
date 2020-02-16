@@ -1,18 +1,18 @@
 public static void main(String[] args) {
     When8 when = new When8();
-    when.When8_clock_step(new BBoolean(true), new BBoolean(true));
+    when.When8_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
     System.out.println(when.getRes());
     System.out.println(when.getRes1());
     System.out.println(when.getRes2());
-    when.When8_clock_step(new BBoolean(true), new BBoolean(false));
+    when.When8_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
     System.out.println(when.getRes());
     System.out.println(when.getRes1());
     System.out.println(when.getRes2());
-    when.When8_clock_step(new BBoolean(false), new BBoolean(true));
+    when.When8_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
     System.out.println(when.getRes());
     System.out.println(when.getRes1());
     System.out.println(when.getRes2());
-    when.When8_clock_step(new BBoolean(false), new BBoolean(false));
+    when.When8_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
     System.out.println(when.getRes());
     System.out.println(when.getRes1());
     System.out.println(when.getRes2());

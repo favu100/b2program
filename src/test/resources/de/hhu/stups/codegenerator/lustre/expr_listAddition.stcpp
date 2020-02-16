@@ -1,6 +1,6 @@
 int main() {
     expr_list program;
-    program.expr_list_clock_step(BInteger(1), BInteger(2));
+    program.expr_list_clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))));
     cout << program.getA() << "\n";
     cout << program.getB() << "\n";
     return 0;

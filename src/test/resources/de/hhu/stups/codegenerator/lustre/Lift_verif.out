@@ -1,6 +1,6 @@
-{(Lift_verif_ref |-> 1)}
-{(Lift_verif_ref |-> 0)}
-{(Lift_verif_ref |-> 100)}
-{(Lift_verif_ref |-> 100)}
-{(Lift_verif_ref |-> 0)}
-{(Lift_verif_ref |-> 0)}
+{(ref |-> 1)}
+{(ref |-> 0)}
+{(ref |-> 100)}
+{(ref |-> 100)}
+{(ref |-> 0)}
+{(ref |-> 0)}

@@ -1,6 +1,6 @@
-{(SLOW_TIME_STABLE_ref |-> true)}
-{(SLOW_TIME_STABLE_ref |-> true)}
-{(SLOW_TIME_STABLE_ref |-> true)}
-{(SLOW_TIME_STABLE_ref |-> true)}
-{(SLOW_TIME_STABLE_ref |-> true)}
-{(SLOW_TIME_STABLE_ref |-> false)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> true)}
+{(ref |-> false)}

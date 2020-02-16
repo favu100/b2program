@@ -1,10 +1,12 @@
 MACHINE fby_node_call
 
+SEES LibraryLustre
+
 VARIABLES fby_node_call_is_initialisation, fby_node_call_var_x, fby_node_call_var_z
 
-SETS fby_node_call_clocks = {fby_node_call_clock___basic__}; fby_node_call_refs = {fby_node_call_ref}
+SETS fby_node_call_clocks = {fby_node_call_clock___basic__}
 
-INVARIANT ((fby_node_call_is_initialisation : fby_node_call_clocks --> BOOL) & ((fby_node_call_var_x : fby_node_call_refs +-> INTEGER) & (fby_node_call_var_z : fby_node_call_refs +-> INTEGER)))
+INVARIANT ((fby_node_call_is_initialisation : fby_node_call_clocks --> BOOL) & ((fby_node_call_var_x : REF +-> INTEGER) & (fby_node_call_var_z : REF +-> INTEGER)))
 
 INITIALISATION 
     fby_node_call_is_initialisation := (fby_node_call_clocks * {TRUE}); 
@@ -16,14 +18,10 @@ OPERATIONS
 
     fby_node_call_clock_step(fby_node_call_param_x) = 
         PRE
-            (fby_node_call_param_x : INTEGER)
+            (fby_node_call_param_x : REF +-> INTEGER)
         THEN
-            fby_node_call_var_x(fby_node_call_ref) := fby_node_call_param_x; 
-            IF (fby_node_call_var_x /= {}) THEN 
-                fby_node_call_var_z(fby_node_call_ref) := fby_node_call_var_x(fby_node_call_ref)
-            ELSE 
-                fby_node_call_var_z := {}
-            END; 
+            fby_node_call_var_x := fby_node_call_param_x; 
+            fby_node_call_var_z := fby_node_call_var_x; 
             fby_node_call_is_initialisation(fby_node_call_clock___basic__) := FALSE
 
         END

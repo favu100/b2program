@@ -1,8 +1,8 @@
 int main() {
     Fby2 program;
-    program.Fby2_clock_step(BInteger(3));
+    program.Fby2_clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))));
     cout << program.getZ() << "\n";
-    program.Fby2_clock_step(BInteger(4));
+    program.Fby2_clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))));
     cout << program.getZ() << "\n";
     return 0;
 }

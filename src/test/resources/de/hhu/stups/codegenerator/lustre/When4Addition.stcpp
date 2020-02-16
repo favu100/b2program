@@ -1,10 +1,10 @@
 int main() {
     When4 when;
-    when.When4_clock_step(BBoolean(false));
+    when.When4_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
     cout << when.getRes() << "\n";
-    when.When4_clock_step(BBoolean(true));
+    when.When4_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
     cout << when.getRes() << "\n";
-    when.When4_clock_step(BBoolean(false));
+    when.When4_clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
     cout << when.getRes() << "\n";
     return 0;
 }

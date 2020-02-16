@@ -1,12 +1,12 @@
 int main() {
     expr_list4 program;
-    program.expr_list4_clock_step(BInteger(3), BInteger(3));
+    program.expr_list4_clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))));
     cout << program.getA() << "\n";
     cout << program.getB() << "\n";
-    program.expr_list4_clock_step(BInteger(4), BInteger(4));
+    program.expr_list4_clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))));
     cout << program.getA() << "\n";
     cout << program.getB() << "\n";
-    program.expr_list4_clock_step(BInteger(0), BInteger(0));
+    program.expr_list4_clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(0))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(0))))));
     cout << program.getA() << "\n";
     cout << program.getB() << "\n";
     return 0;

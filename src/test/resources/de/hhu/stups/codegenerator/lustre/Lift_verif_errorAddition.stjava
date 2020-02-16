@@ -1,9 +1,9 @@
 public static void main(String[] args) {
     Lift_verif_error lift = new Lift_verif_error();
-    lift.Lift_verif_error_clock_step(new BBoolean(true), new BBoolean(false));
+    lift.Lift_verif_error_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
     System.out.println(lift.getOK());
     for(int i = 0; i < 100; i++) {
-        lift.Lift_verif_error_clock_step(new BBoolean(true), new BBoolean(false));
+        lift.Lift_verif_error_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
     }
     System.out.println(lift.getOK());
 }

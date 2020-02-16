@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DeclarationGenerator {
@@ -35,6 +36,8 @@ public class DeclarationGenerator {
     private final Map<String, String> enumToMachine;
 
     private final DeferredSetAnalyzer deferredSetAnalyzer;
+
+    private LambdaFunctionGenerator lambdaFunctionGenerator;
 
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
@@ -104,7 +107,9 @@ public class DeclarationGenerator {
     * This function generates code for declarations of all constants from the given MachineNode
     */
     public List<String> generateConstantsDeclarations(MachineNode node) {
+        Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
         return node.getConstants().stream()
+                .filter(constant -> !lambdaFunctions.contains(constant.getName()))
                 .map(this::generateConstantDeclaration)
                 .collect(Collectors.toList());
     }
@@ -319,5 +324,9 @@ public class DeclarationGenerator {
 
     public Map<String, String> getEnumToMachine() {
         return enumToMachine;
+    }
+
+    public void setLambdaFunctionGenerator(LambdaFunctionGenerator lambdaFunctionGenerator) {
+        this.lambdaFunctionGenerator = lambdaFunctionGenerator;
     }
 }

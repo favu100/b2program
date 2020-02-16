@@ -4,10 +4,14 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
+import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -268,5 +272,37 @@ public class PredicateGenerator {
 
     public void setOperatorGenerator(OperatorGenerator operatorGenerator) {
         this.operatorGenerator = operatorGenerator;
+    }
+
+    /*
+     * This function extracts all relevant conjuncts in the PROPERTIES clause to assign a value to a constant
+     */
+    public List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
+        return extractProperties(node).stream()
+                .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
+                        && ((PredicateOperatorWithExprArgsNode) prop).getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL
+                        && ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0) instanceof IdentifierExprNode
+                        && ((IdentifierExprNode) ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0)).getName().equals(constant.getName()))
+                .collect(Collectors.toList());
+    }
+
+    /*
+     * This function extracts all conjuncts of the PROPERTIES clause. If the PROPERTIES clause is not a conjunction, it might not be analyzable by this code generator.
+     * In this case, an exception is thrown.
+     */
+    private List<PredicateNode> extractProperties(MachineNode node) {
+        List<PredicateNode> propertiesNodes = new ArrayList<>();
+        if(node.getProperties() != null) {
+            if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {
+                propertiesNodes.add(node.getProperties());
+            } else {
+                PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
+                if(properties.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
+                    throw new CodeGenerationException("Predicate for iteration must be a conjunction");
+                }
+                propertiesNodes.addAll(properties.getPredicateArguments());
+            }
+        }
+        return propertiesNodes;
     }
 }

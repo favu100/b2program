@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, getters) ::= <<
+machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, getters, lambdaFunctions) ::= <<
 <imports; separator="\n">
 import java.util.Objects;
 import java.util.Arrays;
@@ -28,6 +28,8 @@ public class <machine> {
     <operations; separator="\n\n">
 
     <getters; separator="\n\n">
+
+    <lambdaFunctions; separator="\n\n">
 
     <addition>
 
@@ -231,6 +233,16 @@ if((<predicate>).booleanValue()) {
     <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
 }
 <endif>
+>>
+
+lambda_function(function, parameters, returnType, expression) ::= <<
+public <returnType> <function>(<parameters; separator=", ">) {
+    return <expression>;
+}
+>>
+
+lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<

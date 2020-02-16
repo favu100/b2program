@@ -10,6 +10,7 @@ import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -58,8 +59,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /*
@@ -83,6 +86,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private final ExpressionGenerator expressionGenerator;
 
 	private final PredicateGenerator predicateGenerator;
+
+	private final LambdaFunctionGenerator lambdaFunctionGenerator;
 
 	private final SubstitutionGenerator substitutionGenerator;
 
@@ -112,6 +117,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private boolean isIncludedMachine;
 
+	private Set<String> lambdaFunctions;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition, boolean isIncludedMachine) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.useBigInteger = useBigInteger;
@@ -129,22 +136,28 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
-		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
+
         this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
-		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
-		this.recordStructAnalyzer = new RecordStructAnalyzer(recordStructGenerator);
+		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
-															declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
+				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
+        this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
+        this.lambdaFunctionGenerator = new LambdaFunctionGenerator(currentGroup, expressionGenerator, predicateGenerator, typeGenerator, declarationGenerator);
+		this.recordStructAnalyzer = new RecordStructAnalyzer(recordStructGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
-																expressionGenerator, identifierGenerator, iterationConstructHandler,
-																parallelConstructHandler, recordStructGenerator, declarationGenerator);
+																expressionGenerator, predicateGenerator, identifierGenerator, iterationConstructHandler,
+																parallelConstructHandler, recordStructGenerator, declarationGenerator, lambdaFunctionGenerator);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
+
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
+		this.lambdaFunctions = new HashSet<>();
 	}
+
+
 
 	/*
 	* This function generates code for the whole machine with the given AST node.
@@ -171,6 +184,15 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.machineNode = node;
 		nameHandler.initialize(node);
 		operationGenerator.mapOperationsToMachine(node);
+		initializeLambdaFunctions();
+	}
+
+	private void initializeLambdaFunctions() {
+		lambdaFunctions.addAll(lambdaFunctionGenerator.getLambdaFunctions(machineNode));
+		for(MachineReferenceNode reference : machineNode.getMachineReferences()) {
+			MachineNode machine = reference.getMachineNode();
+			lambdaFunctions.addAll(lambdaFunctionGenerator.getLambdaFunctions(machine));
+		}
 	}
 
 	/*
@@ -185,6 +207,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
 		TemplateHandler.add(machine, "getters", isIncludedMachine ? generateGetters(node.getVariables()) : new ArrayList<>());
+		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
 
@@ -540,5 +563,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public MachineNode getMachineNode() {
 		return machineNode;
+	}
+
+	public Set<String> getLambdaFunctions() {
+		return lambdaFunctions;
 	}
 }

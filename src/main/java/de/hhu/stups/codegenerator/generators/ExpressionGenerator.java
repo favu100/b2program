@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
+import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -29,8 +30,10 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.BOOL;
@@ -119,19 +122,19 @@ public class ExpressionGenerator {
     /*
     * Hard-coded lists for identifying the type of the operators for expression
     */
-    private static final List<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
-            Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
+    private static final Set<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
+            new HashSet<>(Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
                     OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
                     RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
                     TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
-                    PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT);
+                    PARTIAL_SURJECTION, INSERT_FRONT, INSERT_TAIL, RESTRICT_FRONT, RESTRICT_TAIL, CONCAT));
 
-    private static final List<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
-            Arrays.asList(UNARY_MINUS, PRED, SUCC, CARD, DOMAIN, RANGE, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, FNC, REL, MIN, MAX, FIN, FIN1, POW, POW1, GENERALIZED_UNION, GENERALIZED_INTER,
-                    FIRST, LAST, FRONT, TAIL, CONC, SEQ, SEQ1, ISEQ, ISEQ1, PERM, SIZE, REV);
+    private static final Set<ExpressionOperatorNode.ExpressionOperator> UNARY_EXPRESSION_OPERATORS =
+            new HashSet<>(Arrays.asList(UNARY_MINUS, PRED, SUCC, CARD, DOMAIN, RANGE, CLOSURE, CLOSURE1, ITERATE, INVERSE_RELATION, FNC, REL, MIN, MAX, FIN, FIN1, POW, POW1, GENERALIZED_UNION, GENERALIZED_INTER,
+                    FIRST, LAST, FRONT, TAIL, CONC, SEQ, SEQ1, ISEQ, ISEQ1, PERM, SIZE, REV));
 
-    private static final List<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
-            Arrays.asList(TRUE,FALSE);
+    private static final Set<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
+            new HashSet<>(Arrays.asList(TRUE,FALSE));
 
     private final STGroup currentGroup;
 
@@ -232,10 +235,7 @@ public class ExpressionGenerator {
         if(checkTupleProjections(node)) {
             return generateTupleProjection(node);
         }
-        List<String> expressionList = node.getExpressionNodes().stream()
-                .map(this::visitExprNode)
-                .collect(Collectors.toList());
-        return generateExpression(node, expressionList);
+        return generateExpression(node);
     }
 
     /*
@@ -298,27 +298,36 @@ public class ExpressionGenerator {
     /*
     * This function generates code for an expression with the given AST node and the list of expressions within the expression.
     */
-    public String generateExpression(ExpressionOperatorNode node, List<String> expressionList) {
+    public String generateExpression(ExpressionOperatorNode node) {
         ExpressionOperatorNode.ExpressionOperator operator = node.getOperator();
         if(BINARY_EXPRESSION_OPERATORS.contains(operator)) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return operatorGenerator.generateBinary(() -> operator, expressionList);
         } else if(UNARY_EXPRESSION_OPERATORS.contains(operator)) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateUnaryExpression(operator, expressionList);
         } else if(EXPRESSION_BOOLEANS.contains(operator)) {
             return generateBoolean(operator);
         } else if(node.getOperator() == SET_ENUMERATION) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateSetEnumeration(node.getType(), expressionList);
         } else if(node.getOperator() == SEQ_ENUMERATION) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateSeqEnumeration(node.getType(), expressionList);
         } else if(node.getOperator() == INTERVAL) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateInterval(expressionList);
         } else if(node.getOperator() == PRJ1 || node.getOperator() == PRJ2) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateProjection(node.getOperator(), ((SetType) node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType) node.getExpressionNodes().get(1).getType()).getSubType(), expressionList);
         } else if(node.getOperator() == ID) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateIdentity(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType());
         } else if(node.getOperator() == CARTESIAN_PRODUCT) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateCartesianProduct(expressionList, ((SetType) node.getExpressionNodes().get(0).getType()).getSubType(), ((SetType) node.getExpressionNodes().get(1).getType()).getSubType());
         } else if(node.getOperator() == COUPLE) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateTuple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == FUNCTION_CALL) {
             return generateFunctionCall(node.getExpressionNodes());
@@ -580,12 +589,26 @@ public class ExpressionGenerator {
     * This function generates code for a function call
     */
     private String generateFunctionCall(List<ExprNode> expressions) {
-        ST functionCall = currentGroup.getInstanceOf("binary");
+        ST functionCall;
         ExprNode lhs = expressions.get(0);
         ExprNode argument = getArgumentFromExpressions(expressions.subList(1, expressions.size()));
-        TemplateHandler.add(functionCall, "arg1", machineGenerator.visitExprNode(lhs, null));
-        TemplateHandler.add(functionCall, "arg2", machineGenerator.visitExprNode(argument, null));
-        TemplateHandler.add(functionCall, "operator", "functionCall");
+        Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
+        if(lhs instanceof IdentifierExprNode && lambdaFunctions.contains(((IdentifierExprNode) lhs).getName())) {
+            List<String> arguments = new ArrayList<>();
+            getExpressionsFromArgument(argument, arguments);
+            functionCall = currentGroup.getInstanceOf("lambda_function_call");
+            boolean fromOtherMachine = !((IdentifierExprNode) lhs).getDeclarationNode().getSurroundingMachineNode().equals(machineGenerator.getMachineNode());
+            MachineNode otherMachine = ((IdentifierExprNode) lhs).getDeclarationNode().getSurroundingMachineNode();
+            TemplateHandler.add(functionCall, "otherMachine", nameHandler.handleIdentifier(otherMachine.getPrefix() != null ? otherMachine.getPrefix() : otherMachine.getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
+            TemplateHandler.add(functionCall, "fromOtherMachine", fromOtherMachine);
+            TemplateHandler.add(functionCall, "arg1", nameHandler.handleIdentifier(((IdentifierExprNode) lhs).getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+            TemplateHandler.add(functionCall, "arg2", arguments);
+        } else {
+            functionCall = currentGroup.getInstanceOf("binary");
+            TemplateHandler.add(functionCall, "arg1", machineGenerator.visitExprNode(lhs, null));
+            TemplateHandler.add(functionCall, "operator", "functionCall");
+            TemplateHandler.add(functionCall, "arg2", machineGenerator.visitExprNode(argument, null));
+        }
         return functionCall.render();
     }
 
@@ -601,6 +624,18 @@ public class ExpressionGenerator {
             result.setType(new CoupleType(leftType, rhsElement.getType()));
         }
         return result;
+    }
+
+    public void getExpressionsFromArgument(ExprNode node, List<String> result) {
+        if(node instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) node).getOperator() == COUPLE) {
+            List<ExprNode> expressions = ((ExpressionOperatorNode) node).getExpressionNodes();
+            ExprNode lhs = expressions.get(0);
+            ExprNode rhs = expressions.get(1);
+            getExpressionsFromArgument(lhs, result);
+            getExpressionsFromArgument(rhs, result);
+            return;
+        }
+        result.add(machineGenerator.visitExprNode(node, null));
     }
 
     /*

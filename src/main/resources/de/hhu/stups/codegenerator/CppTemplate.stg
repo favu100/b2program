@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions) ::= <<
 #include \<iostream>
 #include \<string>
 <if(useBigInteger)>#include \<btypes_big_integer/BUtils.hpp><else>#include \<btypes_primitives/BUtils.hpp><endif>
@@ -42,6 +42,8 @@ class <machine> {
         <operations; separator="\n\n">
 
         <getters; separator="\n\n">
+
+        <lambdaFunctions; separator="\n\n">
 };
 
 <addition>
@@ -258,6 +260,16 @@ if((<predicate>).booleanValue()) {
     <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 }
 <endif>
+>>
+
+lambda_function(function, parameters, returnType, expression) ::= <<
+<returnType> <function>(<parameters; separator=", ">) {
+    return <expression>;
+}
+>>
+
+lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<

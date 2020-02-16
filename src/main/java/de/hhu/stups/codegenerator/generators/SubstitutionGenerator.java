@@ -12,9 +12,9 @@ import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
-import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
@@ -53,6 +53,8 @@ public class SubstitutionGenerator {
 
     private final ExpressionGenerator expressionGenerator;
 
+    private final PredicateGenerator predicateGenerator;
+
     private final IdentifierGenerator identifierGenerator;
 
     private final IterationConstructHandler iterationConstructHandler;
@@ -63,6 +65,8 @@ public class SubstitutionGenerator {
 
     private final DeclarationGenerator declarationGenerator;
 
+    private final LambdaFunctionGenerator lambdaFunctionGenerator;
+
     private int currentLocalScope;
 
     private int localScopes;
@@ -72,14 +76,15 @@ public class SubstitutionGenerator {
     private int recordCounter;
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                                 final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator,
+                                 final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator,
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
-                                 final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator) {
+                                 final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
+        this.predicateGenerator = predicateGenerator;
         this.expressionGenerator = expressionGenerator;
         this.expressionGenerator.setSubstitutionGenerator(this);
         this.identifierGenerator = identifierGenerator;
@@ -87,6 +92,7 @@ public class SubstitutionGenerator {
         this.parallelConstructHandler = parallelConstructHandler;
         this.recordStructGenerator = recordStructGenerator;
         this.declarationGenerator = declarationGenerator;
+        this.lambdaFunctionGenerator = lambdaFunctionGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -130,7 +136,9 @@ public class SubstitutionGenerator {
     * This function generates code for initiailizing all constants from the given AST node of a machine
     */
     public List<String> generateConstantsInitializations(MachineNode node) {
+        Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
         List<String> constantsInitializations = node.getConstants().stream()
+                .filter(constant -> !lambdaFunctions.contains(constant.getName()))
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList());
         constantsInitializations.addAll(node.getConstants().stream()
@@ -146,11 +154,14 @@ public class SubstitutionGenerator {
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        List<PredicateNode> equalProperties = extractEqualProperties(node, constant);
+        List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
             return "";
         }
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
+        if(expression instanceof LambdaNode && lambdaFunctionGenerator.checkPredicate((LambdaNode) expression)) {
+            return "";
+        }
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
         TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
         return initialization.render();
@@ -161,38 +172,6 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(initialization, "val", declarationGenerator.callEnum(constant.getType().toString(), constant));
         return initialization.render();
-    }
-
-    /*
-    * This function extracts all relevant conjuncts in the PROPERTIES clause to assign a value to a constant
-    */
-    private List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
-        return extractProperties(node).stream()
-                .filter(prop -> prop instanceof PredicateOperatorWithExprArgsNode
-                        && ((PredicateOperatorWithExprArgsNode) prop).getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL
-                        && ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0) instanceof IdentifierExprNode
-                        && ((IdentifierExprNode) ((PredicateOperatorWithExprArgsNode) prop).getExpressionNodes().get(0)).getName().equals(constant.getName()))
-                .collect(Collectors.toList());
-    }
-
-    /*
-    * This function extracts all conjuncts of the PROPERTIES clause. If the PROPERTIES clause is not a conjunction, it might not be analyzable by this code generator.
-    * In this case, an exception is thrown.
-    */
-    private List<PredicateNode> extractProperties(MachineNode node) {
-        List<PredicateNode> propertiesNodes = new ArrayList<>();
-        if(node.getProperties() != null) {
-            if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {
-                propertiesNodes.add(node.getProperties());
-            } else {
-                PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
-                if(properties.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                    throw new CodeGenerationException("Predicate for iteration must be a conjunction");
-                }
-                propertiesNodes.addAll(properties.getPredicateArguments());
-            }
-        }
-        return propertiesNodes;
     }
 
     /*

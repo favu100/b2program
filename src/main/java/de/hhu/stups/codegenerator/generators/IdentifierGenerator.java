@@ -118,10 +118,16 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
-        boolean fromOtherMachine = node.getDeclarationNode() == null || !node.getDeclarationNode().getSurroundingMachineNode().equals(machineGenerator.getMachineNode());
+        boolean fromOtherMachine;
+        if(node.getDeclarationNode() != null && node.getDeclarationNode().getSurroundingMachineNode() != null) {
+            fromOtherMachine = !node.getDeclarationNode().getSurroundingMachineNode().equals(machineGenerator.getMachineNode());
+            MachineNode otherMachine = node.getDeclarationNode().getSurroundingMachineNode();
+            TemplateHandler.add(identifier, "otherMachine", nameHandler.handleIdentifier(otherMachine.getPrefix() != null ? otherMachine.getPrefix() : otherMachine.getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
+        } else {
+            fromOtherMachine = false;
+            TemplateHandler.add(identifier, "otherMachine", "");
+        }
         TemplateHandler.add(identifier, "fromOtherMachine", fromOtherMachine);
-        MachineNode otherMachine = node.getDeclarationNode().getSurroundingMachineNode();
-        TemplateHandler.add(identifier, "otherMachine", nameHandler.handleIdentifier(otherMachine.getPrefix() != null ? otherMachine.getPrefix() : otherMachine.getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
         return identifier.render();
     }
 

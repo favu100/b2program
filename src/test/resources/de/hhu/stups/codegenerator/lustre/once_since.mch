@@ -31,7 +31,7 @@ OPERATIONS
                 once_since_var_A := once_since_param_A; 
                 once_since_var_tmp_1 := once_since_tmp_0_history; 
                 Node_20.after_clock_step(once_since_var_A); 
-                once_since_var_onceCsinceA := l_if_then_else_boolean(once_since_var_A |-> once_since_var_C |-> l_if_then_else_boolean(Node_20.after_var_afterA |-> l_or(once_since_var_C |-> once_since_var_tmp_1) |-> {ref |-> TRUE})); 
+                once_since_var_onceCsinceA := l_ite_boolean(once_since_var_A |-> once_since_var_C |-> l_ite_boolean(Node_20.after_var_afterA |-> l_or(once_since_var_C |-> once_since_var_tmp_1) |-> {ref |-> TRUE})); 
                 once_since_var_tmp_0 := once_since_var_onceCsinceA; 
                 once_since_is_initialisation(once_since_clock___basic__) := FALSE
 

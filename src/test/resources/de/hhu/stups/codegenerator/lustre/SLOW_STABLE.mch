@@ -33,7 +33,7 @@ OPERATIONS
                 SLOW_STABLE_var_delay := SLOW_STABLE_param_delay; 
                 SLOW_STABLE_var_tmp_1 := SLOW_STABLE_tmp_0_history; 
                 SLOW_STABLE_var_tmp_3 := SLOW_STABLE_tmp_2_history; 
-                SLOW_STABLE_var_count := l_if_then_else_integer(SLOW_STABLE_var_set |-> SLOW_STABLE_var_delay |-> l_if_then_else_integer(l_fby_boolean(SLOW_STABLE_is_initialisation(SLOW_STABLE_clock___basic__) |-> {ref |-> FALSE} |-> SLOW_STABLE_var_tmp_1) |-> l_minus(SLOW_STABLE_var_tmp_3 |-> {ref |-> 1}) |-> {ref |-> 0})); 
+                SLOW_STABLE_var_count := l_ite_integer(SLOW_STABLE_var_set |-> SLOW_STABLE_var_delay |-> l_ite_integer(l_fby_boolean(SLOW_STABLE_is_initialisation(SLOW_STABLE_clock___basic__) |-> {ref |-> FALSE} |-> SLOW_STABLE_var_tmp_1) |-> l_minus(SLOW_STABLE_var_tmp_3 |-> {ref |-> 1}) |-> {ref |-> 0})); 
                 SLOW_STABLE_var_level := l_greater(SLOW_STABLE_var_count |-> {ref |-> 0}); 
                 SLOW_STABLE_var_tmp_0 := SLOW_STABLE_var_level; 
                 SLOW_STABLE_var_tmp_2 := SLOW_STABLE_var_count; 

@@ -8,13 +8,13 @@ ABSTRACT_CONSTANTS
  l_less, l_greater, l_less_equal, l_greater_equal,
  l_equal_integer, l_unequal_integer, l_equal_boolean, l_unequal_boolean,
  l_fby_integer, l_fby_boolean,
- l_if_then_else_integer, l_if_then_else_boolean
+ l_ite_integer, l_ite_boolean
 
 PROPERTIES
   l_and : POW(REF * BOOL) * POW(REF * BOOL) --> POW(REF * BOOL) &
-  l_and = (%(x,y).(x : POW(REF * BOOL) & y : POW(REF * BOOL) | IF x = {} or (x(ref) = TRUE & y = {}) THEN {} ELSE {ref |-> bool(x(ref) = TRUE & y(ref) = TRUE)} END)) &
+  l_and = (%(x,y).(x : POW(REF * BOOL) & y : POW(REF * BOOL) | IF x = {} or x(ref) = FALSE THEN x ELSE y END)) &
   l_or : POW(REF * BOOL) * POW(REF * BOOL) --> POW(REF * BOOL) &
-  l_or = (%(x,y).(x : POW(REF * BOOL) & y : POW(REF * BOOL) | IF x = {} or (x(ref) = FALSE & y = {}) THEN {} ELSE {ref |-> bool(x(ref) = TRUE or y(ref) = TRUE)} END)) &
+  l_or = (%(x,y).(x : POW(REF * BOOL) & y : POW(REF * BOOL) | IF x = {} or x(ref) = TRUE THEN x ELSE y END)) &
   l_not : POW(REF * BOOL) --> POW(REF * BOOL) &
   l_not = (%x.(x : POW(REF * BOOL) | IF x = {} THEN {} ELSE {ref |-> bool(not(x(ref) = TRUE))} END)) &
   l_plus : POW(REF * INTEGER) * POW(REF * INTEGER) --> POW(REF * INTEGER) &
@@ -47,8 +47,8 @@ PROPERTIES
   l_fby_integer = (%(x,y,z).(x : BOOL & y : POW(REF * INTEGER) & z : POW(REF * INTEGER) | IF x = TRUE THEN y ELSE z END)) &
   l_fby_boolean : BOOL * POW(REF * BOOL) * POW(REF * BOOL) --> POW(REF * BOOL) &
   l_fby_boolean = (%(x,y,z).(x : BOOL & y : POW(REF * BOOL) & z : POW(REF * BOOL) | IF x = TRUE THEN y ELSE z END)) &
-  l_if_then_else_integer : POW(REF * BOOL) * POW(REF * INTEGER) * POW(REF * INTEGER) --> POW(REF * INTEGER) &
-  l_if_then_else_integer = (%(x,y,z).(x : POW(REF * BOOL) & y : POW(REF * INTEGER) & z : POW(REF * INTEGER) | IF x = {} THEN {} ELSE IF x(ref) = TRUE THEN y ELSE z END END)) &
-  l_if_then_else_boolean : POW(REF * BOOL) * POW(REF * BOOL) * POW(REF * BOOL) --> POW(REF * BOOL) &
-  l_if_then_else_boolean = (%(x,y,z).(x : POW(REF * BOOL) & y : POW(REF * BOOL) & z : POW(REF * BOOL) | IF x = {} THEN {} ELSE IF x(ref) = TRUE THEN y ELSE z END END))
+  l_ite_integer : POW(REF * BOOL) * POW(REF * INTEGER) * POW(REF * INTEGER) --> POW(REF * INTEGER) &
+  l_ite_integer = (%(x,y,z).(x : POW(REF * BOOL) & y : POW(REF * INTEGER) & z : POW(REF * INTEGER) | IF x = {} THEN {} ELSE IF x(ref) = TRUE THEN y ELSE z END END)) &
+  l_ite_boolean : POW(REF * BOOL) * POW(REF * BOOL) * POW(REF * BOOL) --> POW(REF * BOOL) &
+  l_ite_boolean = (%(x,y,z).(x : POW(REF * BOOL) & y : POW(REF * BOOL) & z : POW(REF * BOOL) | IF x = {} THEN {} ELSE IF x(ref) = TRUE THEN y ELSE z END END))
 END

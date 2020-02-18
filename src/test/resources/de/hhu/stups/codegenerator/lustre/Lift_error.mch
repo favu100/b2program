@@ -34,7 +34,7 @@ OPERATIONS
                 Lift_error_var_old_floor := l_fby_integer(Lift_error_is_initialisation(Lift_error_clock___basic__) |-> {ref |-> 0} |-> Lift_error_var_tmp_1); 
                 Lift_error_var_exec_up := l_and(Lift_error_var_up |-> l_less(Lift_error_var_old_floor |-> {ref |-> 102})); 
                 Lift_error_var_exec_down := l_and(Lift_error_var_down |-> l_greater(Lift_error_var_old_floor |-> {ref |-> 0})); 
-                Lift_error_var_floor := l_if_then_else_integer(Lift_error_var_exec_up |-> l_plus(Lift_error_var_old_floor |-> {ref |-> 1}) |-> l_if_then_else_integer(Lift_error_var_exec_down |-> l_minus(Lift_error_var_old_floor |-> {ref |-> 1}) |-> Lift_error_var_old_floor)); 
+                Lift_error_var_floor := l_ite_integer(Lift_error_var_exec_up |-> l_plus(Lift_error_var_old_floor |-> {ref |-> 1}) |-> l_ite_integer(Lift_error_var_exec_down |-> l_minus(Lift_error_var_old_floor |-> {ref |-> 1}) |-> Lift_error_var_old_floor)); 
                 Lift_error_var_tmp_0 := Lift_error_var_floor; 
                 Lift_error_is_initialisation(Lift_error_clock___basic__) := FALSE
 

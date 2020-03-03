@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    microbenchmarks_plus_integer_exec program = new microbenchmarks_plus_integer_exec();
+    program.simulate();
+}

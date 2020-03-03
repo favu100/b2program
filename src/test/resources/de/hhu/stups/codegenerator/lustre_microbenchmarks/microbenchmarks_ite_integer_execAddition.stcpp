@@ -1,0 +1,5 @@
+int main() {
+    microbenchmarks_ite_integer_exec program;
+    program.simulate();
+    return 0;
+}

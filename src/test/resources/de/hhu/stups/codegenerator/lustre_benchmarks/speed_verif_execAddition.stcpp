@@ -1,0 +1,5 @@
+int main() {
+    speed_verif_exec program;
+    program.simulate();
+    return 0;
+}

@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    speed_verif_exec program = new speed_verif_exec();
+    program.simulate();
+}

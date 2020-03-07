@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    UMS_verif_exec program = new UMS_verif_exec();
+    program.simulate();
+}

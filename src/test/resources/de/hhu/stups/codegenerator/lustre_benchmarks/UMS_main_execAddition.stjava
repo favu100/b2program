@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    UMS_main_exec program = new UMS_main_exec();
+    program.simulate();
+}

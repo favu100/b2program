@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    speed_main_exec program = new speed_main_exec();
+    program.simulate();
+}

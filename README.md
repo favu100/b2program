@@ -16,7 +16,14 @@ Note:
   Including other machines is not supported in C, too.
   The only types that are implemented for C are BInteger and BBoolean.
   An example where code generation for C works is the machine Lift.
-* Executing all tests requires executing `make` before
+* Executing all tests requires building Java B Types and installing C++ B Types
+
+## Build Java B Types
+
+Primitive Integer: `make btypes_primitives`
+
+Big Integer: `make btypes_big_integer`
+
 
 ## Install C++ B Types
 ```bash
@@ -349,15 +356,15 @@ Note that minint and maxint are not optional when using JAR-File.
 
 ### Compile the generated code in Java
 
-1. Run `./gradlew fatJar` in project btypes_persistent or btypes_big_integer
-2. Move `btypes_primitives-all.jar` to same folder as the generated classes
+1. Build JAR for Java B Types (`make btypes_primitives` or `make btypes_big_integer`)
+2. Move `btypes_persistent.jar` to same folder as the generated classes
 3. `javac -cp btypes_primitives-all.jar <files....>`
 4. Example: `javac -cp btypes_primitives-all.jar TrafficLightExec.java TrafficLight.java`
   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
   
 ### Compile the generated code in C++
   
-1. Move all B types (see btypes_primitives or btypes_big_integer folder) files to same folder as the generated classes
+1. Install C++ B Types or move them (see btypes_primitives or btypes_big_integer folder) to same folder as the generated classes
 2. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
 3. Example: `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)

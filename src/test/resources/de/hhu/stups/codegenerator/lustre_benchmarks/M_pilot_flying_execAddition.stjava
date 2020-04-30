@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_pilot_flying_exec program = new M_pilot_flying_exec();
+    program.simulate();
+}

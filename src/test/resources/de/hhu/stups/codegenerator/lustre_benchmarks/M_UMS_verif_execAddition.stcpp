@@ -1,0 +1,5 @@
+int main() {
+    M_UMS_verif_exec program;
+    program.simulate();
+    return 0;
+}

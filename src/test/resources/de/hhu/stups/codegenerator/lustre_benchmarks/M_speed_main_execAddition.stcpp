@@ -1,0 +1,5 @@
+int main() {
+    M_speed_main_exec program;
+    program.simulate();
+    return 0;
+}

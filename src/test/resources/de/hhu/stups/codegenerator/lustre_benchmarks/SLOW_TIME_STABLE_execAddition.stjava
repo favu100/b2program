@@ -1,4 +1,0 @@
-public static void main(String[] args) {
-    SLOW_TIME_STABLE_exec program = new SLOW_TIME_STABLE_exec();
-    program.simulate();
-}

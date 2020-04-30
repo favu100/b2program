@@ -1,4 +1,0 @@
-public static void main(String[] args) {
-    Lift_verif_exec program = new Lift_verif_exec();
-    program.simulate();
-}

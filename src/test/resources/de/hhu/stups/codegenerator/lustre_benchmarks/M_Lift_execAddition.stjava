@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_Lift_exec program = new M_Lift_exec();
+    program.simulate();
+}

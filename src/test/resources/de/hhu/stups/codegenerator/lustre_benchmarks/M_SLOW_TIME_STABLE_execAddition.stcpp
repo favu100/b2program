@@ -1,0 +1,5 @@
+int main() {
+    M_SLOW_TIME_STABLE_exec program;
+    program.simulate();
+    return 0;
+}

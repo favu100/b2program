@@ -256,6 +256,9 @@ public class ExpressionGenerator {
     * This function generates code for an identifier from the belonging AST node.
     */
     public String visitIdentifierExprNode(IdentifierExprNode node) {
+        if(machineGenerator.getInfiniteSets().contains(node.getName())) {
+            throw new RuntimeException("Infinite Set Declarations are not supported");
+        }
         if(node.isPrimed()) {
             return "_primed_" + node.getName();
         }

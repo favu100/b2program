@@ -67,6 +67,8 @@ public class SubstitutionGenerator {
 
     private final LambdaFunctionGenerator lambdaFunctionGenerator;
 
+    private final InfiniteSetGenerator infiniteSetGenerator;
+
     private int currentLocalScope;
 
     private int localScopes;
@@ -79,7 +81,8 @@ public class SubstitutionGenerator {
                                  final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator,
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
-                                 final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator) {
+                                 final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator,
+                                 final InfiniteSetGenerator infiniteSetGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -93,6 +96,7 @@ public class SubstitutionGenerator {
         this.recordStructGenerator = recordStructGenerator;
         this.declarationGenerator = declarationGenerator;
         this.lambdaFunctionGenerator = lambdaFunctionGenerator;
+        this.infiniteSetGenerator = infiniteSetGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -159,6 +163,10 @@ public class SubstitutionGenerator {
             return "";
         }
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
+        if(infiniteSetGenerator.checkExpressionInfinite(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
+            return "";
+        }
+
         if(expression instanceof LambdaNode && lambdaFunctionGenerator.checkPredicate((LambdaNode) expression)) {
             return "";
         }

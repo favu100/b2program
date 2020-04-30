@@ -34,7 +34,6 @@ public class LambdaFunctionGenerator {
         this.predicateGenerator = predicateGenerator;
         this.typeGenerator = typeGenerator;
         this.declarationGenerator = declarationGenerator;
-        this.declarationGenerator.setLambdaFunctionGenerator(this);
     }
 
     public List<String> generateFunctions(MachineNode node) {

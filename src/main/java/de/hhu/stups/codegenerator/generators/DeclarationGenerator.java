@@ -37,8 +37,6 @@ public class DeclarationGenerator {
 
     private final DeferredSetAnalyzer deferredSetAnalyzer;
 
-    private LambdaFunctionGenerator lambdaFunctionGenerator;
-
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
                                 final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer) {
@@ -108,8 +106,10 @@ public class DeclarationGenerator {
     */
     public List<String> generateConstantsDeclarations(MachineNode node) {
         Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
+        Set<String> infiniteSets = machineGenerator.getInfiniteSets();
         return node.getConstants().stream()
                 .filter(constant -> !lambdaFunctions.contains(constant.getName()))
+                .filter(constant -> !infiniteSets.contains(constant.getName()))
                 .map(this::generateConstantDeclaration)
                 .collect(Collectors.toList());
     }
@@ -326,7 +326,4 @@ public class DeclarationGenerator {
         return enumToMachine;
     }
 
-    public void setLambdaFunctionGenerator(LambdaFunctionGenerator lambdaFunctionGenerator) {
-        this.lambdaFunctionGenerator = lambdaFunctionGenerator;
-    }
 }

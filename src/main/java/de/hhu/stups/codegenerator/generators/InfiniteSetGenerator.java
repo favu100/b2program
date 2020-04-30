@@ -2,15 +2,21 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
+import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StructNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by fabian on 21.05.19.
@@ -33,35 +39,56 @@ public class InfiniteSetGenerator {
 
     private final NameHandler nameHandler;
 
-    public InfiniteSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler) {
+    private PredicateGenerator predicateGenerator;
+
+    public InfiniteSetGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
     }
 
     /*
-    * This function checks whether the given predicate contains an infinite epxression on the right-hand side
+    * This function checks whether the given predicate contains an infinite expression on the right-hand side
     */
     public boolean checkInfinite(PredicateOperatorWithExprArgsNode node) {
         List<ExprNode> expressions = node.getExpressionNodes();
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         if(expressions.size() == 2 && INFINITE_PREDICATE_OPERATORS.contains(operator)) {
             ExprNode rhs = node.getExpressionNodes().get(1);
-            if(rhs instanceof ExpressionOperatorNode) {
-                ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
-                if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
-                    return true;
-                } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
-                    ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
-                    if(innerRhs instanceof ExpressionOperatorNode && INFINITE_EXPRESSIONS.contains(((ExpressionOperatorNode) innerRhs).getOperator()) && operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-                        return true;
-                    } else if(innerRhs instanceof StructNode) {
-                        return true;
-                    }
-                }
-            } else if(rhs instanceof StructNode) {
+            return checkExpressionInfinite(rhs, operator);
+        }
+        return false;
+    }
+
+    public boolean checkExpressionInfinite(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        if(expr instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
+            if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
                 return true;
+            } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
+                ExprNode innerRhs = ((ExpressionOperatorNode) expr).getExpressionNodes().get(0);
+                if(innerRhs instanceof ExpressionOperatorNode && isInfiniteExpression(innerRhs) && operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
+                    return true;
+                } else if(innerRhs instanceof StructNode) {
+                    return true;
+                }
             }
+        } else if(expr instanceof StructNode) {
+            return true;
+        } else if(expr instanceof SetComprehensionNode) {
+            return checkPredicateInfinite(((SetComprehensionNode) expr).getPredicateNode());
+
+        }
+        return false;
+    }
+
+    public boolean checkPredicateInfinite(PredicateNode predicate) {
+        if (predicate instanceof PredicateOperatorWithExprArgsNode) {
+            return checkInfinite((PredicateOperatorWithExprArgsNode) predicate);
+        } else if (predicate instanceof PredicateOperatorNode) {
+            return ((PredicateOperatorNode) predicate).getPredicateArguments().stream()
+                    .map(this::checkPredicateInfinite)
+                    .reduce(false, (e,a) -> e || a);
         }
         return false;
     }
@@ -74,6 +101,11 @@ public class InfiniteSetGenerator {
             ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) expression).getOperator();
             if(INFINITE_EXPRESSIONS.contains(operator)) {
                 return true;
+            }
+            if(operator == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
+                return ((ExpressionOperatorNode) expression).getExpressionNodes().stream()
+                        .map(this::isInfiniteExpression)
+                        .reduce(false, (a,e) -> a || e);
             }
         } else if(expression instanceof StructNode) {
             return true;
@@ -568,4 +600,28 @@ public class InfiniteSetGenerator {
         }
     }
 
+    public List<String> getInfiniteSets(MachineNode node) {
+        return node.getConstants().stream()
+                .filter(constant -> isInfiniteSet(node, constant))
+                .map(DeclarationNode::getName)
+                .collect(Collectors.toList());
+    }
+
+    private boolean isInfiniteSet(MachineNode node, DeclarationNode constant) {
+        List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
+        if(equalProperties.isEmpty()) {
+            return false;
+        }
+        ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
+        if(!(expression instanceof SetComprehensionNode)) {
+            return false;
+        } else if(!checkExpressionInfinite(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
+            return false;
+        }
+        return true;
+    }
+
+    public void setPredicateGenerator(PredicateGenerator predicateGenerator) {
+        this.predicateGenerator = predicateGenerator;
+    }
 }

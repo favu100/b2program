@@ -60,13 +60,15 @@ public class PredicateGenerator {
     private OperatorGenerator operatorGenerator;
 
     public PredicateGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                              final ImportGenerator importGenerator, final IterationConstructHandler iterationConstructHandler) {
+                              final ImportGenerator importGenerator, final IterationConstructHandler iterationConstructHandler,
+                              final InfiniteSetGenerator infiniteSetGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
-        this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, machineGenerator, nameHandler);
+        this.infiniteSetGenerator = infiniteSetGenerator;
+        this.infiniteSetGenerator.setPredicateGenerator(this);
         this.relationSetGenerator = new RelationSetGenerator(currentGroup, machineGenerator, nameHandler, infiniteSetGenerator);
     }
 

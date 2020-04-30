@@ -103,6 +103,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final DeferredSetAnalyzer deferredSetAnalyzer;
 
+	private final InfiniteSetGenerator infiniteSetGenerator;
+
 	private final boolean useBigInteger;
 
 	private final Map<String, Integer> boundedVariablesDepth;
@@ -118,6 +120,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private boolean isIncludedMachine;
 
 	private Set<String> lambdaFunctions;
+
+	private Set<String> infiniteSets;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition, boolean isIncludedMachine) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
@@ -136,18 +140,20 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
+		this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, this, nameHandler);
 
         this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
 		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
-        this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler);
+        this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler, infiniteSetGenerator);
         this.lambdaFunctionGenerator = new LambdaFunctionGenerator(currentGroup, expressionGenerator, predicateGenerator, typeGenerator, declarationGenerator);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(recordStructGenerator);
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
 																expressionGenerator, predicateGenerator, identifierGenerator, iterationConstructHandler,
-																parallelConstructHandler, recordStructGenerator, declarationGenerator, lambdaFunctionGenerator);
+																parallelConstructHandler, recordStructGenerator, declarationGenerator, lambdaFunctionGenerator,
+																infiniteSetGenerator);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
@@ -155,6 +161,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
+		this.infiniteSets = new HashSet<>();
 	}
 
 
@@ -185,6 +192,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		nameHandler.initialize(node);
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();
+		inspectInfiniteSets();
 	}
 
 	private void initializeLambdaFunctions() {
@@ -192,6 +200,14 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		for(MachineReferenceNode reference : machineNode.getMachineReferences()) {
 			MachineNode machine = reference.getMachineNode();
 			lambdaFunctions.addAll(lambdaFunctionGenerator.getLambdaFunctions(machine));
+		}
+	}
+
+	private void inspectInfiniteSets() {
+		infiniteSets.addAll(infiniteSetGenerator.getInfiniteSets(machineNode));
+		for(MachineReferenceNode reference : machineNode.getMachineReferences()) {
+			MachineNode machine = reference.getMachineNode();
+			infiniteSets.addAll(infiniteSetGenerator.getInfiniteSets(machine));
 		}
 	}
 
@@ -567,5 +583,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public Set<String> getLambdaFunctions() {
 		return lambdaFunctions;
+	}
+
+	public Set<String> getInfiniteSets() {
+		return infiniteSets;
 	}
 }

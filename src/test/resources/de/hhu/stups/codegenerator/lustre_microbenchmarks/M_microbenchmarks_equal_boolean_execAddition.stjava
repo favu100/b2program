@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_microbenchmarks_equal_boolean_exec program = new M_microbenchmarks_equal_boolean_exec();
+    program.simulate();
+}

@@ -1,4 +1,0 @@
-public static void main(String[] args) {
-    microbenchmarks_and_exec program = new microbenchmarks_and_exec();
-    program.simulate();
-}

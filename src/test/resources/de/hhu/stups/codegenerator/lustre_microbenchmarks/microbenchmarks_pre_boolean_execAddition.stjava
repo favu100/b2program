@@ -1,4 +1,0 @@
-public static void main(String[] args) {
-    microbenchmarks_pre_boolean_exec program = new microbenchmarks_pre_boolean_exec();
-    program.simulate();
-}

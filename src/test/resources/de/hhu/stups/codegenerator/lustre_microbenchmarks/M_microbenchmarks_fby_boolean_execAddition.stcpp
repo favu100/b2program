@@ -1,0 +1,5 @@
+int main() {
+    M_microbenchmarks_fby_boolean_exec program;
+    program.simulate();
+    return 0;
+}

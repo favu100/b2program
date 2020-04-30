@@ -1,4 +1,0 @@
-public static void main(String[] args) {
-    microbenchmarks_fby_boolean_exec program = new microbenchmarks_fby_boolean_exec();
-    program.simulate();
-}

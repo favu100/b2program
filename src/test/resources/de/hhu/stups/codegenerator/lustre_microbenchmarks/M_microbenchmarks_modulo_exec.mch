@@ -1,6 +1,6 @@
-MACHINE M_microbenchmarks_modulo_integer_exec
+MACHINE M_microbenchmarks_modulo_exec
 
-INCLUDES M_microbenchmarks_modulo_integer
+INCLUDES M_microbenchmarks_modulo
 
 SEES LibraryLustre
 

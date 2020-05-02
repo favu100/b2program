@@ -25,6 +25,11 @@ public class TestLustreMicroBenchmarks extends TestJava {
 	}
 
 	@Test
+	public void testModulo() throws Exception {
+		testJava("lustre_microbenchmarks/M_microbenchmarks_modulo_exec", "M_microbenchmarks_modulo_exec", "M_microbenchmarks_modulo_execAddition.stjava", false);
+	}
+
+	@Test
 	public void testEqualBoolean() throws Exception {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_equal_boolean_exec", "M_microbenchmarks_equal_boolean_exec", "M_microbenchmarks_equal_boolean_execAddition.stjava", false);
 	}

@@ -5,7 +5,7 @@ SETS REF = {ref}
 ABSTRACT_CONSTANTS
   l_ite_integer,
   l_less, l_greater, l_less_equal, l_greater_equal,
-  l_plus, l_minus, l_multiply, l_divide, l_unary_minus,
+  l_plus, l_minus, l_multiply, l_divide, l_unary_minus, l_modulo,
   l_equal_integer, l_unequal_integer,
   l_fby_integer,
   LUSTRE_INT,
@@ -68,7 +68,14 @@ PROPERTIES
   l_plus = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} THEN {} ELSE {ref |-> x(ref) + y(ref)} END)) &
   l_minus = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} THEN {} ELSE {ref |-> x(ref) - y(ref)} END)) &
   l_multiply = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} THEN {} ELSE {ref |-> x(ref) * y(ref)} END)) &
-  l_divide = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} THEN {} ELSE {ref |-> x(ref) / y(ref)} END)) &
+  l_divide = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} or y = {ref |-> 0} THEN {} ELSE {ref |-> x(ref) / y(ref)} END)) &
+  l_modulo = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} or y = {ref |-> 0} THEN
+                                                          {}
+                                                         ELSE
+                                                          {ref |-> IF x(ref) < 0 THEN - 1 ELSE 1 END *
+                                                                   (IF x(ref) < 0 THEN -x(ref) ELSE x(ref) END mod
+                                                                   IF y(ref) < 0 THEN -y(ref) ELSE y(ref) END)}
+                                                         END)) &
   l_unary_minus = (%x.(x : LUSTRE_INT | IF x = {} THEN {} ELSE {ref |-> -x(ref)} END)) &
   l_less_equal = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} THEN {} ELSE {ref |-> bool(x(ref) <= y(ref))} END)) &
   l_less = (%(x,y).(x : LUSTRE_INT & y : LUSTRE_INT  | IF x = {} or y = {} THEN {} ELSE {ref |-> bool(x(ref) < y(ref))} END)) &

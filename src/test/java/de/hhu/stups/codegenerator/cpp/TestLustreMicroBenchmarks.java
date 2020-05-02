@@ -24,6 +24,11 @@ public class TestLustreMicroBenchmarks extends TestCpp {
 		testCpp("lustre_microbenchmarks/M_microbenchmarks_divide_integer_exec", "M_microbenchmarks_divide_integer_exec", "M_microbenchmarks_divide_integer_execAddition.stcpp", false);
 	}
 
+    @Test
+    public void testModulo() throws Exception {
+        testCpp("lustre_microbenchmarks/M_microbenchmarks_modulo_exec", "M_microbenchmarks_modulo_exec", "M_microbenchmarks_modulo_execAddition.stcpp", false);
+    }
+
 	@Test
 	public void testEqualBoolean() throws Exception {
 		testCpp("lustre_microbenchmarks/M_microbenchmarks_equal_boolean_exec", "M_microbenchmarks_equal_boolean_exec", "M_microbenchmarks_equal_boolean_execAddition.stcpp", false);

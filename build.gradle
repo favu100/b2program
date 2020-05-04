@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     antlr "org.antlr:antlr4:4.7"
-    compile group: 'org.antlr', name: 'ST4', version: '4.1'
+    compile group: 'org.antlr', name: 'ST4', version: '4.3'
     // antlr parser dependency
     compile 'com.github.hhu-stups:antlr-parser:-SNAPSHOT' // https://github.com/hhu-stups/antlr-parser'
 
@@ -60,6 +60,7 @@ targetCompatibility = 1.8
 sourceSets.main.java.srcDirs = ['src/main/java']
 
 sourceSets.test.runtimeClasspath += files(sourceSets.main.java.srcDirs)
+
 
 tasks.withType(JavaExec) {
     if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('deferred_set_size') && project.hasProperty('file')) {

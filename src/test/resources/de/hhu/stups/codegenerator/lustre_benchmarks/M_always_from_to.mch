@@ -1,6 +1,6 @@
 MACHINE M_always_from_to
 
-INCLUDES Node_15.M_after, Node_16.M_always_since, Node_17.M_once_since, Node_18.M_implies
+INCLUDES Node_15.M_implies, Node_18.M_once_since, Node_17.M_always_since, Node_16.M_after
 
 SEES LibraryLustre
 
@@ -23,11 +23,11 @@ OPERATIONS
                 var_B := param_B; 
                 var_A := param_A; 
                 var_C := param_C; 
-                Node_15.clock_step(var_A); 
-                Node_16.clock_step(var_B, var_A); 
-                Node_17.clock_step(var_C, var_A); 
-                Node_18.clock_step(Node_15.var_afterA, l_or(Node_16.var_alwaysBsinceA |-> Node_17.var_onceCsinceA)); 
-                var_X := Node_18.var_AimpliesB; 
+                Node_16.clock_step(var_A); 
+                Node_17.clock_step(var_B, var_A); 
+                Node_18.clock_step(var_C, var_A); 
+                Node_15.clock_step(Node_16.var_afterA, l_or(Node_17.var_alwaysBsinceA |-> Node_18.var_onceCsinceA)); 
+                var_X := Node_15.var_AimpliesB; 
                 is_initialisation := FALSE
 
             END
@@ -37,3 +37,10 @@ OPERATIONS
 
 
 END
+
+/*
+Node_15: implies(after(A), (always_since(B, A) or once_since(C, A)))
+Node_16: after(A)
+Node_17: always_since(B, A)
+Node_18: once_since(C, A)
+*/

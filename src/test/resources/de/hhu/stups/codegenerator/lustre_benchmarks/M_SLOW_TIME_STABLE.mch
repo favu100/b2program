@@ -42,3 +42,7 @@ OPERATIONS
 
 
 END
+
+/*
+Node_1: SLOW_STABLE((set, delay when second))
+*/

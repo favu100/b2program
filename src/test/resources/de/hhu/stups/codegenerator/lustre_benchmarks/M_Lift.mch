@@ -4,7 +4,7 @@ SEES LibraryLustre
 
 VARIABLES is_initialisation, var_exec_up, var_exec_down, var_floor
 
-INVARIANT ((var_floor : LUSTRE_INT) & ((var_exec_down : LUSTRE_BOOL) & ((var_exec_up : LUSTRE_BOOL) & (is_initialisation : BOOL))))
+INVARIANT ((var_floor : LUSTRE_INT) & ((var_exec_down : LUSTRE_BOOL) & ((var_exec_up : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_floor /= {})) & (((is_initialisation = FALSE) => (var_exec_down /= {})) & ((is_initialisation = FALSE) => (var_exec_up /= {}))))))))
 
 INITIALISATION 
     is_initialisation := TRUE; 
@@ -17,7 +17,7 @@ OPERATIONS
 
     clock_step(param_up, param_down) = 
         PRE
-            ((param_up : LUSTRE_BOOL) & (param_down : LUSTRE_BOOL))
+            ((param_up : LUSTRE_BOOL_NOT_NIL) & (param_down : LUSTRE_BOOL_NOT_NIL))
         THEN
             VAR var_up, var_down, var_old_floor IN
                 var_up := param_up; 
@@ -35,3 +35,4 @@ OPERATIONS
 
 
 END
+

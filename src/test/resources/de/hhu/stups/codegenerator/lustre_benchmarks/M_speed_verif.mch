@@ -6,7 +6,7 @@ SEES LibraryLustre
 
 VARIABLES is_initialisation, var_OK, var_late, var_early
 
-INVARIANT ((var_OK : LUSTRE_BOOL) & ((var_early : LUSTRE_BOOL) & ((var_late : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_OK /= {})) & ((is_initialisation = FALSE) => (var_OK = {ref |-> TRUE})))))))
+INVARIANT ((var_OK : LUSTRE_BOOL) & ((var_early : LUSTRE_BOOL) & ((var_late : LUSTRE_BOOL) & ((is_initialisation : BOOL) & ((is_initialisation = FALSE) => (var_OK = {ref |-> TRUE}))))))
 
 INITIALISATION 
     is_initialisation := TRUE; 
@@ -19,7 +19,7 @@ OPERATIONS
 
     clock_step(param_beacon, param_second) = 
         PRE
-            ((param_beacon : LUSTRE_BOOL_NOT_NIL) & (param_second : LUSTRE_BOOL_NOT_NIL))
+            ((param_beacon : LUSTRE_BOOL) & (param_second : LUSTRE_BOOL))
         THEN
             VAR hvar_early, hvar_late, var_beacon, var_second IN
                 hvar_early := var_early; 
@@ -39,3 +39,7 @@ OPERATIONS
 
 
 END
+
+/*
+Node_2: speed(beacon, second)
+*/

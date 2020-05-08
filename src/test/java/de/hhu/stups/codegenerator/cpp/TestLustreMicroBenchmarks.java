@@ -85,6 +85,11 @@ public class TestLustreMicroBenchmarks extends TestCpp {
 	}
 
 	@Test
+	public void testUnaryMinusInteger() throws Exception {
+		testCpp("lustre_microbenchmarks/M_microbenchmarks_unary_minus_integer_exec", "M_microbenchmarks_unary_minus_integer_exec", "M_microbenchmarks_unary_minus_integer_execAddition.stcpp", false);
+	}
+
+	@Test
 	public void testMultiplyInteger() throws Exception {
 		testCpp("lustre_microbenchmarks/M_microbenchmarks_multiply_integer_exec", "M_microbenchmarks_multiply_integer_exec", "M_microbenchmarks_multiply_integer_execAddition.stcpp", false);
 	}
@@ -132,6 +137,16 @@ public class TestLustreMicroBenchmarks extends TestCpp {
 	@Test
 	public void testWhenInteger() throws Exception {
 		testCpp("lustre_microbenchmarks/M_microbenchmarks_when_integer_exec", "M_microbenchmarks_when_integer_exec", "M_microbenchmarks_when_integer_execAddition.stcpp", false);
+	}
+
+	@Test
+	public void testAssertion() throws Exception {
+		testCpp("lustre_microbenchmarks/M_microbenchmarks_assertion_exec", "M_microbenchmarks_assertion_exec", "M_microbenchmarks_assertion_execAddition.stcpp", false);
+	}
+
+	@Test
+	public void testManyClocks() throws Exception {
+		testCpp("lustre_microbenchmarks/M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_execAddition.stcpp", false);
 	}
 
 }

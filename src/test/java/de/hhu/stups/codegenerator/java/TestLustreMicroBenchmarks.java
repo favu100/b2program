@@ -84,6 +84,11 @@ public class TestLustreMicroBenchmarks extends TestJava {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_minus_integer_exec", "M_microbenchmarks_minus_integer_exec", "M_microbenchmarks_minus_integer_execAddition.stjava", false);
 	}
 
+    @Test
+    public void testUnaryMinusInteger() throws Exception {
+        testJava("lustre_microbenchmarks/M_microbenchmarks_unary_minus_integer_exec", "M_microbenchmarks_unary_minus_integer_exec", "M_microbenchmarks_unary_minus_integer_execAddition.stjava", false);
+    }
+
 	@Test
 	public void testMultiplyInteger() throws Exception {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_multiply_integer_exec", "M_microbenchmarks_multiply_integer_exec", "M_microbenchmarks_multiply_integer_execAddition.stjava", false);
@@ -132,6 +137,16 @@ public class TestLustreMicroBenchmarks extends TestJava {
 	@Test
 	public void testWhenInteger() throws Exception {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_when_integer_exec", "M_microbenchmarks_when_integer_exec", "M_microbenchmarks_when_integer_execAddition.stjava", false);
+	}
+
+	@Test
+	public void testAssertion() throws Exception {
+		testJava("lustre_microbenchmarks/M_microbenchmarks_assertion_exec", "M_microbenchmarks_assertion_exec", "M_microbenchmarks_assertion_execAddition.stjava", false);
+	}
+
+	@Test
+	public void testManyClocks() throws Exception {
+		testJava("lustre_microbenchmarks/M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_execAddition.stjava", false);
 	}
 
 }

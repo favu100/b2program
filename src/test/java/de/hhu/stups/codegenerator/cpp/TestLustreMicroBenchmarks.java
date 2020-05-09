@@ -149,4 +149,9 @@ public class TestLustreMicroBenchmarks extends TestCpp {
 		testCpp("lustre_microbenchmarks/M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_execAddition.stcpp", false);
 	}
 
+	@Test
+	public void testManyLocalClocks() throws Exception {
+		testCpp("lustre_microbenchmarks/M_microbenchmarks_many_local_clocks_exec", "M_microbenchmarks_many_local_clocks_exec", "M_microbenchmarks_many_local_clocks_execAddition.stcpp", false);
+	}
+
 }

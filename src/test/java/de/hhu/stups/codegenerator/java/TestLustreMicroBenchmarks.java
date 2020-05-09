@@ -149,4 +149,9 @@ public class TestLustreMicroBenchmarks extends TestJava {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_execAddition.stjava", false);
 	}
 
+    @Test
+    public void testManyLocalClocks() throws Exception {
+        testJava("lustre_microbenchmarks/M_microbenchmarks_many_local_clocks_exec", "M_microbenchmarks_many_local_clocks_exec", "M_microbenchmarks_many_local_clocks_execAddition.stjava", false);
+    }
+
 }

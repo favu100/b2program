@@ -144,6 +144,11 @@ public class TestLustreMicroBenchmarks extends TestJava {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_assertion_exec", "M_microbenchmarks_assertion_exec", "M_microbenchmarks_assertion_execAddition.stjava", false);
 	}
 
+    @Test
+    public void testNodeCall() throws Exception {
+        testJava("lustre_microbenchmarks/M_microbenchmarks_node_call_exec", "M_microbenchmarks_node_call_exec", "M_microbenchmarks_node_call_execAddition.stjava", false);
+    }
+
 	@Test
 	public void testManyClocks() throws Exception {
 		testJava("lustre_microbenchmarks/M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_execAddition.stjava", false);

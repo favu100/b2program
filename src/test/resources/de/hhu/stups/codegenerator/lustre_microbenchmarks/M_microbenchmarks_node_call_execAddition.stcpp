@@ -1,0 +1,5 @@
+int main() {
+    M_microbenchmarks_node_call_exec program;
+    program.simulate();
+    return 0;
+}

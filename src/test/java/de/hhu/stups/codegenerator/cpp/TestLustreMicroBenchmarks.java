@@ -145,6 +145,11 @@ public class TestLustreMicroBenchmarks extends TestCpp {
 	}
 
 	@Test
+	public void testNodeCall() throws Exception {
+		testCpp("lustre_microbenchmarks/M_microbenchmarks_node_call_exec", "M_microbenchmarks_node_call_exec", "M_microbenchmarks_node_call_execAddition.stcpp", false);
+	}
+
+	@Test
 	public void testManyClocks() throws Exception {
 		testCpp("lustre_microbenchmarks/M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_exec", "M_microbenchmarks_many_clocks_execAddition.stcpp", false);
 	}

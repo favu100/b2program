@@ -6,17 +6,17 @@ SEES LibraryLustre
 
 VARIABLES  counter
 
-INVARIANT  counter : 0..100000
+INVARIANT  counter : 0..500000
 
 INITIALISATION counter := 0
 
 OPERATIONS
 
-	simulate = WHILE counter < 100000 DO
+	simulate = WHILE counter < 500000 DO
               clock_step({ref |-> TRUE}, {ref |-> TRUE}, {ref |-> TRUE}, {ref |-> TRUE}, {ref |-> TRUE});
             	counter := counter + 1
             INVARIANT 1 = 1
-            VARIANT 100000 - counter
+            VARIANT 500000 - counter
             END
 
 END

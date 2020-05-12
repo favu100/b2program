@@ -6,14 +6,14 @@ SEES LibraryLustre
 
 VARIABLES  counter
 
-INVARIANT  counter : 0..500
+INVARIANT  counter : 0..1000
 
 INITIALISATION counter := 0
 
 OPERATIONS
 
 	simulate = 	BEGIN
-							WHILE counter < 500 DO
+							WHILE counter < 1000 DO
 								clock_step({ref |-> FALSE}, {ref |-> FALSE});
 								clock_step({ref |-> FALSE}, {ref |-> FALSE});
 								clock_step({ref |-> FALSE}, {ref |-> FALSE});
@@ -99,7 +99,7 @@ OPERATIONS
 								clock_step({ref |-> TRUE}, {ref |-> TRUE});
 								counter := counter + 1
 							INVARIANT 1 = 1
-							VARIANT 500 - counter
+							VARIANT 1000 - counter
 							END
 						END
 

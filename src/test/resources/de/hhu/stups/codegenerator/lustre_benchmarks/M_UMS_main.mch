@@ -26,7 +26,7 @@ OPERATIONS
                 var_on_C := param_on_C;
                 var_ack_AB := param_ack_AB;
                 var_ack_BC := param_ack_BC;
-                var_empty_section := l_not(l_or(var_on_A |-> l_or(var_on_B |-> var_on_C)));
+                var_empty_section := l_not(l_or(l_or(var_on_A |-> var_on_B) |-> var_on_C));
                 var_only_on_B := l_and(var_on_B |-> l_not(l_or(var_on_A |-> var_on_C)));
                 var_grant_access := l_and(var_empty_section |-> var_ack_AB);
                 var_grant_exit := l_and(var_only_on_B |-> var_ack_BC);

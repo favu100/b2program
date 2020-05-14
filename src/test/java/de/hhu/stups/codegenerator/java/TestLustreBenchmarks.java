@@ -39,4 +39,9 @@ public class TestLustreBenchmarks extends TestJava {
 		testJava("lustre_benchmarks/M_pilot_flying_exec", "M_pilot_flying_exec", "M_pilot_flying_execAddition.stjava", false);
 	}
 
+	@Test
+	public void testCarlights() throws Exception {
+		testJava("lustre_benchmarks/M_carlights2_v4_exec", "M_carlights2_v4_exec", "M_carlights2_v4_execAddition.stjava", false);
+	}
+
 }

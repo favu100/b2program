@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_carlights2_v4_exec program = new M_carlights2_v4_exec();
+    program.simulate();
+}

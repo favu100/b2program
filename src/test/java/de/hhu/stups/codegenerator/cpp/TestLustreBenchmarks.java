@@ -39,4 +39,9 @@ public class TestLustreBenchmarks extends TestCpp {
         testCpp("lustre_benchmarks/M_pilot_flying_exec", "M_pilot_flying_exec", "M_pilot_flying_execAddition.stcpp", false);
     }
 
+	@Test
+	public void testCarlights() throws Exception {
+		testCpp("lustre_benchmarks/M_carlights2_v4_exec", "M_carlights2_v4_exec", "M_carlights2_v4_execAddition.stcpp", false);
+	}
+
 }

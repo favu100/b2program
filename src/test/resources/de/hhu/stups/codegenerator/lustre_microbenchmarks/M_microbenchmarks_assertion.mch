@@ -21,7 +21,7 @@ OPERATIONS
                 var_x := param_x; 
                 var_y := param_y; 
                 var_res := l_and(var_x |-> var_y); 
-                ASSERT (var_res /= {}) THEN skip END; 
+                PRE (var_res /= {}) THEN skip END;
                 SELECT (var_res = {ref |-> TRUE}) THEN skip END; 
                 is_initialisation := FALSE
 

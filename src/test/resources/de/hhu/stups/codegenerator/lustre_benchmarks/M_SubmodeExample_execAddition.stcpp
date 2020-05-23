@@ -1,0 +1,5 @@
+int main() {
+    M_SubmodeExample_exec program;
+    program.simulate();
+    return 0;
+}

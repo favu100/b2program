@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_VerifyMovingItem_exec program = new M_VerifyMovingItem_exec();
+    program.simulate();
+}

@@ -39,10 +39,10 @@ OPERATIONS
         THEN
             var_val := param_val; 
             var_c1 := {ref |-> TRUE}; 
-            ASSERT (var_c1 /= {}) THEN skip END; 
+            PRE (var_c1 /= {}) THEN skip END;
             IF (var_c1 = {ref |-> TRUE}) THEN 
                 var_c2 := var_c1; 
-                ASSERT (var_c2 /= {}) THEN skip END
+                PRE (var_c2 /= {}) THEN skip END
 
             END; 
             IF (var_c1 = {ref |-> TRUE}) THEN 
@@ -50,17 +50,17 @@ OPERATIONS
             END; 
             IF ((var_c1 = {ref |-> TRUE}) & (var_c2 = {ref |-> TRUE})) THEN 
                 var_c3 := var_c2; 
-                ASSERT (var_c3 /= {}) THEN skip END
+                PRE (var_c3 /= {}) THEN skip END
 
             END; 
             IF ((var_c1 = {ref |-> TRUE}) & ((var_c2 = {ref |-> TRUE}) & (var_c3 = {ref |-> TRUE}))) THEN 
                 var_c4 := var_c3; 
-                ASSERT (var_c4 /= {}) THEN skip END
+                PRE (var_c4 /= {}) THEN skip END
 
             END; 
             IF ((var_c1 = {ref |-> TRUE}) & ((var_c2 = {ref |-> TRUE}) & ((var_c3 = {ref |-> TRUE}) & (var_c4 = {ref |-> TRUE})))) THEN 
                 var_c5 := var_c4; 
-                ASSERT (var_c5 /= {}) THEN skip END
+                PRE (var_c5 /= {}) THEN skip END
 
             END; 
             IF ((var_c1 = {ref |-> TRUE}) & (var_c2 = {ref |-> TRUE})) THEN 

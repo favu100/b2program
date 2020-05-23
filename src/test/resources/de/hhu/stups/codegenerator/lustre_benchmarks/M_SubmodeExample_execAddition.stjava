@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_SubmodeExample_exec program = new M_SubmodeExample_exec();
+    program.simulate();
+}

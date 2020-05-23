@@ -65,14 +65,14 @@ OPERATIONS
                 var_tmp_2 := {ref |-> TRUE}; 
                 var_tmp_1 := {ref |-> TRUE}; 
                 var_tmp_0 := {ref |-> FALSE}; 
-                ASSERT (l_and(l_greater_equal(var_switch_pos |-> {ref |-> 0}) |-> l_less_equal(var_switch_pos |-> {ref |-> 2})) /= {}) THEN skip END; 
+                PRE (l_and(l_greater_equal(var_switch_pos |-> {ref |-> 0}) |-> l_less_equal(var_switch_pos |-> {ref |-> 2})) /= {}) THEN skip END; 
                 SELECT (l_and(l_greater_equal(var_switch_pos |-> {ref |-> 0}) |-> l_less_equal(var_switch_pos |-> {ref |-> 2})) = {ref |-> TRUE}) THEN skip END; 
-                ASSERT (l_and(l_greater_equal(var_intensity |-> {ref |-> 0}) |-> l_less_equal(var_intensity |-> {ref |-> 10})) /= {}) THEN skip END; 
+                PRE (l_and(l_greater_equal(var_intensity |-> {ref |-> 0}) |-> l_less_equal(var_intensity |-> {ref |-> 10})) /= {}) THEN skip END; 
                 SELECT (l_and(l_greater_equal(var_intensity |-> {ref |-> 0}) |-> l_less_equal(var_intensity |-> {ref |-> 10})) = {ref |-> TRUE}) THEN skip END; 
                 var__OFF_switch_pos_1 := l_equal_integer({ref |-> 0} |-> var_switch_pos); 
-                ASSERT (var__OFF_switch_pos_1 /= {}) THEN skip END; 
+                PRE (var__OFF_switch_pos_1 /= {}) THEN skip END; 
                 var__ON_switch_pos_1 := l_equal_integer({ref |-> 1} |-> var_switch_pos); 
-                ASSERT (var__ON_switch_pos_1 /= {}) THEN skip END; 
+                PRE (var__ON_switch_pos_1 /= {}) THEN skip END; 
                 var__split_3 := l_less_equal(var_intensity |-> {ref |-> 7}); 
                 var__split_6 := var_is_on; 
                 var____split_23_2_1 := {}; 
@@ -84,7 +84,7 @@ OPERATIONS
                     var____split_23_1_1 := var___tempo_1_1
                 END; 
                 var__AUTO_switch_pos_1 := l_equal_integer({ref |-> 2} |-> var_switch_pos); 
-                ASSERT (var__AUTO_switch_pos_1 /= {}) THEN skip END; 
+                PRE (var__AUTO_switch_pos_1 /= {}) THEN skip END; 
                 var___split_18_1 := var__split_1; 
                 var__split_1 := l_equal_integer(var_switch_pos |-> {ref |-> 2}); 
                 IF (var__OFF_switch_pos_1 = {ref |-> TRUE}) THEN 

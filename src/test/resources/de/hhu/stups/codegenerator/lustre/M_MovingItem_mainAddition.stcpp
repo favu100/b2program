@@ -1,0 +1,36 @@
+int main() {
+    M_MovingItem_main program;
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << program.getStart1() << "\n";
+    cout << program.getStart2() << "\n";
+    cout << program.getStop() << "\n";
+    return 0;
+}

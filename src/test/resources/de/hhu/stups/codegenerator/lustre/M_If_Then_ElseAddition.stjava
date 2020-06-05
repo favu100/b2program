@@ -1,0 +1,9 @@
+public static void main(String[] args) {
+    M_If_Then_Else program = new M_If_Then_Else();
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))));
+    System.out.println(program.getZ());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(4))));
+    System.out.println(program.getZ());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))));
+    System.out.println(program.getZ());
+}

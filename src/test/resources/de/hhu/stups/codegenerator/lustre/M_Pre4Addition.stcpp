@@ -1,0 +1,16 @@
+int main() {
+    M_Pre4 pre;
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))));
+    cout << pre.getZ() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))));
+    cout << pre.getZ() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))));
+    cout << pre.getZ() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))));
+    cout << pre.getZ() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(0))))));
+    cout << pre.getZ() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(-1))))));
+    cout << pre.getZ() << "\n";
+    return 0;
+}

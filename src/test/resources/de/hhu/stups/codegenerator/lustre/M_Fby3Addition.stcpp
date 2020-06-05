@@ -1,0 +1,14 @@
+int main() {
+    M_Fby3 program;
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getZ() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getZ() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << program.getZ() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << program.getZ() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << program.getZ() << "\n";
+    return 0;
+}

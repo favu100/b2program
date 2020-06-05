@@ -1,7 +1,0 @@
-public static void main(String[] args) {
-    Pre3 pre = new Pre3();
-    pre.Pre3_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
-    System.out.println(pre.getA());
-    pre.Pre3_clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
-    System.out.println(pre.getA());
-}

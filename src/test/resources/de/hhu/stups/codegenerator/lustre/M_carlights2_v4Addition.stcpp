@@ -1,0 +1,23 @@
+int main() {
+    M_carlights2_v4 program;
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(0))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(10))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(0))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(9))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(0))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(8))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(7))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(6))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(5))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(5))))));
+    cout << program.getIsOn() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(6))))));
+    cout << program.getIsOn() << "\n";
+
+    return 0;
+}

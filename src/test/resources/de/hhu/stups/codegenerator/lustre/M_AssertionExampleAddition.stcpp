@@ -1,0 +1,6 @@
+int main() {
+    M_AssertionExample program;
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))));
+    cout << program.getR() << "\n";
+    return 0;
+}

@@ -1,0 +1,16 @@
+int main() {
+    M_Current current;
+    current.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))));
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    cout << current.getRes3() << "\n";
+    current.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))));
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    cout << current.getRes3() << "\n";
+    current.clock_step(BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))), BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(5))))));
+    cout << current.getRes1() << "\n";
+    cout << current.getRes2() << "\n";
+    cout << current.getRes3() << "\n";
+    return 0;
+}

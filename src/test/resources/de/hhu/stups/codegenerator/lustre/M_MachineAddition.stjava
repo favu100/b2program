@@ -1,0 +1,15 @@
+public static void main(String[] args) {
+    M_Machine program = new M_Machine();
+    program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(program.getRes());
+    System.out.println(program.getRes1());
+    program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
+    System.out.println(program.getRes());
+    System.out.println(program.getRes1());
+    program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(program.getRes());
+    System.out.println(program.getRes1());
+    program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(program.getRes());
+    System.out.println(program.getRes1());
+}

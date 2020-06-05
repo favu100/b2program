@@ -47,7 +47,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testLift() throws Exception {
-        testJava("Lift", "Lift", "LiftAddition.stjava", true);
+        testJava("Lift", "Lift", "M_LiftAddition.stjava", true);
     }
 
     @Test

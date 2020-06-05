@@ -1,0 +1,16 @@
+int main() {
+    M_Pre7 pre;
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << pre.getY() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << pre.getY() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << pre.getY() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(4))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << pre.getY() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(5))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(true))))));
+    cout << pre.getY() << "\n";
+    pre.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(6))))), BRelation<LibraryLustre::REF, BBoolean >((BTuple<LibraryLustre::REF, BBoolean >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BBoolean(false))))));
+    cout << pre.getY() << "\n";
+    return 0;
+}

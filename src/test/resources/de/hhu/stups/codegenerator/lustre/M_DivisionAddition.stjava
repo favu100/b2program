@@ -1,0 +1,9 @@
+public static void main(String[] args) {
+    M_Division program = new M_Division();
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(2))));
+    System.out.println(program.getRes());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(2))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(4))));
+    System.out.println(program.getRes());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(0))));
+    System.out.println(program.getRes());
+}

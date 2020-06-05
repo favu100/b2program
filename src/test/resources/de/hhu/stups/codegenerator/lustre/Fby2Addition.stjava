@@ -1,7 +1,0 @@
-public static void main(String[] args) {
-    Fby2 program = new Fby2();
-    program.Fby2_clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))));
-    System.out.println(program.getZ());
-    program.Fby2_clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(4))));
-    System.out.println(program.getZ());
-}

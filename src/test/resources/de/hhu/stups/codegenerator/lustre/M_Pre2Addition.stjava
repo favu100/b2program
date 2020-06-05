@@ -1,0 +1,19 @@
+public static void main(String[] args) {
+    M_Pre2 pre = new M_Pre2();
+    pre.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(pre.getRes());
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(pre.getRes());
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
+    System.out.println(pre.getRes());
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+    pre.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(pre.getRes());
+    System.out.println(pre.getRes1());
+    System.out.println(pre.getRes2());
+}

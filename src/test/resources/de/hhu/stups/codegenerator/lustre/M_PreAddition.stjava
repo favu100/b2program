@@ -1,0 +1,11 @@
+public static void main(String [] args) {
+    M_Pre program = new M_Pre();
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(1))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(0))));
+    System.out.println(program.getD());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(2))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(0))));
+    System.out.println(program.getD());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(0))));
+    System.out.println(program.getD());
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(4))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(0))));
+    System.out.println(program.getD());
+}

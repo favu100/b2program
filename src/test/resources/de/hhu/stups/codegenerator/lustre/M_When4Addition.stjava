@@ -1,0 +1,9 @@
+public static void main(String [] args) {
+    M_When4 when = new M_When4();
+    when.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
+    System.out.println(when.getRes());
+    when.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(true))));
+    System.out.println(when.getRes());
+    when.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple<>(LibraryLustre.REF.ref, new BBoolean(false))));
+    System.out.println(when.getRes());
+}

@@ -1,0 +1,10 @@
+int main() {
+    M_Nil3 program;
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))));
+    cout << program.getRes() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))));
+    cout << program.getRes() << "\n";
+    program.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(3))))));
+    cout << program.getRes() << "\n";
+    return 0;
+}

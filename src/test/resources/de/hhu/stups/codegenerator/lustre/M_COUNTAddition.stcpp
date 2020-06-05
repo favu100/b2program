@@ -1,0 +1,12 @@
+int main() {
+    M_COUNT counter;
+    counter.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))));
+    cout << counter.getRes() << "\n";
+    counter.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(2))))));
+    cout << counter.getRes() << "\n";
+    for(int i = 0; i < 100; i++) {
+        counter.clock_step(BRelation<LibraryLustre::REF, BInteger >((BTuple<LibraryLustre::REF, BInteger >((LibraryLustre::REF(LibraryLustre::REF::ref)), (BInteger(1))))));
+    }
+    cout << counter.getRes() << "\n";
+    return 0;
+}

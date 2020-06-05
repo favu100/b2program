@@ -1,0 +1,11 @@
+public static void main(String[] args) {
+    M_COUNT counter = new M_COUNT();
+    counter.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(1))));
+    System.out.println(counter.getRes());
+    counter.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(2))));
+    System.out.println(counter.getRes());
+    for(int i = 0; i < 100; i++) {
+        counter.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(1))));
+    }
+    System.out.println(counter.getRes());
+}

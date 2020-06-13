@@ -47,11 +47,11 @@ public class TestCpp {
 		CodeGenerator codeGenerator = new CodeGenerator();
 		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, null, false);
 
-		/*Process process = Runtime.getRuntime()
+		Process process = Runtime.getRuntime()
 				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
-		process.waitFor();*/
+		process.waitFor();
 		//cleanUp(cppFilePaths.get(0).toString());
 	}
 

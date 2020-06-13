@@ -96,7 +96,10 @@ OPERATIONS
 
             END
 
-        END
+        END;
+
+        out <-- getSelected = BEGIN out := var_LAPPR_Selected END;
+        out <-- getActive = BEGIN out := var_LAPPR_Active END
 
 
 

@@ -6,12 +6,15 @@ import de.hhu.stups.codegenerator.GeneratorMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by fabian on 30.08.18.
@@ -52,7 +55,7 @@ public class TestCpp {
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
-		//cleanUp(cppFilePaths.get(0).toString());
+		cleanUp(cppFilePaths.get(0).toString());
 	}
 
 
@@ -66,7 +69,7 @@ public class TestCpp {
 
 		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
 
-		/*Process compileProcess = runtime
+		Process compileProcess = runtime
 				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " out/test/resources/de/hhu/stups/codegenerator/" + machine + ".cpp");
 		compileProcess.waitFor();
 
@@ -92,8 +95,8 @@ public class TestCpp {
 
 		System.out.println("Assert: " + result + " = " + expectedOutput);
 
-		assertEquals(result, expectedOutput);*/
-		//cleanUp(mainPath.toString());
+		assertEquals(result, expectedOutput);
+		cleanUp(mainPath.toString());
 	}
 
 	private void cleanUp(String path) {

@@ -2,11 +2,12 @@ MACHINE M_microbenchmarks_invoked_node
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_res
+VARIABLES assert_ok, is_initialisation, var_res
 
-INVARIANT ((var_res : LUSTRE_BOOL) & (is_initialisation : BOOL))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & (var_res : LUSTRE_BOOL)))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_res := {}
 

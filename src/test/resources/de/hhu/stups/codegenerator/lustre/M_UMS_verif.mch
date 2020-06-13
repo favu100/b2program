@@ -1,3 +1,7 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
+
 MACHINE M_UMS_verif
 
 INCLUDES Node_2.M_always_from_to, Node_1.M_always_from_to, Node_14.M_always_from_to, Node_13.M_always_from_to, Node_12.M_implies, Node_11.M_UMS, Node_9.M_implies, Node_10.M_edge, Node_7.M_implies, Node_8.M_edge, Node_5.M_implies, Node_6.M_edge, Node_3.M_implies, Node_4.M_edge

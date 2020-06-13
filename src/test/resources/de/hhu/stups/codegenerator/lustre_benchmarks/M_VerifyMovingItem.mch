@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_VerifyMovingItem
 
 INCLUDES Node_32.M_redge, Node_31.M_redge, Node_26.M_sustain, Node_30.M_fedge, Node_29.M_fedge, Node_28.M_redge, Node_27.M_redge
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_OK, var_tmp_0, var_tmp_1, var_TryToMove1, var_TryToMove2, var_start1, var_start2, var_stop, var_moving, var_MaySafelyMove
+VARIABLES assert_ok, is_initialisation, var_OK, var_tmp_0, var_tmp_1, var_TryToMove1, var_TryToMove2, var_start1, var_start2, var_stop, var_moving, var_MaySafelyMove
 
-INVARIANT ((var_TryToMove2 : LUSTRE_BOOL) & ((var_TryToMove1 : LUSTRE_BOOL) & ((var_MaySafelyMove : LUSTRE_BOOL) & ((var_OK : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_moving : LUSTRE_BOOL) & ((var_stop : LUSTRE_BOOL) & ((var_start2 : LUSTRE_BOOL) & ((var_start1 : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_OK /= {})) & ((is_initialisation = FALSE) => (var_OK = {ref |-> TRUE}))))))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_TryToMove2 : LUSTRE_BOOL) & ((var_TryToMove1 : LUSTRE_BOOL) & ((var_MaySafelyMove : LUSTRE_BOOL) & ((var_OK : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_moving : LUSTRE_BOOL) & ((var_stop : LUSTRE_BOOL) & ((var_start2 : LUSTRE_BOOL) & ((var_start1 : LUSTRE_BOOL) & (((is_initialisation = FALSE) => (var_OK /= {})) & ((is_initialisation = FALSE) => (var_OK = {ref |-> TRUE})))))))))))))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_OK := {}; 
     var_tmp_0 := {}; 
@@ -50,6 +54,7 @@ OPERATIONS
                 Node_31.clock_step(var_TryToMove1); 
                 Node_32.clock_step(var_TryToMove2); 
                 var_OK := l_fby_boolean(is_initialisation |-> {ref |-> TRUE} |-> l_ite_boolean(l_or(l_not(Node_31.var_r) |-> l_not(Node_32.var_r)) |-> l_and(l_and(l_or(l_or(l_and(l_not(var_start1) |-> l_not(var_start2)) |-> l_and(l_not(var_start2) |-> l_not(var_stop))) |-> l_and(l_not(var_start1) |-> l_not(var_stop))) |-> l_not(l_and(l_and(var_start1 |-> var_start2) |-> var_stop))) |-> l_ite_boolean(var_moving |-> var_MaySafelyMove |-> {ref |-> TRUE})) |-> {ref |-> TRUE})); 
+                SELECT ((assert_ok = TRUE) & ((Node_32.assert_ok = TRUE) & ((Node_31.assert_ok = TRUE) & ((Node_26.assert_ok = TRUE) & ((Node_30.assert_ok = TRUE) & ((Node_29.assert_ok = TRUE) & ((Node_28.assert_ok = TRUE) & (Node_27.assert_ok = TRUE)))))))) THEN skip END; 
                 is_initialisation := FALSE
 
             END

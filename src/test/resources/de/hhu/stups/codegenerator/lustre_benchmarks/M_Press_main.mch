@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Press_main
 
 INCLUDES Node_14.M_sustain, Node_13.M_sustain, Node_12.M_sustain, Node_6.M_MovingItem, Node_9.M_sustain, Node_10.M_after_h, Node_7.M_sustain, Node_8.M_after_h, Node_11.M_sustain
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_Pup, var_Pdn, var_ArmsMayPassPress, var_Pstop
+VARIABLES assert_ok, is_initialisation, var_Pup, var_Pdn, var_ArmsMayPassPress, var_Pstop
 
-INVARIANT ((var_ArmsMayPassPress : LUSTRE_BOOL) & ((var_Pstop : LUSTRE_BOOL) & ((var_Pdn : LUSTRE_BOOL) & ((var_Pup : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_ArmsMayPassPress /= {})) & (((is_initialisation = FALSE) => (var_Pstop /= {})) & (((is_initialisation = FALSE) => (var_Pdn /= {})) & ((is_initialisation = FALSE) => (var_Pup /= {}))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_ArmsMayPassPress : LUSTRE_BOOL) & ((var_Pstop : LUSTRE_BOOL) & ((var_Pdn : LUSTRE_BOOL) & ((var_Pup : LUSTRE_BOOL) & (((is_initialisation = FALSE) => (var_ArmsMayPassPress /= {})) & (((is_initialisation = FALSE) => (var_Pstop /= {})) & (((is_initialisation = FALSE) => (var_Pdn /= {})) & ((is_initialisation = FALSE) => (var_Pup /= {})))))))))))
 
 INITIALISATION
+    assert_ok := TRUE;
     is_initialisation := TRUE;
     var_Pup := {};
     var_Pdn := {};
@@ -55,6 +59,7 @@ OPERATIONS
                 var_Arm1MayPassPress := l_or(var_Arm1OutOfPress |-> var_Arm1CannotCollideWithPress);
                 var_Arm2MayPassPress := l_or(var_Arm2OutOfPress |-> var_Arm2CannotCollideWithPress);
                 var_ArmsMayPassPress := l_and(var_Arm1MayPassPress |-> var_Arm2MayPassPress);
+                SELECT ((assert_ok = TRUE) & ((Node_14.assert_ok = TRUE) & ((Node_13.assert_ok = TRUE) & ((Node_12.assert_ok = TRUE) & ((Node_6.assert_ok = TRUE) & ((Node_9.assert_ok = TRUE) & ((Node_10.assert_ok = TRUE) & ((Node_7.assert_ok = TRUE) & ((Node_8.assert_ok = TRUE) & (Node_11.assert_ok = TRUE)))))))))) THEN skip END;
                 is_initialisation := FALSE
 
             END

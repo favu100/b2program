@@ -1,3 +1,7 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
+
 MACHINE M_always_since
 
 INCLUDES Node_19.M_after

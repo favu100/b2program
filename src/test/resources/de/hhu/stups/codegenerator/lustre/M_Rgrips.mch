@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Rgrips
 
 INCLUDES Node_25.M_after_h, Node_24.M_after_h, Node_23.M_after_h, Node_22.M_after_h

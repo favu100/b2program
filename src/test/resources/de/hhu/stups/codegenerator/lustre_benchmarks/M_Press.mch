@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Press
 
 INCLUDES Node_14.M_sustain, Node_13.M_sustain, Node_12.M_sustain, Node_6.M_MovingItem, Node_9.M_sustain, Node_10.M_after_h, Node_7.M_sustain, Node_8.M_after_h, Node_11.M_sustain
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_Pup, var_Pdn, var_ArmsMayPassPress, var_Pstop
+VARIABLES assert_ok, is_initialisation, var_Pup, var_Pdn, var_ArmsMayPassPress, var_Pstop
 
-INVARIANT ((var_ArmsMayPassPress : LUSTRE_BOOL) & ((var_Pstop : LUSTRE_BOOL) & ((var_Pdn : LUSTRE_BOOL) & ((var_Pup : LUSTRE_BOOL) & (is_initialisation : BOOL)))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_ArmsMayPassPress : LUSTRE_BOOL) & ((var_Pstop : LUSTRE_BOOL) & ((var_Pdn : LUSTRE_BOOL) & (var_Pup : LUSTRE_BOOL))))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_Pup := {}; 
     var_Pdn := {}; 

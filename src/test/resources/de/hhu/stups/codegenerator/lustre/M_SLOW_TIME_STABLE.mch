@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Lustre V6 Language Manual
+
 MACHINE M_SLOW_TIME_STABLE
 
 INCLUDES Node_1.M_SLOW_STABLE

@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    M_DockingApproachExample_Ext_exec program = new M_DockingApproachExample_Ext_exec();
+    program.simulate();
+}

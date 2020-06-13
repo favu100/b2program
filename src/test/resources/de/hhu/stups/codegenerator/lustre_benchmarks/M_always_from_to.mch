@@ -1,14 +1,19 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
+
 MACHINE M_always_from_to
 
 INCLUDES Node_15.M_implies, Node_18.M_once_since, Node_17.M_always_since, Node_16.M_after
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_X
+VARIABLES assert_ok, is_initialisation, var_X
 
-INVARIANT ((var_X : LUSTRE_BOOL) & (is_initialisation : BOOL))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & (var_X : LUSTRE_BOOL)))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_X := {}
 

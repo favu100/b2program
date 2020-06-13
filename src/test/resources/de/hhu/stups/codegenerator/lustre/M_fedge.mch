@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_fedge
 
 INCLUDES Node_1.M_redge

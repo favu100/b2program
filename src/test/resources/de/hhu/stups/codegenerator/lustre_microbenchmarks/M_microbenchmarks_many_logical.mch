@@ -1,4 +1,4 @@
-MACHINE M_microbenchmarks_fby_boolean
+MACHINE M_microbenchmarks_many_logical
 
 SEES LibraryLustre
 
@@ -21,7 +21,7 @@ OPERATIONS
             VAR var_x, var_y IN
                 var_x := param_x; 
                 var_y := param_y; 
-                var_res := l_fby_boolean(is_initialisation |-> var_x |-> var_y); 
+                var_res := l_or(l_or(l_and(l_or(l_not(var_x) |-> var_x) |-> l_or(l_not(var_y) |-> var_y)) |-> l_and(var_x |-> var_y)) |-> l_and(l_not(var_x) |-> l_not(var_y))); 
                 SELECT (assert_ok = TRUE) THEN skip END; 
                 is_initialisation := FALSE
 

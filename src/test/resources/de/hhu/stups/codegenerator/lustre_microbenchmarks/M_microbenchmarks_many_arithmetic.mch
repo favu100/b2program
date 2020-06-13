@@ -1,4 +1,4 @@
-MACHINE M_microbenchmarks_unary_minus_integer
+MACHINE M_microbenchmarks_many_arithmetic
 
 SEES LibraryLustre
 
@@ -14,13 +14,14 @@ INITIALISATION
 
 OPERATIONS 
 
-    clock_step(param_x) = 
+    clock_step(param_x, param_y) = 
         PRE
-            (param_x : LUSTRE_INT_NOT_NIL)
+            ((param_x : LUSTRE_INT_NOT_NIL) & (param_y : LUSTRE_INT_NOT_NIL))
         THEN
-            VAR var_x IN
+            VAR var_x, var_y IN
                 var_x := param_x; 
-                var_res := l_unary_minus(var_x); 
+                var_y := param_y; 
+                var_res := l_multiply(l_multiply(l_multiply(l_plus(var_x |-> l_unary_minus(var_y)) |-> l_plus(var_x |-> l_unary_minus(var_y))) |-> l_plus(var_x |-> var_y)) |-> l_plus(l_unary_minus(var_x) |-> l_unary_minus(var_y))); 
                 SELECT (assert_ok = TRUE) THEN skip END; 
                 is_initialisation := FALSE
 

@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_fedge
 
 INCLUDES Node_1.M_redge
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_f
+VARIABLES assert_ok, is_initialisation, var_f
 
-INVARIANT ((var_f : LUSTRE_BOOL) & (is_initialisation : BOOL))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & (var_f : LUSTRE_BOOL)))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_f := {}
 

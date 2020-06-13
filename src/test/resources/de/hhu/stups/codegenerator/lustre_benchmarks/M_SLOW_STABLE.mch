@@ -1,12 +1,16 @@
+//generated from Lustre
+//taken from Lustre V6 Language Manual
+
 MACHINE M_SLOW_STABLE
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_level, var_count
+VARIABLES assert_ok, is_initialisation, var_level, var_count
 
-INVARIANT ((var_level : LUSTRE_BOOL) & ((var_count : LUSTRE_INT) & (is_initialisation : BOOL)))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_level : LUSTRE_BOOL) & (var_count : LUSTRE_INT))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_level := {}; 
     var_count := {}

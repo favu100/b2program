@@ -74,4 +74,9 @@ public class TestLustreBenchmarks extends TestCpp {
 		testCpp("lustre_benchmarks/M_VerifyMovingItem_exec", "M_VerifyMovingItem_exec", "M_VerifyMovingItem_execAddition.stcpp", false);
 	}
 
+	@Test
+	public void testDockingApproach() throws Exception {
+		testCpp("lustre_benchmarks/M_DockingApproachExample_Ext_exec", "M_DockingApproachExample_Ext_exec", "M_DockingApproachExample_Ext_execAddition.stcpp", false);
+	}
+
 }

@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Rbase
 
 INCLUDES Node_15.M_MovingItem, Node_19.M_sustain, Node_18.M_sustain, Node_17.M_sustain, Node_16.M_sustain, Node_21.M_sustain, Node_20.M_sustain

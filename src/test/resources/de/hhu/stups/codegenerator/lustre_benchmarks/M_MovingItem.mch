@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_MovingItem
 
 INCLUDES Node_5.M_fedge, Node_4.M_fedge, Node_3.M_redge, Node_2.M_redge
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_start1, var_start2, var_stop, var_tmp_0, var_tmp_1
+VARIABLES assert_ok, is_initialisation, var_start1, var_start2, var_stop, var_tmp_0, var_tmp_1
 
-INVARIANT ((var_stop : LUSTRE_BOOL) & ((var_start2 : LUSTRE_BOOL) & ((var_start1 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & (is_initialisation : BOOL))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_stop : LUSTRE_BOOL) & ((var_start2 : LUSTRE_BOOL) & ((var_start1 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & (var_tmp_0 : LUSTRE_BOOL)))))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_start1 := {}; 
     var_start2 := {}; 

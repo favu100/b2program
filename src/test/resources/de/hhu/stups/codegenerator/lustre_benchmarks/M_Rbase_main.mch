@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Rbase_main
 
 INCLUDES Node_15.M_MovingItem, Node_19.M_sustain, Node_18.M_sustain, Node_17.M_sustain, Node_16.M_sustain, Node_21.M_sustain, Node_20.M_sustain
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_Rleft, var_Rright, var_Rstop
+VARIABLES assert_ok, is_initialisation, var_Rleft, var_Rright, var_Rstop
 
-INVARIANT ((var_Rstop : LUSTRE_BOOL) & ((var_Rright : LUSTRE_BOOL) & ((var_Rleft : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_Rstop /= {})) & (((is_initialisation = FALSE) => (var_Rright /= {})) & ((is_initialisation = FALSE) => (var_Rleft /= {}))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_Rstop : LUSTRE_BOOL) & ((var_Rright : LUSTRE_BOOL) & ((var_Rleft : LUSTRE_BOOL) & (((is_initialisation = FALSE) => (var_Rstop /= {})) & (((is_initialisation = FALSE) => (var_Rright /= {})) & ((is_initialisation = FALSE) => (var_Rleft /= {})))))))))
 
 INITIALISATION
+    assert_ok := TRUE;
     is_initialisation := TRUE;
     var_Rleft := {};
     var_Rright := {};
@@ -44,6 +48,7 @@ OPERATIONS
                 var_Rleft := Node_15.var_start1;
                 var_Rright := Node_15.var_start2;
                 var_Rstop := Node_15.var_stop;
+                SELECT ((assert_ok = TRUE) & ((Node_15.assert_ok = TRUE) & ((Node_19.assert_ok = TRUE) & ((Node_18.assert_ok = TRUE) & ((Node_17.assert_ok = TRUE) & ((Node_16.assert_ok = TRUE) & ((Node_21.assert_ok = TRUE) & (Node_20.assert_ok = TRUE)))))))) THEN skip END;
                 is_initialisation := FALSE
 
             END

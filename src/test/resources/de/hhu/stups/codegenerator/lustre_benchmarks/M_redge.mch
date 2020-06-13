@@ -1,12 +1,16 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_redge
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_r, var_tmp_0
+VARIABLES assert_ok, is_initialisation, var_r, var_tmp_0
 
-INVARIANT ((var_r : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & (is_initialisation : BOOL)))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_r : LUSTRE_BOOL) & (var_tmp_0 : LUSTRE_BOOL))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_r := {}; 
     var_tmp_0 := {}

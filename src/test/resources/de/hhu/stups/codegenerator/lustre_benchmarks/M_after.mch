@@ -1,12 +1,16 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
 MACHINE M_after
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_afterA, var_tmp_0
+VARIABLES assert_ok, is_initialisation, var_afterA, var_tmp_0
 
-INVARIANT ((var_afterA : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & (is_initialisation : BOOL)))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_afterA : LUSTRE_BOOL) & (var_tmp_0 : LUSTRE_BOOL))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_afterA := {}; 
     var_tmp_0 := {}

@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_redge
 
 SEES LibraryLustre

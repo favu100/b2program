@@ -2,11 +2,12 @@ MACHINE M_microbenchmarks_many_local_clocks
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, is_initialisation_c1, is_initialisation_c2, is_initialisation_c3, is_initialisation_c4, is_initialisation_c5, var_res, var_val, var_c1, var_tmp_0, var_c2, var_tmp_1, var_c3, var_tmp_2, var_c4, var_tmp_3, var_c5, var_tmp_4, var_tmp_5, var_tmp_6, var_tmp_7, var_tmp_8
+VARIABLES assert_ok, is_initialisation, is_initialisation_c1, is_initialisation_c2, is_initialisation_c3, is_initialisation_c4, is_initialisation_c5, var_res, var_val, var_c1, var_tmp_0, var_c2, var_tmp_1, var_c3, var_tmp_2, var_c4, var_tmp_3, var_c5, var_tmp_4, var_tmp_5, var_tmp_6, var_tmp_7, var_tmp_8
 
-INVARIANT ((var_val : LUSTRE_BOOL) & ((var_res : LUSTRE_BOOL) & ((var_tmp_4 : LUSTRE_BOOL) & ((var_tmp_5 : LUSTRE_BOOL) & ((var_tmp_3 : LUSTRE_BOOL) & ((var_tmp_6 : LUSTRE_BOOL) & ((var_tmp_2 : LUSTRE_BOOL) & ((var_tmp_7 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_8 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_c5 : LUSTRE_BOOL) & ((var_c4 : LUSTRE_BOOL) & ((var_c3 : LUSTRE_BOOL) & ((var_c2 : LUSTRE_BOOL) & ((var_c1 : LUSTRE_BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_c1 : BOOL) & ((is_initialisation_c2 : BOOL) & ((is_initialisation_c3 : BOOL) & ((is_initialisation_c4 : BOOL) & ((is_initialisation_c5 : BOOL) & ((is_initialisation = FALSE) => (var_res /= {}))))))))))))))))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_c1 : BOOL) & ((is_initialisation_c2 : BOOL) & ((is_initialisation_c3 : BOOL) & ((is_initialisation_c4 : BOOL) & ((is_initialisation_c5 : BOOL) & ((var_val : LUSTRE_BOOL) & ((var_res : LUSTRE_BOOL) & ((var_tmp_4 : LUSTRE_BOOL) & ((var_tmp_5 : LUSTRE_BOOL) & ((var_tmp_3 : LUSTRE_BOOL) & ((var_tmp_6 : LUSTRE_BOOL) & ((var_tmp_2 : LUSTRE_BOOL) & ((var_tmp_7 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_8 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_c5 : LUSTRE_BOOL) & ((var_c4 : LUSTRE_BOOL) & ((var_c3 : LUSTRE_BOOL) & ((var_c2 : LUSTRE_BOOL) & ((var_c1 : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_res /= {})))))))))))))))))))))))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     is_initialisation_c1 := TRUE; 
     is_initialisation_c2 := TRUE; 
@@ -39,7 +40,7 @@ OPERATIONS
         THEN
             var_val := param_val; 
             var_c1 := {ref |-> TRUE}; 
-            PRE (var_c1 /= {}) THEN skip END;
+            PRE (var_c1 /= {}) THEN skip END; 
             IF (var_c1 = {ref |-> TRUE}) THEN 
                 var_c2 := var_c1; 
                 PRE (var_c2 /= {}) THEN skip END
@@ -88,6 +89,7 @@ OPERATIONS
                 var_tmp_8 := var_tmp_7
             END; 
             var_res := var_tmp_8; 
+            SELECT (assert_ok = TRUE) THEN skip END; 
             is_initialisation := FALSE; 
             IF (var_c1 = {ref |-> TRUE}) THEN 
                 is_initialisation_c1 := FALSE

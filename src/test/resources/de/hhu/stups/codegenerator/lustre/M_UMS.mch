@@ -1,3 +1,7 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
+
 MACHINE M_UMS
 
 SEES LibraryLustre

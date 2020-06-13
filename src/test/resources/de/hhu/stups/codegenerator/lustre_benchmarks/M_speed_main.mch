@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from N. Halbwachs, P Raymond A Tutorial of Lustre, 2002
+
 MACHINE M_speed_main
 
 INCLUDES Node_1.M_counter
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_early, var_late
+VARIABLES assert_ok, is_initialisation, var_early, var_late
 
-INVARIANT ((var_early : LUSTRE_BOOL) & ((var_late : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_early /= {})) & ((is_initialisation = FALSE) => (var_late /= {}))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_early : LUSTRE_BOOL) & ((var_late : LUSTRE_BOOL) & (((is_initialisation = FALSE) => (var_early /= {})) & ((is_initialisation = FALSE) => (var_late /= {})))))))
 
 INITIALISATION
+    assert_ok := TRUE;
     is_initialisation := TRUE;
     var_early := {};
     var_late := {}
@@ -28,6 +32,7 @@ OPERATIONS
                 var_diff := Node_1.var_c;
                 var_early := l_fby_boolean(is_initialisation |-> {ref |-> FALSE} |-> l_ite_boolean(var_early |-> l_greater(var_diff |-> {ref |-> 0}) |-> l_greater_equal(var_diff |-> {ref |-> 10})));
                 var_late := l_fby_boolean(is_initialisation |-> {ref |-> FALSE} |-> l_ite_boolean(var_late |-> l_less(var_diff |-> {ref |-> 0}) |-> l_less_equal(var_diff |-> l_unary_minus({ref |-> 10}))));
+                SELECT ((assert_ok = TRUE) & (Node_1.assert_ok = TRUE)) THEN skip END;
                 is_initialisation := FALSE
 
             END

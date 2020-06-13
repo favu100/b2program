@@ -1,12 +1,17 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
+
 MACHINE M_UMS_main
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_grant_access, var_grant_exit, var_do_AB, var_do_BC
+VARIABLES assert_ok, is_initialisation, var_grant_access, var_grant_exit, var_do_AB, var_do_BC
 
-INVARIANT ((var_do_BC : LUSTRE_BOOL) & ((var_do_AB : LUSTRE_BOOL) & ((var_grant_exit : LUSTRE_BOOL) & ((var_grant_access : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_do_BC /= {})) & (((is_initialisation = FALSE) => (var_do_AB /= {})) & (((is_initialisation = FALSE) => (var_grant_exit /= {})) & ((is_initialisation = FALSE) => (var_grant_access /= {}))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_do_BC : LUSTRE_BOOL) & ((var_do_AB : LUSTRE_BOOL) & ((var_grant_exit : LUSTRE_BOOL) & ((var_grant_access : LUSTRE_BOOL) & (((is_initialisation = FALSE) => (var_do_BC /= {})) & (((is_initialisation = FALSE) => (var_do_AB /= {})) & (((is_initialisation = FALSE) => (var_grant_exit /= {})) & ((is_initialisation = FALSE) => (var_grant_access /= {})))))))))))
 
 INITIALISATION
+    assert_ok := TRUE;
     is_initialisation := TRUE;
     var_grant_access := {};
     var_grant_exit := {};
@@ -32,6 +37,7 @@ OPERATIONS
                 var_grant_exit := l_and(var_only_on_B |-> var_ack_BC);
                 var_do_AB := l_and(l_not(var_ack_AB) |-> var_empty_section);
                 var_do_BC := l_and(l_not(var_ack_BC) |-> var_only_on_B);
+                SELECT (assert_ok = TRUE) THEN skip END;
                 is_initialisation := FALSE
 
             END

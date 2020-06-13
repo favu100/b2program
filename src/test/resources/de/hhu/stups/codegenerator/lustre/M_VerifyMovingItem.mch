@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_VerifyMovingItem
 
 INCLUDES Node_32.M_redge, Node_31.M_redge, Node_26.M_sustain, Node_30.M_fedge, Node_29.M_fedge, Node_28.M_redge, Node_27.M_redge

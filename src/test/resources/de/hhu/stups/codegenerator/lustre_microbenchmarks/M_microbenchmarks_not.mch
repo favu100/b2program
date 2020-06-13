@@ -2,11 +2,12 @@ MACHINE M_microbenchmarks_not
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_res
+VARIABLES assert_ok, is_initialisation, var_res
 
-INVARIANT ((var_res : LUSTRE_BOOL) & ((is_initialisation : BOOL) & ((is_initialisation = FALSE) => (var_res /= {}))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_res : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_res /= {})))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_res := {}
 
@@ -20,6 +21,7 @@ OPERATIONS
             VAR var_x IN
                 var_x := param_x; 
                 var_res := l_not(var_x); 
+                SELECT (assert_ok = TRUE) THEN skip END; 
                 is_initialisation := FALSE
 
             END

@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Rbase
 
 INCLUDES Node_15.M_MovingItem, Node_19.M_sustain, Node_18.M_sustain, Node_17.M_sustain, Node_16.M_sustain, Node_21.M_sustain, Node_20.M_sustain
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_Rleft, var_Rright, var_Rstop
+VARIABLES assert_ok, is_initialisation, var_Rleft, var_Rright, var_Rstop
 
-INVARIANT ((var_Rstop : LUSTRE_BOOL) & ((var_Rright : LUSTRE_BOOL) & ((var_Rleft : LUSTRE_BOOL) & (is_initialisation : BOOL))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_Rstop : LUSTRE_BOOL) & ((var_Rright : LUSTRE_BOOL) & (var_Rleft : LUSTRE_BOOL)))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_Rleft := {}; 
     var_Rright := {}; 

@@ -1,14 +1,18 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Rgrips
 
 INCLUDES Node_25.M_after_h, Node_24.M_after_h, Node_23.M_after_h, Node_22.M_after_h
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_Rget1, var_Rget2, var_Rput2, var_Rput1
+VARIABLES assert_ok, is_initialisation, var_Rget1, var_Rget2, var_Rput2, var_Rput1
 
-INVARIANT ((var_Rput2 : LUSTRE_BOOL) & ((var_Rget2 : LUSTRE_BOOL) & ((var_Rput1 : LUSTRE_BOOL) & ((var_Rget1 : LUSTRE_BOOL) & (is_initialisation : BOOL)))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_Rput2 : LUSTRE_BOOL) & ((var_Rget2 : LUSTRE_BOOL) & ((var_Rput1 : LUSTRE_BOOL) & (var_Rget1 : LUSTRE_BOOL))))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_Rget1 := {}; 
     var_Rget2 := {}; 

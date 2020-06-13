@@ -1,45 +1,50 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_MovingItem_main
 
 INCLUDES Node_5.M_fedge, Node_4.M_fedge, Node_3.M_redge, Node_2.M_redge
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_start1, var_start2, var_stop, var_tmp_0, var_tmp_1
+VARIABLES assert_ok, is_initialisation, var_start1, var_start2, var_stop, var_tmp_0, var_tmp_1
 
-INVARIANT ((var_stop : LUSTRE_BOOL) & ((var_start2 : LUSTRE_BOOL) & ((var_start1 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((is_initialisation : BOOL) & (((is_initialisation = FALSE) => (var_stop /= {})) & (((is_initialisation = FALSE) => (var_start2 /= {})) & ((is_initialisation = FALSE) => (var_start1 /= {}))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_stop : LUSTRE_BOOL) & ((var_start2 : LUSTRE_BOOL) & ((var_start1 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & (((is_initialisation = FALSE) => (var_stop /= {})) & (((is_initialisation = FALSE) => (var_start2 /= {})) & ((is_initialisation = FALSE) => (var_start1 /= {})))))))))))
 
-INITIALISATION 
-    is_initialisation := TRUE; 
-    var_start1 := {}; 
-    var_start2 := {}; 
-    var_stop := {}; 
-    var_tmp_0 := {}; 
+INITIALISATION
+    assert_ok := TRUE;
+    is_initialisation := TRUE;
+    var_start1 := {};
+    var_start2 := {};
+    var_stop := {};
+    var_tmp_0 := {};
     var_tmp_1 := {}
 
 
-OPERATIONS 
+OPERATIONS
 
-    clock_step(param_MaySafelyMove, param_TryToMove1, param_TryToMove2) = 
+    clock_step(param_MaySafelyMove, param_TryToMove1, param_TryToMove2) =
         PRE
             ((param_MaySafelyMove : LUSTRE_BOOL_NOT_NIL) & ((param_TryToMove1 : LUSTRE_BOOL_NOT_NIL) & (param_TryToMove2 : LUSTRE_BOOL_NOT_NIL)))
         THEN
             VAR hvar_tmp_0, hvar_tmp_1, var_MaySafelyMove, var_TryToMove1, var_TryToMove2, var_MayMove1, var_MayMove2 IN
-                hvar_tmp_0 := var_tmp_0; 
-                hvar_tmp_1 := var_tmp_1; 
-                var_MaySafelyMove := param_MaySafelyMove; 
-                var_TryToMove1 := param_TryToMove1; 
-                var_TryToMove2 := param_TryToMove2; 
-                var_tmp_1 := l_not(var_TryToMove1); 
-                var_tmp_0 := l_not(var_TryToMove2); 
-                var_MayMove1 := l_and(var_TryToMove1 |-> var_MaySafelyMove); 
-                var_MayMove2 := l_and(var_TryToMove2 |-> var_MaySafelyMove); 
-                Node_2.clock_step(l_and(var_MayMove1 |-> l_fby_boolean(is_initialisation |-> {ref |-> TRUE} |-> hvar_tmp_0))); 
-                var_start1 := Node_2.var_r; 
-                Node_3.clock_step(l_and(var_MayMove2 |-> l_fby_boolean(is_initialisation |-> {ref |-> TRUE} |-> hvar_tmp_1))); 
-                var_start2 := Node_3.var_r; 
-                Node_4.clock_step(var_MayMove1); 
-                Node_5.clock_step(var_MayMove2); 
-                var_stop := l_or(Node_4.var_f |-> Node_5.var_f); 
+                hvar_tmp_0 := var_tmp_0;
+                hvar_tmp_1 := var_tmp_1;
+                var_MaySafelyMove := param_MaySafelyMove;
+                var_TryToMove1 := param_TryToMove1;
+                var_TryToMove2 := param_TryToMove2;
+                var_tmp_1 := l_not(var_TryToMove1);
+                var_tmp_0 := l_not(var_TryToMove2);
+                var_MayMove1 := l_and(var_TryToMove1 |-> var_MaySafelyMove);
+                var_MayMove2 := l_and(var_TryToMove2 |-> var_MaySafelyMove);
+                Node_2.clock_step(l_and(var_MayMove1 |-> l_fby_boolean(is_initialisation |-> {ref |-> TRUE} |-> hvar_tmp_0)));
+                var_start1 := Node_2.var_r;
+                Node_3.clock_step(l_and(var_MayMove2 |-> l_fby_boolean(is_initialisation |-> {ref |-> TRUE} |-> hvar_tmp_1)));
+                var_start2 := Node_3.var_r;
+                Node_4.clock_step(var_MayMove1);
+                Node_5.clock_step(var_MayMove2);
+                var_stop := l_or(Node_4.var_f |-> Node_5.var_f);
+                SELECT ((assert_ok = TRUE) & ((Node_5.assert_ok = TRUE) & ((Node_4.assert_ok = TRUE) & ((Node_3.assert_ok = TRUE) & (Node_2.assert_ok = TRUE))))) THEN skip END;
                 is_initialisation := FALSE
 
             END

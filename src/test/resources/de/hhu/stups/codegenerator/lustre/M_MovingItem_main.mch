@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_MovingItem_main
 
 INCLUDES Node_5.M_fedge, Node_4.M_fedge, Node_3.M_redge, Node_2.M_redge

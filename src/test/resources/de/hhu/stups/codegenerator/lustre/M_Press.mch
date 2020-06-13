@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_Press
 
 INCLUDES Node_14.M_sustain, Node_13.M_sustain, Node_12.M_sustain, Node_6.M_MovingItem, Node_9.M_sustain, Node_10.M_after_h, Node_7.M_sustain, Node_8.M_after_h, Node_11.M_sustain

@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from N. Halbwachs, P Raymond A Tutorial of Lustre, 2002
+
 MACHINE M_speed_main
 
 INCLUDES Node_1.M_counter

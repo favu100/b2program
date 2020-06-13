@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from https://github.com/jahierwan/lustre-examples, Lustre V6 Compiler applied to initial version carlights2.lus
+
 MACHINE M_carlights2_v4
 
 SEES LibraryLustre

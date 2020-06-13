@@ -2,11 +2,12 @@ MACHINE M_microbenchmarks_pre_boolean
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_res, var_x
+VARIABLES assert_ok, is_initialisation, var_res, var_x
 
-INVARIANT ((var_x : LUSTRE_BOOL) & ((var_res : LUSTRE_BOOL) & ((is_initialisation : BOOL) & ((is_initialisation = FALSE) => (var_res /= {})))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((var_x : LUSTRE_BOOL) & ((var_res : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_res /= {}))))))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_res := {}; 
     var_x := {}
@@ -22,6 +23,7 @@ OPERATIONS
                 hvar_x := var_x; 
                 var_x := param_x; 
                 var_res := hvar_x; 
+                SELECT (assert_ok = TRUE) THEN skip END; 
                 is_initialisation := FALSE
 
             END

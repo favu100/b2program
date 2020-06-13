@@ -1,3 +1,7 @@
+//generated from Lustre
+//taken from Programming and verifying real-time systems by means of the synchronous data-flow language LUSTRE, N.Halbwachs et. al
+
+
 MACHINE M_always_from_to
 
 INCLUDES Node_15.M_implies, Node_18.M_once_since, Node_17.M_always_since, Node_16.M_after

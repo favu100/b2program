@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from https://bitbucket.org/lememta/bdd-inv/
+
 MACHINE M_pilot_flying
 
 SEES LibraryLustre

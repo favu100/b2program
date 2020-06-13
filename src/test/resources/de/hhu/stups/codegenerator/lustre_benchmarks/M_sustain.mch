@@ -1,12 +1,16 @@
+//generated from Lustre
+//taken from Production cell in Lustre, Leszek Holenderski
+
 MACHINE M_sustain
 
 SEES LibraryLustre
 
-VARIABLES is_initialisation, var_s
+VARIABLES assert_ok, is_initialisation, var_s
 
-INVARIANT ((var_s : LUSTRE_BOOL) & (is_initialisation : BOOL))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & (var_s : LUSTRE_BOOL)))
 
 INITIALISATION 
+    assert_ok := TRUE; 
     is_initialisation := TRUE; 
     var_s := {}
 

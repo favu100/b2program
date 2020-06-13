@@ -74,4 +74,9 @@ public class TestLustreBenchmarks extends TestJava {
 		testJava("lustre_benchmarks/M_VerifyMovingItem_exec", "M_VerifyMovingItem_exec", "M_VerifyMovingItem_execAddition.stjava", false);
 	}
 
+	@Test
+	public void testDockingApproach() throws Exception {
+		testJava("lustre_benchmarks/M_DockingApproachExample_Ext_exec", "M_DockingApproachExample_Ext_exec", "M_DockingApproachExample_Ext_execAddition.stjava", false);
+	}
+
 }

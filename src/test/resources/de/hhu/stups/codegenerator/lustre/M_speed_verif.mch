@@ -1,3 +1,6 @@
+//generated from Lustre
+//taken from N. Halbwachs, P Raymond A Tutorial of Lustre, 2002
+
 MACHINE M_speed_verif
 
 INCLUDES Node_2.M_speed

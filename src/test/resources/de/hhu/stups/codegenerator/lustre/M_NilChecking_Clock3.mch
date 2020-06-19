@@ -4,9 +4,9 @@ INCLUDES Node_1.M_NilChecking_Clock3_Call1
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation_pre_clock, var_res, var_clock, var_x, var_pre_clock, var_tmp_0
+VARIABLES assert_ok, is_initialisation, is_initialisation_pre_clock, var_res, var_clock, var_pre_clock, var_tmp_0
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_pre_clock : BOOL) & ((var_x : LUSTRE_INT) & ((var_clock : LUSTRE_BOOL) & ((var_res : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & ((var_pre_clock : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_res /= {}))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_pre_clock : BOOL) & ((var_clock : LUSTRE_BOOL) & ((var_res : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & ((var_pre_clock : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_res /= {})))))))))
 
 INITIALISATION 
     assert_ok := TRUE; 
@@ -14,7 +14,6 @@ INITIALISATION
     is_initialisation_pre_clock := TRUE; 
     var_res := {}; 
     var_clock := {}; 
-    var_x := {}; 
     var_pre_clock := {}; 
     var_tmp_0 := {}
 
@@ -25,7 +24,7 @@ OPERATIONS
         PRE
             ((param_clock : LUSTRE_BOOL_NOT_NIL) & (param_x : LUSTRE_INT_NOT_NIL))
         THEN
-            VAR hvar_clock IN
+            VAR hvar_clock, var_x IN
                 hvar_clock := var_clock; 
                 var_clock := param_clock; 
                 var_x := param_x; 

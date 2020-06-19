@@ -7,17 +7,15 @@ INCLUDES Node_1.M_STABLE
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation_ck, var_level, var_set, var_delay, var_ck, var_tmp_0
+VARIABLES assert_ok, is_initialisation, is_initialisation_ck, var_level, var_ck, var_tmp_0
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_ck : BOOL) & ((var_delay : LUSTRE_INT) & ((var_set : LUSTRE_BOOL) & ((var_level : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_ck : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_level /= {}))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_ck : BOOL) & ((var_level : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_ck : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_level /= {}))))))))
 
 INITIALISATION 
     assert_ok := TRUE; 
     is_initialisation := TRUE; 
     is_initialisation_ck := TRUE; 
     var_level := {}; 
-    var_set := {}; 
-    var_delay := {}; 
     var_ck := {}; 
     var_tmp_0 := {}
 
@@ -28,7 +26,7 @@ OPERATIONS
         PRE
             ((param_set : LUSTRE_BOOL_NOT_NIL) & ((param_second : LUSTRE_BOOL_NOT_NIL) & (param_delay : LUSTRE_INT_NOT_NIL)))
         THEN
-            VAR var_second IN
+            VAR var_set, var_second, var_delay IN
                 var_set := param_set; 
                 var_second := param_second; 
                 var_delay := param_delay; 

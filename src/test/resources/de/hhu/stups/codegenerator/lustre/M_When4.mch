@@ -2,16 +2,15 @@ MACHINE M_When4
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation_clock, var_res, var_tmp_0, var_clock
+VARIABLES assert_ok, is_initialisation, is_initialisation_clock, var_res, var_clock
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_clock : BOOL) & ((var_clock : LUSTRE_BOOL) & ((var_res : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & ((is_initialisation_clock = FALSE) => (var_res /= {}))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_clock : BOOL) & ((var_clock : LUSTRE_BOOL) & ((var_res : LUSTRE_INT) & ((is_initialisation_clock = FALSE) => (var_res /= {})))))))
 
 INITIALISATION 
     assert_ok := TRUE; 
     is_initialisation := TRUE; 
     is_initialisation_clock := TRUE; 
     var_res := {}; 
-    var_tmp_0 := {}; 
     var_clock := {}
 
 
@@ -21,7 +20,7 @@ OPERATIONS
         PRE
             (param_clock : LUSTRE_BOOL_NOT_NIL)
         THEN
-            VAR var_a, var_b IN
+            VAR var_a, var_b, var_tmp_0 IN
                 var_clock := param_clock; 
                 PRE (var_clock /= {}) THEN skip END; 
                 var_a := {ref |-> 1}; 
@@ -40,8 +39,7 @@ OPERATIONS
 
         END;
 
-
-     out <-- getRes = BEGIN out := var_res END
+    out <-- getRes = BEGIN out := var_res END
 
 
 

@@ -5,9 +5,9 @@ MACHINE M_carlights2_v4
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation__AUTO_switch_pos_1, is_initialisation__OFF_switch_pos_1, is_initialisation__ON_switch_pos_1, var_is_on, var___tempo_2_1, var___tempo_1_1, var__split_1, var_tmp_0, var__OFF_switch_pos_1, var_tmp_1, var__ON_switch_pos_1, var__split_3, var_intensity, var__split_6, var_tmp_4, var_tmp_5, var_tmp_6, var_tmp_7, var_tmp_10, var_tmp_11, var_tmp_12, var_tmp_13, var_fm_auto, var_tmp_3, var_tmp_9, var_tmp_2, var_tmp_8, var__AUTO_switch_pos_1, var__split_27, var_res_auto, var__split_28
+VARIABLES assert_ok, is_initialisation, is_initialisation__AUTO_switch_pos_1, is_initialisation__OFF_switch_pos_1, is_initialisation__ON_switch_pos_1, var_is_on, var__split_1, var__OFF_switch_pos_1, var__ON_switch_pos_1, var____split_23_2_1, var_____split_21_1_2_1, var____x_1_2_1, var____split_24_2_1, var____split_23_1_1, var_____split_21_1_1_1, var____x_1_1_1, var____split_24_1_1, var__split_5, var___split_13_1, var___split_14_1, var___split_9_1, var___split_15_1, var____split_22_2_1, var____split_25_2_1, var___split_10_1, var____split_22_1_1, var____split_25_1_1, var___n_2_1, var____split_26_2_1, var___n_1_1, var____split_26_1_1, var___tempo_2_1, var___tempo_1_1, var___split_16_1, var___split_11_1, var__AUTO_switch_pos_1, var__split_7, var___split_12_1, var___split_17_1, var__split_2, var__split_4, var__split_8, var__split_27, var_res_auto, var__split_28
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation__AUTO_switch_pos_1 : BOOL) & ((is_initialisation__OFF_switch_pos_1 : BOOL) & ((is_initialisation__ON_switch_pos_1 : BOOL) & ((var_intensity : LUSTRE_INT) & ((var_is_on : LUSTRE_BOOL) & ((var_tmp_13 : LUSTRE_INT) & ((var_tmp_12 : LUSTRE_INT) & ((var_tmp_11 : LUSTRE_INT) & ((var_tmp_10 : LUSTRE_INT) & ((var_tmp_9 : LUSTRE_INT) & ((var_tmp_7 : LUSTRE_INT) & ((var_tmp_6 : LUSTRE_INT) & ((var_tmp_5 : LUSTRE_INT) & ((var_tmp_4 : LUSTRE_INT) & ((var_tmp_3 : LUSTRE_INT) & ((var_tmp_8 : LUSTRE_BOOL) & ((var_tmp_2 : LUSTRE_BOOL) & ((var_tmp_1 : LUSTRE_BOOL) & ((var_tmp_0 : LUSTRE_BOOL) & ((var_res_auto : LUSTRE_BOOL) & ((var_fm_auto : LUSTRE_BOOL) & ((var__split_1 : LUSTRE_BOOL) & ((var__split_3 : LUSTRE_BOOL) & ((var__split_6 : LUSTRE_BOOL) & ((var___tempo_2_1 : LUSTRE_INT) & ((var___tempo_1_1 : LUSTRE_INT) & ((var__AUTO_switch_pos_1 : LUSTRE_BOOL) & ((var__split_27 : LUSTRE_BOOL) & ((var__OFF_switch_pos_1 : LUSTRE_BOOL) & ((var__split_28 : LUSTRE_BOOL) & ((var__ON_switch_pos_1 : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_is_on /= {})))))))))))))))))))))))))))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation__AUTO_switch_pos_1 : BOOL) & ((is_initialisation__OFF_switch_pos_1 : BOOL) & ((is_initialisation__ON_switch_pos_1 : BOOL) & ((var_is_on : LUSTRE_BOOL) & ((var_res_auto : LUSTRE_BOOL) & ((var__split_1 : LUSTRE_BOOL) & ((var__split_2 : LUSTRE_BOOL) & ((var__split_4 : LUSTRE_BOOL) & ((var__split_5 : LUSTRE_INT) & ((var__split_7 : LUSTRE_BOOL) & ((var__split_8 : LUSTRE_BOOL) & ((var___tempo_2_1 : LUSTRE_INT) & ((var____split_22_2_1 : LUSTRE_BOOL) & ((var____split_23_2_1 : LUSTRE_INT) & ((var____split_24_2_1 : LUSTRE_INT) & ((var____split_25_2_1 : LUSTRE_INT) & ((var____split_26_2_1 : LUSTRE_INT) & ((var____x_1_2_1 : LUSTRE_INT) & ((var_____split_21_1_2_1 : LUSTRE_BOOL) & ((var___n_2_1 : LUSTRE_INT) & ((var___tempo_1_1 : LUSTRE_INT) & ((var____split_22_1_1 : LUSTRE_BOOL) & ((var____split_23_1_1 : LUSTRE_INT) & ((var____split_24_1_1 : LUSTRE_INT) & ((var____split_25_1_1 : LUSTRE_INT) & ((var____split_26_1_1 : LUSTRE_INT) & ((var____x_1_1_1 : LUSTRE_INT) & ((var_____split_21_1_1_1 : LUSTRE_BOOL) & ((var___n_1_1 : LUSTRE_INT) & ((var___split_17_1 : LUSTRE_BOOL) & ((var___split_16_1 : LUSTRE_BOOL) & ((var___split_15_1 : LUSTRE_BOOL) & ((var___split_14_1 : LUSTRE_BOOL) & ((var___split_13_1 : LUSTRE_BOOL) & ((var___split_12_1 : LUSTRE_BOOL) & ((var___split_11_1 : LUSTRE_BOOL) & ((var___split_10_1 : LUSTRE_BOOL) & ((var___split_9_1 : LUSTRE_BOOL) & ((var__AUTO_switch_pos_1 : LUSTRE_BOOL) & ((var__split_27 : LUSTRE_BOOL) & ((var__OFF_switch_pos_1 : LUSTRE_BOOL) & ((var__split_28 : LUSTRE_BOOL) & ((var__ON_switch_pos_1 : LUSTRE_BOOL) & ((is_initialisation = FALSE) => (var_is_on /= {})))))))))))))))))))))))))))))))))))))))))))))))
 
 INITIALISATION 
     assert_ok := TRUE; 
@@ -16,30 +16,42 @@ INITIALISATION
     is_initialisation__OFF_switch_pos_1 := TRUE; 
     is_initialisation__ON_switch_pos_1 := TRUE; 
     var_is_on := {}; 
+    var__split_1 := {}; 
+    var__OFF_switch_pos_1 := {}; 
+    var__ON_switch_pos_1 := {}; 
+    var____split_23_2_1 := {}; 
+    var_____split_21_1_2_1 := {}; 
+    var____x_1_2_1 := {}; 
+    var____split_24_2_1 := {}; 
+    var____split_23_1_1 := {}; 
+    var_____split_21_1_1_1 := {}; 
+    var____x_1_1_1 := {}; 
+    var____split_24_1_1 := {}; 
+    var__split_5 := {}; 
+    var___split_13_1 := {}; 
+    var___split_14_1 := {}; 
+    var___split_9_1 := {}; 
+    var___split_15_1 := {}; 
+    var____split_22_2_1 := {}; 
+    var____split_25_2_1 := {}; 
+    var___split_10_1 := {}; 
+    var____split_22_1_1 := {}; 
+    var____split_25_1_1 := {}; 
+    var___n_2_1 := {}; 
+    var____split_26_2_1 := {}; 
+    var___n_1_1 := {}; 
+    var____split_26_1_1 := {}; 
     var___tempo_2_1 := {}; 
     var___tempo_1_1 := {}; 
-    var__split_1 := {}; 
-    var_tmp_0 := {}; 
-    var__OFF_switch_pos_1 := {}; 
-    var_tmp_1 := {}; 
-    var__ON_switch_pos_1 := {}; 
-    var__split_3 := {}; 
-    var_intensity := {}; 
-    var__split_6 := {}; 
-    var_tmp_4 := {}; 
-    var_tmp_5 := {}; 
-    var_tmp_6 := {}; 
-    var_tmp_7 := {}; 
-    var_tmp_10 := {}; 
-    var_tmp_11 := {}; 
-    var_tmp_12 := {}; 
-    var_tmp_13 := {}; 
-    var_fm_auto := {}; 
-    var_tmp_3 := {}; 
-    var_tmp_9 := {}; 
-    var_tmp_2 := {}; 
-    var_tmp_8 := {}; 
+    var___split_16_1 := {}; 
+    var___split_11_1 := {}; 
     var__AUTO_switch_pos_1 := {}; 
+    var__split_7 := {}; 
+    var___split_12_1 := {}; 
+    var___split_17_1 := {}; 
+    var__split_2 := {}; 
+    var__split_4 := {}; 
+    var__split_8 := {}; 
     var__split_27 := {}; 
     var_res_auto := {}; 
     var__split_28 := {}
@@ -51,7 +63,7 @@ OPERATIONS
         PRE
             ((param_switch_pos : LUSTRE_INT_NOT_NIL) & (param_intensity : LUSTRE_INT_NOT_NIL))
         THEN
-            VAR var_switch_pos, var___split_18_1, var___split_19_1, var___split_20_1, var___split_9_1, var___split_10_1, var___split_11_1, var___split_12_1, var___split_13_1, var___split_14_1, var___split_15_1, var___split_16_1, var___split_17_1, var___n_1_1, var_____split_21_1_1_1, var____x_1_1_1, var____split_26_1_1, var____split_25_1_1, var____split_24_1_1, var____split_23_1_1, var____split_22_1_1, var___n_2_1, var_____split_21_1_2_1, var____x_1_2_1, var____split_26_2_1, var____split_25_2_1, var____split_24_2_1, var____split_23_2_1, var____split_22_2_1, var__split_8, var__split_7, var__split_5, var__split_4, var__split_2 IN
+            VAR var_switch_pos, var_intensity, var___split_18_1, var___split_19_1, var___split_20_1, var__split_6, var__split_3, var_fm_auto, var_tmp_0, var_tmp_1, var_tmp_2, var_tmp_8, var_tmp_3, var_tmp_4, var_tmp_5, var_tmp_6, var_tmp_7, var_tmp_9, var_tmp_10, var_tmp_11, var_tmp_12, var_tmp_13 IN
                 var_switch_pos := param_switch_pos; 
                 var_intensity := param_intensity; 
                 var_tmp_13 := {ref |-> 7}; 
@@ -78,11 +90,9 @@ OPERATIONS
                 PRE (var__ON_switch_pos_1 /= {}) THEN skip END; 
                 var__split_3 := l_less_equal(var_intensity |-> {ref |-> 7}); 
                 var__split_6 := var_is_on; 
-                var____split_23_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_23_2_1 := var___tempo_2_1
                 END; 
-                var____split_23_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_23_1_1 := var___tempo_1_1
                 END; 
@@ -96,98 +106,75 @@ OPERATIONS
                 IF (var__ON_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var__split_28 := var_tmp_1
                 END; 
-                var__split_4 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var__split_4 := var__split_3
                 END; 
-                var__split_5 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var__split_5 := var_intensity
                 END; 
-                var__split_7 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var__split_7 := var__split_6
                 END; 
-                var____split_24_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_24_2_1 := l_minus(var____split_23_2_1 |-> var_tmp_4)
                 END; 
-                var____x_1_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____x_1_2_1 := var_tmp_5
                 END; 
-                var_____split_21_1_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var_____split_21_1_2_1 := l_greater(var____x_1_2_1 |-> var____split_24_2_1)
                 END; 
-                var____split_25_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_25_2_1 := l_ite_integer(var_____split_21_1_2_1 |-> var____x_1_2_1 |-> var____split_24_2_1)
                 END; 
-                var___n_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___n_2_1 := var_tmp_6
                 END; 
-                var___split_14_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_14_1 := l_less(var__split_5 |-> var_tmp_7)
                 END; 
-                var___split_13_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_13_1 := l_not(var__split_7)
                 END; 
-                var____split_24_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_24_1_1 := l_minus(var____split_23_1_1 |-> var_tmp_10)
                 END; 
-                var____x_1_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____x_1_1_1 := var_tmp_11
                 END; 
-                var_____split_21_1_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var_____split_21_1_1_1 := l_greater(var____x_1_1_1 |-> var____split_24_1_1)
                 END; 
-                var____split_25_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_25_1_1 := l_ite_integer(var_____split_21_1_1_1 |-> var____x_1_1_1 |-> var____split_24_1_1)
                 END; 
-                var___n_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___n_1_1 := var_tmp_12
                 END; 
-                var___split_9_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_9_1 := l_greater(var__split_5 |-> var_tmp_13)
                 END; 
                 var___split_19_1 := l_not(var___split_18_1); 
-                var___split_15_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_15_1 := l_and(var___split_13_1 |-> var___split_14_1)
                 END; 
-                var___split_10_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_10_1 := l_and(var__split_7 |-> var___split_9_1)
                 END; 
                 var___split_20_1 := l_and(var__split_1 |-> var___split_19_1); 
                 var_fm_auto := l_fby_boolean(is_initialisation |-> var__split_1 |-> var___split_20_1); 
-                var__split_2 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var__split_2 := var_fm_auto
                 END; 
-                var____split_22_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_22_2_1 := l_not(var___split_15_1)
                 END; 
-                var____split_26_2_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_26_2_1 := l_ite_integer(var____split_22_2_1 |-> var___n_2_1 |-> var____split_25_2_1)
                 END; 
-                var____split_22_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_22_1_1 := l_not(var___split_10_1)
                 END; 
-                var____split_26_1_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var____split_26_1_1 := l_ite_integer(var____split_22_1_1 |-> var___n_1_1 |-> var____split_25_1_1)
                 END; 
@@ -197,23 +184,18 @@ OPERATIONS
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___tempo_1_1 := l_fby_integer(is_initialisation__AUTO_switch_pos_1 |-> var___n_1_1 |-> var____split_26_1_1)
                 END; 
-                var___split_16_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_16_1 := l_equal_integer(var___tempo_2_1 |-> var_tmp_3)
                 END; 
-                var___split_11_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_11_1 := l_equal_integer(var___tempo_1_1 |-> var_tmp_9)
                 END; 
-                var___split_17_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_17_1 := l_ite_boolean(var___split_16_1 |-> var_tmp_2 |-> var__split_7)
                 END; 
-                var___split_12_1 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var___split_12_1 := l_ite_boolean(var___split_11_1 |-> var_tmp_8 |-> var__split_7)
                 END; 
-                var__split_8 := {}; 
                 IF (var__AUTO_switch_pos_1 = {ref |-> TRUE}) THEN 
                     var__split_8 := l_ite_boolean(var__split_7 |-> var___split_12_1 |-> var___split_17_1)
                 END; 

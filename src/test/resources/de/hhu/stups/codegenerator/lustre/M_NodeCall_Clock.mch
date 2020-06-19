@@ -4,9 +4,9 @@ INCLUDES Node_1.M_NodeCall_Clock_Call2, Node_2.M_NodeCall_Clock_Call1
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation_c, var_res, var_tmp_0, var_tmp_1, var_tmp_2, var_c
+VARIABLES assert_ok, is_initialisation, is_initialisation_c, var_res, var_tmp_0, var_c
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_c : BOOL) & ((var_c : LUSTRE_BOOL) & ((var_res : LUSTRE_INT) & ((var_tmp_2 : LUSTRE_INT) & ((var_tmp_1 : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & ((is_initialisation_c = FALSE) => (var_res /= {}))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_c : BOOL) & ((var_c : LUSTRE_BOOL) & ((var_res : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & ((is_initialisation_c = FALSE) => (var_res /= {}))))))))
 
 INITIALISATION 
     assert_ok := TRUE; 
@@ -14,8 +14,6 @@ INITIALISATION
     is_initialisation_c := TRUE; 
     var_res := {}; 
     var_tmp_0 := {}; 
-    var_tmp_1 := {}; 
-    var_tmp_2 := {}; 
     var_c := {}
 
 
@@ -25,7 +23,7 @@ OPERATIONS
         PRE
             ((param_x : LUSTRE_INT_NOT_NIL) & (param_c : LUSTRE_BOOL_NOT_NIL))
         THEN
-            VAR var_x IN
+            VAR var_x, var_tmp_1, var_tmp_2 IN
                 var_x := param_x; 
                 var_c := param_c; 
                 PRE (var_c /= {}) THEN skip END; 

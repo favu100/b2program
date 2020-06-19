@@ -2,9 +2,9 @@ MACHINE M_Current
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation_millisecond, is_initialisation, var_res3, var_res2, var_a, var_millisecond, var_c, var_res1, var_tmp_0
+VARIABLES assert_ok, is_initialisation_millisecond, is_initialisation, var_res3, var_res2, var_millisecond, var_c, var_res1, var_tmp_0
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation_millisecond : BOOL) & ((is_initialisation : BOOL) & ((var_a : LUSTRE_INT) & ((var_c : LUSTRE_INT) & ((var_millisecond : LUSTRE_BOOL) & ((var_res1 : LUSTRE_INT) & ((var_res2 : LUSTRE_INT) & ((var_res3 : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & (((is_initialisation = FALSE) => (var_res1 /= {})) & (((is_initialisation = FALSE) => (var_res2 /= {})) & ((is_initialisation = FALSE) => (var_res3 /= {}))))))))))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation_millisecond : BOOL) & ((is_initialisation : BOOL) & ((var_c : LUSTRE_INT) & ((var_millisecond : LUSTRE_BOOL) & ((var_res1 : LUSTRE_INT) & ((var_res2 : LUSTRE_INT) & ((var_res3 : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & (((is_initialisation = FALSE) => (var_res1 /= {})) & (((is_initialisation = FALSE) => (var_res2 /= {})) & ((is_initialisation = FALSE) => (var_res3 /= {})))))))))))))
 
 INITIALISATION 
     assert_ok := TRUE; 
@@ -12,7 +12,6 @@ INITIALISATION
     is_initialisation := TRUE; 
     var_res3 := {}; 
     var_res2 := {}; 
-    var_a := {}; 
     var_millisecond := {}; 
     var_c := {}; 
     var_res1 := {}; 
@@ -25,12 +24,12 @@ OPERATIONS
         PRE
             ((param_millisecond : LUSTRE_BOOL_NOT_NIL) & ((param_c : LUSTRE_INT_NOT_NIL) & ((param_a : LUSTRE_INT_NOT_NIL) & (param_b : LUSTRE_INT_NOT_NIL))))
         THEN
-            VAR var_b IN
+            VAR var_a, var_b IN
                 var_millisecond := param_millisecond; 
                 PRE (var_millisecond /= {}) THEN skip END; 
-                IF (var_millisecond = {ref |-> TRUE}) THEN
+                IF (var_millisecond = {ref |-> TRUE}) THEN 
                     var_c := param_c
-                END;
+                END; 
                 var_a := param_a; 
                 var_b := param_b; 
                 IF (var_millisecond = {ref |-> TRUE}) THEN 
@@ -49,9 +48,9 @@ OPERATIONS
 
         END;
 
-     out <-- getRes1 = BEGIN out := var_res1 END;
-     out <-- getRes2 = BEGIN out := var_res2 END;
-     out <-- getRes3 = BEGIN out := var_res3 END
+    out <-- getRes1 = BEGIN out := var_res1 END;
+    out <-- getRes2 = BEGIN out := var_res2 END;
+    out <-- getRes3 = BEGIN out := var_res3 END
 
 
 

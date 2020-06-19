@@ -2,16 +2,15 @@ MACHINE M_NodeCall_Clock3_Call
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation_c, var_a, var_tmp_0, var_c
+VARIABLES assert_ok, is_initialisation, is_initialisation_c, var_a, var_c
 
-INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_c : BOOL) & ((var_c : LUSTRE_BOOL) & ((var_a : LUSTRE_INT) & (var_tmp_0 : LUSTRE_INT))))))
+INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_c : BOOL) & ((var_c : LUSTRE_BOOL) & (var_a : LUSTRE_INT)))))
 
 INITIALISATION 
     assert_ok := TRUE; 
     is_initialisation := TRUE; 
     is_initialisation_c := TRUE; 
     var_a := {}; 
-    var_tmp_0 := {}; 
     var_c := {}
 
 
@@ -21,7 +20,7 @@ OPERATIONS
         PRE
             ((param_c : LUSTRE_BOOL) & (param_x : LUSTRE_INT))
         THEN
-            VAR var_x IN
+            VAR var_x, var_tmp_0 IN
                 var_c := param_c; 
                 PRE (var_c /= {}) THEN skip END; 
                 var_x := param_x; 

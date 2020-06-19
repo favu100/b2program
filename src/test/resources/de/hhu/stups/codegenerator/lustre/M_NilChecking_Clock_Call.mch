@@ -2,16 +2,16 @@ MACHINE M_NilChecking_Clock_Call
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation_clock, var_x, var_res, var_clock
+VARIABLES assert_ok, is_initialisation_clock, var_res, var_clock, var_x
 
 INVARIANT ((assert_ok : BOOL) & ((is_initialisation_clock : BOOL) & ((var_x : LUSTRE_INT) & ((var_clock : LUSTRE_BOOL) & (var_res : LUSTRE_INT)))))
 
 INITIALISATION 
     assert_ok := TRUE; 
     is_initialisation_clock := TRUE; 
-    var_x := {}; 
     var_res := {}; 
-    var_clock := {}
+    var_clock := {}; 
+    var_x := {}
 
 
 OPERATIONS 

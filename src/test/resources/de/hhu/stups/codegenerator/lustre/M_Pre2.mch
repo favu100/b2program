@@ -2,7 +2,7 @@ MACHINE M_Pre2
 
 SEES LibraryLustre
 
-VARIABLES assert_ok, is_initialisation, is_initialisation_clock1, is_initialisation_clock2, var_res1, var_res2, var_tmp_1, var_tmp_3, var_clock1, var_res, var_clock2, var_tmp_0, var_tmp_2
+VARIABLES assert_ok, is_initialisation, is_initialisation_clock1, is_initialisation_clock2, var_res1, var_res2, var_res, var_tmp_1, var_tmp_3, var_clock1, var_clock2, var_tmp_0, var_tmp_2
 
 INVARIANT ((assert_ok : BOOL) & ((is_initialisation : BOOL) & ((is_initialisation_clock1 : BOOL) & ((is_initialisation_clock2 : BOOL) & ((var_clock2 : LUSTRE_BOOL) & ((var_clock1 : LUSTRE_BOOL) & ((var_res2 : LUSTRE_INT) & ((var_res1 : LUSTRE_INT) & ((var_res : LUSTRE_INT) & ((var_tmp_2 : LUSTRE_INT) & ((var_tmp_3 : LUSTRE_INT) & ((var_tmp_1 : LUSTRE_INT) & ((var_tmp_0 : LUSTRE_INT) & (((is_initialisation = FALSE) => (var_res2 /= {})) & (((is_initialisation = FALSE) => (var_res1 /= {})) & ((is_initialisation = FALSE) => (var_res /= {})))))))))))))))))
 
@@ -13,10 +13,10 @@ INITIALISATION
     is_initialisation_clock2 := TRUE; 
     var_res1 := {}; 
     var_res2 := {}; 
+    var_res := {}; 
     var_tmp_1 := {}; 
     var_tmp_3 := {}; 
     var_clock1 := {}; 
-    var_res := {}; 
     var_clock2 := {}; 
     var_tmp_0 := {}; 
     var_tmp_2 := {}
@@ -54,12 +54,9 @@ OPERATIONS
 
         END;
 
-
-     out <-- getRes = BEGIN out := var_res END;
-     out <-- getRes1 = BEGIN out := var_res1 END;
-     out <-- getRes2 = BEGIN out := var_res2 END
-
-
+    out <-- getRes = BEGIN out := var_res END;
+    out <-- getRes1 = BEGIN out := var_res1 END;
+    out <-- getRes2 = BEGIN out := var_res2 END
 
 END
 

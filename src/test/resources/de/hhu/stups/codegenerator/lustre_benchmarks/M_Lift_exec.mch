@@ -6,13 +6,14 @@ SEES LibraryLustre
 
 VARIABLES  counter
 
-INVARIANT  counter : 0..1000
+INVARIANT  counter : 0..2000
 
 INITIALISATION counter := 0
 
 OPERATIONS
 
-	simulate = WHILE counter < 1000 DO
+	simulate = WHILE counter < 2000 DO
+			  clock_step({ref |-> FALSE}, {ref |-> FALSE});
               clock_step({ref |-> TRUE}, {ref |-> FALSE});
               clock_step({ref |-> TRUE}, {ref |-> FALSE});
               clock_step({ref |-> TRUE}, {ref |-> FALSE});
@@ -113,107 +114,6 @@ OPERATIONS
               clock_step({ref |-> TRUE}, {ref |-> FALSE});
               clock_step({ref |-> TRUE}, {ref |-> FALSE});
               clock_step({ref |-> TRUE}, {ref |-> FALSE});
-
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
-              clock_step({ref |-> TRUE}, {ref |-> TRUE});
 
               clock_step({ref |-> FALSE}, {ref |-> TRUE});
               clock_step({ref |-> FALSE}, {ref |-> TRUE});
@@ -316,109 +216,9 @@ OPERATIONS
               clock_step({ref |-> FALSE}, {ref |-> TRUE});
               clock_step({ref |-> FALSE}, {ref |-> TRUE});
 
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
-              clock_step({ref |-> FALSE}, {ref |-> FALSE});
             	counter := counter + 1
             INVARIANT 1 = 1
-            VARIANT 1000 - counter
+            VARIANT 2000 - counter
             END
 
 END

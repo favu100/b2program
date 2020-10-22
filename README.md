@@ -10,7 +10,7 @@ Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Ge
 
 Citation:
 
-```bash
+```
 @inbook{inbook,
 author = {Vu, Fabian and Hansen, Dominik and Körner, Philipp and Leuschel, Michael},
 year = {2019},

@@ -5,6 +5,23 @@ programming languages.
 
 A subset of B is supported for Java and C++ now. The work for code generation for Python, Clojure and C has begun but not continued.
 
+
+Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Generator_for_High-Level_B
+
+Citation:
+
+```bash
+@inbook{inbook,
+author = {Vu, Fabian and Hansen, Dominik and Körner, Philipp and Leuschel, Michael},
+year = {2019},
+month = {11},
+pages = {456-473},
+title = {A Multi-target Code Generator for High-Level B},
+isbn = {978-3-030-34967-7},
+doi = {10.1007/978-3-030-34968-4_25}
+}
+```
+
 Note:
 
 * The implementation of the B types in C++ uses persistent set from:

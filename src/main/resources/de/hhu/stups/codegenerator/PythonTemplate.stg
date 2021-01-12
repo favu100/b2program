@@ -1,15 +1,20 @@
 keywords() ::= <<
+False, None, True, __peg_parser__, and, as, assert, async, await, break, class, continue, def, del, elif, else, except, finally, for, from, global, if, import, in, is, lambda, nonlocal, not, or, pass, raise, return, try, while, with, yield
+
 >>
 
 
-machine(imports, machine, includes, enums, sets, initialization, operations, addition) ::= <<
+machine(imports, includedMachines, machine, structs, enums, sets, declarations, initialization, operations, addition, getters, lambdaFunctions) ::= <<
 <imports; separator="\n">
+<includedMachines; separator="\n">
+
+<structs; separator= "\n\n">
+
+<enums; separator="\n\n">
 
 class <machine>:
 
-    <includes; separator="\n">
 
-    <enums; separator="\n\n">
 
     <sets; separator="\n">
 
@@ -17,23 +22,106 @@ class <machine>:
 
     <operations; separator="\n\n">
 
-    <addition>
+    <getters; separator="\n\n">
+
+    <lambdaFunctions; separator="\n\n">
+
+<addition>
 >>
 
-initialization(body, machines) ::= <<
+struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
+class <name>(BStruct):
+
+    def __init__(self<parameters : {par |, <par>}>):
+        <declarations; separator="\n">
+        <initializations; separator="\n">
+
+
+    <functions; separator="\n\n">
+
+    def equal(self, <name> o):
+        return BBoolean(<equalPredicates; separator=" and ">)
+
+    def unequal(self, <name> o):
+        return BBoolean(<unequalPredicates; separator=" or ">)
+
+    __str__(self):
+        return "(" + <values; separator=" + \",\" + "> + ")"
+
+    def __eq__(self, other):
+        if not (isinstance(other, <name>)):
+            return False
+
+        o = other
+        return <equalPredicates; separator= " && ">
+
+    def __hash__(self):
+        return hash(<fields; separator=", ">)
+>>
+
+getter(returnType, variable) ::= <<
+def _get_<variable>(self):
+    return self.<variable>
+>>
+
+record_field_get(type, field) ::= <<
+def get_<field>():
+    return self.<field>
+>>
+
+record_field_access(record, field) ::= <<
+<record>.get_<field>()
+>>
+
+record_access_nested(record, field, isNested) ::= <<
+<if(!isNested)><record><else><record>.get_<field>()<endif>
+>>
+
+record_access_element(expr, arg, val) ::= <<
+<expr>.override_<arg>(<val>)
+>>
+
+record_field_override(name, field, type, val, parameters) ::= <<
+def override_<field>(<field>):
+    return <name>(<parameters; separator=", ">)
+>>
+
+record_field_initialization(identifier) ::= <<
+self.<identifier> = self.<identifier>
+>>
+
+record_assignment(identifier) ::= <<
+>>
+
+record_field_to_string(identifier) ::= <<
+"<identifier>: " + self.<identifier>
+>>
+
+record_equal_predicate(field) ::= <<
+self.<field> == o.<field>
+>>
+
+record_unequal_predicate(field) ::= <<
+self.<field> != o.<field>
+>>
+
+record(struct, parameters) ::= <<
+<struct>(<parameters; separator=", ">)
+>>
+
+initialization(machine, machines, properties, values, body) ::= <<
 def __init__(self):
-    <machines : {m | <include_initialization(m)>}; separator="\n">
+    <machines : {mach | self._<mach> = <mach>()
+    }>
+    <properties; separator="\n">
+    <values>
     <body>
->>
-
-include_initialization(machine) ::= <<
-__<machine> = <machine>()
 >>
 
 method() ::= <<
 >>
 
-operation(operationName, parameters, locals, body, return) ::= <<
+operation(returnType, operationName, parameters, locals, body, return) ::= <<
 def <operationName>(self<parameters : {par |, <par>}>):
     <locals; separator="\n">
     <body>
@@ -41,64 +129,187 @@ def <operationName>(self<parameters : {par |, <par>}>):
 >>
 
 return(identifier) ::= <<
-return <identifier>
+return self.<identifier>
 >>
 
 no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-__<identifier> = <set_enumeration(enums, false)>
+<identifier> = <set_enumeration("", type, "", enums, false)>
 >>
 
-set_enumeration(enums, isRelation) ::= <<
+set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
 <if(isRelation)>BRelation<else>BSet<endif>(<enums; separator=", ">)
 >>
 
 seq_enumeration(type, elements) ::= <<
+BRelation(<elements; separator=", ">)
 >>
 
-enum_call(class, identifier) ::= <<
-<class>.<identifier>
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(<identifier> in <set>):
+    <body>
+>>
+
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(<identifier> in <set>):
+    <body>
+>>
+
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(<identifier> in <set>.pow()):
+    <body>
+>>
+
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(<identifier> : <set>.pow().difference(<set>)):
+    <body>
+>>
+
+let_expression_predicate(type, identifier, body) ::= <<
+self.<identifier> = None
+<body>
+>>
+
+let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
+<otherIterationConstructs>
+<identifier> = <val>
+>>
+
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
+self.<identifier> = <if(isRelation)>BRelation<else>BSet<endif>()
+<comprehension>
+>>
+
+set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>.union(<if(isRelation)>BRelation<else>BSet<endif>(<element>))
+<else>
+if(<predicate>).booleanValue():
+    <set> = <set>.union(<if(isRelation)>BRelation<else>BSet<endif>(<element>))
+<endif>
+>>
+
+lambda(type, identifier, lambda, leftType, rightType) ::= <<
+self.<identifier> = BRelation()
+<lambda>
+>>
+
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<relation> = <relation>.union(BRelation(BTuple(<element>, <expression>)))
+<else>
+if(<predicate>).booleanValue():
+    <relation> = <relation>.union(BRelation(BTuple(<element>, <expression>)))
+<endif>
+>>
+
+lambda_function(function, parameters, returnType, expression) ::= <<
+def <function>(<parameters; separator=", ">):
+    return <expression>
+>>
+
+lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
+>>
+
+quantified_predicate(identifier, forall, predicate) ::= <<
+self.<identifier> = BBoolean(<if(forall)>true<else>false<endif>)
+<predicate>
+>>
+
+quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+self.<identifier> = BBoolean(<if(forall)>False<else>True<endif>)
+break
+<else>
+if<if(forall)>not <endif>(<predicate>).booleanValue():
+    self.<identifier> = BBoolean(<if(forall)>False<else>True<endif>)
+    break
+<endif>
+>>
+
+quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
+<if(isInteger)>self.<identifier> = BInteger(<identity>)<else>self.<identifier> = BSet()<endif>
+<evaluation>
+>>
+
+quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+self.<identifier> = self.<identifier>.<operation>(<expression>)
+<else>
+if(<predicate>).booleanValue():
+    self.<identifier> = self.<identifier>.<operation>(<expression>)
+<endif>
+>>
+
+if_expression_predicate(predicate, ifThen, ifElse) ::= <<
+if <predicate>.booleanValue():
+    <ifThen>
+else:
+    <ifElse>
+>>
+
+enum_call(machine, class, identifier, isCurrentMachine) ::= <<
+<if(isCurrentMachine)><class>.<identifier><else><machine>.<class>.<identifier><endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
-<name> = Enum(<enums; separator=", ">)
+from enum import Enum, auto
+class <name>(BObject, Enum):
+    <enums : {enum | <enum> = auto()
+        }>
+
+    def equal(self, o):
+        return BBoolean(self == o)
+
+    def unequal(o):
+        return BBoolean(self != o)
+>>
+
+bool() ::= <<
+BUtils.BOOL
 >>
 
 include_declaration(type, identifier) ::= <<
-__<declaration(identifier)> = <type>()
+<declaration(type, identifier)> = <type>()
 >>
 
-global_declaration() ::= <<
+global_declaration(type, identifier) ::= <<
+<declaration(type, identifier)>
 >>
 
-local_declaration(identifier) ::= <<
-<declaration(identifier)> = None
->>
-
-declaration(identifier) ::= <<
-<identifier>
->>
-
-
-constant() ::= <<
->>
-
-values() ::= <<
+local_declaration(type, identifier) ::= <<
+<declaration(type, identifier)> = None
 >>
 
 constant_declaration(type, identifier) ::= <<
-<type> <identifier>
+<identifier>
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<
 <iterationConstruct; separator="\n">
-__<identifier> = <val>
+<identifier> = <val>
 >>
 
+values(assignments) ::= <<
+<assignments; separator="\n">
+>>
 
-parameter(identifier) ::= <<
+declaration(type, identifier) ::= <<
+<identifier>
+>>
+
+parameter(type, identifier) ::= <<
 <identifier>
 >>
 
@@ -111,66 +322,118 @@ parallel_load(type, identifier) ::= <<
 _ld_<identifier> = <identifier>
 >>
 
+assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <val><elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>)<else><identifier> = <modified_identifier>.override(BRelation(BTuple(<arg>,<val>)))<endif>
+>>
+
+function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
+<expr>.override(BRelation(BTuple(<arg>,<val>)))
+>>
+
+function_call_nested(expr, arg, isNested) ::= <<
+<if(!isNested)><expr><else><expr>.functionCall(<arg>)<endif>
+>>
+
 assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-assignment(identifier, val) ::= <<
-<identifier> = <val>
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism()<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism())<else><identifier> = <modified_identifier>.override(BRelation(BTuple(<arg>,<set>.nondeterminism()))<endif>
 >>
 
 void() ::= <<
 >>
 
-type() ::= <<
+type(type, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><type>
 >>
 
-tuple_type() ::=<<
+tuple_type(leftType, rightType) ::= <<
+BTuple
 >>
 
-set_type() ::= <<
+set_type(type) ::=<<
+BSet
 >>
 
-relation_type() ::= <<
+relation_type(leftType, rightType) ::=<<
+BRelation
 >>
 
 import_type(type) ::= <<
-import <type>
+from btypes.<type> import <type>
 >>
 
+import_machine(machine) ::= <<
+from <machine> import <machine>
+>>
 
 interval(arg1, arg2) ::= <<
 BSet.interval(<arg1>,<arg2>)
+>>
+
+projection(arg1, arg2, isProjection1) ::= <<
+BRelation.<if(isProjection1)>projection1<else>projection2<endif>(<arg1>,<arg2>)
+>>
+
+projection_tuple(arg, isProjection1) ::= <<
+<arg>.<if(isProjection1)>projection1<else>projection2<endif>()
+>>
+
+identity(arg) ::= <<
+BRelation.identity(<arg>)
+>>
+
+cartesian_product(arg1, arg2) ::= <<
+BRelation.cartesianProduct(<arg1>, <arg2>)
 >>
 
 tuple_create(arg1, arg2) ::= <<
 BTuple(<arg1>, <arg2>)
 >>
 
-
 binary(arg1,operator,arg2) ::= <<
 <arg1>.<operator>(<arg2>)
+>>
+
+or(arg1, arg2) ::= <<
+BBoolean(<arg1>.booleanValue() or <arg2>.booleanValue())
+>>
+
+and(arg1, arg2) ::= <<
+BBoolean(<arg1>.booleanValue() and <arg2>.booleanValue())
+>>
+
+implies(arg1, arg2) ::= <<
+BBoolean(not <arg1>.booleanValue() or <arg2>.booleanValue())
+>>
+
+equivalent(arg1, arg2) ::= <<
+BBoolean((not <arg1>.booleanValue() or <arg2>.booleanValue()) and (not <arg2>.booleanValue() or <arg1>.booleanValue()))
 >>
 
 unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
-select(predicate, then) ::= <<
-if <predicate>.booleanValue():
+select(iterationConstruct, predicate, then) ::= <<
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()):
     <then>
-else:
-    raise Error("Invocation of the operation is not possible")
 >>
 
-if(predicate, then, else1) ::= <<
-if <predicate>.booleanValue():
+if(iterationConstruct, predicate, then, else1) ::= <<
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()):
     <then>
 <else1; separator=" ">
 >>
 
 elseif(predicate, then) ::= <<
-else if <predicate>.booleanValue():
+else if((<predicate>).booleanValue()):
     <then>
 >>
 
@@ -179,9 +442,70 @@ else:
     <then>
 >>
 
-while(predicate, then) ::= <<
-while <predicate>.booleanValue():
+choice(len, then, choice1) ::= <<
+int index = (int) Math.floor(Math.random() * <len>)
+if(index == 0):
     <then>
+<choice1; separator=" ">
+>>
+
+
+choice1(counter, then) ::= <<
+else if(index == <counter>):
+    <then>
+>>
+
+choice2(then) ::= <<
+else:
+    <then>
+>>
+
+any(body) ::= <<
+<body>
+>>
+
+any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<body>
+break
+<else>
+if((<predicate>).booleanValue()):
+    <body>
+    break
+<endif>
+>>
+
+becomes_such_that(loads, body) ::= <<
+<loads; separator="\n">
+<body>
+>>
+
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<stores>
+break
+<else>
+if((<predicate>).booleanValue()):
+    <stores>
+    break
+<endif>
+>>
+
+becomes_such_that_load(type, lhs, rhs) ::= <<
+<lhs> = <rhs>
+>>
+
+becomes_such_that_store(lhs, rhs) ::= <<
+<lhs> = <rhs>
+>>
+
+while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+<iterationConstruct1; separator="\n">
+while((<predicate>).booleanValue()):
+    <then>
+    <iterationConstruct2; separator="\n">
 >>
 
 var(locals, body) ::=<<
@@ -190,21 +514,70 @@ var(locals, body) ::=<<
 >>
 
 boolean_val(val) ::= <<
-<if(val)>BBoolean(true)<else>BBoolean(false)<endif>
+<if(val)>BBoolean(True)<else>BBoolean(False)<endif>
 >>
 
-identifier(identifier, isPrivate) ::= <<
-<if(!isPrivate)><identifier><else>self.__<identifier><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else>self.<identifier><endif><endif>
 >>
 
-number(number) ::= <<
-BInteger(<number>)
+number(number, useBigInteger) ::= <<
+<if(useBigInteger)>BInteger("<number>")<else>BInteger(<number>)<endif>
 >>
 
-operation_call_with_assignment_one_parameter(var, machine, function, args, this) ::= <<
-<var> = <operation_call_without_assignment(machine, function, args, this)>
+infinite_predicate(arg, operator) ::= <<
+<arg>.<operator>()
 >>
 
-operation_call_without_assignment(machine, function, args, this) ::= <<
-<if(this)>self.__<else><machine>.<endif><function>(<args; separator=",">)
+relation_predicate(predicates, checkElementOf) ::= <<
+<if(checkElementOf)><predicates><else><predicates>.not()<endif>
+>>
+
+relation_check_domain(arg, domain) ::= <<
+<arg>.checkDomain(<domain>)
+>>
+
+relation_check_range(arg, range) ::= <<
+<arg>.checkRange(<range>)
+>>
+
+relation_total_partial(arg, operator, domain) ::= <<
+<arg>.<operator>(<domain>)
+>>
+
+relation_function(arg, operator) ::= <<
+<arg>.<operator>()
+>>
+
+relation_surjection(arg, range) ::= <<
+<arg>.isSurjection(<range>)
+>>
+
+relation_injection(arg) ::= <<
+<arg>.isInjection()
+>>
+
+relation_bijection(arg, range) ::=<<
+<arg>.isBijection(<range>)
+>>
+
+string(string) ::= <<
+BString(<string>)
+>>
+
+operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
+<var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+<assignments; separator="\n">
+>>
+
+operation_call_assignment(var, record, field) ::= <<
+<var> = <record>.get_<field>()
+>>
+
+operation_call_with_assignment_one_parameter(var, machineInstance, function, args, this) ::= <<
+<var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+>>
+
+operation_call_without_assignment(machineInstance, function, args, this) ::= <<
+<if(this)>self.<else>self.<machineInstance>.<endif><function>(<args; separator=",">)
 >>

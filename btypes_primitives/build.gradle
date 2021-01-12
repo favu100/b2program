@@ -28,6 +28,7 @@ dependencies {
 task fatJar(type: Jar) {
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from('src/main/python'){include 'btypes/*.py'}
     with jar
 }
 
@@ -50,5 +51,3 @@ tasks.withType(JavaExec) {
 
     systemProperty "java.library.path", "./"
 }
-
-

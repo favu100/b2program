@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    range = RangeElementOfBig()
+    range.simulate()
+    print(range.getCounter())

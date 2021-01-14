@@ -299,3 +299,5 @@ operation_call_without_assignment(function, args) ::= <<
 <function>(<args; separator=",">);
 >>
 
+skip() ::= <<
+>>

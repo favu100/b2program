@@ -690,3 +690,6 @@ operation_call_with_assignment_one_parameter(var, machineInstance, function, arg
 operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 <if(this)>this-><else>this-><machineInstance>.<endif><function>(<args; separator=",">);
 >>
+
+skip() ::= <<
+>>

@@ -617,3 +617,5 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 <if(this)>this.<else>this.<machineInstance>.<endif><function>(<args; separator=",">);
 >>
 
+skip() ::= <<
+>>

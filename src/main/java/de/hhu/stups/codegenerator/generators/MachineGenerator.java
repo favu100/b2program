@@ -382,11 +382,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	/*
-    * Generating code from the skip substitution results in an empty string.
-    */
+  * This function generates code for empty functions
+  * Most times this is the empty String
+  */
 	@Override
 	public String visitSkipSubstitutionNode(SkipSubstitutionNode node, Void expected) {
-		return "";
+		ST skip = currentGroup.getInstanceOf("skip");
+		return skip.render();
 	}
 
 	@Override

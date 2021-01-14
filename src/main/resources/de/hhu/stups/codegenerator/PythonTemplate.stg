@@ -129,7 +129,7 @@ def <operationName>(self<parameters : {par |, <par>}>):
 >>
 
 return(identifier) ::= <<
-return self.<identifier>
+return <identifier>
 >>
 
 no_return() ::=<<
@@ -274,6 +274,12 @@ class <name>(BObject, Enum):
 
     def unequal(o):
         return BBoolean(self != o)
+
+    def __str__(self):
+        <enums : {enum |
+        if self == <name>.<enum>:
+            return "<enum>"
+        }>
 >>
 
 bool() ::= <<
@@ -517,8 +523,8 @@ boolean_val(val) ::= <<
 <if(val)>BBoolean(True)<else>BBoolean(False)<endif>
 >>
 
-identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine) ::= <<
-<if(fromOtherMachine)><otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else>self.<identifier><endif><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate) ::= <<
+<if(fromOtherMachine)><otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>self.<endif><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<
@@ -580,4 +586,8 @@ operation_call_with_assignment_one_parameter(var, machineInstance, function, arg
 
 operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 <if(this)>self.<else>self.<machineInstance>.<endif><function>(<args; separator=",">)
+>>
+
+skip() ::= <<
+pass
 >>

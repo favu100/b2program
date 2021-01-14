@@ -249,3 +249,5 @@ operation_call_without_assignment(thisName, machine, function, args, this) ::= <
 (.<function> <if(this)><else>(get-in (.<thisName>-state this) [:<machine>])<endif> <args; separator=" ">)
 >>
 
+skip() ::= <<
+>>

@@ -1,0 +1,6 @@
+if __name__ == '__main__':
+    lift = Lift()
+    lift.inc()
+    lift.inc()
+    lift.inc()
+    print(lift.getFloor())

@@ -1,0 +1,8 @@
+if __name__ == '__main__':
+    counter = Counter()
+    counter.Reset()
+    counter.Inc()
+    counter.Odd()
+    counter.Inc()
+    counter.Even()
+    print(counter.getCount())

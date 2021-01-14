@@ -47,7 +47,7 @@ public class TestMachines extends TestPython {
 
     @Test
     public void testLift() throws Exception {
-        testPython("Lift", "Lift", "M_LiftAddition.stpy", true);
+        testPython("Lift", "Lift", "LiftAddition.stpy", true);
     }
 
     @Test

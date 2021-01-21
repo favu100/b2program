@@ -1,4 +1,5 @@
 public static void main(String[] args) {
     RelationGeneralizedIntersection calc = new RelationGeneralizedIntersection();
     calc.calculate();
+    System.out.println(calc.getRes().card());
 }

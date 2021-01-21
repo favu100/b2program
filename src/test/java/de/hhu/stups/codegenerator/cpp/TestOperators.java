@@ -195,7 +195,7 @@ public class TestOperators extends TestCpp {
 
     @Test
     public void testGeneralizedUnion() throws Exception {
-        testCpp("GeneralizedUnion");
+        testCpp("GeneralizedUnion", "GeneralizedUnion", "GeneralizedUnionAddition.stcpp", true);
     }
 
     @Test
@@ -211,7 +211,7 @@ public class TestOperators extends TestCpp {
 
     @Test
     public void testGeneralizedIntersection() throws Exception {
-        testCpp("GeneralizedIntersection");
+        testCpp("GeneralizedIntersection", "GeneralizedIntersection", "GeneralizedIntersectionAddition.stcpp", true);
     }
 
 

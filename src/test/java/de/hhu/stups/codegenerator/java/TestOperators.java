@@ -195,7 +195,7 @@ public class TestOperators extends TestJava {
 
     @Test
     public void testGeneralizedUnion() throws Exception {
-        testJava("GeneralizedUnion");
+        testJava("GeneralizedUnion", "GeneralizedUnion", "GeneralizedUnionAddition.stjava", true);
     }
 
     @Test
@@ -211,7 +211,7 @@ public class TestOperators extends TestJava {
 
     @Test
     public void testGeneralizedIntersection() throws Exception {
-        testJava("GeneralizedIntersection");
+        testJava("GeneralizedIntersection", "GeneralizedIntersection", "GeneralizedIntersectionAddition.stjava", true);
     }
 
 

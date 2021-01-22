@@ -1,5 +1,6 @@
 int main() {
     RelationGeneralizedUnion calculate;
     calculate.calculate();
+    cout << calculate.getRes().card();
     return 0;
 }

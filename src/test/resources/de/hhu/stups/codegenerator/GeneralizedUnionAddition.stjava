@@ -1,5 +1,5 @@
 public static void main(String[] args) {
-    RelationGeneralizedUnion calc = new RelationGeneralizedUnion();
+    GeneralizedUnion calc = new GeneralizedUnion();
     calc.calculate();
     System.out.println(calc.getRes().card());
 }

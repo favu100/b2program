@@ -1,5 +1,5 @@
 int main() {
-    RelationGeneralizedIntersection calculate;
+    GeneralizedUnion calculate;
     calculate.calculate();
     cout << calculate.getRes().card();
     return 0;

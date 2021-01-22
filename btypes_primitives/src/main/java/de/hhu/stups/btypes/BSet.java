@@ -14,7 +14,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Optional;
 
-public class BSet<T> implements BObject, Set<T> {
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.Method;
+
+public class BSet<T> implements Set<T>, BObject {
 
 	private static final class createBInteger extends AFn {
 		@Override
@@ -166,16 +171,18 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BObject> T intersect() {
 		if (set.isEmpty()) {
-			if(this.getClass().getEnclosingClass() == BSet.class) {
+			//Think about passing the generic inner class through the constructor (or at least with a method)
+			try {
 				return (T) new BSet<K>();
-			} else {
+			} catch (ClassCastException e) {
 				return (T) new BRelation();
 			}
 		} else {
-			if(this.getClass().getEnclosingClass() == BSet.class) {
+			//Think about passing the generic inner class through the constructor (or at least with a method)
+			try {
 				return (T) this.set.stream()
 						.reduce((a, e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
-			} else {
+			} catch (ClassCastException exception) {
 				return (T) this.set.stream()
 						.reduce((a, e) -> ((BRelation) a).intersect((BRelation) e)).get();
 			}
@@ -193,16 +200,18 @@ public class BSet<T> implements BObject, Set<T> {
 	@SuppressWarnings("unchecked")
 	public <K extends BObject> T union() {
 		if (set.isEmpty()) {
-			if(this.getClass().getEnclosingClass() == BSet.class) {
+			//Think about passing the generic inner class through the constructor (or at least with a method)
+			try {
 				return (T) new BSet<K>();
-			} else {
+			} catch (ClassCastException e) {
 				return (T) new BRelation();
 			}
 		} else {
-			if(this.getClass().getEnclosingClass() == BSet.class) {
+			//Think about passing the generic inner class through the constructor (or at least with a method)
+			try {
 				return (T) this.set.stream()
 						.reduce((a, e) -> ((BSet<K>) a).union((BSet<K>) e)).get();
-			} else {
+			} catch (ClassCastException exception) {
 				return (T) this.set.stream()
 						.reduce((a, e) -> ((BRelation) a).union((BRelation) e)).get();
 			}

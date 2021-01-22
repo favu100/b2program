@@ -8,6 +8,7 @@ INITIALISATION set := {{1},{2},{3}}; x := {}
 
 OPERATIONS
 
-	calculate = BEGIN x := union(set) END
+	calculate = BEGIN x := union(set) END;
+	out <-- getRes = out := x
 
 END

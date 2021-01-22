@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    subset = StrictSubset()
+    subset.calculate()
+    print(subset.getRes())

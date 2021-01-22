@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    modulo = Modulo()
+    modulo.calculate()
+    print(modulo.getRes())

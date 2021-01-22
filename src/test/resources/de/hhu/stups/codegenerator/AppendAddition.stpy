@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    append = Append()
+    append.calculate()
+    print(append.getRes())

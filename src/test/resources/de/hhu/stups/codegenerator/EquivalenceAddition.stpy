@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    equi = Equivalence()
+    print(equi.Inc(new BInteger(10)))

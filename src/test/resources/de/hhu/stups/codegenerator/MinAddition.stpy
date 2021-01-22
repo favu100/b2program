@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    min = Min()
+    min.calculate()
+    print(min.getRes())

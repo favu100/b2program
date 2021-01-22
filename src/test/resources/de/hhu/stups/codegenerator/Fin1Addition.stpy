@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    fin = Fin1()
+    fin.calculate()
+    print(fin.getRes())

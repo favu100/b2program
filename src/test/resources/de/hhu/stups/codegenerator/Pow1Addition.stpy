@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    pow = Pow1()
+    pow.calculate()
+    print(pow.getRes())

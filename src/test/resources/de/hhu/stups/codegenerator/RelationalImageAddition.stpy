@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    relation = RelationalImage()
+    relation.calculate()
+    print(relation.getRes())

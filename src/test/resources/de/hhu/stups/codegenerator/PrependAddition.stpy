@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    prepend = Prepend()
+    prepend.calculate()
+    print(prepend.getRes())

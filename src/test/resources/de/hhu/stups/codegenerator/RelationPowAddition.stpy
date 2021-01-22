@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    pow = RelationPow()
+    pow.calculate()
+    print(pow.getRes())

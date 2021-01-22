@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    intersection = Intersection()
+    intersection.calculate()
+    print(intersection.getRes())

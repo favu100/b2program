@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    parallel = ParallelProduct()
+    parallel.calculate()
+    print(parallel.getRes())

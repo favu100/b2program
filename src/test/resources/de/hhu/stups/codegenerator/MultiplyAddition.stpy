@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    multiply = Multiply()
+    multiply.calculate()
+    print(multiply.getRes())

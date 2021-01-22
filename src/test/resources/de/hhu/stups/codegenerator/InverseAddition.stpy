@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    inverse = Inverse()
+    inverse.calculate()
+    print(inverse.getRes())

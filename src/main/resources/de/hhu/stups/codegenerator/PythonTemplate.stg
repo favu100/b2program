@@ -1,5 +1,5 @@
 keywords() ::= <<
-False, None, True, __peg_parser__, and, as, assert, async, await, break, class, continue, def, del, elif, else, except, finally, for, from, global, if, import, in, is, lambda, nonlocal, not, or, pass, raise, return, try, while, with, yield
+False, None, True, __peg_parser__, and, as, assert, async, await, break, class, continue, def, del, elif, else, except, finally, for, from, global, if, import, in, is, lambda, nonlocal, not, or, pass, raise, range, return, try, while, with, yield
 
 >>
 
@@ -324,8 +324,8 @@ parallel(loads, others) ::=<<
 <others; separator="\n">
 >>
 
-parallel_load(type, identifier) ::= <<
-_ld_<identifier> = <identifier>
+parallel_load(type, identifier, name) ::= <<
+_ld_<name> = <identifier>
 >>
 
 assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<

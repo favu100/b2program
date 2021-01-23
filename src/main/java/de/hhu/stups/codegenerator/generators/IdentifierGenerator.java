@@ -156,11 +156,13 @@ public class IdentifierGenerator {
     * This function checks whether the name of an identifier is used on the left-hand side and on the right-hand side of an assignment
     */
     private boolean rhsOnLhs(String name) {
-        return !parallelConstructHandler.isLhsInParallel() && parallelConstructHandler.getParallelConstructAnalyzer() != null && parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel()
-                .stream()
-                .map(IdentifierExprNode::getName)
-                .collect(Collectors.toList())
-                .contains(name);
+        return !parallelConstructHandler.isLhsInParallel() &&
+                parallelConstructHandler.getParallelConstructAnalyzer() != null &&
+                parallelConstructHandler.getParallelConstructAnalyzer().getDefinedIdentifiersInParallel()
+                    .stream()
+                    .map(IdentifierExprNode::getName)
+                    .collect(Collectors.toList())
+                    .contains(name);
     }
 
     /*

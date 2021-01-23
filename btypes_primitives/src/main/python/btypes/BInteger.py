@@ -6,6 +6,8 @@ class BInteger:
         self.__value = value
 
     def __add__(self, other: 'BInteger') -> 'BInteger':
+        if type(other) == str:
+            return str(self) + other
         return BInteger(self.__value + other.__value)
 
     def __sub__(self, other: 'BInteger') -> 'BInteger':
@@ -23,26 +25,26 @@ class BInteger:
     def __neg__(self) -> 'BInteger':
         return BInteger(-self.__value)
 
-    def __lt__(self, other: 'BInteger') -> 'BBoolean':
-        return BBoolean(self.__value < other.__value)
+    def __lt__(self, other: 'BInteger') -> 'bool':
+        return self.__value < other.__value
 
-    def __le__(self, other: 'BInteger') -> 'BBoolean':
-        return BBoolean(self.__value <= other.__value)
+    def __le__(self, other: 'BInteger') -> 'bool':
+        return self.__value <= other.__value
 
-    def __eq__(self, other: 'BInteger') -> 'BBoolean':
-        return BBoolean(self.__value == other.__value)
+    def __eq__(self, other: 'BInteger') -> 'bool':
+        return self.__value == other.__value
 
-    def __ne__(self, other: 'BInteger') -> 'BBoolean':
-        return BBoolean(self.__value != other.__value)
+    def __ne__(self, other: 'BInteger') -> 'bool':
+        return self.__value != other.__value
 
-    def __gt__(self, other: 'BInteger') -> 'BBoolean':
-        return BBoolean(self.__value > other.__value)
+    def __gt__(self, other: 'BInteger') -> 'bool':
+        return self.__value > other.__value
 
-    def __ge__(self, other: 'BInteger') -> 'BBoolean':
-        return BBoolean(self.__value >= other.__value)
+    def __ge__(self, other: 'BInteger') -> 'bool':
+        return self.__value >= other.__value
 
     def __pow__(self, other: 'BInteger') -> 'BInteger':
-        return BInteger(self.__value ** other.__value)
+        return self.__value ** other.__value
 
     def __str__(self) -> 'str':
         return str(self.__value)
@@ -66,22 +68,22 @@ class BInteger:
         return self.__neg__()
 
     def less(self, other: 'BInteger') -> 'BBoolean':
-        return self.__lt__(other)
+        return BBoolean(self.__value < other.__value)
 
     def lessEqual(self, other: 'BInteger') -> 'BBoolean':
-        return self.__le__(other)
+        return BBoolean(self.__value <= other.__value)
 
     def equal(self, other: 'BInteger') -> 'BBoolean':
-        return self.__eq__(other)
+        return BBoolean(self.__value == other.__value)
 
     def unequal(self, other: 'BInteger') -> 'BBoolean':
-        return self.__ne__(other)
+        return BBoolean(self.__value != other.__value)
 
     def greater(self, other: 'BInteger') -> 'BBoolean':
-        return self.__gt__(other)
+        return BBoolean(self.__value > other.__value)
 
     def greaterEqual(self, other: 'BInteger') -> 'BBoolean':
-        return self.__ge__(other)
+        return BBoolean(self.__value >= other.__value)
 
     def succ(self) -> 'BInteger':
         return BInteger(self.__value + 1)

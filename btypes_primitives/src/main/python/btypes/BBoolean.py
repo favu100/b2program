@@ -15,7 +15,7 @@ class BBoolean:
         return BBoolean(self.__value and other.__value)
 
     def __str__(self) -> 'str':
-        return str(self.__value)
+        return str(self.__value).lower()
 
     def __ror__(self, other: 'BBoolean') -> 'BBoolean':
         return BBoolean(self.__value or other.__value)

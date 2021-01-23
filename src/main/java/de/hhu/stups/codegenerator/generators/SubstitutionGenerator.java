@@ -556,6 +556,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType()));
         TemplateHandler.add(substitution, "identifier", identifier);
+        TemplateHandler.add(substitution, "name", expr.toString());
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) expr).getName()));
         return substitution.render();
     }

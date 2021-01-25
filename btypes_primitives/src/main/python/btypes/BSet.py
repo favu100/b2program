@@ -157,13 +157,13 @@ class BSet:
         return True
 
     def strictSubsetOfNatural(self) -> 'bool':
-        return self.subsetOfInteger()
+        return self.subsetOfNatural()
 
     def notSubsetOfNatural(self) -> 'bool':
-        return not self.subsetOfInteger()
+        return not self.subsetOfNatural()
 
     def notStrictSubsetOfNatural(self) -> 'bool':
-        return not self.strictSubsetOfInteger()
+        return not self.strictSubsetOfNatural()
 
     def subsetOfNatural1(self) -> 'bool':
         for element in self.__set:
@@ -178,13 +178,13 @@ class BSet:
         return True
 
     def strictSubsetOfString(self) -> 'bool':
-        return self.subsetOfInteger()
+        return self.subsetOfString()
 
     def notSubsetOfString(self) -> 'bool':
-        return not self.subsetOfInteger()
+        return not self.subsetOfString()
 
     def notStrictSubsetOfString(self) -> 'bool':
-        return not self.strictSubsetOfInteger()
+        return not self.strictSubsetOfString()
 
     def subsetOfStruct(self) -> 'bool':
         for element in self.__set:
@@ -193,13 +193,13 @@ class BSet:
         return True
 
     def strictSubsetOfStruct(self) -> 'bool':
-        return self.subsetOfInteger()
+        return self.subsetOfStruct()
 
     def notSubsetOfStruct(self) -> 'bool':
-        return not self.subsetOfInteger()
+        return not self.subsetOfStruct()
 
     def notStrictSubsetOfStruct(self) -> 'bool':
-        return not self.strictSubsetOfInteger()
+        return not self.strictSubsetOfStruct()
 
     def equalInteger(self) -> 'BBoolean':
         return BBoolean(False)

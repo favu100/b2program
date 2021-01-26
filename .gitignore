@@ -158,4 +158,10 @@ probcli
 probcli.sh
 benchmarks/ProB/lib
 benchmarks/ProB/stdlib
-*.c
+
+/*.c
+/*.cpp
+/*.hpp
+/*.java
+/*.mch
+/*.py

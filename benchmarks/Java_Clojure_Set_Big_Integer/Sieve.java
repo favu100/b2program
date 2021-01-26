@@ -16,9 +16,9 @@ public class Sieve {
     private BInteger limit;
 
     public Sieve() {
-        numbers = BSet.interval(new BInteger("2"),new BInteger("1000000"));
+        numbers = BSet.interval(new BInteger("2"),new BInteger("2000000"));
         cur = new BInteger("2");
-        limit = new BInteger("1000000");
+        limit = new BInteger("2000000");
     }
 
     public BInteger ComputeNumberOfPrimes() {

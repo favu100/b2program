@@ -28,9 +28,9 @@ class Sieve {
     public:
 
         Sieve() {
-            numbers = (BSet<BInteger>::interval((BInteger(2)),(BInteger(1000000))));
+            numbers = (BSet<BInteger>::interval((BInteger(2)),(BInteger(2000000))));
             cur = (BInteger(2));
-            limit = (BInteger(1000000));
+            limit = (BInteger(2000000));
         }
 
         BInteger ComputeNumberOfPrimes() {

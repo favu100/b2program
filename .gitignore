@@ -143,15 +143,11 @@ btypes_big_integer/.settings/org.eclipse.jdt.core.prefs
 
 src/main/resources/de/hhu/stups/codegenerator/testfiles/Rule_DB_Route_0001ori.mch
 
-*.cpp
-*.java
+
 *.dSYM
 *.tmp
 *.save
 *.exec
-*.hpp
-*.mch
-*.py
 *.pyc
 *.prob
 *.gch

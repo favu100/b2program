@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RelationGeneralizedIntersectionEmpty set = new RelationGeneralizedIntersectionEmpty();
+    set.calculate();
+    System.out.println(set.getSet().card());
+}

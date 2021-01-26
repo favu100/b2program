@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    RelationGeneralizedUnionEmpty set = new RelationGeneralizedUnionEmpty();
+    set.calculate();
+    System.out.println(set.getSet().card());
+}

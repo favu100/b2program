@@ -199,8 +199,18 @@ public class TestOperators extends TestJava {
     }
 
     @Test
+    public void testGeneralizedUnionEmpty() throws Exception {
+        testJava("GeneralizedUnionEmpty", "GeneralizedUnionEmpty", "GeneralizedUnionEmptyAddition.stjava", true);
+    }
+
+    @Test
     public void testRelationGeneralizedUnion() throws Exception {
         testJava("RelationGeneralizedUnion", "RelationGeneralizedUnion", "RelationGeneralizedUnionAddition.stjava", true);
+    }
+
+    @Test
+    public void testRelationGeneralizedUnionEmpty() throws Exception {
+        testJava("RelationGeneralizedUnionEmpty", "RelationGeneralizedUnionEmpty", "RelationGeneralizedUnionEmptyAddition.stjava", true);
     }
 
     @Test
@@ -208,10 +218,20 @@ public class TestOperators extends TestJava {
         testJava("RelationGeneralizedIntersection", "RelationGeneralizedIntersection", "RelationGeneralizedIntersectionAddition.stjava", true);
     }
 
+    @Test
+    public void testRelationGeneralizedIntersectionEmpty() throws Exception {
+        testJava("RelationGeneralizedIntersectionEmpty", "RelationGeneralizedIntersectionEmpty", "RelationGeneralizedIntersectionEmptyAddition.stjava", true);
+    }
+
 
     @Test
     public void testGeneralizedIntersection() throws Exception {
         testJava("GeneralizedIntersection", "GeneralizedIntersection", "GeneralizedIntersectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testGeneralizedIntersectionEmpty() throws Exception {
+        testJava("GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmptyAddition.stjava", true);
     }
 
 

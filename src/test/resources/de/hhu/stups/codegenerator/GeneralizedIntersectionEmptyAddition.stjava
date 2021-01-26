@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    GeneralizedIntersectionEmpty set = new GeneralizedIntersectionEmpty();
+    set.calculate();
+    System.out.println(set.getSet().card());
+}

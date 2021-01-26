@@ -199,6 +199,11 @@ public class TestOperators extends TestCpp {
     }
 
     @Test
+    public void testGeneralizedUnionEmpty() throws Exception {
+        testCpp("GeneralizedUnionEmpty", "GeneralizedUnionEmpty", "GeneralizedUnionEmptyAddition.stcpp", true);
+    }
+
+    @Test
     public void testRelationGeneralizedUnion() throws Exception {
         testCpp("RelationGeneralizedUnion", "RelationGeneralizedUnion", "RelationGeneralizedUnionAddition.stcpp", true);
     }
@@ -212,6 +217,11 @@ public class TestOperators extends TestCpp {
     @Test
     public void testGeneralizedIntersection() throws Exception {
         testCpp("GeneralizedIntersection", "GeneralizedIntersection", "GeneralizedIntersectionAddition.stcpp", true);
+    }
+
+    @Test
+    public void testGeneralizedIntersectionEmpty() throws Exception {
+        testCpp("GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmptyAddition.stcpp", true);
     }
 
 

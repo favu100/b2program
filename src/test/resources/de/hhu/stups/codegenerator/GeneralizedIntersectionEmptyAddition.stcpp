@@ -1,0 +1,6 @@
+int main() {
+    GeneralizedIntersectionEmpty set;
+    set.calculate();
+    cout << set.getSet().card();
+    return 0;
+}

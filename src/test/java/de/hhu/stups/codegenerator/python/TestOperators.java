@@ -199,6 +199,11 @@ public class TestOperators extends TestPython {
     }
 
     @Test
+    public void testGeneralizedUnionEmpty() throws Exception {
+        testPython("GeneralizedUnionEmpty", "GeneralizedUnionEmpty", "GeneralizedUnionEmptyAddition.stpy", true);
+    }
+
+    @Test
     public void testRelationGeneralizedUnion() throws Exception {
         testPython("RelationGeneralizedUnion", "RelationGeneralizedUnion", "RelationGeneralizedUnionAddition.stpy", true);
     }
@@ -212,6 +217,11 @@ public class TestOperators extends TestPython {
     @Test
     public void testGeneralizedIntersection() throws Exception {
         testPython("GeneralizedIntersection");
+    }
+
+    @Test
+    public void testGeneralizedIntersectionEmpty() throws Exception {
+        testPython("GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmptyAddition.stpy", true);
     }
 
 

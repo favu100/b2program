@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    GeneralizedUnionEmpty set = new GeneralizedUnionEmpty();
+    set.calculate();
+    System.out.println(set.getSet().card());
+}

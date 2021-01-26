@@ -15,7 +15,7 @@ class TrafficLightExec:
         self.counter = BInteger(0)
 
     def simulate(self):
-        while((self.counter.less(BInteger(500000))).booleanValue()):
+        while((self.counter.less(BInteger(300000000))).booleanValue()):
             self._TrafficLight.cars_ry()
             self._TrafficLight.cars_g()
             self._TrafficLight.cars_y()
@@ -25,15 +25,6 @@ class TrafficLightExec:
             self.counter = self.counter.plus(BInteger(1))
 
 
-
-    def getCounter(self):
-        out = None
-        out = self.counter
-        return out
-
-
-
 if __name__ == '__main__':
     traffic = TrafficLightExec()
     traffic.simulate()
-    print(traffic.getCounter())

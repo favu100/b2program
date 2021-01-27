@@ -2,7 +2,7 @@ from btypes.BInteger import *
 from btypes.BBoolean import *
 from btypes.BString import *
 from btypes.BStruct import *
-
+from btypes.BRelation import *
 
 
 class BSet:
@@ -244,6 +244,3 @@ class BSet:
 
     def __iter__(self):
         return iter(self.__set)
-
-
-from btypes.BRelation import *

@@ -4,7 +4,6 @@ from btypes.BString import *
 from btypes.BStruct import *
 
 
-
 class BSet:
 
     def __init__(self, *args):
@@ -27,6 +26,9 @@ class BSet:
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __len__(self):
+        return len(self.__set)
 
     def union(self, other=None):
         if other is None:
@@ -112,7 +114,7 @@ class BSet:
         start = BSet()
         queue = [start]
         result = result.union(BSet(start))
-        while not len(queue) == 0:
+        while not (len(queue) == 0):
             currentSet = queue.pop()
             for element in self.__set:
                 nextSet = currentSet.union(BSet(element))
@@ -245,5 +247,5 @@ class BSet:
     def __iter__(self):
         return iter(self.__set)
 
-
+#Import is at the bottom due to cyclic dependencies
 from btypes.BRelation import *

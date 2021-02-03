@@ -3,7 +3,6 @@ from btypes.BBoolean import *
 from btypes.BString import *
 from btypes.BStruct import *
 
-
 class BSet:
 
     def __init__(self, *args):

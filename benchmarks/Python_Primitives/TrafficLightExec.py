@@ -3,11 +3,7 @@ from btypes.BInteger import BInteger
 from TrafficLight import TrafficLight
 
 
-
 class TrafficLightExec:
-
-
-
 
     def __init__(self):
         self._TrafficLight = TrafficLight()
@@ -15,7 +11,7 @@ class TrafficLightExec:
         self.counter = BInteger(0)
 
     def simulate(self):
-        while((self.counter.less(BInteger(300000000))).booleanValue()):
+        while (self.counter.less(BInteger(300000000))).booleanValue():
             self._TrafficLight.cars_ry()
             self._TrafficLight.cars_g()
             self._TrafficLight.cars_y()

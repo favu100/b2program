@@ -64,7 +64,7 @@ public class TestPython {
     }
 
     ProcessBuilder processBuilder = new ProcessBuilder();
-    processBuilder.environment().put("PYTHONPATH", "btypes_persistent.jar");
+    processBuilder.environment().put("PYTHONPATH", "btypes_primitives/src/main/python");
     processBuilder.command("python",  "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".py");
     Process executeProcess = processBuilder.start();
     executeProcess.waitFor();
@@ -79,7 +79,7 @@ public class TestPython {
 
     System.out.println("Assert: " + result + " = " + expectedOutput);
 
-    assertEquals(result, expectedOutput);
+    assertEquals(expectedOutput, result);
 
     /*Set<File> classFiles = pythonFilePaths.stream()
         .map(path -> new File(path.getParent().toFile(), machinePath + ".class"))

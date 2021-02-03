@@ -70,7 +70,7 @@ public class TestCpp {
 		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
 
 		Process compileProcess = runtime
-				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " out/test/resources/de/hhu/stups/codegenerator/" + machine + ".cpp");
+				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec" + " build/resources/test/de/hhu/stups/codegenerator/" + machine + ".cpp");
 		compileProcess.waitFor();
 
 		String error = streamToString(compileProcess.getErrorStream());
@@ -95,7 +95,7 @@ public class TestCpp {
 
 		System.out.println("Assert: " + result + " = " + expectedOutput);
 
-		assertEquals(result, expectedOutput);
+		assertEquals(expectedOutput, result);
 		cleanUp(mainPath.toString());
 	}
 

@@ -16,7 +16,7 @@ class Cruise_finite1_deterministic_exec:
         self.counter = BInteger(0)
 
     def simulate(self):
-        while((self.counter.less(BInteger(100))).booleanValue()):
+        while((self.counter.less(BInteger(100000))).booleanValue()):
             self._Cruise_finite1_deterministic.CruiseBecomesAllowed()
             self._Cruise_finite1_deterministic.CruiseBecomesNotAllowed()
             self._Cruise_finite1_deterministic.CruiseBecomesAllowed()
@@ -1379,83 +1379,6 @@ class Cruise_finite1_deterministic_exec:
             self._Cruise_finite1_deterministic.ObstacleDisappears()
             self._Cruise_finite1_deterministic.CruiseBecomesNotAllowed()
             self.counter = self.counter.plus(BInteger(1))
-
-
-
-    def getCruiseAllowed(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_CruiseAllowed()
-        return out
-
-    def getCruiseActive(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_CruiseActive()
-        return out
-
-    def getVehicleAtCruiseSpeed(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed()
-        return out
-
-    def getVehicleCanKeepSpeed(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_VehicleCanKeepSpeed()
-        return out
-
-    def getVehicleTryKeepSpeed(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_VehicleTryKeepSpeed()
-        return out
-
-    def getSpeedAboveMax(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_SpeedAboveMax()
-        return out
-
-    def getVehicleTryKeepTimeGap(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap()
-        return out
-
-    def getNumberOfSetCruise(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_NumberOfSetCruise()
-        return out
-
-    def getCruiseSpeedAtMax(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_CruiseSpeedAtMax()
-        return out
-
-    def getObstacleDistance(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_ObstacleDistance()
-        return out
-
-    def getObstacleStatusJustChanged(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_ObstacleStatusJustChanged()
-        return out
-
-    def getCCInitialisationInProgress(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_CCInitialisationInProgress()
-        return out
-
-    def getCruiseSpeedChangeInProgress(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress()
-        return out
-
-    def getObstaclePresent(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_ObstaclePresent()
-        return out
-
-    def getObstacleRelativeSpeed(self):
-        out = None
-        out = _Cruise_finite1_deterministic._get_ObstacleRelativeSpeed()
-        return out
 
 
 

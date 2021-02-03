@@ -20,7 +20,7 @@ class <machine>:
 
     <initialization>
 
-    <operations; separator="\n\n">
+    <operations; separator="\n">
 
     <getters; separator="\n\n">
 
@@ -265,14 +265,15 @@ enum_call(machine, class, identifier, isCurrentMachine) ::= <<
 
 set_enum_declaration(name,enums) ::= <<
 from enum import Enum, auto
+
+
 class <name>(BObject, Enum):
     <enums : {enum | <enum> = auto()
         }>
-
     def equal(self, o):
         return BBoolean(self == o)
 
-    def unequal(o):
+    def unequal(self, o):
         return BBoolean(self != o)
 
     def __str__(self):

@@ -12,20 +12,15 @@ class BSet:
         if len(args) == 1 and type(args[0]) is immutables.Map:
             self.__set = args[0]
         else:
-            _set = {x: x for x in args}
-            self.__set = immutables.Map(_set)
+            self.__set = immutables.Map({x: x for x in args})
 
     def __str__(self) -> 'str':
         return '{' + ', '.join([str(x) for x in self.__set]) + '}'
 
     def __eq__(self, other):
-        if self is other:
-            return True
-        if other is None or type(self) != type(other):
+        if not isinstance(other, BSet):
             return False
-        if not self.__set == other.__set:
-            return False
-        return True
+        return self.__set == other.__set
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -33,14 +28,17 @@ class BSet:
     def __len__(self):
         return len(self.__set)
 
+    def __contains__(self, item):
+        return item in self.__set
+
     def union(self, other=None):
         if other is None:
             if len(self.__set) == 0:
                 return BSet()
-            elif type(next(iter(self.__set))) == BSet:
-                return reduce(lambda a, e: a.update(e), self, BSet())
-            elif type(next(iter(self.__set))) == BRelation:
-                return reduce(lambda a, e: a.update(e), self, BRelation())
+            elif isinstance(next(iter(self.__set)), BSet):
+                return BSet(reduce(lambda a, e: a.update(e.getSet()), self, immutables.Map()))
+            elif isinstance(next(iter(self.__set)), BRelation):
+                return reduce(lambda a, e: a.union(e), self, BRelation())
 
         return BSet(self.__set.update(other.getSet()))
 
@@ -48,22 +46,20 @@ class BSet:
         if other is None:
             if len(self.__set) == 0:
                 return BSet()
-            elif type(next(iter(self.__set))) == BSet:
+            elif isinstance(next(iter(self.__set)), BSet):
                 return reduce(lambda a, e: a.intersect(e), self, BSet())
-            elif type(next(iter(self.__set))) == BRelation:
+            elif isinstance(next(iter(self.__set)), BRelation):
                 return reduce(lambda a, e: a.intersect(e), self, BRelation())
 
         _set = self.__set
-        for element in _set:
-            if not element in other.__set:
-                _set = _set.delete(element)
+        other_set = other.__set
+        _set = reduce(lambda current_set, el: current_set.delete(el) if el not in other_set else current_set, _set, _set)
         return BSet(_set)
 
     def difference(self, other: 'BSet') -> 'BSet':
         _set = self.__set
-        for element in other.__set:
-            if element in _set:
-                _set = _set.delete(element)
+        other_set = other.__set
+        _set = reduce(lambda current_set, el: current_set.delete(el) if el in _set else current_set, other_set, _set)
         return BSet(_set)
 
     def card(self) -> 'BInteger':
@@ -246,7 +242,7 @@ class BSet:
 
     @staticmethod
     def interval(a: 'BInteger', b: 'BInteger') -> 'BSet':
-        r = list(map(BInteger, range(a.intValue(), b.intValue() + 1)))
+        r = map(BInteger, range(a.intValue(), b.intValue() + 1))
         return BSet(*r)
 
     def __hash__(self):

@@ -10,7 +10,7 @@ INITIALISATION counter := 0
 
 OPERATIONS
 	simulate =
-	WHILE counter < 1000 DO
+	WHILE counter < 10000 DO
             route_reservation(R1);
             route_reservation(R4);
             point_positionning(R1);
@@ -107,7 +107,7 @@ OPERATIONS
             route_freeing(R9);
 	    counter := counter + 1
 	INVARIANT 1 = 1
-	VARIANT 1000 - counter
+	VARIANT 10000 - counter
 	      END
 
 END

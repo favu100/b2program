@@ -14,8 +14,7 @@ ABSTRACT_VARIABLES
   OCC,
   resbl,
   resrt,
-  rsrtbl,
-  visited
+  rsrtbl
 /* PROMOTED OPERATIONS
   route_reservation,
   route_freeing,
@@ -63,7 +62,6 @@ INVARIANT
   & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
   & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
   & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
-  & visited : POW(INTEGER)
 ASSERTIONS
   /* @thm1 */ !(b).(b : OCC & b : dom(TRK) => nxt(rsrtbl(b))(b) = TRK(b));
   /* @thm2 */ ran(lst) /\ dom(TRK) \ ran(fst) = {};
@@ -82,8 +80,6 @@ INITIALISATION
          frm := {}
       ||
          LBT := {}
-      ||
-         visited := {}
 
 OPERATIONS
   route_reservation(r) =
@@ -97,8 +93,6 @@ OPERATIONS
          rsrtbl := rsrtbl \/ (rtbl |> {r})
       ||
          resbl := resbl \/ (rtbl~)[{r}]
-      ||
-         visited := visited \/ {1}
     END;
 
   route_freeing(r) =
@@ -108,8 +102,6 @@ OPERATIONS
          resrt := resrt \ {r}
       ||
          frm := frm \ {r}
-      ||
-         visited := visited \/ {2}
     END;
 
   FRONT_MOVE_1(r) =
@@ -121,8 +113,6 @@ OPERATIONS
          OCC := OCC \/ {fst(r)}
       ||
          LBT := LBT \/ {fst(r)}
-      ||
-         visited := visited \/ {3}
     END;
 
   FRONT_MOVE_2(b) =
@@ -132,8 +122,6 @@ OPERATIONS
       & /* @grd3 */ TRK(b) /: OCC
     THEN
          OCC := OCC \/ {TRK(b)}
-      ||
-         visited := visited \/ {4}
     END;
 
   BACK_MOVE_1(b) =
@@ -148,8 +136,6 @@ OPERATIONS
          resbl := resbl \ {b}
       ||
          LBT := LBT \ {b}
-      ||
-         visited := visited \/ {5}
     END;
 
   BACK_MOVE_2(b) =
@@ -165,8 +151,6 @@ OPERATIONS
          resbl := resbl \ {b}
       ||
          LBT := LBT \ {b} \/ {TRK(b)}
-      ||
-         visited := visited \/ {6}
 
     END;
 
@@ -175,8 +159,6 @@ OPERATIONS
         /* @grd1 */ r : resrt \ frm
     THEN
          TRK := ((dom(nxt(r)) <<| TRK) |>> ran(nxt(r))) \/ nxt(r)
-      ||
-         visited := visited \/ {7}
     END;
 
   route_formation(r) =
@@ -185,7 +167,5 @@ OPERATIONS
       & /* @grd2 */ (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK
     THEN
          frm := frm \/ {r}
-      ||
-         visited := visited \/ {8}
     END
 END

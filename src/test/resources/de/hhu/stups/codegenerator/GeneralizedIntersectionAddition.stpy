@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    calc = GeneralizedIntersection()
+    calc.calculate()
+    print(calc.getRes().card())

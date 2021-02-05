@@ -64,8 +64,8 @@ public class TestPython {
     }
 
     ProcessBuilder processBuilder = new ProcessBuilder();
-    processBuilder.environment().put("PYTHONPATH", "btypes_primitives/src/main/python");
-    processBuilder.command("python",  "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".py");
+    processBuilder.environment().put("PYTHONPATH", "btypes_primitives/src/main/python_magicstack_immutable");
+    processBuilder.command("pypy3",  "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".py");
     Process executeProcess = processBuilder.start();
     executeProcess.waitFor();
 

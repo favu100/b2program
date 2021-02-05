@@ -195,7 +195,7 @@ public class TestOperators extends TestPython {
 
     @Test
     public void testGeneralizedUnion() throws Exception {
-        testPython("GeneralizedUnion");
+        testPython("GeneralizedUnion", "GeneralizedUnion", "GeneralizedUnionAddition.stpy", true);
     }
 
     @Test
@@ -216,7 +216,7 @@ public class TestOperators extends TestPython {
 
     @Test
     public void testGeneralizedIntersection() throws Exception {
-        testPython("GeneralizedIntersection");
+        testPython("GeneralizedIntersection", "GeneralizedIntersection", "GeneralizedIntersectionAddition.stpy", true);
     }
 
     @Test

@@ -4517,7 +4517,7 @@ class CAN_BUS_tlc_exec:
         self._CAN_BUS_tlc.T1Wait(BInteger(2))
         self._CAN_BUS_tlc.T3Wait()
         self._CAN_BUS_tlc.Update(BInteger(4))
-        while((self.counter.less(BInteger(10000))).booleanValue()):
+        while((self.counter.less(BInteger(300000))).booleanValue()):
             self._CAN_BUS_tlc.T3Evaluate()
             self._CAN_BUS_tlc.T3Read(BInteger(4),BInteger(0))
             self._CAN_BUS_tlc.T3Poll()
@@ -4563,13 +4563,12 @@ class CAN_BUS_tlc_exec:
             self._CAN_BUS_tlc.T1Evaluate()
             self._CAN_BUS_tlc.T1Calculate(BInteger(1))
             self._CAN_BUS_tlc.T3Initiate()
-            self._CAN_BUS_tlc.T1SendResult(BInteger(3),BInteger(1))
-            self._CAN_BUS_tlc.T3writebus(BInteger(4),BInteger(0))
+            self._CAN_BUS_tlc.T1SendResult(BInteger(3), BInteger(1))
+            self._CAN_BUS_tlc.T3writebus(BInteger(4), BInteger(0))
             self._CAN_BUS_tlc.T1Wait(BInteger(2))
             self._CAN_BUS_tlc.T3Wait()
             self._CAN_BUS_tlc.Update(BInteger(4))
             self.counter = self.counter.plus(BInteger(1))
-
 
 
 if __name__ == '__main__':

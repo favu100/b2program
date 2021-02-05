@@ -2,6 +2,7 @@ from btypes.BBoolean import BBoolean
 from btypes.BSet import BSet
 from btypes.BInteger import BInteger
 from btypes.BObject import BObject
+from btypes.BUtils import BUtils
 
 
 from enum import Enum, auto
@@ -39,7 +40,7 @@ class ODset(BObject, Enum):
     def equal(self, o):
         return BBoolean(self == o)
 
-    def unequal(o):
+    def unequal(self, o):
         return BBoolean(self != o)
 
     def __str__(self):

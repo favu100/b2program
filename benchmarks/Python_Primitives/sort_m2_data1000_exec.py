@@ -1,8 +1,8 @@
 from btypes.BInteger import BInteger
 from sort_m2_data1000 import sort_m2_data1000
 
-class sort_m2_data1000_exec():
 
+class sort_m2_data1000_exec():
 
     def __init__(self):
         self._sort_m2_data1000 = sort_m2_data1000()

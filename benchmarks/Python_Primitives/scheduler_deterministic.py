@@ -49,16 +49,16 @@ class scheduler_deterministic:
     def ready(self, rr):
         if((self.waiting.elementOf(rr)).booleanValue()):
             self.waiting = self.waiting.difference(BSet(rr))
-            if((self.active.equal(BSet())).booleanValue()):
+            if self.active.equal(BSet()):
                 self.active = BSet(rr)
             else:
                 self._ready = self._ready.union(BSet(rr))
 
 
     def swap(self, pp):
-        if((self.active.unequal(BSet())).booleanValue()):
+        if self.active.unequal(BSet()):
             self.waiting = self.waiting.union(self.active)
-            if((self._ready.equal(BSet())).booleanValue()):
+            if self._ready.equal(BSet()):
                 self.active = BSet()
             else:
                 self.active = BSet(pp)

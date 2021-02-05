@@ -5,10 +5,9 @@ from btypes.BInteger import BInteger
 class Sieve:
 
     def __init__(self):
-        li = 2000000
-        self.numbers = BSet.interval(BInteger(2), BInteger(li))
+        self.numbers = BSet.interval(BInteger(2), BInteger(2000000))
         self.cur = BInteger(2)
-        self.limit = BInteger(li)
+        self.limit = BInteger(2000000)
 
     def ComputeNumberOfPrimes(self):
         while (BBoolean(self.cur.greater(BInteger(1)).booleanValue() and self.cur.multiply(self.cur).lessEqual(self.limit).booleanValue())).booleanValue():

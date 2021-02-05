@@ -149,25 +149,25 @@ BRelation(<elements; separator=", ">)
 
 iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<identifier> in <set>):
+for <identifier> in <set>:
     <body>
 >>
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<identifier> in <set>):
+for <identifier> in <set>:
     <body>
 >>
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<identifier> in <set>.pow()):
+for <identifier> in <set>.pow():
     <body>
 >>
 
 iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<identifier> : <set>.pow().difference(<set>)):
+for <identifier> in <set>.pow().difference(<set>):
     <body>
 >>
 

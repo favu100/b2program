@@ -4,6 +4,7 @@ from btypes.BString import *
 from btypes.BStruct import *
 
 import immutables
+from functools import reduce
 
 
 class BSet:
@@ -251,5 +252,5 @@ class BSet:
     def __iter__(self):
         return iter(self.__set)
 
-
+# Import is at the bottom due to cyclic dependencies
 from btypes.BRelation import *

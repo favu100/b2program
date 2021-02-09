@@ -246,5 +246,5 @@ class BSet:
     def __iter__(self):
         return iter(self.__set)
 
-#Import is at the bottom due to cyclic dependencies
+# Import is at the bottom due to cyclic dependencies
 from btypes.BRelation import *

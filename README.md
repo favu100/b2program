@@ -11,11 +11,12 @@ Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Ge
 Citation:
 
 ```
-@inbook{inbook,
+@InProceedings{b2program,
 author = {Vu, Fabian and Hansen, Dominik and K{\"{o}}rner, Philipp and Leuschel, Michael},
 year = {2019},
 month = {11},
 pages = {456-473},
+Booktitle = {Proceedings {iFM} 2019},
 title = {A Multi-target Code Generator for High-Level B},
 isbn = {978-3-030-34967-7},
 doi = {10.1007/978-3-030-34968-4_25}

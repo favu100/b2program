@@ -12,7 +12,7 @@ Citation:
 
 ```
 @inbook{inbook,
-author = {Vu, Fabian and Hansen, Dominik and Körner, Philipp and Leuschel, Michael},
+author = {Vu, Fabian and Hansen, Dominik and K{\"{o}}rner, Philipp and Leuschel, Michael},
 year = {2019},
 month = {11},
 pages = {456-473},

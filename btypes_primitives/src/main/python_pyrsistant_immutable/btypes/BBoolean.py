@@ -4,6 +4,8 @@ class BBoolean:
             self.__value = value
         elif type(value) is str:
             self.__value = str(value).lower() == "true"
+        elif type(value) is BBoolean:
+            self.__value = value.__value
 
     def __and__(self, other: 'BBoolean') -> 'BBoolean':
         return BBoolean(self.__value and other.__value)

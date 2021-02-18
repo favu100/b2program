@@ -4,6 +4,11 @@ class BBoolean:
             self.__value = value
         elif type(value) is str:
             self.__value = str(value).lower() == "true"
+        elif type(value) is BBoolean:
+            self.__value = value.__value
+
+    def __bool__(self) -> 'bool':
+        return self.__value
 
     def __and__(self, other: 'BBoolean') -> 'BBoolean':
         return BBoolean(self.__value and other.__value)
@@ -32,25 +37,25 @@ class BBoolean:
     def __ne__(self, other: 'BBoolean') -> 'BBoolean':
         return BBoolean(self.__value != other.__value)
 
-    def _and(self, other:  'BBoolean') -> 'BBoolean':
+    def _and(self, other: 'BBoolean') -> 'BBoolean':
         return self.__and__(other)
 
-    def _or(self, other:  'BBoolean') -> 'BBoolean':
+    def _or(self, other: 'BBoolean') -> 'BBoolean':
         return self.__or__(other)
 
     def _not(self) -> 'BBoolean':
         return BBoolean(not self.__value)
 
-    def implies(self, other:  'BBoolean') -> 'BBoolean':
+    def implies(self, other: 'BBoolean') -> 'BBoolean':
         return self._not()._or(other)
 
-    def equivalent(self, other:  'BBoolean') -> 'BBoolean':
+    def equivalent(self, other: 'BBoolean') -> 'BBoolean':
         return self.implies(other)._and(other.implies(self))
 
-    def equal(self, other:  'BBoolean') -> 'BBoolean':
+    def equal(self, other: 'BBoolean') -> 'BBoolean':
         return self.__eq__(other)
 
-    def unequal(self, other:  'BBoolean') -> 'BBoolean':
+    def unequal(self, other: 'BBoolean') -> 'BBoolean':
         return self.__ne__(other)
 
     def booleanValue(self) -> 'bool':

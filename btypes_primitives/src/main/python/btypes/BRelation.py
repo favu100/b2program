@@ -165,7 +165,7 @@ class BRelation:
 	def relationImage(self, domain: 'BSet') -> 'BSet':
 		result_set = set()
 		for domain_element in domain:
-			this_range_set = self.map[domain_element]
+			this_range_set = self.map.get(domain_element, None)
 			if this_range_set is None:
 				continue
 			result_set = result_set.union(this_range_set)

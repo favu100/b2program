@@ -9,4 +9,4 @@ OUTPUT ?= runtimes.txt
 
 % : export PYTHONPATH = $(BTYPESPYTHON)
 % :
-	/usr/bin/time -f "%C %E %M" -ao $(OUTPUT) pypy3 $@.py
+	timeout 20m /usr/bin/time -f "%C %E %M" -ao $(OUTPUT) pypy3 $@.py

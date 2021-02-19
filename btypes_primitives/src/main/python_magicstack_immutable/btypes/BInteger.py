@@ -10,6 +10,11 @@ class BInteger:
             return str(self) + other
         return BInteger(self.__value + other.__value)
 
+    def __radd__(self, other):
+        if type(other) == str:
+            return other + str(self)
+        return BInteger(self.__value + other.__value)
+
     def __sub__(self, other: 'BInteger') -> 'BInteger':
         return BInteger(self.__value - other.__value)
 

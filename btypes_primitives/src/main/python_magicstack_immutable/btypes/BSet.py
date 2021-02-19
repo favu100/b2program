@@ -106,7 +106,10 @@ class BSet:
         return self.__ne__(other)
 
     def nondeterminism(self):
-        return random.choice(self.__set)
+        values = []
+        for item in self.__set:
+            values.append(item)
+        return self.__set[random.choice(values)]
 
     def min(self):
         return min(self.__set)

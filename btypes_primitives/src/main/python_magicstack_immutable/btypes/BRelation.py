@@ -510,7 +510,7 @@ class BRelation:
             i = i + 1
 
         _range = self.map[domain_element]
-        index = random.choice(range(_range.size()))
+        index = random.choice(range(len(_range)))
         i = 0
         for obj in _range:
             if i == index:

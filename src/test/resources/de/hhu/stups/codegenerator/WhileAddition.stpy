@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    while1 = While()
+    print(while1.Inc(BInteger(1)))

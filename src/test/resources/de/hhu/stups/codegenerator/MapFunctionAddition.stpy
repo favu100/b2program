@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    _map = MapFunction()
+    print(_map.getYY().domain().card() + " " + _map.getYY()._range().card())

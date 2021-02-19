@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    locals = ManyLocalDeclarations2()
+    print(locals.Inc(BInteger(10)).card())

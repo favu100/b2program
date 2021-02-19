@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    iff = IfPredicate()
+    iff.calculate()
+    print(iff.getRes())

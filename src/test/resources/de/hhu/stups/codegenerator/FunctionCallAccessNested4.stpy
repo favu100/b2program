@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    functional = FunctionCallAccessNested4()
+    functional.calculate()
+    print(functional.getRes())

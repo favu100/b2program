@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    nondeterminism = Nondeterminism()
+    nondeterminism.calculate()
+    print(nondeterminism.getRes())

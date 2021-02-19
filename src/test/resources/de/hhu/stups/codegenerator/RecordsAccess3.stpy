@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    record = RecordsAccess3()
+    record.calculate()
+    print(record.getRes())

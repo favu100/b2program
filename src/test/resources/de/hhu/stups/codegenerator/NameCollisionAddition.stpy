@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    collision = NameCollision()
+    print(collision.getRes())

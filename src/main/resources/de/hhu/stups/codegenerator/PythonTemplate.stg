@@ -158,7 +158,7 @@ for <identifier> in <set>:
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for <identifier> in <set>:
+for <identifier> in [<set>]:
     <body>
 >>
 
@@ -175,7 +175,7 @@ for <identifier> in <set>.pow().difference(<set>):
 >>
 
 let_expression_predicate(type, identifier, body) ::= <<
-self.<identifier> = None
+<identifier> = None
 <body>
 >>
 
@@ -185,7 +185,7 @@ let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
 >>
 
 set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
-self.<identifier> = <if(isRelation)>BRelation<else>BSet<endif>()
+<identifier> = <if(isRelation)>BRelation<else>BSet<endif>()
 <comprehension>
 >>
 
@@ -200,7 +200,7 @@ if(<predicate>).booleanValue():
 >>
 
 lambda(type, identifier, lambda, leftType, rightType) ::= <<
-self.<identifier> = BRelation()
+<identifier> = BRelation()
 <lambda>
 >>
 
@@ -224,7 +224,7 @@ lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<
-self.<identifier> = BBoolean(<if(forall)>true<else>false<endif>)
+<identifier> = BBoolean(<if(forall)>True<else>False<endif>)
 <predicate>
 >>
 
@@ -234,24 +234,24 @@ quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredi
 self.<identifier> = BBoolean(<if(forall)>False<else>True<endif>)
 break
 <else>
-if<if(forall)>not <endif>(<predicate>).booleanValue():
-    self.<identifier> = BBoolean(<if(forall)>False<else>True<endif>)
+if <if(forall)>not <endif>(<predicate>).booleanValue():
+    <identifier> = BBoolean(<if(forall)>False<else>True<endif>)
     break
 <endif>
 >>
 
 quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
-<if(isInteger)>self.<identifier> = BInteger(<identity>)<else>self.<identifier> = BSet()<endif>
+<identifier> = <if(isInteger)>BInteger(<identity>)<else>BSet()<endif>
 <evaluation>
 >>
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-self.<identifier> = self.<identifier>.<operation>(<expression>)
+<identifier> = <identifier>.<operation>(<expression>)
 <else>
 if(<predicate>).booleanValue():
-    self.<identifier> = self.<identifier>.<operation>(<expression>)
+    <identifier> = <identifier>.<operation>(<expression>)
 <endif>
 >>
 

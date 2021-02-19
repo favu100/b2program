@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    expression = QuantifiedExpression1()
+    expression.calculate();
+    print(expression.getRes())

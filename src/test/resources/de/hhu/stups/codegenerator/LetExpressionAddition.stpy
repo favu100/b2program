@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    let = LetExpression()
+    let.calculate()
+    print(let.getRes())

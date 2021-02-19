@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    predicate = QuantifiedPredicate4()
+    predicate.calculate()
+    print(predicate.getRes())

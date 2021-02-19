@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    set = SetComprehension3()
+    set.calculate()
+    print(set.getRes())

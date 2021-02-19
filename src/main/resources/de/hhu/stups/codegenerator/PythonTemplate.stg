@@ -33,19 +33,18 @@ struct(name, declarations, parameters, initializations, functions, equalPredicat
 class <name>(BStruct):
 
     def __init__(self<parameters : {par |, <par>}>):
-        <declarations; separator="\n">
         <initializations; separator="\n">
 
 
     <functions; separator="\n\n">
 
-    def equal(self, <name> o):
+    def equal(self, o: '<name>'):
         return BBoolean(<equalPredicates; separator=" and ">)
 
-    def unequal(self, <name> o):
+    def unequal(self, o: '<name>'):
         return BBoolean(<unequalPredicates; separator=" or ">)
 
-    __str__(self):
+    def __str__(self):
         return "(" + <values; separator=" + \",\" + "> + ")"
 
     def __eq__(self, other):
@@ -53,7 +52,7 @@ class <name>(BStruct):
             return False
 
         o = other
-        return <equalPredicates; separator= " && ">
+        return <equalPredicates; separator= " and ">
 
     def __hash__(self):
         return hash(<fields; separator=", ">)
@@ -65,7 +64,7 @@ def _get_<variable>(self):
 >>
 
 record_field_get(type, field) ::= <<
-def get_<field>():
+def get_<field>(self):
     return self.<field>
 >>
 
@@ -82,12 +81,16 @@ record_access_element(expr, arg, val) ::= <<
 >>
 
 record_field_override(name, field, type, val, parameters) ::= <<
-def override_<field>(<field>):
-    return <name>(<parameters; separator=", ">)
+def override_<field>(self, <field>):
+    save  = self.<field>
+    self.<field>  = <field>
+    object = <name>(self.<parameters; separator=", self.">)
+    self.<field> = save
+    return object
 >>
 
 record_field_initialization(identifier) ::= <<
-self.<identifier> = self.<identifier>
+self.<identifier> = <identifier>
 >>
 
 record_assignment(identifier) ::= <<
@@ -253,10 +256,7 @@ if(<predicate>).booleanValue():
 >>
 
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
-if <predicate>.booleanValue():
-    <ifThen>
-else:
-    <ifElse>
+<ifThen> if <predicate>.booleanValue() else <ifElse>
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
@@ -407,19 +407,19 @@ binary(arg1,operator,arg2) ::= <<
 >>
 
 or(arg1, arg2) ::= <<
-BBoolean(<arg1>.booleanValue() or <arg2>.booleanValue())
+<arg1> or <arg2>
 >>
 
 and(arg1, arg2) ::= <<
-BBoolean(<arg1>.booleanValue() and <arg2>.booleanValue())
+<arg1> and <arg2>
 >>
 
 implies(arg1, arg2) ::= <<
-BBoolean(not <arg1>.booleanValue() or <arg2>.booleanValue())
+<arg1>.implies(<arg2>)
 >>
 
 equivalent(arg1, arg2) ::= <<
-BBoolean((not <arg1>.booleanValue() or <arg2>.booleanValue()) and (not <arg2>.booleanValue() or <arg1>.booleanValue()))
+<arg1>.equivalent(<arg2>)
 >>
 
 unary(operator, obj, args) ::= <<
@@ -428,19 +428,19 @@ unary(operator, obj, args) ::= <<
 
 select(iterationConstruct, predicate, then) ::= <<
 <iterationConstruct; separator="\n">
-if((<predicate>).booleanValue()):
+if (<predicate>).booleanValue():
     <then>
 >>
 
 if(iterationConstruct, predicate, then, else1) ::= <<
 <iterationConstruct; separator="\n">
-if((<predicate>).booleanValue()):
+if (<predicate>).booleanValue():
     <then>
-<else1; separator=" ">
+<else1; separator="\n">
 >>
 
 elseif(predicate, then) ::= <<
-else if((<predicate>).booleanValue()):
+elif (<predicate>).booleanValue():
     <then>
 >>
 
@@ -450,15 +450,16 @@ else:
 >>
 
 choice(len, then, choice1) ::= <<
-int index = (int) Math.floor(Math.random() * <len>)
-if(index == 0):
+import random
+index = random.randint(0, <len>-1)
+if index == 0:
     <then>
-<choice1; separator=" ">
+<choice1; separator="\n">
 >>
 
 
 choice1(counter, then) ::= <<
-else if(index == <counter>):
+elif index == <counter>:
     <then>
 >>
 
@@ -477,7 +478,7 @@ any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
 <body>
 break
 <else>
-if((<predicate>).booleanValue()):
+if (<predicate>).booleanValue():
     <body>
     break
 <endif>
@@ -494,7 +495,7 @@ becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stor
 <stores>
 break
 <else>
-if((<predicate>).booleanValue()):
+if (<predicate>).booleanValue():
     <stores>
     break
 <endif>
@@ -510,7 +511,7 @@ becomes_such_that_store(lhs, rhs) ::= <<
 
 while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
 <iterationConstruct1; separator="\n">
-while((<predicate>).booleanValue()):
+while (<predicate>).booleanValue():
     <then>
     <iterationConstruct2; separator="\n">
 >>

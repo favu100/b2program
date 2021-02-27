@@ -1,4 +1,4 @@
 if __name__ == "__main__":
-    lift = LiftExec();
+    lift = LiftExec()
     lift.simulate()
     print(lift.getCounter())

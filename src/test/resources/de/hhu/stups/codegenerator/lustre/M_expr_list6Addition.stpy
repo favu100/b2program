@@ -1,0 +1,10 @@
+if __name__ == '__main__':
+    program = M_expr_list6()
+    program.clock_step(BRelation(BTuple(REF.ref, BInteger(3))))
+    print(program.getA())
+    print(program.getB())
+    print(program.getC())
+    program.clock_step(BRelation(BTuple(REF.ref, BInteger(4))))
+    print(program.getA())
+    print(program.getB())
+    print(program.getC())

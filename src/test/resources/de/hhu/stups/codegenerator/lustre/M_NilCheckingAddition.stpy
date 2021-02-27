@@ -1,0 +1,10 @@
+if __name__ == '__main__':
+    program = M_NilChecking()
+    program.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BInteger(1))))
+    print(program.getRes())
+    program.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BInteger(2))))
+    print(program.getRes())
+    program.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BInteger(3))))
+    print(program.getRes())
+    program.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BInteger(4))))
+    print(program.getRes())

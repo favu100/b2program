@@ -1,0 +1,16 @@
+if __name__ == '__main__':
+    lift = M_Lift()
+    lift.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BBoolean(False))))
+    print(lift.getFloor())
+    lift.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(lift.getFloor())
+    for i in range(100):
+        lift.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BBoolean(False))))
+    print(lift.getFloor())
+    lift.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BBoolean(False))))
+    print(lift.getFloor())
+    for i in range(100):
+        lift.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(lift.getFloor())
+    lift.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(lift.getFloor())

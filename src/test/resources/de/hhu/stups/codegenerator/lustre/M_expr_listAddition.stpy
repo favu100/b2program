@@ -1,0 +1,5 @@
+if __name__ == '__main__':
+    program = M_expr_list()
+    program.clock_step(BRelation(BTuple(REF.ref, BInteger(1))), BRelation(BTuple(REF.ref, BInteger(2))))
+    print(program.getA())
+    print(program.getB())

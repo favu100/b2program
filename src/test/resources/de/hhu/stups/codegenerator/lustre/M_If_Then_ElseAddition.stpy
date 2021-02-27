@@ -1,0 +1,8 @@
+if __name__ == '__main__':
+    program = M_If_Then_Else()
+    program.clock_step(BRelation(BTuple(REF.ref, BInteger(3))))
+    print(program.getZ())
+    program.clock_step(BRelation(BTuple(REF.ref, BInteger(4))))
+    print(program.getZ())
+    program.clock_step(BRelation(BTuple(REF.ref, BInteger(3))))
+    print(program.getZ())

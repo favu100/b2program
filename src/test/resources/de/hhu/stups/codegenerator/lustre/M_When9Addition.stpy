@@ -1,0 +1,10 @@
+if __name__ == '__main__':
+    when = M_When9()
+    when.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BBoolean(False))))
+    print(when.getRes())
+    when.clock_step(BRelation(BTuple(REF.ref, BBoolean(False))), BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(when.getRes())
+    when.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BBoolean(False))))
+    print(when.getRes())
+    when.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(when.getRes())

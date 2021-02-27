@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    program = M_AssertionClock()
+    program.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))), BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(program.getRes())

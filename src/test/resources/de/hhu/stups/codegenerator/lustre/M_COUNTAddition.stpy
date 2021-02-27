@@ -1,0 +1,9 @@
+if __name__ == '__main__':
+    counter = M_COUNT()
+    counter.clock_step(BRelation(BTuple(REF.ref, BInteger(1))))
+    print(counter.getRes())
+    counter.clock_step(BRelation(BTuple(REF.ref, BInteger(2))))
+    print(counter.getRes())
+    for i in range(100):
+        counter.clock_step(BRelation(BTuple(REF.ref, BInteger(1))))
+    print(counter.getRes())

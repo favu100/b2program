@@ -1,0 +1,6 @@
+if __name__ == '__main__':
+    pre = M_Pre3()
+    pre.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(pre.getA())
+    pre.clock_step(BRelation(BTuple(REF.ref, BBoolean(True))))
+    print(pre.getA())

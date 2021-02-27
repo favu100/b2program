@@ -3,7 +3,6 @@ from btypes.BInteger import BInteger
 from CAN_BUS_tlc import CAN_BUS_tlc
 
 
-
 class CAN_BUS_tlc_exec:
 
     def __init__(self):
@@ -4572,5 +4571,5 @@ class CAN_BUS_tlc_exec:
 
 
 if __name__ == '__main__':
-    exec = CAN_BUS_tlc_exec()
-    exec.simulate()
+    can_exec = CAN_BUS_tlc_exec()
+    can_exec.simulate()

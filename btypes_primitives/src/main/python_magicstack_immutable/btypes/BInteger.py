@@ -1,11 +1,12 @@
 from btypes.BBoolean import *
 
+
 class BInteger:
 
     def __init__(self, value):
         self.__value = value
 
-    def __add__(self, other: 'BInteger') -> 'BInteger':
+    def __add__(self, other):
         if type(other) == str:
             return str(self) + other
         return BInteger(self.__value + other.__value)

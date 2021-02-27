@@ -6,6 +6,7 @@ False, None, True, __peg_parser__, and, as, assert, async, await, break, class, 
 
 machine(imports, includedMachines, machine, structs, enums, sets, declarations, initialization, operations, addition, getters, lambdaFunctions) ::= <<
 <imports; separator="\n">
+from btypes.BUtils import BUtils
 <includedMachines; separator="\n">
 
 <structs; separator= "\n\n">
@@ -112,10 +113,9 @@ record(struct, parameters) ::= <<
 <struct>(<parameters; separator=", ">)
 >>
 
-initialization(machine, machines, properties, values, body) ::= <<
+initialization(machine, machines, includes, properties, values, body) ::= <<
 def __init__(self):
-    <machines : {mach | self._<mach> = <mach>()
-    }>
+    <includes; separator="\n">
     <properties; separator="\n">
     <values>
     <body>
@@ -215,12 +215,12 @@ if(<predicate>).booleanValue():
 >>
 
 lambda_function(function, parameters, returnType, expression) ::= <<
-def <function>(<parameters; separator=", ">):
+def <function>(self<parameters : {par |, <par>}>):
     return <expression>
 >>
 
 lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
-<if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
+<if(fromOtherMachine)>self.<otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<
@@ -260,7 +260,7 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
-<if(isCurrentMachine)><class>.<identifier><else><machine>.<class>.<identifier><endif>
+<if(isCurrentMachine)><class>.<identifier><else><class>.<identifier><endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -288,7 +288,7 @@ BUtils.BOOL
 >>
 
 include_declaration(type, identifier) ::= <<
-<declaration(type, identifier)> = <type>()
+self.<declaration(type, identifier)> = <type>()
 >>
 
 global_declaration(type, identifier) ::= <<
@@ -375,7 +375,7 @@ from btypes.<type> import <type>
 >>
 
 import_machine(machine) ::= <<
-from <machine> import <machine>
+from <machine> import *
 >>
 
 interval(arg1, arg2) ::= <<
@@ -526,7 +526,7 @@ boolean_val(val) ::= <<
 >>
 
 identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate) ::= <<
-<if(fromOtherMachine)><otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>self.<endif><identifier><endif><endif>
+<if(fromOtherMachine)>self.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>self.<endif><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<

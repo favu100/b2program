@@ -113,6 +113,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "machines", node.getMachineReferences().stream()
                 .map(reference -> nameHandler.handle(reference.getMachineNode().getName()))
                 .collect(Collectors.toList()));
+        TemplateHandler.add(initialization, "includes", declarationGenerator.generateIncludes(node));
         TemplateHandler.add(initialization, "properties", generateConstantsInitializations(node));
         TemplateHandler.add(initialization, "values", generateValues(node));
         if(node.getInitialisation() != null) {

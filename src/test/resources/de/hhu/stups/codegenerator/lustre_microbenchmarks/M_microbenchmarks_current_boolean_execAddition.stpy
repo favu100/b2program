@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    program = M_microbenchmarks_current_boolean_exec()
+    program.simulate()

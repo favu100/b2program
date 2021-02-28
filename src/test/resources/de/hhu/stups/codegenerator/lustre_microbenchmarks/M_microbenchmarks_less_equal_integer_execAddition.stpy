@@ -1,0 +1,3 @@
+if __name__ == '__main__':
+    program = M_microbenchmarks_less_equal_integer_exec()
+    program.simulate()

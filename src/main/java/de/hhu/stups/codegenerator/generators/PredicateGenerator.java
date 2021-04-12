@@ -67,6 +67,7 @@ public class PredicateGenerator {
         this.nameHandler = nameHandler;
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
+        this.iterationConstructHandler.setPredicateGenerator(this);
         this.infiniteSetGenerator = infiniteSetGenerator;
         this.infiniteSetGenerator.setPredicateGenerator(this);
         this.relationSetGenerator = new RelationSetGenerator(currentGroup, machineGenerator, nameHandler, infiniteSetGenerator);

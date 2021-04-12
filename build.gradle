@@ -67,15 +67,15 @@ tasks.withType(JavaExec) {
     if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('deferred_set_size') && project.hasProperty('file')) {
         if(!(project.hasProperty('minint') && project.hasProperty('maxint'))) {
             if (project.hasProperty('addition')) {
-                args([language, big_integer, -2147483648, 2147483647, deferred_set_size, project.rootDir.path.toString() + File.separator +  file, addition])
+                args([language, big_integer, -2147483648, 2147483647, deferred_set_size, true, project.rootDir.path.toString() + File.separator +  file, addition])
             } else {
-                args([language, big_integer, -2147483648, 2147483647, deferred_set_size, project.rootDir.path.toString() + File.separator + file])
+                args([language, big_integer, -2147483648, 2147483647, deferred_set_size, true, project.rootDir.path.toString() + File.separator + file])
             }
         } else {
             if (project.hasProperty('addition')) {
-                args([language, big_integer, minint, maxint, deferred_set_size, project.rootDir.path.toString() + File.separator + file, addition])
+                args([language, big_integer, minint, maxint, deferred_set_size, true, project.rootDir.path.toString() + File.separator + file, addition])
             } else {
-                args([language, big_integer, minint, maxint, deferred_set_size, project.rootDir.path.toString() + File.separator + file])
+                args([language, big_integer, minint, maxint, deferred_set_size, true, project.rootDir.path.toString() + File.separator + file])
             }
         }
     }

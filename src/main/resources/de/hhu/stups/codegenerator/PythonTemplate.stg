@@ -15,8 +15,6 @@ from btypes.BUtils import BUtils
 
 class <machine>:
 
-
-
     <sets; separator="\n">
 
     <initialization>
@@ -197,6 +195,38 @@ set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredica
 if(<predicate>).booleanValue():
     <set> = <set>.union(<if(isRelation)>BRelation<else>BSet<endif>(<element>))
 <endif>
+>>
+
+constraint_solving(identifier, problemIdentifier, variableDeclarations, constraint, isRelation) ::= <<
+from constraint import Problem
+from functools import reduce
+from btypes.BSet import BSet
+from btypes.BUtils import BUtils
+<problemIdentifier> = Problem()
+<variableDeclarations; separator="\n">
+<constraint>
+<identifier> = <problemIdentifier>.getSolutions()
+<if(isRelation)><identifier> = reduce(lambda a,e: a.union(BRelation(reduce(lambda b,f: BTuple(b,f),
+                                                                       list(e.values())[2:],
+                                                                       BTuple(list(e.values())[0],list(e.values())[1])))),
+                      <identifier>,
+                      BRelation())
+<else><identifier> = reduce(lambda a,e: a.union(BSet(e.values())),
+                            <identifier>,
+                            BSet())
+<endif>
+>>
+
+constraint_variable_declaration(identifier, problemIdentifier, range) ::= <<
+<identifier> = <problemIdentifier>.addVariable("<identifier>", <range>)
+>>
+
+constraint_type(isInteger, minInt, maxInt, isBoolean, isSet) ::= <<
+<if(isInteger)>BSet.interval(<minInt>, <maxInt>).getSet()<elseif(isBoolean)>BUtils.BOOL.getSet()<endif>
+>>
+
+constraint(problemIdentifier, var1, var2, constraintFunction) ::= <<
+<problemIdentifier>.addConstraint(lambda <var1><var2 : {var |, <var>}>: <constraintFunction>, ("<var1>"<var2 : {var |, "<var>"}>))
 >>
 
 lambda(type, identifier, lambda, leftType, rightType) ::= <<
@@ -407,11 +437,11 @@ binary(arg1,operator,arg2) ::= <<
 >>
 
 or(arg1, arg2) ::= <<
-<arg1> or <arg2>
+(<arg1> or <arg2>)
 >>
 
 and(arg1, arg2) ::= <<
-<arg1> and <arg2>
+(<arg1> and <arg2>)
 >>
 
 implies(arg1, arg2) ::= <<
@@ -529,8 +559,8 @@ identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate) ::= 
 <if(fromOtherMachine)>self.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>self.<endif><identifier><endif><endif>
 >>
 
-number(number, useBigInteger) ::= <<
-<if(useBigInteger)>BInteger("<number>")<else>BInteger(<number>)<endif>
+number(number) ::= <<
+BInteger(<number>)
 >>
 
 infinite_predicate(arg, operator) ::= <<

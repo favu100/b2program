@@ -1,6 +1,8 @@
 package de.hhu.stups.codegenerator.handlers;
 
+import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
 import de.hhu.stups.codegenerator.generators.ImportGenerator;
+import de.hhu.stups.codegenerator.generators.PredicateGenerator;
 import de.hhu.stups.codegenerator.generators.iteration.IterationConstructGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
@@ -31,8 +33,13 @@ public class IterationConstructHandler {
 
     private final STGroup group;
 
+    private final boolean useConstraintSolving;
+
+    private ExpressionGenerator expressionGenerator;
+    private PredicateGenerator predicateGenerator;
+
     public IterationConstructHandler(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                                     final TypeGenerator typeGenerator, final ImportGenerator importGenerator) {
+                                     final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final boolean useConstraintSolving) {
         this.currentIterationConstructGenerator = null;
         this.iterationConstructCounter = 0;
         this.machineGenerator = machineGenerator;
@@ -40,6 +47,7 @@ public class IterationConstructHandler {
         this.typeGenerator = typeGenerator;
         this.importGenerator = importGenerator;
         this.group = group;
+        this.useConstraintSolving = useConstraintSolving;
     }
 
     public void setIterationConstructGenerator(IterationConstructGenerator iterationConstructGenerator) {
@@ -61,7 +69,7 @@ public class IterationConstructHandler {
     * This function returns a new IterationConstructGenerator
     */
     public IterationConstructGenerator getNewIterationConstructGenerator() {
-        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator);
+        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, useConstraintSolving);
     }
 
     /*
@@ -152,5 +160,13 @@ public class IterationConstructHandler {
 
     public IterationConstructGenerator getCurrentIterationConstructGenerator() {
         return currentIterationConstructGenerator;
+    }
+
+  public void setExpressionGenerator(ExpressionGenerator expressionGenerator) {
+        this.expressionGenerator = expressionGenerator;
+  }
+
+    public void setPredicateGenerator(PredicateGenerator predicateGenerator) {
+        this.predicateGenerator = predicateGenerator;
     }
 }

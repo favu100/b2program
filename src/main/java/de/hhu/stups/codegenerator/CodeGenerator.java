@@ -40,7 +40,7 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, MalformedURLException, CodeGenerationException {
-		if(args.length < 6 || args.length > 7) {
+		if(args.length < 7 || args.length > 8) {
 			System.err.println("Wrong number of arguments");
 			return;
 		}
@@ -49,15 +49,16 @@ public class CodeGenerator {
 		String minint = args[2];
 		String maxint = args[3];
 		String deferredSetSize = args[4];
+		boolean useConstraintSolving = useConstraintSolving(args[5]);
 		CodeGenerator codeGenerator = new CodeGenerator();
-		Path path = Paths.get(args[5]);
+		Path path = Paths.get(args[6]);
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;
-		if(args.length == 7) {
-			addition = args[6];
+		if(args.length == 8) {
+			addition = args[7];
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, true, addition, false);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving, true, addition, false);
 	}
 
 	/*
@@ -97,6 +98,21 @@ public class CodeGenerator {
 		return useBigInteger;
 	}
 
+	/*
+	 * This functon extracts boolean for using constraint solving from the given string
+	 */
+	private static boolean useConstraintSolving(String constraintOption) {
+		boolean useConstraintSolving;
+		if("true".equals(constraintOption)) {
+			useConstraintSolving = true;
+		} else if("false".equals(constraintOption)) {
+			useConstraintSolving = false;
+		} else {
+			throw new RuntimeException("Wrong argument for choice of constraints");
+		}
+		return useConstraintSolving;
+	}
+
 	private static void checkPath(Path path) {
 		if(path == null) {
 			throw new RuntimeException("File not found");
@@ -118,7 +134,7 @@ public class CodeGenerator {
 	/*
 	* This function generates code from a given path for a machine, the target language and the information whether it is a main machine of a project
 	*/
-	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException {
+	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean useConstraintSolving, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException {
 		if(isMain) {
 			paths.clear();
 		}
@@ -128,16 +144,16 @@ public class CodeGenerator {
 		if(addition != null) {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
-		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null, isIncludedMachine));
+		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving);
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null, isIncludedMachine));
 		return paths;
 	}
 
 	/*
 	* This function generates code for a targeted programming language with creating the belonging file
 	*/
-	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, MachineNode node, Path addition, boolean isIncludedMachine) {
-		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, addition, isIncludedMachine);
+	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean useConstraintSolving, MachineNode node, Path addition, boolean isIncludedMachine) {
+		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving, addition, isIncludedMachine);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);

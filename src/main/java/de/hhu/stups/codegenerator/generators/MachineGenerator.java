@@ -123,7 +123,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private Set<String> infiniteSets;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, Path addition, boolean isIncludedMachine) {
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean useConstraintSolving, Path addition, boolean isIncludedMachine) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.useBigInteger = useBigInteger;
 		this.boundedVariablesDepth = new HashMap<>();
@@ -138,7 +138,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
-		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator);
+		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, useConstraintSolving);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
 		this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, this, nameHandler);
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);

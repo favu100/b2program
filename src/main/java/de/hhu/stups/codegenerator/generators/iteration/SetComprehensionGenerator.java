@@ -1,6 +1,9 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
+import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
+import de.hhu.stups.codegenerator.generators.PredicateGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -16,6 +19,7 @@ import org.stringtemplate.v4.STGroup;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by fabian on 04.03.19.
@@ -34,15 +38,21 @@ public class SetComprehensionGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final PredicateGenerator predicateGenerator;
+
+    private final ExpressionGenerator expressionGenerator;
+
     public SetComprehensionGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
                                      final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator,
-                                     final TypeGenerator typeGenerator) {
+                                     final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
         this.typeGenerator = typeGenerator;
+        this.predicateGenerator = predicateGenerator;
+        this.expressionGenerator = expressionGenerator;
     }
 
     /*
@@ -71,6 +81,79 @@ public class SetComprehensionGenerator {
 
         machineGenerator.leaveIterationConstruct(node.getDeclarationList());
         return result;
+    }
+
+    /*
+     * This function generates code for a set comprehension by constraint solving from the belonging AST node
+     */
+    public String generateConstraintSet(SetComprehensionNode node) {
+        machineGenerator.inIterationConstruct(node.getDeclarationList());
+        List<DeclarationNode> declarations = node.getDeclarationList();
+
+        ST template = group.getInstanceOf("constraint_solving");
+
+        List<ST> declarationTemplates = new ArrayList<>();
+        for (DeclarationNode declaration: declarations) {
+            declarationTemplates.add(generateConstraintVariableDeclaration(declaration));
+        }
+
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String identifier = "_cs_set_" + iterationConstructCounter;
+        String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
+
+        boolean isRelation = node.getDeclarationList().size() > 1;
+        //generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, predicate, declarations, type);
+
+        template.add("identifier", identifier);
+        template.add("isRelation", isRelation);
+        template.add("problemIdentifier", problemIdentifier);
+        template.add("variableDeclarations", declarationTemplates);
+        template.add("constraint", generateConstraint((PredicateOperatorNode) node.getPredicateNode(), declarations));
+
+        String result = template.render();
+        iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
+
+        machineGenerator.leaveIterationConstruct(node.getDeclarationList());
+        return result;
+    }
+
+    public ST generateConstraintVariableDeclaration(DeclarationNode declaration) {
+        ST range = group.getInstanceOf("constraint_type");
+        switch (declaration.getType().toString()){
+            case "INTEGER":
+                range.add("isInteger", true);
+                range.add("minInt", expressionGenerator.generateMinInt());
+                range.add("maxInt", expressionGenerator.generateMaxInt());
+                break;
+            case "BOOL":
+                range.add("isBoolean", true);
+                break;
+            default:
+                throw new CodeGenerationException("Type " + declaration.getType().toString() + " not supported for constraint solving!");
+        }
+
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
+
+        ST template = group.getInstanceOf("constraint_variable_declaration");
+        template.add("identifier", declaration.getName());
+        template.add("range", range.render());
+        template.add("problemIdentifier", problemIdentifier);
+        return template;
+    }
+
+    public String generateConstraint(PredicateOperatorNode predicate, List<DeclarationNode> declarations) {
+        ST constraint = group.getInstanceOf("constraint");
+
+        int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+        String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
+
+        constraint.add("problemIdentifier", problemIdentifier);
+        constraint.add("var1", declarations.get(0).getName());
+        constraint.add("var2",declarations.subList(1,declarations.size()).stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+        constraint.add("constraintFunction", predicateGenerator.visitPredicateOperatorNode(predicate));
+
+        return constraint.render();
     }
 
     /*

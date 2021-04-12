@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    setComprehension = SetComprehensionBool2()
+    setComprehension.calculate()
+    print(setComprehension.getCard())

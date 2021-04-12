@@ -179,6 +179,7 @@ public class ExpressionGenerator {
         this.identifierGenerator = identifierGenerator;
         this.typeGenerator = typeGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
+        this.iterationConstructHandler.setExpressionGenerator(this);
         this.recordStructGenerator = recordStructGenerator;
     }
 
@@ -800,7 +801,7 @@ public class ExpressionGenerator {
     /*
     * This function generates code for MININT
     */
-    private String generateMinInt() {
+    public String generateMinInt() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", minint);
         TemplateHandler.add(number, "useBigInteger", useBigInteger);
@@ -820,7 +821,7 @@ public class ExpressionGenerator {
     /*
     * This function generates code for MAXINT
     */
-    private String generateMaxInt() {
+    public String generateMaxInt() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", maxint);
         TemplateHandler.add(number, "useBigInteger", useBigInteger);

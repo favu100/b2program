@@ -45,7 +45,7 @@ public class TestPython {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> pythonFilePaths = codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, null, false);
+		List<Path> pythonFilePaths = codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, true, null, false);
 
 		//pythonFilePaths.forEach(path -> cleanUp(path.toString()));
 	}
@@ -55,7 +55,7 @@ public class TestPython {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> pythonFilePaths = codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, addition, false);
+		List<Path> pythonFilePaths = codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", true, true, addition, false);
 
     Path mainPath = pythonFilePaths.get(pythonFilePaths.size() - 1);
 

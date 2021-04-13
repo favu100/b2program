@@ -30,7 +30,6 @@ class sort_m2_data1000_exec():
             self.sorted = self.sorted.plus(BInteger(1))
         self._sort_m2_data1000.final_evt()
 
-
 if __name__ == '__main__':
-    exec = sort_m2_data1000_exec()
-    exec.simulate()
+    execute = sort_m2_data1000_exec()
+    execute.simulate()

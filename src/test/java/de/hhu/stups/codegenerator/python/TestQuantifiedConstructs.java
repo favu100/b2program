@@ -12,12 +12,12 @@ public class TestQuantifiedConstructs extends TestPython {
 
     @Test
     public void testSetComprehension2() throws Exception {
-        testPython("SetComprehension2", "SetComprehension2", "SetComprehension2Addition.stpy", true);
+        testPython("SetComprehension2", "SetComprehension2", "SetComprehensionInteger2Addition.stpy", true);
     }
 
     @Test
     public void testSetComprehension3() throws Exception {
-        testPython("SetComprehension3", "SetComprehension3", "SetComprehension3Addition.stpy", true);
+        testPython("SetComprehension3", "SetComprehension3", "SetComprehensionInteger3Addition.stpy", true);
     }
 
     @Test

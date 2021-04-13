@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.python;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestLustreBenchmarks extends TestPython {
@@ -59,6 +60,7 @@ public class TestLustreBenchmarks extends TestPython {
 		testPython("lustre_benchmarks/M_Rbase_main_exec", "M_Rbase_main_exec", "M_Rbase_main_execAddition.stpy", false);
 	}
 
+	@Ignore
 	@Test
 	public void testRgrips() throws Exception {
 		testPython("lustre_benchmarks/M_Rgrips_main_exec", "M_Rgrips_main_exec", "M_Rgrips_main_execAddition.stpy", false);

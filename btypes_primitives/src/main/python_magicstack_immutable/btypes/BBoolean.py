@@ -32,6 +32,8 @@ class BBoolean:
         return BBoolean(self.__value ^ other.__value)
 
     def __eq__(self, other: 'BBoolean') -> 'BBoolean':
+        if not isinstance(other, BBoolean):
+            return BBoolean(False)
         return BBoolean(self.__value == other.__value)
 
     def __ne__(self, other: 'BBoolean') -> 'BBoolean':

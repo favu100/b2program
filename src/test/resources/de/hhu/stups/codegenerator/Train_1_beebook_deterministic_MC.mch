@@ -1,4 +1,4 @@
-MACHINE Train_1_beebook_deterministic
+MACHINE Train_1_beebook_deterministic_MC
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I,J,K,L,M,N};
   ROUTES={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10}
@@ -52,10 +52,10 @@ INVARIANT
   & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl[OCC] <: frm
   & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
-  & /* @inv5 */ !(x,y).((x : BLOCKS & y : BLOCKS) & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
+  & /* @inv5 */ !(x,y).(x : BLOCKS & y : BLOCKS & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
   & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
-  & /* @inv8 */ !(a,b).(b : LBT & (b : ran(nxt(rsrtbl(b))) & (a = (nxt(rsrtbl(b))~)(b) & a : dom(rsrtbl))) => rsrtbl(a) /= rsrtbl(b))
+  & /* @inv8 */ !(a,b).((a : BLOCKS & b : LBT & (b : dom(rsrtbl) & b : ran(nxt(rsrtbl(b))) & (a : dom(rsrtbl) & a = (nxt(rsrtbl(b))~)(b)))) => rsrtbl(a) /= rsrtbl(b))
   & /* @inv3 */ rsrtbl : resbl --> resrt
   & /* @inv5 */ rsrtbl <: rtbl
   & /* @inv4 */ OCC <: resbl
@@ -85,7 +85,8 @@ OPERATIONS
   route_reservation(r) =
 
     PRE
-      /* @grd1 */ r /: resrt
+      r : ROUTES
+      & /* @grd1 */ r /: resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
     THEN
          resrt := resrt \/ {r}

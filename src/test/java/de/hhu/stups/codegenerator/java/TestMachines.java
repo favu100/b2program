@@ -47,8 +47,14 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testLift() throws Exception {
-        testJava("Lift", "Lift", "M_LiftAddition.stjava", true);
+        testJava("Lift", "Lift", "LiftAddition.stjava", true);
     }
+
+    @Test
+    public void testLift_MC() throws Exception {
+        testJavaMC("Lift_MC");
+    }
+
 
     @Test
     public void testTravelAgency() throws Exception {
@@ -58,6 +64,11 @@ public class TestMachines extends TestJava {
     @Test
     public void testTrafficLight() throws Exception {
         testJava("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
+    }
+
+    @Test
+    public void testTrafficLightMC() throws Exception {
+        testJavaMC("TrafficLight_MC");
     }
 
     @Test
@@ -101,6 +112,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testCruiseControllerDeterministic_MC() throws Exception {
+        testJavaMC("Cruise_finite1_deterministic_MC");
+    }
+
+    @Test
     public void testCruiseControllerDeterministicExec() throws Exception {
         testJava("Cruise_finite1_deterministic_exec");
     }
@@ -116,6 +132,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testSchedulerDeterministicMC() throws Exception {
+        testJavaMC("scheduler_deterministic_MC");
+    }
+
+    @Test
     public void testSchedulerDeterministicExec() throws Exception {
         testJava("scheduler_deterministic_exec");
     }
@@ -123,6 +144,11 @@ public class TestMachines extends TestJava {
     @Test
     public void testCanBusTLC() throws Exception {
         testJava("CAN_BUS_tlc");
+    }
+
+    @Test
+    public void testCanBusMC() throws Exception {
+        testJavaMC("CAN_BUS_tlc");
     }
 
     @Test
@@ -157,6 +183,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void Train1BeebookDeterministic_MC() throws Exception {
+        testJavaMC("Train_1_beebook_deterministic_MC");
+    }
+
+    @Test
     public void Train1BeebookDeterministicExec() throws Exception {
         testJava("Train_1_beebook_deterministic_exec");
     }
@@ -188,6 +219,21 @@ public class TestMachines extends TestJava {
     @Test
     public void testrether_mch1() throws Exception {
         testJava("rether_mch1");
+    }
+
+    @Test
+    public void testsort_m2_data1000() throws Exception {
+        testJava("sort_m2_data1000");
+    }
+
+    @Test
+    public void testsort_m2_data1000_MC() throws Exception {
+        testJavaMC("sort_m2_data1000_MC");
+    }
+
+    @Test
+    public void testSimpleParameters() throws Exception {
+        testJava("SimpleParameters");
     }
 
 }

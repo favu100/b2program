@@ -236,7 +236,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitIfOrSelectSubstitutionsNode(IfOrSelectSubstitutionsNode node, Void expected) {
+        this.onRightHandSide = true;
         node.getConditions().forEach(cond -> visitPredicateNode(cond, expected));
+        this.onRightHandSide = false;
         node.getSubstitutions().forEach(subs -> visitSubstitutionNode(subs, expected));
         if(node.getElseSubstitution() != null) {
             visitSubstitutionNode(node.getElseSubstitution(), expected);
@@ -293,7 +295,9 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
+        this.onRightHandSide = true;
         visitPredicateNode(node.getCondition(), expected);
+        this.onRightHandSide = false;
         visitSubstitutionNode(node.getSubstitution(), expected);
         return null;
     }

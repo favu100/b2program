@@ -8,6 +8,7 @@ import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.expression.IfExpressionNode;
@@ -77,6 +78,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final BecomesSuchThatGenerator becomesSuchThatGenerator;
 
+    private final TransitionGenerator transitionGenerator;
+
     private final ImportGenerator importGenerator;
 
     private final HashMap<String, String> iterationsMapCode;
@@ -101,6 +104,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.letExpressionPredicateGenerator = new LetExpressionPredicateGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.becomesSuchThatGenerator = new BecomesSuchThatGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.transitionGenerator = new TransitionGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();
@@ -109,6 +113,10 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.useConstraintSolving = useConstraintSolving;
     }
 
+    public void visitOperationNode(OperationNode node, List<DeclarationNode> params, PredicateNode predicate) {
+        iterationsMapCode.put(node.toString(), transitionGenerator.generateTransition(node, params, predicate));
+        iterationConstructHandler.incrementIterationConstructCounter();
+    }
 
     @Override
     public Void visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {

@@ -1,8 +1,12 @@
 package de.hhu.stups.codegenerator;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonWriter;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
+import de.hhu.stups.codegenerator.modelchecker.json.ModelCheckingInfo;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;
@@ -10,6 +14,7 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -22,6 +27,8 @@ import java.util.List;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
+import com.fatboyindustrial.gsonjavatime.Converters;
 
 public class CodeGenerator {
 
@@ -40,7 +47,7 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, MalformedURLException, CodeGenerationException {
-		if(args.length < 7 || args.length > 8) {
+		if(args.length < 8 || args.length > 9) {
 			System.err.println("Wrong number of arguments");
 			return;
 		}
@@ -50,15 +57,16 @@ public class CodeGenerator {
 		String maxint = args[3];
 		String deferredSetSize = args[4];
 		boolean useConstraintSolving = useConstraintSolving(args[5]);
+		boolean forModelChecking = forModelChecking(args[6]);
 		CodeGenerator codeGenerator = new CodeGenerator();
-		Path path = Paths.get(args[6]);
+		Path path = Paths.get(args[7]);
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;
 		if(args.length == 8) {
-			addition = args[7];
+			addition = args[8];
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving, true, addition, false);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false);
 	}
 
 	/*
@@ -113,6 +121,18 @@ public class CodeGenerator {
 		return useConstraintSolving;
 	}
 
+	private static boolean forModelChecking(String modelCheckingOption) {
+		boolean forModelChecking;
+		if("true".equals(modelCheckingOption)) {
+			forModelChecking = true;
+		} else if("false".equals(modelCheckingOption)) {
+			forModelChecking = false;
+		} else {
+			throw new RuntimeException("Wrong argument for choice of model checking");
+		}
+		return forModelChecking;
+	}
+
 	private static void checkPath(Path path) {
 		if(path == null) {
 			throw new RuntimeException("File not found");
@@ -134,7 +154,7 @@ public class CodeGenerator {
 	/*
 	* This function generates code from a given path for a machine, the target language and the information whether it is a main machine of a project
 	*/
-	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean useConstraintSolving, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException {
+	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException {
 		if(isMain) {
 			paths.clear();
 		}
@@ -144,16 +164,16 @@ public class CodeGenerator {
 		if(addition != null) {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
-		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null, isIncludedMachine));
+		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null, isIncludedMachine));
 		return paths;
 	}
 
 	/*
 	* This function generates code for a targeted programming language with creating the belonging file
 	*/
-	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean useConstraintSolving, MachineNode node, Path addition, boolean isIncludedMachine) {
-		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, useConstraintSolving, addition, isIncludedMachine);
+	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, MachineNode node, Path addition, boolean isIncludedMachine) {
+		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, addition, isIncludedMachine);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
@@ -170,7 +190,23 @@ public class CodeGenerator {
 		} else {
 			newPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + "." + mode.name().toLowerCase());
 		}
+		Path jsonPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + ".json");
 		try {
+			if(forModelChecking) {
+				ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);
+				try (final Writer writer = Files.newBufferedWriter(jsonPath)) {
+					final JsonWriter jsonWriter = new JsonWriter(writer);
+					jsonWriter.setHtmlSafe(false);
+					jsonWriter.setIndent("  ");
+					Gson gson = Converters.registerAll(new GsonBuilder())
+							.disableHtmlEscaping()
+							.serializeNulls()
+							.setPrettyPrinting()
+							.create();
+
+					gson.toJson(mcInfo.toJsonObject(), jsonWriter);
+				}
+			}
 			return Files.write(newPath, code.getBytes(), Files.exists(newPath) ? TRUNCATE_EXISTING : CREATE_NEW);
 		} catch (IOException e) {
 			e.printStackTrace();

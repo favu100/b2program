@@ -141,6 +141,7 @@ public class SubstitutionGenerator {
     * This function generates code for initiailizing all constants from the given AST node of a machine
     */
     public List<String> generateConstantsInitializations(MachineNode node) {
+        // TODO: Check that constants must be declared in the order they appear in the PROPERTIES Furthermore, also check that used constants in other constants has to be declared before.
         Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
         List<String> constantsInitializations = node.getConstants().stream()
                 .filter(constant -> !lambdaFunctions.contains(constant.getName()))
@@ -168,7 +169,7 @@ public class SubstitutionGenerator {
             return "";
         }
 
-        if(expression instanceof LambdaNode && lambdaFunctionGenerator.checkPredicate((LambdaNode) expression)) {
+        if(expression instanceof LambdaNode && lambdaFunctionGenerator.checkPredicate((LambdaNode) expression, node)) {
             return "";
         }
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());

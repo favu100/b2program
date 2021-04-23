@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Optional;
 
+import java.util.Objects;
+
 public class BSet<T> implements BObject, Set<T> {
 
 	private static final class createBInteger extends AFn {
@@ -125,7 +127,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public int hashCode() {
-		return set.hashCode();
+		return Objects.hash(set);
 	}
 
 	public boolean removeAll(Collection<?> c) {

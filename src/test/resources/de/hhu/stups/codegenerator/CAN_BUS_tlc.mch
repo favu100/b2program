@@ -29,25 +29,25 @@ VARIABLES
   T3_readvalue,
   T3_state
 INVARIANT
-   T2v : INT &
+   T2v : INTEGER &
    T3_evaluated : BOOL &
    T3_enabled : BOOL &
    T1_state : T1state &
    T2_state : T2state &
    T3_state : T3state &
-   T1_writevalue : INT &
-   T2_writevalue : INT &
-   T2_readvalue : INT &
-   T1_timer : NAT &
-   T2_timer : NAT &
+   T1_writevalue : INTEGER &
+   T2_writevalue : INTEGER &
+   T2_readvalue : INTEGER &
+   T1_timer : NATURAL &
+   T2_timer : NATURAL &
    T2_mode : T2mode &
-   BUSvalue : INT &
+   BUSvalue : INTEGER &
    BUSpriority : NATSET &
-   T3_readvalue : INT &
+   T3_readvalue : INTEGER &
    T3_readpriority : NATSET &
    T2_readpriority : NATSET &
-   BUSwrite : NATSET +-> INT &
-   /*BUSwrite : FIN(NATSET*INT) &*/
+   BUSwrite : NATSET +-> INTEGER &
+   /*BUSwrite : FIN(NATSET*INTEGER) &*/
    BUSwrite /= {} &
    0 : dom(BUSwrite)
 INITIALISATION
@@ -107,8 +107,8 @@ OPERATIONS
     END;
   T1SendResult(ppriority,pv) =
     PRE
-        /* @grd1 */ pv = T1_writevalue
-      & /* @grd2 */ ppriority = 3
+        /* @grd2 */ ppriority = 3
+      & /* @grd1 */ pv = T1_writevalue
       & /* @grd3 */ T1_state = T1_SEND
     THEN
          BUSwrite := BUSwrite <+ {ppriority |-> pv}
@@ -135,8 +135,8 @@ OPERATIONS
     END;
   T2ReadBus(ppriority,pv) =
     PRE
-        /* @grd1 */ pv = BUSvalue
-      & /* @grd2 */ ppriority = BUSpriority
+        /* @grd2 */ ppriority = BUSpriority
+      & /* @grd1 */ pv = BUSvalue
       & /* @grd3 */ T2_state = T2_RCV
     THEN
          T2_readvalue := pv
@@ -160,8 +160,8 @@ OPERATIONS
     END;
   T2Complete =
     PRE
-        /* @grd1 */ T2_readpriority = 5
-      & /* @grd2 */ T2_state = T2_PROC
+        /* @grd2 */ T2_state = T2_PROC
+      & /* @grd1 */ T2_readpriority = 5
       & /* @grd3 */ T2_mode = T2MODE_TRANSMIT
     THEN
          T2_state := T2_RELEASE
@@ -191,8 +191,8 @@ OPERATIONS
 
   T2WriteBus(ppriority,pv) =
     PRE
-        /* @grd1 */ pv = T2_writevalue
-      & /* @grd2 */ ppriority = 5
+        /* @grd2 */ ppriority = 5
+      & /* @grd1 */ pv = T2_writevalue
       & /* @grd3 */ T2_state = T2_SEND
     THEN
          BUSwrite := BUSwrite <+ {ppriority |-> pv}
@@ -232,8 +232,8 @@ OPERATIONS
 
   T3writebus(ppriority,pv) =
     PRE
-        /* @grd1 */ pv = 0
-      & /* @grd2 */ ppriority = 4
+         /* @grd2 */ ppriority = 4
+      &  /* @grd1 */ pv = 0
       & /* @grd3 */ T3_state = T3_WRITE
     THEN
          BUSwrite := BUSwrite <+ {ppriority |-> pv}
@@ -243,8 +243,8 @@ OPERATIONS
 
   T3Read(ppriority,pv) =
     PRE
-        /* @grd1 */ pv = BUSvalue
-      & /* @grd2 */ ppriority = BUSpriority
+        /* @grd2 */ ppriority = BUSpriority
+      & /* @grd1 */ pv = BUSvalue
       & /* @grd4 */ T3_state = T3_READ
     THEN
          T3_readvalue := pv

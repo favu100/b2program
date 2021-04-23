@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, getters, lambdaFunctions) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
 <imports; separator="\n">
 import java.util.Objects;
 import java.util.Arrays;
@@ -25,9 +25,23 @@ public class <machine> {
 
     <initialization>
 
+    <if(forModelChecking)>
+    <copyConstructor>
+    <endif>
+
     <operations; separator="\n\n">
 
     <getters; separator="\n\n">
+
+    <if(forModelChecking)>
+
+    <transitions; separator="\n\n">
+
+    <invariant>
+
+    <copy>
+
+    <endif>
 
     <lambdaFunctions; separator="\n\n">
 
@@ -38,7 +52,7 @@ public class <machine> {
 >>
 
 getter(returnType, variable) ::= <<
-<returnType> _get_<variable>() {
+public <returnType> _get_<variable>() {
     return <variable>;
 }
 >>
@@ -279,6 +293,53 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
+parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>.union(new BSet\<<subType>\>(<element>));
+<else>
+if((<predicate>).booleanValue()) {
+    <set> = <set>.union(new BSet\<<subType>\>(<element>));
+}
+<endif>
+>>
+
+transition(noParameters, identifier, subType, operationName, predicate, combination) ::= <<
+public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationName>() {
+    <if(noParameters)>
+    return <predicate>.booleanValue();
+    <else>
+    BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();
+    <combination>
+    return <identifier>;
+    <endif>
+}
+>>
+
+invariant(iterationConstruct, predicate) ::= <<
+public boolean _check_inv() {
+    <iterationConstruct; separator="\n">
+    return <predicate>.booleanValue();
+}
+>>
+
+copy_constructor(machine, parameters, properties, assignments) ::= <<
+public <machine>(<parameters; separator=", ">) {
+    <properties; separator="\n">
+    <assignments; separator="\n">
+}
+>>
+
+copy_assignment(variable) ::= <<
+this.<variable> = <variable>;
+>>
+
+copy(machine, parameters) ::= <<
+public <machine> _copy() {
+    return new <machine>(<parameters; separator=", ">);
+}
+>>
+
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 (<predicate>.booleanValue() ? <ifThen> : <ifElse>)
 >>
@@ -397,9 +458,13 @@ import_machine(machine) ::= <<
 import de.hhu.stups.btypes.<machine>;
 >>
 
+mc_info_type(isSet, machine, type) ::= <<
+<if(isSet)><machine>$<type><else>de.hhu.stups.btypes.<type><endif>
+>>
+
 
 interval(arg1, arg2) ::= <<
-BSet.interval(<arg1>,<arg2>)
+BSet.interval(<arg1>, <arg2>)
 >>
 
 projection(arg1, arg2, isProjection1) ::= <<

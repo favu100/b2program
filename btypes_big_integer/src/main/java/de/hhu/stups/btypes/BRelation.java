@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
  * Created by fabian on 15.01.19.
@@ -115,7 +116,7 @@ public class BRelation<S,T> {
 	}
 
 	public int hashCode() {
-		return map.hashCode();
+		return Objects.hash(map);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -281,6 +282,9 @@ public class BRelation<S,T> {
 			for(Object e1 : thisDomain) {
 				S domainElement = (S) e1;
 				PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
+				if(range == null) {
+					break;
+				}
 				for(Object e2 : range) {
 					T rangeElement = (T) e2;
 					BRelation<S,T> nextRelation = currentSet.union(BRelation.fromSet(new BSet(new BTuple<S,T>(domainElement, rangeElement))));
@@ -316,7 +320,7 @@ public class BRelation<S,T> {
 		for(Object obj : set) {
 			S domainElement = (S) obj;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-			if(range.size() == 0) {
+			if(range == null || range.size() == 0) {
 				resultSet = (PersistentHashSet) DIFFERENCE.invoke(resultSet, SET.invoke(SEQ.invoke(LIST.invoke(domainElement))));
 			}
 		}
@@ -338,6 +342,9 @@ public class BRelation<S,T> {
 		for(Object e1 : keys) {
 			S domainElement = (S) e1;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
+			if(range == null) {
+				break;
+			}
 			for(Object e2 : range) {
 				T rangeElement = (T) e2;
 				PersistentHashSet currentRange = (PersistentHashSet) GET.invoke(resultMap, rangeElement);
@@ -400,6 +407,28 @@ public class BRelation<S,T> {
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, DIFFERENCE.invoke(thisRangeSet, otherSet));
 		}
 		return new BRelation<S, T>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public BBoolean subset(BRelation<S,T> arg) {
+		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(arg.map));
+		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+
+		PersistentHashMap resultMap = this.map;
+		for(Object obj : thisDomain) {
+			S domainElement = (S) obj;
+			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
+			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(arg.map, domainElement);
+			if(thisRangeSet != null && !thisRangeSet.isEmpty() && !otherRangeSet.containsAll(thisRangeSet)) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public BBoolean notSubset(BRelation<S,T> arg) {
+		return subset(arg).not();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -595,6 +624,9 @@ public class BRelation<S,T> {
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
 
 			PersistentHashSet set = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
+			if(range == null) {
+				break;
+			}
 			for(Object e2: range) {
 				T rangeElement = (T) e2;
 				set = (PersistentHashSet) UNION.invoke(set, (PersistentHashSet) GET.invoke(otherMap, rangeElement));
@@ -743,6 +775,9 @@ public class BRelation<S,T> {
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, domainElement);
 		index = (int) Math.floor(Math.random() * range.size());
 		i = 0;
+		if(range == null) {
+			return null;
+		}
 		for(Object obj : range) {
 			if(i == index) {
 				return new BTuple<S,T>(domainElement, (T) obj);
@@ -972,6 +1007,9 @@ public class BRelation<S,T> {
 		PersistentHashSet visited = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
 		for(S element : this.domain()) {
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, element);
+			if(range == null) {
+				break;
+			}
 			for(Object e : range) {
 				T rangeElement = (T) e;
 				if(visited.contains(rangeElement)) {
@@ -1021,6 +1059,9 @@ public class BRelation<S,T> {
 		for(Object e1 : domain) {
 			S domainElement = (S) e1;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
+			if(range == null) {
+				break;
+			}
 			for(Object e2 : range) {
 				T rangeElement = (T) e2;
 				sb.append("(");

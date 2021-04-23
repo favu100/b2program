@@ -232,7 +232,7 @@ public class IterationPredicateGenerator {
             enumerationTemplate = getSubsetNeqTemplate(declaration, innerPredicate.getExpressionNodes().get(0));
             inLoop = true;
         } else {
-            throw new RuntimeException("Other operations within predicate node are not supported");
+            throw new RuntimeException("Other operators within predicate node are not supported");
         }
         return enumerationTemplate;
     }

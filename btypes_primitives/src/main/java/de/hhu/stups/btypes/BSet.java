@@ -19,6 +19,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.Method;
 
+import java.util.Objects;
+
 public class BSet<T> implements Set<T>, BObject {
 
 	private static final class createBInteger extends AFn {
@@ -130,7 +132,7 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public int hashCode() {
-		return set.hashCode();
+		return Objects.hash(set);
 	}
 
 	public boolean removeAll(Collection<?> c) {

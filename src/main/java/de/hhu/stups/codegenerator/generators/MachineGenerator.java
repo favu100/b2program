@@ -4,10 +4,15 @@ import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
+import de.hhu.stups.codegenerator.generators.iteration.IterationConstructGenerator;
+import de.hhu.stups.codegenerator.generators.iteration.IterationPredicateGenerator;
+import de.hhu.stups.codegenerator.generators.iteration.TransitionGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.hhu.stups.codegenerator.modelchecker.json.ModelCheckingInfo;
+import de.hhu.stups.codegenerator.modelchecker.json.OperationFunctionInfo;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
@@ -33,6 +38,7 @@ import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
 import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -47,8 +53,13 @@ import de.prob.parser.ast.nodes.substitution.LetSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
+import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
+import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.DeferredSetElementType;
+import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.UntypedType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.ST;
@@ -64,6 +75,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
 
 /*
 * The code generator is implemented by using the visitor pattern
@@ -105,6 +118,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final InfiniteSetGenerator infiniteSetGenerator;
 
+	private final boolean forModelChecking;
+
 	private final boolean useBigInteger;
 
 	private final Map<String, Integer> boundedVariablesDepth;
@@ -123,8 +138,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private Set<String> infiniteSets;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean useConstraintSolving, Path addition, boolean isIncludedMachine) {
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
+		this.forModelChecking = forModelChecking;
 		this.useBigInteger = useBigInteger;
 		this.boundedVariablesDepth = new HashMap<>();
 		if(addition != null) {
@@ -156,7 +172,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
-
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
@@ -173,6 +188,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
+		TemplateHandler.add(machine, "forModelChecking", forModelChecking);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
 		TemplateHandler.add(machine, "imports", importGenerator.getImports());
@@ -192,6 +208,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();
 		inspectInfiniteSets();
+		if(forModelChecking) {
+			importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
+		}
 	}
 
 	private void initializeLambdaFunctions() {
@@ -220,8 +239,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
+		TemplateHandler.add(machine, "copyConstructor", this.generateCopyConstructor(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
-		TemplateHandler.add(machine, "getters", isIncludedMachine ? generateGetters(node.getVariables()) : new ArrayList<>());
+		TemplateHandler.add(machine, "getters", generateGetters(node.getVariables()));
+		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
+		TemplateHandler.add(machine, "invariant", generateInvariant(node.getInvariant()));
+		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
@@ -243,6 +266,83 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(getter, "variable", nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
 		TemplateHandler.add(getter, "returnType", typeGenerator.generate(variable.getType()));
 		return getter.render();
+	}
+
+	private List<String> generateTransitions(List<OperationNode> operations) {
+		List<String> transitions = new ArrayList<>();
+		if(forModelChecking) {
+			for (OperationNode operation : operations) {
+				transitions.add(generateTransition(operation));
+			}
+		}
+		return transitions;
+	}
+
+	private String generateTransition(OperationNode operation) {
+		SubstitutionNode bodySubstitution = operation.getSubstitution();
+		IterationConstructGenerator iterationConstructGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
+		if(bodySubstitution instanceof IfOrSelectSubstitutionsNode) {
+			if(((IfOrSelectSubstitutionsNode) bodySubstitution).getOperator() == IfOrSelectSubstitutionsNode.Operator.SELECT) {
+				PredicateNode predicate = ((IfOrSelectSubstitutionsNode) bodySubstitution).getConditions().get(0);
+				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
+				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
+			} else {
+				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
+			}
+		} else if(bodySubstitution instanceof ConditionSubstitutionNode) {
+			if(((ConditionSubstitutionNode) bodySubstitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
+				PredicateNode predicate = ((ConditionSubstitutionNode) bodySubstitution).getCondition();
+				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
+				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
+			} else {
+				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
+			}
+		} else {
+			throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
+		}
+	}
+
+	private String generateInvariant(PredicateNode predicate) {
+		// TODO: Discard typing predicates
+		if(forModelChecking) {
+			ST template = currentGroup.getInstanceOf("invariant");
+			TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
+			TemplateHandler.add(template, "predicate", visitPredicateNode(predicate, null));
+			return template.render();
+		}
+		return "";
+	}
+
+	private String generateCopyConstructor(MachineNode node) {
+		if(forModelChecking) {
+			ST template = currentGroup.getInstanceOf("copy_constructor");
+			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
+			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(node.getVariables(), OperationGenerator.DeclarationType.PARAMETER, false));
+			TemplateHandler.add(template, "properties", substitutionGenerator.generateConstantsInitializations(node));
+			TemplateHandler.add(template, "assignments", node.getVariables().stream()
+					.map(this::generateCopyAssignment)
+					.collect(Collectors.toList()));
+			return template.render();
+		}
+		return "";
+	}
+
+	private String generateCopyAssignment(DeclarationNode declaration) {
+		ST template = currentGroup.getInstanceOf("copy_assignment");
+		TemplateHandler.add(template, "variable", nameHandler.handleIdentifier(declaration.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+		return template.render();
+	}
+
+	private String generateCopy(MachineNode node) {
+		if(forModelChecking) {
+			ST template = currentGroup.getInstanceOf("copy");
+			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
+			TemplateHandler.add(template, "parameters", node.getVariables().stream()
+					.map(variable -> nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+					.collect(Collectors.toList()));
+			return template.render();
+		}
+		return "";
 	}
 
 	/*
@@ -588,5 +688,36 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public Set<String> getInfiniteSets() {
 		return infiniteSets;
+	}
+
+	public ModelCheckingInfo generateModelCheckingInfo(MachineNode node) {
+		String machineName = nameHandler.handle(node.getName());
+		List<String> variables = node.getVariables().stream()
+				.map(variable -> "_get_" + nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+				.collect(Collectors.toList());
+
+		Map<String, String> transitionEvaluationFunctions = new HashMap<>();
+		for(OperationNode operation : node.getOperations()) {
+			String opName = nameHandler.handleIdentifier(operation.getName(), INCLUDED_MACHINES);
+			String transitionName = "_tr_" + operation.getName();
+			transitionEvaluationFunctions.put(opName, transitionName);
+		}
+
+		List<OperationFunctionInfo> operationFunctions = new ArrayList<>();
+		for(OperationNode operation : node.getOperations()) {
+			String opName = nameHandler.handleIdentifier(operation.getName(), INCLUDED_MACHINES);
+			List<String> parameterTypes = new ArrayList<>();
+			for(DeclarationNode param : operation.getParams()) {
+				BType type = param.getType();
+				ST typeTemplate = currentGroup.getInstanceOf("mc_info_type");
+				TemplateHandler.add(typeTemplate, "isSet", type instanceof EnumeratedSetElementType || type instanceof DeferredSetElementType);
+				TemplateHandler.add(typeTemplate, "machine", machineName);
+				TemplateHandler.add(typeTemplate, "type", typeGenerator.generate(type));
+				parameterTypes.add(typeTemplate.render());
+			}
+			operationFunctions.add(new OperationFunctionInfo(opName, parameterTypes));
+		}
+
+		return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions);
 	}
 }

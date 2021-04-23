@@ -1,5 +1,7 @@
 package de.hhu.stups.btypes;
 
+import java.util.Objects;
+
 /**
  * Created by fabian on 15.10.18.
  */
@@ -23,10 +25,7 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + value;
-        return result;
+        return Objects.hash(value);
     }
 
     public BInteger(int value) {

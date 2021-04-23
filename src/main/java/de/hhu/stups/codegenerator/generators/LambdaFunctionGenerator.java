@@ -12,6 +12,7 @@ import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,12 +38,18 @@ public class LambdaFunctionGenerator {
     }
 
     public List<String> generateFunctions(MachineNode node) {
+        if(node.getInitialisation() != null || !node.getOperations().isEmpty()) {
+            return new ArrayList<>();
+        }
         return node.getConstants().stream()
                 .map(constant -> generateFunction(node, constant))
                 .collect(Collectors.toList());
     }
 
     public List<String> getLambdaFunctions(MachineNode node) {
+        if(node.getInitialisation() != null || !node.getOperations().isEmpty()) {
+            return new ArrayList<>();
+        }
         return node.getConstants().stream()
                 .filter(constant -> isLambdaFunction(node, constant))
                 .map(DeclarationNode::getName)
@@ -57,13 +64,16 @@ public class LambdaFunctionGenerator {
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
         if(!(expression instanceof LambdaNode)) {
             return false;
-        } else if(!checkPredicate((LambdaNode) expression)) {
+        } else if(!checkPredicate((LambdaNode) expression, node)) {
             return false;
         }
         return true;
     }
 
     public String generateFunction(MachineNode node, DeclarationNode constant) {
+        if(node.getInitialisation() != null || !node.getOperations().isEmpty()) {
+            return "";
+        }
         if(!isLambdaFunction(node, constant)) {
             return "";
         }
@@ -78,7 +88,10 @@ public class LambdaFunctionGenerator {
         return template.render();
     }
 
-    public boolean checkPredicate(LambdaNode node) {
+    public boolean checkPredicate(LambdaNode node, MachineNode machineNode) {
+        if(machineNode.getInitialisation() != null || !machineNode.getOperations().isEmpty()) {
+            return false;
+        }
         PredicateNode predicate = node.getPredicate();
         List<DeclarationNode> declarations = node.getDeclarations();
         if(!(predicate instanceof PredicateOperatorNode)) {

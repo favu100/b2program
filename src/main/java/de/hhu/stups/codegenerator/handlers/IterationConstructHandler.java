@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.handlers;
 import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
 import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.PredicateGenerator;
+import de.hhu.stups.codegenerator.generators.iteration.ConstraintSolverPredicateGenerator;
 import de.hhu.stups.codegenerator.generators.iteration.IterationConstructGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
@@ -37,9 +38,11 @@ public class IterationConstructHandler {
 
     private ExpressionGenerator expressionGenerator;
     private PredicateGenerator predicateGenerator;
+    private ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator;
 
     public IterationConstructHandler(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                                     final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final boolean useConstraintSolving) {
+                                     final TypeGenerator typeGenerator, final ImportGenerator importGenerator,
+                                     final boolean useConstraintSolving) {
         this.currentIterationConstructGenerator = null;
         this.iterationConstructCounter = 0;
         this.machineGenerator = machineGenerator;
@@ -69,7 +72,7 @@ public class IterationConstructHandler {
     * This function returns a new IterationConstructGenerator
     */
     public IterationConstructGenerator getNewIterationConstructGenerator() {
-        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, useConstraintSolving);
+        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, useConstraintSolving, constraintSolverPredicateGenerator);
     }
 
     /*
@@ -162,11 +165,16 @@ public class IterationConstructHandler {
         return currentIterationConstructGenerator;
     }
 
-  public void setExpressionGenerator(ExpressionGenerator expressionGenerator) {
+    public void setExpressionGenerator(ExpressionGenerator expressionGenerator) {
         this.expressionGenerator = expressionGenerator;
-  }
+    }
 
     public void setPredicateGenerator(PredicateGenerator predicateGenerator) {
         this.predicateGenerator = predicateGenerator;
     }
+
+    public void setConstraintSolverPredicateGenerator(ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator) {
+        this.constraintSolverPredicateGenerator = constraintSolverPredicateGenerator;
+    }
+
 }

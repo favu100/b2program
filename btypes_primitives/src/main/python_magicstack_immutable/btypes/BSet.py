@@ -5,7 +5,8 @@ from btypes.BStruct import *
 
 import immutables
 from functools import reduce
-
+from z3 import Solver
+from z3 import sat
 
 class BSet:
 
@@ -254,6 +255,16 @@ class BSet:
 
     def __iter__(self):
         return iter(self.__set)
+
+    @staticmethod
+    def fromSolver(solver: 'Solver', listOfVariables) -> 'BSet':
+        currentSet = []
+        key = [x for x in listOfVariables][0]
+        while solver.check() == sat:
+            currentSet.append(solver.model()[key])
+            solver.add(key != solver.model()[key])
+
+        return BSet(*currentSet)
 
 # Import is at the bottom due to cyclic dependencies
 from btypes.BRelation import *

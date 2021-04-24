@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.generators.iteration.ConstraintSolverPredicateGenerator;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
@@ -36,11 +37,13 @@ public class OperatorGenerator {
 
     private final ExpressionGenerator expressionGenerator;
 
-    public OperatorGenerator(final PredicateGenerator predicateGenerator, final ExpressionGenerator expressionGenerator) {
+    public OperatorGenerator(final PredicateGenerator predicateGenerator, final ExpressionGenerator expressionGenerator,
+                             final ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator) {
         this.predicateGenerator = predicateGenerator;
         this.predicateGenerator.setOperatorGenerator(this);
         this.expressionGenerator = expressionGenerator;
         this.expressionGenerator.setOperatorGenerator(this);
+        constraintSolverPredicateGenerator.setOperatorGenerator(this);
     }
 
     /*
@@ -63,7 +66,7 @@ public class OperatorGenerator {
                 }
                 return template.render();
             });
-        return result.isPresent() ? result.get() : "";
+        return result.orElse("");
     }
 
     /*

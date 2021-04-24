@@ -42,9 +42,12 @@ public class SetComprehensionGenerator {
 
     private final ExpressionGenerator expressionGenerator;
 
+    private final ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator;
+
     public SetComprehensionGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
                                      final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator,
-                                     final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator) {
+                                     final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator,
+                                     final ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
@@ -53,6 +56,7 @@ public class SetComprehensionGenerator {
         this.typeGenerator = typeGenerator;
         this.predicateGenerator = predicateGenerator;
         this.expressionGenerator = expressionGenerator;
+        this.constraintSolverPredicateGenerator = constraintSolverPredicateGenerator;
     }
 
     /*
@@ -99,14 +103,14 @@ public class SetComprehensionGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_cs_set_" + iterationConstructCounter;
-        String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
+        String solverIdentifier = "_cs_solver_" + iterationConstructCounter;
 
         boolean isRelation = node.getDeclarationList().size() > 1;
         //generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, predicate, declarations, type);
 
         template.add("identifier", identifier);
         template.add("isRelation", isRelation);
-        template.add("problemIdentifier", problemIdentifier);
+        template.add("solverIdentifier", solverIdentifier);
         template.add("variableDeclarations", declarationTemplates);
         template.add("constraint", generateConstraint((PredicateOperatorNode) node.getPredicateNode(), declarations));
 
@@ -122,8 +126,6 @@ public class SetComprehensionGenerator {
         switch (declaration.getType().toString()){
             case "INTEGER":
                 range.add("isInteger", true);
-                range.add("minInt", expressionGenerator.generateMinInt());
-                range.add("maxInt", expressionGenerator.generateMaxInt());
                 break;
             case "BOOL":
                 range.add("isBoolean", true);
@@ -133,12 +135,11 @@ public class SetComprehensionGenerator {
         }
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
+        String solverIdentifier = "_cs_solver_" + iterationConstructCounter;
 
         ST template = group.getInstanceOf("constraint_variable_declaration");
         template.add("identifier", declaration.getName());
-        template.add("range", range.render());
-        template.add("problemIdentifier", problemIdentifier);
+        template.add("type", range.render());
         return template;
     }
 
@@ -146,11 +147,9 @@ public class SetComprehensionGenerator {
         ST constraint = group.getInstanceOf("constraint");
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
+        String solverIdentifier = "_cs_solver_" + iterationConstructCounter;
 
-        constraint.add("problemIdentifier", problemIdentifier);
-        constraint.add("var1", declarations.get(0).getName());
-        constraint.add("var2",declarations.subList(1,declarations.size()).stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+        constraint.add("solverIdentifier", solverIdentifier);
         constraint.add("constraintFunction", predicateGenerator.visitPredicateOperatorNode(predicate));
 
         return constraint.render();

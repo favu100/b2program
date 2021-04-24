@@ -1,0 +1,171 @@
+# Entscheidungen bzgl. Constraint Solver
+
+Der Codegenerator b2program unterstützt zur Zeit nur einen Teil der in ProB implementierten Set-Comprehensions.
+Um diese Funktion zu erweitern haben wir den Einsatz eines Constraint-Solvers in Betracht gezogen.
+Constraint-Solver sind Programme, denen man  ein Problem beschreibt und die dann eine / alle mögliche(n) Lösung(en) berechnen.
+
+Zuletzt haben wir b2program um die Programmiersprache Python erweitert.
+Daher haben wir uns entschieden auch mit der Erweiterung um einen Constraint-Solver für Python zu beginnen.
+
+In einer Recherche sind wir auf die folgenden Constraint-Solver gestoßen:
+
+* https://choco-solver.org/[Choco-Solver]
+* https://github.com/xoolive/facile[facile]
+* https://labix.org/python-constraint[python-constraint]
+* https://developers.google.com/optimization/cp/cp_solver[CP-SAT Solver]
+* https://docs.sympy.org/latest/modules/solvers/solvers.html[SymPy]
+
+Im folgenden werden wir Vor- und Nachteile, sowie unsere Vorgehensweise und Probleme mit den einzelnen Constraint-Solvern erläutern.
+
+## Choco-Solver
+Der Choco-Solver ist eine mit IntelliJ IDEA entwickelte Open-Source Bibliothek.
+In der Ursprünglichen Recherche ist der Solver auf Grund vielfältiger Datentypen positiv aufgefallen.
+Nach oberflächlicher Betrachtung ist allerdings aufgefallen, dass nur die Programmiersprache Java unterstützt wird.
+Daher ist der Choco-Solver für Python nicht geeignet.
+Allerdings ist für die Implementierung in Java zu empfehlen diesen genauer zu betrachten.
+
+## facile
+Facile ist einer der ersten Constraint-Solver auf den wir gestoßen sind.
+Er unterstützt laut Dokumentation Gleichungen, Ungleichungen, sowie Funktionen.
+Allerdings gab es bei der Installation Probleme.
+
+Die empfohlene Installation ist die Installation mit pip.
+Diese warf folgende Fehlermeldung:
+
+   ERROR: Could not find a version that satisfies the requirement facile
+   ERROR: No matching distribution found for facile
+
+Nach etwas mehr Recherche stellte sich heraus, dass keine passende Version der Software für mein System bei pip hinterlegt ist.
+
+Die nächste Installationsvariante war die Installation mit easy_install.
+Dabei gab es Probleme, da die setuptools-Bibliothek nicht gefunden wurde.
+Der Import der Bibliothek mit Python funktionierte allerdings.
+Im Verdacht waren fehlende PATH Variablen, falsch installierte Python-Versionen, sowie Probleme mit Nutzerrechten.
+Allerdings konnte ich für dieses Problem leider keine Lösung finden.
+
+Der nächste Ansatz zur Installation war die Installation mit opam.
+Dafür musste zunächst opam istalliert werden.
+Danach konnte mit opam install facile die Bibliothek installiert werden.
+Allerdings habe ich dann erst festgestellt, dass facile nur für python2 geeignet ist.
+Da die in der API verwendete Syntax Python3 kompatibel ist, ist mir dies nicht vorher aufgefalen.
+Daher ist facile für unsere Zwecke nicht geeignet, da b2program Python3 verwendet und auf weitere externe Bibliotheken angewiesen ist.
+
+## python-constraint
+Python-constraint ist der Constraint-Solver, der von PyB, einem B-Interpreter unseres Lehrstuhls, verwendet wird.
+Die Installation mit pip verlief hier problemlos.
+
+Um mit python-constraint eine Problem zu lösen, legt man erst das Problem an.
+Dann fügt dann die Variablen mit einem gegebenen Definitionsbereich pro Variable hinzu.
+Zuletzt fügt man die Bedingungen hinzu und kann sich dann die Lösungen ausgeben lassen.
+Die Syntax dafür sieht wie folgt aus:
+
+....
+from constraint import *
+
+problem = Problem()
+
+problem.addVariable("x", range(-50,50))
+problem.addVariable("y", range(-50,50))
+
+problem.addConstraint(lambda x,y: 0<x and x<y and y<10, ["x", "y"])
+
+problem.getSolutions()
+....
+
+Mit dieser Definition berechnet man die Set-Comprehensions {x,y | 0<x & x<y & y<10} (unter der Einschränkung, dass x und y im Intervall von -50 bis 50 liegen).
+b2program kann solche Set-Comprehensions bisher noch nicht lösen, da alle Variablen am Beginn des Prädikates gebunden werden müssen.
+Die Einschränkung des Definitionsbereichs der Variablen lässt sich über den Typ vornehmen, der bei den entsprechenden DeclarationNodes des ASTs hinterlegt ist
+
+Der Definitionsbereich der Variablen lässt sich als Liste beliebiger Werte angeben.
+Daher lassen sich auch andere Typen als Integer, wie z.B. Boolean definieren.
+
+Allerdings kann der angegebene Definitionsbereich nicht unendlich groß werden.
+Möchte man beispielsweise den Integer-Bereich von -2147483648 bis 2147483647 (Standard Integer Bereich von b2program), so gibt python-constraint nur einen *"MemoryError"* aus.
+
+Betrachtet man also Probleme mit großen Zahlen, so ist python-constraint nicht geeignet.
+Für kleinere Probleme sollte es allerdings gut funktionieren.
+
+## CP-SAT Solver
+Der CP-SAT Solver ist ein Constraint-Solver von Google zur Lösung von Integer Constraints.
+Dieser Solver unterstützt nur Probleme, die durch Integer ausgedrückt werden können.
+Allerdings kann man z.B. Booleans durch 0 und 1 ausdrücken und ggf. auch andere Problemstellungen umformulieren.
+Die Installation erfolgt hier ebenfalls über pip.
+
+Das Anlegen und Lösen eines Problems erfolgt hier ähnlich zu python-constraint.
+Allerdings werden die Variablen hier als separate Variablen deklariert und nicht nur im Problem gespeichert.
+Die Syntax sieht wie folgt aus:
+
+....
+from ortools.sat.python import cp_model
+
+model = cp_model.CpModel()
+
+x = model.NewIntVar(-50, 50, 'x')
+y = model.NewIntVar(-50, 50, 'y')
+
+model.Add(0<x)
+model.Add(x<y)
+model.Add(y<10)
+
+solver = cp_model.CpSolver()
+status = solver.Solve(model)
+
+print("Wert für x: ", solver.Value(x))
+print("Wert für y: ", solver.Value(y))
+....
+
+Dies gibt allerdings nur eine mögliche Lösung aus.
+Wenn man alle Lösungen ausgeben möchte, muss man eine zusätzliche Klasse definieren, die während des Lösungsprozesses alle Lösungen sammelt und dann am Ende ausgeben kann.
+Außerdem müssen die (Un-)Gleichungen jeweils separat hinzugefügt werden und können nicht gesammelt übergeben werden.
+
+Für diesen Solver spricht allerdings, dass er auch mit großen Zahlen arbeiten kann und alle möglichen Lösungen berechnet.
+
+## SymPy
+SymPy ist eine Bibliothek, die symbolischen Umgang mit verschiedenen Typen von Gleichungen ermöglicht.
+Das heißt, dass Gleichungen nach Möglichkeit nicht ausgerechnet, sondern vereinfacht werden.
+Die Ergebnisse werden dann symbolisch dargestellt und können so verwendet werden.
+
+Die Syntax dafür sieht wie folgt aus:
+....
+from sympy import symbols
+from sympy.solvers.inequalities import reduce_rational_inequalities
+x=symbols('x')
+reduce_rational_inequalities([[0<x]], x)
+....
+
+Mit SymPy ist es allerdings schwierig Gleichungen und Ungleichungen, oder mehrere Gleichungen zu kombinieren.
+Daher ist es für unsere Zwecke wahrscheinlich nicht geeignet.
+
+## Fazit
+Von den betrachteten Solvern sind wahrscheinlich python-constraint und CP-SAT Solver die beiden passendsten für unser Problem.
+python-constraint liefert viel Funktionalität, dank der Constraints über lambda-Funktionen, schränkt dafür aber den Zahlenraum stark ein.
+CP-SAT Solver hingegen liefert einen großen Zahlenraum, dafür ist es komplizierter die Constraints zu definieren.
+
+## Nachtrag: Z3 Solver
+Der Z3 Solver stellt viele Funktionen für das Constraint Solving zur Verfügung.
+Darunter fallen Datentypen wie Int, Bool, String und mehr.
+Des weiteren ist es möglich Prädikate wie Exists und ForAll abzufragen.
+Wie auch bei den anderen Constaint Solvern ist es auch hier möglich die Lösungsmenge zu extrahieren.
+Allerdings muss dafür jede Lösung einzeln gesammelt und dann von den möglichen Lösungen ausgeschlossen werden.
+Der Code dafür sieht wie folgt aus:
+
+....
+solutionSet = []
+    while solver.check() == sat:
+        currentTuple = reduce(lambda a, b:  BTuple(solver.model()[a], solver.model()[b]), listOfVariables)
+        solutionSet.append(currentTuple)
+        firstCondition =
+            Or(listOfVariables[0] != solver.model()[listOfVariables[0]],
+               listOfVariables[1] != solver.model()[listOfVariables[1]])
+        solver.add(reduce(lambda a, b:  Or(a, b != solver.model()[b]),
+                          listOfVariables[2:], firstCondition))
+
+....
+
+Dabei müssen die Variablen nachgehalten werden und jeweils einzeln ausgeschlossen werden.
+
+Mit dem Funktionsumfang ist der z3 Solver wahrscheinlich das geeignetste Mittel für unseren Zweck.
+Aus Zeitgründen wurde eine vollständige Implementierung allerdings nicht durchgeführt.
+Um den Solver zu implementieren müssen die B-Predikate zu Z3 Predikaten umgeschrieben werden.
+Wahrscheinlich sollte dafür ein neuer PredicateGenerator geschrieben werden, der dann die entsprechenden Predikate generiert.
+Dies ist allerdings zeitaufwändig.

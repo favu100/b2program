@@ -4,6 +4,7 @@ import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
+import de.hhu.stups.codegenerator.generators.iteration.ConstraintSolverPredicateGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
@@ -87,6 +88,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final PredicateGenerator predicateGenerator;
 
+	private final ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator;
+
 	private final LambdaFunctionGenerator lambdaFunctionGenerator;
 
 	private final SubstitutionGenerator substitutionGenerator;
@@ -153,7 +156,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 																expressionGenerator, predicateGenerator, identifierGenerator, iterationConstructHandler,
 																parallelConstructHandler, recordStructGenerator, declarationGenerator, lambdaFunctionGenerator,
 																infiniteSetGenerator);
-		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
+		this.constraintSolverPredicateGenerator = new ConstraintSolverPredicateGenerator(this, iterationConstructHandler);
+		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator, constraintSolverPredicateGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
 

@@ -91,10 +91,11 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     public IterationConstructGenerator(final IterationConstructHandler iterationConstructHandler, final MachineGenerator machineGenerator, final NameHandler nameHandler, final STGroup group,
                                        final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final ExpressionGenerator expressionGenerator,
-                                       final PredicateGenerator predicateGenerator, final boolean useConstraintSolving) {
+                                       final PredicateGenerator predicateGenerator, final boolean useConstraintSolving,
+                                       final ConstraintSolverPredicateGenerator constraintSolverPredicateGenerator) {
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = new IterationPredicateGenerator(group, machineGenerator, typeGenerator, iterationConstructHandler);
-        this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator, expressionGenerator, predicateGenerator);
+        this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator, expressionGenerator, predicateGenerator, constraintSolverPredicateGenerator);
         this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);

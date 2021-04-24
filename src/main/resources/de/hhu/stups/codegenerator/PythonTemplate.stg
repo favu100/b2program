@@ -192,41 +192,38 @@ set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredica
 <if(emptyPredicate)>
 <set> = <set>.union(<if(isRelation)>BRelation<else>BSet<endif>(<element>))
 <else>
-if(<predicate>).booleanValue():
+if (<predicate>).booleanValue():
     <set> = <set>.union(<if(isRelation)>BRelation<else>BSet<endif>(<element>))
 <endif>
 >>
 
-constraint_solving(identifier, problemIdentifier, variableDeclarations, constraint, isRelation) ::= <<
-from constraint import Problem
+constraint_solving(identifier, solverIdentifier, variableDeclarations, constraint, isRelation) ::= <<
+from z3 import Solver
+from btypes.BZ3 import Int
+from z3 import Bool
 from functools import reduce
 from btypes.BSet import BSet
 from btypes.BUtils import BUtils
-<problemIdentifier> = Problem()
+<solverIdentifier> = Solver()
+listOfVariables = []
 <variableDeclarations; separator="\n">
 <constraint>
-<identifier> = <problemIdentifier>.getSolutions()
-<if(isRelation)><identifier> = reduce(lambda a,e: a.union(BRelation(reduce(lambda b,f: BTuple(b,f),
-                                                                       list(e.values())[2:],
-                                                                       BTuple(list(e.values())[0],list(e.values())[1])))),
-                      <identifier>,
-                      BRelation())
-<else><identifier> = reduce(lambda a,e: a.union(BSet(e.values())),
-                            <identifier>,
-                            BSet())
+<if(isRelation)><identifier> = BRelation.fromSolver(<solverIdentifier>, listOfVariables)
+<else> <identifier> = BSet.fromSolver(<solverIdentifier>, listOfVariables)
 <endif>
 >>
 
-constraint_variable_declaration(identifier, problemIdentifier, range) ::= <<
-<identifier> = <problemIdentifier>.addVariable("<identifier>", <range>)
+constraint_variable_declaration(identifier, type) ::= <<
+<identifier> = <type>('<identifier>')
+listOfVariables.append(<identifier>)
 >>
 
-constraint_type(isInteger, minInt, maxInt, isBoolean, isSet) ::= <<
-<if(isInteger)>BSet.interval(<minInt>, <maxInt>).getSet()<elseif(isBoolean)>BUtils.BOOL.getSet()<endif>
+constraint_type(isInteger, isBoolean, isSet) ::= <<
+<if(isInteger)>Int<elseif(isBoolean)>Bool<endif>
 >>
 
-constraint(problemIdentifier, var1, var2, constraintFunction) ::= <<
-<problemIdentifier>.addConstraint(lambda <var1><var2 : {var |, <var>}>: <constraintFunction>, ("<var1>"<var2 : {var |, "<var>"}>))
+constraint(solverIdentifier, constraintFunction) ::= <<
+<solverIdentifier>.add(<constraintFunction>)
 >>
 
 lambda(type, identifier, lambda, leftType, rightType) ::= <<
@@ -441,7 +438,7 @@ or(arg1, arg2) ::= <<
 >>
 
 and(arg1, arg2) ::= <<
-(<arg1> and <arg2>)
+(<arg1>._and(<arg2>))
 >>
 
 implies(arg1, arg2) ::= <<

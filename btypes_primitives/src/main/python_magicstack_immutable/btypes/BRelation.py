@@ -8,6 +8,9 @@ import immutables
 from functools import reduce
 import random
 
+from z3 import Solver
+from z3 import sat
+from z3 import And
 
 class BRelation:
 
@@ -719,3 +722,16 @@ class BRelation:
                 i = i + 1
         sb += "}"
         return sb
+
+    @staticmethod
+    def fromSolver(solver: 'Solver', listOfVariables) -> 'BRelation':
+        currentSet = []
+
+        while solver.check() == sat:
+            currentTuple = reduce(lambda a, b:  BTuple(solver.model()[a], solver.model()[b]), listOfVariables)
+            currentSet.append(currentTuple)
+            firstCondition = Or(listOfVariables[0] != solver.model()[listOfVariables[0]],
+                                 listOfVariables[1] != solver.model()[listOfVariables[1]])
+            solver.add(reduce(lambda a, b:  Or(a, b != solver.model()[b]), listOfVariables[2:], firstCondition))
+
+        return BRelation(*currentSet)

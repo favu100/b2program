@@ -3,7 +3,7 @@
 This is the code generator **B2Program** for generating code from B to other
 programming languages.
 
-A subset of B is supported for Java and C++ now. The work for code generation for Python, Clojure and C has begun but not continued.
+A subset of B is supported for Java, C++, and Python now. The work for code generation for Clojure and C has begun but not continued.
 
 
 Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Generator_for_High-Level_B

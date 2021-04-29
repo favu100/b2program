@@ -63,7 +63,7 @@ public class CodeGenerator {
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;
-		if(args.length == 8) {
+		if(args.length == 9) {
 			addition = args[8];
 		}
 		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false);

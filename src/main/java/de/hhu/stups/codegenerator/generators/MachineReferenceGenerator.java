@@ -7,6 +7,7 @@ import de.prob.parser.antlr.BProject;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.types.RecordType;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -34,7 +35,7 @@ public class MachineReferenceGenerator {
         for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
             pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(last, referenceNode.getMachineName());
             last = referenceNode.getMachineName();
-            Path currentPath = Paths.get(String.join("/", pathAsList));
+            Path currentPath = Paths.get(String.join(File.separator, pathAsList));
             if(!codeGenerator.getPaths().contains(currentPath)) {
                 codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, false, null, true);
             }

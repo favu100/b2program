@@ -13,6 +13,7 @@ import de.prob.parser.antlr.ScopeException;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
@@ -159,13 +160,13 @@ public class CodeGenerator {
 			paths.clear();
 		}
 		BProject project = parseProject(path);
-		String[] pathAsList = path.toString().split("/");
+		String[] pathAsList = path.toString().split(File.separator);
 		String[] additionAsList = Arrays.copyOf(pathAsList, pathAsList.length);
 		if(addition != null) {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
 		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join("/",additionAsList)) : null, isIncludedMachine));
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join(File.separator, additionAsList)) : null, isIncludedMachine));
 		return paths;
 	}
 
@@ -181,7 +182,7 @@ public class CodeGenerator {
 		String code = generator.generateMachine(node);
 
 		int lastIndexDot = path.toString().lastIndexOf(".");
-		int lastIndexSlash = path.toString().lastIndexOf("/");
+		int lastIndexSlash = path.toString().lastIndexOf(File.separator);
 
 		String fileName = path.toString().substring(lastIndexSlash + 1, lastIndexDot);
 		Path newPath;

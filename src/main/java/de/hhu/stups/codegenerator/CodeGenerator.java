@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -160,13 +161,13 @@ public class CodeGenerator {
 			paths.clear();
 		}
 		BProject project = parseProject(path);
-		String[] pathAsList = path.toString().split(File.separator);
+		String[] pathAsList = path.toString().split(Pattern.quote(File.separator));
 		String[] additionAsList = Arrays.copyOf(pathAsList, pathAsList.length);
 		if(addition != null) {
 			additionAsList[additionAsList.length - 1] = addition;
 		}
 		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join(File.separator, additionAsList)) : null, isIncludedMachine));
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join(Pattern.quote(File.separator), additionAsList)) : null, isIncludedMachine));
 		return paths;
 	}
 
@@ -182,7 +183,7 @@ public class CodeGenerator {
 		String code = generator.generateMachine(node);
 
 		int lastIndexDot = path.toString().lastIndexOf(".");
-		int lastIndexSlash = path.toString().lastIndexOf(File.separator);
+		int lastIndexSlash = path.toString().lastIndexOf(Pattern.quote(File.separator));
 
 		String fileName = path.toString().substring(lastIndexSlash + 1, lastIndexDot);
 		Path newPath;

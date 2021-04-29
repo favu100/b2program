@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class MachineReferenceGenerator {
 
@@ -35,7 +36,7 @@ public class MachineReferenceGenerator {
         for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
             pathAsList[pathAsList.length - 1] = pathAsList[pathAsList.length - 1].replaceAll(last, referenceNode.getMachineName());
             last = referenceNode.getMachineName();
-            Path currentPath = Paths.get(String.join(File.separator, pathAsList));
+            Path currentPath = Paths.get(String.join(Pattern.quote(File.separator), pathAsList));
             if(!codeGenerator.getPaths().contains(currentPath)) {
                 codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, false, null, true);
             }

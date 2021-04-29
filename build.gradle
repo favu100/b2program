@@ -68,19 +68,31 @@ sourceSets.test.runtimeClasspath += files(sourceSets.main.java.srcDirs)
 
 tasks.withType(JavaExec) {
     if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('deferred_set_size') && project.hasProperty('file')) {
+        def arguments = []
         if(!(project.hasProperty('minint') && project.hasProperty('maxint'))) {
-            if (project.hasProperty('addition')) {
-                args([language, big_integer, -2147483648, 2147483647, deferred_set_size, true, project.rootDir.path.toString() + File.separator +  file, addition])
-            } else {
-                args([language, big_integer, -2147483648, 2147483647, deferred_set_size, true, project.rootDir.path.toString() + File.separator + file])
-            }
+            arguments = [language, big_integer, -2147483648, 2147483647, deferred_set_size]
         } else {
-            if (project.hasProperty('addition')) {
-                args([language, big_integer, minint, maxint, deferred_set_size, true, project.rootDir.path.toString() + File.separator + file, addition])
-            } else {
-                args([language, big_integer, minint, maxint, deferred_set_size, true, project.rootDir.path.toString() + File.separator + file])
-            }
+            arguments = [language, big_integer, minint, maxint, deferred_set_size]
         }
+
+        if(project.hasProperty('useConstraintSolving')) {
+            arguments.add(useConstraintSolving)
+        } else {
+            arguments.add(false)
+        }
+
+        if(project.hasProperty('forModelchecking')) {
+            arguments.add(forModelchecking)
+        } else {
+            arguments.add(false)
+        }
+
+        arguments.add(file)
+
+        if(project.hasProperty('addition')) {
+            arguments.add(addition)
+        }
+        args(arguments)
     }
 
     def env_vars = ['LD_LIBRARY_PATH'  : ("$System.env.LD_LIBRARY_PATH" + System.getProperty("path.separator") + "$projectDir/"),

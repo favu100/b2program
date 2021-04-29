@@ -348,7 +348,8 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 
 ```
 
-`-Pminint` and `-Pmaxint` are optional. The default values cover 32-Bit Integers
+`-Pminint` and `-Pmaxint` are optional. The default values cover 32-Bit Integers.
+
 `-PuseConstraintSolving` and `-PforModelchecking` are also optional. They default to `false`.
 
 #### JAR-File

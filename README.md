@@ -335,20 +335,21 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 
 ```bash
 # Java
-./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" [-PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # C++
-./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" [-PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # Python
-./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" [-PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # C
-./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint"] -Pdeferred_set_size="size" [-PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 ```
 
--Pminint and -Pmaxint are optional. The default values cover 32-Bit Integers
+`-Pminint` and `-Pmaxint` are optional. The default values cover 32-Bit Integers
+`-PuseConstraintSolving` and `-PforModelchecking` are also optional. They default to `false`.
 
 #### JAR-File
 
@@ -358,19 +359,19 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 
 ```bash
 # Java
-java -jar B2Program-all-0.1.0-SNAPSHOT java <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT java <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking> <file_path_relative_to_jar_file>
 
 # C++
-java -jar B2Program-all-0.1.0-SNAPSHOT cpp <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT cpp <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
 # Python
-java -jar B2Program-all-0.1.0-SNAPSHOT python <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
 # C
-java -jar B2Program-all-0.1.0-SNAPSHOT c <isBigInteger> <minint> <maxint> <deferred_set_size> <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT c <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 ```
 
-Note that minint and maxint are not optional when using JAR-File.
+Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`  are not optional when using JAR-File.
 
 ### Compile the generated code in Java
 

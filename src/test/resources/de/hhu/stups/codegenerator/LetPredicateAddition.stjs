@@ -1,0 +1,3 @@
+let _let: LetPredicate = new LetPredicate();
+_let.calculate();
+console.log(_let.getRes().toString());

@@ -1,0 +1,2 @@
+let program: M_Rgrips_main_exec = new M_Rgrips_main_exec();
+program.simulate();

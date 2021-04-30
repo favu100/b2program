@@ -1,0 +1,3 @@
+let range: RangeUnionBig = new RangeUnionBig();
+range.simulate();
+console.log(range.getSet().card().toString());

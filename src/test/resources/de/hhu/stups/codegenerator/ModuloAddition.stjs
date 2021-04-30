@@ -1,0 +1,3 @@
+let modulo: Modulo = new Modulo();
+modulo.calculate();
+console.log(modulo.getRes().toString());

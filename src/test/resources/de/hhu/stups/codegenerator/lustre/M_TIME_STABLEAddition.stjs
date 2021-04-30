@@ -1,0 +1,13 @@
+let program: M_TIME_STABLE = new M_TIME_STABLE();
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getLevel().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getLevel().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getLevel().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getLevel().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getLevel().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getLevel().toString());

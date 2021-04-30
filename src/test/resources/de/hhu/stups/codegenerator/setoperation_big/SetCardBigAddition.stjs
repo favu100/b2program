@@ -1,0 +1,3 @@
+let set: SetCardBig = new SetCardBig();
+set.simulate();
+console.log(set.getResult().toString());

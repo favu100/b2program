@@ -1,0 +1,3 @@
+let range: RangeSubstraction = new RangeSubstraction();
+range.calculate();
+console.log(range.getRes().toString());

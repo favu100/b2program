@@ -1,0 +1,3 @@
+let range: RangeIntersectionBig = new RangeIntersectionBig();
+range.simulate();
+console.log(range.getSet().card().toString());

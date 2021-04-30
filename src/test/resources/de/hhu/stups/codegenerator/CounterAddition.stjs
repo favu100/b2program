@@ -1,0 +1,7 @@
+let counter: Counter = new Counter();
+counter.Reset();
+counter.Inc();
+counter.Odd();
+counter.Inc();
+counter.Even();
+console.log(counter.getCount().toString());

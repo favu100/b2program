@@ -1,0 +1,2 @@
+let equi: Equivalence = new Equivalence();
+console.log(equi.Inc(new BInteger(10)).toString());

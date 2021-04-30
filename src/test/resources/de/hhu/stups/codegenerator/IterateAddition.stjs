@@ -1,0 +1,3 @@
+let iterate: Iterate = new Iterate();
+iterate.calculate();
+console.log(iterate.getRes().toString());

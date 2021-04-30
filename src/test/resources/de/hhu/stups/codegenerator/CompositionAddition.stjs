@@ -1,0 +1,3 @@
+let composition: Composition = new Composition();
+composition.calculate();
+console.log(composition.getRes().toString());

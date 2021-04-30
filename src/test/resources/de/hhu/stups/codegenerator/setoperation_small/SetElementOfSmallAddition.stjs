@@ -1,0 +1,3 @@
+let set: SetElementOfSmall = new SetElementOfSmall();
+set.simulate();
+console.log(set.getCounter().toString());

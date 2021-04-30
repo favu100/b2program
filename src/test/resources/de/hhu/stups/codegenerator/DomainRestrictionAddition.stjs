@@ -1,0 +1,3 @@
+let domain: DomainRestriction = new DomainRestriction();
+domain.calculate();
+console.log(domain.getRes().toString());

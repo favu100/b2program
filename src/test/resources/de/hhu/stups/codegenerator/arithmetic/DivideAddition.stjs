@@ -1,0 +1,3 @@
+let arithmetic: Divide = new Divide();
+arithmetic.simulate();
+console.log(arithmetic.getValue().toString());

@@ -1,0 +1,3 @@
+let range: RangeElementOfSmall = new RangeElementOfSmall();
+range.simulate();
+console.log(range.getCounter().toString());

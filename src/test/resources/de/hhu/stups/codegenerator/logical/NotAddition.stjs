@@ -1,0 +1,3 @@
+let logical: Not = new Not();
+logical.simulate();
+console.log(logical.getCounter().toString());

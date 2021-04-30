@@ -1,0 +1,3 @@
+let append: Append = new Append();
+append.calculate();
+console.log(append.getRes().toString);

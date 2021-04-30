@@ -1,0 +1,3 @@
+let set: RelationGeneralizedIntersectionEmpty = new RelationGeneralizedIntersectionEmpty();
+set.calculate();
+console.log(set.getSet().card().toString());

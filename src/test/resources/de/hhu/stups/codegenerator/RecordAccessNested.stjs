@@ -1,0 +1,3 @@
+let record: RecordAccessNested = new RecordAccessNested();
+record.calculate();
+console.log(record.getRes().toString());

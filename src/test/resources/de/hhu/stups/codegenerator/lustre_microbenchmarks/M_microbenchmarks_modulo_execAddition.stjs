@@ -1,0 +1,2 @@
+let program: M_microbenchmarks_modulo_exec = new M_microbenchmarks_modulo_exec();
+program.simulate();

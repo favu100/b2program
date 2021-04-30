@@ -1,0 +1,3 @@
+let union: Union = new Union();
+union.calculate();
+console.log(union.getRes().toString());

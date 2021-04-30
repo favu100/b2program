@@ -1,0 +1,3 @@
+let set: SetDifferenceSmall = new SetDifferenceSmall();
+set.simulate();
+console.log(set.getSet().toString());

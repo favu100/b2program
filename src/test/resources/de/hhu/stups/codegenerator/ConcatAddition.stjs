@@ -1,0 +1,3 @@
+let concat: Concat = new Concat();
+concat.calculate();
+console.log(concat.getRes().toString());

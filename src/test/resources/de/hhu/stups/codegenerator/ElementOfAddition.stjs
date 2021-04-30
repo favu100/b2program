@@ -1,0 +1,3 @@
+let elementOf: ElementOf = new ElementOf();
+elementOf.calculate();
+console.log(elementOf.getRes().toString());

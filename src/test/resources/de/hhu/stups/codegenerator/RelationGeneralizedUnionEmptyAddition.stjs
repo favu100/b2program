@@ -1,0 +1,3 @@
+let set: RelationGeneralizedUnionEmpty = new RelationGeneralizedUnionEmpty();
+set.calculate();
+console.log(set.getSet().card().toString());

@@ -1,0 +1,3 @@
+let min: Min = new Min();
+min.calculate();
+console.log(min.getRes().toString());

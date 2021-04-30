@@ -1,0 +1,3 @@
+let max: Max = new Max();
+max.calculate();
+console.log(max.getRes().toString());

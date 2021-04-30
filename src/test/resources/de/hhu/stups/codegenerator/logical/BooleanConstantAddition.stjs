@@ -1,0 +1,3 @@
+let logical: BooleanConstant = new BooleanConstant();
+logical.simulate();
+console.log(logical.getCounter().toString());

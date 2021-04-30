@@ -1,0 +1,3 @@
+let comparison: Equal = new Equal();
+comparison.calculate();
+console.log(comparison.getRes().toString());

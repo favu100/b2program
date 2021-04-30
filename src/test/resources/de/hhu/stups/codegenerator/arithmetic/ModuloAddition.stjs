@@ -1,0 +1,3 @@
+let arithmetic: Modulo = new Modulo();
+arithmetic.simulate();
+console.log(arithmetic.getValue().toString());

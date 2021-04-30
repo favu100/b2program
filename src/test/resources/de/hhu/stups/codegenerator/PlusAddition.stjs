@@ -1,0 +1,3 @@
+let plus: Plus = new Plus();
+plus.calculate();
+console.log(plus.getRes().toString());

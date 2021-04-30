@@ -1,0 +1,3 @@
+let functional: FunctionalOverride3 = new FunctionalOverride3();
+functional.calculate();
+console.log(functional.getRes().toString());

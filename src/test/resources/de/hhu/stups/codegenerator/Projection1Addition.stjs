@@ -1,0 +1,4 @@
+let projection: Projection1 = new Projection1();
+projection.calculate();
+console.log(projection.getRes() + " ");
+console.log(projection.getPair().toString());

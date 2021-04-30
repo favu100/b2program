@@ -1,0 +1,3 @@
+let pred: Pred = new Pred();
+pred.calculate();
+console.log(pred.getRes().toString());

@@ -1,0 +1,3 @@
+let domain: DomainSubstraction = new DomainSubstraction();
+domain.calculate();
+console.log(domain.getRes().toString());

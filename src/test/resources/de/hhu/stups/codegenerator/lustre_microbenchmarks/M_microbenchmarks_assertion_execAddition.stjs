@@ -1,0 +1,2 @@
+let program: M_microbenchmarks_assertion_exec = new M_microbenchmarks_assertion_exec();
+program.simulate();

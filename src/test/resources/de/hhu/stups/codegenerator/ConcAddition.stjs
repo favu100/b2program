@@ -1,0 +1,3 @@
+let conc: Conc = new Conc();
+conc.calculate();
+console.log(conc.getRes().toString());

@@ -1,0 +1,3 @@
+let lift: LiftExec = new LiftExec();
+lift.simulate();
+console.log(lift.getCounter().toString());

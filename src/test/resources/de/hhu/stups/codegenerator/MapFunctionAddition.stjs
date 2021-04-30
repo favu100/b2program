@@ -1,0 +1,2 @@
+let map: MapFunction = new MapFunction();
+console.log(map.getYY().domain().card() + " " + map.getYY().range().card());

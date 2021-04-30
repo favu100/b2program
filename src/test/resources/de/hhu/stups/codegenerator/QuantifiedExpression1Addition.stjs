@@ -1,0 +1,3 @@
+let expression: QuantifiedExpression1 = new QuantifiedExpression1();
+expression.calculate();
+console.log(expression.getRes().toString());

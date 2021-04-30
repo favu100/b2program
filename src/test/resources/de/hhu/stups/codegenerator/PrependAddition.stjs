@@ -1,0 +1,3 @@
+let prepend: Prepend = new Prepend();
+prepend.calculate();
+console.log(prepend.getRes().toString());

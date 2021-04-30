@@ -1,0 +1,2 @@
+let union: SetUnion = new SetUnion();
+console.log(union.getYY().card().toString());

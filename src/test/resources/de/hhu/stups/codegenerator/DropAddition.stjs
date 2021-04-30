@@ -1,0 +1,3 @@
+let drop: Drop = new Drop();
+drop.calculate();
+console.log(drop.getRes().toString());

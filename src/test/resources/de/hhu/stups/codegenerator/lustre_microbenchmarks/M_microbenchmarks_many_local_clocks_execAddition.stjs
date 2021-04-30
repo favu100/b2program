@@ -1,0 +1,2 @@
+let program: M_microbenchmarks_many_local_clocks_exec = new M_microbenchmarks_many_local_clocks_exec();
+program.simulate();

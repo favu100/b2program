@@ -1,0 +1,3 @@
+let inverse: Inverse = new Inverse();
+inverse.calculate();
+console.log(inverse.getRes().toString());

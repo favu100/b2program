@@ -1,0 +1,3 @@
+let set: GeneralizedIntersectionEmpty = new GeneralizedIntersectionEmpty();
+set.calculate();
+console.log(set.getSet().card().toString());

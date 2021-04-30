@@ -1,0 +1,3 @@
+let card: Card = new Card();
+card.calculate();
+console.log(card.getRes().toString());

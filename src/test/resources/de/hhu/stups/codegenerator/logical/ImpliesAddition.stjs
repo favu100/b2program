@@ -1,0 +1,3 @@
+let logical: Implies = new Implies();
+logical.simulate();
+console.log(logical.getCounter().toString());

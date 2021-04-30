@@ -1,0 +1,3 @@
+let direct: DirectProduct = new DirectProduct();
+direct.calculate();
+console.log(direct.getRes().toString());

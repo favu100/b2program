@@ -1,0 +1,3 @@
+let notElementOf: NotElementOf = new NotElementOf();
+notElementOf.calculate();
+console.log(notElementOf.getRes().toString());

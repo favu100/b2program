@@ -1,0 +1,3 @@
+let set: SetIntersectionSmall = new SetIntersectionSmall();
+set.simulate();
+console.log(set.getSet().toString());

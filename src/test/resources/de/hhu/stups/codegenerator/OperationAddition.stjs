@@ -1,0 +1,2 @@
+let operation: Operation = new Operation();
+console.log(operation.Inc(new BInteger(10)).toString());

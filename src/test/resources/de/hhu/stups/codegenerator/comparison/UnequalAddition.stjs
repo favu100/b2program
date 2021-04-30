@@ -1,0 +1,3 @@
+let comparison: Unequal = new Unequal();
+comparison.simulate();
+console.log(comparison.getCounter().toString());

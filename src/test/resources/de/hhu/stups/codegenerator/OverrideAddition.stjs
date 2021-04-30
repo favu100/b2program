@@ -1,0 +1,3 @@
+let override: Override = new Override();
+override.calculate();
+console.log(override.getRes().toString());

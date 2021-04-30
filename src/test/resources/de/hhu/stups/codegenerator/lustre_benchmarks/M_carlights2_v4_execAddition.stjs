@@ -1,0 +1,2 @@
+let program: M_carlights2_v4_exec = new M_carlights2_v4_exec();
+program.simulate();

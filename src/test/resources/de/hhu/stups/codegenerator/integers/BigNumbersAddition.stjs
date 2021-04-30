@@ -1,0 +1,3 @@
+let numbers: BigNumbers = new BigNumbers();
+numbers.simulate();
+console.log(numbers.getValue().toString());

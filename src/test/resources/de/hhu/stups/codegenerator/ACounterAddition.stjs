@@ -1,0 +1,4 @@
+let counter: ACounter = new ACounter();
+counter.inc();
+counter.inc();
+console.log(counter.res().toString());

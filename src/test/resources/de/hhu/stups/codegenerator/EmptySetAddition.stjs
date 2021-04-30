@@ -1,0 +1,3 @@
+let empty: EmptySet = new EmptySet();
+empty.calculate();
+console.log(empty.getRes().toString());

@@ -1,0 +1,3 @@
+let set: SetIntersectionBig2 = new SetIntersectionBig2();
+set.simulate();
+console.log(set.getSet1().card().toString());

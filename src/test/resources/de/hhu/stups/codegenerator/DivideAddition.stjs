@@ -1,0 +1,3 @@
+let divide: Divide = new Divide();
+divide.calculate();
+console.log(divide.getRes().toString());

@@ -1,0 +1,3 @@
+let logical: Implies = new Implies();
+logical.calculate();
+console.log(logical.getRes().toString());

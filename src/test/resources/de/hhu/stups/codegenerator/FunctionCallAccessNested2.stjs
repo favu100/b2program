@@ -1,0 +1,3 @@
+let functional: FunctionCallAccessNested2 = new FunctionCallAccessNested2();
+functional.calculate();
+console.log(functional.getRes().toString());

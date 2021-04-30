@@ -1,0 +1,2 @@
+let program: M_SubmodeExample_exec = new M_SubmodeExample_exec();
+program.simulate();

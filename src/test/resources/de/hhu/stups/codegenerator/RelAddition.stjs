@@ -1,0 +1,3 @@
+let rel: Rel = new Rel();
+rel.calculate();
+console.log(rel.getRes().toString());

@@ -1,0 +1,3 @@
+let relation: RelationalImage = new RelationalImage();
+relation.calculate();
+console.log(relation.getRes().toString());

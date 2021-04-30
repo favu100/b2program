@@ -1,0 +1,3 @@
+let calc: RelationGeneralizedIntersection = new RelationGeneralizedIntersection();
+calc.calculate();
+console.log(calc.getRes().card().toString());

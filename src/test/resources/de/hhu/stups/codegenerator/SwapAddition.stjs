@@ -1,0 +1,4 @@
+let swap: Swap = new Swap();
+swap.swap();
+console.log(swap.getXX().toString);
+console.log(swap.getYY().toString());

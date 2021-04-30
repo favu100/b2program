@@ -1,0 +1,3 @@
+let range: RangeCardSmall = new RangeCardSmall();
+range.simulate();
+console.log(range.getResult().toString());

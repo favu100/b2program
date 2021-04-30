@@ -1,0 +1,3 @@
+let range: Range = new Range();
+range.calculate();
+console.log(range.getRes().toString());

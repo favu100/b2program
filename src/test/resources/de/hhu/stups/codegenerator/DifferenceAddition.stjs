@@ -1,0 +1,3 @@
+let difference: Difference = new Difference();
+difference.calculate();
+console.log(difference.getRes().toString());

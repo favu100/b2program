@@ -1,0 +1,3 @@
+let logical: And = new And();
+logical.simulate();
+console.log(logical.getCounter().toString());

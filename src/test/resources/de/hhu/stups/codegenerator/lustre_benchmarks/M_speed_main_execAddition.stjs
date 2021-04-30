@@ -1,0 +1,2 @@
+let program: M_speed_main_exec = new M_speed_main_exec();
+program.simulate();

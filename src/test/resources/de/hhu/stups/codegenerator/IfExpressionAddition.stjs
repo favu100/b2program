@@ -1,0 +1,3 @@
+let iff: IfExpression = new IfExpression();
+iff.calculate();
+console.log(iff.getRes().toString());

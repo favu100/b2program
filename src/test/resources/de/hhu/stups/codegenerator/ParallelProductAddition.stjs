@@ -1,0 +1,3 @@
+let parallel: ParallelProduct = new ParallelProduct();
+parallel.calculate();
+console.log(parallel.getRes().toString());

@@ -1,0 +1,13 @@
+let program: M_Current = new M_Current();
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getRes1().toString());
+console.log(program.getRes2().toString());
+console.log(program.getRes3().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))));
+console.log(program.getRes1().toString());
+console.log(program.getRes2().toString());
+console.log(program.getRes3().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(5))));
+console.log(program.getRes1().toString());
+console.log(program.getRes2().toString());
+console.log(program.getRes3().toString());

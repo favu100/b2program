@@ -1,0 +1,2 @@
+let program: M_microbenchmarks_unequal_boolean_exec = new M_microbenchmarks_unequal_boolean_exec();
+program.simulate();

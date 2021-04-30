@@ -1,0 +1,2 @@
+let program: M_pilot_flying_exec = new M_pilot_flying_exec();
+program.simulate();

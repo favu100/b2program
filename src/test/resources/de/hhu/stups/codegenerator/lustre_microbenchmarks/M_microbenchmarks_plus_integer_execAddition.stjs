@@ -1,0 +1,2 @@
+let program: M_microbenchmarks_plus_integer_exec = new M_microbenchmarks_plus_integer_exec();
+program.simulate();

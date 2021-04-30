@@ -1,0 +1,3 @@
+let pow: Pow = new Pow();
+pow.calculate();
+console.log(pow.getRes().toString());

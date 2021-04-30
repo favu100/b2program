@@ -1,0 +1,3 @@
+let set: SetComprehension4 = new SetComprehension4();
+set.calculate();
+console.log(set.getRes().toString());

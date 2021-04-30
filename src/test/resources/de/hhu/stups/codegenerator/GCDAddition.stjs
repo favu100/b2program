@@ -1,0 +1,2 @@
+let gcd: GCD = new GCD();
+console.log(gcd.GCDSolution().toString());

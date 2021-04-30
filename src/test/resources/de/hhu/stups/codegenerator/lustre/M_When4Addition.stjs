@@ -1,0 +1,7 @@
+let when: M_When4 = new M_When4();
+when.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+console.log(when.getRes().toString());
+when.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+console.log(when.getRes().toString());
+when.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+console.log(when.getRes().toString());

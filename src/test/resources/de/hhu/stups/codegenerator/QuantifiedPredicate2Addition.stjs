@@ -1,0 +1,3 @@
+let predicate: QuantifiedPredicate2 = new QuantifiedPredicate2();
+predicate.calculate();
+console.log(predicate.getRes().toString());

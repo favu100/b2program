@@ -1,0 +1,3 @@
+let iset: IncreasingSet = new IncreasingSet();
+iset.simulate();
+console.log(iset.getSet().card().toString());

@@ -1,0 +1,2 @@
+let sieve: Sieve = new Sieve();
+console.log(sieve.ComputeNumberOfPrimes().toString());

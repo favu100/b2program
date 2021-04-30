@@ -1,0 +1,3 @@
+let set: SetElementOfBig = new SetElementOfBig();
+set.simulate();
+console.log(set.getCounter().toString());

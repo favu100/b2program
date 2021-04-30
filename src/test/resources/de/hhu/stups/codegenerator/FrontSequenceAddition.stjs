@@ -1,0 +1,3 @@
+let sequence: FrontSequence = new FrontSequence();
+sequence.calculate();
+console.log(sequence.getRes().toString());

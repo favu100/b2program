@@ -1,0 +1,3 @@
+let fin: Fin = new Fin();
+fin.calculate();
+console.log(fin.getRes().toString());

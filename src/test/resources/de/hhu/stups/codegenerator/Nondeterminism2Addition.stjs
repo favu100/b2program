@@ -1,0 +1,3 @@
+let nondeterminism: Nondeterminism2 = new Nondeterminism2();
+nondeterminism.calculate();
+console.log(nondeterminism.getRes().toString());

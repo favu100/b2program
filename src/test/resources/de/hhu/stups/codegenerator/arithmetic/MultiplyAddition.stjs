@@ -1,0 +1,3 @@
+let arithmetic: Multiply = new Multiply();
+arithmetic.simulate();
+console.log(arithmetic.getValue().toString());

@@ -1,0 +1,3 @@
+let calc: GeneralizedUnion = new GeneralizedUnion();
+calc.calculate();
+console.log(calc.getRes().card().toString());

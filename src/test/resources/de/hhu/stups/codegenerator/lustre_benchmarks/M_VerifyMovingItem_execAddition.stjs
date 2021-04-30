@@ -1,0 +1,2 @@
+let program: M_VerifyMovingItem_exec = new M_VerifyMovingItem_exec();
+program.simulate();

@@ -1,0 +1,3 @@
+let succ: Succ = new Succ();
+succ.calculate();
+console.log(succ.getRes().toString());

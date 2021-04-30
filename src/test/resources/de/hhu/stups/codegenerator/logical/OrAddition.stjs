@@ -1,0 +1,3 @@
+let logical: Or = new Or();
+logical.simulate();
+console.log(logical.getCounter().toString());

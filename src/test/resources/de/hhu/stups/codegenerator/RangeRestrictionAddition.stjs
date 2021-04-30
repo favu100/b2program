@@ -1,0 +1,3 @@
+let range: RangeRestriction = new RangeRestriction();
+range.calculate();
+console.log(range.getRes().toString());

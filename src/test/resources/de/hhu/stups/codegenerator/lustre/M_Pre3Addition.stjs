@@ -1,0 +1,5 @@
+let pre: M_Pre3 = new M_Pre3();
+pre.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+console.log(pre.getA().toString());
+pre.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+console.log(pre.getA().toString());

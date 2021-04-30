@@ -1,0 +1,3 @@
+let arithmetic: Negative = new Negative();
+arithmetic.simulate();
+console.log(arithmetic.getValue().toString());

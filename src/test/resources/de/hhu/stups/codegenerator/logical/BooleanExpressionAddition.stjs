@@ -1,0 +1,3 @@
+let logical: BooleanExpression = new BooleanExpression();
+logical.simulate();
+console.log(logical.getExpr().toString());

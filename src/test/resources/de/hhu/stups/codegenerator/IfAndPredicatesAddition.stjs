@@ -1,0 +1,3 @@
+let iff: IfAndPredicates = new IfAndPredicates();
+iff.calculate();
+console.log(iff.getRes().toString());

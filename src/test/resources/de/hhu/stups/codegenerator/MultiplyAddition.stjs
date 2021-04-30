@@ -1,0 +1,3 @@
+let multiply: Multiply = new Multiply();
+multiply.calculate();
+console.log(multiply.getRes().toString());

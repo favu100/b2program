@@ -1,0 +1,11 @@
+let program: M_NilChecking6 = new M_NilChecking6();
+program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))));
+console.log(program.getRes().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))));
+console.log(program.getRes().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(program.getRes().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))));
+console.log(program.getRes().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(5))));
+console.log(program.getRes().toString());

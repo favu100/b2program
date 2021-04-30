@@ -1,0 +1,13 @@
+let program: M_Machine = new M_Machine();
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+console.log(program.getRes().toString());
+console.log(program.getRes1().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+console.log(program.getRes().toString());
+console.log(program.getRes1().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+console.log(program.getRes().toString());
+console.log(program.getRes1().toString());
+program.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+console.log(program.getRes().toString());
+console.log(program.getRes1().toString());

@@ -1,0 +1,3 @@
+let comparison: Less = new Less();
+comparison.simulate();
+console.log(comparison.getCounter().toString());

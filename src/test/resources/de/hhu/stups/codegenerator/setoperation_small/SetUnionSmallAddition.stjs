@@ -1,0 +1,3 @@
+let set: SetUnionSmall = new SetUnionSmall();
+set.simulate();
+console.log(set.getSet().card().toString());

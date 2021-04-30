@@ -1,0 +1,3 @@
+let _let: LetSubstitution = new LetSubstitution();
+_let.calculate();
+console.log(_let.getRes().toString());

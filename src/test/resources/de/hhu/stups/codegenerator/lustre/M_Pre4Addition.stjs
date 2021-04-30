@@ -1,0 +1,13 @@
+let pre: M_Pre4 = new M_Pre4();
+pre.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))));
+console.log(pre.getZ().toString());
+pre.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))));
+console.log(pre.getZ().toString());
+pre.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+console.log(pre.getZ().toString());
+pre.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))));
+console.log(pre.getZ().toString());
+pre.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(0))));
+console.log(pre.getZ().toString());
+pre.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(-1))));
+console.log(pre.getZ().toString());

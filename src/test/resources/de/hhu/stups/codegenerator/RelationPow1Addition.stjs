@@ -1,0 +1,3 @@
+let pow: RelationPow1 = new RelationPow1();
+pow.calculate();
+console.log(pow.getRes().toString());

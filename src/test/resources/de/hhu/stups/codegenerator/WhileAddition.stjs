@@ -1,0 +1,2 @@
+let while1: While = new While();
+console.log(while1.Inc(new BInteger(1)).toString());

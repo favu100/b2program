@@ -1,0 +1,3 @@
+let logical: Equivalent = new Equivalent();
+logical.simulate();
+console.log(logical.getCounter().toString());

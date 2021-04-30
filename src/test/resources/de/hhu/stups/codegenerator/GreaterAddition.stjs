@@ -1,0 +1,3 @@
+let comparison: Greater = new Greater();
+comparison.calculate();
+console.log(comparison.getRes().toString());

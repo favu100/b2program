@@ -1,0 +1,3 @@
+let fnc: Fnc = new Fnc();
+fnc.calculate();
+console.log(fnc.getRes().toString());

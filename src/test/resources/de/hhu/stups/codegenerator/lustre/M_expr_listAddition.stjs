@@ -1,0 +1,4 @@
+let program: M_expr_list = new M_expr_list();
+program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))));
+console.log(program.getA().toString());
+console.log(program.getB().toString());

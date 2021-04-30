@@ -1,0 +1,8 @@
+let bakery: Bakery0 = new Bakery0();
+bakery.enter1();
+bakery.leave1();
+bakery.enter2();
+bakery.leave2();
+bakery.try1();
+bakery.try2();
+console.log(bakery.getAA().toString());

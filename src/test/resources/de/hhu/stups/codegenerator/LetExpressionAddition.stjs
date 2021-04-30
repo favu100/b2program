@@ -1,0 +1,3 @@
+let _let: LetExpression = new LetExpression();
+_let.calculate();
+console.log(_let.getRes().toString());

@@ -1,0 +1,3 @@
+let setoperation: SetOperation = new SetOperation();
+setoperation.simulate();
+console.log(setoperation.getSet().card().toString());

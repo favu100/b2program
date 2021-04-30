@@ -1,0 +1,2 @@
+let locals: ManyLocalDeclarations = new ManyLocalDeclarations();
+console.log(locals.Inc(new BInteger(10)).card().toString());

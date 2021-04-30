@@ -1,0 +1,3 @@
+let logical: And = new And();
+logical.calculate();
+console.log(logical.getRes().toString());

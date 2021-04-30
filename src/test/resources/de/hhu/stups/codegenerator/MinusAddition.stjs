@@ -1,0 +1,3 @@
+let minus: Minus = new Minus();
+minus.calculate();
+console.log(minus.getRes().toString());

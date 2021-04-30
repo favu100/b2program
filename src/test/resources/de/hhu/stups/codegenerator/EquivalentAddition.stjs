@@ -1,0 +1,3 @@
+let logical: Equivalent = new Equivalent();
+logical.calculate();
+console.log(logical.getRes().toString());

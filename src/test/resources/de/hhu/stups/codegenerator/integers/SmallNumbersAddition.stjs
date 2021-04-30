@@ -1,0 +1,3 @@
+let numbers: SmallNumbers = new SmallNumbers();
+numbers.simulate();
+console.log(numbers.getValue().toString());

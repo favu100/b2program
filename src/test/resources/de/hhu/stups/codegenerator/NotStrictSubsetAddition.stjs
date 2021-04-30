@@ -1,0 +1,3 @@
+let subset: NotStrictSubset = new NotStrictSubset();
+subset.calculate();
+console.log(subset.getRes().toString());

@@ -1,0 +1,3 @@
+let intersection: Intersection = new Intersection();
+intersection.calculate();
+console.log(intersection.getRes().toString());

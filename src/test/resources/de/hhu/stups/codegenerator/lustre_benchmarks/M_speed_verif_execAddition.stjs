@@ -1,0 +1,2 @@
+let program: M_speed_verif_exec = new M_speed_verif_exec();
+program.simulate();

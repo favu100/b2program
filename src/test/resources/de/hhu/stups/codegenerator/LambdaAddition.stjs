@@ -1,0 +1,3 @@
+let lambda: Lambda = new Lambda();
+lambda.calculate();
+console.log(lambda.getRes().toString());

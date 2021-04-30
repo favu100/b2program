@@ -1,0 +1,2 @@
+let program: M_DockingApproachExample_Ext_exec = new M_DockingApproachExample_Ext_exec();
+program.simulate();

@@ -1,0 +1,3 @@
+let sequence: FirstElementSequence = new FirstElementSequence();
+sequence.calculate();
+console.log(sequence.getRes().toString());

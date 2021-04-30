@@ -1,0 +1,3 @@
+let range: RangeCardBig = new RangeCardBig();
+range.simulate();
+console.log(range.getResult().toString());

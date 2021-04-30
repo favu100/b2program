@@ -1,0 +1,3 @@
+let set: SetDifferenceBig = new SetDifferenceBig();
+set.simulate();
+console.log(set.getSet().card().toString());

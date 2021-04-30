@@ -1,0 +1,2 @@
+let program: M_Press_main_exec = new M_Press_main_exec();
+program.simulate();

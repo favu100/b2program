@@ -55,7 +55,11 @@ public class TransitionGenerator {
         TemplateHandler.add(template, "operationName", node.getName());
 
         if(noParameters) {
-            TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicate, null));
+            if(predicate == null) {
+                TemplateHandler.add(template,"noPredicate", true);
+            } else {
+                TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicate, null));
+            }
             String result = template.render();
             iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
             return result;

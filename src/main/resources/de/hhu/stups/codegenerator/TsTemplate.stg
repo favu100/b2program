@@ -1,0 +1,683 @@
+keywords() ::= <<
+abstract, assert, boolean, break, byte, case, catch, char, class, continue, default, do, double, else, enum, extends, final, finally, float, for, if, implements, import, instanceof, int, interface, long, native, new, package, private, protected, public, return, short, static, strictfp, super, switch, synchronized, this, throw, throws, try, void, volatile, while, true, false, null, var, const, goto, size
+>>
+
+
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
+<imports; separator="\n">
+import {BUtils} from "/home/christopher/uni/Projektarbeit/b2program/btypes_primitives/src/main/js/de/hhu/stups/btypes/BUtils"
+
+export class <machine> {
+
+    <structs; separator= "\n\n">
+
+    <constants_declarations; separator="\n">
+
+    <includes; separator="\n">
+
+    <enums; separator="\n\n">
+
+    <sets; separator="\n">
+
+    <declarations; separator="\n">
+
+    <initialization>
+
+    <if(forModelChecking)>
+    <copyConstructor>
+    <endif>
+
+    <operations; separator="\n\n">
+
+    <getters; separator="\n\n">
+
+    <if(forModelChecking)>
+
+    <transitions; separator="\n\n">
+
+    <invariant>
+
+    <copy>
+
+    <endif>
+
+    <lambdaFunctions; separator="\n\n">
+
+}
+
+<addition>
+>>
+
+getter(returnType, variable) ::= <<
+_get_<variable>(): <returnType> {
+    return this.<variable>;
+}
+>>
+
+struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
+public static class <name> extends BStruct {
+    <declarations; separator="\n">
+
+    public <name>(<parameters; separator=", ">) {
+        <initializations; separator="\n">
+    }
+
+    <functions; separator="\n\n">
+
+    public BBoolean equal(<name> o) {
+        return new BBoolean(<equalPredicates; separator=" && ">);
+    }
+
+    public BBoolean unequal(<name> o) {
+        return new BBoolean(<unequalPredicates; separator=" || ">);
+    }
+
+    public String toString() {
+        return "(" + <values; separator=" + \",\" + "> + ")";
+    }
+
+    public boolean equals(Object other) {
+        if(!(other instanceof <name>)) {
+            return false;
+        }
+        <name> o = (<name>) other;
+        return <equalPredicates; separator= " && ">;
+    }
+
+    public int hashCode() {
+        return Objects.hash(<fields; separator=", ">);
+    }
+}
+>>
+
+record_field_get(type, field) ::= <<
+get_<field>(): <type> {
+    return this.<field>;
+}
+>>
+
+record_field_access(record, field) ::= <<
+<record>.get_<field>()
+>>
+
+record_access_nested(record, field, isNested) ::= <<
+<if(!isNested)><record><else><record>.get_<field>()<endif>
+>>
+
+record_access_element(expr, arg, val) ::= <<
+<expr>.override_<arg>(<val>)
+>>
+
+record_field_override(name, field, type, val, parameters) ::= <<
+override_<field>(<type> <field>): <name> {
+    return new <name>(<parameters; separator=", ">);
+}
+>>
+
+record_field_initialization(identifier) ::= <<
+this.<identifier> = <identifier>;
+>>
+
+record_assignment(identifier) ::= <<
+>>
+
+record_field_to_string(identifier) ::= <<
+"<identifier> : " + this.<identifier>
+>>
+
+record_equal_predicate(field) ::= <<
+this.<field> === o.<field>
+>>
+
+record_unequal_predicate(field) ::= <<
+this.<field> !== o.<field>
+>>
+
+record(struct, parameters) ::= <<
+new <struct>(<parameters; separator=", ">)
+>>
+
+initialization(machine, properties, values, body) ::= <<
+constructor() {
+    <properties; separator="\n">
+    <values>
+    <body>
+}
+>>
+
+method() ::= <<
+>>
+
+operation(returnType, operationName, parameters, locals, body, return) ::= <<
+ <operationName>(<parameters; separator=", ">): <returnType> {
+    <locals; separator="\n">
+    <body>
+    <return>
+}
+>>
+
+return(identifier) ::= <<
+return <identifier>;
+>>
+
+no_return() ::=<<
+>>
+
+set_declaration(identifier, type, enums) ::= <<
+let <identifier>: BSet\<<type>\>  = <set_enumeration("", type, "", enums, false)>;
+>>
+
+set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
+<if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet\<<type>\><endif>(<enums; separator=", ">)
+>>
+
+seq_enumeration(type, elements) ::= <<
+new BRelation\<BInteger, <type>\>(<elements; separator=", ">)
+>>
+
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(let <identifier> of <set>) {
+    <body>
+}
+>>
+
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(let <identifier> of Arrays.asList(<set>)) {
+    <body>
+}
+
+>>
+
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(let <identifier> of <set>.pow()) {
+    <body>
+}
+>>
+
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for(let <identifier> of <set>.pow().difference(<set>)) {
+    <body>
+}
+>>
+
+let_expression_predicate(type, identifier, body) ::= <<
+let <identifier>: <type> = null;
+<body>
+>>
+
+let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
+<otherIterationConstructs>
+<identifier> = <val>;
+>>
+
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
+let <identifier>: <type> = new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>();
+<comprehension>
+>>
+
+set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
+<else>
+if((<predicate>).booleanValue()) {
+    <set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
+}
+<endif>
+>>
+
+lambda(type, identifier, lambda, leftType, rightType) ::= <<
+let <identifier>: <type> = new BRelation\<<leftType>, <rightType>\>();
+<lambda>
+>>
+
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple(<element>, <expression>)));
+<else>
+if((<predicate>).booleanValue()) {
+    <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple(<element>, <expression>)));
+}
+<endif>
+>>
+
+lambda_function(function, parameters, returnType, expression) ::= <<
+public <returnType> <function>(<parameters; separator=", ">) {
+    return <expression>;
+}
+>>
+
+lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)>this.<otherMachine>.<endif><arg1>(<arg2; separator=", ">)
+>>
+
+quantified_predicate(identifier, forall, predicate) ::= <<
+let <identifier>: BBoolean = new BBoolean(<if(forall)>true<else>false<endif>);
+<predicate>
+>>
+
+quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+this.<identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+break;
+<else>
+if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
+    <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+    break;
+}
+<endif>
+>>
+
+quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
+<if(isInteger)><identifier>: BInteger = new BInteger(<identity>);<else><identifier>: BSet\<<setType>\> = new BSet\<<setType>\>();<endif>
+<evaluation>
+>>
+
+quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = <identifier>.<operation>(<expression>);
+<else>
+if((<predicate>).booleanValue()) {
+    <identifier> = <identifier>.<operation>(<expression>);
+}
+<endif>
+>>
+
+parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>.union(new BSet\<<subType>\>(<element>));
+<else>
+if((<predicate>).booleanValue()) {
+    <set> = <set>.union(new BSet\<<subType>\>(<element>));
+}
+<endif>
+>>
+
+transition(noParameters, identifier, subType, operationName, predicate, combination) ::= <<
+public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationName>() {
+    <if(noParameters)>
+    return <predicate>.booleanValue();
+    <else>
+    let <identifier>: BSet\<<subType>\> = new BSet\<<subType>\>();
+    <combination>
+    return <identifier>;
+    <endif>
+}
+>>
+
+invariant(iterationConstruct, predicate) ::= <<
+public boolean _check_inv() {
+    <iterationConstruct; separator="\n">
+    return <predicate>.booleanValue();
+}
+>>
+
+copy_constructor(machine, parameters, properties, assignments) ::= <<
+public <machine>(<parameters; separator=", ">) {
+    <properties; separator="\n">
+    <assignments; separator="\n">
+}
+>>
+
+copy_assignment(variable) ::= <<
+this.<variable> = <variable>;
+>>
+
+copy(machine, parameters) ::= <<
+public <machine> _copy() {
+    return new <machine>(<parameters; separator=", ">);
+}
+>>
+
+if_expression_predicate(predicate, ifThen, ifElse) ::= <<
+(<predicate>.booleanValue() ? <ifThen> : <ifElse>)
+>>
+
+enum_call(machine, class, identifier, isCurrentMachine) ::= <<
+<if(isCurrentMachine)><class>.<identifier><else><machine>.<class>.<identifier><endif>
+>>
+
+set_enum_declaration(name,enums) ::= <<
+enum <name> implements BObject {
+    <enums; separator=", \n">;
+
+    equal(o: <name>): BBoolean {
+        return new BBoolean(this == o);
+    }
+
+    unequal(o: <name>): BBoolean {
+        return new BBoolean(this != o);
+    }
+}
+>>
+
+bool() ::= <<
+BUtils.BOOL
+>>
+
+include_declaration(type, identifier) ::= <<
+this.<declaration(type, identifier)> = new <type>();
+>>
+
+global_declaration(type, identifier) ::= <<
+private <declaration(type, identifier)>;
+>>
+
+local_declaration(type, identifier) ::= <<
+let <declaration(type, identifier)> = null;
+>>
+
+constant_declaration(type, identifier) ::= <<
+private const <identifier>: <type>;
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+<iterationConstruct; separator="\n">
+<identifier> = <val>;
+>>
+
+values(assignments) ::= <<
+<assignments; separator="\n">
+>>
+
+declaration(type, identifier) ::= <<
+<identifier>: <type>
+>>
+
+parameter(type, identifier) ::= <<
+<identifier>: <type>
+>>
+
+parallel(loads, others) ::=<<
+<loads; separator="\n">
+<others; separator="\n">
+>>
+
+parallel_load(type, identifier) ::= <<
+let _ld_<identifier>: <type> = <identifier>;
+>>
+
+assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <val>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<val>)));<endif>
+>>
+
+function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
+<expr>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<val>)))
+>>
+
+function_call_nested(expr, arg, isNested) ::= <<
+<if(!isNested)><expr><else><expr>.functionCall(<arg>)<endif>
+>>
+
+assignments(assignments) ::= <<
+<assignments; separator="\n">
+>>
+
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple(<arg>,<set>.nondeterminism()));<endif>
+>>
+
+void() ::= <<
+void
+>>
+
+type(type, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><type>
+>>
+
+tuple_type(leftType, rightType) ::= <<
+BTuple\<<leftType>, <rightType>\>
+>>
+
+set_type(type) ::=<<
+BSet\<<type>\>
+>>
+
+relation_type(leftType, rightType) ::=<<
+BRelation\<<leftType>, <rightType>\>
+>>
+
+import_type(type) ::= <<
+import {<type>} from '/home/christopher/uni/Projektarbeit/b2program/btypes_primitives/src/main/js/de/hhu/stups/btypes/<type>';
+>>
+
+import_machine(machine) ::= <<
+const {<machine>} = require('./<machine>');
+>>
+
+mc_info_type(isSet, machine, type) ::= <<
+<if(isSet)><machine>$<type><else>de.hhu.stups.btypes.<type><endif>
+>>
+
+
+interval(arg1, arg2) ::= <<
+BSet.interval(<arg1>, <arg2>)
+>>
+
+projection(arg1, arg2, isProjection1) ::= <<
+BRelation.<if(isProjection1)>projection1<else>projection2<endif>(<arg1>,<arg2>)
+>>
+
+projection_tuple(arg, isProjection1) ::= <<
+<arg>.<if(isProjection1)>projection1<else>projection2<endif>()
+>>
+
+identity(arg) ::= <<
+BRelation.identity(<arg>)
+>>
+
+cartesian_product(arg1, arg2) ::= <<
+BRelation.cartesianProduct(<arg1>, <arg2>)
+>>
+
+tuple_create(arg1, arg2) ::= <<
+new BTuple(<arg1>, <arg2>)
+>>
+
+binary(arg1,operator,arg2) ::= <<
+<arg1>.<operator>(<arg2>)
+>>
+
+or(arg1, arg2) ::= <<
+new BBoolean(<arg1>.booleanValue() || <arg2>.booleanValue())
+>>
+
+and(arg1, arg2) ::= <<
+new BBoolean(<arg1>.booleanValue() && <arg2>.booleanValue())
+>>
+
+implies(arg1, arg2) ::= <<
+new BBoolean(!<arg1>.booleanValue() || <arg2>.booleanValue())
+>>
+
+equivalent(arg1, arg2) ::= <<
+new BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue() || <arg1>.booleanValue()))
+>>
+
+unary(operator, obj, args) ::= <<
+<obj>.<operator>(<args; separator=", ">)
+>>
+
+select(iterationConstruct, predicate, then) ::= <<
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()) {
+    <then>
+}
+>>
+
+if(iterationConstruct, predicate, then, else1) ::= <<
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()) {
+    <then>
+} <else1; separator=" ">
+>>
+
+elseif(predicate, then) ::= <<
+else if((<predicate>).booleanValue()) {
+    <then>
+}
+>>
+
+else(then) ::= <<
+else {
+    <then>
+}
+>>
+
+choice(len, then, choice1) ::= <<
+int index = (int) Math.floor(Math.random() * <len>);
+if(index == 0) {
+    <then>
+} <choice1; separator=" ">
+>>
+
+
+choice1(counter, then) ::= <<
+else if(index == <counter>) {
+    <then>
+}
+>>
+
+choice2(then) ::= <<
+else {
+    <then>
+}
+>>
+
+any(body) ::= <<
+<body>
+>>
+
+any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<body>
+break;
+<else>
+if((<predicate>).booleanValue()) {
+    <body>
+    break;
+}
+<endif>
+>>
+
+becomes_such_that(loads, body) ::= <<
+<loads; separator="\n">
+<body>
+>>
+
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<stores>
+break;
+<else>
+if((<predicate>).booleanValue()) {
+    <stores>
+    break;
+}
+<endif>
+>>
+
+becomes_such_that_load(type, lhs, rhs) ::= <<
+let <lhs>: <type> = <rhs>;
+>>
+
+becomes_such_that_store(lhs, rhs) ::= <<
+<lhs> = <rhs>;
+>>
+
+while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+<iterationConstruct1; separator="\n">
+while((<predicate>).booleanValue()) {
+    <then>
+    <iterationConstruct2; separator="\n">
+}
+>>
+
+var(locals, body) ::=<<
+<locals; separator="\n">
+<body>
+>>
+
+boolean_val(val) ::= <<
+<if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
+>>
+
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate) ::= <<
+<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>this.<endif><identifier><endif><endif>
+>>
+
+number(number, useBigInteger) ::= <<
+<if(useBigInteger)>new BInteger("<number>")<else>new BInteger(<number>)<endif>
+>>
+
+infinite_predicate(arg, operator) ::= <<
+<arg>.<operator>()
+>>
+
+relation_predicate(predicates, checkElementOf) ::= <<
+<if(checkElementOf)><predicates><else><predicates>.not()<endif>
+>>
+
+relation_check_domain(arg, domain) ::= <<
+<arg>.checkDomain(<domain>)
+>>
+
+relation_check_range(arg, range) ::= <<
+<arg>.checkRange(<range>)
+>>
+
+relation_total_partial(arg, operator, domain) ::= <<
+<arg>.<operator>(<domain>)
+>>
+
+relation_function(arg, operator) ::= <<
+<arg>.<operator>()
+>>
+
+relation_surjection(arg, range) ::= <<
+<arg>.isSurjection(<range>)
+>>
+
+relation_injection(arg) ::= <<
+<arg>.isInjection()
+>>
+
+relation_bijection(arg, range) ::=<<
+<arg>.isBijection(<range>)
+>>
+
+string(string) ::= <<
+new BString(<string>)
+>>
+
+operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
+<machine>.<struct> <var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+<assignments; separator="\n">
+>>
+
+operation_call_assignment(var, record, field) ::= <<
+<var> = <record>.get_<field>();
+>>
+
+operation_call_with_assignment_one_parameter(var, machineInstance, function, args, this) ::= <<
+<var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+>>
+
+operation_call_without_assignment(machineInstance, function, args, this) ::= <<
+<if(this)>this.<else>this.<machineInstance>.<endif><function>(<args; separator=",">);
+>>
+
+skip() ::= <<
+>>

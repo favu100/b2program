@@ -188,7 +188,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
-		TemplateHandler.add(machine, "forModelChecking", forModelChecking);
+		TemplateHandler.add(machine, "forModelChecking", forModelChecking && !isIncludedMachine);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
 		TemplateHandler.add(machine, "imports", importGenerator.getImports());
@@ -208,7 +208,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();
 		inspectInfiniteSets();
-		if(forModelChecking) {
+		if(forModelChecking && !isIncludedMachine) {
 			importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
 		}
 	}
@@ -270,7 +270,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private List<String> generateTransitions(List<OperationNode> operations) {
 		List<String> transitions = new ArrayList<>();
-		if(forModelChecking) {
+		if(forModelChecking && !isIncludedMachine) {
 			for (OperationNode operation : operations) {
 				transitions.add(generateTransition(operation));
 			}
@@ -290,12 +290,19 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
 			}
 		} else if(bodySubstitution instanceof ConditionSubstitutionNode) {
-			if(((ConditionSubstitutionNode) bodySubstitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
+			if (((ConditionSubstitutionNode) bodySubstitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
 				PredicateNode predicate = ((ConditionSubstitutionNode) bodySubstitution).getCondition();
 				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
 				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
 			} else {
 				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
+			}
+		} else if(bodySubstitution instanceof ListSubstitutionNode) {
+			if(operation.getParams().size() == 0) {
+				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), null);
+				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
+			} else {
+				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
 			}
 		} else {
 			throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
@@ -304,7 +311,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private String generateInvariant(PredicateNode predicate) {
 		// TODO: Discard typing predicates
-		if(forModelChecking) {
+		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("invariant");
 			TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
 			TemplateHandler.add(template, "predicate", visitPredicateNode(predicate, null));
@@ -314,7 +321,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private String generateCopyConstructor(MachineNode node) {
-		if(forModelChecking) {
+		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy_constructor");
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(node.getVariables(), OperationGenerator.DeclarationType.PARAMETER, false));
@@ -334,7 +341,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private String generateCopy(MachineNode node) {
-		if(forModelChecking) {
+		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy");
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			TemplateHandler.add(template, "parameters", node.getVariables().stream()

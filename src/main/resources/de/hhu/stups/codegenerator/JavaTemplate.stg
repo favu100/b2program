@@ -304,10 +304,14 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-transition(noParameters, identifier, subType, operationName, predicate, combination) ::= <<
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
 public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationName>() {
     <if(noParameters)>
+    <if(noPredicate)>
+    return true;
+    <else>
     return <predicate>.booleanValue();
+    <endif>
     <else>
     BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();
     <combination>

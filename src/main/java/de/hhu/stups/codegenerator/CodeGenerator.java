@@ -86,6 +86,8 @@ public class CodeGenerator {
 			mode = GeneratorMode.CPP;
 		} else if("clojure".equals(languageOption)) {
 			mode = GeneratorMode.CLJ;
+		} else if("ts".equals(languageOption)) {
+			mode = GeneratorMode.TS;
 		} else {
 			throw new RuntimeException("Wrong argument for language");
 		}

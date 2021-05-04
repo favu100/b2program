@@ -61,7 +61,7 @@ public class CodeGenerator {
 		boolean useConstraintSolving = useConstraintSolving(args[5]);
 		boolean forModelChecking = forModelChecking(args[6]);
 		CodeGenerator codeGenerator = new CodeGenerator();
-		Path path = Paths.get(args[7]);
+		Path path = Paths.get(args[7]).toAbsolutePath();
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;

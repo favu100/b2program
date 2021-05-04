@@ -163,13 +163,9 @@ public class CodeGenerator {
 			paths.clear();
 		}
 		BProject project = parseProject(path);
-		String[] pathAsList = path.toString().split(Pattern.quote(File.separator));
-		String[] additionAsList = Arrays.copyOf(pathAsList, pathAsList.length);
-		if(addition != null) {
-			additionAsList[additionAsList.length - 1] = addition;
-		}
-		machineReferenceGenerator.generateIncludedMachines(project, pathAsList, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? Paths.get(String.join(Pattern.quote(File.separator), additionAsList)) : null, isIncludedMachine));
+		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
+		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
+		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine));
 		return paths;
 	}
 
@@ -184,17 +180,14 @@ public class CodeGenerator {
 
 		String code = generator.generateMachine(node);
 
-		int lastIndexDot = path.toString().lastIndexOf(".");
-		int lastIndexSlash = path.toString().lastIndexOf(Pattern.quote(File.separator));
-
-		String fileName = path.toString().substring(lastIndexSlash + 1, lastIndexDot);
+		String fileName = path.getFileName().toString().replace(".mch", "");
 		Path newPath;
 		if(mode == GeneratorMode.CPP && isIncludedMachine) {
-			newPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + ".hpp");
+			newPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".hpp");
 		} else {
-			newPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + "." + mode.name().toLowerCase());
+			newPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + "." + mode.name().toLowerCase());
 		}
-		Path jsonPath = Paths.get(path.toString().substring(0, lastIndexSlash + 1) + generator.getNameHandler().handle(fileName) + ".json");
+		Path jsonPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".json");
 		try {
 			if(forModelChecking) {
 				ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);

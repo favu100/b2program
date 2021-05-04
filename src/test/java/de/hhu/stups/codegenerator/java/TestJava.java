@@ -67,7 +67,6 @@ public class TestJava {
 	}
 
 	public void testJava(String machinePath, String machineName, String addition, boolean execute) throws Exception {
-		testJava(machinePath);
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();

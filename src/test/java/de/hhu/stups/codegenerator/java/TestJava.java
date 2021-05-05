@@ -88,7 +88,9 @@ public class TestJava {
 			return;
 		}
 
-		Process executeProcess = runtime.exec("java -cp btypes_persistent.jar:out/test/resources/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName);
+		String generatedMachinePath = Paths.get("out", "test", "resources", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
+
+		Process executeProcess = runtime.exec("java -cp btypes_persistent.jar:" + generatedMachinePath);
 		executeProcess.waitFor();
 
 		error = streamToString(executeProcess.getErrorStream());

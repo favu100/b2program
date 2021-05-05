@@ -63,9 +63,12 @@ public class TestPython {
       return;
     }
 
+    String pythonPath = Paths.get("btypes_primitives", "src", "main", "python_magicstack_immutable").toString();
+    String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".py").toString();
+
     ProcessBuilder processBuilder = new ProcessBuilder();
-    processBuilder.environment().put("PYTHONPATH", "btypes_primitives/src/main/python_magicstack_immutable");
-    processBuilder.command("pypy3",  "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".py");
+    processBuilder.environment().put("PYTHONPATH", pythonPath);
+    processBuilder.command("pypy3",  generatedMachinePath);
     Process executeProcess = processBuilder.start();
     executeProcess.waitFor();
 

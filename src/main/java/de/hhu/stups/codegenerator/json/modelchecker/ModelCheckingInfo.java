@@ -1,9 +1,8 @@
-package de.hhu.stups.codegenerator.modelchecker.json;
+package de.hhu.stups.codegenerator.json.modelchecker;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import javax.json.JsonString;
 import java.util.List;
 import java.util.Map;
 

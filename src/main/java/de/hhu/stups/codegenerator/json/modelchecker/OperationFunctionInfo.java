@@ -1,4 +1,4 @@
-package de.hhu.stups.codegenerator.modelchecker.json;
+package de.hhu.stups.codegenerator.json.modelchecker;
 
 import java.util.List;
 

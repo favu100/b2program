@@ -1,11 +1,10 @@
-package de.hhu.stups.codegenerator.modelchecker.json;
+package de.hhu.stups.codegenerator.json.modelchecker;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import de.hhu.stups.codegenerator.modelchecker.json.ModelCheckingInfo;
 
 import java.io.File;
 import java.io.FileReader;

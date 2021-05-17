@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.types.RecordType;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -31,7 +32,7 @@ public class MachineReferenceGenerator {
     /*
     * This function generates code for all included machines from the given options
     */
-    public void generateIncludedMachines(BProject project, Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving) {
+    public void generateIncludedMachines(BProject project, Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving) throws IOException {
         for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
             Path currentPath = Paths.get(path.getParent().toString(), referenceNode.getMachineName() + ".mch");
             if(!codeGenerator.getPaths().contains(currentPath)) {

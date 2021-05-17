@@ -94,6 +94,9 @@ public class OperationGenerator {
         ST operation = generate(node, globals);
         TemplateHandler.add(operation,  "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+        //System.out.println(machineGenerator.getMachineName());
+        //System.out.println(node.getSubstitution());
+        //System.out.println("-----------");
         return operation.render();
     }
 

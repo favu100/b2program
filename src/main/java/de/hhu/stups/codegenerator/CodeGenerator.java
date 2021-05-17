@@ -6,7 +6,11 @@ import com.google.gson.stream.JsonWriter;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
-import de.hhu.stups.codegenerator.modelchecker.json.ModelCheckingInfo;
+import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
+import de.hhu.stups.codegenerator.json.visb.VisBEvent;
+import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
+import de.hhu.stups.codegenerator.json.visb.VisBItem;
+import de.hhu.stups.codegenerator.json.visb.VisBVisualisation;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;
@@ -17,15 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -48,7 +50,7 @@ public class CodeGenerator {
 	* Second argument : Path for the main machine code should be generated for
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
-	public static void main(String[] args) throws URISyntaxException, MalformedURLException, CodeGenerationException {
+	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
 		if(args.length < 8 || args.length > 9) {
 			System.err.println("Wrong number of arguments");
 			return;
@@ -158,11 +160,16 @@ public class CodeGenerator {
 	/*
 	* This function generates code from a given path for a machine, the target language and the information whether it is a main machine of a project
 	*/
-	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException {
+	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException, IOException {
 		if(isMain) {
 			paths.clear();
 		}
-		BProject project = parseProject(path);
+		// Hard coded
+		//VisBVisualisation visualisation = VisBFileHandler.constructVisualisationFromJSON(new File("./traffic_light.json"));
+		//List<String> formulas = visualisation.getVisBItems().stream().map(VisBItem::getExpression).collect(Collectors.toList());
+		//List<String> events = visualisation.getVisBEvents().stream().map(VisBEvent::getEvent).collect(Collectors.toList());
+
+		BProject project = parseProject(path, new ArrayList<>(), new ArrayList<>());
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
 		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
 		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine));
@@ -214,15 +221,19 @@ public class CodeGenerator {
 	/*
 	* This function executes parsing and semantic checkings on a project
 	*/
-	private BProject parseProject(Path path) throws CodeGenerationException {
+	private BProject parseProject(Path path, List<String> formulas, List<String> events) throws CodeGenerationException {
 		BProject project;
 		try {
-			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile());
+			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile(), formulas, events);
 		} catch (TypeErrorException | ScopeException | IOException e) {
 			e.printStackTrace();
 			throw new CodeGenerationException(e.getMessage());
 		}
 		return project;
+	}
+
+	private BProject parseProject(Path path) throws CodeGenerationException {
+		return parseProject(path, new ArrayList<>() , new ArrayList<>());
 	}
 
 	public List<Path> getPaths() {

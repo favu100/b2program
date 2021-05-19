@@ -10,6 +10,8 @@ import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
 import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
+import de.hhu.stups.codegenerator.json.visb.VisBProject;
+import de.hhu.stups.codegenerator.json.visb.VisBProjectParser;
 import de.hhu.stups.codegenerator.json.visb.VisBVisualisation;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
@@ -27,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -168,8 +169,9 @@ public class CodeGenerator {
 		//VisBVisualisation visualisation = VisBFileHandler.constructVisualisationFromJSON(new File("./traffic_light.json"));
 		//List<String> formulas = visualisation.getVisBItems().stream().map(VisBItem::getExpression).collect(Collectors.toList());
 		//List<String> events = visualisation.getVisBEvents().stream().map(VisBEvent::getEvent).collect(Collectors.toList());
+		//VisBProject visBProject = parseVisBProject(path, visualisation);
 
-		BProject project = parseProject(path, new ArrayList<>(), new ArrayList<>());
+		BProject project = parseProject(path);
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
 		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
 		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine));
@@ -221,10 +223,10 @@ public class CodeGenerator {
 	/*
 	* This function executes parsing and semantic checkings on a project
 	*/
-	private BProject parseProject(Path path, List<String> formulas, List<String> events) throws CodeGenerationException {
+	private BProject parseProject(Path path) throws CodeGenerationException {
 		BProject project;
 		try {
-			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile(), formulas, events);
+			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile());
 		} catch (TypeErrorException | ScopeException | IOException e) {
 			e.printStackTrace();
 			throw new CodeGenerationException(e.getMessage());
@@ -232,8 +234,15 @@ public class CodeGenerator {
 		return project;
 	}
 
-	private BProject parseProject(Path path) throws CodeGenerationException {
-		return parseProject(path, new ArrayList<>() , new ArrayList<>());
+	private VisBProject parseVisBProject(Path path, VisBVisualisation visualisation) throws CodeGenerationException {
+		VisBProject project;
+		try {
+			project = VisBProjectParser.createVisBProjectFromMainFile(path.toFile(), visualisation);
+		} catch (TypeErrorException | ScopeException | IOException e) {
+			e.printStackTrace();
+			throw new CodeGenerationException(e.getMessage());
+		}
+		return project;
 	}
 
 	public List<Path> getPaths() {

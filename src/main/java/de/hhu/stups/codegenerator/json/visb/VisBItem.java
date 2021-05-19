@@ -1,6 +1,8 @@
 package de.hhu.stups.codegenerator.json.visb;
 
 
+import de.prob.parser.ast.nodes.expression.ExprNode;
+
 import java.util.Objects;
 
 /**
@@ -46,6 +48,7 @@ public class VisBItem {
     private String expression;
     private String description;
     private String source;
+    private ExprNode exprNode;
 
     /**
      *
@@ -104,5 +107,13 @@ public class VisBItem {
     @Override
     public int hashCode() {
         return Objects.hash(id, attribute, expression, description, source);
+    }
+
+    public void setExprNode(ExprNode exprNode) {
+        this.exprNode = exprNode;
+    }
+
+    public ExprNode getExprNode() {
+        return exprNode;
     }
 }

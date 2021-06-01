@@ -5,7 +5,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 
 machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
 <imports; separator="\n">
-import {BUtils} from "/home/christopher/uni/Projektarbeit/b2program/btypes_primitives/src/main/js/de/hhu/stups/btypes/BUtils"
+import {BUtils} from "btypes/BUtils.js";
 
 export class <machine> {
 
@@ -14,8 +14,6 @@ export class <machine> {
     <constants_declarations; separator="\n">
 
     <includes; separator="\n">
-
-    <enums; separator="\n\n">
 
     <sets; separator="\n">
 
@@ -45,6 +43,8 @@ export class <machine> {
 
 }
 
+<enums; separator="\n\n">
+
 <addition>
 >>
 
@@ -55,37 +55,39 @@ _get_<variable>(): <returnType> {
 >>
 
 struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
-public static class <name> extends BStruct {
+export static class <name> extends BStruct {
     <declarations; separator="\n">
 
-    public <name>(<parameters; separator=", ">) {
+    constructor(<parameters; separator=", ">) {
         <initializations; separator="\n">
     }
 
     <functions; separator="\n\n">
 
-    public BBoolean equal(<name> o) {
+    equal(o: <name>): BBoolean {
         return new BBoolean(<equalPredicates; separator=" && ">);
     }
 
-    public BBoolean unequal(<name> o) {
+    unequal(o: <name>): BBoolean {
         return new BBoolean(<unequalPredicates; separator=" || ">);
     }
 
-    public String toString() {
+    toString(): string {
         return "(" + <values; separator=" + \",\" + "> + ")";
     }
 
-    public boolean equals(Object other) {
+    equals(other: any): boolean {
         if(!(other instanceof <name>)) {
             return false;
         }
-        <name> o = (<name>) other;
+        let o: <name> = (<name>) other;
         return <equalPredicates; separator= " && ">;
     }
 
-    public int hashCode() {
-        return Objects.hash(<fields; separator=", ">);
+    hashCode(): number {
+        int result = 1;
+        <fields: {field | result = 31 * result + (<field>.hashCode() \<\< 1);}; separator="\n">
+        return result;
     }
 }
 >>
@@ -164,7 +166,7 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-let <identifier>: BSet\<<type>\>  = <set_enumeration("", type, "", enums, false)>;
+<identifier>: BSet\<<type>\>  = <set_enumeration("", type, "", enums, false)>;
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -328,6 +330,7 @@ public <machine>(<parameters; separator=", ">) {
 >>
 
 copy_assignment(variable) ::= <<
+//TODO
 this.<variable> = <variable>;
 >>
 
@@ -342,20 +345,46 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
-<if(isCurrentMachine)><class>.<identifier><else><machine>.<class>.<identifier><endif>
+<if(isCurrentMachine)><class>.get_<identifier>()<else><machine>.<class>.get_<identifier>()<endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
-enum <name> implements BObject {
-    <enums; separator=", \n">;
+enum enum_<name> {
+    <enums; separator=",\n">
+}
 
-    equal(o: <name>): BBoolean {
-        return new BBoolean(this == o);
+class <name> implements BObject{
+    value: enum_<name>;
+
+    constructor(value: enum_<name>) {
+        this.value = value;
     }
 
-    unequal(o: <name>): BBoolean {
-        return new BBoolean(this != o);
+    equal(other: <name>) {
+        return new BBoolean(this.value === other.value);
     }
+
+    unequal(other: <name>) {
+        return new BBoolean(this.value !== other.value);
+    }
+
+    equals(o: any) {
+        if(!(o instanceof <name>)) {
+            return false;
+        }
+        return this.value === o.value;
+    }
+
+    hashCode() {
+        return 0;
+    }
+
+    toString() {
+        return enum_<name>[this.value].toString();
+    }
+
+    <enums : {enum | static get_<enum> () {return new <name>(enum_<name>.<enum>);\}<\n>}>
+
 }
 >>
 
@@ -376,12 +405,12 @@ let <declaration(type, identifier)> = null;
 >>
 
 constant_declaration(type, identifier) ::= <<
-private const <identifier>: <type>;
+<identifier>: <type>;
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<
 <iterationConstruct; separator="\n">
-<identifier> = <val>;
+this.<identifier> = <val>;
 >>
 
 values(assignments) ::= <<
@@ -401,8 +430,8 @@ parallel(loads, others) ::=<<
 <others; separator="\n">
 >>
 
-parallel_load(type, identifier) ::= <<
-let _ld_<identifier>: <type> = <identifier>;
+parallel_load(type, identifier, name) ::= <<
+let _ld_<name>: <type> = <identifier>;
 >>
 
 assignment(iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
@@ -448,11 +477,11 @@ BRelation\<<leftType>, <rightType>\>
 >>
 
 import_type(type) ::= <<
-import {<type>} from '/home/christopher/uni/Projektarbeit/b2program/btypes_primitives/src/main/js/de/hhu/stups/btypes/<type>';
+import {<type>} from 'btypes/<type>.js';
 >>
 
 import_machine(machine) ::= <<
-const {<machine>} = require('./<machine>');
+import {<machine>} from './<machine>.js';
 >>
 
 mc_info_type(isSet, machine, type) ::= <<

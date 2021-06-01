@@ -45,9 +45,10 @@ public class TestJs {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> tsFilePaths = codeGenerator.generate(mchPath, GeneratorMode.TS, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false,true, true, null, false);
+		List<Path> tsFilePaths = codeGenerator.generate(mchPath, GeneratorMode.TS, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false,false, true, null, false);
 		Process process = Runtime.getRuntime()
-				.exec("tsc -classpath btypes_persistent.jar " + String.join(" ", tsFilePaths.stream()
+				.exec("tsc --target es2015 --moduleResolution node "  +
+						String.join(" ", tsFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
 
@@ -55,12 +56,11 @@ public class TestJs {
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
 
-		Set<File> classFiles = tsFilePaths.stream()
+		Set<File> jsFiles = tsFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machine + ".class"))
 				.collect(Collectors.toSet());
 
-		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
-		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
 	}
 
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
@@ -70,7 +70,7 @@ public class TestJs {
 		CodeGenerator codeGenerator = new CodeGenerator();
 		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.TS, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, false, true, addition, false);
 		Runtime runtime = Runtime.getRuntime();
-		Process compileProcess = runtime.exec("tsc " +
+		Process compileProcess = runtime.exec("tsc --target es2020 --moduleResolution node " +
 				String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
@@ -87,8 +87,8 @@ public class TestJs {
 		}
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.environment().put("NODE_PATH", "btypes_primitives/src/main/python_magicstack_immutable");
-		processBuilder.command("node",  "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".js");
+		processBuilder.environment().put("NODE_PATH", "btypes_primitives/src/main/js/");
+		processBuilder.command("node", "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".js");
 		Process executeProcess = processBuilder.start();
 		executeProcess.waitFor();
 
@@ -104,18 +104,17 @@ public class TestJs {
 
 		assertEquals(expectedOutput, result);
 
-		Set<File> classFiles = javaFilePaths.stream()
+		Set<File> jsFiles = javaFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machinePath + ".js"))
 				.collect(Collectors.toSet());
 
-//		javaFilePaths.forEach(path -> cleanUp(path.toString()));
-//		classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
 	}
 
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {
-			file.delete();
+			//file.delete();
 		}
 	}
 

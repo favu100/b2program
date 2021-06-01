@@ -1,4 +1,4 @@
-import {BObject} from "./BObject";
+import {BObject} from "./BObject.js";
 
 export class BBoolean implements BObject{
     readonly value: boolean;
@@ -37,6 +37,13 @@ export class BBoolean implements BObject{
         return new BBoolean(this.value === other.value);
     }
 
+    equals(other: any): boolean {
+        if (other !instanceof BBoolean) {
+            return false;
+        }
+        return this.equal(other).booleanValue();
+    }
+
     unequal(other: BBoolean): BBoolean {
         return new BBoolean(this.value != other.value);
     }
@@ -47,6 +54,10 @@ export class BBoolean implements BObject{
 
     toString(): string {
         return this.value.toString();
+    }
+
+    hashCode(): number {
+        return this.value? 1: 0;
     }
 
 }

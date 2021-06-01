@@ -1,7 +1,7 @@
-import {BBoolean} from "./BBoolean";
-import {BObject} from "./BObject";
+import {BBoolean} from "./BBoolean.js";
+import {BObject} from "./BObject.js";
 
-export class BTuple<S,T> implements BObject {
+export class BTuple<S extends BObject,T extends BObject> implements BObject {
 
 	first: S;
 
@@ -16,11 +16,8 @@ export class BTuple<S,T> implements BObject {
 	}
 
 
-	equals(o): boolean {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || o !instanceof BTuple) {
+	equals(o: any): boolean {
+		if (o == null || !(o instanceof BTuple)) {
 			return false;
 		}
 		return o.projection1().equals(this.first) && o.projection2().equals(this.second);
@@ -44,6 +41,10 @@ export class BTuple<S,T> implements BObject {
 
 	unequal(o: BTuple<S, T>): BBoolean {
 		return new BBoolean(!this.equals(o));
+	}
+
+	hashCode(): number {
+		return this.first.hashCode() ^ (this.second.hashCode() << 1);
 	}
 
 }

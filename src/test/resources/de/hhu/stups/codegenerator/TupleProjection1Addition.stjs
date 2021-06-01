@@ -1,4 +1,4 @@
-TupleProjection1 projection = new TupleProjection1();
+let projection = new TupleProjection1();
 projection.calculate();
 console.log(projection.getRes().toString() + " ");
 console.log(projection.getPair().toString());

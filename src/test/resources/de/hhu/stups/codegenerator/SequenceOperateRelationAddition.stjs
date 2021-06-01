@@ -1,3 +1,3 @@
 let sequence: SequenceOperateRelation = new SequenceOperateRelation();
 sequence.calculate();
-(sequence.getRes());
+console.log(sequence.getRes().toString());

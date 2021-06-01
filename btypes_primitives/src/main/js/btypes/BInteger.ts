@@ -1,4 +1,4 @@
-import {BBoolean} from './BBoolean'
+import {BBoolean} from './BBoolean.js';
 import {BObject} from "./BObject";
 
 export class BInteger implements BObject{
@@ -9,11 +9,7 @@ export class BInteger implements BObject{
         this.value = value;
     }
 
-    equals(obj): boolean {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
+    equals(obj: any): boolean {
         if (obj instanceof BInteger) {
             return this.compareTo(obj) === 0;
         }
@@ -46,7 +42,7 @@ export class BInteger implements BObject{
     }
 
     equal(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) == 0);
+        return new BBoolean(this.compareTo(o) === 0);
     }
 
     unequal(o: BInteger): BBoolean {
@@ -139,5 +135,12 @@ export class BInteger implements BObject{
 
     isNotNatural1(): BBoolean {
         return this.isNatural1().not();
+    }
+
+    hashCode(): number {
+        const prime = 31;
+        let result = 1;
+        result = prime * result + this.value;
+        return result;
     }
 }

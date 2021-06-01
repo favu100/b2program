@@ -47,7 +47,7 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testLift() throws Exception {
-        testJs("Lift", "Lift", "M_LiftAddition.stjs", true);
+        testJs("Lift", "Lift", "LiftAddition.stjs", true);
     }
 
     @Test
@@ -70,11 +70,13 @@ public class TestMachines extends TestJs {
         testJs("phonebook6");
     }
 
+    @Ignore
     @Test
     public void testSieve() throws Exception {
         testJs("Sieve", "Sieve", "SieveAddition.stjs", true);
     }
 
+    @Ignore
     @Test
     public void testSieveParallel() throws Exception {
         testJs("SieveParallel", "SieveParallel", "SieveParallelAddition.stjs", true);
@@ -125,6 +127,7 @@ public class TestMachines extends TestJs {
         testJs("CAN_BUS_tlc");
     }
 
+    @Ignore
     @Test
     public void testCanBusTLCExec() throws Exception {
         testJs("CAN_BUS_tlc_exec");

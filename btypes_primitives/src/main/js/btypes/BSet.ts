@@ -63,30 +63,26 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	static immutableSetUnion<R extends BObject>(s1: immutable.Set<R>, s2: immutable.Set<R>): immutable.Set<R>{
-		let result = s2;
-		elem_loop:
-		for (let current_element of s1) {
-			for (let result_element of result) {
-				if (current_element.equals(result_element)) {
-					continue elem_loop;
-				}
+		let result;
+		if(s1.size > s2.size) {
+			result = s1;
+			for (let current_element of s2) {
+				result = result.add(current_element);
 			}
-			result = result.add(current_element);
+		} else {
+			result = s2;
+			for (let current_element of s1) {
+				result = result.add(current_element);
+			}
 		}
 		return result;
 	}
 
 	static immutableSetDifference<R extends BObject>(s1: immutable.Set<R>, s2: immutable.Set<R>): immutable.Set<R> {
 		let result = s1;
-		elem_loop:
-			for (let current_element of s2) {
-				for (let result_element of result) {
-					if (current_element.equals(result_element)) {
-						result = result.remove(result_element)
-						continue elem_loop;
-					}
-				}
-			}
+		for (let current_element of s2) {
+			result = result.remove(current_element);
+		}
 		return result;
 	}
 

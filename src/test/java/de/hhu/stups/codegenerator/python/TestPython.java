@@ -45,9 +45,10 @@ public class TestPython {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> pythonFilePaths = codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, true, true, null, false);
+		List<Path> pythonFilePaths =
+        codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, true, true, null, false, null);
 
-		//pythonFilePaths.forEach(path -> cleanUp(path.toString()));
+		pythonFilePaths.forEach(path -> cleanUp(path.toString()));
 	}
 
 	public void testPython(String machinePath, String machineName, String addition, boolean execute) throws Exception {
@@ -55,7 +56,8 @@ public class TestPython {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> pythonFilePaths = codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, true, true, addition, false);
+		List<Path> pythonFilePaths =
+        codeGenerator.generate(mchPath, GeneratorMode.PY, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, true, true, addition, false, null);
 
     Path mainPath = pythonFilePaths.get(pythonFilePaths.size() - 1);
 
@@ -84,17 +86,13 @@ public class TestPython {
 
     assertEquals(expectedOutput, result);
 
-    /*Set<File> classFiles = pythonFilePaths.stream()
-        .map(path -> new File(path.getParent().toFile(), machinePath + ".class"))
-        .collect(Collectors.toSet());*/
-
-		//pythonFilePaths.forEach(path -> cleanUp(path.toString()));
+		pythonFilePaths.forEach(path -> cleanUp(path.toString()));
 	}
 
 	private void cleanUp(String path) {
 		File file = new File(path);
 		if (file.exists()) {
-			file.delete();
+			//file.delete();
 		}
 	}
 

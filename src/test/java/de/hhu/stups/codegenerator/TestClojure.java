@@ -25,7 +25,11 @@ public class TestClojure {
         Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
                 .getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
         CodeGenerator codeGenerator = new CodeGenerator();
-        List<Path> cljFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CLJ, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, false, true, null, false);
+        List<Path> cljFilePaths =
+            codeGenerator.generate(mchPath, GeneratorMode.CLJ, false,
+                String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE),
+                "10", false, false, true,
+                null, false, null);
 
         //cljFilePaths.forEach(path -> cleanUp(path.toString()));
     }

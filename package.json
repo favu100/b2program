@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "dependencies": {
+    "apm": "^1.0.2",
+    "git-utils": "^5.7.1",
+    "immutable": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.41"
+  }
+}

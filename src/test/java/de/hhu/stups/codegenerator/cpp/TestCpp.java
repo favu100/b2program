@@ -48,7 +48,7 @@ public class TestCpp {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, false,true, null, false);
+		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, false,true, null, false, null);
 
 		Process process = Runtime.getRuntime()
 				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
@@ -63,7 +63,11 @@ public class TestCpp {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> cppFilePaths = codeGenerator.generate(mchPath, GeneratorMode.CPP, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, false,true, addition, false);
+		List<Path> cppFilePaths =
+				codeGenerator.generate(mchPath, GeneratorMode.CPP, false,
+						String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE),
+						"10", false, false,true,
+						addition, false, null);
 
 		Runtime runtime = Runtime.getRuntime();
 

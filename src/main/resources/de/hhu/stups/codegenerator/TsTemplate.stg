@@ -5,9 +5,9 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 
 machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
 <imports; separator="\n">
-import {BUtils} from "btypes/BUtils.js";
+import BUtils from "./btypes/BUtils.js";
 
-export class <machine> {
+export default class <machine> {
 
     <structs; separator= "\n\n">
 
@@ -345,15 +345,15 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
-<if(isCurrentMachine)><class>.get_<identifier>()<else><machine>.<class>.get_<identifier>()<endif>
+<if(isCurrentMachine)>new <class>(enum_<class>.<identifier>)<else>new <machine>.<class>(<machine>.enum_<class>.<identifier>)<endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
-enum enum_<name> {
+export enum enum_<name> {
     <enums; separator=",\n">
 }
 
-class <name> implements BObject{
+export class <name> implements BObject{
     value: enum_<name>;
 
     constructor(value: enum_<name>) {
@@ -477,11 +477,11 @@ BRelation\<<leftType>, <rightType>\>
 >>
 
 import_type(type) ::= <<
-import {<type>} from 'btypes/<type>.js';
+import <type> from './btypes/<type>.js';
 >>
 
 import_machine(machine) ::= <<
-import {<machine>} from './<machine>.js';
+import <machine> from './<machine>.js';
 >>
 
 mc_info_type(isSet, machine, type) ::= <<

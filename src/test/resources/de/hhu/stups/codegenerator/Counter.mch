@@ -1,8 +1,6 @@
 MACHINE Counter
 CONSTANTS offset
-PROPERTIES offset : INTEGER
-VALUES
- offset = 1
+PROPERTIES offset : INTEGER & offset = 1
 VARIABLES count
 INVARIANT
  count:NATURAL

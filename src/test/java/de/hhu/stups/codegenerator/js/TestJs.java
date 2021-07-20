@@ -45,7 +45,11 @@ public class TestJs {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> tsFilePaths = codeGenerator.generate(mchPath, GeneratorMode.TS, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false,false, true, null, false);
+		List<Path> tsFilePaths =
+				codeGenerator.generate(mchPath, GeneratorMode.TS, false,
+						String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE),
+						"10", false,false, true,
+						null, false, null);
 		Process process = Runtime.getRuntime()
 				.exec("tsc --target es2015 --moduleResolution node "  +
 						String.join(" ", tsFilePaths.stream()
@@ -64,13 +68,21 @@ public class TestJs {
 	}
 
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
+		testJs(machinePath, machineName, addition, null, execute);
+	}
+
+	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute) throws Exception {
 		testJs(machinePath);
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> javaFilePaths = codeGenerator.generate(mchPath, GeneratorMode.TS, false, String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE), "10", false, false, true, addition, false);
+		List<Path> javaFilePaths =
+				codeGenerator.generate(mchPath, GeneratorMode.TS, false,
+						String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE),
+						"10", false, false, true,
+						addition, false, visualisation);
 		Runtime runtime = Runtime.getRuntime();
-		Process compileProcess = runtime.exec("tsc --target es2020 --moduleResolution node " +
+		Process compileProcess = runtime.exec("tsc --target ES6 --moduleResolution node " +
 				String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
@@ -88,7 +100,7 @@ public class TestJs {
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.environment().put("NODE_PATH", "btypes_primitives/src/main/js/");
-		processBuilder.command("node", "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".js");
+		processBuilder.command("node", "--experimental-specifier-resolution=node", "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".js");
 		Process executeProcess = processBuilder.start();
 		executeProcess.waitFor();
 

@@ -29,12 +29,20 @@ public class ImportGenerator {
 
     private final Set<String> imports;
 
+    private final Set<String> importedTypes;
+
+    private final Set<String> importedEnums;
+
     private final boolean useBigInteger;
+
+
 
     public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
         this.group = group;
         this.nameHandler = nameHandler;
         this.imports = new HashSet<>();
+        this.importedTypes = new HashSet<>();
+        importedEnums = new HashSet<>();
         this.useBigInteger = useBigInteger;
     }
 
@@ -53,6 +61,7 @@ public class ImportGenerator {
         } else if(type instanceof EnumeratedSetElementType) {
             importBObject();
             importBBoolean();
+            importEnum((EnumeratedSetElementType) type);
         } else if(type instanceof DeferredSetElementType) {
             importBObject();
             importBBoolean();
@@ -62,6 +71,10 @@ public class ImportGenerator {
             importStruct((RecordType) type);
             importBBoolean();
         }
+    }
+
+    private void importEnum(EnumeratedSetElementType enumType) {
+        importedEnums.add(enumType.getSetName());
     }
 
     /*
@@ -101,6 +114,7 @@ public class ImportGenerator {
         TemplateHandler.add(template, "type", "BInteger");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
+        importedTypes.add("BInteger");
     }
 
     /*
@@ -111,6 +125,7 @@ public class ImportGenerator {
         TemplateHandler.add(template, "type", "BObject");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
+        importedTypes.add("BObject");
     }
 
     /*
@@ -121,6 +136,7 @@ public class ImportGenerator {
         TemplateHandler.add(template, "type", "BBoolean");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
+        importedTypes.add("BBoolean");
     }
 
     /*
@@ -131,6 +147,7 @@ public class ImportGenerator {
         TemplateHandler.add(template, "type", "BString");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
+        importedTypes.add("BString");
     }
 
     /*
@@ -143,6 +160,7 @@ public class ImportGenerator {
         imports.add(template.render());
         addImport(type.getLeft());
         addImport(type.getRight());
+        importedTypes.add("BTuple");
     }
 
     /*
@@ -154,6 +172,7 @@ public class ImportGenerator {
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         type.getSubtypes().forEach(this::addImport);
         imports.add(template.render());
+        importedTypes.add("BStruct");
     }
 
     /*
@@ -168,6 +187,7 @@ public class ImportGenerator {
             TemplateHandler.add(template, "useBigInteger", useBigInteger);
             imports.add(template.render());
             addImport(type.getSubType());
+            importedTypes.add("BSet");
         }
     }
 
@@ -182,9 +202,18 @@ public class ImportGenerator {
         addImport(type);
         addImport(type.getLeft());
         addImport(type.getRight());
+        importedTypes.add("BRelation");
     }
 
     public Set<String> getImports() {
         return imports;
+    }
+
+    public Set<String> getImportedTypes() {
+        return importedTypes;
+    }
+
+    public Set<String> getImportedEnums() {
+        return importedEnums;
     }
 }

@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonWriter;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
+import de.hhu.stups.codegenerator.generators.VisualisationGenerator;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
 import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -52,7 +54,7 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
-		if(args.length < 8 || args.length > 9) {
+		if(args.length < 8 || args.length > 10) {
 			System.err.println("Wrong number of arguments");
 			return;
 		}
@@ -68,10 +70,17 @@ public class CodeGenerator {
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;
-		if(args.length == 9) {
+		if(args.length >= 9) {
 			addition = args[8];
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false);
+		String visualisationFile = null;
+		if(args.length == 10) {
+			if (mode != GeneratorMode.TS) {
+				System.err.println("Generating a visulisation is only supported for TypeScript");
+			}
+			visualisationFile = args[9];
+		}
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, visualisationFile);
 	}
 
 	/*
@@ -161,33 +170,63 @@ public class CodeGenerator {
 	/*
 	* This function generates code from a given path for a machine, the target language and the information whether it is a main machine of a project
 	*/
-	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, boolean isMain, String addition, boolean isIncludedMachine) throws CodeGenerationException, IOException {
+	public List<Path> generate(Path path, GeneratorMode mode, boolean useBigInteger,
+														 String minint, String maxint, String deferredSetSize,
+														 boolean forModelChecking, boolean useConstraintSolving,
+														 boolean isMain, String addition, boolean isIncludedMachine,
+														 String visualisationFile) throws CodeGenerationException, IOException {
 		if(isMain) {
 			paths.clear();
 		}
-		// Hard coded
-		//VisBVisualisation visualisation = VisBFileHandler.constructVisualisationFromJSON(new File("./traffic_light.json"));
-		//List<String> formulas = visualisation.getVisBItems().stream().map(VisBItem::getExpression).collect(Collectors.toList());
-		//List<String> events = visualisation.getVisBEvents().stream().map(VisBEvent::getEvent).collect(Collectors.toList());
-		//VisBProject visBProject = parseVisBProject(path, visualisation);
 
 		BProject project = parseProject(path);
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
 		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
-		paths.add(writeToFile(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine));
+		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, visualisationFile));
 		return paths;
 	}
 
 	/*
-	* This function generates code for a targeted programming language with creating the belonging file
-	*/
-	private Path writeToFile(Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, MachineNode node, Path addition, boolean isIncludedMachine) {
-		MachineGenerator generator = new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, addition, isIncludedMachine);
+	 * This function generates code for a targeted programming language with creating the belonging file
+	 */
+	private Path generateCode(Path path, GeneratorMode mode, boolean useBigInteger,
+														String minint, String maxint, String deferredSetSize,
+														boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
+														Path addition, boolean isIncludedMachine, String visualisationFile) throws IOException {
+		MachineGenerator generator =
+				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
+														 useConstraintSolving, addition, isIncludedMachine);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
 
 		String code = generator.generateMachine(node);
+		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code);
+
+		if(visualisationFile != null) {
+			VisBVisualisation visualisation = VisBFileHandler.constructVisualisationFromJSON(Paths.get(path.getParent().toString(), visualisationFile).toFile());
+			VisBProject visBProject = parseVisBProject(path, visualisation);
+			generateVisualisation(visBProject, generator, path);
+		}
+
+		return codePath;
+	}
+
+	private void generateVisualisation(VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
+		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(generator.getImportGenerator(), generator.getExpressionGenerator());
+		String htmlCode = visualisationGenerator.generateHTML(visBProject);
+		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode);
+		//Has to be saved as <machineName>-visualisation.js
+		String jsVisulisationCode = visualisationGenerator.generateVisualisation(visBProject);
+		Path visualisationPath = Paths.get(mainMachinePath.toString().replace(".mch", "-visualisation.mch")).toAbsolutePath();
+		writeToFile(visualisationPath, GeneratorMode.JS, false, null, false, generator, jsVisulisationCode);
+	}
+
+	/*
+	 * This function writes code for a targeted programming language with creating the belonging file
+	 */
+	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code) {
+
 
 		String fileName = path.getFileName().toString().replace(".mch", "");
 		Path newPath;

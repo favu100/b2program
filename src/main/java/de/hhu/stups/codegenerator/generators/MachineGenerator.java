@@ -725,4 +725,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 		return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions);
 	}
+
+	public ImportGenerator getImportGenerator() {
+		return importGenerator;
+	}
+
+	public ExpressionGenerator getExpressionGenerator() {
+		return expressionGenerator;
+	}
 }

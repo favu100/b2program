@@ -36,7 +36,7 @@ public class MachineReferenceGenerator {
         for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
             Path currentPath = Paths.get(path.getParent().toString(), referenceNode.getMachineName() + ".mch");
             if(!codeGenerator.getPaths().contains(currentPath)) {
-                codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, false, null, true);
+                codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, false, null, true, null);
             }
         }
     }

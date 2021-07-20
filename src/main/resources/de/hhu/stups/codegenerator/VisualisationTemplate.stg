@@ -1,0 +1,45 @@
+keywords() ::= <<
+document, false, for, function, import, true, var
+>>
+
+
+visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, enums) ::= <<
+import <machineName> from "./<machineName>.js"
+<enums : {enum | <enum_import(enum, machineName)>}>
+<imports; separator="\n">
+
+var _machine = new <machineName>();
+<machineVars : {machineVar | var <machineVar> = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
+
+function updateVisuals (){
+  <visualUpdates; separator="\n">
+}
+
+<machineEvents: {machineEvent| <event(machineEvent, machineName)>}>
+
+updateVisuals();
+>>
+
+btype_import(type) ::= <<
+import <type> from "./btypes/<type>.js";
+>>
+
+enum_import(enumName, machineName) ::= <<
+import {enum_<enumName>} from "./<machineName>.js"
+import {<enumName>} from "./<machineName>.js"
+>>
+
+visualUpdate(machineVar, attribute, expression) ::= <<
+<machineVar>.setAttribute("<attribute>", <expression>);
+>>
+
+event(machineEvent, machineName) ::= <<
+var <machineEvent> = document.createElement("button");
+<machineEvent>.innerHTML = "<machineEvent>"
+<machineEvent>.onclick = function() {
+  _machine.<machineEvent>();
+  updateVisuals();
+}
+document.body.appendChild(<machineEvent>);
+
+>>

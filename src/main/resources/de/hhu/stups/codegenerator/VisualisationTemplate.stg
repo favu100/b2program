@@ -15,7 +15,7 @@ function updateVisuals (){
   <visualUpdates; separator="\n">
 }
 
-<machineEvents: {machineEvent| <event(machineEvent, machineName)>}>
+<machineEvents: {machineEvent| <machineEvent><\n>}>
 
 updateVisuals();
 >>
@@ -33,7 +33,7 @@ visualUpdate(machineVar, attribute, expression) ::= <<
 <machineVar>.setAttribute("<attribute>", <expression>);
 >>
 
-event(machineEvent, machineName) ::= <<
+event(machineEvent, machineEventId, svgName) ::= <<
 var <machineEvent> = document.createElement("button");
 <machineEvent>.innerHTML = "<machineEvent>"
 <machineEvent>.onclick = function() {
@@ -42,4 +42,9 @@ var <machineEvent> = document.createElement("button");
 }
 document.body.appendChild(<machineEvent>);
 
+<machineEventId> = document.getElementById("<svgName>").contentDocument.getElementById("<machineEventId>")
+<machineEventId>.onclick = function() {
+  _machine.<machineEvent>();
+  updateVisuals();
+}
 >>

@@ -40,7 +40,7 @@ public class VisualisationGenerator{
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(visualisation, "svgName", visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(visualisation, "machineVars", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
-    TemplateHandler.add(visualisation, "machineEvents", visBProject.getVisualisation().getVisBEvents().stream().map(VisBEvent::getEvent).collect(Collectors.toSet()));
+    TemplateHandler.add(visualisation, "machineEvents", visBProject.getVisualisation().getVisBEvents().stream().map(visBEvent -> this.generateMachineEvent(visBEvent, visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0])).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "visualUpdates", visBProject.getVisualisation().getVisBItems().stream().map(this::generateVisualUpdate).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "enums", importGenerator.getImportedEnums());
     //Adding imports last to ensure all needed types are imported.
@@ -49,13 +49,21 @@ public class VisualisationGenerator{
     return visualisation.render();
   }
 
-  public String generateVisualUpdate(VisBItem item){
+  public String generateVisualUpdate(VisBItem item) {
     ST visualUpdate = visualisationGroup.getInstanceOf("visualUpdate");
     TemplateHandler.add(visualUpdate, "machineVar", item.getId());
     TemplateHandler.add(visualUpdate, "attribute", item.getAttribute());
     TemplateHandler.add(visualUpdate, "expression", expressionGenerator.visitExprNode(item.getExprNode()).replaceAll("this.([a-zA-Z]+)", "_machine")+ ".getValue()");
 
     return visualUpdate.render();
+  }
+
+  public String generateMachineEvent(VisBEvent event, String svgName) {
+    ST eventTemplate = visualisationGroup.getInstanceOf("event");
+    TemplateHandler.add(eventTemplate, "machineEvent", event.getEvent());
+    TemplateHandler.add(eventTemplate, "machineEventId", event.getId());
+    TemplateHandler.add(eventTemplate, "svgName", svgName);
+    return eventTemplate.render();
   }
 
   public String generateHTML(VisBProject visBProject) {

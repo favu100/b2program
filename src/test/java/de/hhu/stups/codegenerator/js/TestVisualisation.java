@@ -7,6 +7,6 @@ public class TestVisualisation extends TestJs {
 
     @Test
     public void testTrafficLight() throws Exception {
-        testJs("visualisation/TrafficLight", "TrafficLight", "TrafficLightAddition.stjs", "0.json", false);
+        testJs("visualisation/TrafficLight", "TrafficLight", "TrafficLightAddition.stjs", "traffic_light.json", false);
     }
 }

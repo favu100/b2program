@@ -132,12 +132,17 @@ public class BRelation<S,T> {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, INTERSECTION.invoke(thisRangeSet, otherRangeSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) INTERSECTION.invoke(thisRangeSet, otherRangeSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 
 		for(Object obj : differenceDomain) {
 			S domainElement = (S) obj;
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke())));
+			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 		}
 		return new BRelation<S,T>(resultMap);
 	}
@@ -155,12 +160,17 @@ public class BRelation<S,T> {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, DIFFERENCE.invoke(thisRangeSet, otherRangeSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherRangeSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 
 		for(Object obj : restDomain) {
 			S domainElement = (S) obj;
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke())));
+			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 		}
 		return new BRelation<S,T>(resultMap);
 	}
@@ -194,11 +204,11 @@ public class BRelation<S,T> {
 	}
 
 	public BInteger card() {
-		return new BInteger(String.valueOf((int) this.size()));
+		return new BInteger((int) this.size());
 	}
 
 	public BInteger _size() {
-		return new BInteger(String.valueOf((int) this.size()));
+		return new BInteger((int) this.size());
 	}
 
 	public BBoolean equal(BRelation<S,T> o) {
@@ -390,7 +400,12 @@ public class BRelation<S,T> {
 		for(Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, INTERSECTION.invoke(thisRangeSet, otherSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) INTERSECTION.invoke(thisRangeSet, otherSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 		return new BRelation<S, T>(resultMap);
 	}
@@ -404,7 +419,12 @@ public class BRelation<S,T> {
 		for(Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, DIFFERENCE.invoke(thisRangeSet, otherSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 		return new BRelation<S, T>(resultMap);
 	}
@@ -449,7 +469,7 @@ public class BRelation<S,T> {
 
 	@SuppressWarnings("unchecked")
 	public T first() {
-		return this.functionCall((S) new BInteger("1"));
+		return this.functionCall((S) new BInteger(1));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -461,7 +481,7 @@ public class BRelation<S,T> {
 	public BRelation<S,T> reverse() {
 		BInteger size = this.card();
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			T rangeElement = (T) this.functionCall((S) size.minus(i).succ());
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i, SET.invoke(SEQ.invoke(LIST.invoke(rangeElement))));
 		}
@@ -477,7 +497,7 @@ public class BRelation<S,T> {
 	public BRelation<S,T> tail() {
 		BInteger size = this._size();
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BInteger i = new BInteger("2"); i.lessEqual(size).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger(2); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			T rangeElement = (T) this.functionCall((S) i);
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i.pred(), SET.invoke(SEQ.invoke(LIST.invoke(rangeElement))));
 		}
@@ -515,7 +535,7 @@ public class BRelation<S,T> {
 		PersistentHashMap resultMap = this.map;
 		PersistentHashMap otherMap = arg.map;
 		BInteger size = this.card();
-		for(BInteger i = new BInteger("1"); i.lessEqual(arg._size()).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger(1); i.lessEqual(arg._size()).booleanValue(); i = i.succ()) {
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, size.plus(i), (PersistentHashSet) GET.invoke(otherMap, i));
 		}
 		return new BRelation<S, T>(resultMap);
@@ -525,7 +545,7 @@ public class BRelation<S,T> {
 	public <R,A> BRelation<R,A> conc() {
 		BRelation<R,A> result = new BRelation<R,A>();
 		BInteger size = this.card();
-		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			result = result.concat((BRelation<R,A>) functionCall((S) i));
 		}
 		return result;
@@ -543,10 +563,10 @@ public class BRelation<S,T> {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 		PersistentHashMap thisMap = this.map;
 		BInteger size = this._size();
-		for(BInteger i = new BInteger("1"); i.lessEqual(size).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i.succ(), (PersistentHashSet) GET.invoke(thisMap, i));
 		}
-		resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, new BInteger("1"), (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(arg))));
+		resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, new BInteger(1), (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(arg))));
 		return new BRelation<S, T>(resultMap);
 	}
 
@@ -640,7 +660,7 @@ public class BRelation<S,T> {
 	public BRelation<S,S> iterate(BInteger n) {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
 		BRelation<S,S> result = identity(this.domain());
-		for(BInteger i = new BInteger("1"); i.lessEqual(n).booleanValue(); i = i.succ()) {
+		for(BInteger i = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
 			result = result.union(result.composition(thisRelation));
 		}
 		return result;

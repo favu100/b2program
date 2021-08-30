@@ -84,7 +84,7 @@ public class IterationPredicateGenerator {
         for(int i = 0; i < declarations.size(); i++) {
             PredicateNode innerPredicate = predicate.getPredicateArguments().get(i);
             if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                throw new CodeGenerationException("First predicates must declare the set to iterate over");
+                throw new CodeGenerationException("First predicates must declare the set to iterate over: \n" + innerPredicate);
             }
         }
     }

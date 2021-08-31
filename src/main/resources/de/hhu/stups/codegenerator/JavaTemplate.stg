@@ -141,9 +141,16 @@ new <struct>(<parameters; separator=", ">)
 >>
 
 initialization(machine, properties, values, body) ::= <<
-public <machine>() {
+<if(properties)>
+<if(values)>
+static {
     <properties; separator="\n">
     <values>
+}
+<endif>
+<endif>
+
+public <machine>() {
     <body>
 }
 >>
@@ -167,7 +174,7 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-private BSet\<<type>\> <identifier> = <set_enumeration("", type, "", enums, false)>;
+private static BSet\<<type>\> <identifier> = <set_enumeration("", type, "", enums, false)>;
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -327,9 +334,8 @@ public boolean _check_inv() {
 }
 >>
 
-copy_constructor(machine, parameters, properties, assignments) ::= <<
+copy_constructor(machine, parameters, assignments) ::= <<
 public <machine>(<parameters; separator=", ">) {
-    <properties; separator="\n">
     <assignments; separator="\n">
 }
 >>
@@ -383,7 +389,7 @@ local_declaration(type, identifier) ::= <<
 >>
 
 constant_declaration(type, identifier) ::= <<
-private final <type> <identifier>;
+private static final <type> <identifier>;
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<

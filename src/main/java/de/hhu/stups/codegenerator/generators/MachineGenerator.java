@@ -323,7 +323,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			ST template = currentGroup.getInstanceOf("copy_constructor");
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(node.getVariables(), OperationGenerator.DeclarationType.PARAMETER, false));
-			TemplateHandler.add(template, "properties", substitutionGenerator.generateConstantsInitializations(node));
 			TemplateHandler.add(template, "assignments", node.getVariables().stream()
 					.map(this::generateCopyAssignment)
 					.collect(Collectors.toList()));

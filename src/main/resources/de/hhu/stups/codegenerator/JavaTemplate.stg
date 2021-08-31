@@ -389,7 +389,7 @@ local_declaration(type, identifier) ::= <<
 >>
 
 constant_declaration(type, identifier) ::= <<
-private static final <type> <identifier>;
+private static <type> <identifier>;
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<

@@ -1,0 +1,25 @@
+{
+  "svg": "button.svg",
+  "include": "button_extra.json",
+  "items": [
+    {
+      "id": "button",
+      "attr": "fill",
+      "value": "IF button=TRUE THEN \"green\" ELSE \"red\" END"
+    },
+    {
+      "id": "button",
+      "attr": "stroke-width",
+      "value": "IF ENABLED(\"press_button\") THEN 6 ELSE 1 END",
+      "ignore": "is now used in hover below"
+    }
+  ],
+  "events": [
+    {
+      "id": "button",
+      "event": "toggle_button",
+      "hovers": [{ "attr":"stroke-width", "enter":"6", "leave":"1"},
+                 { "attr":"opacity", "enter":"0.8", "leave":"1.0"}]
+    }
+  ]
+}

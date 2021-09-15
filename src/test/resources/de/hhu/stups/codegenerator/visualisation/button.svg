@@ -1,0 +1,15 @@
+<svg
+    height="240"
+    width="200"
+    xmlns="http://www.w3.org/2000/svg">
+  <circle id="button" cx="100" cy="100" r="80"
+    stroke="black" stroke-width="3" fill="green" />
+    <text  text-align="left"  x="50"  y="190"
+        font-family="sans-serif">
+       <tspan dx="0" dy = "0.6em" id="visb_debug_messages">1.</tspan>
+    </text>
+    <circle id="button_TRUE" cx="10" cy="200" r="8"
+    stroke="black" stroke-width="3" fill="green" />
+    <circle id="button_FALSE" cx="30" cy="200" r="8"
+    stroke="black" stroke-width="3" fill="red" />
+</svg> 

@@ -1,0 +1,111 @@
+{
+  "name": "Blinking",
+  "description": "(this project was created automatically from file /Users/leuschel/git_root/ARTICLES/abz2020_case_study/LightModel/Blinking.mch)",
+  "machines": [
+    {
+      "name": "Sensors",
+      "description": "",
+      "location": "Sensors.mch",
+      "lastUsedPreferenceName": "default",
+      "ltlFormulas": [],
+      "ltlPatterns": [],
+      "symbolicCheckingFormulas": [],
+      "symbolicAnimationFormulas": [],
+      "simulationItems": [],
+      "testCases": [],
+      "traces": [],
+      "modelcheckingItems": [],
+      "simulation": null,
+      "visBVisualisation": null
+    },
+    {
+      "name": "PitmanController_TIME_MC_v4",
+      "description": "",
+      "location": "PitmanController_TIME_MC_v4.mch",
+      "lastUsedPreferenceName": "default",
+      "ltlFormulas": [],
+      "ltlPatterns": [],
+      "symbolicCheckingFormulas": [],
+      "symbolicAnimationFormulas": [],
+      "simulationItems": [],
+      "testCases": [],
+      "traces": [
+        "traces/PitmanController_TIME_v3_Trace7.prob2trace",
+        "traces/PitmanController_TIME_MC_v4_Trace7.prob2trace"
+      ],
+      "modelcheckingItems": [
+        {
+          "nodesLimit": "-",
+          "timeLimit": "-",
+          "options": {
+            "options": [
+              "FIND_DEADLOCKS",
+              "FIND_INVARIANT_VIOLATIONS",
+              "INSPECT_EXISTING_NODES"
+            ]
+          },
+          "goal": "-",
+          "shouldExecute": true
+        }
+      ],
+      "simulation": "Simulation_MC/PitmanController_v4_simulation.json",
+      "visBVisualisation": null
+    },
+    {
+      "name": "BlinkLamps_v3",
+      "description": "",
+      "location": "BlinkLamps_v3.mch",
+      "lastUsedPreferenceName": "default",
+      "ltlFormulas": [],
+      "ltlPatterns": [],
+      "symbolicCheckingFormulas": [],
+      "symbolicAnimationFormulas": [],
+      "simulationItems": [],
+      "testCases": [],
+      "traces": [],
+      "modelcheckingItems": [
+        {
+          "nodesLimit": "-",
+          "timeLimit": "-",
+          "options": {
+            "options": [
+              "FIND_DEADLOCKS",
+              "FIND_INVARIANT_VIOLATIONS",
+              "INSPECT_EXISTING_NODES"
+            ]
+          },
+          "goal": "-",
+          "shouldExecute": true
+        }
+      ],
+      "simulation": null,
+      "visBVisualisation": null
+    },
+    {
+      "name": "GenericTimersMC",
+      "description": "",
+      "location": "GenericTimersMC.mch",
+      "lastUsedPreferenceName": "default",
+      "ltlFormulas": [],
+      "ltlPatterns": [],
+      "symbolicCheckingFormulas": [],
+      "symbolicAnimationFormulas": [],
+      "simulationItems": [],
+      "testCases": [],
+      "traces": [],
+      "modelcheckingItems": [],
+      "simulation": null,
+      "visBVisualisation": null
+    }
+  ],
+  "preferences": [],
+  "metadata": {
+    "fileType": "Project",
+    "formatVersion": 12,
+    "savedAt": "2021-04-30T12:49:28.369147Z",
+    "creator": "User",
+    "proB2KernelVersion": "4.0.0-SNAPSHOT",
+    "proBCliVersion": null,
+    "modelName": null
+  }
+}

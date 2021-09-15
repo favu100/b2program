@@ -1,0 +1,28 @@
+{
+  "svg": "button.svg",
+  "comment": "treatment of button_TRUE and button_FALSE extra buttons",
+  "items": [
+    {
+      "id": "button_%0",
+      "attr": "visibility",
+      "value": "IF button=%0 THEN \"visible\" ELSE \"hidden\" END",
+      "repeat": [ "TRUE", "FALSE" ]
+    }
+  ],
+  "events": [
+    {
+      "id": "button_TRUE",
+      "event": "toggle_button",
+      "hovers": [{ "attr":"stroke-width", "enter":"3", "leave":"1", "id":"button"},
+                 { "attr":"opacity", "enter":"0.5", "leave":"0.8"}]
+    },
+    {
+      "id": "button_FALSE",
+      "event": "set_button",
+      "optional": true,
+      "predicates" : ["newVal =  bool(%shiftKey=FALSE)"],
+      "hovers": [{ "attr":"stroke-width", "enter":"5", "leave":"1", "id":"button"},
+                { "attr":"opacity", "enter":"0.85", "leave":"1.0"}]
+    }
+  ]
+}

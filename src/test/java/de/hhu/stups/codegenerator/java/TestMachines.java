@@ -236,4 +236,9 @@ public class TestMachines extends TestJava {
         testJava("SimpleParameters");
     }
 
+    @Test
+    public void testPitmanController_TIME_MC_v4() throws Exception {
+        testJava("visualisation/PitmanController_TIME_MC_v4");
+    }
+
 }

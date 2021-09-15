@@ -26,6 +26,9 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     antlr "org.antlr:antlr4:4.7"
     compile group: 'org.antlr', name: 'ST4', version: '4.3'
     // antlr parser dependency

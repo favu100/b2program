@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * Created by fabian on 15.01.19.
  */
-public class BRelation<S,T> {
+public class BRelation<S,T> implements Iterable<BTuple<S,T>> {
 
 	protected static final Var ASSOC;
 
@@ -1064,6 +1064,27 @@ public class BRelation<S,T> {
 	public BBoolean isBijectionStruct() {
 		return new BBoolean(false);
 	}
+
+	/*@Override
+	public Iterator<BTuple<S,T>> iterator() {
+		PersistentHashMap thisMap = this.map;
+		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
+
+		int size = this.size();
+		int i = 0;
+
+		for(Object e1 : domain) {
+			S domainElement = (S) e1;
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
+			if(range == null) {
+				break;
+			}
+			for(Object e2 : range) {
+				T rangeElement = (T) e2;
+			}
+		}
+		//TODO: Implement iterator
+	}*/
 
 	@SuppressWarnings("unchecked")
 	public java.lang.String toString() {

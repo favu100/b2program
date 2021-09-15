@@ -102,7 +102,7 @@ public class TestCpp {
 		System.out.println("Assert: " + result + " = " + expectedOutput);
 
 		assertEquals(expectedOutput, result);
-		cleanUp(mainPath.toString());
+		//cleanUp(mainPath.toString());
 	}
 
 	private void cleanUp(String path) {

@@ -42,17 +42,11 @@ PROPERTIES
   & /* @axm41 */ fst = {R1 |-> L,R2 |-> L,R3 |-> L,R4 |-> M,R5 |-> M,R6 |-> C,R7 |-> G,R8 |-> N,R9 |-> G,R10 |-> N}
   & /* @axm42 */ lst = {R1 |-> C,R2 |-> G,R3 |-> N,R4 |-> G,R5 |-> N,R6 |-> L,R7 |-> L,R8 |-> L,R9 |-> M,R10 |-> M}
 INVARIANT
-    /* @inv3 */ rsrtbl : resbl --> resrt
-  & /* @inv5 */ rsrtbl <: rtbl
-  & /* @inv4 */ OCC <: resbl
-  & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
-  & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
-  & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
-  & /* @inv1 */ TRK : BLOCKS >+> BLOCKS
+  /* @inv1 */ TRK : BLOCKS >+> BLOCKS
   & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl[OCC] <: frm
   & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
-  & /* @inv5 */ !(x,y).((x : BLOCKS & y : BLOCKS) & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
+  & /* @inv5 */ !(x,y).(x : dom(TRK) & y : TRK[{x}] => #(r).(r : ROUTES & x |-> y : nxt(r)))
   & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
   & /* @inv8 */ !(a,b).(b : LBT & (b : ran(nxt(rsrtbl(b))) & (a = (nxt(rsrtbl(b))~)(b) & a : dom(rsrtbl))) => rsrtbl(a) /= rsrtbl(b))

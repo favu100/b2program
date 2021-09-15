@@ -196,4 +196,12 @@ public class NameHandler {
     public List<String> getDeferredTypes() {
         return deferredTypes;
     }
+
+    public Map<String, String> getEnumToMachine() {
+        return machineGenerator.getDeclarationGenerator().getEnumToMachine();
+    }
+
+    public String getMachineName() {
+        return machineGenerator.getMachineName();
+    }
 }

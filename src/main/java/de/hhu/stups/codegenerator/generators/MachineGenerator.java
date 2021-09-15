@@ -233,13 +233,17 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private void generateBody(MachineNode node, ST machine) {
 		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
 		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node));
+		TemplateHandler.add(machine, "enum_imports", importGenerator.getImportedEnums());
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "copyConstructor", this.generateCopyConstructor(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
-		TemplateHandler.add(machine, "getters", generateGetters(node.getVariables()));
+		List<DeclarationNode> variablesAndConstants = new ArrayList<>();
+		variablesAndConstants.addAll(node.getConstants());
+		variablesAndConstants.addAll(node.getVariables());
+		TemplateHandler.add(machine, "getters", generateGetters(variablesAndConstants));
 		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", generateInvariant(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));

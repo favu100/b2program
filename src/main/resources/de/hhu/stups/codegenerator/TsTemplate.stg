@@ -3,17 +3,21 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
+machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
 <imports; separator="\n">
+<enum_imports; separator="\n">
+<includedMachines; separator="\n">
 import BUtils from "./btypes/BUtils.js";
+
+<enums; separator="\n\n">
 
 export default class <machine> {
 
     <structs; separator= "\n\n">
 
-    <constants_declarations; separator="\n">
-
     <includes; separator="\n">
+
+    <constants_declarations; separator="\n">
 
     <sets; separator="\n">
 
@@ -43,8 +47,6 @@ export default class <machine> {
 
 }
 
-<enums; separator="\n\n">
-
 <addition>
 >>
 
@@ -55,10 +57,11 @@ _get_<variable>(): <returnType> {
 >>
 
 struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
-export static class <name> extends BStruct {
+public <name> = class extends BStruct {
     <declarations; separator="\n">
 
     constructor(<parameters; separator=", ">) {
+        super();
         <initializations; separator="\n">
     }
 
@@ -80,12 +83,12 @@ export static class <name> extends BStruct {
         if(!(other instanceof <name>)) {
             return false;
         }
-        let o: <name> = (<name>) other;
+        let o: <name> = other as <name>;
         return <equalPredicates; separator= " && ">;
     }
 
     hashCode(): number {
-        int result = 1;
+        let result: number = 1;
         <fields: {field | result = 31 * result + (<field>.hashCode() \<\< 1);}; separator="\n">
         return result;
     }
@@ -111,7 +114,7 @@ record_access_element(expr, arg, val) ::= <<
 >>
 
 record_field_override(name, field, type, val, parameters) ::= <<
-override_<field>(<type> <field>): <name> {
+override_<field>(<field>: <type>): <name> {
     return new <name>(<parameters; separator=", ">);
 }
 >>
@@ -166,7 +169,7 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-<identifier>: BSet\<<type>\>  = <set_enumeration("", type, "", enums, false)>;
+private <identifier>: BSet\<<type>\>  = <set_enumeration("", type, "", enums, false)>;
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -186,7 +189,7 @@ for(let <identifier> of <set>) {
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(let <identifier> of Arrays.asList(<set>)) {
+for(let <identifier> of Array.of(<set>)) {
     <body>
 }
 
@@ -277,7 +280,7 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 >>
 
 quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
-<if(isInteger)><identifier>: BInteger = new BInteger(<identity>);<else><identifier>: BSet\<<setType>\> = new BSet\<<setType>\>();<endif>
+<if(isInteger)>let <identifier>: BInteger = new BInteger(<identity>);<else>let <identifier>: BSet\<<setType>\> = new BSet\<<setType>\>();<endif>
 <evaluation>
 >>
 
@@ -345,7 +348,7 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
-<if(isCurrentMachine)>new <class>(enum_<class>.<identifier>)<else>new <machine>.<class>(<machine>.enum_<class>.<identifier>)<endif>
+<if(isCurrentMachine)>new <class>(enum_<class>.<identifier>)<else>new <class>(enum_<class>.<identifier>)<endif>
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -393,7 +396,7 @@ BUtils.BOOL
 >>
 
 include_declaration(type, identifier) ::= <<
-this.<declaration(type, identifier)> = new <type>();
+/*this.*/<declaration(type, identifier)> = new <type>();
 >>
 
 global_declaration(type, identifier) ::= <<
@@ -405,7 +408,7 @@ let <declaration(type, identifier)> = null;
 >>
 
 constant_declaration(type, identifier) ::= <<
-<identifier>: <type>;
+private <identifier>: <type>;
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<
@@ -461,7 +464,7 @@ void
 >>
 
 type(type, fromOtherMachine, otherMachine) ::= <<
-<if(fromOtherMachine)><otherMachine>.<endif><type>
+<type>
 >>
 
 tuple_type(leftType, rightType) ::= <<
@@ -564,7 +567,7 @@ else {
 >>
 
 choice(len, then, choice1) ::= <<
-int index = (int) Math.floor(Math.random() * <len>);
+var index = Math.floor(Math.random() * <len>);
 if(index == 0) {
     <then>
 } <choice1; separator=" ">
@@ -643,8 +646,8 @@ boolean_val(val) ::= <<
 <if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
 >>
 
-identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate) ::= <<
-<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>this.<endif><identifier><endif><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant) ::= <<
+<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>this.<else><if(isConstant)>this.<endif><endif><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<
@@ -709,4 +712,9 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 >>
 
 skip() ::= <<
+>>
+
+enum_import(name, machineName) ::= <<
+import {enum_<name>} from "./<machineName>.js"
+import {<name>} from "./<machineName>.js"
 >>

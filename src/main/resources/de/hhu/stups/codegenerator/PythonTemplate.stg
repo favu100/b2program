@@ -623,3 +623,6 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 skip() ::= <<
 pass
 >>
+
+enum-import() ::= <<
+>>

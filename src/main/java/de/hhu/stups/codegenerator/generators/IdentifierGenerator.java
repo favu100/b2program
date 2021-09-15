@@ -65,7 +65,7 @@ public class IdentifierGenerator {
     */
     public String generate(IdentifierExprNode node) {
         boolean isReturn = isReturn(node);
-        boolean isPrivate = nameHandler.getGlobals().contains(node.getName());
+        boolean isPrivate = nameHandler.getGlobals().contains(nameHandler.handle(node.getName()));
         boolean isAssigned = node.getParent() == null || isAssigned(node, node.getParent());
         return generate(node, isReturn, isPrivate, isAssigned);
     }
@@ -128,6 +128,7 @@ public class IdentifierGenerator {
             TemplateHandler.add(identifier, "otherMachine", "");
         }
         TemplateHandler.add(identifier, "fromOtherMachine", fromOtherMachine);
+        TemplateHandler.add(identifier, "isConstant", node.getDeclarationNode() != null && DeclarationNode.Kind.CONSTANT.equals(node.getDeclarationNode().getKind()));
         return identifier.render();
     }
 

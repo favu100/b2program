@@ -3,18 +3,26 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, enums) ::= <<
+visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, importedEnums, machineEnums) ::= <<
 import <machineName> from "./<machineName>.js"
-<enums : {enum | <enum_import(enum, machineName)>}>
+<importedEnums; separator="\n">
+<machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
+<machineEnums : {enum | import {enum_<enum>\} from "./<machineName>.js"<\n>}>
 <imports; separator="\n">
 
 var _machine = new <machineName>();
-<machineVars : {machineVar | var <machineVar> = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
+var _svg_vars = {}
+<machineVars : {machineVar | _svg_vars["<machineVar>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
 
 function updateVisuals (){
   <visualUpdates; separator="\n">
 }
 
+_operations_view = document.getElementById("_operations_view");
+_history_view = document.getElementById("_history_view");
+var _param_div;
+var _onclick_function;
+var _svg_events = {}
 <machineEvents: {machineEvent| <machineEvent><\n>}>
 
 updateVisuals();
@@ -24,27 +32,54 @@ btype_import(type) ::= <<
 import <type> from "./btypes/<type>.js";
 >>
 
-enum_import(enumName, machineName) ::= <<
-import {enum_<enumName>} from "./<machineName>.js"
-import {<enumName>} from "./<machineName>.js"
->>
-
 visualUpdate(machineVar, attribute, expression) ::= <<
-<machineVar>.setAttribute("<attribute>", <expression>);
+_svg_vars["<machineVar>"].setAttribute("<attribute>", <expression>);
 >>
 
-event(machineEvent, machineEventId, svgName) ::= <<
-var <machineEvent> = document.createElement("button");
-<machineEvent>.innerHTML = "<machineEvent>"
-<machineEvent>.onclick = function() {
-  _machine.<machineEvent>();
-  updateVisuals();
-}
-document.body.appendChild(<machineEvent>);
+event(machineEvent, svgName, parameterCreation, parameterNames) ::= <<
+_param_div = document.createElement("div");
+_param_div.classList.add("param");
+<parameterCreation: {param| <param><\n>}>
+_operations_view.appendChild(_param_div);
 
-<machineEventId> = document.getElementById("<svgName>").contentDocument.getElementById("<machineEventId>")
-<machineEventId>.onclick = function() {
-  _machine.<machineEvent>();
+var <machineEvent> = document.createElement("button");
+<machineEvent>.style.gridColumn="-1";
+<machineEvent>.innerHTML = "<machineEvent>";
+_onclick_function = function() {
+  _machine.<machineEvent>(<parameterNames: {param| <param>.getValue(), }>);
   updateVisuals();
+  var history_element = document.createElement("span");
+  history_element.innerHTML = "<machineEvent>\</br>";
+  _history_view.appendChild(history_element);
 }
+<machineEvent>.onclick = _onclick_function;
+_operations_view.appendChild(<machineEvent>);
+>>
+
+onclick_event(machineEventId, svgName) ::= <<
+_svg_events["<machineEventId>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineEventId>")
+_svg_events["<machineEventId>"].onclick = _onclick_function;
+>>
+
+parameter(name, getValueMethod, eventName) ::= <<
+var <name>_label = document.createElement("label")
+<name>_label.textContent = "<name>:"
+<name>_label.htmlFor="<name>"
+_param_div.appendChild(<name>_label)
+var <name> = document.createElement("input")
+<name>.id="<name>"
+<getValueMethod>
+_param_div.appendChild(<name>)
+>>
+
+boolValue(name) ::= <<
+<name>.getValue = function() {return new BBoolean(<name>.value == "true")}
+>>
+
+intValue(name) ::= <<
+<name>.getValue = function() {return new BInteger(parseInt(<name>.value))}
+>>
+
+enumValue(name, enum) ::= <<
+<name>.getValue = function() {return <enum>["get_" + <name>.value]()}
 >>

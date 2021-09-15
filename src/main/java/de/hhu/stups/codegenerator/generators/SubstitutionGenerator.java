@@ -462,7 +462,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
         TemplateHandler.add(substitution, "isRecordAccessLhs", isRecordLhs);
         TemplateHandler.add(substitution, "identifier", machineGenerator.visitExprNode(identifier, null));
-        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(identifier.getName()));
+        TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(nameHandler.handle(identifier.getName())));
         parallelConstructHandler.setLhsInParallel(false);
         TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(identifier, null));
     }

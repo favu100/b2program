@@ -301,3 +301,6 @@ operation_call_without_assignment(function, args) ::= <<
 
 skip() ::= <<
 >>
+
+enum-import() ::= <<
+>>

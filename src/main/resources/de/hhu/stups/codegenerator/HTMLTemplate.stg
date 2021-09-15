@@ -12,12 +12,44 @@ html(machineName, svgName, btypeImports) ::= <<
 \<head>
 
 \<body>
-  \<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml" height="300" width="300">
+  \<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml" height="300" width="300">\</object>
+  \<div id="_operations_view">
+    \<div>Parameter\</div>
+    \<div style="text-align: center; grid-column: -1;">Event\</div>
+  \</div>
+  \<div id="_history_view">\</div>
   \<script type="module" src="./immutable/dist/immutable.es.js">\</script>
   <btypeImports; separator="\n">
   \<script type="module" src="./<machineName>.js">\</script>
   \<script type="module" src="./<machineName>-visualisation.js" defer>\</script>
 \</body>
+
+\<style>
+#_operations_view{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.5%;
+    margin-bottom: auto;
+    margin-right: 1rem;
+}
+.param{
+    display: grid;
+    grid-template-columns: auto auto;
+}
+#_history_view{
+    margin-bottom: auto;
+    margin-right: 1rem;
+    overflow-y  : auto;
+    padding-right: 18px;
+    max-height: 90vh;
+}
+body{
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+}
+\</style>
+
 \</html>
 >>
 

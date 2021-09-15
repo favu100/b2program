@@ -870,4 +870,8 @@ public class ExpressionGenerator {
         this.substitutionGenerator = substitutionGenerator;
     }
 
+    public NameHandler getNameHandler() {
+        return this.nameHandler;
+    }
+
 }

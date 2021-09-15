@@ -17,7 +17,9 @@ import de.prob.parser.ast.types.StringType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,7 +76,13 @@ public class ImportGenerator {
     }
 
     private void importEnum(EnumeratedSetElementType enumType) {
-        importedEnums.add(enumType.getSetName());
+        boolean fromOtherMachine = nameHandler.getEnumToMachine().get(enumType.getSetName()) != null && !nameHandler.getMachineName().equals(nameHandler.getEnumToMachine().get(enumType.getSetName()));
+        if (fromOtherMachine) {
+            ST enumImport = group.getInstanceOf("enum_import");
+            TemplateHandler.add(enumImport, "name", enumType.getSetName());
+            TemplateHandler.add(enumImport, "machineName", nameHandler.getEnumToMachine().get(enumType.getSetName()));
+            importedEnums.add(enumImport.render());
+        }
     }
 
     /*

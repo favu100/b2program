@@ -251,3 +251,6 @@ operation_call_without_assignment(thisName, machine, function, args, this) ::= <
 
 skip() ::= <<
 >>
+
+enum-import() ::= <<
+>>

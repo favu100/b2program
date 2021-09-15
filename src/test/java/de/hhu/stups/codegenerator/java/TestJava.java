@@ -58,6 +58,11 @@ public class TestJava {
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
 
+		String error = streamToString(process.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
 		Set<File> classFiles = javaFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machine + ".class"))
 				.collect(Collectors.toSet());

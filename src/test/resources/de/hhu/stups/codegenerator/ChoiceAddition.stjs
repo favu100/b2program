@@ -1,2 +1,2 @@
 let choice: Choice = new Choice();
-console.log BInteger(3).toString());
+choice.calculate(new BInteger(3));

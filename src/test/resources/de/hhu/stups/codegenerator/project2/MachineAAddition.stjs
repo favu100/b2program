@@ -1,5 +1,3 @@
-public static void main(String[] args) {
-    MachineA machine = new MachineA();
-    machine.IncX1();
-    machine.IncX2();
-}
+let machine: MachineA = new MachineA();
+machine.IncX1();
+machine.IncX2();

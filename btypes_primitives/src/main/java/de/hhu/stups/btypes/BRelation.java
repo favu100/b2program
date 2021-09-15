@@ -132,12 +132,17 @@ public class BRelation<S,T> {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, INTERSECTION.invoke(thisRangeSet, otherRangeSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) INTERSECTION.invoke(thisRangeSet, otherRangeSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 
 		for(Object obj : differenceDomain) {
 			S domainElement = (S) obj;
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke())));
+			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 		}
 		return new BRelation<S,T>(resultMap);
 	}
@@ -155,12 +160,17 @@ public class BRelation<S,T> {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, DIFFERENCE.invoke(thisRangeSet, otherRangeSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherRangeSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 
 		for(Object obj : restDomain) {
 			S domainElement = (S) obj;
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke())));
+			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 		}
 		return new BRelation<S,T>(resultMap);
 	}
@@ -390,7 +400,12 @@ public class BRelation<S,T> {
 		for(Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, INTERSECTION.invoke(thisRangeSet, otherSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) INTERSECTION.invoke(thisRangeSet, otherSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 		return new BRelation<S, T>(resultMap);
 	}
@@ -404,7 +419,12 @@ public class BRelation<S,T> {
 		for(Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, DIFFERENCE.invoke(thisRangeSet, otherSet));
+			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherSet);
+			if(newRangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
+			} else {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
+			}
 		}
 		return new BRelation<S, T>(resultMap);
 	}

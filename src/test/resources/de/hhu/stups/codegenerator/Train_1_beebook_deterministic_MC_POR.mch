@@ -1,4 +1,4 @@
-MACHINE Train_1_beebook_deterministic_MC
+MACHINE Train_1_beebook_deterministic_MC_POR
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I,J,K,L,M,N};
   ROUTES={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10}
@@ -49,12 +49,12 @@ INVARIANT
   & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
   & /* @inv8 */ !(a,b).((a : BLOCKS & b : LBT & (b : dom(rsrtbl) & b : ran(nxt(rsrtbl(b))) & (a : dom(rsrtbl) & a = (nxt(rsrtbl(b))~)(b)))) => rsrtbl(a) /= rsrtbl(b))
-  & /* @inv3 */ rsrtbl : resbl --> resrt
-  & /* @inv5 */ rsrtbl <: rtbl
-  & /* @inv4 */ OCC <: resbl
-  & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
-  & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
-  & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
+  & /* @inv9 */ rsrtbl : resbl --> resrt
+  & /* @inv10 */ rsrtbl <: rtbl
+  & /* @inv11 */ OCC <: resbl
+  & /* @inv12 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
+  & /* @inv13 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
+  & /* @inv14 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
   & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl[OCC] <: frm
 ASSERTIONS
@@ -83,6 +83,7 @@ OPERATIONS
       r : ROUTES
       & /* @grd1 */ r /: resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
+      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          resrt := resrt \/ {r}
       ||
@@ -105,6 +106,7 @@ OPERATIONS
         /* @grd1 */ r : frm
       & /* @grd2 */ fst(r) : resbl \ OCC
       & /* @grd3 */ rsrtbl(fst(r)) = r
+      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \/ {fst(r)}
       ||
@@ -124,6 +126,7 @@ OPERATIONS
     PRE
         /* @grd1 */ b : LBT
       & /* @grd2 */ b /: dom(TRK)
+      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \ {b}
       ||
@@ -139,6 +142,7 @@ OPERATIONS
         /* @grd1 */ b : LBT
       & /* @grd2 */ b : dom(TRK)
       & /* @grd3 */ TRK(b) : OCC
+      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \ {b}
       ||
@@ -153,6 +157,7 @@ OPERATIONS
   point_positionning(r) =
     PRE
         /* @grd1 */ r : resrt \ frm
+        & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          TRK := ((dom(nxt(r)) <<| TRK) |>> ran(nxt(r))) \/ nxt(r)
     END;
@@ -161,7 +166,10 @@ OPERATIONS
     PRE
         /* @grd1 */ r : resrt \ frm
       & /* @grd2 */ (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK
+      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          frm := frm \/ {r}
     END
+
 END
+

@@ -198,13 +198,48 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void Train1LukasPORv3() throws Exception {
+        testJavaMC("Train1_Lukas_POR_v3");
+    }
+
+    @Test
+    public void Train1LukasPORv4() throws Exception {
+        testJavaMC("Train1_Lukas_POR_v4");
+    }
+
+    @Test
     public void Train1BeebookDeterministic_MC_POR() throws Exception {
         testJavaMC("Train_1_beebook_deterministic_MC_POR");
     }
 
     @Test
+    public void Train1BeebookDeterministic_MC_POR_v2() throws Exception {
+        testJavaMC("Train_1_beebook_deterministic_MC_POR_v2");
+    }
+
+    @Test
     public void Train1() throws Exception {
         testJava("train_1");
+    }
+
+    @Test
+    public void IncrementalStagePackingTestLargeSlow() throws Exception {
+        testJavaMC("IncrementalStatePackingTestLargeSlow");
+    }
+
+    @Test
+    public void IncrementalStagePackingTestLargeSlow2() throws Exception {
+        testJavaMC("IncrementalStatePackingTestLargeSlow2");
+    }
+
+    @Test
+    public void ThreeCounter() throws Exception {
+        testJavaMC("ThreeCounter");
+    }
+
+    @Test
+    public void ThreeCounter2() throws Exception {
+        testJavaMC("ThreeCounter2");
     }
 
     @Ignore

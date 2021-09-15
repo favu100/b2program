@@ -35,27 +35,28 @@ PROPERTIES
   & /* @axm11 */ !(r).(r : ROUTES => fst(r) /= lst(r))
   & /* @axm10 */ !(r).(r : ROUTES => !(S).((S <: ran(nxt(r)) & S <: nxt(r)[S]) => S = {}))
   & /* @axm9 */ !(r).(r : ROUTES => nxt(r) : (rtbl~)[{r}] \ {lst(r)} >->> (rtbl~)[{r}] \ {fst(r)})
-  & /* @axm12 */ !(r,s).(r : ROUTES & s : ROUTES & r /= s => fst(r) /: (rtbl~)[{s}] \ {fst(s),lst(s)})
-  & /* @axm13 */ !(r,s).(r : ROUTES & s : ROUTES & r /= s => lst(r) /: (rtbl~)[{s}] \ {fst(s),lst(s)})
+  & /* @axm12 */ !(r,s).((r : ROUTES & s : ROUTES) & r /= s => fst(r) /: (rtbl~)[{s}] \ {fst(s),lst(s)})
+  & /* @axm13 */ !(r,s).((r : ROUTES & s : ROUTES) & r /= s => lst(r) /: (rtbl~)[{s}] \ {fst(s),lst(s)})
   & /* @axm14 */ rtbl = {A |-> R1,A |-> R2,A |-> R5,A |-> R6,B |-> R1,B |-> R2,B |-> R5,B |-> R6,C |-> R1,C |-> R5,D |-> R2,D |-> R6,E |-> R2,E |-> R3,E |-> R4,E |-> R6,E |-> R7,E |-> R8,F |-> R2,F |-> R3,F |-> R4,F |-> R6,F |-> R7,F |-> R8,G |-> R3,G |-> R4,G |-> R4,G |-> R7,G |-> R8,H |-> R3,H |-> R7,I |-> R4,I |-> R8}
   & /* @axm40 */ nxt = {R1 |-> {A |-> B,B |-> C},R2 |-> {A |-> B,B |-> D,D |-> E,E |-> F},R3 |-> {H |-> G,G |-> E,E |-> F},R4 |-> {I |-> G,G |-> E,E |-> F},R5 |-> {C |-> B,B |-> A},R6 |-> {F |-> E,E |-> D,D |-> B,B |-> A},R7 |-> {F |-> E,E |-> G,G |-> H},R8 |-> {F |-> E,E |-> G,G |-> I}}
   & /* @axm41 */ fst = {R1 |-> A,R2 |-> A,R3 |-> H,R4 |-> I,R5 |-> C,R6 |-> F,R7 |-> F,R8 |-> F}
   & /* @axm42 */ lst = {R1 |-> C,R2 |-> F,R3 |-> F,R4 |-> F,R5 |-> A,R6 |-> A,R7 |-> H,R8 |-> I}
 INVARIANT
-    /* @inv1 */ TRK : BLOCKS >+> BLOCKS
-  & /* @inv3 */ rsrtbl[OCC] <: frm
+  /* @inv1 */ TRK : BLOCKS >+> BLOCKS
+
   & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
-  & /* @inv5 */ !(x,y).(x : BLOCKS & y : BLOCKS & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
+  & /* @inv5 */ !(x,y).(x : dom(TRK) & y : TRK[{x}] => #(r).(r : ROUTES & x |-> y : nxt(r)))
   & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
   & /* @inv8 */ !(a,b).((a : BLOCKS & b : LBT & (b : dom(rsrtbl) & b : ran(nxt(rsrtbl(b))) & (a : dom(rsrtbl) & a = (nxt(rsrtbl(b))~)(b)))) => rsrtbl(a) /= rsrtbl(b))
-  & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl : resbl --> resrt
   & /* @inv5 */ rsrtbl <: rtbl
   & /* @inv4 */ OCC <: resbl
   & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
   & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
   & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
+  & /* @inv2 */ frm <: resrt
+  & /* @inv3 */ rsrtbl[OCC] <: frm
 INITIALISATION
          resrt := {}
       ||
@@ -75,8 +76,7 @@ OPERATIONS
   route_reservation(r) =
     
     PRE
-      r : ROUTES &
-        /* @grd1 */ r /: resrt
+        /* @grd1 */ r : ROUTES \ resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN 
@@ -98,10 +98,10 @@ OPERATIONS
   
   FRONT_MOVE_1(r) =
      PRE
-        /* @grd1 */ r : frm
-      & /* @grd2 */ fst(r) : resbl \ OCC
-      & /* @grd3 */ rsrtbl(fst(r)) = r
-      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
+          /* @grd1 */ r : frm
+        & /* @grd3 */ fst(r) : resbl \ OCC
+        & /* @grd2 */ r = rsrtbl(fst(r))
+        & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN 
          OCC := OCC \/ {fst(r)}
       ||
@@ -110,18 +110,15 @@ OPERATIONS
   
   FRONT_MOVE_2(b) =
      PRE
-        /* @grd1 */ b : OCC
-      & /* @grd2 */ b : dom(TRK)
+        /* @grd1 */ b : OCC /\ dom(TRK)
       & /* @grd3 */ TRK(b) /: OCC
-      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN 
          OCC := OCC \/ {TRK(b)}
     END;
   
   BACK_MOVE_1(b) =
     PRE
-        /* @grd1 */ b : LBT
-      & /* @grd2 */ b /: dom(TRK)
+        /* @grd1 */ b : LBT \ dom(TRK)
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN 
          OCC := OCC \ {b}
@@ -135,8 +132,7 @@ OPERATIONS
   
   BACK_MOVE_2(b) =
      PRE
-        /* @grd1 */ b : LBT
-      & /* @grd2 */ b : dom(TRK)
+        /* @grd1 */ b : LBT /\ dom(TRK)
       & /* @grd3 */ TRK(b) : OCC
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN 

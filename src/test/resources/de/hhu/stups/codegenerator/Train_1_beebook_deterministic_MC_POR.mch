@@ -45,16 +45,14 @@ INVARIANT
   /* @inv1 */ TRK : BLOCKS >+> BLOCKS
 
   & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
-  & /* @inv5 */ !(x,y).(x : BLOCKS & y : BLOCKS & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
+  & /* @inv5 */ !(x,y).(x : dom(TRK) & y : TRK[{x}] => #(r).(r : ROUTES & x |-> y : nxt(r)))
   & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
-  & /* @inv8 */ !(a,b).((a : BLOCKS & b : LBT & (b : dom(rsrtbl) & b : ran(nxt(rsrtbl(b))) & (a : dom(rsrtbl) & a = (nxt(rsrtbl(b))~)(b)))) => rsrtbl(a) /= rsrtbl(b))
+  & /* @inv8 */ !(a,b).(a : dom(rsrtbl) & b : LBT & (b : ran(nxt(rsrtbl(b))) & (a = (nxt(rsrtbl(b))~)(b))) => rsrtbl(a) /= rsrtbl(b))
   & /* @inv9 */ rsrtbl : resbl --> resrt
   & /* @inv10 */ rsrtbl <: rtbl
   & /* @inv11 */ OCC <: resbl
-  & /* @inv12 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
-  & /* @inv13 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
-  & /* @inv14 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
+  & /* @inv12 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {} & nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}] & nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
   & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl[OCC] <: frm
 ASSERTIONS
@@ -80,8 +78,7 @@ OPERATIONS
   route_reservation(r) =
 
     PRE
-      r : ROUTES
-      & /* @grd1 */ r /: resrt
+      /* @grd1 */ r : ROUTES \ resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
@@ -104,8 +101,8 @@ OPERATIONS
   FRONT_MOVE_1(r) =
     PRE
         /* @grd1 */ r : frm
-      & /* @grd2 */ fst(r) : resbl \ OCC
-      & /* @grd3 */ rsrtbl(fst(r)) = r
+      & /* @grd3 */ fst(r) : resbl \ OCC
+      & /* @grd2 */ r = rsrtbl(fst(r))
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \/ {fst(r)}
@@ -115,17 +112,15 @@ OPERATIONS
 
   FRONT_MOVE_2(b) =
     PRE
-        /* @grd1 */ b : OCC
-      & /* @grd2 */ b : dom(TRK)
-      & /* @grd3 */ TRK(b) /: OCC
+        /* @grd1 */ b : OCC /\ dom(TRK)
+      & /* @grd2 */ TRK(b) /: OCC
     THEN
          OCC := OCC \/ {TRK(b)}
     END;
 
   BACK_MOVE_1(b) =
     PRE
-        /* @grd1 */ b : LBT
-      & /* @grd2 */ b /: dom(TRK)
+      /* @grd1 */ b : LBT \ dom(TRK)
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \ {b}
@@ -139,9 +134,8 @@ OPERATIONS
 
   BACK_MOVE_2(b) =
     PRE
-        /* @grd1 */ b : LBT
-      & /* @grd2 */ b : dom(TRK)
-      & /* @grd3 */ TRK(b) : OCC
+        /* @grd1 */ b : LBT /\ dom(TRK)
+      & /* @grd2 */ TRK(b) : OCC
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \ {b}

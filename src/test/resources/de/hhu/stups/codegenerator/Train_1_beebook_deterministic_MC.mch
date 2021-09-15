@@ -45,7 +45,7 @@ INVARIANT
   /* @inv1 */ TRK : BLOCKS >+> BLOCKS
 
   & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
-  & /* @inv5 */ !(x,y).(x : BLOCKS & y : BLOCKS & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
+  & /* @inv5 */ !(x,y).(x : dom(TRK) & y : TRK[{x}] => #(r).(r : ROUTES & x |-> y : nxt(r)))
   & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
   & /* @inv8 */ !(a,b).((a : BLOCKS & b : LBT & (b : dom(rsrtbl) & b : ran(nxt(rsrtbl(b))) & (a : dom(rsrtbl) & a = (nxt(rsrtbl(b))~)(b)))) => rsrtbl(a) /= rsrtbl(b))
@@ -102,9 +102,10 @@ OPERATIONS
 
   FRONT_MOVE_1(r) =
     PRE
-        /* @grd1 */ r : frm
-      & /* @grd2 */ fst(r) : resbl \ OCC
-      & /* @grd3 */ rsrtbl(fst(r)) = r
+          /* @grd1 */ r : frm
+        & /* @grd2 */ r = rsrtbl(fst(r))
+        & /* @grd3 */ fst(r) : resbl \ OCC
+        & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          OCC := OCC \/ {fst(r)}
       ||

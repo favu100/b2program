@@ -169,11 +169,11 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-private <identifier>: BSet\<<type>\>  = <set_enumeration("", type, "", enums, false)>;
+private <identifier>: BSet = <set_enumeration("", type, "", enums, false)>;
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-<if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet\<<type>\><endif>(<enums; separator=", ">)
+<if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet<endif>(<enums; separator=", ">)
 >>
 
 seq_enumeration(type, elements) ::= <<

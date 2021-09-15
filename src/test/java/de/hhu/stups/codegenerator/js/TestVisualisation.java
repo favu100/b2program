@@ -19,4 +19,9 @@ public class TestVisualisation extends TestJs {
     public void testLightmodel() throws Exception {
         testJs("visualisation/PitmanController_TIME_MC_v4", "PitmanController_TIME_MC_v4", null, "blinking_visb_v4.json", false);
     }
+
+    @Test
+    public void testLift() throws Exception {
+        testJs("visualisation/Lift", "Lift", null, "lift_groups.json", false);
+    }
 }

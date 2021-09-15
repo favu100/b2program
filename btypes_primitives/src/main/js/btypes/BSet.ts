@@ -4,10 +4,10 @@ import {BObject} from "./BObject.js";
 import {BRelation} from "./BRelation.js";
 import {BString} from "./BString.js";
 import {BStruct} from "./BStruct.js";
+import * as immutable from "immutable";
 
 const {Set} = require("immutable");
 const {Map} = require("immutable");
-import * as immutable from "immutable";
 
 export class BSet<T extends BObject> implements BObject{
 
@@ -22,6 +22,9 @@ export class BSet<T extends BObject> implements BObject{
 				this.set = this.set.add(x)
 			}
 		}
+		//Make BSet iterable:
+		// @ts-ignore
+		this[Symbol.iterator] = this.set[Symbol.iterator].bind(this.set);
 	}
 
 	toString(): string {
@@ -63,31 +66,15 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	static immutableSetUnion<R extends BObject>(s1: immutable.Set<R>, s2: immutable.Set<R>): immutable.Set<R>{
-		let result;
-		if(s1.size > s2.size) {
-			result = s1;
-			for (let current_element of s2) {
-				result = result.add(current_element);
-			}
-		} else {
-			result = s2;
-			for (let current_element of s1) {
-				result = result.add(current_element);
-			}
-		}
-		return result;
+		return s1.union(s2);
 	}
 
 	static immutableSetDifference<R extends BObject>(s1: immutable.Set<R>, s2: immutable.Set<R>): immutable.Set<R> {
-		let result = s1;
-		for (let current_element of s2) {
-			result = result.remove(current_element);
-		}
-		return result;
+		return s1.subtract(s2);
 	}
 
 	static immutableSetIntersection<R extends BObject>(s1: immutable.Set<R>, s2: immutable.Set<R>): immutable.Set<R> {
-		return BSet.immutableSetDifference(s1, BSet.immutableSetDifference(s1, s2));
+		return s1.intersect(s2);
 	}
 
 	static immutableMapUnion<S extends BObject, T extends BObject>(m1: immutable.Map<S, immutable.Set<T>>,
@@ -433,6 +420,9 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	static interval(a: BInteger, b: BInteger): BSet<BInteger> {
+		if (b.less(a).booleanValue()) {
+			return new BSet();
+		}
 		const range = [...Array(b.minus(a).intValue() +1).keys()].map(e => new BInteger(e).plus(a));
 		return new BSet(Set(range));
 	}

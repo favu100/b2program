@@ -60,7 +60,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	intersect(relation: BRelation<S, T>): BRelation<S,T>  {
 		let otherMap: immutable.Map<S, immutable.Set<T>> = relation.map;
-		let otherDomain = otherMap.keys();
+		let otherDomain = Set(otherMap.keys());
 		let thisDomain = Set(this.map.keys());
 		let intersectionDomain = thisDomain.intersect(otherDomain);
 		let differenceDomain  = thisDomain.subtract(otherDomain);
@@ -648,12 +648,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		if(range != null) {
 			index = Math.floor(Math.random() * range.size);
 			i = 0;
-			range.forEach(obj => {
+			for (let obj of range) {
 				if (i == index) {
 					return new BTuple<S, T>(<S>domainElement, obj);
 				}
 				i++;
-			});
+			}
 		}
 		return null;
 	}

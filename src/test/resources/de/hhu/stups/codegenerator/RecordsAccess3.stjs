@@ -1,5 +1,3 @@
-let static: public void main(String[] args) {
-    RecordsAccess3 record = new RecordsAccess3();
-    record.calculate();
-    System.out.println(record.getRes());
-}
+let record: RecordsAccess3 = new RecordsAccess3();
+record.calculate();
+console.log(record.getRes());

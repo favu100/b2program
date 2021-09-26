@@ -29,7 +29,7 @@ updateVisuals();
 >>
 
 btype_import(type) ::= <<
-import <type> from "./btypes/<type>.js";
+import {<type>} from "./btypes/<type>.js";
 >>
 
 visualUpdate(machineVar, attribute, expression) ::= <<

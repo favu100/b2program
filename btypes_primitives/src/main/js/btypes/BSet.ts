@@ -4,10 +4,7 @@ import {BObject} from "./BObject.js";
 import {BRelation} from "./BRelation.js";
 import {BString} from "./BString.js";
 import {BStruct} from "./BStruct.js";
-import * as immutable from "immutable";
-
-const {Set} = require("immutable");
-const {Map} = require("immutable");
+import * as immutable from "../immutable/dist/immutable.es.js";
 
 export class BSet<T extends BObject> implements BObject{
 
@@ -17,14 +14,16 @@ export class BSet<T extends BObject> implements BObject{
 		if (args.length == 1 && args[0] instanceof immutable.Set) {
 			this.set = <immutable.Set<T>> args[0];
 		} else {
-			this.set = Set();
+			this.set = immutable.Set();
 			for(let x of args) {
 				this.set = this.set.add(x)
 			}
 		}
-		//Make BSet iterable:
-		// @ts-ignore
-		this[Symbol.iterator] = this.set[Symbol.iterator].bind(this.set);
+	}
+
+	/* Make this class iterable */
+	public [Symbol.iterator]() {
+		return this.set[Symbol.iterator]();
 	}
 
 	toString(): string {
@@ -46,7 +45,7 @@ export class BSet<T extends BObject> implements BObject{
 			if (this.set.size === 0) {
 				return new BSet();
 			} else if (this.set.values().next().value instanceof BSet) {
-				let result = Set();
+				let result = immutable.Set();
 				for (let current_set of this.set) {
 					result = BSet.immutableSetUnion(result, (<BSet<BObject>><unknown> current_set).set)
 				}
@@ -58,7 +57,7 @@ export class BSet<T extends BObject> implements BObject{
 				}
 				return <T><unknown> new BRelation(result);
 			} else {
-				throw new Error("Generalized Union is only possible on Sets of Sets or Relations");
+				throw new Error("Generalized Union is only possible on Sets of Sets or Relations.");
 			}
 		}
 		let result = BSet.immutableSetUnion(this.set, other.set);
@@ -107,8 +106,8 @@ export class BSet<T extends BObject> implements BObject{
 					let result_set = m2.get(result_element);
 					let current_set = m1.get(current_element);
 					result = result.set(result_element,
-						BSet.immutableSetIntersection(result_set !=null ? result_set : Set(),
-												      current_set !=null ? current_set: Set()));
+						BSet.immutableSetIntersection(result_set !=null ? result_set : immutable.Set(),
+												      current_set !=null ? current_set: immutable.Set()));
 					continue elem_loop;
 				}
 			}
@@ -216,21 +215,18 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	equals(other: any): boolean {
-		return this.equal(other);
+		return this.equal(other).booleanValue();
 	}
 
-	equal(other: any): boolean {
+	equal(other: any): BBoolean {
 		if (!(other instanceof BSet)) {
-			return false;
+			return new BBoolean(false);
 		}
-		return this.subset(other).and(other.subset(this)).booleanValue();
+		return this.subset(other).and(other.subset(this));
 	}
 
-	unequal(other: any): boolean {
-		if (other ! instanceof BSet) {
-			return true;
-		}
-		return this.set !== other.set
+	unequal(other: any): BBoolean {
+		return this.equal(other).not();
 	}
 
 	nondeterminism(): T {
@@ -424,7 +420,7 @@ export class BSet<T extends BObject> implements BObject{
 			return new BSet();
 		}
 		const range = [...Array(b.minus(a).intValue() +1).keys()].map(e => new BInteger(e).plus(a));
-		return new BSet(Set(range));
+		return new BSet(immutable.Set(range));
 	}
 
 	hashCode(): number {

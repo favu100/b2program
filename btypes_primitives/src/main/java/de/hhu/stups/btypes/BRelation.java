@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * Created by fabian on 15.01.19.
  */
-public class BRelation<S,T> implements Iterable<BTuple<S,T>> {
+public class BRelation<S,T> {
 
 	protected static final Var ASSOC;
 

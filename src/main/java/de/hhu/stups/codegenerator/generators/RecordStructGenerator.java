@@ -176,12 +176,15 @@ public class RecordStructGenerator {
     private List<String> generateOverwriteFunctions(RecordType recordType, String name) {
         List<String> functions = new ArrayList<>();
         List<String> identifiers = recordType.getIdentifiers();
+        String privateVariablePrefix = currentGroup.getInstanceOf("record_private_variable_prefix").render();
         for(int i = 0; i < identifiers.size(); i++) {
             ST function = currentGroup.getInstanceOf("record_field_override");
             TemplateHandler.add(function, "name", name);
             TemplateHandler.add(function, "field", identifiers.get(i));
             TemplateHandler.add(function, "type", typeGenerator.generate(recordType.getSubtypes().get(i)));
-            TemplateHandler.add(function,"parameters", identifiers);
+            final int currentIndex = i;
+            TemplateHandler.add(function,"parameters", identifiers.stream().map(
+                    identifier -> (identifiers.indexOf(identifier) != currentIndex)? privateVariablePrefix + identifier: identifier).collect(Collectors.toSet()));
             functions.add(function.render());
         }
         return functions;

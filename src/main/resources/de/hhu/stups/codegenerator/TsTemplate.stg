@@ -718,3 +718,7 @@ enum_import(name, machineName) ::= <<
 import {enum_<name>} from "./<machineName>.js"
 import {<name>} from "./<machineName>.js"
 >>
+
+record_private_variable_prefix() ::= <<
+this.
+>>

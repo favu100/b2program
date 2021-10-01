@@ -2,19 +2,17 @@ package de.hhu.stups.codegenerator.js;
 
 import de.hhu.stups.codegenerator.CodeGenerator;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.Assert.assertEquals;
 
 
@@ -41,9 +39,41 @@ public class TestJs {
 			outputStream.write(buffer, 0, size);
 	}
 
+	private void provideBTypesAndImmutables(Path machinePath) throws Exception{
+		Path machineDirectory = machinePath.getParent();
+		Path btypeDirectory = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("btypes").toURI());
+		if (Files.exists(btypeDirectory)) {
+			if (Files.notExists(machineDirectory.resolve("btypes"))) {
+				Files.copy(btypeDirectory, machineDirectory.resolve("btypes"), REPLACE_EXISTING);
+			}
+			File[] btypesJS = btypeDirectory.toFile().listFiles((directory, name) -> name.toLowerCase().endsWith(".js"));
+			if (btypesJS == null) {
+				throw new CodeGenerationException("BTypes must be provided in resources/test/btypes.");
+			}
+			for (File file : btypesJS) {
+				Files.copy(file.toPath(), machineDirectory.resolve("btypes/" + file.getName()), REPLACE_EXISTING);
+			}
+		}
+
+		Path immutableDirectory = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("immutable").toURI());
+		if (Files.exists(immutableDirectory)) {
+			if (Files.notExists(machineDirectory.resolve("immutable"))) {
+				Files.copy(btypeDirectory, machineDirectory.resolve("immutable"), REPLACE_EXISTING);
+			}
+			Files.copy(immutableDirectory.resolve("LICENSE"), machineDirectory.resolve("immutable/LICENSE"), REPLACE_EXISTING);
+			if(Files.notExists(machineDirectory.resolve("immutable/dist"))) {
+				Files.copy(immutableDirectory.resolve("dist"), machineDirectory.resolve("immutable/dist"), REPLACE_EXISTING);
+			}
+			Files.copy(immutableDirectory.resolve("dist/immutable.es.js"), machineDirectory.resolve("immutable/dist/immutable.es.js"), REPLACE_EXISTING);
+		}
+	}
+
 	public void testJs(String machine) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
+		provideBTypesAndImmutables(mchPath);
 		CodeGenerator codeGenerator = new CodeGenerator();
 		List<Path> tsFilePaths =
 				codeGenerator.generate(mchPath, GeneratorMode.TS, false,

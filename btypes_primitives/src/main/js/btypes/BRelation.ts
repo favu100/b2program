@@ -6,9 +6,7 @@ import {BString} from "./BString.js";
 import {BStruct} from "./BStruct.js";
 import {BObject} from "./BObject.js";
 
-const {Map} = require("immutable");
-const {Set} = require("immutable");
-import * as immutable from "immutable";
+import * as immutable from "../immutable/dist/immutable.es.js";
 
 export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
@@ -16,11 +14,11 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	constructor(...args: any[]) {
 		if (args.length === 0) {
-			this.map = Map()
+			this.map = immutable.Map()
 		} else if (args.length == 1 && args[0] instanceof immutable.Map) {
 			this.map = args[0] as immutable.Map<S, immutable.Set<T>>
 		} else {
-			this.map = Map()
+			this.map = immutable.Map()
 			for (let e of args) {
 				let key = e.projection1()
 				let value = e.projection2()
@@ -35,13 +33,13 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	static fromSet<S extends BObject,T extends BObject>(set: BSet<BTuple<S, T>> ): BRelation<S,T> {
-		let resultMap = Map();
+		let resultMap = immutable.Map();
 		set.getSet().forEach(e => {
 			let key: S = e.projection1();
 			let value: T = e.projection2();
 			let range: any = resultMap.get(key);
 			if(range == null) {
-				range = Set([value]);
+				range = immutable.Set([value]);
 				resultMap = resultMap.set(key, range);
 			} else {
 				range = range.add(value);
@@ -60,8 +58,8 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	intersect(relation: BRelation<S, T>): BRelation<S,T>  {
 		let otherMap: immutable.Map<S, immutable.Set<T>> = relation.map;
-		let otherDomain = Set(otherMap.keys());
-		let thisDomain = Set(this.map.keys());
+		let otherDomain = immutable.Set(otherMap.keys());
+		let thisDomain = immutable.Set(this.map.keys());
 		let intersectionDomain = thisDomain.intersect(otherDomain);
 		let differenceDomain  = thisDomain.subtract(otherDomain);
 		let resultMap: immutable.Map<S, immutable.Set<T>> = this.map;
@@ -73,7 +71,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		});
 
 		differenceDomain.forEach((domainElement: S) => {
-			resultMap = resultMap.set(domainElement, Set());
+			resultMap = resultMap.set(domainElement, immutable.Set());
 		});
 
 		return new BRelation<S,T>(resultMap);
@@ -82,7 +80,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	difference(relation: BRelation<S, T>): BRelation<S, T> {
 		let otherMap: immutable.Map<S, immutable.Set<T>> = relation.map;
 		let otherDomain = otherMap.keys();
-		let thisDomain = Set(this.map.keys());
+		let thisDomain = immutable.Set(this.map.keys());
 		let differenceDomain = thisDomain.subtract(otherDomain);
 		let restDomain = thisDomain.subtract(differenceDomain);
 
@@ -94,33 +92,34 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		});
 
 		restDomain.forEach((domainElement: S) => {
-			resultMap = resultMap.set(domainElement, Set());
+			resultMap = resultMap.set(domainElement, immutable.Set());
 		});
 		return new BRelation<S,T>(resultMap);
 	}
 
 	union(relation: BRelation<S, T>): BRelation<S, T> {
 		let otherMap = relation.map;
-		let otherDomain = Set(otherMap.keys());
+		let otherDomain = immutable.Set(otherMap.keys());
 
 		let resultMap = this.map;
         for (let domainElement of otherDomain) {
 			let thisRangeSet = this.map.get(domainElement);
 			let otherRangeSet = <immutable.Set<T>> otherMap.get(domainElement);
-			resultMap = resultMap.set(domainElement, thisRangeSet != null? thisRangeSet.union(otherRangeSet) : otherRangeSet);
+			resultMap = resultMap.set(domainElement, thisRangeSet == null? otherRangeSet:otherRangeSet == null? otherRangeSet: thisRangeSet.union(otherRangeSet));
 		}
 		return new BRelation<S,T>(resultMap);
 	}
 
 	size(): number {
 		let size: number = 0;
-		let thisDomain = Set(this.map.keys());
+		let thisDomain = immutable.Set(this.map.keys());
 
 		for(let domainElement of thisDomain) {
 			let thisRangeSet = this.map.get(domainElement);
-			if(thisRangeSet != null) {
-				size += thisRangeSet.size;
+			if(thisRangeSet == null) {
+				continue;
 			}
+			size += thisRangeSet.size;
 		}
 		return size;
 	}
@@ -164,7 +163,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	relationImage(domain: BSet<S> ): BSet<T> {
-		let resultSet = Set();
+		let resultSet = immutable.Set();
 		for (let this_domain_elem of this.map.keys()){
 			for(let other_domain_elem of domain.set) {
 				if(other_domain_elem.equals(this_domain_elem)) {
@@ -198,7 +197,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	pow(): BSet<BRelation<S,T>> {
 		let thisMap = this.map;
-		let thisDomain = Set(thisMap.keys());
+		let thisDomain = immutable.Set(thisMap.keys());
 
 
 		let result: BSet<BRelation<S,T>> = new BSet<BRelation<S,T>>();
@@ -237,7 +236,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 	
 	domain(): BSet<S> {
-		let resultSet = Set(this.map.keys());
+		let resultSet = immutable.Set(this.map.keys());
 		for(let domainElement of this.map.keys()) {
 			let range = <immutable.Set<T>> this.map.get(domainElement)
 			if(range.size === 0) {
@@ -248,13 +247,13 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	range(): BSet<T> {
-		let set = Set.union(this.map.values());
+		let set = immutable.Set.union(this.map.values());
 		return new BSet<T>(set);
 	}
 
 	inverse(): BRelation<T,S> {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		let keys = Set(thisMap.keys());
+		let keys = immutable.Set(thisMap.keys());
 
 		let resultMap: immutable.Map<T, immutable.Set<S>> = immutable.Map<T, immutable.Set<S>>();
 		for(let domainElement of keys) {
@@ -300,7 +299,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	rangeRestriction(arg: BSet<T>): BRelation<S,T> {
 		let otherSet: immutable.Set<T> = arg.getSet();
-		let thisDomain = Set(this.map.keys());
+		let thisDomain = immutable.Set(this.map.keys());
 
 		let resultMap = this.map
 		for(let domainElement of thisDomain) {
@@ -312,7 +311,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	rangeSubstraction(arg: BSet<T>): BRelation<S, T> {
 		let otherSet = arg.getSet();
-		let thisDomain = Set(this.map.keys());
+		let thisDomain = immutable.Set(this.map.keys());
 
 		let resultMap = this.map
 		for(let domainElement of thisDomain) {
@@ -325,7 +324,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	override(arg: BRelation<S,T>): BRelation<S,T> {
 		let otherMap = arg.map;
 
-		let otherDomain = Set(otherMap.keys());
+		let otherDomain = immutable.Set(otherMap.keys());
 
 		let resultMap = this.map;
 		outer_loop:
@@ -353,10 +352,10 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	reverse(): BRelation<S,T> {
 		let size: BInteger = this.card();
-		let resultMap: Map<S, Set<T>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 		for(let i: BInteger = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			let rangeElement: T = this.functionCall(<S><unknown>size.minus(i).succ());
-			resultMap = resultMap.set(<S><unknown>i, Set([rangeElement]));
+			resultMap = resultMap.set(<S><unknown>i, immutable.Set([rangeElement]));
 		}
 		return new BRelation<S, T>(resultMap);
 	}
@@ -367,10 +366,10 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	tail(): BRelation<S,T> {
 		let size: BInteger = this.card()
-		let resultMap: Map<S, Set<T>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 		for(let i: BInteger = new BInteger(2); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			let rangeElement: T = this.functionCall(<S><unknown>i);
-			resultMap = resultMap.set(<S><unknown>i.pred(),Set([rangeElement]));
+			resultMap = resultMap.set(<S><unknown>i.pred(), immutable.Set([rangeElement]));
 		}
 		return new BRelation<S, T>(resultMap);
 	}
@@ -397,7 +396,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	drop(n: BInteger): BRelation<S,T> {
 		let size: BInteger = this.card();
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		let resultMap: immutable.Map<S, immutable.Set<T>> = Map();
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map();
 		for(let i: BInteger = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			let currentSet = thisMap.get(<S><unknown>i);
 			resultMap = resultMap.set(<S><unknown>i.minus(n), <immutable.Set<T>> currentSet);
@@ -426,18 +425,18 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	append(arg: T): BRelation<S,T> {
 		let resultMap = this.map
-		resultMap = resultMap.set(<S><unknown>this.card().succ(), Set([arg]));
+		resultMap = resultMap.set(<S><unknown>this.card().succ(), immutable.Set([arg]));
 		return new BRelation<S, T>(resultMap);
 	}
 	
 	prepend(arg: T): BRelation<S,T> {
-		let resultMap: immutable.Map<S, immutable.Set<T>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
 		let size: BInteger = this.card()
 		for(let i: BInteger = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			resultMap = resultMap.set(<S><unknown>i.succ(), <immutable.Set<T>> thisMap.get(<S><unknown>i));
 		}
-		resultMap = resultMap.set(<S><unknown>new BInteger(1), Set([arg]));
+		resultMap = resultMap.set(<S><unknown>new BInteger(1), immutable.Set([arg]));
 		return new BRelation<S, T>(resultMap);
 	}
 
@@ -446,17 +445,17 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let thisDomain = immutable.Set(thisMap.keys());
 		let otherMap = arg.map;
 
-		let resultMap: Map<S, Set<T>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 		for(let domainElement of thisDomain) {
 			let thisRange: immutable.Set<T> = <immutable.Set<T>> this.map.get(domainElement)
 			let otherRange = otherMap.get(domainElement);
 			if(otherRange == undefined) {
 				continue;
 			}
-			let resultRange = Set();
+			let resultRange = immutable.Set();
 			thisRange.forEach(lhs => {
 				otherRange!.forEach(rhs => {
-					resultRange = Set.union([resultRange, Set([new BTuple<T,R>(lhs, rhs)])]);
+					resultRange = immutable.Set.union([resultRange, immutable.Set([new BTuple<T,R>(lhs, rhs)])]);
 				});
 			});
 			resultMap = resultMap.set(domainElement, resultRange);
@@ -466,12 +465,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	parallelProduct<R extends BObject,A extends BObject>(arg: BRelation<R,A>): BRelation<BTuple<S,R>,BTuple<T,A>> {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		let thisDomain = Set(thisMap.keys());
+		let thisDomain = immutable.Set(thisMap.keys());
 
 		let otherMap: immutable.Map<R, immutable.Set<A>> = arg.map;
-		let otherDomain = Set(otherMap.keys());
+		let otherDomain = immutable.Set(otherMap.keys());
 
-		let resultMap: immutable.Map<S, immutable.Set<T>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 
 		for(let domainElementThis of thisDomain) {
 			for(let domainElementOther of otherDomain) {
@@ -496,7 +495,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
 		let otherMap = arg.map;
 
-		let resultMap: immutable.Map<S, immutable.Set<R>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<R>> = immutable.Map()
 
 		for(let domainElement of this.map.keys()) {
 			let range: immutable.Set<T> = <immutable.Set<T>> this.map.get(domainElement)
@@ -557,11 +556,11 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let argSet1 = arg1.getSet();
 		let argSet2 = arg2.getSet();
 
-		let resultMap: Map<BTuple<BObject, BObject>, Set<BObject>> = Map()
+		let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
 		argSet1.forEach(e1 => {
 			argSet2.forEach(e2 => {
 				let tuple: BTuple<S,T> = new BTuple<S,T>(e1, e2);
-				resultMap = resultMap.set(tuple, Set([e1]));
+				resultMap = resultMap.set(tuple, immutable.Set([e1]));
 			});
 		});
 		return new BRelation<BTuple<S, T>, S>(resultMap);
@@ -572,12 +571,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let argSet1 = arg1.getSet();
 		let argSet2 = arg2.getSet();
 
-		let resultMap: Map<BTuple<S, T>, Set<T>> = Map()
+		let resultMap: immutable.Map<BTuple<S, T>, immutable.Set<T>> = immutable.Map()
 		argSet1.forEach(e1 => {
 			argSet2.forEach(e2 => {
 
 				let tuple: BTuple<S,T> = new BTuple<S,T>(e1, e2);
-				resultMap = resultMap.set(tuple, Set([e2]));
+				resultMap = resultMap.set(tuple, immutable.Set([e2]));
 			});
 		});
 		return new BRelation<BTuple<S, T>, T>(resultMap);
@@ -588,11 +587,11 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
 		let domain = this.domain().getSet();
 
-		let resultMap: Map<S, Set<BSet<T>>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<BSet<T>>> = immutable.Map()
 		domain.forEach(domainElement => {
 			let range = thisMap.get(domainElement);
 			let rangeSet: BSet<T> = new BSet<T>([range]);
-			resultMap = resultMap.set(domainElement, Set([rangeSet]));
+			resultMap = resultMap.set(domainElement, immutable.Set([rangeSet]));
 		});
 		return new BRelation<S, BSet<T>>(resultMap);
 	}
@@ -600,7 +599,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	rel<R extends BObject>(): BRelation<S,R> {
 		let domain: immutable.Set<S> = this.domain().getSet();
 
-		let resultMap: Map<S, Set<T>> = Map()
+		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 		domain.forEach(domainElement => {
 			let range: BSet<R> = <BSet<R>><unknown>this.functionCall(domainElement);
 			let rangeSet = range.getSet();
@@ -610,9 +609,9 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
     static identity<T extends BObject>(arg: BSet<T>):  BRelation<T,T> {
-		let resultMap: Map<T, Set<T>> = Map()
+		let resultMap: immutable.Map<T, immutable.Set<T>> = immutable.Map()
 		arg.getSet().forEach(e => {
-			resultMap = resultMap.set(e, Set([e]));
+			resultMap = resultMap.set(e, immutable.Set([e]));
 		});
 		return new BRelation<T, T>(resultMap);
 	}
@@ -628,7 +627,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	
 	nondeterminism(): BTuple<S,T> | null {
-		let domain = Set(this.map.keys());
+		let domain = immutable.Set(this.map.keys());
 		let index: number = Math.floor(Math.random() * domain.size);
 		let i: number = 0;
 		let domainElement: S | undefined = undefined;
@@ -875,14 +874,14 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	
 	isInjection(): BBoolean {
-		let visited = Set();
+		let visited = immutable.Set();
 		this.domain().getSet().forEach(element => {
 			let range = <immutable.Set<T>> this.map.get(element);
 			range.forEach(rangeElement => {
 				if(visited.contains(rangeElement)) {
 					return new BBoolean(false);
 				}
-				visited = visited.union(Set([rangeElement]));
+				visited = visited.union(immutable.Set([rangeElement]));
 			});
 		});
 		return new BBoolean(true);

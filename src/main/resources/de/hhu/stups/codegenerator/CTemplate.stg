@@ -304,3 +304,6 @@ skip() ::= <<
 
 enum-import() ::= <<
 >>
+
+record_private_variable_prefix() ::= <<
+>>

@@ -16,7 +16,7 @@ public class TestVisualisation extends TestJs {
 
     @Test
     public void testButton() throws Exception {
-        testJs("visualisation3/Button", "Button", "ButtonAddition.stjs", "Button.json", false);
+        testJs("visualisation/Button", "Button", null, "button.json", false);
     }
 
     @Test

@@ -1,5 +1,4 @@
-"use strict";
-export default class BBoolean {
+export class BBoolean {
     constructor(value) {
         if (typeof (value) === 'boolean') {
             this.value = value;
@@ -30,7 +29,7 @@ export default class BBoolean {
         return new BBoolean(this.value === other.value);
     }
     equals(other) {
-        if (other instanceof BBoolean) {
+        if (!(other instanceof BBoolean)) {
             return false;
         }
         return this.equal(other).booleanValue();

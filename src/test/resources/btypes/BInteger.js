@@ -1,6 +1,5 @@
-"use strict";
-import BBoolean from "./BBoolean.js";
-export default class BInteger {
+import { BBoolean } from './BBoolean.js';
+export class BInteger {
     constructor(value) {
         this.value = value;
     }

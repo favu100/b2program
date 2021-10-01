@@ -38,7 +38,7 @@ export class BBoolean implements BObject{
     }
 
     equals(other: any): boolean {
-        if (other !instanceof BBoolean) {
+        if (!(other instanceof BBoolean)) {
             return false;
         }
         return this.equal(other).booleanValue();

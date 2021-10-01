@@ -1,24 +1,24 @@
-"use strict";
-import BBoolean from "./BBoolean.js";
-import BInteger from "./BInteger.js";
-import BObject from "./BObject.js";
-import BRelation from "./BRelation.js";
-import BString from "./BString.js";
-import BStruct from "./BStruct.js";
-import immutable from "../immutable/dist/immutable.es.js";
-const {Set, Map} = immutable;
-
-export default class BSet {
+import { BBoolean } from "./BBoolean.js";
+import { BInteger } from "./BInteger.js";
+import { BRelation } from "./BRelation.js";
+import { BString } from "./BString.js";
+import { BStruct } from "./BStruct.js";
+import * as immutable from "../immutable/dist/immutable.es.js";
+export class BSet {
     constructor(...args) {
-        if (args.length == 1 && args[0] instanceof Set) {
+        if (args.length == 1 && args[0] instanceof immutable.Set) {
             this.set = args[0];
         }
         else {
-            this.set = Set();
+            this.set = immutable.Set();
             for (let x of args) {
                 this.set = this.set.add(x);
             }
         }
+    }
+    /* Make this class iterable */
+    [Symbol.iterator]() {
+        return this.set[Symbol.iterator]();
     }
     toString() {
         let sb = "{";
@@ -37,52 +37,34 @@ export default class BSet {
                 return new BSet();
             }
             else if (this.set.values().next().value instanceof BSet) {
-                let result = Set();
+                let result = immutable.Set();
                 for (let current_set of this.set) {
                     result = BSet.immutableSetUnion(result, current_set.set);
                 }
                 return new BSet(result);
             }
             else if (this.set.values().next().value instanceof BRelation) {
-                let result = Map();
+                let result = immutable.Map();
                 for (let current_set of this.set) {
                     result = BSet.immutableMapUnion(result, current_set.map);
                 }
                 return new BRelation(result);
             }
             else {
-                throw new Error("Generalized Union is only possible on Sets of Sets or Relations");
+                throw new Error("Generalized Union is only possible on immutable.Sets of immutable.Sets or Relations");
             }
         }
         let result = BSet.immutableSetUnion(this.set, other.set);
         return new BSet(result);
     }
     static immutableSetUnion(s1, s2) {
-        let result = s2;
-        elem_loop: for (let current_element of s1) {
-            for (let result_element of result) {
-                if (current_element.equals(result_element)) {
-                    continue elem_loop;
-                }
-            }
-            result = result.add(current_element);
-        }
-        return result;
+        return s1.union(s2);
     }
     static immutableSetDifference(s1, s2) {
-        let result = s1;
-        elem_loop: for (let current_element of s2) {
-            for (let result_element of result) {
-                if (current_element.equals(result_element)) {
-                    result = result.remove(result_element);
-                    continue elem_loop;
-                }
-            }
-        }
-        return result;
+        return s1.subtract(s2);
     }
     static immutableSetIntersection(s1, s2) {
-        return BSet.immutableSetDifference(s1, BSet.immutableSetDifference(s1, s2));
+        return s1.intersect(s2);
     }
     static immutableMapUnion(m1, m2) {
         let result = m2;
@@ -91,7 +73,7 @@ export default class BSet {
                 if (current_element.equals(result_element)) {
                     let result_set = result.get(result_element);
                     let current_set = m1.get(current_element);
-                    result = result.set(result_element, BSet.immutableSetUnion(result_set != null ? result_set :Set(), current_set != null ? current_set :Set()));
+                    result = result.set(result_element, BSet.immutableSetUnion(result_set != null ? result_set : immutable.Set(), current_set != null ? current_set : immutable.Set()));
                     continue outer_loop;
                 }
             }
@@ -100,13 +82,13 @@ export default class BSet {
         return result;
     }
     static immutableMapIntersection(m1, m2) {
-        let result = Map();
+        let result = immutable.Map();
         elem_loop: for (let result_element of m2.keys()) {
             for (let current_element of m1.keys()) {
                 if (current_element.equals(result_element)) {
                     let result_set = m2.get(result_element);
                     let current_set = m1.get(current_element);
-                    result = result.set(result_element, BSet.immutableSetIntersection(result_set != null ? result_set :Set(), current_set != null ? current_set :Set()));
+                    result = result.set(result_element, BSet.immutableSetIntersection(result_set != null ? result_set : immutable.Set(), current_set != null ? current_set : immutable.Set()));
                     continue elem_loop;
                 }
             }
@@ -134,7 +116,7 @@ export default class BSet {
                 return new BRelation(result);
             }
             else {
-                throw new Error("Generalized Intersection is only possible on Sets of Sets or Relations");
+                throw new Error("Generalized Intersection is only possible on immutable.Sets of immutable.Sets or Relations");
             }
         }
         let new_set = BSet.immutableSetDifference(this.set, BSet.immutableSetDifference(this.set, other.set));
@@ -199,19 +181,16 @@ export default class BSet {
         return this.set.size === 0;
     }
     equals(other) {
-        return this.equal(other);
+        return this.equal(other).booleanValue();
     }
     equal(other) {
         if (!(other instanceof BSet)) {
-            return false;
+            return new BBoolean(false);
         }
-        return this.subset(other).and(other.subset(this)).booleanValue();
+        return this.subset(other).and(other.subset(this));
     }
     unequal(other) {
-        if (other instanceof BSet) {
-            return true;
-        }
-        return this.set !== other.set;
+        return this.equal(other).not();
     }
     nondeterminism() {
         let values = [];
@@ -302,7 +281,7 @@ export default class BSet {
     }
     subsetOfString() {
         for (let element of this.set) {
-            if (element instanceof BString) {
+            if (!(element instanceof BString)) {
                 return false;
             }
         }
@@ -319,7 +298,7 @@ export default class BSet {
     }
     subsetOfStruct() {
         for (let element of this.set) {
-            if (element instanceof BStruct) {
+            if (!(element instanceof BStruct)) {
                 return false;
             }
         }
@@ -368,8 +347,11 @@ export default class BSet {
         return this.set;
     }
     static interval(a, b) {
+        if (b.less(a).booleanValue()) {
+            return new BSet();
+        }
         const range = [...Array(b.minus(a).intValue() + 1).keys()].map(e => new BInteger(e).plus(a));
-        return new BSet(Set(range));
+        return new BSet(immutable.Set(range));
     }
     hashCode() {
         return this.set.hashCode();

@@ -842,3 +842,7 @@ public static void main(String[] args) {
     printResult(numberStates.get(), transitions.get(), deadlockDetected, invariantViolated.get());
 }
 >>
+
+record_private_variable_prefix() ::= <<
+>>
+

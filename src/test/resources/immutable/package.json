@@ -125,5 +125,6 @@
     "sequence",
     "iteration"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "type": "module"
 }

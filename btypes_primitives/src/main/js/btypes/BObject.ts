@@ -1,4 +1,9 @@
-export interface BObject {
-    equals(other: any): boolean;
-    hashCode(): number;
+export class BObject {
+    equals(other: any): boolean {
+        return false
+    }
+
+    hashCode(): number {
+        return 0
+    }
 }

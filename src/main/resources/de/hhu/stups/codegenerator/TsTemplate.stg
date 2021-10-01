@@ -7,13 +7,13 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 <imports; separator="\n">
 <enum_imports; separator="\n">
 <includedMachines; separator="\n">
-import BUtils from "./btypes/BUtils.js";
+import {BUtils} from "./btypes/BUtils.js";
 
 <enums; separator="\n\n">
 
-export default class <machine> {
+<structs; separator= "\n\n">
 
-    <structs; separator= "\n\n">
+export default class <machine> {
 
     <includes; separator="\n">
 
@@ -57,7 +57,7 @@ _get_<variable>(): <returnType> {
 >>
 
 struct(name, declarations, parameters, initializations, functions, equalPredicates, unequalPredicates, fields, values) ::= <<
-public <name> = class extends BStruct {
+class <name> extends BStruct {
     <declarations; separator="\n">
 
     constructor(<parameters; separator=", ">) {
@@ -89,7 +89,7 @@ public <name> = class extends BStruct {
 
     hashCode(): number {
         let result: number = 1;
-        <fields: {field | result = 31 * result + (<field>.hashCode() \<\< 1);}; separator="\n">
+        <fields: {field | result = 31 * result + (this.<field>.hashCode() \<\< 1);}; separator="\n">
         return result;
     }
 }
@@ -169,7 +169,7 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-private <identifier>: BSet = <set_enumeration("", type, "", enums, false)>;
+private <identifier>: BSet\<<type>\> = <set_enumeration("", type, "", enums, false)>;
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -396,7 +396,7 @@ BUtils.BOOL
 >>
 
 include_declaration(type, identifier) ::= <<
-/*this.*/<declaration(type, identifier)> = new <type>();
+<declaration(type, identifier)> = new <type>();
 >>
 
 global_declaration(type, identifier) ::= <<
@@ -480,7 +480,7 @@ BRelation\<<leftType>, <rightType>\>
 >>
 
 import_type(type) ::= <<
-import <type> from './btypes/<type>.js';
+import {<type>} from './btypes/<type>.js';
 >>
 
 import_machine(machine) ::= <<
@@ -717,4 +717,8 @@ skip() ::= <<
 enum_import(name, machineName) ::= <<
 import {enum_<name>} from "./<machineName>.js"
 import {<name>} from "./<machineName>.js"
+>>
+
+record_private_variable_prefix() ::= <<
+this.
 >>

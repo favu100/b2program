@@ -70,12 +70,25 @@ sourceSets.test.runtimeClasspath += files(sourceSets.main.java.srcDirs)
 
 
 tasks.withType(JavaExec) {
-    if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('deferred_set_size') && project.hasProperty('file')) {
-        def arguments = []
-        if(!(project.hasProperty('minint') && project.hasProperty('maxint'))) {
-            arguments = [language, big_integer, -2147483648, 2147483647, deferred_set_size]
+    if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('file')) {
+        def arguments = [language, big_integer]
+
+        if(project.hasProperty('minint')) {
+            arguments.add(minint)
         } else {
-            arguments = [language, big_integer, minint, maxint, deferred_set_size]
+            arguments.add(-2147483648)
+        }
+
+        if(project.hasProperty('maxint')) {
+            arguments.add(maxint)
+        } else {
+            arguments.add(2147483647)
+        }
+
+        if(project.hasProperty('deferred_set_size')) {
+            arguments.add(deferred_set_size)
+        } else {
+            arguments.add(10)
         }
 
         if(project.hasProperty('useConstraintSolving')) {

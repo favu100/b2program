@@ -355,21 +355,20 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 #### JAR-File
 
 1. Run `./gradlew fatJar` to build the JAR-file
-2. Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as the machine
-3. Generate code from the machine
+2. Generate code from the machine
 
 ```bash
 # Java
-java -jar B2Program-all-0.1.0-SNAPSHOT java <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking> <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar java <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking> <file_path_relative_to_jar_file>
 
 # C++
-java -jar B2Program-all-0.1.0-SNAPSHOT cpp <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
 # Python
-java -jar B2Program-all-0.1.0-SNAPSHOT python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
 # C
-java -jar B2Program-all-0.1.0-SNAPSHOT c <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar c <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 ```
 
 Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`  are not optional when using JAR-File.

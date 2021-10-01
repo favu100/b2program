@@ -12,7 +12,7 @@ public class TemplateHandler {
     * This function replaces the given placeholder by the given information to the given template
     */
     public static void add(ST template, String key, Object object) {
-        if(template.getAttributes() != null && template.getAttributes().keySet().contains(key)) {
+        if(template.getAttributes() != null && template.getAttributes().containsKey(key)) {
             template.add(key,object);
         }
     }

@@ -1,6 +1,5 @@
-"use strict";
-import BBoolean from "./BBoolean.js";
-export default class BTuple {
+import { BBoolean } from "./BBoolean.js";
+export class BTuple {
     constructor(first, second) {
         if (first == null || second == null) {
             throw new RangeError("Arguments of Tuple cant be null or undefined");

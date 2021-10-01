@@ -1,6 +1,5 @@
-"use strict";
-import BBoolean from "./BBoolean.js";
-export default class BString {
+import { BBoolean } from "./BBoolean.js";
+export class BString {
     constructor(value) {
         this.value = value;
     }
@@ -43,4 +42,5 @@ export default class BString {
         }
         return hash;
     }
+    ;
 }

@@ -355,8 +355,7 @@ Comments are ignored during code generation. Furthermore trees and pragmas are n
 #### JAR-File
 
 1. Run `./gradlew fatJar` to build the JAR-file
-2. Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as the machine
-3. Generate code from the machine
+2. Generate code from the machine
 
 ```bash
 # Java

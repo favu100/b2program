@@ -12,6 +12,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ModelCheckingGenerator {
@@ -198,6 +199,53 @@ public class ModelCheckingGenerator {
         }
         return result;
     }
+
+    public List<String> generateHashEqual() {
+        return Arrays.asList(generateEqual(), generateUnequal(), generateHash());
+    }
+
+    public String generateEqual() {
+        ST template = currentGroup.getInstanceOf("machine_equal");
+        TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
+        List<String> predicates = new ArrayList<>();
+        for(String var : modelCheckingInfo.getVariables()) {
+            ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
+            TemplateHandler.add(predicateTemplate, "var", var);
+            predicates.add(predicateTemplate.render());
+        }
+        TemplateHandler.add(template, "predicates", predicates);
+        return template.render();
+    }
+
+    public String generateUnequal() {
+        ST template = currentGroup.getInstanceOf("machine_unequal");
+        TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
+        List<String> predicates = new ArrayList<>();
+        for(String var : modelCheckingInfo.getVariables()) {
+            ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
+            TemplateHandler.add(predicateTemplate, "var", var);
+            predicates.add(predicateTemplate.render());
+        }
+        TemplateHandler.add(template, "predicates", predicates);
+        return template.render();
+    }
+
+    public String generateHash() {
+        ST template = currentGroup.getInstanceOf("machine_hash");
+        List<String> assignments = new ArrayList<>();
+        int i = 0;
+        for(String var : modelCheckingInfo.getVariables()) {
+            ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
+            TemplateHandler.add(assignmentTemplate, "isFirst", i == 0);
+            TemplateHandler.add(assignmentTemplate, "var", var);
+            assignments.add(assignmentTemplate.render());
+            i++;
+        }
+        TemplateHandler.add(template, "assignments", assignments);
+        return template.render();
+    }
+
+
 
     public void setModelCheckingInfo(ModelCheckingInfo modelCheckingInfo) {
         this.modelCheckingInfo = modelCheckingInfo;

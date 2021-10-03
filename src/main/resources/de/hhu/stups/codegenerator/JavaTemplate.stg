@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions, modelcheck) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, modelcheck, lambdaFunctions) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -61,6 +61,24 @@ public class <machine> {
 
 }
 
+>>
+
+machine_unequal() ::= <<
+>>
+
+machine_unequal_predicate() ::= <<
+>>
+
+machine_equal() ::= <<
+>>
+
+machine_equal_predicate() ::= <<
+>>
+
+machine_hash() ::= <<
+>>
+
+machine_hash_assignment() ::= <<
 >>
 
 getter(returnType, variable) ::= <<
@@ -332,7 +350,7 @@ public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationNam
     return <predicate>.booleanValue();
     <endif>
     <else>
-    BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();
+    BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
     <combination>
     return <identifier>;
     <endif>

@@ -434,6 +434,43 @@ class BRelation : public BObject {
             return BRelation<S,T>(resultMap);
         }
 
+        BBoolean subset(const BRelation<S,T>& arg) {
+
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> thisMap = this->map;
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> otherMap = arg.map;
+
+            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+                S domainElement = pair.first;
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
+
+                const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = otherMap.find(domainElement);
+                if(rangePtr == nullptr) {
+                    return BBoolean(false);
+                }
+
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRange = thisMap[domainElement];
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> otherRange = otherMap[domainElement];
+                if(thisRange.size() > 0 && otherRange.size() == 0) {
+                    return BBoolean(false);
+                }
+
+                for(const T& rangeElement : thisRange) {
+                    if(otherRange.count(rangeElement) == 0) {
+                        return BBoolean(false);
+                    }
+                }
+            }
+            return new BBoolean(true);
+        }
+
+        BBoolean notSubset(const BRelation<S,T>& arg) {
+            return subset(arg)._not();
+        }
+
     	BSet<BRelation<S,T>> pow() const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,

@@ -147,7 +147,11 @@ class BRelation : public BObject {
                             resultSet = resultSet.erase(rangeElement);
                         }
                     }
-                    resultMap = resultMap.set(domainElement, resultSet);
+                    if(resultSet.size() == 0) {
+                        resultMap = resultMap.erase(domainElement);
+                    } else {
+                        resultMap = resultMap.set(domainElement, resultSet);
+                    }
                 }
             }
             return BRelation<S,T>(resultMap);
@@ -178,7 +182,13 @@ class BRelation : public BObject {
                             resultSet = resultSet.erase(rangeElement);
                         }
                     }
-                    resultMap = resultMap.set(domainElement, resultSet);
+                    if(resultSet.size() == 0) {
+                        resultMap = resultMap.erase(domainElement);
+                    } else {
+                        resultMap = resultMap.set(domainElement, resultSet);
+                    }
+                } else {
+                    resultMap = resultMap.erase(domainElement);
                 }
             }
             return BRelation<S,T>(resultMap);
@@ -384,7 +394,11 @@ class BRelation : public BObject {
                     }
                 }
 
-                resultMap = resultMap.set(domainElement, resultRange);
+                if(resultRange.size() == 0) {
+                    resultMap = resultMap.erase(domainElement);
+                } else {
+                    resultMap = resultMap.set(domainElement, resultRange);
+                }
             }
             return BRelation<S,T>(resultMap);
         }
@@ -411,7 +425,11 @@ class BRelation : public BObject {
                     }
                 }
 
-                resultMap = resultMap.set(domainElement, resultRange);
+                if(resultRange.size() == 0) {
+                    resultMap = resultMap.erase(domainElement);
+                } else {
+                    resultMap = resultMap.set(domainElement, resultRange);
+                }
             }
             return BRelation<S,T>(resultMap);
         }
@@ -477,7 +495,11 @@ class BRelation : public BObject {
             for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : otherMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = otherMap[domainElement];
-                resultMap = resultMap.set(domainElement, range);
+                if(range.size() == 0) {
+                    resultMap = resultMap.erase(domainElement);
+                } else {
+                    resultMap = resultMap.set(domainElement, range);
+                }
             }
             return BRelation<S,T>(resultMap);
         }

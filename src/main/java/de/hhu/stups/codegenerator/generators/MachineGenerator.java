@@ -332,8 +332,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy_constructor");
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
-			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(node.getVariables(), OperationGenerator.DeclarationType.PARAMETER, false));
-			TemplateHandler.add(template, "assignments", node.getVariables().stream()
+			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
+			parameters.addAll(node.getVariables());
+			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
+			TemplateHandler.add(template, "assignments", parameters.stream()
 					.map(this::generateCopyAssignment)
 					.collect(Collectors.toList()));
 			return template.render();
@@ -350,8 +352,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private String generateCopy(MachineNode node) {
 		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy");
+			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
+			parameters.addAll(node.getVariables());
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
-			TemplateHandler.add(template, "parameters", node.getVariables().stream()
+			TemplateHandler.add(template, "parameters", parameters.stream()
 					.map(variable -> nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
 					.collect(Collectors.toList()));
 			return template.render();

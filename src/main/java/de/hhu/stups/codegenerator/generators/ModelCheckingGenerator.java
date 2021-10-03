@@ -34,11 +34,13 @@ public class ModelCheckingGenerator {
 
     public String generate(MachineNode machineNode, boolean forModelChecking, boolean isIncludedMachine) {
         if(forModelChecking && !isIncludedMachine) {
+            typeGenerator.setFromOutside(true);
             ST template = currentGroup.getInstanceOf("model_check");
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
             TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
             TemplateHandler.add(template, "printResult", generatePrintResult());
             TemplateHandler.add(template, "main", generateMain(machineNode));
+            typeGenerator.setFromOutside(false);
             return template.render();
         }
         return "";

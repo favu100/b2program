@@ -582,8 +582,8 @@ void() ::= <<
 void
 >>
 
-type(type, fromOtherMachine, otherMachine) ::= <<
-<if(fromOtherMachine)><otherMachine>::<endif><type>
+type(type, fromOtherMachine, fromOutside, otherMachine) ::= <<
+<if(fromOtherMachine || fromOutside)><otherMachine>::<endif><type>
 >>
 
 tuple_type(leftType, rightType) ::=<<

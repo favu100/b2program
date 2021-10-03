@@ -350,7 +350,7 @@ public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationNam
     return <predicate>.booleanValue();
     <endif>
     <else>
-    BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
+    BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();
     <combination>
     return <identifier>;
     <endif>

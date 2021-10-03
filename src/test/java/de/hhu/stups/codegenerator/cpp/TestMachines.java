@@ -141,6 +141,11 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void Train1LukasPORv3() throws Exception {
+        testCppMC("Train1_Lukas_POR_v3");
+    }
+
+    @Test
     public void testCanBusTLCExec() throws Exception {
         testCpp("CAN_BUS_tlc_exec");
     }

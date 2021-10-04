@@ -123,27 +123,27 @@ class BInteger : public BObject {
           return strm << b.value;
         }
 
-        BBoolean isInteger() {
+        BBoolean isInteger() const {
             return BBoolean(true);
         }
 
-        BBoolean isNotInteger() {
+        BBoolean isNotInteger() const {
             return BBoolean(false);
         }
 
-        BBoolean isNatural() {
+        BBoolean isNatural() const {
             return this->greaterEqual(BInteger(0));
         }
 
-        BBoolean isNotNatural() {
+        BBoolean isNotNatural() const {
             return this->isNatural()._not();
         }
 
-        BBoolean isNatural1() {
+        BBoolean isNatural1() const {
             return this->greater(BInteger(0));
         }
 
-        BBoolean isNotNatural1() {
+        BBoolean isNotNatural1() const {
             return this->isNatural1()._not();
         }
 };

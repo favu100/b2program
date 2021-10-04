@@ -121,18 +121,14 @@ o1.<var>() == o2.<var>()
 
 machine_hash(assignments) ::= <<
 int hashCode() const {
-    int result = 0;
+    int result = 1;
     <assignments; separator= "\n">
     return result;
 }
 >>
 
-machine_hash_assignment(isFirst, var) ::= <<
-<if(isFirst)>
-result = (this-><var>()).hashCode();
-<else>
-result = result ^ ((this-><var>()).hashCode() \<\< 1);
-<endif>
+machine_hash_assignment(var) ::= <<
+result = (31 * result) ^ ((this-><var>()).hashCode() \<\< 1);
 >>
 
 
@@ -505,7 +501,7 @@ class <name> : public BObject {
         }
 
         int hashCode() const {
-            return static_cast\<int>(value);
+            return (31 * 1) ^ (static_cast\<int>(value) \<\< 1);
         }
 };
 >>

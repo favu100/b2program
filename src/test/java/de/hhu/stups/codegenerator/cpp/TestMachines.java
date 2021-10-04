@@ -182,6 +182,11 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void Train1BeebookDeterministic_MC_POR_v2() throws Exception {
+        testCppMC("Train_1_beebook_deterministic_MC_POR_v2");
+    }
+
+    @Test
     public void Train1BeebookDeterministicExec() throws Exception {
         testCpp("Train_1_beebook_deterministic_exec");
     }

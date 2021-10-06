@@ -86,6 +86,11 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testLiftMC() throws Exception {
+        testCppMC("Lift_MC");
+    }
+
+    @Test
     public void testCruiseController1() throws Exception {
         testCpp("Cruise_finite1");
     }
@@ -98,6 +103,11 @@ public class TestMachines extends TestCpp {
     @Test
     public void testCruiseControllerDeterministic() throws Exception {
         testCpp("Cruise_finite1_deterministic");
+    }
+
+    @Test
+    public void testCruiseControllerDeterministic_MC() throws Exception {
+        testCppMC("Cruise_finite1_deterministic_MC");
     }
 
     @Test
@@ -126,6 +136,16 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testCanBusMC() throws Exception {
+        testCppMC("CAN_BUS_tlc");
+    }
+
+    @Test
+    public void Train1LukasPORv3() throws Exception {
+        testCppMC("Train1_Lukas_POR_v3");
+    }
+
+    @Test
     public void testCanBusTLCExec() throws Exception {
         testCpp("CAN_BUS_tlc_exec");
     }
@@ -147,6 +167,11 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testsort_m2_data1000_MC() throws Exception {
+        testCppMC("sort_m2_data1000_MC");
+    }
+
+    @Test
     public void Train1BeebookTLC() throws Exception {
         testCpp("Train_1_beebook_TLC");
     }
@@ -154,6 +179,11 @@ public class TestMachines extends TestCpp {
     @Test
     public void Train1BeebookDeterministic() throws Exception {
         testCpp("Train_1_beebook_deterministic");
+    }
+
+    @Test
+    public void Train1BeebookDeterministic_MC_POR_v2() throws Exception {
+        testCppMC("Train_1_beebook_deterministic_MC_POR_v2");
     }
 
     @Test

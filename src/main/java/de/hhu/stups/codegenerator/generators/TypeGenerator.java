@@ -28,6 +28,8 @@ public class TypeGenerator {
 
     private RecordStructGenerator recordStructGenerator;
 
+    private boolean fromOutside = false;
+
     public TypeGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator) {
         this.group = group;
         this.nameHandler = nameHandler;
@@ -142,6 +144,7 @@ public class TypeGenerator {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "fromOtherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()) != null && !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
         TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
+        TemplateHandler.add(template, "fromOutside", fromOutside);
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();
     }
@@ -153,6 +156,7 @@ public class TypeGenerator {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "fromOtherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()) != null && !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
         TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
+        TemplateHandler.add(template, "fromOutside", fromOutside);
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();
     }
@@ -172,4 +176,7 @@ public class TypeGenerator {
         this.declarationGenerator = declarationGenerator;
     }
 
+    public void setFromOutside(boolean fromOutside) {
+        this.fromOutside = fromOutside;
+    }
 }

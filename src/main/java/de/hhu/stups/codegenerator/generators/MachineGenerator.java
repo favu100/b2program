@@ -116,6 +116,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final InfiniteSetGenerator infiniteSetGenerator;
 
+	private final ModelCheckingGenerator modelCheckingGenerator;
+
 	private final boolean forModelChecking;
 
 	private final boolean useBigInteger;
@@ -170,6 +172,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
+		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator);
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
@@ -209,6 +212,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		if(forModelChecking && !isIncludedMachine) {
 			importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
 		}
+		modelCheckingGenerator.setModelCheckingInfo(generateModelCheckingInfo(node));
 	}
 
 	private void initializeLambdaFunctions() {
@@ -247,6 +251,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", generateInvariant(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
+		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqual());
+		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine));
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
@@ -326,8 +332,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy_constructor");
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
-			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(node.getVariables(), OperationGenerator.DeclarationType.PARAMETER, false));
-			TemplateHandler.add(template, "assignments", node.getVariables().stream()
+			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
+			parameters.addAll(node.getVariables());
+			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
+			TemplateHandler.add(template, "assignments", parameters.stream()
 					.map(this::generateCopyAssignment)
 					.collect(Collectors.toList()));
 			return template.render();
@@ -344,8 +352,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private String generateCopy(MachineNode node) {
 		if(forModelChecking && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy");
+			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
+			parameters.addAll(node.getVariables());
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
-			TemplateHandler.add(template, "parameters", node.getVariables().stream()
+			TemplateHandler.add(template, "parameters", parameters.stream()
 					.map(variable -> nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
 					.collect(Collectors.toList()));
 			return template.render();

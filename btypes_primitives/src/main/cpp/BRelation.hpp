@@ -147,7 +147,11 @@ class BRelation : public BObject {
                             resultSet = resultSet.erase(rangeElement);
                         }
                     }
-                    resultMap = resultMap.set(domainElement, resultSet);
+                    if(resultSet.size() == 0) {
+                        resultMap = resultMap.erase(domainElement);
+                    } else {
+                        resultMap = resultMap.set(domainElement, resultSet);
+                    }
                 }
             }
             return BRelation<S,T>(resultMap);
@@ -178,7 +182,13 @@ class BRelation : public BObject {
                             resultSet = resultSet.erase(rangeElement);
                         }
                     }
-                    resultMap = resultMap.set(domainElement, resultSet);
+                    if(resultSet.size() == 0) {
+                        resultMap = resultMap.erase(domainElement);
+                    } else {
+                        resultMap = resultMap.set(domainElement, resultSet);
+                    }
+                } else {
+                    resultMap = resultMap.erase(domainElement);
                 }
             }
             return BRelation<S,T>(resultMap);
@@ -384,7 +394,11 @@ class BRelation : public BObject {
                     }
                 }
 
-                resultMap = resultMap.set(domainElement, resultRange);
+                if(resultRange.size() == 0) {
+                    resultMap = resultMap.erase(domainElement);
+                } else {
+                    resultMap = resultMap.set(domainElement, resultRange);
+                }
             }
             return BRelation<S,T>(resultMap);
         }
@@ -411,9 +425,50 @@ class BRelation : public BObject {
                     }
                 }
 
-                resultMap = resultMap.set(domainElement, resultRange);
+                if(resultRange.size() == 0) {
+                    resultMap = resultMap.erase(domainElement);
+                } else {
+                    resultMap = resultMap.set(domainElement, resultRange);
+                }
             }
             return BRelation<S,T>(resultMap);
+        }
+
+        BBoolean subset(const BRelation<S,T>& arg) {
+
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> thisMap = this->map;
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> otherMap = arg.map;
+
+            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+                S domainElement = pair.first;
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
+
+                const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = otherMap.find(domainElement);
+                if(rangePtr == nullptr) {
+                    return BBoolean(false);
+                }
+
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRange = thisMap[domainElement];
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> otherRange = otherMap[domainElement];
+                if(thisRange.size() > 0 && otherRange.size() == 0) {
+                    return BBoolean(false);
+                }
+
+                for(const T& rangeElement : thisRange) {
+                    if(otherRange.count(rangeElement) == 0) {
+                        return BBoolean(false);
+                    }
+                }
+            }
+            return new BBoolean(true);
+        }
+
+        BBoolean notSubset(const BRelation<S,T>& arg) const {
+            return subset(arg)._not();
         }
 
     	BSet<BRelation<S,T>> pow() const {
@@ -477,7 +532,11 @@ class BRelation : public BObject {
             for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : otherMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = otherMap[domainElement];
-                resultMap = resultMap.set(domainElement, range);
+                if(range.size() == 0) {
+                    resultMap = resultMap.erase(domainElement);
+                } else {
+                    resultMap = resultMap.set(domainElement, range);
+                }
             }
             return BRelation<S,T>(resultMap);
         }
@@ -583,7 +642,7 @@ class BRelation : public BObject {
     		return result;
     	}
 
-    	BRelation<S,T> append(const T& arg) {
+    	BRelation<S,T> append(const T& arg) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
@@ -594,7 +653,7 @@ class BRelation : public BObject {
             return BRelation<S,T>(resultMap);
     	}
 
-    	BRelation<S,T> prepend(const T& arg) {
+    	BRelation<S,T> prepend(const T& arg) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;
@@ -615,7 +674,7 @@ class BRelation : public BObject {
     	}
 
     	template<typename R>
-    	BRelation<S,BTuple<T,R>> directProduct(const BRelation<S,R>& arg) {
+    	BRelation<S,BTuple<T,R>> directProduct(const BRelation<S,R>& arg) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;
@@ -647,7 +706,7 @@ class BRelation : public BObject {
     	}
 
     	template<typename R,typename A>
-    	BRelation<BTuple<S,R>,BTuple<T,A>> parallelProduct(const BRelation<R,A>& arg) {
+    	BRelation<BTuple<S,R>,BTuple<T,A>> parallelProduct(const BRelation<R,A>& arg) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;
@@ -683,7 +742,7 @@ class BRelation : public BObject {
     	}
 
     	template<typename R>
-    	BRelation<S,R> composition(const BRelation<T,R>& arg) {
+    	BRelation<S,R> composition(const BRelation<T,R>& arg) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;
@@ -836,36 +895,36 @@ class BRelation : public BObject {
             return BRelation<S,R>(resultMap);
     	}
 
-    	BBoolean isTotal(const BSet<S>& domain) {
+    	BBoolean isTotal(const BSet<S>& domain) const {
     		return this->domain().equal(domain);
     	}
 
-    	BBoolean isTotalInteger() {
+    	BBoolean isTotalInteger() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isTotalNatural() {
+    	BBoolean isTotalNatural() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isTotalNatural1() {
+    	BBoolean isTotalNatural1() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isTotalString() {
+    	BBoolean isTotalString() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isTotalStruct() {
+    	BBoolean isTotalStruct() const {
     	    return BBoolean(false);
     	}
 
-    	BBoolean isPartial(const BSet<S>& domain) {
+    	BBoolean isPartial(const BSet<S>& domain) const {
     		return this->domain().strictSubset(domain);
     	}
 
 
-    	BBoolean isPartialInteger() {
+    	BBoolean isPartialInteger() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BInteger)) {
     				return BBoolean(true);
@@ -876,7 +935,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean isPartialNatural() {
+    	BBoolean isPartialNatural() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger) element).isNatural().booleanValue()) {
     				return BBoolean(false);
@@ -885,7 +944,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean isPartialNatural1() {
+    	BBoolean isPartialNatural1() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
     				return BBoolean(false);
@@ -894,7 +953,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean isPartialString() {
+    	BBoolean isPartialString() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
     				return BBoolean(false);
@@ -903,7 +962,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean isPartialStruct() {
+    	BBoolean isPartialStruct() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
@@ -912,11 +971,11 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkDomain(const BSet<S>& domain) {
+    	BBoolean checkDomain(const BSet<S>& domain) const {
     		return this->domain().subset(domain);
     	}
 
-    	BBoolean checkDomainInteger() {
+    	BBoolean checkDomainInteger() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BInteger)) {
     				return BBoolean(true);
@@ -927,7 +986,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkDomainNatural() {
+    	BBoolean checkDomainNatural() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
     				return BBoolean(false);
@@ -936,7 +995,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkDomainNatural1() {
+    	BBoolean checkDomainNatural1() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
     				return BBoolean(false);
@@ -945,7 +1004,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkDomainString() {
+    	BBoolean checkDomainString() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
     				return BBoolean(false);
@@ -954,7 +1013,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkDomainStruct() {
+    	BBoolean checkDomainStruct() const {
     		for(S element : this->domain()) {
     			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
@@ -963,11 +1022,11 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkRange(const BSet<T>& range) {
+    	BBoolean checkRange(const BSet<T>& range) const {
     		return this->range().subset(range);
     	}
 
-    	BBoolean checkRangeInteger() {
+    	BBoolean checkRangeInteger() const {
     		for(T element : this->range()) {
     			if(typeid(element) == typeid(BInteger)) {
     				return BBoolean(true);
@@ -978,7 +1037,7 @@ class BRelation : public BObject {
     		return new BBoolean(true);
     	}
 
-    	BBoolean checkRangeNatural() {
+    	BBoolean checkRangeNatural() const {
     		for(T element : this->range()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
     				return BBoolean(false);
@@ -987,7 +1046,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkRangeNatural1() {
+    	BBoolean checkRangeNatural1() const {
     		for(T element : this->range()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
     				return BBoolean(false);
@@ -996,7 +1055,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkRangeString() {
+    	BBoolean checkRangeString() const {
     		for(T element : this->range()) {
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
     				return BBoolean(false);
@@ -1005,7 +1064,7 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean checkRangeStruct() {
+    	BBoolean checkRangeStruct() const {
     		for(T element : this->range()) {
     			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
@@ -1014,11 +1073,11 @@ class BRelation : public BObject {
     		return BBoolean(true);
     	}
 
-    	BBoolean isRelation() {
+    	BBoolean isRelation() const {
     		return BBoolean(true);
     	}
 
-    	BBoolean isFunction() {
+    	BBoolean isFunction() const {
     	    for(S element : this->domain()) {
     	        immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = this->map[element];
     	        if(range.size() > 1) {
@@ -1028,31 +1087,31 @@ class BRelation : public BObject {
     	    return BBoolean(true);
     	}
 
-    	BBoolean isSurjection(const BSet<T>& range) {
+    	BBoolean isSurjection(const BSet<T>& range) const {
     		return this->range().equal(range);
     	}
 
-    	BBoolean isSurjectionInteger() {
+    	BBoolean isSurjectionInteger() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isSurjectionNatural() {
+    	BBoolean isSurjectionNatural() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isSurjectionNatural1() {
+    	BBoolean isSurjectionNatural1() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isSurjectionString() {
+    	BBoolean isSurjectionString() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isSurjectionStruct() {
+    	BBoolean isSurjectionStruct() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isInjection() {
+    	BBoolean isInjection() const {
     	    immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> visited;
     	    for(S element : this->domain()) {
     	        immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = this->map[element];
@@ -1066,27 +1125,27 @@ class BRelation : public BObject {
     	    return BBoolean(true);
     	}
 
-    	BBoolean isBijection(const BSet<T>& range) {
+    	BBoolean isBijection(const BSet<T>& range) const {
     		return isSurjection(range)._and(isInjection());
     	}
 
-    	BBoolean isBijectionInteger() {
+    	BBoolean isBijectionInteger() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isBijectionNatural() {
+    	BBoolean isBijectionNatural() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isBijectionNatural1() {
+    	BBoolean isBijectionNatural1() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isBijectionString() {
+    	BBoolean isBijectionString() const {
     		return BBoolean(false);
     	}
 
-    	BBoolean isBijectionStruct() {
+    	BBoolean isBijectionStruct() const {
     		return BBoolean(false);
     	}
 
@@ -1240,14 +1299,11 @@ class BRelation : public BObject {
 
             int size = this->size();
             int i = 0;
-            int result = 0;
+            int result = 1;
             for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
                 for(T rangeElement : range) {
-                    if(i == 0) {
-                        result = domainElement.hashCode() ^ (rangeElement.hashCode() << 1);
-                    }
                     result = result ^ ((domainElement.hashCode() ^ (rangeElement.hashCode() << 1)) << 1);
                     ++i;
                 }

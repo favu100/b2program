@@ -106,7 +106,7 @@ class BBoolean : public BObject {
         }
 
         int hashCode() const {
-            return value == true ? 1 : 0;
+            return (31 * 1) ^ (value == true ? 1 : 0 << 1);
         }
 
         friend std::ostream& operator<<(std::ostream &strm, const BBoolean &b) {

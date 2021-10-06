@@ -17,6 +17,7 @@ template<typename T>
 class BSet : public BObject {
 
     public:
+
         typedef BSet<T> current_type;
         typedef T value_type;
         typedef void left_type;
@@ -78,7 +79,7 @@ class BSet : public BObject {
             immer::set<T,Hash, HashEqual> result = this->set;
             for (const T& obj : this->set) {
                 if(set.set.count(obj) == 0) {
-                    result = std::move(result).erase(obj);
+                    result = result.erase(obj);
                 }
             }
             return BSet(result);
@@ -108,14 +109,16 @@ class BSet : public BObject {
             immer::set<T, Hash, HashEqual> result = this->set;
             for (const T& obj : set.set) {
                 if(result.count(obj) == 1) {
-                    result = std::move(result).erase(obj);
+                    result = result.erase(obj);
                 }
             }
             return BSet(result);
         }
 
         BSet<T> _union(const BSet<T>& set) const {
-            if(this->size() > set.size()) {
+            int thisSize = this->size();
+            int otherSize = set.size();
+            if(thisSize > otherSize) {
                 immer::set<T,Hash, HashEqual> result = this->set;
                 for (const T& obj : set.set) {
                     if(result.count(obj) == 0) {
@@ -151,6 +154,7 @@ class BSet : public BObject {
             }
             return BSet(result);
         }
+
 
         BInteger card() const {
             return BInteger(set.size());
@@ -458,12 +462,9 @@ class BSet : public BObject {
         }
 
         int hashCode() const {
-            int result = 0;
+            int result = 1;
             int i = 0;
             for(const T& s : this->set) {
-                if(i == 0) {
-                    result = s.hashCode();
-                }
                 result = result ^ (s.hashCode() << 1);
                 ++i;
             }

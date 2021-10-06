@@ -137,7 +137,7 @@ public class TransitionGenerator {
     /*
      * This function extracts the couple type from a list of declarations
      */
-    private BType extractTypeFromDeclarations(List<DeclarationNode> declarations) {
+    public BType extractTypeFromDeclarations(List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             return declarations.get(0).getType();
         }

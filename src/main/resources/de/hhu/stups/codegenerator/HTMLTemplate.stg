@@ -18,6 +18,14 @@ html(machineName, svgName, btypeImports) ::= <<
     \<div style="text-align: center; grid-column: -1;">Event\</div>
   \</div>
   \<div id="_history_view">\</div>
+  \<div id="_state_view">
+    \<div id="_state_view_variables" class="state_view_section">
+        \<div class="state_view_header">Variables\</div>
+    \</div>
+    \<div id="_state_view_constants" class="state_view_section">
+            \<div class="state_view_header">Constants\</div>
+        \</div>
+  \</div>
   \<script type="module" src="./immutable/dist/immutable.es.js">\</script>
   <btypeImports; separator="\n">
   \<script type="module" src="./<machineName>.js">\</script>
@@ -42,6 +50,15 @@ html(machineName, svgName, btypeImports) ::= <<
     overflow-y  : auto;
     padding-right: 18px;
     max-height: 90vh;
+}
+.state_view_section {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0px 20px;
+}
+.state_view_header {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid black;
 }
 body{
 display: flex;

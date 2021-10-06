@@ -3,19 +3,30 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, importedEnums, machineEnums) ::= <<
+visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, importedEnums, machineEnums, variables, constants, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js"
 <importedEnums; separator="\n">
 <machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
 <machineEnums : {enum | import {enum_<enum>\} from "./<machineName>.js"<\n>}>
 <imports; separator="\n">
 
-var _machine = new <machineName>();
+var <initialMachineVar()> = new <machineName>();
+var _included_machines = {};
+_included_machines["<machineName>"] = <initialMachineVar()>;
+<includedMachines; separator="\n">
+var _state_view_vars = document.getElementById("_state_view_variables");
+var _state_view_consts = document.getElementById("_state_view_constants");
 var _svg_vars = {}
-<machineVars : {machineVar | _svg_vars["<machineVar>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
+<machineVars: {machineVar | _svg_vars["<machineVar>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
+var _machine_vars = {}
+var _var_label;
+var _var_div;
+<variables; separator="\n">
+<constants; separator="\n">
 
 function updateVisuals (){
   <visualUpdates; separator="\n">
+  <variableUpdates; separator="\n">
 }
 
 _operations_view = document.getElementById("_operations_view");
@@ -36,17 +47,22 @@ visualUpdate(machineVar, attribute, expression) ::= <<
 _svg_vars["<machineVar>"].setAttribute("<attribute>", <expression>);
 >>
 
+variableUpdate(variable, machineName) ::= <<
+_machine_vars["<variable>"].innerHTML = _included_machines["<machineName>"]._get_<variable>();
+>>
+
 event(machineEvent, svgName, parameterCreation, parameterNames) ::= <<
 _param_div = document.createElement("div");
 _param_div.classList.add("param");
+var <machineEvent> = document.createElement("button");
 <parameterCreation: {param| <param><\n>}>
 _operations_view.appendChild(_param_div);
 
-var <machineEvent> = document.createElement("button");
+
 <machineEvent>.style.gridColumn="-1";
 <machineEvent>.innerHTML = "<machineEvent>";
 _onclick_function = function() {
-  _machine.<machineEvent>(<parameterNames: {param| <param>.getValue(), }>);
+  <initialMachineVar()>.<machineEvent>(<parameterNames: {param| <machineEvent>["<param>"].getValue(), }>);
   updateVisuals();
   var history_element = document.createElement("span");
   history_element.innerHTML = "<machineEvent>\</br>";
@@ -57,29 +73,66 @@ _operations_view.appendChild(<machineEvent>);
 >>
 
 onclick_event(machineEventId, svgName) ::= <<
-_svg_events["<machineEventId>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineEventId>")
+_svg_events["<machineEventId>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineEventId>");
 _svg_events["<machineEventId>"].onclick = _onclick_function;
 >>
 
 parameter(name, getValueMethod, eventName) ::= <<
 var <name>_label = document.createElement("label")
-<name>_label.textContent = "<name>:"
-<name>_label.htmlFor="<name>"
-_param_div.appendChild(<name>_label)
-var <name> = document.createElement("input")
-<name>.id="<name>"
+<name>_label.textContent = "<name>:";
+<name>_label.htmlFor="<name>";
+_param_div.appendChild(<name>_label);
+var <name> = document.createElement("input");
+<name>.id="<name>";
 <getValueMethod>
-_param_div.appendChild(<name>)
+_param_div.appendChild(<name>);
+<eventName>["<name>"] = <name>;
 >>
 
 boolValue(name) ::= <<
-<name>.getValue = function() {return new BBoolean(<name>.value == "true")}
+<name>.getValue = function() {return new BBoolean(this.value == "true")}
 >>
 
 intValue(name) ::= <<
-<name>.getValue = function() {return new BInteger(parseInt(<name>.value))}
+<name>.getValue = function() {return new BInteger(parseInt(this.value))}
 >>
 
 enumValue(name, enum) ::= <<
-<name>.getValue = function() {return <enum>["get_" + <name>.value]()}
+<name>.getValue = function() {return <enum>["get_" + this.value]()}
+>>
+
+variable(var, machineName) ::= <<
+_var_div = document.createElement("div");
+_var_div.innerHTML = _included_machines["<machineName>"]._get_<var>();
+_var_div.id = "_var_<var>";
+_machine_vars["<var>"] = _var_div;
+_var_label = document.createElement("label");
+_var_label.htmlFor = "_var_<var>";
+_var_label.innerHTML = "<machineName>.<var>";
+_state_view_vars.appendChild(_var_label);
+_state_view_vars.appendChild(_var_div);
+>>
+
+constant(var, machineName) ::= <<
+_var_div = document.createElement("div");
+_var_div.innerHTML = _included_machines["<machineName>"]._get_<var>();
+_var_div.id = "_var_<var>";
+_machine_vars["<var>"] = _var_div;
+_var_label = document.createElement("label");
+_var_label.htmlFor = "_var_<var>";
+_var_label.innerHTML = "<machineName>.<var>";
+_state_view_consts.appendChild(_var_label);
+_state_view_consts.appendChild(_var_div);
+>>
+
+initialMachineVar() ::= <<
+_machine
+>>
+
+getMachineFromMachine(machine, includedMachine) ::= <<
+<machine>._<includedMachine>
+>>
+
+mapIncludedMachineName(machineName, pathFromMainMachine) ::= <<
+_included_machines["<machineName>"] = <pathFromMainMachine>;
 >>

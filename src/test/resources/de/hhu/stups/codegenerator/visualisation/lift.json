@@ -1,0 +1,267 @@
+{
+  "svg":"lift.svg",
+  "items":[
+    {
+      "id":"floor_2",
+      "attr":"visibility",
+      "value":"IF topf=2 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"floor_1",
+      "attr":"visibility",
+      "value":"IF topf:{1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"floor_0",
+      "attr":"visibility",
+      "value":"IF topf:{0,1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"floor_U",
+      "attr":"visibility",
+      "value":"IF groundf=-1 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"text_2",
+      "attr":"visibility",
+      "value":"IF topf=2 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"text_1",
+      "attr":"visibility",
+      "value":"IF topf:{1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"text_0",
+      "attr":"visibility",
+      "value":"IF topf:{0,1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"text_U",
+      "attr":"visibility",
+      "value":"IF groundf=-1 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_text_2",
+      "attr":"visibility",
+      "value":"IF topf=2 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_text_1",
+      "attr":"visibility",
+      "value":"IF topf:{1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_text_0",
+      "attr":"visibility",
+      "value":"IF topf:{0,1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_text_U",
+      "attr":"visibility",
+      "value":"IF groundf=-1 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"button_2",
+      "attr":"visibility",
+      "value":"IF topf=2 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"button_1",
+      "attr":"visibility",
+      "value":"IF topf:{1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"button_0",
+      "attr":"visibility",
+      "value":"IF topf:{0,1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"button_U",
+      "attr":"visibility",
+      "value":"IF groundf=-1 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_2",
+      "attr":"visibility",
+      "value":"IF topf=2 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_1",
+      "attr":"visibility",
+      "value":"IF topf:{1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_0",
+      "attr":"visibility",
+      "value":"IF topf:{0,1,2} THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"inside_U",
+      "attr":"visibility",
+      "value":"IF groundf=-1 THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"lift",
+      "attr":"fill",
+      "value":"IF door_open=TRUE THEN \"#ffeeaa\" ELSE \"#ac9393\" END"
+    },
+    {
+      "id":"lift",
+      "attr":"y",
+      "value":"IF cur_floor=2 THEN \"3.207\" ELSIF cur_floor=1 THEN \"76.974\" ELSIF cur_floor=0 THEN \"150.474\" ELSE \"224.574\" END"
+    },
+    {
+      "id":"door_right",
+      "attr":"y",
+      "value":"IF cur_floor=2 THEN \"3.207\" ELSIF cur_floor=1 THEN \"76.974\" ELSIF cur_floor=0 THEN \"150.474\" ELSE \"224.574\" END"
+    },
+    {
+      "id":"door_left",
+      "attr":"y",
+      "value":"IF cur_floor=2 THEN \"3.207\" ELSIF cur_floor=1 THEN \"76.974\" ELSIF cur_floor=0 THEN \"150.474\" ELSE \"224.574\" END"
+    },
+    {
+      "id":"button_U",
+      "attr":"fill",
+      "value":"IF -1:call_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"button_0",
+      "attr":"fill",
+      "value":"IF 0:call_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"button_1",
+      "attr":"fill",
+      "value":"IF 1:call_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"button_2",
+      "attr":"fill",
+      "value":"IF 2:call_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"inside_U",
+      "attr":"fill",
+      "value":"IF -1:inside_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"inside_0",
+      "attr":"fill",
+      "value":"IF 0:inside_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"inside_1",
+      "attr":"fill",
+      "value":"IF 1:inside_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"inside_2",
+      "attr":"fill",
+      "value":"IF 2:inside_buttons THEN \"#FF0000\" ELSE \"#FF8080\" END"
+    },
+    {
+      "id":"reverse_up",
+      "attr":"visibility",
+      "value":"IF direction_up=TRUE THEN \"hidden\" ELSE \"visible\" END"
+    },
+    {
+      "id":"reverse_down",
+      "attr":"visibility",
+      "value":"IF direction_up=FALSE THEN \"hidden\" ELSE \"visible\" END"
+    },
+    {
+      "id":"open_door",
+      "attr":"visibility",
+      "value":"IF door_open=TRUE THEN \"hidden\" ELSE \"visible\" END"
+    },
+    {
+      "id":"close_door",
+      "attr":"visibility",
+      "value":"IF door_open=FALSE THEN \"hidden\" ELSE \"visible\" END"
+    }
+  ],
+  "events":[
+    {
+      "id":"button_U",
+      "event":"push_call_button",
+      "predicates":[
+        "b=-1"
+      ]
+    },
+    {
+      "id":"button_0",
+      "event":"push_call_button",
+      "predicates":[
+        "b=0"
+      ]
+    },
+    {
+      "id":"button_1",
+      "event":"push_call_button",
+      "predicates":[
+        "b=1"
+      ]
+    },
+    {
+      "id":"button_2",
+      "event":"push_call_button",
+      "predicates":[
+        "b=2"
+      ]
+    },
+    {
+      "id":"inside_U",
+      "event":"push_inside_button",
+      "predicates":[
+        "b=-1"
+      ]
+    },
+    {
+      "id":"inside_0",
+      "event":"push_inside_button",
+      "predicates":[
+        "b=0"
+      ]
+    },
+    {
+      "id":"inside_1",
+      "event":"push_inside_button",
+      "predicates":[
+        "b=1"
+      ]
+    },
+    {
+      "id":"inside_2",
+      "event":"push_inside_button",
+      "predicates":[
+        "b=2"
+      ]
+    },
+    {
+      "id":"close_door",
+      "event":"close_door"
+    },
+    {
+      "id":"open_door",
+      "event":"open_door"
+    },
+    {
+      "id":"up",
+      "event":"move_up"
+    },
+    {
+      "id":"down",
+      "event":"move_down"
+    },
+    {
+      "id":"reverse_up",
+      "event":"reverse_lift_up"
+    },
+    {
+      "id":"reverse_down",
+      "event":"reverse_lift_down"
+    }
+  ]
+}

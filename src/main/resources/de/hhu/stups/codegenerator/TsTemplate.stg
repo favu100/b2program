@@ -50,6 +50,24 @@ export default class <machine> {
 <addition>
 >>
 
+machine_unequal() ::= <<
+>>
+
+machine_unequal_predicate() ::= <<
+>>
+
+machine_equal() ::= <<
+>>
+
+machine_equal_predicate() ::= <<
+>>
+
+machine_hash() ::= <<
+>>
+
+machine_hash_assignment() ::= <<
+>>
+
 getter(returnType, variable) ::= <<
 _get_<variable>(): <returnType> {
     return this.<variable>;
@@ -717,6 +735,34 @@ skip() ::= <<
 enum_import(name, machineName) ::= <<
 import {enum_<name>} from "./<machineName>.js"
 import {<name>} from "./<machineName>.js"
+>>
+
+model_check() ::= <<
+>>
+
+model_check_next_states() ::= <<
+>>
+
+model_check_transition() ::= <<
+>>
+
+model_check_transition_body() ::= <<
+>>
+
+model_check_transition_param_assignment() ::= <<
+>>
+
+model_check_evaluate_state() ::= <<
+>>
+
+model_check_evaluate_variable() ::= <<
+>>
+
+model_check_print() ::= <<
+>>
+
+
+model_check_main() ::= <<
 >>
 
 record_private_variable_prefix() ::= <<

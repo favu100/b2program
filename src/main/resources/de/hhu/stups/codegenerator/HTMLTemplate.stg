@@ -20,10 +20,10 @@ html(machineName, svgName, btypeImports) ::= <<
   \<div id="_history_view">\</div>
   \<div id="_state_view">
     \<div id="_state_view_variables" class="state_view_section">
-        \<div class="state_view_header">Variables\</div>
+        \<div class="state_view_header collapsed" onclick="collapse(this)">Variables\</div>
     \</div>
     \<div id="_state_view_constants" class="state_view_section">
-            \<div class="state_view_header">Constants\</div>
+            \<div class="state_view_header collapsed" onclick="collapse(this)">Constants\</div>
         \</div>
   \</div>
   \<script type="module" src="./immutable/dist/immutable.es.js">\</script>
@@ -32,6 +32,11 @@ html(machineName, svgName, btypeImports) ::= <<
   \<script type="module" src="./<machineName>-visualisation.js" defer>\</script>
 \</body>
 
+\<script>
+function collapse(element) {
+    element.classList.toggle("collapsed");
+}
+\</script>
 \<style>
 #_operations_view{
     display: grid;
@@ -59,6 +64,17 @@ html(machineName, svgName, btypeImports) ::= <<
 .state_view_header {
     grid-column: 1 / -1;
     border-bottom: 1px solid black;
+}
+.state_view_header::after {
+    content: "\25B2";
+    margin-left: 5px;
+}
+.collapsed ~ * {
+    display: none;
+}
+.collapsed::after {
+    content: "\25BC";
+    margin-left: 5px;
 }
 body{
 display: flex;

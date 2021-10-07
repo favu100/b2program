@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -81,6 +82,9 @@ import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandling
 */
 
 public class MachineGenerator implements AbstractVisitor<String, Void> {
+
+	private static final List<Class<?>> nondeterministicSubstitutions = Arrays.asList(AnySubstitutionNode.class, ChoiceSubstitutionNode.class,
+			BecomesSuchThatSubstitutionNode.class, BecomesElementOfSubstitutionNode.class);
 
 	private final TypeGenerator typeGenerator;
 
@@ -305,15 +309,15 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			} else {
 				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
 			}
-		} else if(bodySubstitution instanceof ListSubstitutionNode) {
+		} else if(nondeterministicSubstitutions.contains(bodySubstitution.getClass())) {
+			throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
+		} else {
 			if(operation.getParams().size() == 0) {
 				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), null);
 				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
 			} else {
 				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
 			}
-		} else {
-			throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
 		}
 	}
 

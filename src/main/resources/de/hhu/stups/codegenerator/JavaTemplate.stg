@@ -771,13 +771,13 @@ transitions.set(transitions.get() + 1);
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
 <if(isLhs)>
+<type> <param> = <val>.projection1();
+<else>
 <if(oneParameter)>
 <type> <param> = <val>;
 <else>
-<type> <param> = <val>.projection1();
-<endif>
-<else>
 <type> <param> = <val>.projection2();
+<endif>
 <endif>
 >>
 

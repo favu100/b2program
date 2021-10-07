@@ -19,6 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*
+* This file was taken from an earlier version of ProB2-UI
+*/
+
 public class VisBFileHandler {
 
     /**
@@ -34,6 +38,7 @@ public class VisBFileHandler {
         JsonObject visBFile = gson.fromJson(reader, JsonObject.class);
         String parentFile = inputFile.getParentFile().toString();
         Path svgPath;
+
         if (visBFile.has("svg")) {
             String filePath = visBFile.get("svg").getAsString();
             if (filePath == null || filePath.isEmpty()) {

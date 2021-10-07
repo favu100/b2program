@@ -91,6 +91,7 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "hasParameters", hasParameters);
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
+
         if(hasParameters) {
 
             BType currentType = tupleType;
@@ -102,7 +103,7 @@ public class ModelCheckingGenerator {
                 TemplateHandler.add(paramTemplateLhs, "type", typeGenerator.generate(currentType));
                 TemplateHandler.add(paramTemplateLhs, "param", "_tmp_" + 1);
                 TemplateHandler.add(paramTemplateLhs, "val", "param");
-                TemplateHandler.add(paramTemplateLhs, "isLhs", true);
+                TemplateHandler.add(paramTemplateLhs, "isLhs", false);
                 TemplateHandler.add(paramTemplateLhs, "oneParameter", true);
                 String lhsParameter = paramTemplateLhs.render();
                 readParameters.add(lhsParameter);
@@ -114,40 +115,45 @@ public class ModelCheckingGenerator {
 
 
                     if (i < opNode.getParams().size() - 1) {
+                        // Access rhs were it is not the left-most parameter
+
                         ST paramTemplateLhs = currentGroup.getInstanceOf("model_check_transition_param_assignment");
                         TemplateHandler.add(paramTemplateLhs, "type", typeGenerator.generate(paramNode.getType()));
                         TemplateHandler.add(paramTemplateLhs, "param", "_tmp_" + j);
                         TemplateHandler.add(paramTemplateLhs, "val", j == 1 ? "param" : "_tmp_" + (j - 1));
-                        TemplateHandler.add(paramTemplateLhs, "isLhs", true);
+                        TemplateHandler.add(paramTemplateLhs, "isLhs", false);
                         TemplateHandler.add(paramTemplateLhs, "oneParameter", false);
                         String lhsParameter = paramTemplateLhs.render();
                         readParameters.add(lhsParameter);
-                        parameters.add("_tmp_" + j);
+                        parameters.add(0, "_tmp_" + j);
 
                         j++;
 
-                        if(i < opNode.getParams().size() - 2) {
 
-                            currentType = ((CoupleType) currentType).getRight();
+
+                        if(i < opNode.getParams().size() - 2) {
+                            // Store temporary tuples im necessary
+                            currentType = ((CoupleType) currentType).getLeft();
                             ST paramTemplateRhs = currentGroup.getInstanceOf("model_check_transition_param_assignment");
                             TemplateHandler.add(paramTemplateRhs, "type", typeGenerator.generate(currentType));
                             TemplateHandler.add(paramTemplateRhs, "param", "_tmp_" + j);
                             TemplateHandler.add(paramTemplateRhs, "val", j == 2 ? "param" : "_tmp_" + (j - 2));
-                            TemplateHandler.add(paramTemplateRhs, "isLhs", false);
+                            TemplateHandler.add(paramTemplateRhs, "isLhs", true);
                             TemplateHandler.add(paramTemplateRhs, "oneParameter", false);
                             readParameters.add(paramTemplateRhs.render());
                             j++;
                         }
                     } else {
+                        // Access left-most parameter
                         ST paramTemplateLhs = currentGroup.getInstanceOf("model_check_transition_param_assignment");
                         TemplateHandler.add(paramTemplateLhs, "type", typeGenerator.generate(paramNode.getType()));
                         TemplateHandler.add(paramTemplateLhs, "param", "_tmp_" + j);
-                        TemplateHandler.add(paramTemplateLhs, "val", j == 2 ? "param" : "_tmp_" + (j - 1));
-                        TemplateHandler.add(paramTemplateLhs, "isLhs", false);
+                        TemplateHandler.add(paramTemplateLhs, "val", j == 2 ? "param" : "_tmp_" + (j - 2));
+                        TemplateHandler.add(paramTemplateLhs, "isLhs", true);
                         TemplateHandler.add(paramTemplateLhs, "oneParameter", false);
                         String lhsParameter = paramTemplateLhs.render();
                         readParameters.add(lhsParameter);
-                        parameters.add("_tmp_" + j);
+                        parameters.add(0, "_tmp_" + j);
                         j++;
                     }
 

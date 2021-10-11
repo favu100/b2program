@@ -14,6 +14,7 @@ import org.stringtemplate.v4.STGroup;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.*;
@@ -143,6 +144,11 @@ public class OperationGenerator {
     private void generateReturnStatementIdentifier(ST operation, List<DeclarationNode> outputs) {
         BType type = outputs.get(0).getType();
         String identifier = outputs.get(0).getName();
+        //TODO: render identifier via template instead of transforming it here
+        if (nameHandler.getGlobals().contains(identifier)) {
+            String privateVariablePrefix = group.getInstanceOf("record_private_variable_prefix").render();
+            identifier = privateVariablePrefix + identifier;
+        }
         TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
         ST returnTemplate = group.getInstanceOf("return");
         TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
@@ -156,6 +162,7 @@ public class OperationGenerator {
     */
     private void generateReturnStatementRecord(ST operation, OperationNode node) {
         List<DeclarationNode> outputs = node.getOutputParams();
+        String privateVariablePrefix = group.getInstanceOf("record_private_variable_prefix").render();
         String struct = recordStructGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
 
@@ -163,7 +170,7 @@ public class OperationGenerator {
                 .map(declarationNode -> {
                     String generatedParameter = nameHandler.handleIdentifier(declarationNode.getName(), FUNCTION_NAMES);
                     if (nameHandler.getGlobals().contains(declarationNode.getName())) {
-                        generatedParameter = group.getInstanceOf("record_private_variable_prefix").render() + generatedParameter;
+                        generatedParameter = privateVariablePrefix + generatedParameter;
                     }
                     return generatedParameter;
                     })

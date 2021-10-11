@@ -121,10 +121,18 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "includes", declarationGenerator.generateIncludes(node));
         TemplateHandler.add(initialization, "properties", generateConstantsInitializations(node));
         TemplateHandler.add(initialization, "values", generateValues(node));
-        if(node.getInitialisation() != null) {
-            TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
+
+        String body = "";
+        if (node.getInitialisation() != null) body = machineGenerator.visitSubstitutionNode(node.getInitialisation(), null);
+        //TODO: add empty templates in other languages instead of checking for existence
+        if (currentGroup.getInstanceOf("set_initialization") != null) {
+            //Rust needs the Set declaration and initialization separat
+            List<String> setInitializations = declarationGenerator.generateSetDeclarations(node, "set_initialization");
+            if (setInitializations.size() > 0) body += "\n" + String.join("\n", setInitializations);
         }
         TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());
+        if (body.trim().length() > 0) TemplateHandler.add(initialization, "body", body);
+
         return initialization.render();
     }
 
@@ -167,6 +175,7 @@ public class SubstitutionGenerator {
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
         List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
             return "";

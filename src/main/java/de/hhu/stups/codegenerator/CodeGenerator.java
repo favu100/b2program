@@ -139,6 +139,8 @@ public class CodeGenerator {
 			mode = GeneratorMode.TS;
 		} else if("prolog".equals(languageOption)) {
 			mode = GeneratorMode.PL;
+		} else if("rs".equals(languageOption)) {
+			mode = GeneratorMode.RS;
 		} else {
 			throw new RuntimeException("Wrong argument for language (must be java, python, c, cpp, clojure, ts)");
 		}

@@ -1,0 +1,10 @@
+fn main() {
+    let mut bakery: Bakery0 = Bakery0::new();
+    bakery.enter1();
+    bakery.leave1();
+    bakery.enter2();
+    bakery.leave2();
+    bakery.try1();
+    bakery.try2();
+    println!("{}", bakery.getAA());
+}

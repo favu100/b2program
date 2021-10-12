@@ -265,7 +265,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	* This function generates code for all getters for variables if the machine is an included machine
 	*/
 	private List<String> generateGetters(List<DeclarationNode> variables) {
+		Set<String> lambdaFunctions = getLambdaFunctions();
+		Set<String> infiniteSets = getInfiniteSets();
 		return variables.stream()
+				.filter(variable -> !lambdaFunctions.contains(variable.getName()))
+				.filter(variable -> !infiniteSets.contains(variable.getName()))
 				.map(this::generateGetter)
 				.collect(Collectors.toList());
 	}

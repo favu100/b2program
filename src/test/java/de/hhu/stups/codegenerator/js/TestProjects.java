@@ -12,6 +12,12 @@ public class TestProjects extends TestJs {
     }
 
     @Test
+    public void testProjectC() throws Exception {
+        //This might be a bug in the parser in the scoping part
+        testJs("project1/C", "C", null, true);
+    }
+
+    @Test
     public void testProject2() throws Exception {
         testJs("project2/MachineA", "MachineA", "MachineAAddition.stjs", true);
     }

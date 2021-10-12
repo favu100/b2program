@@ -426,6 +426,9 @@ import_machine(machine) ::= <<
 from <machine> import *
 >>
 
+mc_info_type() ::= <<
+>>
+
 interval(arg1, arg2) ::= <<
 BSet.interval(<arg1>,<arg2>)
 >>

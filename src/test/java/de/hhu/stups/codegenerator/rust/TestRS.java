@@ -48,7 +48,7 @@ public class TestRS {
                 false, false,true,
                 addition, false, null);
 
-        Path typesPath = Paths.get(this.getClass().getClassLoader().getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust"));
+        Path typesPath = Paths.get(this.getClass().getClassLoader().getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust/bmachine/src"));
         rsFilePaths = rsFilePaths.stream().map(file -> {
             Path dest = typesPath.resolve(Paths.get(file.toFile().getName()));
             file.toFile().renameTo(dest.toFile());
@@ -57,12 +57,15 @@ public class TestRS {
 
         Runtime runtime = Runtime.getRuntime();
         Path mainPath = rsFilePaths.get(rsFilePaths.size() - 1);
-        Process process = runtime.exec("rustc " + mainPath.toFile().getAbsolutePath());
+        File newMainFile = typesPath.resolve(Paths.get("main.rs")).toFile();
+        cleanUp(newMainFile);
+        mainPath.toFile().renameTo(newMainFile);
+        Process process = runtime.exec("cargo build --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
         writeInputToSystem(process.getErrorStream());
         writeInputToOutput(process.getErrorStream(), process.getOutputStream());
         process.waitFor();
         if (process.exitValue() != 0) {
-            throw new Exception("Rust compilation failed, exitcode: " + process.exitValue());
+            throw new Exception("cargo build failed, exitcode: " + process.exitValue());
         }
 
         if(!execute) {
@@ -70,13 +73,11 @@ public class TestRS {
             return;
         }
 
-        Process executeProcess = runtime.exec("./" + machineName);
+        Process executeProcess = runtime.exec("cargo run --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
         executeProcess.waitFor();
 
         String error = streamToString(executeProcess.getErrorStream());
-        cleanUp("./" + machine + ".pdb");
-        cleanUp("./" + machine + ".exe");
-        if(!error.isEmpty()) {
+        if(executeProcess.exitValue() != 0) {
             throw new RuntimeException(error);
         }
 
@@ -87,6 +88,7 @@ public class TestRS {
         System.out.println("Assert: " + result + " = " + expectedOutput);
 
         assertEquals(expectedOutput, result);
+        cleanUp(newMainFile);
         rsFilePaths.forEach(p -> cleanUp(p.toFile()));
     }
 

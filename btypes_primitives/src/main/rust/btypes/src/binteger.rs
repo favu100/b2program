@@ -1,5 +1,5 @@
-use super::bboolean::BBoolean;
-use super::bobject::BObject;
+use crate::bboolean::BBoolean;
+use crate::bobject::BObject;
 
 use std::fmt;
 use std::hash::Hash;

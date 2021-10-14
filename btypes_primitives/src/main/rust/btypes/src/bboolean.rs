@@ -1,5 +1,5 @@
 use std::hash::Hash;
-use super::bobject::BObject;
+use crate::bobject::BObject;
 use std::fmt;
 
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]

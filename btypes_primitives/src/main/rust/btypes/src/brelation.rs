@@ -1,7 +1,5 @@
-mod bobject;
-use bobject::BObject;
+use crate::BObject;
 
-mod btuple;
 use btuple::BTuple;
 
 use immutable_map::TreeMap;

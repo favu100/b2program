@@ -1,10 +1,11 @@
 keywords() ::= <<
-let, fn, return, min, max
+as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, abstract, become, box, do, final, macro, override, priv, typeof, unsized, virtual, yield, try, union, dyn, min, max
 >>
 
 
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions) ::= <<
-mod btypes;
+#![ allow( dead_code, unused_imports, unused_mut ) ]
+
 use std::fmt;
 <imports; separator="\n">
 <if(useBigInteger)>//TODO BigInt<endif>
@@ -69,7 +70,7 @@ identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine,
 
 getter(returnType, isConstant, machine, variable) ::= <<
 pub fn get_<variable>(&self) -> <returnType> {
-    return <if(isConstant)><machine>::<else>self.<endif><variable>;
+    return <if(isConstant)><machine>::<else>self.<endif><variable>.clone();
 }
 >>
 
@@ -278,7 +279,7 @@ if_expression_predicate(<predicate>, <ifThen>, <ifElse>)
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-set_enumeration(<leftType>, <type>, <rightType>,<enums; separator="|">, <isRelation>)
+<if(isRelation)>BRelation::new<else>BSet::new<endif>(vec![<enums; separator=", ">])
 >>
 
 seq_enumeration(type, elements) ::= <<
@@ -366,7 +367,7 @@ tuple_type(<leftType>, <rightType>)
 >>
 
 set_type(type) ::=<<
-set_type(<type>)
+BSet\<<type>\>
 >>
 
 relation_type(leftType, rightType) ::=<<
@@ -499,7 +500,7 @@ var(<locals; separator="|">, <body>)
 >>
 
 boolean_val(val) ::= <<
-boolean_val(<val>)
+BBoolean::new(<val>)
 >>
 
 infinite_predicate(arg, operator) ::= <<

@@ -1,0 +1,5 @@
+fn main() {
+    let mut elementOf = ElementOf::new();
+    elementOf.calculate();
+    println!("{}", elementOf.getRes());
+}

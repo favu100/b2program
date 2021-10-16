@@ -1,0 +1,5 @@
+fn main() {
+    let mut concat = Concat::new();
+    concat.calculate();
+    println!("{}", concat.getRes());
+}

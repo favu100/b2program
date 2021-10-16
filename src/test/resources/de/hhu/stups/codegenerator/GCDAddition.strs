@@ -1,0 +1,4 @@
+fn main() {
+    let mut gcd = GCD::new();
+    println!("{}", gcd.GCDSolution());
+}

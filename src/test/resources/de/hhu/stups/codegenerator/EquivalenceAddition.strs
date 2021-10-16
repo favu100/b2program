@@ -1,0 +1,4 @@
+fn main() {
+    let mut equi = Equivalence::new();
+    println!("{}", equi.Inc(new BInteger(10)));
+}

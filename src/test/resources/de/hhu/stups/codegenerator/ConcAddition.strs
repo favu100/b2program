@@ -1,0 +1,5 @@
+fn main() {
+    let mut conc = Conc::new();
+    conc.calculate();
+    println!("{}", conc.getRes());
+}

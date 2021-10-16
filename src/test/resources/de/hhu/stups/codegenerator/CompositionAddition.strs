@@ -1,0 +1,5 @@
+fn main() {
+    let mut composition = Composition::new();
+    composition.calculate();
+    println!("{}", composition.getRes());
+}

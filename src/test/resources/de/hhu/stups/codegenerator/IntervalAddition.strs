@@ -1,0 +1,5 @@
+fn main() {
+    let mut interval = Interval::new();
+    interval.calculate();
+    println!("{}", interval.getRes());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut lambda = Lambda::new();
+    lambda.calculate();
+    println!("{}", lambda.getRes());
+}

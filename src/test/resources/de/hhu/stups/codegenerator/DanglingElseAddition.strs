@@ -1,0 +1,5 @@
+fn main() {
+    let mut dangling = DanglingElse::new();
+    dangling.calculate();
+    println!("{}", dangling.getRes());
+}

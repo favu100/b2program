@@ -1,0 +1,5 @@
+fn main() {
+    let mut inverse = Inverse::new();
+    inverse.calculate();
+    println!("{}", inverse.getRes());
+}

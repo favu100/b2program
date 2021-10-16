@@ -1,0 +1,6 @@
+fn main() {
+    let mut swap = Swap::new();
+    swap.swap();
+    println!("{}", swap.getXX());
+    println!("{}", swap.getYY());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut fnc = Fnc::new();
+    fnc.calculate();
+    println!("{}", fnc.getRes());
+}

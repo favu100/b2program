@@ -1,0 +1,5 @@
+fn main() {
+    let mut iterate = Iterate::new();
+    iterate.calculate();
+    println!("{}", iterate.getRes());
+}

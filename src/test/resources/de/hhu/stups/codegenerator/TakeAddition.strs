@@ -1,0 +1,5 @@
+fn main() {
+    let mut sequence = Take::new();
+    sequence.calculate();
+    println!("{}", sequence.getRes());
+}

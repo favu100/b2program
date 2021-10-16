@@ -1,0 +1,5 @@
+fn main() {
+    let mut functional = FunctionCallAccessNested5::new();
+    functional.calculate();
+    println!("{}", functional.getRes());
+}

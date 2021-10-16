@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = SetComprehension7::new();
+    set.calculate();
+    println!("{}", set.getRes());
+}

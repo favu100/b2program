@@ -1,0 +1,5 @@
+fn main() {
+    let mut logical = Equivalent::new();
+    logical.calculate();
+    println!("{}", logical.getRes());
+}

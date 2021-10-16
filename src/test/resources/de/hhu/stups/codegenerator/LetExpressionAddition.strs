@@ -1,0 +1,5 @@
+fn main() {
+    let mut let = LetExpression::new();
+    let.calculate();
+    println!("{}", let.getRes());
+}

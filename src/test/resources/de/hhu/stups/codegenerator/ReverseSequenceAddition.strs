@@ -1,0 +1,5 @@
+fn main() {
+    let mut sequence = ReverseSequence::new();
+    sequence.calculate();
+    println!("{}", sequence.getRes());
+}

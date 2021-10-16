@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = GeneralizedUnionEmpty::new();
+    set.calculate();
+    println!("{}", set.getSet().card());
+}

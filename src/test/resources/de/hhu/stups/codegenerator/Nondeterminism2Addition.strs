@@ -1,0 +1,5 @@
+fn main() {
+    let mut nondeterminism = Nondeterminism2::new();
+    nondeterminism.calculate();
+    println!("{}", nondeterminism.getRes());
+}

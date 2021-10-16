@@ -1,0 +1,5 @@
+fn main() {
+    let mut minus = UnaryMinus::new();
+    minus.calculate();
+    println!("{}", minus.getRes());
+}

@@ -1,0 +1,4 @@
+fn main() {
+    let mut bl = BooleanPredicate::new();
+    println!("{}", bl.Inc(new BInteger(10)));
+}

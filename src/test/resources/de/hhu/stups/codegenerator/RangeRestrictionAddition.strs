@@ -1,0 +1,5 @@
+fn main() {
+    let mut range = RangeRestriction::new();
+    range.calculate();
+    println!("{}", range.getRes());
+}

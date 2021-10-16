@@ -1,0 +1,5 @@
+fn main() {
+    let mut sequence = FrontSequence::new();
+    sequence.calculate();
+    println!("{}", sequence.getRes());
+}

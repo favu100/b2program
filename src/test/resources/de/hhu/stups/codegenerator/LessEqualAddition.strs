@@ -1,0 +1,5 @@
+fn main() {
+    let mut comparison = LessEqual::new();
+    comparison.calculate();
+    println!("{}", comparison.getRes());
+}

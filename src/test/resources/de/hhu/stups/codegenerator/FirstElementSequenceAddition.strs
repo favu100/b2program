@@ -1,0 +1,5 @@
+fn main() {
+    let mut sequence = FirstElementSequence::new();
+    sequence.calculate();
+    println!("{}", sequence.getRes());
+}

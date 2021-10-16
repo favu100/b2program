@@ -1,0 +1,5 @@
+fn main() {
+    let mut override = Override::new();
+    override.calculate();
+    println!("{}", override.getRes());
+}

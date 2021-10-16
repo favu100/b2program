@@ -1,0 +1,5 @@
+fn main() {
+    let mut expression = QuantifiedExpression3::new();
+    expression.calculate();
+    println!("{}", expression.getRes());
+}

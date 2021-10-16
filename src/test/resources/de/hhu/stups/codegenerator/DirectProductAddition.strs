@@ -1,0 +1,5 @@
+fn main() {
+    let mut direct = DirectProduct::new();
+    direct.calculate();
+    println!("{}", direct.getRes());
+}

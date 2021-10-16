@@ -1,0 +1,5 @@
+fn main() {
+    let mut domain = Domain::new();
+    domain.calculate();
+    println!("{}", domain.getRes());
+}

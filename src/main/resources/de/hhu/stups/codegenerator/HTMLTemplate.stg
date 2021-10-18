@@ -23,7 +23,13 @@ html(machineName, svgName, btypeImports) ::= <<
         \<div class="state_view_header collapsed" onclick="collapse(this)">Variables\</div>
     \</div>
     \<div id="_state_view_constants" class="state_view_section">
-            \<div class="state_view_header collapsed" onclick="collapse(this)">Constants\</div>
+        \<div class="state_view_header collapsed" onclick="collapse(this)">Constants\</div>
+    \</div>
+    \<div id="_state_view_sets" class="state_view_section">
+            \<div class="state_view_header collapsed" onclick="collapse(this)">Sets\</div>
+        \</div>
+    \<div id="_state_view_invariant" class="state_view_section">
+            \<div class="state_view_header collapsed" onclick="collapse(this)">Invariant\</div>
         \</div>
   \</div>
   \<script type="module" src="./immutable/dist/immutable.es.js">\</script>

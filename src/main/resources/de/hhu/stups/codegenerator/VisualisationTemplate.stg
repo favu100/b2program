@@ -3,7 +3,7 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, importedEnums, machineEnums, variables, constants, variableUpdates, includedMachines) ::= <<
+visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js"
 <importedEnums; separator="\n">
 <machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
@@ -16,6 +16,8 @@ _included_machines["<machineName>"] = <initialMachineVar()>;
 <includedMachines; separator="\n">
 var _state_view_vars = document.getElementById("_state_view_variables");
 var _state_view_consts = document.getElementById("_state_view_constants");
+var _state_view_sets = document.getElementById("_state_view_sets");
+var _state_view_invariant = document.getElementById("_state_view_invariant");
 var _svg_vars = {}
 <machineVars: {machineVar | _svg_vars["<machineVar>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
 var _machine_vars = {}
@@ -23,10 +25,14 @@ var _var_label;
 var _var_div;
 <variables; separator="\n">
 <constants; separator="\n">
+<sets; separator="\n">
+<invariant>
+
 
 function updateVisuals (){
   <visualUpdates; separator="\n">
   <variableUpdates; separator="\n">
+  _machine_vars["_invariant"].innerHTML = _machine._check_inv()
 }
 
 _operations_view = document.getElementById("_operations_view");
@@ -123,6 +129,30 @@ _var_label.htmlFor = "_var_<var>";
 _var_label.innerHTML = "<machineName>.<var>";
 _state_view_consts.appendChild(_var_label);
 _state_view_consts.appendChild(_var_div);
+>>
+
+set(var, machineName) ::= <<
+_var_div = document.createElement("div");
+_var_div.innerHTML = _included_machines["<machineName>"]._get__<var>();
+_var_div.id = "_var_<var>";
+_machine_vars["<var>"] = _var_div;
+_var_label = document.createElement("label");
+_var_label.htmlFor = "_var_<var>";
+_var_label.innerHTML = "<machineName>.<var>";
+_state_view_sets.appendChild(_var_label);
+_state_view_sets.appendChild(_var_div);
+>>
+
+invariant(invariantFormula, machineName) ::= <<
+_var_div = document.createElement("div");
+_var_div.innerHTML = _included_machines["<machineName>"]._check_inv();
+_var_div.id = "_invariant";
+_machine_vars["_invariant"] = _var_div;
+_var_label = document.createElement("label");
+_var_label.htmlFor = "_invariant";
+_var_label.innerHTML = "<invariantFormula>";
+_state_view_invariant.appendChild(_var_label);
+_state_view_invariant.appendChild(_var_div);
 >>
 
 initialMachineVar() ::= <<

@@ -7,10 +7,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
-import de.prob.parser.ast.nodes.DeclarationNode;
-import de.prob.parser.ast.nodes.MachineNode;
-import de.prob.parser.ast.nodes.MachineReferenceNode;
-import de.prob.parser.ast.nodes.OperationNode;
+import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import org.stringtemplate.v4.ST;
@@ -54,11 +51,20 @@ public class VisualisationGenerator{
     TemplateHandler.add(visualisation, "includedMachines", generateIncludedMachines(visBProject.getProject().getMainMachine()));
     TemplateHandler.add(visualisation, "variables", generateVariables(visBProject.getProject().getMainMachine()));
     TemplateHandler.add(visualisation, "constants", generateConstants(visBProject.getProject().getMainMachine()));
+    TemplateHandler.add(visualisation, "sets", generateSets(visBProject.getProject().getMainMachine()));
+    TemplateHandler.add(visualisation, "invariant", generateInvariant(visBProject.getProject().getMainMachine()));
     TemplateHandler.add(visualisation, "variableUpdates", generateVariableUpdates(visBProject.getProject().getMainMachine()));
     //Adding imports last to ensure all needed types are imported.
     TemplateHandler.add(visualisation, "imports", importGenerator.getImportedTypes().stream().map(this::generateVisualisationImport).collect(Collectors.toSet()));
 
     return visualisation.render();
+  }
+
+  private String generateInvariant(MachineNode mainMachine) {
+    ST invariantTemplate = visualisationGroup.getInstanceOf("invariant");
+    TemplateHandler.add(invariantTemplate, "machineName", mainMachine.getName());
+    TemplateHandler.add(invariantTemplate, "invariantFormula", mainMachine.getInvariant().getSourceCodePosition().getText());
+    return invariantTemplate.render();
   }
 
   private List<String> generateIncludedMachines(MachineNode mainMachine) {
@@ -133,6 +139,25 @@ public class VisualisationGenerator{
     TemplateHandler.add(constant, "var", var.getName());
     TemplateHandler.add(constant, "machineName", machine.getName());
     return constant.render();
+  }
+
+  private List<String> generateSets(MachineNode machine) {
+    List<String> ownSets = machine.getEnumeratedSets().stream().map(var -> generateSet(var, machine)).collect(Collectors.toList());
+    List<String> othherSets = new ArrayList<>();
+
+    for (MachineReferenceNode includedMachine : machine.getMachineReferences()) {
+      List<String> strings = generateSets(includedMachine.getMachineNode());
+      othherSets.addAll(strings);
+    }
+    ownSets.addAll(othherSets);
+    return ownSets;
+  }
+
+  private String generateSet(EnumeratedSetDeclarationNode var, MachineNode machine) {
+    ST set = visualisationGroup.getInstanceOf("set");
+    TemplateHandler.add(set, "var", var.getSetDeclarationNode().getName());
+    TemplateHandler.add(set, "machineName", machine.getName());
+    return set.render();
   }
 
   public String generateVisualUpdate(VisBItem item, VisBProject visBProject) {

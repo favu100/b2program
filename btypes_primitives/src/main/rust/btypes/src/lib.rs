@@ -4,3 +4,5 @@ pub mod bobject;
 pub mod bstruct;
 pub mod bset;
 pub mod bstring;
+pub mod btuple;
+pub mod brelation;

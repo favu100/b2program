@@ -371,7 +371,7 @@ BSet\<<type>\>
 >>
 
 relation_type(leftType, rightType) ::=<<
-relation_type(<leftType>, <rightType>)
+BRelation\<<leftType>, <rightType>\>
 >>
 
 import_machine(machine) ::= <<
@@ -400,27 +400,27 @@ cartesian_product(<leftType>, <rightType>, <arg1>, <arg2>)
 >>
 
 tuple_create(leftType, rightType, arg1, arg2) ::= <<
-tuple_create(<leftType>, <rightType>, <arg1>, <arg2>)
+BTuple::new(vec![<arg1>, <arg2>])
 >>
 
 binary(arg1,operator,arg2) ::= <<
-<arg1>.<operator>(<arg2>)
+<arg1>.<operator>(&<arg2>)
 >>
 
 or(arg1, arg2) ::= <<
-<arg1>.or(<arg2>)
+<arg1>.or(&<arg2>)
 >>
 
 and(arg1, arg2) ::= <<
-<arg1>.and(<arg2>)
+<arg1>.and(&<arg2>)
 >>
 
 implies(arg1, arg2) ::= <<
-<arg1>.implies(<arg2>)
+<arg1>.implies(&<arg2>)
 >>
 
 equivalent(arg1, arg2) ::= <<
-equivalent(<arg1>, <arg2>)
+<arg1>.equivalent(&<arg2>)
 >>
 
 unary(operator, obj, args) ::= <<

@@ -24,56 +24,56 @@ impl BInteger {
 
     pub fn get_val(&self) -> i32 { return self.val; }
 
-    pub fn compareTo(&self, o: BInteger) -> i32 {
+    pub fn compareTo(&self, o: &BInteger) -> i32 {
         return self.val - o.val;
     }
 
-    pub fn lessEqual(&self, o: BInteger) -> BBoolean {
+    pub fn lessEqual(&self, o: &BInteger) -> BBoolean {
         return BBoolean::new(self.val <= o.val);
     }
 
-    pub fn greaterEqual(&self, o: BInteger) -> BBoolean {
+    pub fn greaterEqual(&self, o: &BInteger) -> BBoolean {
         return BBoolean::new(self.val >= o.val);
     }
 
-    pub fn less(&self, o: BInteger) -> BBoolean {
+    pub fn less(&self, o: &BInteger) -> BBoolean {
         return BBoolean::new(self.val < o.val);
     }
 
-    pub fn greater(&self, o: BInteger) -> BBoolean {
+    pub fn greater(&self, o: &BInteger) -> BBoolean {
         return BBoolean::new(self.val > o.val);
     }
 
-    pub fn equal(&self, o: BInteger) -> BBoolean {
+    pub fn equal(&self, o: &BInteger) -> BBoolean {
         return BBoolean::new(self.val == o.val);
     }
 
-    pub fn unequal(&self, o: BInteger) -> BBoolean {
+    pub fn unequal(&self, o: &BInteger) -> BBoolean {
         return BBoolean::new(self.val != o.val);
     }
 
-    pub fn plus(&self, v: BInteger) -> BInteger {
+    pub fn plus(&self, v: &BInteger) -> BInteger {
         return BInteger::new(self.val + v.val);
     }
 
-    pub fn minus(&self, v: BInteger) -> BInteger {
+    pub fn minus(&self, v: &BInteger) -> BInteger {
         return BInteger::new(self.val - v.val);
     }
 
-    pub fn multiply(&self, v: BInteger) -> BInteger {
+    pub fn multiply(&self, v: &BInteger) -> BInteger {
         return BInteger::new(self.val * v.val);
     }
 
-    pub fn power(&self, v: BInteger) -> BInteger {
+    pub fn power(&self, v: &BInteger) -> BInteger {
         if v.val < 0 { panic!("Power with negative exponent!") }
         return BInteger::new(self.val.pow(v.val.unsigned_abs()));
     }
 
-    pub fn divide(&self, v: BInteger) -> BInteger {
+    pub fn divide(&self, v: &BInteger) -> BInteger {
         return BInteger::new(self.val / v.val);
     }
 
-    pub fn modulo(&self, v: BInteger) -> BInteger {
+    pub fn modulo(&self, v: &BInteger) -> BInteger {
         //return BInteger::new(self.val.rem_euclid(v.val));
         return BInteger::new(self.val % v.val);
     }

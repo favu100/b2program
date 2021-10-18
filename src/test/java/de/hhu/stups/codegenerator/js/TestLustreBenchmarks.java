@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.js;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestLustreBenchmarks extends TestJs {
@@ -59,6 +60,7 @@ public class TestLustreBenchmarks extends TestJs {
 		testJs("lustre_benchmarks/M_Rbase_main_exec", "M_Rbase_main_exec", "M_Rbase_main_execAddition.stjs", false);
 	}
 
+	@Ignore
 	@Test
 	public void testRgrips() throws Exception {
 		testJs("lustre_benchmarks/M_Rgrips_main_exec", "M_Rgrips_main_exec", "M_Rgrips_main_execAddition.stjs", false);
@@ -74,6 +76,7 @@ public class TestLustreBenchmarks extends TestJs {
 		testJs("lustre_benchmarks/M_VerifyMovingItem_exec", "M_VerifyMovingItem_exec", "M_VerifyMovingItem_execAddition.stjs", false);
 	}
 
+	@Ignore
 	@Test
 	public void testDockingApproach() throws Exception {
 		testJs("lustre_benchmarks/M_DockingApproachExample_Ext_exec", "M_DockingApproachExample_Ext_exec", "M_DockingApproachExample_Ext_execAddition.stjs", false);

@@ -15,6 +15,8 @@ public class ParallelConstructHandler {
 
     private boolean lhsInParallel;
 
+    private boolean isDefiningLdVariable;
+
     public ParallelConstructHandler() {
         this.lhsInParallel = false;
     }
@@ -35,4 +37,11 @@ public class ParallelConstructHandler {
         return lhsInParallel;
     }
 
+    public boolean isDefiningLdVariable() {
+        return isDefiningLdVariable;
+    }
+
+    public void setDefiningLdVariable(boolean definingLdVariable) {
+        isDefiningLdVariable = definingLdVariable;
+    }
 }

@@ -65,7 +65,7 @@ public class IdentifierGenerator {
     */
     public String generate(IdentifierExprNode node) {
         boolean isReturn = isReturn(node);
-        boolean isPrivate = nameHandler.getGlobals().contains(nameHandler.handle(node.getName()));
+        boolean isPrivate = nameHandler.getGlobals().contains(nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         boolean isAssigned = node.getParent() == null || isAssigned(node, node.getParent());
         return generate(node, isReturn, isPrivate, isAssigned);
     }
@@ -75,7 +75,7 @@ public class IdentifierGenerator {
     */
     private boolean isReturn(IdentifierExprNode node) {
         return outputParams.stream()
-                .map(declarationNode -> nameHandler.getEnumTypes().keySet().contains(declarationNode.getName()) ||
+                .map(declarationNode -> nameHandler.getEnumTypes().containsKey(declarationNode.getName()) ||
                                         nameHandler.getDeferredTypes().contains(declarationNode.getName()) ?
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.VARIABLES) :
                         nameHandler.handleIdentifier(declarationNode.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
@@ -94,8 +94,7 @@ public class IdentifierGenerator {
             isAssigned = ((AssignSubstitutionNode) parent).getLeftSide().contains(node);
         } else if(parent instanceof ListSubstitutionNode) {
             isAssigned = ((ListSubstitutionNode) parent).getSubstitutions().stream()
-                    .map(n -> isAssigned(node, n))
-                    .anyMatch(val -> val);
+                    .anyMatch(n -> isAssigned(node, n));
         } else if(parent instanceof OperationCallSubstitutionNode) {
             isAssigned = ((OperationCallSubstitutionNode) parent).getAssignedVariables().contains(node);
         }
@@ -111,13 +110,14 @@ public class IdentifierGenerator {
         String nodeName = node.getName();
         String[] nodeNameAsList = nodeName.split("\\.");
         String variable = nodeNameAsList[nodeNameAsList.length - 1];
-        TemplateHandler.add(identifier, "identifier", node.getType() != null && (nameHandler.getEnumTypes().keySet().contains(nodeName) || nameHandler.getDeferredTypes().contains(nodeName)) ?
+        TemplateHandler.add(identifier, "identifier", node.getType() != null && (nameHandler.getEnumTypes().containsKey(nodeName) || nameHandler.getDeferredTypes().contains(nodeName)) ?
                 nameHandler.handleIdentifier(variable, NameHandler.IdentifierHandlingEnum.VARIABLES) :
                 nameHandler.handleIdentifier(variable, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
+        TemplateHandler.add(identifier, "isDefiningLdVariable", parallelConstructHandler.isDefiningLdVariable());
         boolean fromOtherMachine;
         if(node.getDeclarationNode() != null && node.getDeclarationNode().getSurroundingMachineNode() != null) {
             fromOtherMachine = !node.getDeclarationNode().getSurroundingMachineNode().equals(machineGenerator.getMachineNode());
@@ -138,7 +138,7 @@ public class IdentifierGenerator {
     public String generateVarDeclaration(String name, boolean isAssigned) {
         ST identifier = group.getInstanceOf("identifier");
         StringBuilder resultIdentifier = new StringBuilder(nameHandler.handleIdentifier(name, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        if(currentLocals.keySet().contains(name)) {
+        if(currentLocals.containsKey(name)) {
             for (int i = 0; i < currentLocals.get(name); i++) {
                 resultIdentifier.insert(0, "_");
             }
@@ -190,7 +190,7 @@ public class IdentifierGenerator {
     * This function is needed for solving the collision problem beteween output parameters and local variables.
     */
     public void addLocal(String local) {
-        if(maxLocals.keySet().contains(local)) {
+        if(maxLocals.containsKey(local)) {
             int value = maxLocals.get(local);
             maxLocals.put(local, value + 1);
             currentLocals.put(local, value + 1);

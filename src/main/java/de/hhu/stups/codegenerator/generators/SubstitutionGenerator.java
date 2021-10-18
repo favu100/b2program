@@ -546,7 +546,7 @@ public class SubstitutionGenerator {
     /*
     * This function generates code for a parallel load from the given AST node
     */
-    private String visitParallelLoad(ExprNode expr) {
+    private String visitParallelLoad(IdentifierExprNode expr) {
         String identifier = machineGenerator.visitExprNode(expr, null);
         List<String> identifiersInCode = parallelConstructHandler.getParallelConstructAnalyzer().definedIdentifiersInCode();
         if(identifiersInCode.contains(identifier)) {
@@ -558,7 +558,9 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         TemplateHandler.add(substitution, "type", typeGenerator.generate(expr.getType()));
         TemplateHandler.add(substitution, "identifier", identifier);
-        TemplateHandler.add(substitution, "name", expr.toString());
+        parallelConstructHandler.setDefiningLdVariable(true);
+        TemplateHandler.add(substitution, "name", machineGenerator.visitExprNode(expr, null));
+        parallelConstructHandler.setDefiningLdVariable(false);
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(((IdentifierExprNode) expr).getName()));
         return substitution.render();
     }

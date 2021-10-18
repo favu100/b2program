@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
-import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.*;
 
 
 public class OperationGenerator {
@@ -160,9 +159,15 @@ public class OperationGenerator {
         List<DeclarationNode> outputs = node.getOutputParams();
         String struct = recordStructGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
+
         List<String> identifiers = outputs.stream()
-                .map(DeclarationNode::getName)
-                .map(identifier -> nameHandler.handleIdentifier(identifier, FUNCTION_NAMES))
+                .map(declarationNode -> {
+                    String generatedParameter = nameHandler.handleIdentifier(declarationNode.getName(), FUNCTION_NAMES);
+                    if (nameHandler.getGlobals().contains(declarationNode.getName())) {
+                        generatedParameter = group.getInstanceOf("record_private_variable_prefix").render() + generatedParameter;
+                    }
+                    return generatedParameter;
+                    })
                 .collect(Collectors.toList());
 
         ST recordTemplate = group.getInstanceOf("record");

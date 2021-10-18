@@ -348,12 +348,12 @@ local_declaration(type, identifier) ::= <<
 >>
 
 constant_declaration(type, identifier) ::= <<
-<identifier>
+self.<identifier>
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<
 <iterationConstruct; separator="\n">
-<identifier> = <val>
+self.<identifier> = <val>
 >>
 
 values(assignments) ::= <<
@@ -576,8 +576,8 @@ boolean_val(val) ::= <<
 <if(val)>BBoolean(True)<else>BBoolean(False)<endif>
 >>
 
-identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate) ::= <<
-<if(fromOtherMachine)>self.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>self.<endif><identifier><endif><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant, isDefiningLdVariable) ::= <<
+<if(fromOtherMachine)>self.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(!isDefiningLdVariable)><if(isPrivate || isConstant)>self.<endif><endif><identifier><endif><endif>
 >>
 
 number(number) ::= <<
@@ -677,4 +677,7 @@ model_check_main() ::= <<
 >>
 
 record_private_variable_prefix() ::= <<
+>>
+
+enum_import() ::= <<
 >>

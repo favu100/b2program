@@ -110,6 +110,14 @@ class <name> extends BStruct {
         <fields: {field | result = 31 * result + (this.<field>.hashCode() \<\< 1);}; separator="\n">
         return result;
     }
+
+    isRecord() {
+        return new BBoolean(true);
+    }
+
+    isNotRecord() {
+        return new BBoolean(false);
+    }
 }
 >>
 
@@ -270,7 +278,7 @@ if((<predicate>).booleanValue()) {
 >>
 
 lambda_function(function, parameters, returnType, expression) ::= <<
-public <returnType> <function>(<parameters; separator=", ">) {
+<function>(<parameters; separator=", ">): <returnType> {
     return <expression>;
 }
 >>
@@ -324,10 +332,14 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-transition(noParameters, identifier, subType, operationName, predicate, combination) ::= <<
-public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationName>() {
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
+_tr_<operationName>(): <if(noParameters)>boolean<else>BSet\<<subType>\><endif> {
     <if(noParameters)>
+    <if(noPredicate)>
+    return true;
+    <else>
     return <predicate>.booleanValue();
+    <endif>
     <else>
     let <identifier>: BSet\<<subType>\> = new BSet\<<subType>\>();
     <combination>
@@ -337,17 +349,14 @@ public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationNam
 >>
 
 invariant(iterationConstruct, predicate) ::= <<
-public boolean _check_inv() {
+_check_inv() {
     <iterationConstruct; separator="\n">
     return <predicate>.booleanValue();
 }
 >>
 
 copy_constructor(machine, parameters, properties, assignments) ::= <<
-public <machine>(<parameters; separator=", ">) {
-    <properties; separator="\n">
-    <assignments; separator="\n">
-}
+//TODO
 >>
 
 copy_assignment(variable) ::= <<
@@ -356,8 +365,9 @@ this.<variable> = <variable>;
 >>
 
 copy(machine, parameters) ::= <<
-public <machine> _copy() {
-    return new <machine>(<parameters; separator=", ">);
+public _copy(): <machine> {
+    //TODO
+    return new <machine>(/*<parameters; separator=", ">*/);
 }
 >>
 
@@ -664,8 +674,8 @@ boolean_val(val) ::= <<
 <if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
 >>
 
-identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant) ::= <<
-<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(isPrivate)>this.<else><if(isConstant)>this.<endif><endif><identifier><endif><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant, isDefiningLdVariable) ::= <<
+<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(!isDefiningLdVariable)><if(isPrivate || isConstant)>this.<endif><endif><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<
@@ -713,7 +723,7 @@ new BString(<string>)
 >>
 
 operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
-<machine>.<struct> <var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+let <var> = <operation_call_without_assignment(machineInstance, function, args, this)>
 <assignments; separator="\n">
 >>
 
@@ -737,34 +747,139 @@ import {enum_<name>} from "./<machineName>.js"
 import {<name>} from "./<machineName>.js"
 >>
 
-model_check() ::= <<
+record_private_variable_prefix() ::= <<
+this.
 >>
 
-model_check_next_states() ::= <<
+model_check(nextStates, evalState, printResult, main) ::= <<
+<nextStates>
+
+<evalState>
+
+<printResult>
+
+<main>
 >>
 
-model_check_transition() ::= <<
+model_check_next_states(machine, transitions) ::= <<
+private static Set\<<machine>\> generateNextStates(<machine> state, AtomicInteger transitions) {
+    Set\<<machine>\> result = new HashSet\<>();
+    <transitions>
+    return result;
+}
 >>
 
-model_check_transition_body() ::= <<
+model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions) ::= <<
+<if(hasParameters)>
+BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
+for(<tupleType> param : <transitionIdentifier>) {
+    <execTransitions>
+}
+<else>
+if(state.<evalTransitions>()) {
+    <execTransitions>
+}
+<endif>
 >>
 
-model_check_transition_param_assignment() ::= <<
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters) ::= <<
+<if(hasParameters)>
+<readParameters>
+<endif>
+<machine> copiedState = state._copy();
+copiedState.<operation>(<parameters; separator=", ">);
+result.add(copiedState);
+transitions.set(transitions.get() + 1);
 >>
 
-model_check_evaluate_state() ::= <<
+model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
+<if(isLhs)>
+<if(oneParameter)>
+<type> <param> = <val>;
+<else>
+<type> <param> = <val>.projection1();
+<endif>
+<else>
+<type> <param> = <val>.projection2();
+<endif>
 >>
 
-model_check_evaluate_variable() ::= <<
+model_check_evaluate_state(machine, variables) ::= <<
+private static Map\<String, Object> evaluateState(<machine> machine) {
+    Map\<String, Object> state = new HashMap\<>();
+    <variables; separator="\n">
+    return state;
+}
+>>
+
+model_check_evaluate_variable(getter) ::= <<
+state.put("<getter>", machine.<getter>());
 >>
 
 model_check_print() ::= <<
+private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
+    if(deadlockDetected) {
+        System.out.println("DEADLOCK DETECTED");
+    }
+    if(invariantViolated) {
+        System.out.println("INVARIANT VIOLATED");
+    }
+    if(!deadlockDetected && !invariantViolated) {
+        System.out.println("MODEL CHECKING SUCCESSFUL");
+    }
+    System.out.println("Number of States: " + states);
+    System.out.println("Number of Transitions: " + transitions);
+}
 >>
 
 
-model_check_main() ::= <<
->>
+model_check_main(machine) ::= <<
+public static void main(String[] args) {
+    <machine> machine = new <machine>();
 
-record_private_variable_prefix() ::= <<
-this.
+
+    AtomicBoolean invariantViolated = new AtomicBoolean(false);
+    boolean deadlockDetected = false;
+
+    Map\<String, Object> initialState = evaluateState(machine);
+    if(!machine._check_inv()) {
+        invariantViolated.set(true);
+    }
+
+    Set\<Map\<String, Object>\> states = new HashSet\<>();
+    states.add(initialState);
+    AtomicInteger numberStates = new AtomicInteger(1);
+
+    LinkedList\<<machine>\> collection = new LinkedList\<>();
+    collection.add(machine);
+
+    AtomicInteger transitions = new AtomicInteger(0);
+
+    while(!collection.isEmpty()) {
+        // TODO: BF, DF, MIXED
+        <machine> state = Math.random() > 0.5 ? collection.removeFirst() : collection.removeLast();
+        Set\<<machine>\> nextStates = generateNextStates(state, transitions);
+        if(nextStates.isEmpty()) {
+            deadlockDetected = true;
+        }
+
+        nextStates.forEach(nextState -> {
+            Map\<String, Object> nextMachineState = evaluateState(nextState);
+            if(!states.contains(nextMachineState)) {
+                if(!nextState._check_inv()) {
+                    invariantViolated.set(true);
+                }
+                states.add(nextMachineState);
+                collection.add(nextState);
+                numberStates.getAndIncrement();
+                if(numberStates.get() % 10000 == 0) {
+                    System.out.println("VISITED STATES: " + numberStates.get());
+                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                    System.out.println("-------------------");
+                }
+            }
+        });
+    }
+    printResult(numberStates.get(), transitions.get(), deadlockDetected, invariantViolated.get());
+}
 >>

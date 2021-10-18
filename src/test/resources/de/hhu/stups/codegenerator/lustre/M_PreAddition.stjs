@@ -1,9 +1,9 @@
 let program: M_Pre = new M_Pre();
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(0))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(1))), new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(0))));
 console.log(program.getD().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(0))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(2))), new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(0))));
 console.log(program.getD().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(0))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(3))), new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(0))));
 console.log(program.getD().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(0))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(4))), new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(0))));
 console.log(program.getD().toString());

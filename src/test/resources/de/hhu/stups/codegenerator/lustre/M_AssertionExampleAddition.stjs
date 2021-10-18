@@ -1,3 +1,3 @@
 let program: M_AssertionExample = new M_AssertionExample();
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(1))));
 console.log(program.getR().toString());

@@ -1,19 +1,19 @@
 let lift: M_Lift = new M_Lift();
-lift.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+lift.clock_step(new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))));
 console.log(lift.getFloor().toString());
-lift.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
-console.log(lift.getFloor().toString());
-var i;
-for(i = 0; i < 100; i++) {
-    lift.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
-}
-console.log(lift.getFloor().toString());
-lift.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+lift.clock_step(new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))));
 console.log(lift.getFloor().toString());
 var i;
 for(i = 0; i < 100; i++) {
-    lift.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+    lift.clock_step(new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))));
 }
 console.log(lift.getFloor().toString());
-lift.clock_step(new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+lift.clock_step(new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))));
+console.log(lift.getFloor().toString());
+var i;
+for(i = 0; i < 100; i++) {
+    lift.clock_step(new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))));
+}
+console.log(lift.getFloor().toString());
+lift.clock_step(new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))));
 console.log(lift.getFloor().toString());

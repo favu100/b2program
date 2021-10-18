@@ -1,9 +1,9 @@
 let program: M_NodeCall_Clock2 = new M_NodeCall_Clock2();
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(1))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(1))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))));
 console.log(program.getRes().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(2))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(2))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))));
 console.log(program.getRes().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(false))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(3))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(false))));
 console.log(program.getRes().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))), new BRelation<LibraryLustre.REF, BBoolean>(new BTuple(LibraryLustre.REF.ref, new BBoolean(true))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(4))), new BRelation<REF, BBoolean>(new BTuple(new REF(enum_REF.ref), new BBoolean(true))));
 console.log(program.getRes().toString());

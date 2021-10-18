@@ -1,5 +1,5 @@
 let program: M_Fby2 = new M_Fby2();
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(3))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(3))));
 console.log(program.getZ().toString());
-program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple(LibraryLustre.REF.ref, new BInteger(4))));
+program.clock_step(new BRelation<REF, BInteger>(new BTuple(new REF(enum_REF.ref), new BInteger(4))));
 console.log(program.getZ().toString());

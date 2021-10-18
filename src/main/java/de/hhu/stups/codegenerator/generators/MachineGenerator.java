@@ -11,10 +11,7 @@ import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
 import de.hhu.stups.codegenerator.json.modelchecker.OperationFunctionInfo;
-import de.prob.parser.ast.nodes.DeclarationNode;
-import de.prob.parser.ast.nodes.MachineNode;
-import de.prob.parser.ast.nodes.MachineReferenceNode;
-import de.prob.parser.ast.nodes.OperationNode;
+import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -66,13 +63,8 @@ import org.stringtemplate.v4.STGroup;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
@@ -248,10 +240,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "copyConstructor", this.generateCopyConstructor(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
-		List<DeclarationNode> variablesAndConstants = new ArrayList<>();
-		variablesAndConstants.addAll(node.getConstants());
-		variablesAndConstants.addAll(node.getVariables());
-		TemplateHandler.add(machine, "getters", generateGetters(variablesAndConstants));
+		List<DeclarationNode> gettableNodes = new ArrayList<>();
+		gettableNodes.addAll(node.getConstants());
+		gettableNodes.addAll(node.getVariables());
+		node.getEnumeratedSets().forEach(enumeratedSet -> {
+			gettableNodes.add(enumeratedSet.getSetDeclarationNode());
+		});
+		TemplateHandler.add(machine, "getters", generateGetters(gettableNodes));
 		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", generateInvariant(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
@@ -279,7 +274,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	private String generateGetter(DeclarationNode variable) {
 		ST getter = currentGroup.getInstanceOf("getter");
-		TemplateHandler.add(getter, "variable", nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+		TemplateHandler.add(getter, "variable", (variable.getKind().equals(DeclarationNode.Kind.ENUMERATED_SET) ? "_": "") + nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
 		TemplateHandler.add(getter, "returnType", typeGenerator.generate(variable.getType()));
 		return getter.render();
 	}

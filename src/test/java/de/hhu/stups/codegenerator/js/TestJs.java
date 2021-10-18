@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,59 +71,65 @@ public class TestJs {
 		}
 	}
 
+	/**
+	 * Tests if the machine can successfully be transpiled to JS.
+	 */
 	public void testJs(String machine) throws Exception {
-		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
-				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
-		provideBTypesAndImmutables(mchPath);
-		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> tsFilePaths =
-				codeGenerator.generate(mchPath, GeneratorMode.TS, false,
-						String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE),
-						"10", false,false, true,
-						null, false, null);
-		Process process = Runtime.getRuntime()
-				.exec("tsc --target es2015 --moduleResolution node "  +
-						String.join(" ", tsFilePaths.stream()
-						.map(path -> path.toFile().getAbsoluteFile().toString())
-						.collect(Collectors.toSet())));
-
-		writeInputToSystem(process.getErrorStream());
-		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
-		process.waitFor();
+		List<Path> tsFilePaths = compileMachine(machine, null, null);
 
 		Set<File> jsFiles = tsFilePaths.stream()
-				.map(path -> new File(path.getParent().toFile(), machine + ".class"))
+				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
 				.collect(Collectors.toSet());
 
-		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath()));
 	}
 
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
 		testJs(machinePath, machineName, addition, null, execute);
 	}
 
-	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute) throws Exception {
-		testJs(machinePath);
+	private List<Path> compileMachine(String machinePath, String addition, String visualisation) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
+		provideBTypesAndImmutables(mchPath);
 		CodeGenerator codeGenerator = new CodeGenerator();
-		List<Path> javaFilePaths =
-				codeGenerator.generate(mchPath, GeneratorMode.TS, false,
-						String.valueOf(Integer.MIN_VALUE), String.valueOf(Integer.MAX_VALUE),
-						"10", false, false, true,
-						addition, false, visualisation);
-		Runtime runtime = Runtime.getRuntime();
-		Process compileProcess = runtime.exec("tsc --target ES6 --moduleResolution node " +
-				String.join(" ", javaFilePaths.stream()
+		List<Path> tsFilePaths =
+				codeGenerator.generate(mchPath,
+						GeneratorMode.TS,
+						false,
+						String.valueOf(Integer.MIN_VALUE),
+						String.valueOf(Integer.MAX_VALUE),
+						"10",
+						visualisation != null,
+						false,
+						true,
+						addition,
+						false,
+						visualisation);
+
+		Process compileProcess = Runtime.getRuntime().exec("tsc --target ES6 --moduleResolution node " +
+				String.join(" ", tsFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
+		compileProcess.waitFor();
+
+		writeInputToSystem(compileProcess.getErrorStream());
+		writeInputToOutput(compileProcess.getErrorStream(), compileProcess.getOutputStream());
 		compileProcess.waitFor();
 
 		String error = streamToString(compileProcess.getInputStream());
 		if(!error.isEmpty()) {
 			throw new RuntimeException(error);
 		}
-		Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
+		return tsFilePaths;
+	}
+
+	/**
+	 * Tests if the machine can be successfully transpiled to JS and be executed with node.
+	 */
+	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute) throws Exception {
+		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation);
+		Path mainPath = tsFilePaths.get(tsFilePaths.size() - 1);
 
 		if(!execute) {
 			return;
@@ -134,23 +141,23 @@ public class TestJs {
 		Process executeProcess = processBuilder.start();
 		executeProcess.waitFor();
 
-		error = streamToString(executeProcess.getErrorStream());
+		String error = streamToString(executeProcess.getErrorStream());
 		if(!error.isEmpty()) {
 			throw new RuntimeException(error);
 		}
 
 		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
-		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".ts", ".out"))).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replace(".ts", ".out"))).replaceAll("\n", "");
 
 		System.out.println("Assert: " + result + " = " + expectedOutput);
 
 		assertEquals(expectedOutput, result);
 
-		Set<File> jsFiles = javaFilePaths.stream()
+		Set<File> jsFiles = tsFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machinePath + ".js"))
 				.collect(Collectors.toSet());
 
-		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath()));
 	}
 
 	private void cleanUp(String path) {

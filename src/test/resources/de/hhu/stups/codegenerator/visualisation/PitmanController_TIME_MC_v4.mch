@@ -33,7 +33,7 @@ INVARIANT
 
  /* "SAF-H0" */ (hazardWarningSwitchOn = switch_on ⇒ remaining_blinks = -1) &
  
- /* "SAF-H3b"*/ (pitmanArmUpDown∈PITMAN_DIRECTION_BLINKING & engineOn=TRUE
+ /* "SAF-H3b"*/ (pitmanArmUpDown ∈ PITMAN_DIRECTION_BLINKING & engineOn=TRUE
         ⇒ remaining_blinks = -1)
 
 ASSERTIONS
@@ -127,7 +127,7 @@ OPERATIONS
   ENV_Pitman_DirectionBlinking (newPos) =
   // corresponds to pitmanArmUpDown = 2 or 4 (Upward/Downward7)
   // ELS-1, ELS-5
-  PRE newPos /= pitmanArmUpDown THEN
+  PRE newPos : PITMAN_POSITION & newPos /= pitmanArmUpDown THEN
      IF hazardWarningSwitchOn = switch_off & engineOn = TRUE THEN
          SET_BlinkersOn(pitman_direction(newPos), -1)
      END;
@@ -145,7 +145,7 @@ OPERATIONS
   
   
   
-  ENV_Hazard_blinking(newSwitchPos) = SELECT newSwitchPos /= hazardWarningSwitchOn THEN
+  ENV_Hazard_blinking(newSwitchPos) = SELECT newSwitchPos : SWITCH_STATUS & newSwitchPos /= hazardWarningSwitchOn THEN
   // ELS-1, ELS-5
       IF newSwitchPos = switch_on // hazardWarningSwitchOn = switch_off
       THEN

@@ -14,7 +14,7 @@ html(machineName, svgName, btypeImports) ::= <<
 \<body>
   \<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml" height="300" width="300">\</object>
   \<div id="_operations_view">
-    \<div>Parameter\</div>
+    \<div class="param">Parameter\</div>
     \<div style="text-align: center; grid-column: -1;">Event\</div>
   \</div>
   \<div id="_history_view">\</div>
@@ -51,9 +51,13 @@ function collapse(element) {
     margin-bottom: auto;
     margin-right: 1rem;
 }
+:root {
+    --noneOrGrid: grid;
+}
 .param{
-    display: grid;
+    display: var(--noneOrGrid);
     grid-template-columns: auto auto;
+    gap: 5px;
 }
 #_history_view{
     margin-bottom: auto;
@@ -71,16 +75,21 @@ function collapse(element) {
     grid-column: 1 / -1;
     border-bottom: 1px solid black;
 }
+
+.state_view_header:only-child {
+    display: none;
+}
+
 .state_view_header::after {
     content: "\25B2";
     margin-left: 5px;
+    float: right;
 }
 .collapsed ~ * {
     display: none;
 }
 .collapsed::after {
     content: "\25BC";
-    margin-left: 5px;
 }
 body{
 display: flex;

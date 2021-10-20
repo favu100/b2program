@@ -1,5 +1,8 @@
 package de.hhu.stups.codegenerator.json.visb;
 
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,6 +13,7 @@ public class VisBEvent {
 	private String event;
 	private List<String> predicates;
 	private List<VisBHover> hovers; // TODO: maybe provide multiple values and allow value to depend on B state
+	private List<PredicateNode> predicateNodes;
 
 
 	/**
@@ -23,6 +27,7 @@ public class VisBEvent {
 		this.event = event;
 		this.predicates = predicates;
 		this.hovers = hovers;
+		this.predicateNodes = new ArrayList<>();
 	}
 
 	public String getEvent() {
@@ -39,6 +44,10 @@ public class VisBEvent {
 
 	public List<VisBHover> getHovers() {
 		return hovers;
+	}
+
+	public List<PredicateNode> getPredicateNodes() {
+		return predicateNodes;
 	}
 
 	@Override

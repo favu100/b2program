@@ -7,6 +7,7 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.visitors.MachineScopeChecker;
 import de.prob.parser.ast.visitors.TypeChecker;
 import de.prob.parser.ast.visitors.TypeErrorException;
@@ -70,6 +71,14 @@ public class VisBProjectParser extends Antlr4BParser {
             BParser.ExpressionContext expressionContext = parseExpression(stream);
             ExprNode exprNode = MachineASTCreator.createExpressionAST(expressionContext);
             item.setExprNode(exprNode);
+        });
+        visualisation.getVisBEvents().forEach(event -> {
+            event.getPredicates().forEach(predicate -> {
+                CodePointCharStream stream = CharStreams.fromString(predicate);
+                BParser.PredicateContext predicateContext = parsePredicate(stream);
+                PredicateNode predicateNode = MachineASTCreator.createPredicateAST(predicateContext);
+                event.getPredicateNodes().add(predicateNode);
+            });
         });
         checkMachineName(mainBFile, main.getName());
 

@@ -3,7 +3,7 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, machineVars, machineEvents, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, variableUpdates, includedMachines) ::= <<
+visulisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js"
 <importedEnums; separator="\n">
 <machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
@@ -19,7 +19,7 @@ var _state_view_consts = document.getElementById("_state_view_constants");
 var _state_view_sets = document.getElementById("_state_view_sets");
 var _state_view_invariant = document.getElementById("_state_view_invariant");
 var _svg_vars = {}
-<machineVars: {machineVar | _svg_vars["<machineVar>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineVar>")<\n>}>
+<svgElements: {svgElement | _svg_vars["<svgElement>"] = document.getElementById("<svgName>").contentDocument.getElementById("<svgElement>")<\n>}>
 var _machine_vars = {}
 var _var_label;
 var _var_div;
@@ -29,20 +29,36 @@ var _var_div;
 <invariant>
 
 
-function updateVisuals (){
+function updateVisuals () {
   <visualUpdates; separator="\n">
   <variableUpdates; separator="\n">
-  _machine_vars["_invariant"].innerHTML = _machine._check_inv()
+  _machine_vars["_invariant"].innerHTML = _machine._check_inv();
+  checkTransitions();
+}
+
+function checkTransitions () {
+    for(event in _machine_events) {
+      var transition = <initialMachineVar()>["_tr_" + event]();
+      if(!(transition instanceof BSet)) {
+        _machine_events[event].disabled = !transition;
+      } else if (transition.size().intValue() == 0) {
+        _machine_events[event].disabled = true;
+      }
+    }
 }
 
 _operations_view = document.getElementById("_operations_view");
 _history_view = document.getElementById("_history_view");
 var _param_div;
 var _onclick_function;
-var _svg_events = {}
-<machineEvents: {machineEvent| <machineEvent><\n>}>
+var _machine_events = {};
+var _svg_events = {};
+<events: {event| <event><\n>}>
 
 updateVisuals();
+if(_operations_view.getElementsByTagName("label").length == 0) {
+    document.documentElement.style.setProperty('--noneOrGrid', 'none');
+}
 >>
 
 btype_import(type) ::= <<
@@ -57,30 +73,50 @@ variableUpdate(variable, machineName) ::= <<
 _machine_vars["<variable>"].innerHTML = _included_machines["<machineName>"]._get_<variable>();
 >>
 
-event(machineEvent, svgName, parameterCreation, parameterNames) ::= <<
+event(machineEvent, svgName, parameterCreation, parameterNames, svgEvents) ::= <<
 _param_div = document.createElement("div");
 _param_div.classList.add("param");
-var <machineEvent> = document.createElement("button");
+_machine_events["<machineEvent>"] = document.createElement("button");
 <parameterCreation: {param| <param><\n>}>
 _operations_view.appendChild(_param_div);
 
 
-<machineEvent>.style.gridColumn="-1";
-<machineEvent>.innerHTML = "<machineEvent>";
-_onclick_function = function() {
-  <initialMachineVar()>.<machineEvent>(<parameterNames: {param| <machineEvent>["<param>"].getValue(), }>);
-  updateVisuals();
-  var history_element = document.createElement("span");
-  history_element.innerHTML = "<machineEvent>\</br>";
-  _history_view.appendChild(history_element);
-}
-<machineEvent>.onclick = _onclick_function;
-_operations_view.appendChild(<machineEvent>);
+_machine_events["<machineEvent>"].style.gridColumn="-1";
+_machine_events["<machineEvent>"].innerHTML = "<machineEvent>";
+_machine_events["<machineEvent>"].onclick = <onclick_function(false, machineEvent, parameterNames)>
+_operations_view.appendChild(_machine_events["<machineEvent>"]);
+
+<svgEvents; separator="\n">
 >>
 
-onclick_event(machineEventId, svgName) ::= <<
+svg_event(machineEvent, machineEventId, svgName, parameterMap, parameterNames) ::= <<
 _svg_events["<machineEventId>"] = document.getElementById("<svgName>").contentDocument.getElementById("<machineEventId>");
-_svg_events["<machineEventId>"].onclick = _onclick_function;
+_svg_events["<machineEventId>"].onclick = <onclick_function(parameterMap, machineEvent, parameterNames)>
+>>
+
+onclick_function(parameterMap, machineEvent, parameterNames) ::= <<
+function() {
+  var parameters = <if(parameterMap)><parameterMap><else>{}<endif>;
+  var transition = <initialMachineVar()>._tr_<machineEvent>();
+  if(!(transition instanceof BSet)) {
+    if(!transition) {
+        alert("Event <machineEvent> is not enabled!");
+        return;
+    }
+  } else {
+    var parameterTuple = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>].reduce((a, e) => new BTuple(a, e))
+    if(! transition.elementOf(parameterTuple).booleanValue()) {
+        alert("Invalid parameters for event <machineEvent>!");
+        return;
+    }
+  }
+  var returnValue = <initialMachineVar()>.<machineEvent>(<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>);
+  updateVisuals();
+  var history_element = document.createElement("span");
+  history_element.innerHTML = "<machineEvent>" + (returnValue? " (" + returnValue.toString() + ")": "") + "\</br>";
+  _history_view.appendChild(history_element);
+}
+
 >>
 
 parameter(name, getValueMethod, eventName) ::= <<
@@ -92,7 +128,7 @@ var <name> = document.createElement("input");
 <name>.id="<name>";
 <getValueMethod>
 _param_div.appendChild(<name>);
-<eventName>["<name>"] = <name>;
+_machine_events["<eventName>"]["<name>"] = <name>;
 >>
 
 boolValue(name) ::= <<
@@ -165,4 +201,14 @@ getMachineFromMachine(machine, includedMachine) ::= <<
 
 mapIncludedMachineName(machineName, pathFromMainMachine) ::= <<
 _included_machines["<machineName>"] = <pathFromMainMachine>;
+>>
+
+parameterMap(parameters) ::= <<
+{
+    <parameters; separator="\n">
+}
+>>
+
+parameterMapPredicate(name, predicate) ::= <<
+<name>: <predicate>,
 >>

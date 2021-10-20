@@ -8,6 +8,12 @@ import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
 import de.prob.parser.ast.nodes.*;
+import de.prob.parser.ast.nodes.expression.ExprNode;
+import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
+import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode.PredOperatorExprArgs;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
 import org.stringtemplate.v4.ST;
@@ -26,8 +32,6 @@ public class VisualisationGenerator{
   private final STGroup htmlGroup;
   private final STGroup visualisationGroup;
 
-  private final Set<String> generatedEvents = new HashSet<>();
-
   public VisualisationGenerator(ImportGenerator importGenerator, ExpressionGenerator expressionGenerator) {
     this.htmlGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLTemplate.stg");
     this.visualisationGroup = new STGroupFile("de/hhu/stups/codegenerator/VisualisationTemplate.stg");
@@ -43,8 +47,8 @@ public class VisualisationGenerator{
 
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(visualisation, "svgName", visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
-    TemplateHandler.add(visualisation, "machineVars", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
-    TemplateHandler.add(visualisation, "machineEvents", visBProject.getVisualisation().getVisBEvents().stream().map(visBEvent -> this.generateMachineEvent(visBEvent, visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0], visBProject.getProject().getMainMachine().getOperations())).collect(Collectors.toSet()));
+    TemplateHandler.add(visualisation, "svgElements", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
+    TemplateHandler.add(visualisation, "events", visBProject.getProject().getMainMachine().getOperations().stream().map(machineEvent -> this.generateMachineEvent(machineEvent, visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0], visBProject.getVisualisation().getVisBEvents())).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "visualUpdates", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem item) -> generateVisualUpdate(item, visBProject)).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "machineEnums", expressionGenerator.getNameHandler().getEnumTypes().keySet().stream().filter((String machineEnum) -> expressionGenerator.getNameHandler().getEnumToMachine().get(machineEnum).equals(visBProject.getProject().getMainMachine().getName())).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "importedEnums", importGenerator.getImportedEnums());
@@ -212,30 +216,52 @@ public class VisualisationGenerator{
     return paramTemplate.render();
   }
 
-  public String generateMachineEvent(VisBEvent event, String svgName, List<OperationNode> operations) {
-    Optional<OperationNode> operation = operations.stream().filter(operationNode -> operationNode.getName().equals(event.getEvent())).findFirst();
-    if(!operation.isPresent()) {
-      throw new RuntimeException("Operation " + event.getEvent() + " used in visualisation but not present in machine.");
-    }
-    List<DeclarationNode> params = operation.get().getParams();
+  public String generateMachineEvent(OperationNode operation, String svgName, List<VisBEvent> events) {
+    List<DeclarationNode> params = operation.getParams();
 
-    String result = "";
-    if (!generatedEvents.contains(event.getEvent())) {
-      ST eventTemplate = visualisationGroup.getInstanceOf("event");
-      TemplateHandler.add(eventTemplate, "machineEvent", event.getEvent());
-      TemplateHandler.add(eventTemplate, "svgName", svgName);
-      TemplateHandler.add(eventTemplate, "parameterCreation", params.stream().map((DeclarationNode param) -> generateEventParameter(param, event.getEvent())).collect(Collectors.toList()));
-      TemplateHandler.add(eventTemplate, "parameterNames", params.stream().map(DeclarationNode::getName).collect(Collectors.toList()));
-      result += eventTemplate.render();
-      generatedEvents.add(event.getEvent());
+    //Generate onclicks for VisB-Events
+    List<VisBEvent> eventsWithOperation = events.stream().filter(event -> event.getEvent().equals(operation.getName())).collect(Collectors.toList());
+    List<String> svgEvents = new ArrayList<>();
+    for (VisBEvent event : eventsWithOperation) {
+      ST onclickEventTemplate = visualisationGroup.getInstanceOf("svg_event");
+      TemplateHandler.add(onclickEventTemplate, "machineEvent", event.getEvent());
+      TemplateHandler.add(onclickEventTemplate, "machineEventId", event.getId());
+      TemplateHandler.add(onclickEventTemplate, "svgName", svgName);
+      TemplateHandler.add(onclickEventTemplate, "parameterMap", generateParameterMap(event.getPredicateNodes()));
+      TemplateHandler.add(onclickEventTemplate, "parameterNames", params.stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+      svgEvents.add(onclickEventTemplate.render());
     }
-    ST onclickEventTemplate = visualisationGroup.getInstanceOf("onclick_event");
-    TemplateHandler.add(onclickEventTemplate, "machineEvent", event.getEvent());
-    TemplateHandler.add(onclickEventTemplate, "machineEventId", event.getId());
-    TemplateHandler.add(onclickEventTemplate, "svgName", svgName);
-    TemplateHandler.add(onclickEventTemplate, "parameterNames", params.stream().map(DeclarationNode::getName).collect(Collectors.toList()));
-    result += onclickEventTemplate.render();
-    return result;
+
+    //Generate the machine Event
+    ST eventTemplate = visualisationGroup.getInstanceOf("event");
+    TemplateHandler.add(eventTemplate, "machineEvent", operation.getName());
+    TemplateHandler.add(eventTemplate, "svgName", svgName);
+    TemplateHandler.add(eventTemplate, "parameterCreation", params.stream().map(param -> generateEventParameter(param, operation.getName())).collect(Collectors.toList()));
+    TemplateHandler.add(eventTemplate, "parameterNames", params.stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+    TemplateHandler.add(eventTemplate, "svgEvents", svgEvents);
+
+    return eventTemplate.render();
+  }
+
+  private String generateParameterMap(List<PredicateNode> parameters) {
+    List<String> parameterList = new ArrayList<>();
+    parameters.forEach(parameter -> {
+      if(! (parameter instanceof PredicateOperatorWithExprArgsNode)
+      || ! ((PredicateOperatorWithExprArgsNode) parameter).getOperator().equals(PredOperatorExprArgs.EQUAL)
+      || ((PredicateOperatorWithExprArgsNode) parameter).getExpressionNodes().size() != 2
+      || ! (((PredicateOperatorWithExprArgsNode) parameter).getExpressionNodes().get(0) instanceof IdentifierExprNode)) {
+        throw new CodeGenerationException("Predicates for Parameters must be an assignment for a single parameter.");
+      }
+      PredicateOperatorWithExprArgsNode param = (PredicateOperatorWithExprArgsNode) parameter;
+
+      ST parameterTemplate = visualisationGroup.getInstanceOf("parameterMapPredicate");
+      TemplateHandler.add(parameterTemplate, "name", ((IdentifierExprNode) param.getExpressionNodes().get(0)).getName());
+      TemplateHandler.add(parameterTemplate, "predicate", expressionGenerator.visitExprNode(param.getExpressionNodes().get(1)));
+      parameterList.add(parameterTemplate.render());
+    });
+    ST parameterMap = visualisationGroup.getInstanceOf("parameterMap");
+    TemplateHandler.add(parameterMap, "parameters", parameterList);
+    return parameterMap.render();
   }
 
   public String generateHTML(VisBProject visBProject) {

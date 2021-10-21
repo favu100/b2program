@@ -6,15 +6,16 @@ use crate::bobject::BObject;
 //TODO: use immutable_map::TreeSet;
 use std::any::TypeId;
 use std::convert::TryInto;
-use std::collections::BTreeSet;
+use im::ordset::{OrdSet, Iter};
 use std::hash::Hash;
 use std::collections::LinkedList;
 use std::fmt;
+use std::sync::Arc;
 use rand::Rng;
 
 #[derive(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone)]
 pub struct BSet<T: BObject> {
-    set: BTreeSet<T>,
+    set: OrdSet<T>,
 }
 
 impl<T: BObject> fmt::Display for BSet<T> {
@@ -33,17 +34,35 @@ impl<T: BObject> fmt::Display for BSet<T> {
 
 impl<T: BObject> BObject for BSet<T> {}
 
+impl<T: 'static + BObject> IntoIterator for BSet<T> {
+    type Item = Arc<T>;
+    type IntoIter = im::ordset::Iter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
 impl<T: 'static + BObject> BSet<T> {
     #![allow(non_snake_case, dead_code)]
 
     pub fn new(mut args: Vec<T>) -> BSet<T> {
         let mut ret: BSet<T> = BSet {
-            set: BTreeSet::new()
+            set: OrdSet::new()
         };
         while !args.is_empty() {
-            ret.set.insert(args.remove(0));
+            ret.set = ret.set.insert(args.remove(0));
         }
         return ret;
+    }
+
+    pub fn fromOrdSet(set: OrdSet<T>) -> BSet<T> {
+        return BSet { set: set };
+    }
+
+
+    pub fn iter(&self) -> Iter<T> {
+        return self.set.iter();
     }
 
     pub fn size(&self) -> usize {
@@ -59,21 +78,21 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
     pub fn intersect(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet::new(self.set.intersection(&set.set).cloned().collect());
+        return BSet{ set: self.set.intersection(&set.set) };
     }
 
     pub fn difference(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet::new(self.set.difference(&set.set).cloned().collect());
+        return BSet{ set: self.set.difference(&set.set) };
     }
 
     pub fn _union(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet::new(self.set.union(&set.set).cloned().collect());
+        return BSet{ set: self.set.union(&set.set) };
     }
 
     pub fn interval(a: &BInteger, b: &BInteger) -> BSet<BInteger> {
         let mut result: BSet<BInteger> = BSet::new(vec![]);
         for i in a.get_val()..b.get_val()+1 {
-            result.set.insert(BInteger::new(i));
+            result.set = result.set.insert(BInteger::new(i));
         }
         return result;
     }
@@ -136,7 +155,7 @@ impl<T: 'static + BObject> BSet<T> {
         while !queue.is_empty() {
             let current_set: BSet<T> = queue.pop_front().unwrap();
             for element in self.set.iter() {
-                let next_set: BSet<T> = current_set._union(&BSet::new(vec![element.clone()]));
+                let next_set: BSet<T> = current_set._union(&BSet::new(vec![element.as_ref().clone()]));
                 let previous_size = result.size();
                 result = result._union(&BSet::new(vec![next_set.clone()]));
                 if previous_size < result.size() {
@@ -150,7 +169,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn _min(self: &BSet<T>) -> BInteger {
         if TypeId::of::<BInteger>() == TypeId::of::<T>() {
-            return self.set.iter().next().unwrap().get_binteger_value();
+            return self.set.get_min().unwrap().get_binteger_value();
         } else {
             panic!("Called interval function of BSet which doesnt hold integers!")
         }
@@ -158,7 +177,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn _max(self: &BSet<T>) -> BInteger {
         if TypeId::of::<BInteger>() == TypeId::of::<T>() {
-            return self.set.iter().next_back().unwrap().get_binteger_value();
+            return self.set.get_max().unwrap().get_binteger_value();
         } else {
             panic!("Called interval function of BSet which doesnt hold integers!")
         }
@@ -166,7 +185,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn nondeterminism(&self) -> T {
         let mut rng = rand::thread_rng();
-        return self.set.iter().nth(rng.gen_range(0..self.set.len())).unwrap().clone();
+        return self.set.iter().nth(rng.gen_range(0..self.set.len())).unwrap().as_ref().clone();
     }
 
     pub fn equal(&self, other: &BSet<T>) -> BBoolean {
@@ -235,7 +254,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn subsetOfNatural(&self) -> BBoolean {
         if self.subsetOfInteger().booleanValue() {
-            return BBoolean::new(self.set.iter().find(|&i| i.get_binteger_value().isNotNatural().booleanValue()).is_none());
+            return BBoolean::new(self.set.iter().find(|i| i.get_binteger_value().isNotNatural().booleanValue()).is_none());
         }
         return BBoolean::new(false);
     }
@@ -254,7 +273,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn subsetOfNatural1(&self) -> BBoolean {
         if self.subsetOfInteger().booleanValue() {
-            return BBoolean::new(self.set.iter().find(|&i| i.get_binteger_value().isNotNatural1().booleanValue()).is_none());
+            return BBoolean::new(self.set.iter().find(|i| i.get_binteger_value().isNotNatural1().booleanValue()).is_none());
         }
         return BBoolean::new(false);
     }

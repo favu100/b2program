@@ -12,7 +12,7 @@ html(machineName, svgName, btypeImports) ::= <<
 \<head>
 
 \<body>
-  \<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml" height="300" width="300">\</object>
+  <if(svgName)>)\<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml" height="300" width="300">\</object><endif>
   \<div id="_operations_view">
     \<div class="param">Parameter\</div>
     \<div style="text-align: center; grid-column: -1;">Event\</div>

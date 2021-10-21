@@ -54,7 +54,7 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
-		if(args.length < 8 || args.length > 10) {
+		if(args.length < 8 || args.length > 11) {
 			System.err.println("Wrong number of arguments");
 			return;
 		}
@@ -73,14 +73,18 @@ public class CodeGenerator {
 		if(args.length >= 9) {
 			addition = args[8];
 		}
+		boolean forVisualisation = false;
+		if(args.length >= 10) {
+			forVisualisation = Boolean.parseBoolean(args[9]);
+		}
 		String visualisationFile = null;
-		if(args.length == 10) {
+		if(args.length == 11) {
 			if (mode != GeneratorMode.TS) {
 				System.err.println("Generating a visulisation is only supported for TypeScript");
 			}
-			visualisationFile = args[9];
+			visualisationFile = args[10];
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, visualisationFile);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
 	}
 
 	/*
@@ -174,6 +178,7 @@ public class CodeGenerator {
 														 String minint, String maxint, String deferredSetSize,
 														 boolean forModelChecking, boolean useConstraintSolving,
 														 boolean isMain, String addition, boolean isIncludedMachine,
+														 boolean forVisualisation,
 														 String visualisationFile) throws CodeGenerationException, IOException {
 		if(isMain) {
 			paths.clear();
@@ -182,7 +187,7 @@ public class CodeGenerator {
 		BProject project = parseProject(path);
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
 		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving);
-		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, visualisationFile));
+		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile));
 		return paths;
 	}
 
@@ -192,7 +197,7 @@ public class CodeGenerator {
 	private Path generateCode(Path path, GeneratorMode mode, boolean useBigInteger,
 														String minint, String maxint, String deferredSetSize,
 														boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
-														Path addition, boolean isIncludedMachine, String visualisationFile) throws IOException {
+														Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile) throws IOException {
 		MachineGenerator generator =
 				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
 														 useConstraintSolving, addition, isIncludedMachine);
@@ -203,9 +208,16 @@ public class CodeGenerator {
 		String code = generator.generateMachine(node);
 		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code);
 
-		if(visualisationFile != null) {
-			VisBVisualisation visualisation = VisBFileHandler.constructVisualisationFromJSON(Paths.get(path.getParent().toString(), visualisationFile).toFile());
-			VisBProject visBProject = parseVisBProject(path, visualisation);
+		if(forVisualisation) {
+
+			VisBProject visBProject;
+			if(visualisationFile != null) {
+				VisBVisualisation visualisation = VisBFileHandler.constructVisualisationFromJSON(Paths.get(path.getParent().toString(), visualisationFile).toFile());
+				visBProject = parseVisBProject(path, visualisation);
+			} else {
+				visBProject = parseVisBProject(path, new VisBVisualisation(new ArrayList<>(), new ArrayList<>(), null, null));
+			}
+
 			generateVisualisation(visBProject, generator, path);
 		}
 

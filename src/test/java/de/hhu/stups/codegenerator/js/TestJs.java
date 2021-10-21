@@ -75,7 +75,7 @@ public class TestJs {
 	 * Tests if the machine can successfully be transpiled to JS.
 	 */
 	public void testJs(String machine) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machine, null, null);
+		List<Path> tsFilePaths = compileMachine(machine, null, null, false);
 
 		Set<File> jsFiles = tsFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
@@ -85,10 +85,10 @@ public class TestJs {
 	}
 
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
-		testJs(machinePath, machineName, addition, null, execute);
+		testJs(machinePath, machineName, addition, null, execute, false);
 	}
 
-	private List<Path> compileMachine(String machinePath, String addition, String visualisation) throws Exception {
+	private List<Path> compileMachine(String machinePath, String addition, String visualisation, boolean forVisualisation) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		provideBTypesAndImmutables(mchPath);
@@ -100,11 +100,12 @@ public class TestJs {
 						String.valueOf(Integer.MIN_VALUE),
 						String.valueOf(Integer.MAX_VALUE),
 						"10",
-						visualisation != null,
+						forVisualisation,
 						false,
 						true,
 						addition,
 						false,
+						forVisualisation,
 						visualisation);
 
 		Process compileProcess = Runtime.getRuntime().exec("tsc --target ES6 --moduleResolution node " +
@@ -127,8 +128,8 @@ public class TestJs {
 	/**
 	 * Tests if the machine can be successfully transpiled to JS and be executed with node.
 	 */
-	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation);
+	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute, boolean forVisualisation) throws Exception {
+		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation, forVisualisation);
 		Path mainPath = tsFilePaths.get(tsFilePaths.size() - 1);
 
 		if(!execute) {

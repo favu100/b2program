@@ -18,8 +18,8 @@ var _state_view_vars = document.getElementById("_state_view_variables");
 var _state_view_consts = document.getElementById("_state_view_constants");
 var _state_view_sets = document.getElementById("_state_view_sets");
 var _state_view_invariant = document.getElementById("_state_view_invariant");
-var _svg_vars = {}
-<svgElements: {svgElement | _svg_vars["<svgElement>"] = document.getElementById("<svgName>").contentDocument.getElementById("<svgElement>")<\n>}>
+<if(svgName)>var _svg_vars = {}
+<svgElements: {svgElement | _svg_vars["<svgElement>"] = document.getElementById("<svgName>").contentDocument.getElementById("<svgElement>")<\n>}><endif>
 var _machine_vars = {}
 var _var_label;
 var _var_div;
@@ -30,7 +30,7 @@ var _var_div;
 
 
 function updateVisuals () {
-  <visualUpdates; separator="\n">
+  <if(svgName)><visualUpdates; separator="\n"><endif>
   <variableUpdates; separator="\n">
   _machine_vars["_invariant"].innerHTML = _machine._check_inv();
   checkTransitions();
@@ -52,7 +52,7 @@ _history_view = document.getElementById("_history_view");
 var _param_div;
 var _onclick_function;
 var _machine_events = {};
-var _svg_events = {};
+<if(svgName)>var _svg_events = {};<endif>
 <events: {event| <event><\n>}>
 
 updateVisuals();

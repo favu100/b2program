@@ -44,11 +44,11 @@ public class VisualisationGenerator{
    */
   public String generateVisualisation(VisBProject visBProject) {
     ST visualisation = visualisationGroup.getInstanceOf("visulisation");
-
+    boolean withoutSvg = visBProject.getVisualisation().getSvgPath() == null;
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
-    TemplateHandler.add(visualisation, "svgName", visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
+    TemplateHandler.add(visualisation, "svgName", withoutSvg? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(visualisation, "svgElements", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
-    TemplateHandler.add(visualisation, "events", visBProject.getProject().getMainMachine().getOperations().stream().map(machineEvent -> this.generateMachineEvent(machineEvent, visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0], visBProject.getVisualisation().getVisBEvents())).collect(Collectors.toSet()));
+    TemplateHandler.add(visualisation, "events", visBProject.getProject().getMainMachine().getOperations().stream().map(machineEvent -> this.generateMachineEvent(machineEvent, withoutSvg? null: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0], visBProject.getVisualisation().getVisBEvents())).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "visualUpdates", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem item) -> generateVisualUpdate(item, visBProject)).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "machineEnums", expressionGenerator.getNameHandler().getEnumTypes().keySet().stream().filter((String machineEnum) -> expressionGenerator.getNameHandler().getEnumToMachine().get(machineEnum).equals(visBProject.getProject().getMainMachine().getName())).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "importedEnums", importGenerator.getImportedEnums());
@@ -267,7 +267,7 @@ public class VisualisationGenerator{
   public String generateHTML(VisBProject visBProject) {
     ST html = htmlGroup.getInstanceOf("html");
     TemplateHandler.add(html, "machineName", visBProject.getProject().getMainMachine().getName());
-    TemplateHandler.add(html, "svgName", visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
+    TemplateHandler.add(html, "svgName", visBProject.getVisualisation().getSvgPath() == null? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(html, "btypeImports", importGenerator.getImportedTypes().stream().map(this::generateHTMLImport).collect(Collectors.toSet()));
     return html.render();
   }

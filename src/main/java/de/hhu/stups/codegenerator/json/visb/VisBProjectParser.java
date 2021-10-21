@@ -63,60 +63,17 @@ public class VisBProjectParser extends Antlr4BParser {
     }
 
     public static VisBProject createVisBProjectFromMainFile(File mainBFile, VisBVisualisation visualisation, boolean typecheck) throws IOException, TypeErrorException, ScopeException {
-        final File parentFolder = mainBFile.getParentFile();
-        final List<MachineNode> machines = new ArrayList<>();
-        final BParser.StartContext mainMachineCST = parse(mainBFile);
-        final MachineNode main = MachineASTCreator.createMachineAST(mainMachineCST);
-
-        checkMachineName(mainBFile, main.getName());
-
-        machines.add(main);
-        final Set<String> parsedMachines = new HashSet<>();
-        parsedMachines.add(main.getName());
-        final List<MachineReferenceNode> todo = new ArrayList<>();
-        todo.addAll(main.getMachineReferences());
-        while (!todo.isEmpty()) {
-            final MachineReferenceNode next = todo.iterator().next();
-            todo.remove(next);
-            final String name = next.getMachineName();
-            if (!parsedMachines.contains(name)) {
-                final File file = getFile(parentFolder, name);
-                checkMachineName(file, name);
-                final BParser.StartContext cst = parse(file);
-                final MachineNode ast = MachineASTCreator.createMachineAST(cst);
-                ast.setPrefix(next.getPrefix());
-                machines.add(ast);
-                for (MachineReferenceNode machineReferenceNode : ast.getMachineReferences()) {
-                    final String refName = machineReferenceNode.getMachineName();
-                    if (!parsedMachines.contains(refName)) {
-                        todo.add(machineReferenceNode);
-                    }
-                }
-            }
-        }
-
-        MachineScopeChecker scopeChecker = null;
-        TypeChecker typeChecker = null;
-
-        sortMachineNodes(machines);
-        for (int i = machines.size() - 1; i >= 0; i--) {
-            MachineNode machineNode = machines.get(i);
-            scopeChecker = new MachineScopeChecker(machineNode);
-        }
-        for (int i = machines.size() - 1; i >= 0; i--) {
-            MachineNode machineNode = machines.get(i);
-            typeChecker = new TypeChecker(machineNode);
-        }
+        BProject bProject = Antlr4BParser.createBProjectFromMainMachineFile(mainBFile);
+        MachineScopeChecker scopeChecker = new MachineScopeChecker(bProject.getMainMachine());
+        TypeChecker typeChecker = new TypeChecker(bProject.getMainMachine());
 
 
-        MachineScopeChecker finalScopeChecker = scopeChecker;
-        TypeChecker finalTypeChecker = typeChecker;
         visualisation.getVisBItems().forEach(item -> {
             CodePointCharStream stream = CharStreams.fromString(item.getExpression());
             BParser.ExpressionContext expressionContext = parseExpression(stream);
             ExprNode exprNode = MachineASTCreator.createExpressionAST(expressionContext);
-            finalScopeChecker.checkExpression(exprNode);
-            finalTypeChecker.checkExprNode(exprNode);
+            scopeChecker.checkExpression(exprNode);
+            typeChecker.checkExprNode(exprNode);
             item.setExprNode(exprNode);
         });
         visualisation.getVisBEvents().forEach(event -> {
@@ -124,12 +81,12 @@ public class VisBProjectParser extends Antlr4BParser {
                 CodePointCharStream stream = CharStreams.fromString(predicate);
                 BParser.PredicateContext predicateContext = parsePredicate(stream);
                 PredicateNode predicateNode = MachineASTCreator.createPredicateAST(predicateContext);
-                finalScopeChecker.checkPredicate(predicateNode);
-                finalTypeChecker.checkPredicateNode(predicateNode);
+                scopeChecker.checkPredicate(predicateNode);
+                typeChecker.checkPredicateNode(predicateNode);
                 event.getPredicateNodes().add(predicateNode);
             });
         });
-        return createVisBProject(machines, visualisation, typecheck);
+        return createVisBProject(bProject.getMachines(), visualisation, typecheck);
     }
 
 }

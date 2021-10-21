@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.json.visb;
 
 import de.prob.parser.antlr.Antlr4BParser;
+import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.MachineASTCreator;
 import de.prob.parser.antlr.ScopeException;
 import de.prob.parser.ast.nodes.MachineNode;
@@ -66,20 +67,7 @@ public class VisBProjectParser extends Antlr4BParser {
         final List<MachineNode> machines = new ArrayList<>();
         final BParser.StartContext mainMachineCST = parse(mainBFile);
         final MachineNode main = MachineASTCreator.createMachineAST(mainMachineCST);
-        visualisation.getVisBItems().forEach(item -> {
-            CodePointCharStream stream = CharStreams.fromString(item.getExpression());
-            BParser.ExpressionContext expressionContext = parseExpression(stream);
-            ExprNode exprNode = MachineASTCreator.createExpressionAST(expressionContext);
-            item.setExprNode(exprNode);
-        });
-        visualisation.getVisBEvents().forEach(event -> {
-            event.getPredicates().forEach(predicate -> {
-                CodePointCharStream stream = CharStreams.fromString(predicate);
-                BParser.PredicateContext predicateContext = parsePredicate(stream);
-                PredicateNode predicateNode = MachineASTCreator.createPredicateAST(predicateContext);
-                event.getPredicateNodes().add(predicateNode);
-            });
-        });
+
         checkMachineName(mainBFile, main.getName());
 
         machines.add(main);
@@ -106,6 +94,41 @@ public class VisBProjectParser extends Antlr4BParser {
                 }
             }
         }
+
+        MachineScopeChecker scopeChecker = null;
+        TypeChecker typeChecker = null;
+
+        sortMachineNodes(machines);
+        for (int i = machines.size() - 1; i >= 0; i--) {
+            MachineNode machineNode = machines.get(i);
+            scopeChecker = new MachineScopeChecker(machineNode);
+        }
+        for (int i = machines.size() - 1; i >= 0; i--) {
+            MachineNode machineNode = machines.get(i);
+            typeChecker = new TypeChecker(machineNode);
+        }
+
+
+        MachineScopeChecker finalScopeChecker = scopeChecker;
+        TypeChecker finalTypeChecker = typeChecker;
+        visualisation.getVisBItems().forEach(item -> {
+            CodePointCharStream stream = CharStreams.fromString(item.getExpression());
+            BParser.ExpressionContext expressionContext = parseExpression(stream);
+            ExprNode exprNode = MachineASTCreator.createExpressionAST(expressionContext);
+            finalScopeChecker.checkExpression(exprNode);
+            finalTypeChecker.checkExprNode(exprNode);
+            item.setExprNode(exprNode);
+        });
+        visualisation.getVisBEvents().forEach(event -> {
+            event.getPredicates().forEach(predicate -> {
+                CodePointCharStream stream = CharStreams.fromString(predicate);
+                BParser.PredicateContext predicateContext = parsePredicate(stream);
+                PredicateNode predicateNode = MachineASTCreator.createPredicateAST(predicateContext);
+                finalScopeChecker.checkPredicate(predicateNode);
+                finalTypeChecker.checkPredicateNode(predicateNode);
+                event.getPredicateNodes().add(predicateNode);
+            });
+        });
         return createVisBProject(machines, visualisation, typecheck);
     }
 

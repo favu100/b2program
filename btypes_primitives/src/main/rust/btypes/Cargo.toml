@@ -7,4 +7,4 @@ edition = "2018"
 
 [dependencies]
 rand = "0.8.3"
-im = "9.0.0"
+im = "15.0.0"

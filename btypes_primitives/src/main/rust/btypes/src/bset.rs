@@ -10,7 +10,6 @@ use im::ordset::{OrdSet, Iter};
 use std::hash::Hash;
 use std::collections::LinkedList;
 use std::fmt;
-use std::sync::Arc;
 use rand::Rng;
 
 #[derive(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone)]
@@ -34,9 +33,12 @@ impl<T: BObject> fmt::Display for BSet<T> {
 
 impl<T: BObject> BObject for BSet<T> {}
 
-impl<T: 'static + BObject> IntoIterator for BSet<T> {
-    type Item = Arc<T>;
-    type IntoIter = im::ordset::Iter<T>;
+impl<'a, T: 'static + BObject> IntoIterator for &'a BSet<T>
+where
+    T: 'a + Ord,
+{
+    type Item = &'a T;
+    type IntoIter = im::ordset::Iter<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.iter()
@@ -51,7 +53,7 @@ impl<T: 'static + BObject> BSet<T> {
             set: OrdSet::new()
         };
         while !args.is_empty() {
-            ret.set = ret.set.insert(args.remove(0));
+            ret.set.insert(args.remove(0));
         }
         return ret;
     }
@@ -61,7 +63,7 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
 
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> Iter<'_, T> {
         return self.set.iter();
     }
 
@@ -78,21 +80,21 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
     pub fn intersect(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet{ set: self.set.intersection(&set.set) };
+        return BSet{ set: self.set.clone().intersection(set.set.clone()) };
     }
 
     pub fn difference(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet{ set: self.set.difference(&set.set) };
+        return BSet{ set: self.set.clone().relative_complement(set.set.clone()) };
     }
 
     pub fn _union(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet{ set: self.set.union(&set.set) };
+        return BSet{ set: self.set.clone().union(set.set.clone()) };
     }
 
     pub fn interval(a: &BInteger, b: &BInteger) -> BSet<BInteger> {
         let mut result: BSet<BInteger> = BSet::new(vec![]);
         for i in a.get_val()..b.get_val()+1 {
-            result.set = result.set.insert(BInteger::new(i));
+            result.set.insert(BInteger::new(i));
         }
         return result;
     }
@@ -155,7 +157,7 @@ impl<T: 'static + BObject> BSet<T> {
         while !queue.is_empty() {
             let current_set: BSet<T> = queue.pop_front().unwrap();
             for element in self.set.iter() {
-                let next_set: BSet<T> = current_set._union(&BSet::new(vec![element.as_ref().clone()]));
+                let next_set: BSet<T> = current_set._union(&BSet::new(vec![element.clone()]));
                 let previous_size = result.size();
                 result = result._union(&BSet::new(vec![next_set.clone()]));
                 if previous_size < result.size() {
@@ -185,7 +187,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn nondeterminism(&self) -> T {
         let mut rng = rand::thread_rng();
-        return self.set.iter().nth(rng.gen_range(0..self.set.len())).unwrap().as_ref().clone();
+        return self.set.iter().nth(rng.gen_range(0..self.set.len())).unwrap().clone();
     }
 
     pub fn equal(&self, other: &BSet<T>) -> BBoolean {

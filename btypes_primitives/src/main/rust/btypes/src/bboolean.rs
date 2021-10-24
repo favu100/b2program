@@ -28,15 +28,15 @@ impl BBoolean {
         return self.val;
     }
 
-    pub fn or(&self, other: BBoolean) -> BBoolean {
+    pub fn or(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(self.val || other.val);
     }
 
-    pub fn xor(&self, other:BBoolean) -> BBoolean {
+    pub fn xor(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(self.val ^ other.val);
     }
 
-    pub fn and(&self, other:BBoolean) -> BBoolean {
+    pub fn and(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(self.val && other.val);
     }
 
@@ -44,19 +44,19 @@ impl BBoolean {
         return BBoolean::new(!self.val);
     }
 
-    pub fn implies(&self, other:BBoolean) -> BBoolean {
+    pub fn implies(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(!self.val || other.val);
     }
 
-    pub fn equivalent(&self, other:BBoolean) -> BBoolean {
+    pub fn equivalent(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(self.val == other.val);
     }
 
-    pub fn equal(&self, other:BBoolean) -> BBoolean {
+    pub fn equal(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(self.val == other.val);
     }
 
-    pub fn unequal(&self, other:BBoolean) -> BBoolean {
+    pub fn unequal(&self, other: &BBoolean) -> BBoolean {
         return BBoolean::new(self.val == other.val);
     }
 }

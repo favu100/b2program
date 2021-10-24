@@ -261,4 +261,36 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     pub fn last(&self) -> R {
         return self.functionCall(&self.map.keys().last().unwrap());
     }
+
+    //TODO: pub fn reverse(&self) -> BRelation<L, R> {}
+
+    //TODO: pub fn front(&self) -> BRelation<L, R> {}
+
+    //TODO: pub fn tail(&self) -> BRelation<L, R> {}
+
+    //TODO: pub fn take(&self, n: &BInteger) -> BRelation<L, R> {}
+
+    //TODO: pub fn drop(&self, n: &BInteger) -> BRelation<L, R> {}
+
+    //TODO: pub fn concat(&self, arg: &BRelation<L,R>) -> BRelation<L, R> {}
+
+    //TODO: pub fn conc(&self) -> BRelation<Ln, Rn> {} ??
+
+    //TODO: pub fn append(&self, arg: &T) -> BRelation<L, R> {}
+
+    //TODO: pub fn prepend(&self, arg: &T) -> BRelation<L, R> {}
+
+    pub fn directProduct<ArgR: 'static + BObject>(&self, arg: &BRelation<L, ArgR>) -> BRelation<L, BTuple<R, ArgR>> {
+        self.map.iter()
+            .fold(BRelation::<L, BTuple<R, ArgR>>::new(vec![]),
+                  |mut rel, (k, v)| {
+                      let option = arg.map.get(k);
+                      if option.is_some() {
+                          rel.map.insert(k.clone(), BSet::<R>::cartesian::<R, ArgR>(v, option.unwrap()));
+                      }
+                      return rel;
+                  })
+    }
+
+
 }

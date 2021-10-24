@@ -595,6 +595,7 @@ public class SubstitutionGenerator {
         IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
         boolean isIdentifierLhs = lhs instanceof IdentifierExprNode;
         boolean isRecordLhs = lhs instanceof RecordFieldAccessNode;
+        TemplateHandler.add(substitution, "rightTypeIsCollection", rhs.getType() instanceof SetType);
         parallelConstructHandler.setLhsInParallel(true);
         generateAssignmentArgument(substitution, lhs);
         TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);

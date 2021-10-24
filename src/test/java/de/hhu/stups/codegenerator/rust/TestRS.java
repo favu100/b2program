@@ -46,7 +46,7 @@ public class TestRS {
                 false, String.valueOf(Integer.MIN_VALUE),
                 String.valueOf(Integer.MAX_VALUE), "10",
                 false, false,true,
-                addition, false, null);
+                addition, false, false, null);
 
         Path typesPath = Paths.get(this.getClass().getClassLoader().getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust/bmachine/src"));
         rsFilePaths = rsFilePaths.stream().map(file -> {

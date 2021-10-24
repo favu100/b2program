@@ -2,8 +2,8 @@ use crate::bboolean::BBoolean;
 use crate::binteger::BInteger;
 use crate::bstring::BString;
 use crate::bobject::BObject;
+use crate::btuple::BTuple;
 
-//TODO: use immutable_map::TreeSet;
 use std::any::TypeId;
 use std::convert::TryInto;
 use im::ordset::{OrdSet, Iter};
@@ -19,12 +19,12 @@ pub struct BSet<T: BObject> {
 
 impl<T: BObject> fmt::Display for BSet<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut result = "{ ".to_owned();
+        let mut result = "{".to_owned();
         let mut first = true;
         for e in self.set.iter() {
             if !first { result = result + ", " }
             else { first = false; }
-            result = result + &format!("{}", e).to_string() + " ";
+            result = result + &format!("{}", e).to_string();
         }
         result = result + "}";
         return write!(f, "{}", result);
@@ -322,5 +322,15 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn notStrictsubsetOfStruct(&self) -> BBoolean {
         return self.strictsubsetOfStruct().not();
+    }
+
+    //rust specific
+    pub fn cartesian<T1: 'static + BObject, T2: 'static + BObject>(set_a: &OrdSet<T1>, set_b: &OrdSet<T2>) -> OrdSet<BTuple<T1, T2>> {
+        if set_a.is_empty() || set_b.is_empty() {return OrdSet::<BTuple<T1, T2>>::new();}
+        return set_a.iter()
+            .fold(OrdSet::<BTuple<T1, T2>>::new(),
+                  |set, lhs| set_b.iter().cloned()
+                                                         .fold(set,
+                                                               |tset, rhs| tset.update(BTuple::new(lhs.clone(), rhs))))
     }
 }

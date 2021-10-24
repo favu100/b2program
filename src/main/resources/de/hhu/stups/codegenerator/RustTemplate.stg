@@ -54,12 +54,12 @@ fn init(&mut self) {
 }
 >>
 
-assignment(leftType, rightType, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
+assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
 <iterationConstruct; separator="|">
 <if(!isIdentifierLhs)>//TODO: assignment: identifier is not Lhs!<endif>
 <if(isRecordAccessLhs)>//TODO: assignment: RecordAccessLhs!<endif>
 <if(arg)>//TODO: assignment: arg<endif>
-<identifier> = <val>;
+<identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;
 >>
 
 identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant) ::= <<
@@ -380,7 +380,7 @@ import_machine(<machine>)
 
 
 interval(arg1, arg2) ::= <<
-interval(<arg1>, <arg2>)
+BSet::\<BInteger>::interval(&<arg1>, &<arg2>)
 >>
 
 projection(domainType, rangeType, arg1, arg2, isProjection1) ::= <<
@@ -392,7 +392,7 @@ projection_tuple(<arg>, <isProjection1>)
 >>
 
 identity(type, arg) ::= <<
-identity(<type>, <arg>)
+BRelation::identity(<type>, <arg>)
 >>
 
 cartesian_product(leftType, rightType, arg1, arg2) ::= <<
@@ -400,7 +400,7 @@ cartesian_product(<leftType>, <rightType>, <arg1>, <arg2>)
 >>
 
 tuple_create(leftType, rightType, arg1, arg2) ::= <<
-BTuple::new(vec![<arg1>, <arg2>])
+BTuple::new(<arg1>, <arg2>)
 >>
 
 binary(arg1,operator,arg2) ::= <<
@@ -568,4 +568,28 @@ enum-import()
 
 mc_info_type(isSet, machine, type) ::= <<
 mc_info_type(<isSet>, <machine>, <type>)
+>>
+
+machine_equal() ::= <<
+machine_equal()
+>>
+
+machine_unequal() ::= <<
+machine_equal()
+>>
+
+machine_equal_predicate() ::= <<
+machine_equal_predicate()
+>>
+
+machine_unequal_predicate() ::= <<
+machine_equal_predicate()
+>>
+
+machine_hash() ::= <<
+machine_hash()
+>>
+
+machine_hash_assignment() ::= <<
+machine_hash_assignment()
 >>

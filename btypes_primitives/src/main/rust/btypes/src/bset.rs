@@ -1,5 +1,5 @@
 use crate::bboolean::BBoolean;
-use crate::binteger::BInteger;
+use crate::binteger::{BInt, BInteger};
 use crate::bstring::BString;
 use crate::bobject::BObject;
 use crate::btuple::BTuple;
@@ -169,22 +169,6 @@ impl<T: 'static + BObject> BSet<T> {
         return result;
     }
 
-    pub fn _min(self: &BSet<T>) -> BInteger {
-        if TypeId::of::<BInteger>() == TypeId::of::<T>() {
-            return self.set.get_min().unwrap().get_binteger_value();
-        } else {
-            panic!("Called interval function of BSet which doesnt hold integers!")
-        }
-    }
-
-    pub fn _max(self: &BSet<T>) -> BInteger {
-        if TypeId::of::<BInteger>() == TypeId::of::<T>() {
-            return self.set.get_max().unwrap().get_binteger_value();
-        } else {
-            panic!("Called interval function of BSet which doesnt hold integers!")
-        }
-    }
-
     pub fn nondeterminism(&self) -> T {
         let mut rng = rand::thread_rng();
         return self.set.iter().nth(rng.gen_range(0..self.set.len())).unwrap().clone();
@@ -250,6 +234,52 @@ impl<T: 'static + BObject> BSet<T> {
         return BBoolean::new(true);
     }
 
+    pub fn subsetOfString(&self) -> BBoolean {
+        return BBoolean::new(TypeId::of::<BString>() == TypeId::of::<T>());
+    }
+
+    pub fn strictSubsetOfString(&self) -> BBoolean {
+        return self.subsetOfString();
+    }
+
+    pub fn notSubsetOfString(&self) -> BBoolean {
+        return self.subsetOfString().not();
+    }
+
+    pub fn notStrictSubsetOfString(&self) -> BBoolean {
+        return self.strictSubsetOfString().not();
+    }
+
+    pub fn subsetOfStruct(&self) -> BBoolean {
+        return self.is_struct();
+    }
+
+    pub fn strictsubsetOfStruct(&self) -> BBoolean {
+        return self.subsetOfStruct();
+    }
+
+    pub fn notsubsetOfStruct(&self) -> BBoolean {
+        return self.subsetOfStruct().not();
+    }
+
+    pub fn notStrictsubsetOfStruct(&self) -> BBoolean {
+        return self.strictsubsetOfStruct().not();
+    }
+
+    //rust specific
+    pub fn cartesian<T1: 'static + BObject, T2: 'static + BObject>(set_a: &OrdSet<T1>, set_b: &OrdSet<T2>) -> OrdSet<BTuple<T1, T2>> {
+        if set_a.is_empty() || set_b.is_empty() {return OrdSet::<BTuple<T1, T2>>::new();}
+        return set_a.iter()
+            .fold(OrdSet::<BTuple<T1, T2>>::new(),
+                  |set, lhs| set_b.iter().cloned()
+                                                         .fold(set,
+                                                               |tset, rhs| tset.update(BTuple::new(lhs.clone(), rhs))))
+    }
+}
+
+impl<T: 'static + BInt> BSet<T> {
+    #![allow(non_snake_case, dead_code)]
+
     pub fn notStrictSubsetOfInteger(&self) -> BBoolean {
         return self.strictSubsetOfInteger().not();
     }
@@ -292,45 +322,11 @@ impl<T: 'static + BObject> BSet<T> {
         return self.strictSubsetOfNatural1().not();
     }
 
-    pub fn subsetOfString(&self) -> BBoolean {
-        return BBoolean::new(TypeId::of::<BString>() == TypeId::of::<T>());
+    pub fn _min(self: &BSet<T>) -> BInteger {
+        return self.set.get_min().unwrap().get_binteger_value();
     }
 
-    pub fn strictSubsetOfString(&self) -> BBoolean {
-        return self.subsetOfString();
-    }
-
-    pub fn notSubsetOfString(&self) -> BBoolean {
-        return self.subsetOfString().not();
-    }
-
-    pub fn notStrictSubsetOfString(&self) -> BBoolean {
-        return self.strictSubsetOfString().not();
-    }
-
-    pub fn subsetOfStruct(&self) -> BBoolean {
-        return self.is_struct();
-    }
-
-    pub fn strictsubsetOfStruct(&self) -> BBoolean {
-        return self.subsetOfStruct();
-    }
-
-    pub fn notsubsetOfStruct(&self) -> BBoolean {
-        return self.subsetOfStruct().not();
-    }
-
-    pub fn notStrictsubsetOfStruct(&self) -> BBoolean {
-        return self.strictsubsetOfStruct().not();
-    }
-
-    //rust specific
-    pub fn cartesian<T1: 'static + BObject, T2: 'static + BObject>(set_a: &OrdSet<T1>, set_b: &OrdSet<T2>) -> OrdSet<BTuple<T1, T2>> {
-        if set_a.is_empty() || set_b.is_empty() {return OrdSet::<BTuple<T1, T2>>::new();}
-        return set_a.iter()
-            .fold(OrdSet::<BTuple<T1, T2>>::new(),
-                  |set, lhs| set_b.iter().cloned()
-                                                         .fold(set,
-                                                               |tset, rhs| tset.update(BTuple::new(lhs.clone(), rhs))))
+    pub fn _max(self: &BSet<T>) -> BInteger {
+        return self.set.get_max().unwrap().get_binteger_value();
     }
 }

@@ -4,13 +4,23 @@ use crate::bobject::BObject;
 use std::fmt;
 use std::hash::Hash;
 
+pub trait BInt: BObject { fn get_binteger_value(&self) -> BInteger { panic!("get_integer_value not implemented!"); }}
+pub trait FromBInt { fn from<T: BInt>(value: &T) -> Self; }
+
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct BInteger {
     val: i32,
 }
 
-impl BObject for BInteger {
+impl BObject for BInteger {}
+impl BInt for BInteger {
     fn get_binteger_value(&self) -> BInteger { return *self; }
+}
+
+impl FromBInt for BInteger {
+    fn from<T: BInt>(value: &T) -> Self {
+        return value.get_binteger_value();
+    }
 }
 
 impl BInteger {

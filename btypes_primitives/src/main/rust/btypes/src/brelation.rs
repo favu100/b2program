@@ -1,6 +1,6 @@
 use std::collections::LinkedList;
 use crate::bobject::BObject;
-use crate::binteger::BInteger;
+use crate::binteger::{BInt, BInteger, FromBInt};
 use crate::btuple::BTuple;
 
 use std::fmt;
@@ -68,6 +68,10 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
             new_set = OrdSet::from(vec![tuple.projection2()]);
         }
         self.map.insert(tuple.projection1(), new_set);
+    }
+
+    fn update(&self, key: L, value: OrdSet<R>) -> Self {
+        BRelation{ map: self.map.update(key, value) }
     }
 
     pub fn card(&self) -> BInteger {
@@ -165,11 +169,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
             panic!("Argument is not in the domain of this relation");
         }
 
-        for element in range.unwrap().iter() {
-            return element.clone();
-        }
-
-        panic!("Argument is not in the domain of this relation");
+        return range.unwrap().iter().next().unwrap_or_else(|| panic!("Argument is not in the domain of this relation")).clone();
     }
 
     pub fn pow(&self) -> BSet<BRelation<L, R>> { return self._pow(true); }
@@ -254,32 +254,6 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
         return BRelation { map: arg.map.clone().union(self.map.clone())}
     }
 
-    pub fn first(&self) -> R {
-        return self.functionCall(&self.map.keys().next().unwrap());
-    }
-
-    pub fn last(&self) -> R {
-        return self.functionCall(&self.map.keys().last().unwrap());
-    }
-
-    //TODO: pub fn reverse(&self) -> BRelation<L, R> {}
-
-    //TODO: pub fn front(&self) -> BRelation<L, R> {}
-
-    //TODO: pub fn tail(&self) -> BRelation<L, R> {}
-
-    //TODO: pub fn take(&self, n: &BInteger) -> BRelation<L, R> {}
-
-    //TODO: pub fn drop(&self, n: &BInteger) -> BRelation<L, R> {}
-
-    //TODO: pub fn concat(&self, arg: &BRelation<L,R>) -> BRelation<L, R> {}
-
-    //TODO: pub fn conc(&self) -> BRelation<Ln, Rn> {} ??
-
-    //TODO: pub fn append(&self, arg: &T) -> BRelation<L, R> {}
-
-    //TODO: pub fn prepend(&self, arg: &T) -> BRelation<L, R> {}
-
     pub fn directProduct<ArgR: 'static + BObject>(&self, arg: &BRelation<L, ArgR>) -> BRelation<L, BTuple<R, ArgR>> {
         self.map.iter()
             .fold(BRelation::<L, BTuple<R, ArgR>>::new(vec![]),
@@ -292,5 +266,87 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
                   })
     }
 
+    pub fn parallelProduct<ArgL, ArgR>(&self, arg: &BRelation<ArgL, ArgR>)
+        -> BRelation<BTuple<L, ArgL>, BTuple<R, ArgR>>
+    where ArgL: 'static + BObject,
+          ArgR: 'static + BObject {
+        let mut result_relation: BRelation<BTuple<L, ArgL>, BTuple<R, ArgR>> = BRelation::new(vec![]);
+        for (this_key, this_range) in self.map.clone() {
+            for (that_key, that_range) in arg.map.clone() {
+                result_relation.map.insert(BTuple::new(this_key.clone(), that_key),
+                                           BSet::<R>::cartesian::<R, ArgR>(&this_range, &that_range));
+            }
+        }
+        return result_relation;
+    }
 
+    pub fn composition<NewR: 'static + BObject>(&self, arg: &BRelation<R, NewR>) -> BRelation<L, NewR> {
+        let mut result_set: BRelation<L, NewR> = BRelation::new(vec![]);
+        let empty_set = OrdSet::<NewR>::new();
+        for (this_key, this_range) in self.map.iter() {
+            let new_range = this_range.iter().fold(OrdSet::<NewR>::new(),
+                                                   |set, element| set.union(arg.map.get(element).unwrap_or(&empty_set).clone()));
+            if !new_range.is_empty() { result_set.map.insert(this_key.clone(), new_range); }
+        }
+        return result_set;//TODO
+    }
+
+    pub fn identity(&self) {
+        //TODO
+    }
+}
+
+
+impl<L: 'static + BObject> BRelation<L, L> {
+    pub fn iterate(&self, n: &BInteger) -> BRelation<L, L> {
+        return [0..n.pred().get_val()].iter()
+            .fold(self.clone(), |rel, _| rel._union(&rel.composition(self)));
+    }
+}
+
+//sequence
+impl<L, R> BRelation<L, R>
+where L: 'static + BInt + FromBInt,
+      R: 'static + BObject {
+    //this actually works, ridiculous...
+    pub fn first(&self) -> R {
+        return self.functionCall(&L::from(&BInteger::new(1)));
+    }
+
+    pub fn last(&self) -> R {
+        return self.functionCall(&L::from(&self.card()));
+    }
+
+    pub fn reverse(&self) -> BRelation<R, L> {
+        return BRelation {
+            map: self.map.iter().fold(HashMap::<R, OrdSet<L>>::new(),
+                                      |result, (k, v)|
+                                          result.update(v.iter().next().unwrap().clone(), OrdSet::unit(k.clone()))),
+        }
+    }
+
+    pub fn front(&self) -> BRelation<L, R> {
+        return self.domainSubstraction(&BSet::new(vec![L::from(&self.card())]));
+    }
+
+    pub fn tail(&self) -> BRelation<L, R> {
+        return self.drop(&BInteger::new(1))
+    }
+
+    pub fn take(&self, n: &BInteger) -> BRelation<L, R> {
+        return self.domainRestriction(&BSet::new((1..n.get_val()+1).map(|i| L::from(&BInteger::new(i))).collect()));
+    }
+
+    pub fn drop(&self, n: &BInteger) -> BRelation<L, R> {
+        return BSet::<BInteger>::interval(&n.succ(), &self.card()).iter().map(|i| (L::from(&i.minus(n)), L::from(i)))
+            .fold(BRelation::<L, R>::new(vec![]), |rel, (i, i2)| rel.update(i, self.map.get(&i2).unwrap().clone()));
+    }
+
+    //TODO: pub fn concat(&self, arg: &BRelation<L,R>) -> BRelation<L, R> {}
+
+    //TODO: pub fn conc(&self) -> BRelation<Ln, Rn> {} ??
+
+    //TODO: pub fn append(&self, arg: &T) -> BRelation<L, R> {}
+
+    //TODO: pub fn prepend(&self, arg: &T) -> BRelation<L, R> {}
 }

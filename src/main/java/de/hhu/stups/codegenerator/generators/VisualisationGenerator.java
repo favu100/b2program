@@ -8,8 +8,6 @@ import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
 import de.prob.parser.ast.nodes.*;
-import de.prob.parser.ast.nodes.expression.ExprNode;
-import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;

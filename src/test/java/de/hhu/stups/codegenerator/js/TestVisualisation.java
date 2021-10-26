@@ -30,7 +30,7 @@ public class TestVisualisation extends TestJs {
     }
 
     @Test
-    public void testTrain() throws Exception {
+    public void testTravelAgency() throws Exception {
         testJs("visualisation/TravelAgency", "TravelAgency", null, null, false, true);
     }
 }

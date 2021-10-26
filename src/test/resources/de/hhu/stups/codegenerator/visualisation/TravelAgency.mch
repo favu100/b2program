@@ -17,7 +17,7 @@ CONSTANTS
     AGENCY_USER
 
 PROPERTIES
-    AGENCY_USER <: USER & AGENCY_USER /= {}
+    AGENCY_USER = {user1}
 
 VARIABLES
     session,

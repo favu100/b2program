@@ -74,6 +74,10 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
         BRelation{ map: self.map.update(key, value) }
     }
 
+    fn update_unit(&self, key: L, value: R) -> Self {
+        self.update(key, OrdSet::unit(value))
+    }
+
     pub fn card(&self) -> BInteger {
         return self.size();
     }
@@ -277,7 +281,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
                                            BSet::<R>::cartesian::<R, ArgR>(&this_range, &that_range));
             }
         }
-        return result_relation;
+        return result_relation; //TODO?
     }
 
     pub fn composition<NewR: 'static + BObject>(&self, arg: &BRelation<R, NewR>) -> BRelation<L, NewR> {
@@ -288,19 +292,37 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
                                                    |set, element| set.union(arg.map.get(element).unwrap_or(&empty_set).clone()));
             if !new_range.is_empty() { result_set.map.insert(this_key.clone(), new_range); }
         }
-        return result_set;//TODO
-    }
-
-    pub fn identity(&self) {
-        //TODO
+        return result_set;
     }
 }
 
 
 impl<L: 'static + BObject> BRelation<L, L> {
+    pub fn identity(set: &BSet<L>) -> BRelation<L, L> {
+        return set.iter().fold(BRelation::<L, L>::new(vec![]), |rel, v| rel.update_unit(v.clone(), v.clone()));
+    }
+
     pub fn iterate(&self, n: &BInteger) -> BRelation<L, L> {
-        return [0..n.pred().get_val()].iter()
-            .fold(self.clone(), |rel, _| rel._union(&rel.composition(self)));
+        return (0..n.get_val()).fold(BRelation::identity(&self.domain()._union(&self.range())),
+                                     |rel, _| rel._union(&rel.composition(self)));
+    }
+
+    pub fn closure(&self) -> BRelation<L, L> {
+        return self.closure_closure1(false);
+    }
+
+    pub fn closure1(&self) -> BRelation<L, L> {
+        return self.closure_closure1(true);
+    }
+
+    fn closure_closure1(&self, is_closure1: bool) -> BRelation<L, L> {
+        let mut result = if is_closure1 { self.clone() } else { self.iterate(&BInteger::new(0)) };
+        let mut next_result = result.composition(self);
+        while !result.eq(&next_result) {
+            result = result._union(&next_result);
+            next_result = result.composition(self);
+        }
+        return result;
     }
 }
 
@@ -342,11 +364,23 @@ where L: 'static + BInt + FromBInt,
             .fold(BRelation::<L, R>::new(vec![]), |rel, (i, i2)| rel.update(i, self.map.get(&i2).unwrap().clone()));
     }
 
-    //TODO: pub fn concat(&self, arg: &BRelation<L,R>) -> BRelation<L, R> {}
+    pub fn concat(&self, arg: &BRelation<L,R>) -> BRelation<L, R> {
+        return arg.map.iter().fold(self.clone(), |rel, (k, v)|
+            rel.update(L::from(&k.get_binteger_value().plus(&self.card())), v.clone()));
+    }
 
-    //TODO: pub fn conc(&self) -> BRelation<Ln, Rn> {} ??
+    pub fn append(&self, arg: &R) -> BRelation<L, R> {
+        return self.update_unit(L::from(&self.card().succ()), arg.clone());
+    }
 
-    //TODO: pub fn append(&self, arg: &T) -> BRelation<L, R> {}
-
-    //TODO: pub fn prepend(&self, arg: &T) -> BRelation<L, R> {}
+    pub fn prepend(&self, arg: &R) -> BRelation<L, R> {
+        return self.map.iter().fold(self.clone(), |rel, (k, v)|
+                                    rel.update(L::from(&k.get_binteger_value().succ()), v.clone()))
+                   .update_unit(L::from(&self.card().succ()), arg.clone());
+    }
 }
+
+// TODO: impl BRelation<BInt, BRelatrion<NL, NR>>
+// pub fn conc<NewL, NewR>(&self) -> BRelation<NewL, NewR> {
+//  self.map: HashMap<BInteger, BRelation<NewL, NewR>>
+// }

@@ -8,9 +8,7 @@ import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
 import de.hhu.stups.codegenerator.generators.VisualisationGenerator;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
-import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
-import de.hhu.stups.codegenerator.json.visb.VisBItem;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
 import de.hhu.stups.codegenerator.json.visb.VisBProjectParser;
 import de.hhu.stups.codegenerator.json.visb.VisBVisualisation;
@@ -20,7 +18,6 @@ import de.prob.parser.antlr.ScopeException;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
@@ -30,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -91,7 +87,7 @@ public class CodeGenerator {
 	* This function extracts the generator mode representing the language code should be generated from from the given string
 	*/
 	private static GeneratorMode getMode(String languageOption) {
-		GeneratorMode mode = null;
+		GeneratorMode mode;
 		if("java".equals(languageOption)) {
 			mode = GeneratorMode.JAVA;
 		} else if("python".equals(languageOption)) {
@@ -200,13 +196,13 @@ public class CodeGenerator {
 														Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile) throws IOException {
 		MachineGenerator generator =
 				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
-														 useConstraintSolving, addition, isIncludedMachine);
+														 useConstraintSolving, addition, isIncludedMachine, forVisualisation);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
 
 		String code = generator.generateMachine(node);
-		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code);
+		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code, forVisualisation);
 
 		if(forVisualisation) {
 
@@ -227,17 +223,17 @@ public class CodeGenerator {
 	private void generateVisualisation(VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
 		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(generator.getImportGenerator(), generator.getExpressionGenerator());
 		String htmlCode = visualisationGenerator.generateHTML(visBProject);
-		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode);
+		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode, false);
 		//Has to be saved as <machineName>-visualisation.js
 		String jsVisulisationCode = visualisationGenerator.generateVisualisation(visBProject);
 		Path visualisationPath = Paths.get(mainMachinePath.toString().replace(".mch", "-visualisation.mch")).toAbsolutePath();
-		writeToFile(visualisationPath, GeneratorMode.JS, false, null, false, generator, jsVisulisationCode);
+		writeToFile(visualisationPath, GeneratorMode.JS, false, null, false, generator, jsVisulisationCode, false);
 	}
 
 	/*
 	 * This function writes code for a targeted programming language with creating the belonging file
 	 */
-	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code) {
+	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code, boolean forVisualisation) {
 
 
 		String fileName = path.getFileName().toString().replace(".mch", "");
@@ -249,7 +245,7 @@ public class CodeGenerator {
 		}
 		Path jsonPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".json");
 		try {
-			if(forModelChecking) {
+			if(forModelChecking || forVisualisation) {
 				ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);
 				try (final Writer writer = Files.newBufferedWriter(jsonPath)) {
 					final JsonWriter jsonWriter = new JsonWriter(writer);

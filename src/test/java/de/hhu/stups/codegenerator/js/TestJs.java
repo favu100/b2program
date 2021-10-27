@@ -5,7 +5,6 @@ import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,7 +74,7 @@ public class TestJs {
 	 * Tests if the machine can successfully be transpiled to JS.
 	 */
 	public void testJs(String machine) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machine, null, null, false);
+		List<Path> tsFilePaths = compileMachine(machine, null, null, false, false);
 
 		Set<File> jsFiles = tsFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
@@ -88,7 +87,7 @@ public class TestJs {
 		testJs(machinePath, machineName, addition, null, execute, false);
 	}
 
-	private List<Path> compileMachine(String machinePath, String addition, String visualisation, boolean forVisualisation) throws Exception {
+	private List<Path> compileMachine(String machinePath, String addition, String visualisation, boolean forVisualisation, boolean forModelChecking) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		provideBTypesAndImmutables(mchPath);
@@ -100,7 +99,7 @@ public class TestJs {
 						String.valueOf(Integer.MIN_VALUE),
 						String.valueOf(Integer.MAX_VALUE),
 						"10",
-						forVisualisation,
+						forModelChecking,
 						false,
 						true,
 						addition,
@@ -129,7 +128,7 @@ public class TestJs {
 	 * Tests if the machine can be successfully transpiled to JS and be executed with node.
 	 */
 	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute, boolean forVisualisation) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation, forVisualisation);
+		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation, forVisualisation, false);
 		Path mainPath = tsFilePaths.get(tsFilePaths.size() - 1);
 
 		if(!execute) {

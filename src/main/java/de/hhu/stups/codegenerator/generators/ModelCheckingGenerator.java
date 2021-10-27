@@ -32,8 +32,8 @@ public class ModelCheckingGenerator {
         this.typeGenerator = typeGenerator;
     }
 
-    public String generate(MachineNode machineNode, boolean forModelChecking, boolean isIncludedMachine) {
-        if(forModelChecking && !isIncludedMachine) {
+    public String generate(MachineNode machineNode, boolean forModelChecking, boolean isIncludedMachine, boolean forVisualisation) {
+        if((forModelChecking || forVisualisation) && !isIncludedMachine) {
             typeGenerator.setFromOutside(true);
             ST template = currentGroup.getInstanceOf("model_check");
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));

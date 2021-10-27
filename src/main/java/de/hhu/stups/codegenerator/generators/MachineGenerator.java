@@ -116,6 +116,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final boolean forModelChecking;
 
+	private final boolean forVisualisation;
+
 	private final boolean useBigInteger;
 
 	private final Map<String, Integer> boundedVariablesDepth;
@@ -134,9 +136,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private Set<String> infiniteSets;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine) {
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine, boolean forVisualisation) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.forModelChecking = forModelChecking;
+		this.forVisualisation = forVisualisation;
 		this.useBigInteger = useBigInteger;
 		this.boundedVariablesDepth = new HashMap<>();
 		if(addition != null) {
@@ -185,7 +188,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
-		TemplateHandler.add(machine, "forModelChecking", forModelChecking && !isIncludedMachine);
+		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation) && !isIncludedMachine);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
 		TemplateHandler.add(machine, "imports", importGenerator.getImports());
@@ -205,7 +208,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();
 		inspectInfiniteSets();
-		if(forModelChecking && !isIncludedMachine) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
 		}
 		modelCheckingGenerator.setModelCheckingInfo(generateModelCheckingInfo(node));
@@ -251,7 +254,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "invariant", generateInvariant(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqual());
-		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine));
+		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine, forVisualisation));
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
@@ -281,7 +284,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private List<String> generateTransitions(List<OperationNode> operations) {
 		List<String> transitions = new ArrayList<>();
-		if(forModelChecking && !isIncludedMachine) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			for (OperationNode operation : operations) {
 				transitions.add(generateTransition(operation));
 			}
@@ -322,7 +325,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private String generateInvariant(PredicateNode predicate) {
 		// TODO: Discard typing predicates
-		if(forModelChecking && !isIncludedMachine) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("invariant");
 			TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
 			TemplateHandler.add(template, "predicate", visitPredicateNode(predicate, null));
@@ -332,7 +335,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private String generateCopyConstructor(MachineNode node) {
-		if(forModelChecking && !isIncludedMachine) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy_constructor");
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
@@ -353,7 +356,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private String generateCopy(MachineNode node) {
-		if(forModelChecking && !isIncludedMachine) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("copy");
 			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
 			parameters.addAll(node.getVariables());

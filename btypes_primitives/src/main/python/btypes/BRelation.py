@@ -70,7 +70,7 @@ class BRelation:
 			domain_element = obj
 			this_range_set = self.map[domain_element]
 			other_range_set = other_map[domain_element]
-			result_map[domain_element] = this_range_set.union(other_range_set)
+			result_map[domain_element] = this_range_set.intersection(other_range_set)
 
 		for obj in difference_domain:
 			domain_element = obj
@@ -441,14 +441,14 @@ class BRelation:
 
 	def iterate(self, n: 'BInteger') -> 'BRelation':
 		this_relation = self
-		result = self.identity(self.domain())
+		result = self.identity(self.domain().union(self.range()))
 		for _ in map(BInteger, range(1, n.intValue() + 1)):
-			result = result.union(result.composition(this_relation))
+			result = result.composition(this_relation)
 		return result
 
 	def closure(self) -> 'BRelation':
 		this_relation = self
-		result = self.identity(self.domain())
+		result = self.iterate(BInteger(0))
 		next_result = result.composition(this_relation)
 		while True:
 			last_result = deepcopy(result)

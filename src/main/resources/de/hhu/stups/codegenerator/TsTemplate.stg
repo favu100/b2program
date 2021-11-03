@@ -356,18 +356,18 @@ _check_inv() {
 >>
 
 copy_constructor(machine, parameters, properties, assignments) ::= <<
-//TODO
 >>
 
 copy_assignment(variable) ::= <<
-//TODO
-this.<variable> = <variable>;
 >>
 
 copy(machine, parameters) ::= <<
 public _copy(): <machine> {
-    //TODO
-    return new <machine>(/*<parameters; separator=", ">*/);
+    let new_machine = new <machine>();
+    for(let key of Object.keys(this)) {
+        new_machine[key] = this[key]._copy?.() ?? this[key];
+    }
+    return new_machine;
 }
 >>
 

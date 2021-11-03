@@ -17,7 +17,10 @@ html(machineName, svgName, btypeImports) ::= <<
     \<div class="param">Parameter\</div>
     \<div style="text-align: center; grid-column: -1;">Event\</div>
   \</div>
-  \<div id="_history_view">\</div>
+  \<div id="_history_view">
+    \<div id="_history_view_buttons">
+    \</div>
+  \</div>
   \<div id="_state_view">
     \<div id="_state_view_variables" class="state_view_section">
         \<div class="state_view_header collapsed" onclick="collapse(this)">Variables\</div>
@@ -65,6 +68,13 @@ function collapse(element) {
     overflow-y  : auto;
     padding-right: 18px;
     max-height: 90vh;
+}
+#_history_view > span.active {
+    background: lightblue;
+}
+#_history_view_buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 .state_view_section {
     display: grid;

@@ -32,11 +32,11 @@ public class MachineReferenceGenerator {
     /*
     * This function generates code for all included machines from the given options
     */
-    public void generateIncludedMachines(BProject project, Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving) throws IOException {
+    public void generateIncludedMachines(BProject project, Path path, GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, boolean forVisualisation) throws IOException {
         for(MachineReferenceNode referenceNode : project.getMainMachine().getMachineReferences()) {
             Path currentPath = Paths.get(path.getParent().toString(), referenceNode.getMachineName() + ".mch");
             if(!codeGenerator.getPaths().contains(currentPath)) {
-                codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, false, null, true, false, null);
+                codeGenerator.generate(currentPath, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, false, null, true, forVisualisation, null);
             }
         }
     }

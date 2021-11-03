@@ -11,8 +11,9 @@ import <machineName> from "./<machineName>.js"
 <imports; separator="\n">
 
 var <initialMachineVar()> = new <machineName>();
+var _state_list = [];
 var _included_machines = {};
-_included_machines["<machineName>"] = <initialMachineVar()>;
+_included_machines["<machineName>"] = function(){return <initialMachineVar()>};
 <includedMachines; separator="\n">
 var _state_view_vars = document.getElementById("_state_view_variables");
 var _state_view_consts = document.getElementById("_state_view_constants");
@@ -28,13 +29,16 @@ var _var_div;
 <sets; separator="\n">
 <invariant>
 
-
 function updateVisuals () {
   <if(svgName)><visualUpdates; separator="\n"><endif>
   <variableUpdates; separator="\n">
   _machine_vars["_invariant"].innerHTML = _machine._check_inv();
   checkTransitions();
 }
+
+var _history_view_buttons = document.getElementById("_history_view_buttons");
+var _buttonLeft = document.createElement("button");
+var _buttonRight = document.createElement("button");
 
 function checkTransitions () {
     for(event in _machine_events) {
@@ -45,10 +49,57 @@ function checkTransitions () {
         _machine_events[event].disabled = true;
       }
     }
+    _buttonLeft.disabled = document.querySelector(".active").index \<= 0;
+    _buttonRight.disabled = document.querySelector(".active").index >= document.querySelector("span:last-of-type").index;
 }
 
 _operations_view = document.getElementById("_operations_view");
 _history_view = document.getElementById("_history_view");
+
+var _history_onclick_function = function () {
+  <initialMachineVar()> = _state_list[this.index]._copy();
+  document.querySelectorAll("span").forEach(el => el.classList.remove("active"));
+  this.classList.add("active");
+  updateVisuals();
+}
+
+function createHistoryElement(text, index) {
+  var history_element = document.createElement("span");
+  history_element.innerHTML = text + "\</br>";
+  history_element.index = index;
+  document.querySelectorAll("span").forEach(element => element.classList.remove("active"));
+  history_element.classList.add("active");
+  history_element.onclick = _history_onclick_function;
+  _state_list = _state_list.slice(0, index);
+  _state_list.push(<initialMachineVar()>._copy());
+  while(_history_view.querySelectorAll("span").length > index && _history_view.lastChild !== null) {
+    _history_view.removeChild(_history_view.lastChild);
+  }
+  _history_view.appendChild(history_element);
+}
+
+function selectHistoryElement(offset) {
+  let currentHistoryElement = _history_view.querySelector(".active");
+  let index = currentHistoryElement.index + offset;
+  if (index \< 0 || index >= _state_list.length) {
+    return;
+  }
+  currentHistoryElement.classList.remove("active");
+  <initialMachineVar()> = _state_list[index]._copy();
+  _history_view.querySelectorAll("span").forEach(el => el.classList.remove("active"));
+  _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")").classList.add("active");
+  updateVisuals();
+}
+
+_buttonLeft.innerHTML="&#9664;";
+_buttonLeft.onclick = function(){selectHistoryElement(-1)};
+_buttonRight.innerHTML="&#9654;";
+_buttonRight.onclick = function(){selectHistoryElement(1)};
+_history_view_buttons.appendChild(_buttonLeft);
+_history_view_buttons.appendChild(_buttonRight);
+
+createHistoryElement("Initialisation", 0);
+
 var _param_div;
 var _onclick_function;
 var _machine_events = {};
@@ -56,7 +107,7 @@ var _machine_events = {};
 <events: {event| <event><\n>}>
 
 updateVisuals();
-if(_operations_view.getElementsByTagName("label").length == 0) {
+if(_operations_view.querySelectorAll("label").length == 0) {
     document.documentElement.style.setProperty('--noneOrGrid', 'none');
 }
 >>
@@ -70,7 +121,7 @@ _svg_vars["<machineVar>"].setAttribute("<attribute>", <expression>);
 >>
 
 variableUpdate(variable, machineName) ::= <<
-_machine_vars["<variable>"].innerHTML = _included_machines["<machineName>"]._get_<variable>();
+_machine_vars["<variable>"].innerHTML = _included_machines["<machineName>"]()._get_<variable>();
 >>
 
 event(machineEvent, svgName, parameterCreation, parameterNames, svgEvents) ::= <<
@@ -111,10 +162,8 @@ function() {
     }
   }
   var returnValue = <initialMachineVar()>.<machineEvent>(<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>);
+  createHistoryElement("<machineEvent>" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
   updateVisuals();
-  var history_element = document.createElement("span");
-  history_element.innerHTML = "<machineEvent>" + (returnValue? " (" + returnValue.toString() + ")": "") + "\</br>";
-  _history_view.appendChild(history_element);
 }
 
 >>
@@ -145,7 +194,7 @@ enumValue(name, enum) ::= <<
 
 variable(var, machineName) ::= <<
 _var_div = document.createElement("div");
-_var_div.innerHTML = _included_machines["<machineName>"]._get_<var>();
+_var_div.innerHTML = _included_machines["<machineName>"]()._get_<var>();
 _var_div.id = "_var_<var>";
 _machine_vars["<var>"] = _var_div;
 _var_label = document.createElement("label");
@@ -157,7 +206,7 @@ _state_view_vars.appendChild(_var_div);
 
 constant(var, machineName) ::= <<
 _var_div = document.createElement("div");
-_var_div.innerHTML = _included_machines["<machineName>"]._get_<var>();
+_var_div.innerHTML = _included_machines["<machineName>"]()._get_<var>();
 _var_div.id = "_var_<var>";
 _machine_vars["<var>"] = _var_div;
 _var_label = document.createElement("label");
@@ -169,7 +218,7 @@ _state_view_consts.appendChild(_var_div);
 
 set(var, machineName) ::= <<
 _var_div = document.createElement("div");
-_var_div.innerHTML = _included_machines["<machineName>"]._get__<var>();
+_var_div.innerHTML = _included_machines["<machineName>"]()._get__<var>();
 _var_div.id = "_var_<var>";
 _machine_vars["<var>"] = _var_div;
 _var_label = document.createElement("label");
@@ -181,7 +230,7 @@ _state_view_sets.appendChild(_var_div);
 
 invariant(invariantFormula, machineName) ::= <<
 _var_div = document.createElement("div");
-_var_div.innerHTML = _included_machines["<machineName>"]._check_inv();
+_var_div.innerHTML = _included_machines["<machineName>"]()._check_inv();
 _var_div.id = "_invariant";
 _machine_vars["_invariant"] = _var_div;
 _var_label = document.createElement("label");
@@ -200,7 +249,7 @@ getMachineFromMachine(machine, includedMachine) ::= <<
 >>
 
 mapIncludedMachineName(machineName, pathFromMainMachine) ::= <<
-_included_machines["<machineName>"] = <pathFromMainMachine>;
+_included_machines["<machineName>"] = function(){return <pathFromMainMachine>};
 >>
 
 parameterMap(parameters) ::= <<

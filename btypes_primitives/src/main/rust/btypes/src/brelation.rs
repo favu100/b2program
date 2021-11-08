@@ -1,3 +1,5 @@
+#![ allow( dead_code, non_snake_case) ]
+
 use std::collections::LinkedList;
 use crate::bobject::BObject;
 use crate::binteger::{BInt, BInteger, FromBInt};
@@ -7,15 +9,28 @@ use std::fmt;
 use std::hash::Hash;
 use std::convert::TryInto;
 use std::iter::FromIterator;
+use rand::prelude::IteratorRandom;
 use im::{HashMap, OrdSet};
 use crate::bboolean::BBoolean;
 use crate::brelation::CombiningType::{DIFFERENCE, INTERSECTION, UNION};
-use crate::bset::BSet;
+use crate::bset::{BSet, TBSet};
 
 enum CombiningType {
     DIFFERENCE,
     INTERSECTION,
     UNION
+}
+
+pub trait TBRelation {
+    fn isPartialInteger(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkDomainInteger(&self) -> BBoolean { return BBoolean::new(false); }
+    fn isPartialNatural(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkDomainNatural(&self) -> BBoolean { return BBoolean::new(false); }
+    fn isPartialNatural1(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkDomainNatural1(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkRangeInteger(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkRangeNatural(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkRangeNatural1(&self) -> BBoolean { return BBoolean::new(false); }
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -38,12 +53,10 @@ impl<L: BObject, R: BObject> fmt::Display for BRelation<L, R> {
         return write!(f, "{}", result);
     }
 }
-
+impl<L: BObject, R: BObject> TBRelation for BRelation<L, R> {}
 impl<L: BObject, R: BObject> BObject for BRelation<L, R> {}
 
 impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
-    #![ allow( dead_code, non_snake_case) ]
-
     pub fn new(mut args: Vec<BTuple<L, R>>) -> BRelation<L,R> {
         let mut ret: BRelation<L, R> = BRelation {map: HashMap::new() };
         while !args.is_empty() {
@@ -294,6 +307,77 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
         }
         return result_set;
     }
+
+    pub fn projection1(arg1: &BSet<L>, arg2: &BSet<R>) -> BRelation<BTuple<L,R>,L> {
+        return arg1.iter().fold(BRelation::new(vec![]), |rel, element1|
+            arg2.iter().cloned().fold(rel, |nrel, element2|
+                nrel.update_unit(BTuple::new(element1.clone(), element2), element1.clone())));
+    }
+
+    pub fn projection2(arg1: &BSet<L>, arg2: &BSet<R>) -> BRelation<BTuple<L,R>,R> {
+        return arg1.iter().fold(BRelation::new(vec![]), |rel, element1|
+            arg2.iter().cloned().fold(rel, |nrel, element2|
+                nrel.update_unit(BTuple::new(element1.clone(), element2.clone()), element2)));
+    }
+
+    pub fn fnc(&self) -> BRelation<L, BSet<R>> {
+        return self.map.iter().fold(BRelation::new(vec![]), |rel, (key, range)|
+            rel.update_unit(key.clone(), BSet::fromOrdSet(range.clone())))
+    }
+
+    pub fn cartesianProduct(set_a: &BSet<L>, set_b: &BSet<R>) -> BRelation<L, R> {
+        // slightly inefficient due to double iteration
+        return BSet::<L>::cartesian::<L, R>(&set_a.as_ord_set(), &set_b.as_ord_set()).iter()
+            .fold(BRelation::new(vec![]), |mut rel, tuple| { rel.insert(tuple); return rel; });
+    }
+
+    pub fn nondeterminism(&self) -> BTuple<L, R> {
+        let mut rng = rand::thread_rng();
+        let tuple = self.map.iter().choose(&mut rng).unwrap();
+        return BTuple::new(tuple.0.clone(), tuple.1.iter().choose(&mut rng).unwrap().clone());
+    }
+
+    pub fn isTotal(&self, domain: &BSet<L>) -> BBoolean { return self.domain().equal(domain); }
+    pub fn isTotalInteger(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isTotalNatural(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isTotalNatural1(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isTotalString(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isTotalStruct(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isPartial(&self, domain: &BSet<L>) -> BBoolean { return self.domain().strictSubset(domain); }
+    pub fn checkDomain(&self, domain: &BSet<L>) -> BBoolean { return self.domain().subset(domain); }
+    pub fn checkRange(&self, range: &BSet<R>) -> BBoolean { return self.range().subset(range); }
+
+    pub fn isRelation(&self) -> BBoolean { return BBoolean::new(true); }
+
+    pub fn isFunction(&self) -> BBoolean {
+        return BBoolean::new(self.map.values().find(|set| set.len() > 1).is_none());
+    }
+
+    pub fn isSurjection(&self, range: &BSet<R>) -> BBoolean { return self.range().equal(range); }
+    pub fn isSurjectionInteger(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isSurjectionNatural(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isSurjectionNatural1(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isSurjectionString(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isSurjectionStruct(&self) -> BBoolean { return BBoolean::new(false); }
+
+    pub fn isInjection(&self) -> BBoolean {
+        if self.map.is_empty() { return BBoolean::new(true); }
+        let mut ranges = self.map.values().cloned();
+        let mut checked = ranges.next().unwrap();
+        for to_check in ranges {
+            //current range "hits" and element that was already "hit" before
+            if !checked.clone().intersection(to_check.clone()).is_empty() { return BBoolean::new(false); }
+            checked = checked.union(to_check);
+        }
+        return BBoolean::new(true);
+    }
+
+    pub fn isBijection(&self, range: &BSet<R>) -> BBoolean { return self.isSurjection(range).and(&self.isInjection()); }
+    pub fn isBijectionInteger(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isBijectionNatural(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isBijectionNatural1(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isBijectionString(&self) -> BBoolean { return BBoolean::new(false); }
+    pub fn isBijectionStruct(&self) -> BBoolean { return BBoolean::new(false); }
 }
 
 
@@ -378,9 +462,41 @@ where L: 'static + BInt + FromBInt,
                                     rel.update(L::from(&k.get_binteger_value().succ()), v.clone()))
                    .update_unit(L::from(&self.card().succ()), arg.clone());
     }
+
+    pub fn isPartialInteger(&self) -> BBoolean { return BBoolean::new(true); }
+    pub fn checkDomainInteger(&self) -> BBoolean { return self.isPartialInteger(); }
+    pub fn isPartialNatural(&self) -> BBoolean { return self.domain().subsetOfNatural(); }
+    pub fn checkDomainNatural(&self) -> BBoolean { return self.isPartialNatural(); }
+    pub fn isPartialNatural1(&self) -> BBoolean { return self.domain().subsetOfNatural1(); }
+    pub fn checkDomainNatural1(&self) -> BBoolean { return self.isPartialNatural1(); }
+}
+
+impl<L, R> BRelation<L, R>
+    where L: 'static + BObject,
+          R: 'static + BInt + FromBInt {
+
+    pub fn checkRangeInteger(&self) -> BBoolean { return BBoolean::new(true); }
+    pub fn checkRangeNatural(&self) -> BBoolean { return self.range().subsetOfNatural(); }
+    pub fn checkRangeNatural1(&self) -> BBoolean { return self.range().subsetOfNatural1(); }
+}
+
+impl<L, R> BRelation<L, R>
+where L: 'static + BObject,
+      R: 'static + BObject + TBSet {
+
+    pub fn rel(&self) -> BRelation<L, R::Item> {
+        return self.map.iter().fold(BRelation::<L, R::Item>::new(vec![]), |rel, (key, range)|
+            rel.update(key.clone(), range.iter().next().unwrap().as_ord_set()));
+    }
+
 }
 
 // TODO: impl BRelation<BInt, BRelatrion<NL, NR>>
 // pub fn conc<NewL, NewR>(&self) -> BRelation<NewL, NewR> {
 //  self.map: HashMap<BInteger, BRelation<NewL, NewR>>
 // }
+
+// TODO: isPartialString/checkDomainString
+// TODO: checkRangeString
+// TODO: isPartialStruct/checkDomainStruct
+// TODO: checkRangeStruct

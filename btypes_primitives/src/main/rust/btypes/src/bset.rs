@@ -12,9 +12,20 @@ use std::collections::LinkedList;
 use std::fmt;
 use rand::Rng;
 
+pub trait TBSet {
+    type Item: BObject;
+
+    fn as_ord_set(&self) -> OrdSet<Self::Item>;
+}
+
 #[derive(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone)]
 pub struct BSet<T: BObject> {
     set: OrdSet<T>,
+}
+
+impl<T: BObject> TBSet for BSet<T> {
+    type Item = T;
+    fn as_ord_set(&self) -> OrdSet<Self::Item> { self.set.clone() }
 }
 
 impl<T: BObject> fmt::Display for BSet<T> {

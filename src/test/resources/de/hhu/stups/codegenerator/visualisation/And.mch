@@ -1,8 +1,8 @@
 MACHINE And
-
+CONSTANTS interval
 VARIABLES  counter
-
-INVARIANT  counter : 0..1000000
+PROPERTIES interval = 0..1000000
+INVARIANT  counter : interval
 
 INITIALISATION counter := 0
 

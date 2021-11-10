@@ -20,7 +20,7 @@
       "id": "button_FALSE",
       "event": "set_button",
       "optional": true,
-      "predicates" : ["newVal =  bool(%shiftKey=FALSE)"],
+      "predicates" : ["newVal =  FALSE"],
       "hovers": [{ "attr":"stroke-width", "enter":"5", "leave":"1", "id":"button"},
                 { "attr":"opacity", "enter":"0.85", "leave":"1.0"}]
     }

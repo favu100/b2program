@@ -29,19 +29,19 @@ OPERATIONS
   END;
   
   IncreaseTimeUntilDeadline(timer,delta) =
-   SELECT delta:NATURAL & 
-          timer : dom(curDeadlines) &
+   SELECT timer : dom(curDeadlines) &
+          delta:NATURAL &
           delta = min(ran(curDeadlines)) & 
           delta = curDeadlines(timer) THEN
      curDeadlines := %x.(x:dom(curDeadlines) \ {timer}|curDeadlines(x)-delta)
   END;
   
   IncreaseTimeUntilCyclicDeadline(timer,delta,newDelta) =
-   SELECT delta:NATURAL & 
-          timer : dom(curDeadlines) & 
+   SELECT timer : dom(curDeadlines) &
+          delta:NATURAL &
+          newDelta:NATURAL &
           delta = curDeadlines(timer)  &
-          delta = min(ran(curDeadlines)) &
-          newDelta : NATURAL
+          delta = min(ran(curDeadlines))
   THEN
      curDeadlines := %x.(x:dom(curDeadlines) \ {timer}|curDeadlines(x)-delta) \/ {timer |-> newDelta}
   END

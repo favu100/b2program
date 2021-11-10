@@ -152,7 +152,7 @@
 ],
   "events":[
     {
-      "id":"warningLight",
+      "id":"warningLightOuter",
       "event":"ENV_Hazard_blinking"
     },
     {

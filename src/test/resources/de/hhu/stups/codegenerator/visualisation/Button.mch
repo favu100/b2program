@@ -5,7 +5,7 @@ DEFINITIONS
 VARIABLES
   button
 INVARIANT
-  button:BOOL
+  button∈BOOL
 INITIALISATION
   button := FALSE
 OPERATIONS
@@ -15,7 +15,7 @@ OPERATIONS
   toggle_button = BEGIN
     button:= bool(button=FALSE)
   END;
-  set_button(newVal, P2, P3, P4) = PRE newVal:BOOL & P2: BOOL & P3: BOOL & P4: BOOL THEN
+  set_button(newVal) = PRE newVal:BOOL & newVal /= button THEN
      button := bool(newVal=TRUE)
   END
 END

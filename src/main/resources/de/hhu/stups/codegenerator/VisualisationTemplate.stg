@@ -155,9 +155,14 @@ function() {
         return;
     }
   } else {
-    var parameterTuple = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>].reduce((a, e) => new BTuple(a, e))
+    try  {
+        var parameterTuple = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>].reduce((a, e) => new BTuple(a, e));
+    } catch {
+        alert("Invalid parameters for event <machineEvent>!\nPossible values are:\n" + transition.toString());
+        return;
+    }
     if(! transition.elementOf(parameterTuple).booleanValue()) {
-        alert("Invalid parameters for event <machineEvent>!");
+        alert("Invalid parameters for event <machineEvent>!\nPossible values are:\n" + transition.toString());
         return;
     }
   }

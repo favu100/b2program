@@ -245,7 +245,7 @@ public class CodeGenerator {
 		}
 		Path jsonPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".json");
 		try {
-			if(forModelChecking || forVisualisation) {
+			if(forModelChecking) {
 				ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);
 				try (final Writer writer = Files.newBufferedWriter(jsonPath)) {
 					final JsonWriter jsonWriter = new JsonWriter(writer);

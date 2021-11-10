@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
+machine(forModelChecking, forVisualisation, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
 <imports; separator="\n">
 <enum_imports; separator="\n">
 <includedMachines; separator="\n">
@@ -25,8 +25,9 @@ export default class <machine> {
 
     <initialization>
 
-    <if(forModelChecking)>
+    <if(forModelChecking || forVisualisation)>
     <copyConstructor>
+    <copy>
     <endif>
 
     <operations; separator="\n\n">
@@ -34,13 +35,9 @@ export default class <machine> {
     <getters; separator="\n\n">
 
     <if(forModelChecking)>
-
     <transitions; separator="\n\n">
 
     <invariant>
-
-    <copy>
-
     <endif>
 
     <lambdaFunctions; separator="\n\n">
@@ -356,18 +353,23 @@ _check_inv() {
 >>
 
 copy_constructor(machine, parameters, properties, assignments) ::= <<
+public <machine>(<parameters; separator=", ">): <machine> {
+    let _instance = Object.create(<machine>.prototype);
+    //TODO Fix assignment with enums and constants
+    for(let key of Object.keys(this)) {
+        _instance[key] = this[key]._copy?.() ?? this[key];
+    }
+    return _instance;
+}
 >>
 
 copy_assignment(variable) ::= <<
+    _instance.<variable> = this.<variable>;
 >>
 
 copy(machine, parameters) ::= <<
 public _copy(): <machine> {
-    let new_machine = new <machine>();
-    for(let key of Object.keys(this)) {
-        new_machine[key] = this[key]._copy?.() ?? this[key];
-    }
-    return new_machine;
+    return this.<machine>(<if(parameters)>this.<endif><parameters; separator=", this.">);
 }
 >>
 

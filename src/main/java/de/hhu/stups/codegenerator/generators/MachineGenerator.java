@@ -188,7 +188,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
-		TemplateHandler.add(machine, "forModelChecking", (forModelChecking && !isIncludedMachine) || forVisualisation);
+		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation) && !isIncludedMachine);
+		TemplateHandler.add(machine, "forVisualisation", forVisualisation);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
 		TemplateHandler.add(machine, "imports", importGenerator.getImports());
@@ -208,7 +209,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();
 		inspectInfiniteSets();
-		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
 		}
 		modelCheckingGenerator.setModelCheckingInfo(generateModelCheckingInfo(node));
@@ -284,7 +285,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private List<String> generateTransitions(List<OperationNode> operations) {
 		List<String> transitions = new ArrayList<>();
-		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			for (OperationNode operation : operations) {
 				transitions.add(generateTransition(operation));
 			}
@@ -325,7 +326,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private String generateInvariant(PredicateNode predicate) {
 		// TODO: Discard typing predicates
-		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
+		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			ST template = currentGroup.getInstanceOf("invariant");
 			TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
 			TemplateHandler.add(template, "predicate", visitPredicateNode(predicate, null));

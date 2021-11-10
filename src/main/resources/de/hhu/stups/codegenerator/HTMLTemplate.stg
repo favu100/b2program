@@ -17,8 +17,10 @@ html(machineName, svgName, btypeImports) ::= <<
     \<div class="param">Parameter\</div>
     \<div style="text-align: center; grid-column: -1;">Event\</div>
   \</div>
-  \<div id="_history_view">
+  \<div>
     \<div id="_history_view_buttons">
+    \</div>
+    \<div id="_history_view">
     \</div>
   \</div>
   \<div id="_state_view">

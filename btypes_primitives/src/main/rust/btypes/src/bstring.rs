@@ -6,6 +6,10 @@ pub struct BString {
     val: String,
 }
 
+pub trait TBString {}
+
+impl TBString for BString {}
+
 impl Display for BString {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.val)

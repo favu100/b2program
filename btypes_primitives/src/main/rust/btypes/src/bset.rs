@@ -1,3 +1,5 @@
+#![ allow( dead_code, non_snake_case) ]
+
 use crate::bboolean::BBoolean;
 use crate::binteger::{BInt, BInteger};
 use crate::bstring::BString;
@@ -12,10 +14,17 @@ use std::collections::LinkedList;
 use std::fmt;
 use rand::Rng;
 
-pub trait TBSet {
+pub trait TBSet: BObject {
     type Item: BObject;
 
     fn as_ord_set(&self) -> OrdSet<Self::Item>;
+    fn as_bset(&self) -> &BSet<Self::Item>;
+}
+
+pub trait SetLike: BObject {
+    fn get_empty() -> Self;
+    fn _union(&self, other: &Self) -> Self;
+    fn intersect(&self, other: &Self) -> Self;
 }
 
 #[derive(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone)]
@@ -23,9 +32,12 @@ pub struct BSet<T: BObject> {
     set: OrdSet<T>,
 }
 
+impl<T: BObject> BObject for BSet<T> {}
+
 impl<T: BObject> TBSet for BSet<T> {
     type Item = T;
     fn as_ord_set(&self) -> OrdSet<Self::Item> { self.set.clone() }
+    fn as_bset(&self) -> &BSet<Self::Item> { self }
 }
 
 impl<T: BObject> fmt::Display for BSet<T> {
@@ -42,8 +54,6 @@ impl<T: BObject> fmt::Display for BSet<T> {
     }
 }
 
-impl<T: BObject> BObject for BSet<T> {}
-
 impl<'a, T: 'static + BObject> IntoIterator for &'a BSet<T>
 where
     T: 'a + Ord,
@@ -57,7 +67,6 @@ where
 }
 
 impl<T: 'static + BObject> BSet<T> {
-    #![allow(non_snake_case, dead_code)]
 
     pub fn new(mut args: Vec<T>) -> BSet<T> {
         let mut ret: BSet<T> = BSet {
@@ -289,7 +298,6 @@ impl<T: 'static + BObject> BSet<T> {
 }
 
 impl<T: 'static + BInt> BSet<T> {
-    #![allow(non_snake_case, dead_code)]
 
     pub fn notStrictSubsetOfInteger(&self) -> BBoolean {
         return self.strictSubsetOfInteger().not();
@@ -339,5 +347,21 @@ impl<T: 'static + BInt> BSet<T> {
 
     pub fn _max(self: &BSet<T>) -> BInteger {
         return self.set.get_max().unwrap().get_binteger_value();
+    }
+}
+
+impl<T: 'static + BObject> SetLike for BSet<T> {
+    fn get_empty() -> Self { BSet::<T>::new(vec![]) }
+    fn _union(&self, other: &Self) -> Self { self._union(other) }
+    fn intersect(&self, other: &Self) -> Self { self.intersect(other) }
+}
+
+impl<T: 'static + SetLike> BSet<T> {
+    pub fn unary__union(&self) -> T {
+        return self.iter().fold(T::get_empty(), |result, next| result._union(next));
+    }
+
+    pub fn unary_intersect(&self) -> T {
+        return self.iter().fold(T::get_empty(), |result, next| result.intersect(next));
     }
 }

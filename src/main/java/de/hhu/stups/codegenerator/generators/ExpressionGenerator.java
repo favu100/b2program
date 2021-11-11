@@ -503,6 +503,7 @@ public class ExpressionGenerator {
     */
     private ST generateUnary(ExpressionOperatorNode.ExpressionOperator operator) {
         ST template = currentGroup.getInstanceOf("unary");
+        boolean isOverloadedOperator = false; // indicates if the unary-operator has a binary equivalent, used for languages that don't support method overloading (like rust)
         String operatorName;
         switch (operator) {
             case UNARY_MINUS:
@@ -561,9 +562,11 @@ public class ExpressionGenerator {
                 break;
             case GENERALIZED_UNION:
                 operatorName = "union";
+                isOverloadedOperator = true;
                 break;
             case GENERALIZED_INTER:
                 operatorName = "intersect";
+                isOverloadedOperator = true;
                 break;
             case FIRST:
                 operatorName = "first";
@@ -605,6 +608,7 @@ public class ExpressionGenerator {
                 throw new RuntimeException("Given operator is not implemented: " + operator);
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        TemplateHandler.add(template, "isOverloadedOperator", isOverloadedOperator);
         return template;
     }
 

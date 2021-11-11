@@ -13,7 +13,9 @@ use rand::prelude::IteratorRandom;
 use im::{HashMap, OrdSet};
 use crate::bboolean::BBoolean;
 use crate::brelation::CombiningType::{DIFFERENCE, INTERSECTION, UNION};
-use crate::bset::{BSet, TBSet};
+use crate::bset::{BSet, SetLike, TBSet};
+use crate::bstring::TBString;
+use crate::bstruct::BStruct;
 
 enum CombiningType {
     DIFFERENCE,
@@ -21,7 +23,17 @@ enum CombiningType {
     UNION
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct BRelation<L: BObject, R: BObject> {
+    map: HashMap<L, OrdSet<R>>,
+}
+
 pub trait TBRelation {
+    type Left: BObject;
+    type Right: BObject;
+
+    fn get_as_brelation(&self) -> &BRelation<Self::Left, Self::Right>;
+
     fn isPartialInteger(&self) -> BBoolean { return BBoolean::new(false); }
     fn checkDomainInteger(&self) -> BBoolean { return BBoolean::new(false); }
     fn isPartialNatural(&self) -> BBoolean { return BBoolean::new(false); }
@@ -31,11 +43,12 @@ pub trait TBRelation {
     fn checkRangeInteger(&self) -> BBoolean { return BBoolean::new(false); }
     fn checkRangeNatural(&self) -> BBoolean { return BBoolean::new(false); }
     fn checkRangeNatural1(&self) -> BBoolean { return BBoolean::new(false); }
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct BRelation<L: BObject, R: BObject> {
-    map: HashMap<L, OrdSet<R>>,
+    fn checkDomainString(&self) -> BBoolean { return BBoolean::new(false); }
+    fn isPartialString(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkRangeString(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkDomainStruct(&self) -> BBoolean { return BBoolean::new(false); }
+    fn isPartialStruct(&self) -> BBoolean { return BBoolean::new(false); }
+    fn checkRangeStruct(&self) -> BBoolean { return BBoolean::new(false); }
 }
 
 impl<L: BObject, R: BObject> fmt::Display for BRelation<L, R> {
@@ -53,7 +66,11 @@ impl<L: BObject, R: BObject> fmt::Display for BRelation<L, R> {
         return write!(f, "{}", result);
     }
 }
-impl<L: BObject, R: BObject> TBRelation for BRelation<L, R> {}
+impl<L: BObject, R: BObject> TBRelation for BRelation<L, R> {
+    type Left = L;
+    type Right = R;
+    fn get_as_brelation(&self) -> &BRelation<Self::Left, Self::Right> { self }
+}
 impl<L: BObject, R: BObject> BObject for BRelation<L, R> {}
 
 impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
@@ -254,6 +271,21 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
         return BRelation {map: arg.iter().fold(self.map.clone(), |map, e| map.without(e))}
     }
 
+    pub fn rangeRestriction(&self, arg: &BSet<R>) -> BRelation<L, R> {
+        //return self.rangeSubstraction(self.range().difference(arg));
+        return self.map.iter().filter_map(|(key, value)| {
+            let resut_range = BSet::fromOrdSet(value.clone()).intersect(arg);
+            if resut_range.isEmpty() { Option::None } else { Option::Some((key, resut_range)) }
+        }).fold(BRelation::<L, R>::new(vec![]), |rel, (key, val)| rel.update(key.clone(), val.as_ord_set()));
+    }
+
+    pub fn rangeSubstraction(&self, arg: &BSet<R>) -> BRelation<L, R> {
+        return self.map.iter().filter_map(|(key, value)| {
+                let resut_range = BSet::fromOrdSet(value.clone()).difference(arg);
+                if resut_range.isEmpty() { Option::None } else { Option::Some((key, resut_range)) }
+            }).fold(BRelation::<L, R>::new(vec![]), |rel, (key, val)| rel.update(key.clone(), val.as_ord_set()));
+    }
+
     pub fn subset(&self, arg: &BRelation<L, R>) -> BBoolean {
         let emptySet = OrdSet::new();
         for (k, v) in self.map.clone() {
@@ -401,10 +433,10 @@ impl<L: 'static + BObject> BRelation<L, L> {
 
     fn closure_closure1(&self, is_closure1: bool) -> BRelation<L, L> {
         let mut result = if is_closure1 { self.clone() } else { self.iterate(&BInteger::new(0)) };
-        let mut next_result = result.composition(self);
+        let mut next_result = result.composition(self)._union(&result);
         while !result.eq(&next_result) {
-            result = result._union(&next_result);
-            next_result = result.composition(self);
+            result = next_result;
+            next_result = result.composition(self)._union(&result);
         }
         return result;
     }
@@ -472,6 +504,18 @@ where L: 'static + BInt + FromBInt,
 }
 
 impl<L, R> BRelation<L, R>
+    where L: 'static + BInt + FromBInt,
+          R: 'static + BObject + TBRelation,
+          R::Left: 'static + BInt + FromBInt {
+
+    pub fn conc(&self) -> BRelation<R::Left, R::Right> {
+        return self.map.values().map(|set| set.iter().next().unwrap().get_as_brelation())
+            .fold(BRelation::<R::Left, R::Right>::new(vec![]),
+                  |result, next| result.concat(next));
+    }
+}
+
+impl<L, R> BRelation<L, R>
     where L: 'static + BObject,
           R: 'static + BInt + FromBInt {
 
@@ -491,12 +535,38 @@ where L: 'static + BObject,
 
 }
 
-// TODO: impl BRelation<BInt, BRelatrion<NL, NR>>
-// pub fn conc<NewL, NewR>(&self) -> BRelation<NewL, NewR> {
-//  self.map: HashMap<BInteger, BRelation<NewL, NewR>>
-// }
+impl<L, R> BRelation<L, R>
+    where L: 'static + BObject + TBString,
+          R: 'static + BObject {
 
-// TODO: isPartialString/checkDomainString
-// TODO: checkRangeString
-// TODO: isPartialStruct/checkDomainStruct
-// TODO: checkRangeStruct
+    pub fn checkDomainString(&self) -> BBoolean { return BBoolean::new(true); }
+    pub fn isPartialString(&self) -> BBoolean { return self.checkDomainString(); }
+}
+
+impl<L, R> BRelation<L, R>
+    where L: 'static + BObject,
+          R: 'static + BObject + TBString {
+
+    pub fn checkRangeString(&self) -> BBoolean { return BBoolean::new(true); }
+}
+
+impl<L, R> BRelation<L, R>
+where L: 'static + BObject + BStruct,
+      R: 'static + BObject {
+
+    pub fn checkDomainStruct(&self) -> BBoolean { return BBoolean::new(true); }
+    pub fn isPartialStruct(&self) -> BBoolean { return self.checkDomainStruct(); }
+}
+
+impl<L, R> BRelation<L, R>
+    where L: 'static + BObject,
+          R: 'static + BObject + BStruct {
+
+    pub fn checkRangeStruct(&self) -> BBoolean { return BBoolean::new(true); }
+}
+
+impl<L: 'static + BObject, R: 'static + BObject> SetLike for BRelation<L, R> {
+    fn get_empty() -> Self { BRelation::<L, R>::new(vec![]) }
+    fn _union(&self, other: &Self) -> Self { self._union(other) }
+    fn intersect(&self, other: &Self) -> Self { self.intersect(other) }
+}

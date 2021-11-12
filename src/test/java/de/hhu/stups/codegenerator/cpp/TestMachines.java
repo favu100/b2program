@@ -187,6 +187,11 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testLandingGear_MC() throws Exception {
+        testCppMC("landing_gear/LandingGear_R6");
+    }
+
+    @Test
     public void Train1BeebookDeterministicExec() throws Exception {
         testCpp("Train_1_beebook_deterministic_exec");
     }

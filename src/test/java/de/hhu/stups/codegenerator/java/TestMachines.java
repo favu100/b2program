@@ -291,4 +291,11 @@ public class TestMachines extends TestJava {
         testJavaMC("visualisation/Button");
     }
 
+    @Test
+    public void testLandingGear_MC() throws Exception {
+        testJavaMC("landing_gear/LandingGear_R6");
+    }
+
+
+
 }

@@ -53,13 +53,13 @@ pub trait TBRelation {
 
 impl<L: BObject, R: BObject> fmt::Display for BRelation<L, R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut result = "{ ".to_owned();
+        let mut result = "{".to_owned();
         let mut first = true;
         for (key, range) in self.map.iter() {
             for value in range.iter() {
                 if !first { result = result + ", " }
                 else { first = false; }
-                result = result + &format!("({} ↦ {})", key, value).to_string() + " ";
+                result = result + &format!("({} |-> {})", key, value).to_string();
             }
         }
         result = result + "}";
@@ -420,7 +420,7 @@ impl<L: 'static + BObject> BRelation<L, L> {
 
     pub fn iterate(&self, n: &BInteger) -> BRelation<L, L> {
         return (0..n.get_val()).fold(BRelation::identity(&self.domain()._union(&self.range())),
-                                     |rel, _| rel._union(&rel.composition(self)));
+                                     |rel, _| rel.composition(self));
     }
 
     pub fn closure(&self) -> BRelation<L, L> {

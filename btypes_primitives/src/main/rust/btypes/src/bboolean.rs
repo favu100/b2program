@@ -57,6 +57,6 @@ impl BBoolean {
     }
 
     pub fn unequal(&self, other: &BBoolean) -> BBoolean {
-        return BBoolean::new(self.val == other.val);
+        return BBoolean::new(self.val != other.val);
     }
 }

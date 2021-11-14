@@ -56,16 +56,12 @@ fn init(&mut self) {
 
 assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
 <iterationConstruct; separator="|">
-<if(!isIdentifierLhs)>//TODO: assignment: identifier is not Lhs!<endif>
-<if(isRecordAccessLhs)>//TODO: assignment: RecordAccessLhs!<endif>
-<if(arg)>//TODO: assignment: arg<endif>
-<identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;
+<if(isIdentifierLhs)><identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>._override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
-identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant) ::= <<
-<if(rhsOnLhs)>//TODO: identifier rhsOnLhs<endif>
+identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
 <if(fromOtherMachine)>//TODO: identifier from Other Machine <otherMachine><endif>
-<if(isPrivate)>self.<elseif(isConstant)><machine>::<endif><identifier>
+<if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)><machine>::<endif><identifier>
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
@@ -283,7 +279,7 @@ set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
 >>
 
 seq_enumeration(type, elements) ::= <<
-seq_enumeration(<type>, (<elements; separator="|">)
+BRelation::new(vec![<elements; separator=", ">])
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
@@ -337,8 +333,8 @@ parallel(loads, others) ::=<<
 <others; separator="\n">
 >>
 
-parallel_load(type, identifier) ::= <<
-parallel_load(<type>, <identifier>)
+parallel_load(type, identifier, name) ::= <<
+let mut _ld_<name>: <type> = <identifier>.clone();
 >>
 
 function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
@@ -346,7 +342,7 @@ function_call_range_element(<expr>, <leftType>, <rightType>, <arg>, <val>)
 >>
 
 function_call_nested(expr, arg, isNested) ::= <<
-function_call_nested(<expr>, <arg>, <isNested>)
+<if(!isNested)><expr><else><expr>.functionCall(<arg>)<endif>
 >>
 
 assignments(assignments) ::= <<
@@ -363,7 +359,7 @@ type(type, fromOtherMachine, otherMachine) ::= <<
 >>
 
 tuple_type(leftType, rightType) ::=<<
-tuple_type(<leftType>, <rightType>)
+BTuple\<<leftType>, <rightType>\>
 >>
 
 set_type(type) ::=<<
@@ -388,7 +384,7 @@ projection(<domainType>, <rangeType>, <arg1>, <arg2>, <isProjection1>)
 >>
 
 projection_tuple(arg, isProjection1) ::= <<
-projection_tuple(<arg>, <isProjection1>)
+<arg>.<if(isProjection1)>projection1<else>projection2<endif>()
 >>
 
 identity(type, arg) ::= <<
@@ -423,8 +419,8 @@ equivalent(arg1, arg2) ::= <<
 <arg1>.equivalent(&<arg2>)
 >>
 
-unary(operator, obj, isOverloadedOperator) ::= <<
-<obj>.<if(isOverloadedOperator)>unary_<endif><operator>()
+unary(operator, obj, isOverloadedOperator, args) ::= <<
+<obj>.<if(isOverloadedOperator)>unary_<endif><operator>(<if(args)>&<endif><args; separator=", &">)
 >>
 
 select(iterationConstruct, predicate, then) ::= <<

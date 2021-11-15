@@ -7,6 +7,7 @@ machine(imports, includedMachines, machine, structs, constants_declarations, inc
 #![ allow( dead_code, unused_imports, unused_mut ) ]
 
 use std::fmt;
+use rand::{thread_rng, Rng};
 <imports; separator="\n">
 <if(useBigInteger)>//TODO BigInt<endif>
 <includedMachines; separator="\n">
@@ -271,7 +272,7 @@ quantified_expression_evaluation(<otherIterationConstructs>, <emptyPredicate>, <
 >>
 
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
-if_expression_predicate(<predicate>, <ifThen>, <ifElse>)
+(if <predicate>.booleanValue() { <ifThen> } else { <ifElse> })
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -338,19 +339,20 @@ let mut _ld_<name>: <type> = <identifier>.clone();
 >>
 
 function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
-function_call_range_element(<expr>, <leftType>, <rightType>, <arg>, <val>)
+<expr>._override(&BRelation::new(vec![BTuple::new(<arg>,<val>)]))
 >>
 
 function_call_nested(expr, arg, isNested) ::= <<
-<if(!isNested)><expr><else><expr>.functionCall(<arg>)<endif>
+<if(!isNested)><expr><else><expr>.functionCall(&<arg>)<endif>
 >>
 
 assignments(assignments) ::= <<
-assignments(<assignments; separator="|">)
+<assignments; separator="\n">
 >>
 
 nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
-nondeterminism(<iterationConstruct; separator="|">, <leftType>, <rightType>, <identifier>, <modified_identifier>, <set>, <isIdentifierLhs>, <isRecordAccessLhs>, <arg>)
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>._override(BRelation::new(BTuple::new(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 type(type, fromOtherMachine, otherMachine) ::= <<
@@ -380,7 +382,7 @@ BSet::\<BInteger>::interval(&<arg1>, &<arg2>)
 >>
 
 projection(domainType, rangeType, arg1, arg2, isProjection1) ::= <<
-projection(<domainType>, <rangeType>, <arg1>, <arg2>, <isProjection1>)
+BRelation::<if(isProjection1)>projection1<else>projection2<endif>(&<arg1>, &<arg2>)
 >>
 
 projection_tuple(arg, isProjection1) ::= <<
@@ -395,8 +397,8 @@ cartesian_product(leftType, rightType, arg1, arg2) ::= <<
 cartesian_product(<leftType>, <rightType>, <arg1>, <arg2>)
 >>
 
-tuple_create(leftType, rightType, arg1, arg2) ::= <<
-BTuple::new(<arg1>, <arg2>)
+tuple_create(leftType, rightType, arg1, arg1IsPrivate, arg2, arg2IsPrivate) ::= <<
+BTuple::from_refs(&<arg1>, &<arg2>)
 >>
 
 binary(arg1,operator,arg2) ::= <<
@@ -450,17 +452,20 @@ else {
 >>
 
 choice(len, then, choice1) ::= <<
-choice(<len>, <then>, <choice1; separator="|">)
+let mut rng = thread_rng();
+match rng.gen_range(0..<len>) {
+    0 => {<then>},
+    <choice1; separator=",\n">
+}
 >>
 
 
 choice1(counter, then) ::= <<
-choice1(<counter>, <then>)
-}
+<counter> => {<then>}
 >>
 
 choice2(then) ::= <<
-choice2(<counter>, <then>)
+_ => {<then>}
 >>
 
 any(body) ::= <<
@@ -488,7 +493,11 @@ becomes_such_that_store(<lhs>, <rhs>)
 >>
 
 while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
-//TODO: while(<iterationConstruct1; separator="|">, <iterationConstruct2; separator="|">, <predicate>, <then>)
+<iterationConstruct1; separator="\n">
+while (<predicate>).booleanValue() {
+    <then>
+    <iterationConstruct2; separator="\n">
+}
 >>
 
 var(locals, body) ::=<<

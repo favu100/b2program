@@ -1,4 +1,4 @@
 fn main() {
     let mut choice = Choice::new();
-    choice.calculate(new BInteger(3));
+    choice.calculate(BInteger::new(3));
 }

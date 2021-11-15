@@ -432,11 +432,13 @@ impl<L: 'static + BObject> BRelation<L, L> {
     }
 
     fn closure_closure1(&self, is_closure1: bool) -> BRelation<L, L> {
-        let mut result = if is_closure1 { self.clone() } else { self.iterate(&BInteger::new(0)) };
-        let mut next_result = result.composition(self)._union(&result);
+        let mut result = if is_closure1 { BRelation::new(vec![]) } else { self.iterate(&BInteger::new(0)) };
+        let mut current_iteration = self.iterate(&BInteger::new(1));
+        let mut next_result = result._union(&current_iteration);
         while !result.eq(&next_result) {
             result = next_result;
-            next_result = result.composition(self)._union(&result);
+            current_iteration = current_iteration.composition(self);
+            next_result = result._union(&current_iteration);
         }
         return result;
     }
@@ -455,11 +457,12 @@ where L: 'static + BInt + FromBInt,
         return self.functionCall(&L::from(&self.card()));
     }
 
-    pub fn reverse(&self) -> BRelation<R, L> {
+    pub fn reverse(&self) -> BRelation<L, R> {
+        let size = self.card().succ();
         return BRelation {
-            map: self.map.iter().fold(HashMap::<R, OrdSet<L>>::new(),
+            map: self.map.iter().fold(HashMap::<L, OrdSet<R>>::new(),
                                       |result, (k, v)|
-                                          result.update(v.iter().next().unwrap().clone(), OrdSet::unit(k.clone()))),
+                                          result.update(L::from(&size.minus(&k.get_binteger_value())), v.clone())),
         }
     }
 

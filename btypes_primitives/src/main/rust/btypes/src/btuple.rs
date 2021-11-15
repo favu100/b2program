@@ -9,7 +9,7 @@ pub struct BTuple<L: BObject, R: BObject>{
 
 impl<L: BObject, R: BObject> fmt::Display for BTuple<L, R> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "({}, {})", self.left_val, self.right_val);
+        return write!(f, "({} |-> {})", self.left_val, self.right_val);
     }
 }
 
@@ -18,6 +18,10 @@ impl<L: BObject, R:BObject> BObject for BTuple<L, R>{}
 impl<L: BObject, R: BObject> BTuple<L, R> {
     pub fn new(left: L, right: R) -> BTuple<L, R> {
         return BTuple {left_val: left, right_val: right,};
+    }
+
+    pub fn from_refs(left: &L, right: &R) -> BTuple<L, R> {
+        return BTuple {left_val: left.clone(), right_val: right.clone(),};
     }
 
     pub fn projection1(&self) -> L {

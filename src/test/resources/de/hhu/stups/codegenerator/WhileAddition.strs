@@ -1,4 +1,4 @@
 fn main() {
     let mut while1 = While::new();
-    println!("{}", while1.Inc(new BInteger(1)));
+    println!("{}", while1.Inc(BInteger::new(1)));
 }

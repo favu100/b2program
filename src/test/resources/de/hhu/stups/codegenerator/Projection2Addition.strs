@@ -1,6 +1,6 @@
 fn main() {
     let mut projection = Projection2::new();
     projection.calculate();
-    println!("{}", projection.getRes() + " ");
+    println!("{} ", projection.getRes());
     println!("{}", projection.getPair());
 }

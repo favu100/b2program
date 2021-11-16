@@ -411,9 +411,9 @@ class BRelation:
 
     def iterate(self, n: 'BInteger') -> 'BRelation':
         this_relation = self
-        result = self.identity(self.domain())
+        result = self.identity(self.domain().union(self._range()))
         for _ in range(1, n.intValue() + 1):
-            result = result.union(result.composition(this_relation))
+            result = result.composition(this_relation)
         return result
 
     def closure(self) -> 'BRelation':

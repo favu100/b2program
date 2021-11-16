@@ -785,9 +785,9 @@ class BRelation : public BObject {
 
     	BRelation<S,S> iterate(const BInteger& n) const {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
-            BRelation<S,S> result = BRelation<S,S>::identity(this->domain());
+            BRelation<S,S> result = BRelation<S,S>::identity(this->domain()._union(thisRelation->range()));
     		for(BInteger i = BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
-    			result = result._union(result.composition(thisRelation));
+    			result = result.composition(thisRelation);
     		}
     		return result;
     	}

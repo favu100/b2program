@@ -659,9 +659,9 @@ public class BRelation<S,T> {
 	@SuppressWarnings("unchecked")
 	public BRelation<S,S> iterate(BInteger n) {
 		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = identity(this.domain());
+		BRelation<S,S> result = identity(this.domain().union(thisRelation.range()));
 		for(BInteger i = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
-			result = result.union(result.composition(thisRelation));
+			result = result.composition(thisRelation);
 		}
 		return result;
 	}

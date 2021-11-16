@@ -516,9 +516,9 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	iterate(n: BInteger): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S,S>><unknown>this;
-		let result: BRelation<S,S> = BRelation.identity(this.domain());
+		let result: BRelation<S,S> = BRelation.identity(this.domain().union(this.range()));
 		for(let i: BInteger = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
-			result = result.union(result.composition(thisRelation));
+			result = result.composition(thisRelation);
 		}
 		return result;
 	}

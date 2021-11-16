@@ -96,7 +96,7 @@ public class TestCpp {
 
 		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
 
-		String generatedMachinePath = Paths.get("out", "test", "resources", "de", "hhu", "stups", "codegenerator", machine + ".cpp").toString();
+		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machine + ".cpp").toString();
 
 		Process compileProcess = runtime
 				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);

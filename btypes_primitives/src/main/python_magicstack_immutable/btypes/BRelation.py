@@ -417,7 +417,7 @@ class BRelation:
         return result
 
     def closure(self) -> 'BRelation':
-        result = self.identity(self.domain())
+        result = self.identity(self.domain().union(self._range()))
         next_result = result.composition(self)
         while True:
             last_result = result

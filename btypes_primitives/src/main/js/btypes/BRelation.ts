@@ -526,7 +526,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	closure(): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S, S>><unknown>this;
-		let result: BRelation<S,S> = BRelation.identity(this.domain());
+		let result: BRelation<S,S> = BRelation.identity(this.domain().union(this.range()));
 		let nextResult: BRelation<S,S> = result.composition(thisRelation);
 		let lastResult: BRelation<S,S> = result;
 		do {

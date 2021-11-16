@@ -794,7 +794,7 @@ class BRelation : public BObject {
 
     	BRelation<S,S> closure() const {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
-            BRelation<S,S> result = BRelation<S,S>::identity(this->domain());
+            BRelation<S,S> result = BRelation<S,S>::identity(this->domain()._union(thisRelation->range()));
     		BRelation<S,S> nextResult = result.composition(thisRelation);
     		BRelation<S,S> lastResult;
     		do {

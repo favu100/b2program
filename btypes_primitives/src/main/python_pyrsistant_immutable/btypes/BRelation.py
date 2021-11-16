@@ -452,7 +452,7 @@ class BRelation:
 
 	def closure(self) -> 'BRelation':
 		this_relation = self
-		result = self.identity(self.domain())
+		result = self.identity(self.domain().union(self._range()))
 		next_result = result.composition(this_relation)
 		while True:
 			last_result = deepcopy(result)

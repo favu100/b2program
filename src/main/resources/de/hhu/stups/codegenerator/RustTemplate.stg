@@ -57,7 +57,7 @@ fn init(&mut self) {
 
 assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
 <iterationConstruct; separator="|">
-<if(isIdentifierLhs)><identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>._override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
+<if(isIdentifierLhs)><identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
 identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
@@ -108,11 +108,18 @@ BInteger::new(<number>)
 >>
 
 struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct <name> {
     <if(declarations)><declarations; separator="\n"><endif>
 }
 
+impl fmt::Display for <name> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "<values:{v | <v>: {\}}; separator=",">", <values:{v | self.<v>}; separator=" ,">)
+    }
+}
+
+impl BObject for <name> {}
 impl BStruct for <name> {}
 
 impl <name> {
@@ -179,19 +186,19 @@ const <identifier>: <type> = <val>;
 >>
 
 record_field_access(record, field) ::= <<
-record_field_access(<record>, <field>)
+<record>.get_<field>()
 >>
 
 record_access_nested(record, field, isNested) ::= <<
-record_access_nested(<record>, <field>. <isNested>)
+<if(!isNested)><record><else><record>.get_<field>()<endif>
 >>
 
 record_access_element(expr, arg, val) ::= <<
-record_access_element(<expr>, <arg>, <val>)
+<expr>.override_<arg>(<val>)
 >>
 
 record_field_to_string(identifier) ::= <<
-record_field_to_string(<identifier>)
+<identifier>
 >>
 
 method() ::= <<
@@ -429,6 +436,8 @@ select(iterationConstruct, predicate, then) ::= <<
 <iterationConstruct; separator="\n">
 if (<predicate>).booleanValue() {
     <then>
+} else {
+    panic!("ERROR: called SELECT-function with incompatible parameters!");
 }
 >>
 
@@ -501,7 +510,8 @@ while (<predicate>).booleanValue() {
 >>
 
 var(locals, body) ::=<<
-var(<locals; separator="|">, <body>)
+<locals; separator="\n">
+<body>
 >>
 
 boolean_val(val) ::= <<

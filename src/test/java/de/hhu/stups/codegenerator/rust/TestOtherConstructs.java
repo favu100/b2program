@@ -14,9 +14,14 @@ public class TestOtherConstructs extends TestRS {
         testRS("Equivalence", "Equivalence", "EquivalenceAddition.strs", true);
     }
 
-    @Test
+    @Test(expected = Exception.class)
     public void testBooleanPredicate() throws Exception {
         testRS("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.strs", true);
+    }
+
+    @Test
+    public void testBooleanPredicateWD() throws Exception {
+        testRS("BooleanPredicateWD", "BooleanPredicateWD", "BooleanPredicateAdditionWD.strs", true);
     }
 
     @Test

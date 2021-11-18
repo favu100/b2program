@@ -197,6 +197,7 @@ public class SubstitutionGenerator {
     private String generateConstantFromDeferredSet(DeclarationNode constant, String machineName) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(initialization, "val", declarationGenerator.callEnum(constant.getType().toString(), constant));
         TemplateHandler.add(initialization, "machineName", machineName);
         return initialization.render();

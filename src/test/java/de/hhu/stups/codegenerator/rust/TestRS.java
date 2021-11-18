@@ -83,7 +83,7 @@ public class TestRS {
 
         String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
         File outFile = Paths.get(CodeGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/" + machine + ".out").toURI()).toFile();
-        String expectedOutput = streamToString(new FileInputStream(outFile)).replaceAll("\n", "");
+        String expectedOutput = streamToString(new FileInputStream(outFile)).replaceAll("[\n\r]", "");
 
         System.out.println("Assert: " + result + " = " + expectedOutput);
 

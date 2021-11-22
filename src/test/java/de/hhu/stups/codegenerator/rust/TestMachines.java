@@ -51,13 +51,13 @@ public class TestMachines extends TestRS {
     }
 
     @Test
-    public void testLift_MC() throws Exception { //TODO MC
+    public void testLift_MC() throws Exception {
         testRSMC("Lift_MC");
     }
 
 
     @Test
-    public void testTravelAgency() throws Exception { //TODO
+    public void testTravelAgency() throws Exception {
         testRS("TravelAgency");
     }
 
@@ -67,7 +67,7 @@ public class TestMachines extends TestRS {
     }
 
     @Test
-    public void testTrafficLightMC() throws Exception { //TODO: MC
+    public void testTrafficLightMC() throws Exception {
         testRSMC("TrafficLight_MC");
     }
 
@@ -286,4 +286,13 @@ public class TestMachines extends TestRS {
         testRS("visualisation/PitmanController_TIME_MC_v4");
     }
 
+    @Test
+    public void testButton() throws Exception {
+        testRSMC("visualisation/Button");
+    }
+
+    @Test
+    public void testLandingGear_MC() throws Exception {
+        testRSMC("landing_gear/LandingGear_R6");
+    }
 }

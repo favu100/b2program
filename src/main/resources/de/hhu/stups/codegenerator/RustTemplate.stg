@@ -56,7 +56,7 @@ fn init(&mut self) {
 >>
 
 assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
-<iterationConstruct; separator="|">
+<iterationConstruct; separator="\n">
 <if(isIdentifierLhs)><identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
@@ -214,11 +214,17 @@ self.<identifier> = BSet::new(vec![<enums; separator=", ">]);
 >>
 
 iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
-iteration_construct_enumeration<otherIterationConstructs>, <type>, <identifier>, <set>, <body>)
+<otherIterationConstructs>
+for <identifier> in <set>.iter().cloned() {
+    <body>
+}
 >>
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
-iteration_construct_assignment(<otherIterationConstructs>, <type>, <identifier>, <set>, <body>)
+<otherIterationConstructs>
+for <identifier> in vec![<set>] {
+    <body>
+}
 >>
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
@@ -229,53 +235,90 @@ iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, b
 iteration_construct_subsetneq(<otherIterationConstructs>, <type>, <identifier>, <set>, <body>)
 >>
 
-let_expression_predicate(type, identifier, body) ::= <<
-let_expression_predicate(<type>, <identifier>, <body>)
+let_expression_predicate(type, isBool, identifier, body) ::= <<
+let mut <identifier>: <type><if(isBool)> = BBoolean::new(false)<endif>;
+<body>
 >>
 
 let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
-let_expression_predicate_body(<otherIterationConstructs>, <identifier>, <val>)
+<otherIterationConstructs>
+<identifier> = <val>;
 >>
 
-set_comprehension(type, identifier, comprehension) ::= <<
-//TODO: set_comprehension(<type>, <identifier>, <comprehension>);
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
+let mut <identifier> = <if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![]);
+<comprehension>
 >>
 
-set_comprehension_predicate(otherIterationConstructs, set, type, element, emptyPredicate, predicate, isRelation) ::= <<
-//TODO: set_comprehension_predicate(<otherIterationConstructs>, <set>, <type>, <element>, <emptyPredicate>, <predicate>, <isRelation>)
+set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+<else>
+if (<predicate>).booleanValue() {
+    <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+}
+<endif>
 >>
 
-lambda(type, identifier, lambda) ::= <<
-//TODO: lambda(<type>, <identifier>, <lambda>)
+lambda(type, identifier, lambda, leftType, rightType) ::= <<
+let mut <identifier> = BRelation::\<<leftType>, <rightType>\>::new(vec![]);
+<lambda>
 >>
 
-lambda_expression(otherIterationConstructs, relation, leftType, rightType, element, expression, emptyPredicate, predicate) ::= <<
-//TODO: lambda_expression(<otherIterationConstructs>, <relation>, <leftType>, <rightType>, <element>, <expression>, <emptyPredicate>, <predicate>)
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>, <expression>)]));
+<else>
+if (<predicate>).booleanValue() {
+    <relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>, <expression>)]));
+}
+<endif>
 >>
 
 lambda_function(function, parameters, returnType, expression) ::= <<
-//TODO: lambda_function(<function>, <parameters>, <returnType>, <expression>)
+pub fn <function>(<parameters; separator=", ">) -> <returnType> {
+    return <expression>;
 }
 >>
 
 lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
-//TODO: lambda_function_call(<arg1>, <arg2>, <fromOtherMachine>, <otherMachine>)
+<if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<
-//TODO: quantified_predicate(<identifier>, <forall>, <predicate>)
+let mut <identifier> = BBoolean::new(<if(forall)>true<else>false<endif>);
+<predicate>
 >>
 
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
-//TODO: quantified_predicate_evaluation(<otherIterationConstructs>, <identifier>, <emptyPredicate>, <predicate>, <forall>)
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = BBoolean::new(<if(forall)>false<else>true<endif>);
+break;
+<else>
+if <if(forall)>!<endif>(<predicate>).booleanValue() {
+    <identifier> = BBoolean::new(<if(forall)>false<else>true<endif>);
+    break;
+}
+<endif>
 >>
 
 quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
-quantified_expression(<identifier>, <identity>, <setType>, <evaluation>, <isInteger>)
+let mut <identifier> = <if(isInteger)>BInteger::new(<identity>);<else>BSet::\<<setType>\>::new(vec![]);<endif>
+<evaluation>
 >>
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
-quantified_expression_evaluation(<otherIterationConstructs>, <emptyPredicate>, <predicate>, <identifier>, <operation>, <expression>)
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = <identifier>.<operation>(&<expression>);
+<else>
+if (<predicate>).booleanValue() {
+    <identifier> = <identifier>.<operation>(&<expression>);
+}
+<endif>
 >>
 
 if_expression_predicate(predicate, ifThen, ifElse) ::= <<
@@ -478,27 +521,44 @@ _ => {<then>}
 >>
 
 any(body) ::= <<
-any(<body>)
+<body>
 >>
 
 any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
-any_body(<otherIterationConstructs>, <emptyPredicate>, <predicate>, <body>)
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<body>
+break;<else>
+if (<predicate>).booleanValue() {
+    <body>
+    break;
+}<endif>
 >>
 
 becomes_such_that(loads, body) ::= <<
-becomes_such_that(<loads; separator="|">, <body>)
+<loads; separator="\n">
+<body>
 >>
 
 becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
-becomes_such_that_body(<otherIterationConstructs>, <emptyPredicate>, <predicate>, <stores>)
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<stores>
+break;
+<else>
+if (<predicate>).booleanValue() {
+    <stores>
+    break;
+}
+<endif>
 >>
 
 becomes_such_that_load(type, lhs, rhs) ::= <<
-becomes_such_that_load(<type>, <lhs>, <rhs>)
+let mut <lhs>: <type> = <rhs>;
 >>
 
 becomes_such_that_store(lhs, rhs) ::= <<
-becomes_such_that_store(<lhs>, <rhs>)
+<lhs> = <rhs>;
 >>
 
 while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<

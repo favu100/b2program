@@ -11,6 +11,7 @@ import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.BoolType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -161,6 +162,7 @@ public class LetExpressionPredicateGenerator {
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "isBool", type instanceof BoolType);
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "body", body);
     }
@@ -174,6 +176,7 @@ public class LetExpressionPredicateGenerator {
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
+        TemplateHandler.add(template, "isBool", type instanceof BoolType);
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "body", body);
     }

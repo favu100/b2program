@@ -1,13 +1,18 @@
 keywords() ::= <<
-as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, abstract, become, box, do, final, macro, override, priv, typeof, unsized, virtual, yield, try, union, dyn, min, max
+as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, abstract, become, box, do, final, macro, override, priv, typeof, unsized, virtual, yield, try, union, dyn, min, max, new
 >>
 
 
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions) ::= <<
-#![ allow( dead_code, unused_imports, unused_mut ) ]
+#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types ) ]
+<if(constants_declarations)>
+#[macro_use]
+extern crate lazy_static;
 
+<endif>
 use std::fmt;
 use rand::{thread_rng, Rng};
+use btypes::butils;
 <imports; separator="\n">
 <if(useBigInteger)>//TODO BigInt<endif>
 <includedMachines; separator="\n">
@@ -15,6 +20,11 @@ use rand::{thread_rng, Rng};
 
 <structs; separator="\n\n">
 
+<if(constants_declarations)>
+lazy_static! {
+    <constants_declarations; separator="\n">
+}
+<endif>
 <enums; separator="\n\n">
 
 #[derive(Default, Debug)]
@@ -24,7 +34,6 @@ pub struct <machine> {
 }
 
 impl <machine> {
-    #![allow(non_snake_case)]
     <initialization>
     <if(getters)><\n><getters; separator="\n\n"><endif>
     <if(operations)><\n><operations; separator="\n\n">
@@ -62,7 +71,7 @@ assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, ident
 
 identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
 <if(fromOtherMachine)>//TODO: identifier from Other Machine <otherMachine><endif>
-<if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)><machine>::<endif><identifier>
+<if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)><endif><identifier>
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
@@ -344,7 +353,8 @@ pub enum <name> {
     <enums; separator=", \n">
 }
 impl <name> {
-    pub fn equal(&self, other: <name>) -> BBoolean { BBoolean::new(*self == other)}
+    pub fn equal(&self, other: &<name>) -> BBoolean { BBoolean::new(*self == *other)}
+    pub fn unequal(&self, other: &<name>) -> BBoolean { BBoolean::new(*self != *other)}
 }
 impl BObject for <name> {}
 impl Default for <name> {
@@ -360,7 +370,7 @@ impl fmt::Display for <name> {
 >>
 
 bool() ::= <<
-bool()
+butils::BOOL
 >>
 
 include_declaration(type, identifier) ::= <<
@@ -371,8 +381,8 @@ global_declaration(type, identifier) ::= <<
 <identifier>: <type>,
 >>
 
-constant_declaration(type, identifier) ::= <<
-constant_declaration(<type>, <identifier>)
+constant_declaration(type, identifier, isSetType, isRelationType) ::= <<
+static ref <identifier>: <type> <if(isSetType)>= BSet::new(vec![])<elseif(isRelationType)>= BRelation::new(vec![])<endif>;
 >>
 
 values() ::= <<
@@ -444,7 +454,7 @@ BRelation::\<<type>,<type>\>::identity(&<arg>)
 >>
 
 cartesian_product(leftType, rightType, arg1, arg2) ::= <<
-cartesian_product(<leftType>, <rightType>, <arg1>, <arg2>)
+BRelation::cartesianProduct(&<arg1>, &<arg2>)
 >>
 
 tuple_create(leftType, rightType, arg1, arg1IsPrivate, arg2, arg2IsPrivate) ::= <<
@@ -667,4 +677,7 @@ machine_hash()
 
 machine_hash_assignment() ::= <<
 machine_hash_assignment()
+>>
+
+enum_import() ::= <<
 >>

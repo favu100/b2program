@@ -1,0 +1,3 @@
+//Not used for a specific test case, will be added if no specific addition is necessary,
+//since rust requires a main fn for compilation
+fn main() {}

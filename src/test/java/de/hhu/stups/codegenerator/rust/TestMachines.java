@@ -50,6 +50,7 @@ public class TestMachines extends TestRS {
         testRS("Lift", "Lift", "LiftAddition.strs", true);
     }
 
+    @Ignore //MC
     @Test
     public void testLift_MC() throws Exception {
         testRSMC("Lift_MC");
@@ -66,6 +67,7 @@ public class TestMachines extends TestRS {
         testRS("TrafficLight", "TrafficLight", "TrafficLightAddition.strs", true);
     }
 
+    @Ignore //MC
     @Test
     public void testTrafficLightMC() throws Exception {
         testRSMC("TrafficLight_MC");
@@ -111,6 +113,7 @@ public class TestMachines extends TestRS {
         testRS("Cruise_finite1_deterministic");
     }
 
+    @Ignore //MC
     @Test
     public void testCruiseControllerDeterministic_MC() throws Exception {
         testRSMC("Cruise_finite1_deterministic_MC");
@@ -131,6 +134,7 @@ public class TestMachines extends TestRS {
         testRS("scheduler_deterministic");
     }
 
+    @Ignore //MC
     @Test
     public void testSchedulerDeterministicMC() throws Exception {
         testRSMC("scheduler_deterministic_MC");
@@ -146,6 +150,7 @@ public class TestMachines extends TestRS {
         testRS("CAN_BUS_tlc");
     }
 
+    @Ignore //MC
     @Test
     public void testCanBusMC() throws Exception {
         testRSMC("CAN_BUS_tlc");
@@ -182,6 +187,7 @@ public class TestMachines extends TestRS {
         testRS("Train_1_beebook_deterministic");
     }
 
+    @Ignore //MC
     @Test
     public void Train1BeebookDeterministic_MC() throws Exception {
         testRSMC("Train_1_beebook_deterministic_MC");
@@ -192,26 +198,31 @@ public class TestMachines extends TestRS {
         testRS("Train_1_beebook_deterministic_exec");
     }
 
+    @Ignore //MC
     @Test
     public void Train1LukasPOR() throws Exception {
         testRSMC("Train1_Lukas_POR");
     }
 
+    @Ignore //MC
     @Test
     public void Train1LukasPORv3() throws Exception {
         testRSMC("Train1_Lukas_POR_v3");
     }
 
+    @Ignore //MC
     @Test
     public void Train1LukasPORv4() throws Exception {
         testRSMC("Train1_Lukas_POR_v4");
     }
 
+    @Ignore //MC
     @Test
     public void Train1BeebookDeterministic_MC_POR() throws Exception {
         testRSMC("Train_1_beebook_deterministic_MC_POR");
     }
 
+    @Ignore //MC
     @Test
     public void Train1BeebookDeterministic_MC_POR_v2() throws Exception {
         testRSMC("Train_1_beebook_deterministic_MC_POR_v2");
@@ -222,21 +233,25 @@ public class TestMachines extends TestRS {
         testRS("train_1");
     }
 
+    @Ignore //MC
     @Test
     public void IncrementalStagePackingTestLargeSlow() throws Exception {
         testRSMC("IncrementalStatePackingTestLargeSlow");
     }
 
+    @Ignore //MC
     @Test
     public void IncrementalStagePackingTestLargeSlow2() throws Exception {
         testRSMC("IncrementalStatePackingTestLargeSlow2");
     }
 
+    @Ignore //MC
     @Test
     public void ThreeCounter() throws Exception {
         testRSMC("ThreeCounter");
     }
 
+    @Ignore //MC
     @Test
     public void ThreeCounter2() throws Exception {
         testRSMC("ThreeCounter2");
@@ -271,6 +286,7 @@ public class TestMachines extends TestRS {
         testRS("sort_m2_data1000");
     }
 
+    @Ignore //MC
     @Test
     public void testsort_m2_data1000_MC() throws Exception {
         testRSMC("sort_m2_data1000_MC");
@@ -286,11 +302,13 @@ public class TestMachines extends TestRS {
         testRS("visualisation/PitmanController_TIME_MC_v4");
     }
 
+    @Ignore //MC
     @Test
     public void testButton() throws Exception {
         testRSMC("visualisation/Button");
     }
 
+    @Ignore //MC
     @Test
     public void testLandingGear_MC() throws Exception {
         testRSMC("landing_gear/LandingGear_R6");

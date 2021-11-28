@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
+import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -119,6 +120,11 @@ public class DeclarationGenerator {
         ST declaration = currentGroup.getInstanceOf("constant_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        if (constant.getType() instanceof SetType) {
+            boolean isRelation = ((SetType) constant.getType()).getSubType() instanceof CoupleType;
+            TemplateHandler.add(declaration, "isSetType", !isRelation);
+            TemplateHandler.add(declaration, "isRelationType", isRelation);
+        }
         return declaration.render();
     }
 

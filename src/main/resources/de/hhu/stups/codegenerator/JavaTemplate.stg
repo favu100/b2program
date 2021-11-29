@@ -1608,4 +1608,5 @@ public static void main(String[] args) {
 record_private_variable_prefix() ::= <<
 >>
 
-
+include_initialization() ::= <<
+>>

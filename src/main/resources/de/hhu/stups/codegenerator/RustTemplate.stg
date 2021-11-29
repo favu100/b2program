@@ -5,31 +5,22 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions) ::= <<
 #![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types ) ]
-<if(constants_declarations)>
-#[macro_use]
-extern crate lazy_static;
-
-<endif>
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
 <imports; separator="\n">
 <if(useBigInteger)>//TODO BigInt<endif>
 <includedMachines; separator="\n">
-<if(includes)><includes; separator="\n"><endif>
 
 <structs; separator="\n\n">
 
-<if(constants_declarations)>
-lazy_static! {
-    <constants_declarations; separator="\n">
-}
-<endif>
 <enums; separator="\n\n">
 
 #[derive(Default, Debug)]
 pub struct <machine> {
     <if(declarations)><declarations; separator="\n"><endif>
+    <if(includes)><includes; separator="\n"><endif>
+    <if(constants_declarations)><constants_declarations; separator="\n"><endif>
     <sets; separator="\n">
 }
 
@@ -49,8 +40,7 @@ import_type(type, useBigInteger) ::= <<
 use btypes::<type; format="lower">::<type>;
 >>
 
-initialization(machine, properties, values, body, sets) ::= <<
-<properties; separator="\n">
+initialization(machine, properties, values, body, sets, includesInitialization) ::= <<
 
 pub fn new() -> <machine> {
 <if(values)>    //values: '<values>'<endif>
@@ -59,8 +49,10 @@ pub fn new() -> <machine> {
     return m;
 }
 fn init(&mut self) {
-    <body>
     <sets; separator="\n">
+    <body>
+    <includesInitialization; separator="\n">
+    <properties; separator="\n">
 }
 >>
 
@@ -70,13 +62,12 @@ assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, ident
 >>
 
 identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
-<if(fromOtherMachine)>//TODO: identifier from Other Machine <otherMachine><endif>
-<if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)><endif><identifier>
+<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
 pub fn get_<variable>(&self) -> <returnType> {
-    return <if(isConstant)><machine>::<else>self.<endif><variable>.clone();
+    return self.<variable>.clone();
 }
 >>
 
@@ -191,7 +182,7 @@ record(struct, parameters) ::= <<
 
 constant_initialization(iterationConstruct, identifier, type, val) ::= <<
 <iterationConstruct; separator="\n">
-const <identifier>: <type> = <val>;
+self.<identifier> = <val>;
 >>
 
 record_field_access(record, field) ::= <<
@@ -343,8 +334,7 @@ BRelation::new(vec![<elements; separator=", ">])
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
-<if(!isCurrentMachine)>//TODO: enum_call to not current machine<endif>
-<class>::<identifier>
+<if(!isCurrentMachine)><machine>::<endif><class>::<identifier>
 >>
 
 set_enum_declaration(name,enums) ::= <<
@@ -374,15 +364,19 @@ butils::BOOL
 >>
 
 include_declaration(type, identifier) ::= <<
-include_declaration(<type>, <identifier>)
+<identifier>: <type>::<type>,
+>>
+
+include_initialization(type, identifier) ::= <<
+self.<identifier> = <type>::<type>::new();
 >>
 
 global_declaration(type, identifier) ::= <<
 <identifier>: <type>,
 >>
 
-constant_declaration(type, identifier, isSetType, isRelationType) ::= <<
-static ref <identifier>: <type> <if(isSetType)>= BSet::new(vec![])<elseif(isRelationType)>= BRelation::new(vec![])<endif>;
+constant_declaration(type, identifier) ::= <<
+<identifier>: <type>,
 >>
 
 values() ::= <<
@@ -416,8 +410,7 @@ nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_ide
 >>
 
 type(type, fromOtherMachine, otherMachine) ::= <<
-<if(fromOtherMachine)>//TODO: type with fromOtherMachine=true<endif>
-<type>
+<if(fromOtherMachine)><otherMachine>::<endif><type>
 >>
 
 tuple_type(leftType, rightType) ::=<<
@@ -433,7 +426,7 @@ BRelation\<<leftType>, <rightType>\>
 >>
 
 import_machine(machine) ::= <<
-import_machine(<machine>)
+mod <machine>;
 >>
 
 
@@ -589,43 +582,43 @@ BBoolean::new(<val>)
 >>
 
 infinite_predicate(arg, operator) ::= <<
-infinite_predicate(<arg>, <operator>)
+<arg>.<operator>()
 >>
 
 relation_predicate(predicates, checkElementOf) ::= <<
-relation_predicate(<predicates>, <checkElementOf>)
+<if(checkElementOf)><predicates><else><predicates>.not()<endif>
 >>
 
 relation_check_domain(arg, domain) ::= <<
-relation_check_domain(<arg>, <domain>)
+<arg>.checkDomain(<domain>)
 >>
 
 relation_check_range(arg, range) ::= <<
-relation_check_range(<arg>, <range>)
+<arg>.checkRange(<range>)
 >>
 
 relation_total_partial(arg, operator, domain) ::= <<
-relation_total_partial(<arg>, <operator>, <domain>)
+<arg>.<operator>(<domain>)
 >>
 
 relation_function(arg, operator) ::= <<
-relation_function(<arg>, <operator>)
+<arg>.<operator>()
 >>
 
 relation_surjection(arg, range) ::= <<
-relation_surjection(<arg>, <range>)
+<arg>.isSurjection(<range>)
 >>
 
 relation_injection(arg) ::= <<
-relation_injection(<arg>)
+<arg>.isInjection()
 >>
 
 relation_bijection(arg, range) ::=<<
-relation_bijection(<arg>, <range>)
+<arg>.isBijection(<range>)
 >>
 
 string(string) ::= <<
-//TODO: string(<string>)
+BString::new(<string>)
 >>
 
 operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
@@ -641,7 +634,7 @@ operation_call_with_assignment_one_parameter(<var>, <machineInstance>, <function
 >>
 
 operation_call_without_assignment(machineInstance, function, args, this) ::= <<
-operation_call_without_assignment(<machineInstance>, <function>, <args; separator="|">, <this>)
+<if(this)>self.<else>self.<machineInstance>.<endif><function>(<args; separator=",">);
 >>
 
 skip() ::= <<

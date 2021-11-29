@@ -7,6 +7,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,8 @@ public class TestRS {
                 addition, false, false, null);
 
         Path typesPath = Paths.get(this.getClass().getClassLoader().getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust/bmachine/src"));
+        File[] oldFiles = typesPath.toFile().listFiles();
+        if (oldFiles != null && oldFiles.length > 0) Arrays.stream(oldFiles).forEach(file -> file.delete());
         rsFilePaths = rsFilePaths.stream().map(file -> {
             Path dest = typesPath.resolve(Paths.get(file.toFile().getName()));
             file.toFile().renameTo(dest.toFile());
@@ -58,7 +61,6 @@ public class TestRS {
         Runtime runtime = Runtime.getRuntime();
         Path mainPath = rsFilePaths.get(rsFilePaths.size() - 1);
         File newMainFile = typesPath.resolve(Paths.get("main.rs")).toFile();
-        cleanUp(newMainFile);
         mainPath.toFile().renameTo(newMainFile);
         Process process = runtime.exec("cargo build --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
         writeInputToSystem(process.getErrorStream());

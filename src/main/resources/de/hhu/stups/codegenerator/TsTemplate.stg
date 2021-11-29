@@ -987,3 +987,6 @@ public String toString() {
 }
 */
 >>
+
+include_initialization() ::= <<
+>>

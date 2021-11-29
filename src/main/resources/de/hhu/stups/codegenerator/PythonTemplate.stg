@@ -725,3 +725,6 @@ record_private_variable_prefix() ::= <<
 
 enum_import() ::= <<
 >>
+
+include_initialization() ::= <<
+>>

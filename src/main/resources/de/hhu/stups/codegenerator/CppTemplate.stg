@@ -1467,3 +1467,6 @@ int main(int argc, char *argv[]) {
 
 record_private_variable_prefix() ::= <<
 >>
+
+include_initialization() ::= <<
+>>

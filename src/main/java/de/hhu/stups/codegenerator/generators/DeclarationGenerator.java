@@ -120,11 +120,6 @@ public class DeclarationGenerator {
         ST declaration = currentGroup.getInstanceOf("constant_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        if (constant.getType() instanceof SetType) {
-            boolean isRelation = ((SetType) constant.getType()).getSubType() instanceof CoupleType;
-            TemplateHandler.add(declaration, "isSetType", !isRelation);
-            TemplateHandler.add(declaration, "isRelationType", isRelation);
-        }
         return declaration.render();
     }
 
@@ -136,12 +131,25 @@ public class DeclarationGenerator {
                 .map(this::generateIncludeDeclaration)
                 .collect(Collectors.toList());
     }
+    public List<String> generateIncludesInitialization(MachineNode node) {
+        return node.getMachineReferences().stream()
+                .map(this::generateIncludeInitialization)
+                .collect(Collectors.toList());
+    }
 
     /*
     * This function generates code for one included machine with the given AST node and the template.
     */
     private String generateIncludeDeclaration(MachineReferenceNode reference) {
         ST declaration = currentGroup.getInstanceOf("include_declaration");
+        String machine = reference.getMachineName();
+        String referenceName = reference.getPrefix() != null ? reference.getPrefix() : reference.getMachineName();
+        TemplateHandler.add(declaration, "type", nameHandler.handle(machine));
+        TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(referenceName, NameHandler.IdentifierHandlingEnum.MACHINES));
+        return declaration.render();
+    }
+    private String generateIncludeInitialization(MachineReferenceNode reference) {
+        ST declaration = currentGroup.getInstanceOf("include_initialization");
         String machine = reference.getMachineName();
         String referenceName = reference.getPrefix() != null ? reference.getPrefix() : reference.getMachineName();
         TemplateHandler.add(declaration, "type", nameHandler.handle(machine));

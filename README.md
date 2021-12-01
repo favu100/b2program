@@ -310,8 +310,7 @@ Restriction: STRING is a infinite set. It is only supported on the right-hand si
 | IF P THEN G END                                   | IF Substitution                                          |
 | IF P THEN G ELSE H                                | IF-THEN-ELSE Substitution                                |
 | IF P1 THEN G1 ELSIF P2 THEN G2 ... ELSE Gn END    | IF-THEN-ELSE Substitution with Many Else Branches        |
-| SELECT P THEN G WHEN .. WHEN Q THEN H END         | SELECT Substitution with Many Branches                   |
-| SELECT P THEN G WHEN .. WHEN Q THEN H ELSE I END  | SELECT Substitution with Many Branches and a Else Branch |
+| SELECT P THEN G END                               | SELECT Substitution                                      |
 | CASE E OF EITHER m THEN G or n THEN H ... END END | CASE substitution                                        |
 
 Functional Override and Record Access with assignment can be nested.
@@ -325,6 +324,9 @@ Restriction: Choice by Predicates are quantified constructs. The predicate P mus
 The i-th conjunct must constraint xi for each i in {1,...,n}.
 
 Comments are ignored during code generation. Furthermore trees and pragmas are not supported by B2Program.
+
+
+Remark: SELECT with ELSE Branches are not supported yet
 
 
 ## Usage

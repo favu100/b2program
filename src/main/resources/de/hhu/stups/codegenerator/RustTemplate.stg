@@ -4,7 +4,7 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 
 
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions) ::= <<
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types ) ]
+#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
@@ -56,13 +56,13 @@ fn init(&mut self) {
 }
 >>
 
-assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
+assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, lhsIsLocal) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <val><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
+<if(isIdentifierLhs)><identifier> = <if(lhsIsLocal)>Option::Some(<endif><val><if(rightTypeIsCollection)>.clone()<endif><if(lhsIsLocal)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
-identifier(machine, identifier, isReturn, isPrivate, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
-<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
+identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigned, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
+<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<elseif(isLocal && !isParam && !isAssigned)><identifier>.unwrap()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
@@ -83,8 +83,8 @@ parameter(type, identifier) ::= <<
 mut <identifier>: <type>
 >>
 
-return(identifier) ::= <<
-return <identifier>;
+return(identifier,isLocal) ::= <<
+return <identifier><if(isLocal)>.unwrap()<endif>;
 >>
 
 no_return() ::=<<
@@ -99,7 +99,7 @@ local_declaration(type, identifier) ::= <<
 >>
 
 declaration(type, identifier) ::= <<
-let mut <identifier>: <type>;
+let mut <identifier>: Option\<<type>\> = Option::None;
 >>
 
 number(number, useBigInteger) ::= <<
@@ -222,7 +222,8 @@ for <identifier> in <set>.iter().cloned() {
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for <identifier> in vec![<set>] {
+{
+    let mut <identifier> = <set>;
     <body>
 }
 >>
@@ -622,15 +623,16 @@ BString::new(<string>)
 >>
 
 operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
-operation_call_with_assignment_many_parameters(<struct>, <var>, <machine>, <machineInstance>, <function>, <args>, <this>, <assignments; separator="|">)
+let mut <var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+<assignments; separator="\n">
 >>
 
 operation_call_assignment(var, record, field) ::= <<
-operation_call_assignment(<var>, <record>, <field>)
+<var> = <record>.get_<field>();
 >>
 
 operation_call_with_assignment_one_parameter(var, machineInstance, function, args, this) ::= <<
-operation_call_with_assignment_one_parameter(<var>, <machineInstance>, <function>, <args>, <this>)
+<var> = <operation_call_without_assignment(machineInstance, function, args, this)>
 >>
 
 operation_call_without_assignment(machineInstance, function, args, this) ::= <<

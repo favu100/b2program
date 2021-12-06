@@ -1,0 +1,5 @@
+fn main() {
+    let mut machine = MachineA::new();
+    machine.IncX1();
+    machine.IncX2();
+}

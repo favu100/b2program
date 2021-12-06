@@ -444,6 +444,7 @@ public class SubstitutionGenerator {
             TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
             TemplateHandler.add(substitution, "isFinalExpr", isFinalExpr(rhs));
         }
+        if (lhs instanceof IdentifierExprNode) TemplateHandler.add(substitution, "lhsIsLocal", !machineGenerator.getNameHandler().getGlobals().contains(((IdentifierExprNode) lhs).getName()));
         TemplateHandler.add(substitution, "stateCount", machineGenerator.getAndIncCurrentStateCount());
         TemplateHandler.add(substitution, "nextStateCount", machineGenerator.getCurrentStateCount());
         TemplateHandler.add(substitution, "lastExprCount", machineGenerator.getCurrentExpressionCount()-1);

@@ -145,7 +145,9 @@ public class OperationGenerator {
         BType type = outputs.get(0).getType();
         String identifier = outputs.get(0).getName();
         //TODO: render identifier via template instead of transforming it here
+        boolean isGlobal = false;
         if (nameHandler.getGlobals().contains(identifier)) {
+            isGlobal = true;
             String privateVariablePrefix = group.getInstanceOf("record_private_variable_prefix").render();
             identifier = privateVariablePrefix + identifier;
         }
@@ -153,6 +155,7 @@ public class OperationGenerator {
         ST returnTemplate = group.getInstanceOf("return");
         TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
         TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
+        TemplateHandler.add(returnTemplate, "isLocal", !isGlobal);
         TemplateHandler.add(operation, "isTyped", true);
         TemplateHandler.add(operation, "return", returnTemplate.render());
     }

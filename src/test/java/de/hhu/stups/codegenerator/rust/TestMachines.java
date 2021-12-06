@@ -172,7 +172,8 @@ public class TestMachines extends TestRS {
         testRS("SetLawsNAT");
     }
 
-    @Test
+    // totalFunction currently not supported (and maybe never will)
+    @Test(expected = Exception.class)
     public void SimpsonFourSlot() throws Exception {
         testRS("Simpson_Four_Slot");
     }

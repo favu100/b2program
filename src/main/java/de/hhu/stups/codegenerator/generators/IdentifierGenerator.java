@@ -118,6 +118,8 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
+        TemplateHandler.add(identifier, "isLocal", !nameHandler.getGlobals().contains(nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))); //technically its just !isPrivate, but semantically !isPrivate could mean isGlobal, which is technically how isPrivate is defined here...
+        TemplateHandler.add(identifier, "isParam", node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER));
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
         TemplateHandler.add(identifier, "isDefiningLdVariable", parallelConstructHandler.isDefiningLdVariable());
         boolean fromOtherMachine;

@@ -16,12 +16,15 @@ public class ModelCheckingInfo {
 
     private final Map<String, String> transitionEvaluationFunctions;
 
+    private final List<String> invariantFunctions;
+
     public ModelCheckingInfo(final String machineName, final List<String> variables, final Map<String, String> transitionEvaluationFunctions,
-                             final List<OperationFunctionInfo> operationFunctions) {
+                             final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions) {
         this.machineName = machineName;
         this.variables = variables;
         this.transitionEvaluationFunctions = transitionEvaluationFunctions;
         this.operationFunctions = operationFunctions;
+        this.invariantFunctions = invariantFunctions;
     }
 
     public String getMachineName() {
@@ -40,6 +43,10 @@ public class ModelCheckingInfo {
         return operationFunctions;
     }
 
+    public List<String> getInvariantFunctions() {
+        return invariantFunctions;
+    }
+
     @Override
     public String toString() {
         return "ModelCheckingInfo{" +
@@ -47,6 +54,7 @@ public class ModelCheckingInfo {
                 ", variables=" + variables +
                 ", operationFunctions=" + operationFunctions +
                 ", transitionEvaluationFunctions=" + transitionEvaluationFunctions +
+                ", invariantFunctions=" + invariantFunctions +
                 '}';
     }
 
@@ -77,6 +85,10 @@ public class ModelCheckingInfo {
             transitionEvaluationObject.addProperty(key, transitionEvaluationFunctions.get(key));
         }
         jsonObject.add("transitionEvaluationFunctions", transitionEvaluationObject);
+
+        JsonArray invariantsArray = new JsonArray();
+        invariantFunctions.forEach(invariantsArray::add);
+        jsonObject.add("invariants", invariantsArray);
 
         return jsonObject;
     }

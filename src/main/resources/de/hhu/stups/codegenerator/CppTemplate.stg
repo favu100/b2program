@@ -77,7 +77,7 @@ class <machine> {
 
         <transitions; separator="\n\n">
 
-        <invariant>
+        <invariant; separator="\n\n">
 
         <copy>
 
@@ -414,8 +414,8 @@ transition(noParameters, noPredicate, identifier, subType, operationName, predic
 }
 >>
 
-invariant(iterationConstruct, predicate) ::= <<
-bool _check_inv() {
+invariant(invariantFunction, iterationConstruct, predicate) ::= <<
+bool <invariantFunction>() {
     <iterationConstruct; separator="\n">
     return (<predicate>).booleanValue();
 }
@@ -906,7 +906,7 @@ static void printResult(int states, int transitions, bool deadlockDetected, bool
 >>
 
 
-model_check_main(machine) ::= <<
+model_check_main(machine, invariants) ::= <<
 int main() {
     <machine> machine = <machine>();
 
@@ -915,7 +915,7 @@ int main() {
     invariantViolated = false;
     bool deadlockDetected = false;
 
-    if(!machine._check_inv()) {
+    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
         invariantViolated = true;
     }
 
@@ -947,7 +947,7 @@ int main() {
 
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
-                if(!nextState._check_inv()) {
+                if(<invariants:{inv | !nextState.<inv>()}; separator=" || ">) {
                     invariantViolated = true;
                 }
                 states.insert(nextState);

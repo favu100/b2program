@@ -190,6 +190,7 @@ public class ModelCheckingGenerator {
     public String generateMain(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_main");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
+        TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
         return template.render();
     }
 

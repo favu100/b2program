@@ -47,7 +47,7 @@ public class <machine> {
 
     <transitions; separator="\n\n">
 
-    <invariant>
+    <invariant; separator="\n\n">
 
     <copy>
 
@@ -357,8 +357,8 @@ public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationNam
 }
 >>
 
-invariant(iterationConstruct, predicate) ::= <<
-public boolean _check_inv() {
+invariant(invariantFunction, iterationConstruct, predicate) ::= <<
+public boolean <invariantFunction>() {
     <iterationConstruct; separator="\n">
     return <predicate>.booleanValue();
 }
@@ -810,7 +810,7 @@ private static void printResult(int states, int transitions, boolean deadlockDet
 >>
 
 
-model_check_main(machine) ::= <<
+model_check_main(machine, invariants) ::= <<
 public static void main(String[] args) {
     <machine> machine = new <machine>();
 
@@ -819,7 +819,8 @@ public static void main(String[] args) {
     boolean deadlockDetected = false;
 
     Map\<String, Object> initialState = evaluateState(machine);
-    if(!machine._check_inv()) {
+
+    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
         invariantViolated.set(true);
     }
 
@@ -843,7 +844,7 @@ public static void main(String[] args) {
         nextStates.forEach(nextState -> {
             Map\<String, Object> nextMachineState = evaluateState(nextState);
             if(!states.contains(nextMachineState)) {
-                if(!nextState._check_inv()) {
+                if(<invariants:{inv | !nextState.<inv>()}; separator=" || ">) {
                     invariantViolated.set(true);
                 }
                 states.add(nextMachineState);

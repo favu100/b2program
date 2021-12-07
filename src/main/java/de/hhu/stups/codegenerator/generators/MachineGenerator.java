@@ -64,7 +64,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
@@ -100,7 +99,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final IdentifierGenerator identifierGenerator;
 
-	private NameHandler nameHandler;
+	private final NameHandler nameHandler;
 
 	private final ParallelConstructHandler parallelConstructHandler;
 
@@ -114,6 +113,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final ModelCheckingGenerator modelCheckingGenerator;
 
+	private final InvariantGenerator invariantGenerator;
+
 	private final boolean forModelChecking;
 
 	private final boolean forVisualisation;
@@ -122,7 +123,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final Map<String, Integer> boundedVariablesDepth;
 
-	private STGroup currentGroup;
+	private final STGroup currentGroup;
 
 	private MachineNode machineNode;
 
@@ -130,11 +131,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private int iterationConstructDepth;
 
-	private boolean isIncludedMachine;
+	private final boolean isIncludedMachine;
 
-	private Set<String> lambdaFunctions;
+	private final Set<String> lambdaFunctions;
 
-	private Set<String> infiniteSets;
+	private final Set<String> infiniteSets;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine, boolean forVisualisation) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
@@ -172,6 +173,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
 		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator);
+		this.invariantGenerator = new InvariantGenerator(currentGroup, this, iterationConstructHandler);
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
@@ -252,7 +254,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		});
 		TemplateHandler.add(machine, "getters", generateGetters(gettableNodes));
 		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
-		TemplateHandler.add(machine, "invariant", generateInvariant(node.getInvariant()));
+		TemplateHandler.add(machine, "invariant", invariantGenerator.generateInvariants(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqual());
 		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine, forVisualisation));
@@ -322,17 +324,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
 			}
 		}
-	}
-
-	private String generateInvariant(PredicateNode predicate) {
-		// TODO: Discard typing predicates
-		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
-			ST template = currentGroup.getInstanceOf("invariant");
-			TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
-			TemplateHandler.add(template, "predicate", visitPredicateNode(predicate, null));
-			return template.render();
-		}
-		return "";
 	}
 
 	private String generateCopyConstructor(MachineNode node) {
@@ -743,7 +734,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			operationFunctions.add(new OperationFunctionInfo(opName, parameterTypes));
 		}
 
-		return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions);
+		List<String> invariantFunctions = new ArrayList<>();
+		int invariantSize = invariantGenerator.splitInvariant(machineNode.getInvariant()).size();
+		for(int i = 1; i <= invariantSize; i++) {
+			invariantFunctions.add("_check_inv_" + i);
+		}
+
+		return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions, invariantFunctions);
 	}
 
 	public ImportGenerator getImportGenerator() {
@@ -752,5 +749,17 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public ExpressionGenerator getExpressionGenerator() {
 		return expressionGenerator;
+	}
+
+	public boolean isForModelChecking() {
+		return forModelChecking;
+	}
+
+	public boolean isForVisualisation() {
+		return forVisualisation;
+	}
+
+	public boolean isIncludedMachine() {
+		return isIncludedMachine;
 	}
 }

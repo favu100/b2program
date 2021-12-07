@@ -51,7 +51,13 @@ public class ModelCheckingInfoFileHandler {
             operationFunctions.add(new OperationFunctionInfo(operationName, parameters));
         }
 
-        return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions,  operationFunctions);
+        List<String> invariants = new ArrayList<>();
+        JsonArray invariantsArray = modelCheckingInfoObject.getAsJsonArray("invariants");
+        for(int i = 0; i < invariantsArray.size(); i++) {
+            invariants.add(invariantsArray.get(i).getAsString());
+        }
+
+        return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions,  operationFunctions, invariants);
     }
 
 }

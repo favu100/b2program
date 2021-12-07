@@ -113,6 +113,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final ModelCheckingGenerator modelCheckingGenerator;
 
+	private final ModelCheckingInfoGenerator modelCheckingInfoGenerator;
+
 	private final InvariantGenerator invariantGenerator;
 
 	private final boolean forModelChecking;
@@ -174,6 +176,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 															typeGenerator, recordStructGenerator);
 		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator);
 		this.invariantGenerator = new InvariantGenerator(currentGroup, this, iterationConstructHandler);
+		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, typeGenerator);
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
@@ -214,7 +217,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
 			importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
 		}
-		modelCheckingGenerator.setModelCheckingInfo(generateModelCheckingInfo(node));
+		modelCheckingGenerator.setModelCheckingInfo(modelCheckingInfoGenerator.generateModelCheckingInfo(node));
 	}
 
 	private void initializeLambdaFunctions() {
@@ -707,40 +710,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	public ModelCheckingInfo generateModelCheckingInfo(MachineNode node) {
-		String machineName = nameHandler.handle(node.getName());
-		List<String> variables = node.getVariables().stream()
-				.map(variable -> "_get_" + nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
-				.collect(Collectors.toList());
-
-		Map<String, String> transitionEvaluationFunctions = new HashMap<>();
-		for(OperationNode operation : node.getOperations()) {
-			String opName = nameHandler.handleIdentifier(operation.getName(), INCLUDED_MACHINES);
-			String transitionName = "_tr_" + operation.getName();
-			transitionEvaluationFunctions.put(opName, transitionName);
-		}
-
-		List<OperationFunctionInfo> operationFunctions = new ArrayList<>();
-		for(OperationNode operation : node.getOperations()) {
-			String opName = nameHandler.handleIdentifier(operation.getName(), INCLUDED_MACHINES);
-			List<String> parameterTypes = new ArrayList<>();
-			for(DeclarationNode param : operation.getParams()) {
-				BType type = param.getType();
-				ST typeTemplate = currentGroup.getInstanceOf("mc_info_type");
-				TemplateHandler.add(typeTemplate, "isSet", type instanceof EnumeratedSetElementType || type instanceof DeferredSetElementType);
-				TemplateHandler.add(typeTemplate, "machine", machineName);
-				TemplateHandler.add(typeTemplate, "type", typeGenerator.generate(type));
-				parameterTypes.add(typeTemplate.render());
-			}
-			operationFunctions.add(new OperationFunctionInfo(opName, parameterTypes));
-		}
-
-		List<String> invariantFunctions = new ArrayList<>();
-		int invariantSize = invariantGenerator.splitInvariant(machineNode.getInvariant()).size();
-		for(int i = 1; i <= invariantSize; i++) {
-			invariantFunctions.add("_check_inv_" + i);
-		}
-
-		return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions, invariantFunctions);
+		return modelCheckingInfoGenerator.generateModelCheckingInfo(node);
 	}
 
 	public ImportGenerator getImportGenerator() {

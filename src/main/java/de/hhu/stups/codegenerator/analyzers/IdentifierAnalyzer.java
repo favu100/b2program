@@ -194,7 +194,9 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
-        visitPredicateNode(node.getCondition(), expected);
+        if(kind == Kind.READ) {
+            visitPredicateNode(node.getCondition(), expected);
+        }
         visitSubstitutionNode(node.getBody(), expected);
         return null;
     }
@@ -207,7 +209,9 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitIfOrSelectSubstitutionsNode(IfOrSelectSubstitutionsNode node, Void expected) {
-        node.getConditions().forEach(cond -> visitPredicateNode(cond, expected));
+        if(kind == Kind.READ) {
+            node.getConditions().forEach(cond -> visitPredicateNode(cond, expected));
+        }
         node.getSubstitutions().forEach(subs -> visitSubstitutionNode(subs, expected));
         if(node.getElseSubstitution() != null) {
             visitSubstitutionNode(node.getElseSubstitution(), expected);
@@ -232,21 +236,27 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
-        visitPredicateNode(node.getCondition(), expected);
+        if(kind == Kind.READ) {
+            visitPredicateNode(node.getCondition(), expected);
+        }
         visitSubstitutionNode(node.getSubstitution(), expected);
         return null;
     }
 
     @Override
     public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-        visitPredicateNode(node.getWherePredicate(), expected);
+        if(kind == Kind.READ) {
+            visitPredicateNode(node.getWherePredicate(), expected);
+        }
         visitSubstitutionNode(node.getThenSubstitution(), expected);
         return null;
     }
 
     @Override
     public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
-        visitPredicateNode(node.getPredicate(), expected);
+        if(kind == Kind.READ) {
+            visitPredicateNode(node.getPredicate(), expected);
+        }
         visitSubstitutionNode(node.getBody(), expected);
         return null;
     }
@@ -277,7 +287,9 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode node, Void expected) {
-        node.getArguments().forEach(arg -> visitExprNode(arg, expected));
+        if(kind == Kind.READ) {
+            node.getArguments().forEach(arg -> visitExprNode(arg, expected));
+        }
         return null;
     }
 

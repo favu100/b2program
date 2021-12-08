@@ -141,7 +141,7 @@ public class ModelCheckingInfoGenerator {
         List<String> variablesAsString = variables.stream().map(DeclarationNode::toString).collect(Collectors.toList());
         Map<String, List<String>> writeInformation = new HashMap<>();
         for (OperationNode operation : operations) {
-            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.WRITE);
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             PredicateNode guard = transitionGenerator.extractGuard(operation);
             String opName = "_tr_" + nameHandler.handle(operation.getName());
             List<String> identifiers = new ArrayList<>();

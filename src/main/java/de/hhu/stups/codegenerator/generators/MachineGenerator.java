@@ -74,9 +74,6 @@ import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandling
 
 public class MachineGenerator implements AbstractVisitor<String, Void> {
 
-	private static final List<Class<?>> nondeterministicSubstitutions = Arrays.asList(AnySubstitutionNode.class, ChoiceSubstitutionNode.class,
-			BecomesSuchThatSubstitutionNode.class, BecomesElementOfSubstitutionNode.class);
-
 	private final TypeGenerator typeGenerator;
 
 	private final ImportGenerator importGenerator;
@@ -116,6 +113,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private final ModelCheckingInfoGenerator modelCheckingInfoGenerator;
 
 	private final InvariantGenerator invariantGenerator;
+
+	private final TransitionGenerator transitionGenerator;
 
 	private final boolean forModelChecking;
 
@@ -176,7 +175,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 															typeGenerator, recordStructGenerator);
 		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator);
 		this.invariantGenerator = new InvariantGenerator(currentGroup, this, iterationConstructHandler);
-		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, typeGenerator);
+		this.transitionGenerator = new TransitionGenerator(this, iterationConstructHandler);
+		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, transitionGenerator, typeGenerator);
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
@@ -256,7 +256,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			gettableNodes.add(enumeratedSet.getSetDeclarationNode());
 		});
 		TemplateHandler.add(machine, "getters", generateGetters(gettableNodes));
-		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
+		TemplateHandler.add(machine, "transitions", transitionGenerator.generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", invariantGenerator.generateInvariants(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqual());
@@ -286,47 +286,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(getter, "variable", (variable.getKind().equals(DeclarationNode.Kind.ENUMERATED_SET) ? "_": "") + nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
 		TemplateHandler.add(getter, "returnType", typeGenerator.generate(variable.getType()));
 		return getter.render();
-	}
-
-	private List<String> generateTransitions(List<OperationNode> operations) {
-		List<String> transitions = new ArrayList<>();
-		if((forModelChecking || forVisualisation) && !isIncludedMachine) {
-			for (OperationNode operation : operations) {
-				transitions.add(generateTransition(operation));
-			}
-		}
-		return transitions;
-	}
-
-	private String generateTransition(OperationNode operation) {
-		SubstitutionNode bodySubstitution = operation.getSubstitution();
-		IterationConstructGenerator iterationConstructGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
-		if(bodySubstitution instanceof IfOrSelectSubstitutionsNode) {
-			if(((IfOrSelectSubstitutionsNode) bodySubstitution).getOperator() == IfOrSelectSubstitutionsNode.Operator.SELECT) {
-				PredicateNode predicate = ((IfOrSelectSubstitutionsNode) bodySubstitution).getConditions().get(0);
-				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
-				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
-			} else {
-				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
-			}
-		} else if(bodySubstitution instanceof ConditionSubstitutionNode) {
-			if (((ConditionSubstitutionNode) bodySubstitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
-				PredicateNode predicate = ((ConditionSubstitutionNode) bodySubstitution).getCondition();
-				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
-				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
-			} else {
-				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
-			}
-		} else if(nondeterministicSubstitutions.contains(bodySubstitution.getClass())) {
-			throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
-		} else {
-			if(operation.getParams().size() == 0) {
-				iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), null);
-				return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
-			} else {
-				throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
-			}
-		}
 	}
 
 	private String generateCopyConstructor(MachineNode node) {

@@ -57,7 +57,42 @@ public class ModelCheckingInfoFileHandler {
             invariants.add(invariantsArray.get(i).getAsString());
         }
 
-        return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions,  operationFunctions, invariants);
+
+        Map<String, List<String>> writeInformation = new HashMap<>();
+        JsonObject writeInformationObject = modelCheckingInfoObject.getAsJsonObject("writeInformation");
+        for(String writeKey : writeInformationObject.keySet()) {
+            List<String> writes = new ArrayList<>();
+            JsonArray writesArray = writeInformationObject.get(writeKey).getAsJsonArray();
+            for(int i = 0; i < writesArray.size(); i++) {
+                writes.add(writesArray.get(i).getAsString());
+            }
+            writeInformation.put(writeKey, writes);
+        }
+
+        Map<String, List<String>> invariantReads = new HashMap<>();
+        JsonObject invariantReadsObject = modelCheckingInfoObject.getAsJsonObject("invariantReads");
+        for(String readKey : invariantReadsObject.keySet()) {
+            List<String> reads = new ArrayList<>();
+            JsonArray readsArray = invariantReadsObject.get(readKey).getAsJsonArray();
+            for(int i = 0; i < readsArray.size(); i++) {
+                reads.add(readsArray.get(i).getAsString());
+            }
+            invariantReads.put(readKey, reads);
+        }
+
+        Map<String, List<String>> guardsReads = new HashMap<>();
+        JsonObject guardsReadsObject = modelCheckingInfoObject.getAsJsonObject("guardsReads");
+        for(String readKey : guardsReadsObject.keySet()) {
+            List<String> reads = new ArrayList<>();
+            JsonArray readsArray = guardsReadsObject.get(readKey).getAsJsonArray();
+            for(int i = 0; i < readsArray.size(); i++) {
+                reads.add(readsArray.get(i).getAsString());
+            }
+            guardsReads.put(readKey, reads);
+        }
+
+        return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions,  operationFunctions, invariants,
+                                    writeInformation, invariantReads, guardsReads);
     }
 
 }

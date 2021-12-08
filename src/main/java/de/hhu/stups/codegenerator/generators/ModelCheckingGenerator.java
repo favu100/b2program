@@ -79,11 +79,11 @@ public class ModelCheckingGenerator {
         }
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
-        TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType, index));
+        TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType));
         return template.render();
     }
 
-    public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType, int index) {
+    public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType) {
         ST template = currentGroup.getInstanceOf("model_check_transition_body");
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));

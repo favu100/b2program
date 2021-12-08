@@ -18,13 +18,23 @@ public class ModelCheckingInfo {
 
     private final List<String> invariantFunctions;
 
+    private final Map<String, List<String>> writeInformation;
+
+    private final Map<String, List<String>> invariantReads;
+
+    private final Map<String, List<String>> guardsReads;
+
     public ModelCheckingInfo(final String machineName, final List<String> variables, final Map<String, String> transitionEvaluationFunctions,
-                             final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions) {
+                             final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions,
+                             final Map<String, List<String>> writeInformation, final Map<String, List<String>> invariantReads, final Map<String, List<String>> guardsReads) {
         this.machineName = machineName;
         this.variables = variables;
         this.transitionEvaluationFunctions = transitionEvaluationFunctions;
         this.operationFunctions = operationFunctions;
         this.invariantFunctions = invariantFunctions;
+        this.writeInformation = writeInformation;
+        this.invariantReads = invariantReads;
+        this.guardsReads = guardsReads;
     }
 
     public String getMachineName() {
@@ -47,6 +57,18 @@ public class ModelCheckingInfo {
         return invariantFunctions;
     }
 
+    public Map<String, List<String>> getWriteInformation() {
+        return writeInformation;
+    }
+
+    public Map<String, List<String>> getInvariantReads() {
+        return invariantReads;
+    }
+
+    public Map<String, List<String>> getGuardsReads() {
+        return guardsReads;
+    }
+
     @Override
     public String toString() {
         return "ModelCheckingInfo{" +
@@ -55,6 +77,9 @@ public class ModelCheckingInfo {
                 ", operationFunctions=" + operationFunctions +
                 ", transitionEvaluationFunctions=" + transitionEvaluationFunctions +
                 ", invariantFunctions=" + invariantFunctions +
+                ", writeInformation=" + writeInformation +
+                ", invariantReads=" + invariantReads +
+                ", guardsReads=" + guardsReads +
                 '}';
     }
 
@@ -89,6 +114,31 @@ public class ModelCheckingInfo {
         JsonArray invariantsArray = new JsonArray();
         invariantFunctions.forEach(invariantsArray::add);
         jsonObject.add("invariants", invariantsArray);
+
+
+        JsonObject writeInformationObject = new JsonObject();
+        for(String key : writeInformation.keySet()) {
+            JsonArray writesArray = new JsonArray();
+            writeInformation.get(key).forEach(writesArray::add);
+            writeInformationObject.add(key, writesArray);
+        }
+        jsonObject.add("writeInformation", writeInformationObject);
+
+        JsonObject invariantReadsObject = new JsonObject();
+        for(String key : invariantReads.keySet()) {
+            JsonArray invariantsReadsArray = new JsonArray();
+            invariantReads.get(key).forEach(invariantsReadsArray::add);
+            invariantReadsObject.add(key, invariantsReadsArray);
+        }
+        jsonObject.add("invariantReads", invariantReadsObject);
+
+        JsonObject guardsReadsObject = new JsonObject();
+        for(String key : guardsReads.keySet()) {
+            JsonArray guardsReadsArray = new JsonArray();
+            guardsReads.get(key).forEach(guardsReadsArray::add);
+            guardsReadsObject.add(key, guardsReadsArray);
+        }
+        jsonObject.add("guardsReads", guardsReadsObject);
 
         return jsonObject;
     }

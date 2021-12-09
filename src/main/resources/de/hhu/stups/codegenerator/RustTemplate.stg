@@ -56,13 +56,13 @@ fn init(&mut self) {
 }
 >>
 
-assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, lhsIsLocal) ::= <<
+assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, lhsIsLocal, lhsIsParam) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <if(lhsIsLocal)>Option::Some(<endif><val><if(rightTypeIsCollection)>.clone()<endif><if(lhsIsLocal)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
+<if(isIdentifierLhs)><identifier> = <if(lhsIsLocal && !lhsIsParam)>Option::Some(<endif><val><if(rightTypeIsCollection)>.clone()<endif><if(lhsIsLocal && !lhsIsParam)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
 identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigned, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
-<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<elseif(isLocal && !isParam && !isAssigned)><identifier>.unwrap()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
+<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<elseif(isLocal && !isParam && !isAssigned && !isConstant)><identifier>.unwrap()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
@@ -215,7 +215,7 @@ self.<identifier> = BSet::new(vec![<enums; separator=", ">]);
 
 iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for <identifier> in <set>.iter().cloned() {
+for <identifier> in <set>.clone().iter().cloned() {
     <body>
 }
 >>
@@ -390,7 +390,7 @@ parallel(loads, others) ::=<<
 >>
 
 parallel_load(type, identifier, name) ::= <<
-let mut _ld_<name>: <type> = <identifier>.clone();
+let mut _ld_<name> = <identifier>.clone();
 >>
 
 function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
@@ -532,10 +532,9 @@ any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <body>
-break;<else>
+<else>
 if (<predicate>).booleanValue() {
     <body>
-    break;
 }<endif>
 >>
 

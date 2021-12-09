@@ -57,7 +57,7 @@ public class TestProjects extends TestRS {
     }
 
     // does not work for java as well
-    @Test
+    @Test(expected = Exception.class)
     public void testRefinement() throws Exception {
         //TODO: Type checking of variables from abstract machine
         testRS("refinement/RefinementMachine");

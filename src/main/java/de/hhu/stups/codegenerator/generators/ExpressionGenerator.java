@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.Node;
@@ -307,7 +308,8 @@ public class ExpressionGenerator {
         }
         if(substitutionGenerator.getCurrentLocalScope() > 0 && identifierGenerator.getCurrentLocals().containsKey(node.getName())) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
-            return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned);
+            boolean isParam = node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER);
+            return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned, isParam);
         }
         return identifierGenerator.generate(node);
     }

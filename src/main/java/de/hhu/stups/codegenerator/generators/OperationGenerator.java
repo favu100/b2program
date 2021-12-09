@@ -6,6 +6,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
+import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
@@ -165,19 +166,15 @@ public class OperationGenerator {
     */
     private void generateReturnStatementRecord(ST operation, OperationNode node) {
         List<DeclarationNode> outputs = node.getOutputParams();
-        String privateVariablePrefix = group.getInstanceOf("record_private_variable_prefix").render();
         String struct = recordStructGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
 
-        List<String> identifiers = outputs.stream()
-                .map(declarationNode -> {
-                    String generatedParameter = nameHandler.handleIdentifier(declarationNode.getName(), FUNCTION_NAMES);
-                    if (nameHandler.getGlobals().contains(declarationNode.getName())) {
-                        generatedParameter = privateVariablePrefix + generatedParameter;
-                    }
-                    return generatedParameter;
-                    })
-                .collect(Collectors.toList());
+        List <String> identifiers = outputs.stream().map(declarationNode -> {
+            IdentifierExprNode asIdExpr = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+            asIdExpr.setDeclarationNode(declarationNode);
+            asIdExpr.setParent(declarationNode.getParent());
+            return identifierGenerator.generate(asIdExpr);
+        }).collect(Collectors.toList());
 
         ST recordTemplate = group.getInstanceOf("record");
         TemplateHandler.add(recordTemplate, "struct", struct);

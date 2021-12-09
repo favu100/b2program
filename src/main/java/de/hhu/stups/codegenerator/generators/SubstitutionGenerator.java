@@ -444,7 +444,11 @@ public class SubstitutionGenerator {
             TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
             TemplateHandler.add(substitution, "isFinalExpr", isFinalExpr(rhs));
         }
-        if (lhs instanceof IdentifierExprNode) TemplateHandler.add(substitution, "lhsIsLocal", !machineGenerator.getNameHandler().getGlobals().contains(((IdentifierExprNode) lhs).getName()));
+        if (lhs instanceof IdentifierExprNode){
+            IdentifierExprNode leftIdentifier = (IdentifierExprNode) lhs;
+            TemplateHandler.add(substitution, "lhsIsLocal", !machineGenerator.getNameHandler().getGlobals().contains(nameHandler.handleIdentifier(leftIdentifier.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)));
+            TemplateHandler.add(substitution, "lhsIsParam", leftIdentifier.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER));
+        }
         TemplateHandler.add(substitution, "stateCount", machineGenerator.getAndIncCurrentStateCount());
         TemplateHandler.add(substitution, "nextStateCount", machineGenerator.getCurrentStateCount());
         TemplateHandler.add(substitution, "lastExprCount", machineGenerator.getCurrentExpressionCount()-1);
@@ -951,7 +955,7 @@ public class SubstitutionGenerator {
     private String generateVariableInVar(DeclarationNode identifier) {
         ST declaration = currentGroup.getInstanceOf("local_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(identifier.getType()));
-        TemplateHandler.add(declaration, "identifier", identifierGenerator.generateVarDeclaration(identifier.getName(), true));
+        TemplateHandler.add(declaration, "identifier", identifierGenerator.generateVarDeclaration(identifier.getName(), true, false));
         return declaration.render();
     }
 

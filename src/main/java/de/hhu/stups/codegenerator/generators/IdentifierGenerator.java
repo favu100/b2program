@@ -119,7 +119,8 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
         TemplateHandler.add(identifier, "isLocal", !nameHandler.getGlobals().contains(nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))); //technically its just !isPrivate, but semantically !isPrivate could mean isGlobal, which is technically how isPrivate is defined here...
-        TemplateHandler.add(identifier, "isParam", node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER));
+        if (node.getDeclarationNode() != null)
+            TemplateHandler.add(identifier, "isParam", node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER));
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(node.getName()));
         TemplateHandler.add(identifier, "isDefiningLdVariable", parallelConstructHandler.isDefiningLdVariable());
         boolean fromOtherMachine;
@@ -141,7 +142,7 @@ public class IdentifierGenerator {
     /*
     * This function generates code for a declaration of a local variable in B.
     */
-    public String generateVarDeclaration(String name, boolean isAssigned) {
+    public String generateVarDeclaration(String name, boolean isAssigned, boolean isParam) {
         ST identifier = group.getInstanceOf("identifier");
         StringBuilder resultIdentifier = new StringBuilder(nameHandler.handleIdentifier(name, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         if(currentLocals.containsKey(name)) {
@@ -154,6 +155,8 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", false);
         TemplateHandler.add(identifier, "isPrivate", false);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
+        TemplateHandler.add(identifier, "isLocal", !nameHandler.getGlobals().contains(resultIdentifier.toString()));
+        TemplateHandler.add(identifier, "isParam", isParam);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(name));
         TemplateHandler.add(identifier, "fromOtherMachine", false);
         return identifier.render();

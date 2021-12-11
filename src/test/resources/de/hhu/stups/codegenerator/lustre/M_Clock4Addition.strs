@@ -1,0 +1,11 @@
+fn main() {
+    let mut clock = M_Clock4::new();
+    clock.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(1))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(true))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(true))));
+    println!("{}", clock.getRes());
+    clock.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(2))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(true))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(false))));
+    println!("{}", clock.getRes());
+    clock.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(3))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(false))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(true))));
+    println!("{}", clock.getRes());
+    clock.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(4))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(false))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(false))));
+    println!("{}", clock.getRes());
+}

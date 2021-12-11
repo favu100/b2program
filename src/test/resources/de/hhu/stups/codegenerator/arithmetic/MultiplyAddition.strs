@@ -1,0 +1,5 @@
+fn main() {
+    let mut arithmetic = Multiply::new();
+    arithmetic.simulate();
+    println!("{}", arithmetic.getValue());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut program = M_AssertionExample::new();
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(1))));
+    println!("{}", program.getR());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = SetIntersectionBig2::new();
+    set.simulate();
+    println!("{}", set.getSet1().card());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = SetIntersectionSmall::new();
+    set.simulate();
+    println!("{}", set.getSet());
+}

@@ -1,0 +1,21 @@
+fn main() {
+    let mut program = M_carlights2_v4::new();
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(0))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(10))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(0))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(9))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(0))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(8))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(1))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(7))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(1))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(6))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(1))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(5))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(2))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(4))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(2))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(5))));
+    println!("{}", program.getIsOn());
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(2))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BInteger::new(6))));
+    println!("{}", program.getIsOn());
+}

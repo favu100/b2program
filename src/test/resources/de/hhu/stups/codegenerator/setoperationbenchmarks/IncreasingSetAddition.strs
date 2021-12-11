@@ -1,0 +1,5 @@
+fn main() {
+    let mut iset = IncreasingSet::new();
+    iset.simulate();
+    println!("{}", iset.getSet().card());
+}

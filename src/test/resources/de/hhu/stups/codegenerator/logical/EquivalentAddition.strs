@@ -1,0 +1,5 @@
+fn main() {
+    let mut logical = Equivalent::new();
+    logical.simulate();
+    println!("{}", logical.getCounter());
+}

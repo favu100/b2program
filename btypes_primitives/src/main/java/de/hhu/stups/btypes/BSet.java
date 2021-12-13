@@ -324,6 +324,18 @@ public class BSet<T> implements Set<T>, BObject {
 		return this.pow1();
 	}
 
+	public BSet<BRelation<BInteger,T>> permutate() {
+		BSet<BInteger> interval = BSet.interval(new BInteger(1), this._size());
+		BSet<BRelation<BInteger,T>> permutations = BRelation.cartesianProduct(interval, this).pow();
+		BSet<BRelation<BInteger,T>> result = permutations;
+		for(BRelation<BInteger, T> permutation : permutations) {
+			if(!permutation.isBijection(this).booleanValue()) {
+				result = result.difference(new BSet<BRelation<BInteger, T>>(permutation));
+			}
+		}
+		return result;
+	}
+
 	public BBoolean subsetOfInteger() {
 		for(T e : this) {
 			if(e instanceof BInteger) {

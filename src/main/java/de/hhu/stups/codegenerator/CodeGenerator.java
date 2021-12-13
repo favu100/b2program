@@ -50,8 +50,14 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
-		if(args.length < 8 || args.length > 11) {
-			System.err.println("Wrong number of arguments");
+		if(args.length < 8 ) {
+			System.err.println("Too few arguments");
+			printUsageHelp();
+			return;
+		}
+		if(args.length > 11) {
+			System.err.println("Too many arguments");
+			printUsageHelp();
 			return;
 		}
 		GeneratorMode mode = getMode(args[0]);
@@ -82,6 +88,17 @@ public class CodeGenerator {
 		}
 		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
 	}
+	
+	private static void printUsageHelp () {
+	  System.out.println("Usage: java -jar B2Program.jar LANG BIGINT MININT MAXINT DSET CONS MC File.mch [VS VisFile]");
+	  System.out.println("       LANG: java, python, c, cpp, clojure, ts");
+	  System.out.println("       BIGINT: true for using big integer, false otherwise");
+	  System.out.println("       MAXINT: integer value");
+	  System.out.println("       MININT: integer value");
+	  System.out.println("       DSET: integer value");
+	  System.out.println("       CONS: true for using constraint solving, false otherwise");
+	  System.out.println("       MC: true to enable model checking, false otherwise");
+	}
 
 	/*
 	* This function extracts the generator mode representing the language code should be generated from from the given string
@@ -101,7 +118,7 @@ public class CodeGenerator {
 		} else if("ts".equals(languageOption)) {
 			mode = GeneratorMode.TS;
 		} else {
-			throw new RuntimeException("Wrong argument for language");
+			throw new RuntimeException("Wrong argument for language (must be java, python, c, cpp, clojure, ts)");
 		}
 		return mode;
 	}
@@ -117,7 +134,7 @@ public class CodeGenerator {
 		} else if("false".equals(integerOption)) {
 			useBigInteger = false;
 		} else {
-			throw new RuntimeException("Wrong argument for choice of integers");
+			throw new RuntimeException("Wrong argument for choice of integers (must be true or false)");
 		}
 		return useBigInteger;
 	}
@@ -132,7 +149,7 @@ public class CodeGenerator {
 		} else if("false".equals(constraintOption)) {
 			useConstraintSolving = false;
 		} else {
-			throw new RuntimeException("Wrong argument for choice of constraints");
+			throw new RuntimeException("Wrong argument for choice of constraints (must be true or false)");
 		}
 		return useConstraintSolving;
 	}
@@ -144,7 +161,7 @@ public class CodeGenerator {
 		} else if("false".equals(modelCheckingOption)) {
 			forModelChecking = false;
 		} else {
-			throw new RuntimeException("Wrong argument for choice of model checking");
+			throw new RuntimeException("Wrong argument for choice of model checking (must be true or false)");
 		}
 		return forModelChecking;
 	}

@@ -832,7 +832,7 @@ public class BRelation<S,T> {
 	}
 
 	public BBoolean isPartial(BSet<S> domain) {
-		return this.domain().strictSubset(domain);
+		return this.domain().subset(domain);
 	}
 
 	public BBoolean isPartialInteger() {

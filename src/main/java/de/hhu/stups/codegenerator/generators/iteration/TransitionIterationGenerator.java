@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by fabian on 18.04.21.
  */
-public class TransitionGenerator {
+public class TransitionIterationGenerator {
 
     private final STGroup group;
 
@@ -35,8 +35,8 @@ public class TransitionGenerator {
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
 
-    public TransitionGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator, final IterationConstructGenerator iterationConstructGenerator,
-                               final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
+    public TransitionIterationGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator, final IterationConstructGenerator iterationConstructGenerator,
+                                        final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;

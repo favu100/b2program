@@ -78,7 +78,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     private final BecomesSuchThatGenerator becomesSuchThatGenerator;
 
-    private final TransitionGenerator transitionGenerator;
+    private final TransitionIterationGenerator transitionGenerator;
 
     private final ImportGenerator importGenerator;
 
@@ -104,7 +104,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.letExpressionPredicateGenerator = new LetExpressionPredicateGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.becomesSuchThatGenerator = new BecomesSuchThatGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
-        this.transitionGenerator = new TransitionGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.transitionGenerator = new TransitionIterationGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new HashMap<>();
         this.iterationsMapIdentifier = new HashMap<>();

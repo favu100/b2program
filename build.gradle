@@ -34,7 +34,7 @@ dependencies {
 
     compile group: 'org.clojure', name: 'clojure', version: '1.6.0'
 
-    implementation group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.1"
+    compile group: "com.fatboyindustrial.gson-javatime-serialisers", name: "gson-javatime-serialisers", version: "1.1.1"
     compile group: "com.google.code.gson", name: "gson", version: "2.8.6"
     testCompile 'junit:junit:4.8.2'
 }

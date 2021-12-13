@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.analyzers.FunctionCallAnalyzer;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -116,6 +117,13 @@ public class LambdaGenerator {
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        FunctionCallAnalyzer functionCallAnalyzer = new FunctionCallAnalyzer();
+        functionCallAnalyzer.visitPredicateNode(subpredicate, null);
+        List<PredicateNode> newPredicates = functionCallAnalyzer.getPredicates();
+        if(!newPredicates.isEmpty()) {
+            newPredicates.add(subpredicate);
+            subpredicate = new PredicateOperatorNode(subpredicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, newPredicates);
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "leftType", leftType);
         TemplateHandler.add(template, "rightType", rightType);

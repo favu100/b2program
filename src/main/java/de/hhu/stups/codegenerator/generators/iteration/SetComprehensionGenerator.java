@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.analyzers.FunctionCallAnalyzer;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
@@ -11,6 +12,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import org.stringtemplate.v4.ST;
@@ -164,6 +166,13 @@ public class SetComprehensionGenerator {
         ST template = group.getInstanceOf("set_comprehension_predicate");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        FunctionCallAnalyzer functionCallAnalyzer = new FunctionCallAnalyzer();
+        functionCallAnalyzer.visitPredicateNode(subpredicate, null);
+        List<PredicateNode> newPredicates = functionCallAnalyzer.getPredicates();
+        if(!newPredicates.isEmpty()) {
+            newPredicates.add(subpredicate);
+            subpredicate = new PredicateOperatorNode(subpredicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, newPredicates);
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);

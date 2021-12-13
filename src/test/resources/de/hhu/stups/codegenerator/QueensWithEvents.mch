@@ -1,4 +1,6 @@
 MACHINE QueensWithEvents
+// rewritten for B2Program by inlining DEFINITIONS
+// v2: rewrote perm(1..n)
 CONSTANTS n
 PROPERTIES
  n : NATURAL &
@@ -9,9 +11,12 @@ INVARIANT
 INITIALISATION
   queens := {}
 OPERATIONS
-  Solve(solution)= SELECT
-        solution : (1 .. n) <-> (1 .. n)
-      & solution : perm(1 .. n)
+  Solve(solution) = SELECT
+        solution : POW((1 .. n) * (1 .. n))
+      // & solution : perm(1 .. n)
+      &  dom(solution) = 1..n
+      &  ran(solution) = 1..n
+        // this actually implies it is a bijection
       &
         !(q1,q2).(
          (

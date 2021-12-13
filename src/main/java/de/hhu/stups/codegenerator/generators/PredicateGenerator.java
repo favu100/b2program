@@ -119,8 +119,9 @@ public class PredicateGenerator {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExpressionOperatorNode rhs = (ExpressionOperatorNode) node.getExpressionNodes().get(1);
         List<ExprNode> expressions = new ArrayList<>();
-        ExprNode domain = rhs.getExpressionNodes().get(0);
-        ExprNode range = rhs.getExpressionNodes().get(1);
+        ExprNode rhsInner = rhs.getExpressionNodes().get(0);
+        ExprNode domain = ((ExpressionOperatorNode) rhsInner).getExpressionNodes().get(0);
+        ExprNode range = ((ExpressionOperatorNode) rhsInner).getExpressionNodes().get(1);
         expressions.add(lhs);
         expressions.add(new ExpressionOperatorNode(node.getSourceCodePosition(), Arrays.asList(domain, range), ExpressionOperatorNode.ExpressionOperator.SET_RELATION));
         return new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);

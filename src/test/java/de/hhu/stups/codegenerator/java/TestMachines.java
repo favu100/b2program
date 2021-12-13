@@ -296,6 +296,11 @@ public class TestMachines extends TestJava {
         testJavaMC("landing_gear/LandingGear_R6");
     }
 
+    @Test
+    public void testQueensWithEvents() throws Exception {
+        testJavaMC("QueensWithEvents");
+    }
+
 
 
 }

@@ -30,6 +30,7 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SEQ1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SEQ_ENUMERATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_RELATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SET_SUBTRACTION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SIZE;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.SUCC;
@@ -335,6 +337,9 @@ public class ExpressionGenerator {
             return generateTuple(expressionList, node.getExpressionNodes().get(0).getType(), node.getExpressionNodes().get(1).getType());
         } else if(node.getOperator() == FUNCTION_CALL) {
             return generateFunctionCall(node.getExpressionNodes());
+        } else if(node.getOperator() == SET_RELATION) {
+            ExpressionOperatorNode cartesianProductNode = new ExpressionOperatorNode(node.getSourceCodePosition(), node.getExpressionNodes(), CARTESIAN_PRODUCT);
+            return generateExpression(new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(cartesianProductNode), POW));
         } else if(node.getOperator() == BOOL) {
             return generateBooleans();
         } else if(node.getOperator() == MININT) {

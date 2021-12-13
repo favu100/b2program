@@ -81,10 +81,13 @@ public class IterationPredicateGenerator {
     * This function checks whether first predicate declares a set to iterate over for a bounded variable
     */
     private void checkPredicateIteration(List<DeclarationNode> declarations, PredicateOperatorNode predicate) {
+        if(predicate.getPredicateArguments().size() < declarations.size()) {
+            throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n. The failed predicate is: \n" + predicate.getSourceCodePosition().getText());
+        }
         for(int i = 0; i < declarations.size(); i++) {
             PredicateNode innerPredicate = predicate.getPredicateArguments().get(i);
             if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                throw new CodeGenerationException("First predicates must declare the set to iterate over: \n" + innerPredicate);
+                throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n. The failed predicate is: \n" + innerPredicate.getSourceCodePosition().getText());
             }
         }
     }

@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, modelcheck, lambdaFunctions) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -51,6 +51,8 @@ public class <machine> {
 
     <copy>
 
+    <hash_equal; separator="\n\n">
+
     <modelcheck>
 
     <endif>
@@ -69,17 +71,30 @@ machine_unequal() ::= <<
 machine_unequal_predicate() ::= <<
 >>
 
-machine_equal() ::= <<
+machine_equal(machine, predicates) ::= <<
+public boolean equals(Object o) {
+    <machine> o1 = this;
+    <machine> o2 = (<machine>) o;
+    return <predicates; separator= " && ">;
+}
 >>
 
-machine_equal_predicate() ::= <<
+machine_equal_predicate(var) ::= <<
+o1.<var>() == o2.<var>()
 >>
 
-machine_hash() ::= <<
+machine_hash(assignments) ::= <<
+public int hashCode() {
+    int result = 1;
+    <assignments; separator= "\n">
+    return result;
+}
 >>
 
-machine_hash_assignment() ::= <<
+machine_hash_assignment(var) ::= <<
+result = (1543 * result) ^ ((this.<var>()).hashCode() \<\< 1);
 >>
+
 
 getter(returnType, variable) ::= <<
 public <returnType> _get_<variable>() {

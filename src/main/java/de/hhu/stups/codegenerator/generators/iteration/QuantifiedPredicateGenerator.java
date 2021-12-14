@@ -1,6 +1,5 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
-import de.hhu.stups.codegenerator.analyzers.FunctionCallAnalyzer;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -73,6 +72,7 @@ public class QuantifiedPredicateGenerator {
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
+        System.out.println(predicate);
         for (String key : iterationConstructGenerator.getIterationsMapIdentifier().keySet()) {
             otherConstructsGenerator.getIterationsMapIdentifier().put(key, iterationConstructGenerator.getIterationsMapIdentifier().get(key));
         }
@@ -105,13 +105,6 @@ public class QuantifiedPredicateGenerator {
         ST template = group.getInstanceOf("quantified_predicate_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", subpredicate instanceof PredicateOperatorNode && ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
-        FunctionCallAnalyzer functionCallAnalyzer = new FunctionCallAnalyzer();
-        functionCallAnalyzer.visitPredicateNode(subpredicate, null);
-        List<PredicateNode> newPredicates = functionCallAnalyzer.getPredicates();
-        if(!newPredicates.isEmpty()) {
-            newPredicates.add(subpredicate);
-            subpredicate = new PredicateOperatorNode(subpredicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, newPredicates);
-        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);

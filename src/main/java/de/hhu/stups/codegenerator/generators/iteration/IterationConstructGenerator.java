@@ -52,6 +52,7 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,8 +107,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.becomesSuchThatGenerator = new BecomesSuchThatGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.transitionGenerator = new TransitionIterationGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
-        this.iterationsMapCode = new HashMap<>();
-        this.iterationsMapIdentifier = new HashMap<>();
+        this.iterationsMapCode = new LinkedHashMap<>();
+        this.iterationsMapIdentifier = new LinkedHashMap<>();
         this.boundedVariables = new ArrayList<>();
         this.allBoundedVariables = new ArrayList<>();
         this.useConstraintSolving = useConstraintSolving;

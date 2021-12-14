@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Future;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 <endif>
 import java.util.Objects;
 import java.util.Arrays;
@@ -80,6 +84,7 @@ machine_unequal_predicate() ::= <<
 >>
 
 machine_equal(machine, predicates) ::= <<
+@Override
 public boolean equals(Object o) {
     <machine> o1 = this;
     <machine> o2 = (<machine>) o;
@@ -92,6 +97,7 @@ o1.<var>().equals(o2.<var>())
 >>
 
 machine_hash(assignments) ::= <<
+@Override
 public int hashCode() {
     int result = 1;
     <assignments; separator= "\n">
@@ -789,7 +795,7 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 result.add(copiedState);
-transitions.set(transitions.get() + 1);
+transitions.getAndIncrement();
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -805,11 +811,6 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 >>
 
 model_check_evaluate_state(machine, variables) ::= <<
-private static Map\<String, Object> evaluateState(<machine> machine) {
-    Map\<String, Object> state = new HashMap\<>();
-    <variables; separator="\n">
-    return state;
-}
 >>
 
 model_check_evaluate_variable(getter) ::= <<
@@ -834,8 +835,8 @@ private static void printResult(int states, int transitions, boolean deadlockDet
 
 
 model_check_main(machine, invariants) ::= <<
-private static <machine> next(LinkedList\<<machine>\> collection, Type type) {
-    synchronized(collection) {
+private static <machine> next(LinkedList\<<machine>\> collection, Object lock, Type type) {
+    synchronized(lock) {
         return switch(type) {
             case BFS -> collection.removeFirst();
             case DFS -> collection.removeLast();
@@ -846,20 +847,21 @@ private static <machine> next(LinkedList\<<machine>\> collection, Type type) {
 
 
 public static void main(String[] args) {
+    Object lock = new Object();
+    ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(6);
+
     <machine> machine = new <machine>();
 
 
     AtomicBoolean invariantViolated = new AtomicBoolean(false);
-    boolean deadlockDetected = false;
-
-    Map\<String, Object> initialState = evaluateState(machine);
+    AtomicBoolean deadlockDetected = new AtomicBoolean(false);
 
     if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
         invariantViolated.set(true);
     }
 
-    Set\<Map\<String, Object>\> states = new HashSet\<>();
-    states.add(initialState);
+    Set\<<machine>\> states = new HashSet\<>();
+    states.add(machine);
     AtomicInteger numberStates = new AtomicInteger(1);
 
     LinkedList\<<machine>\> collection = new LinkedList\<>();
@@ -868,30 +870,42 @@ public static void main(String[] args) {
     AtomicInteger transitions = new AtomicInteger(0);
 
     while(!collection.isEmpty()) {
-        <machine> state = next(collection, Type.MIXED);
-        Set\<<machine>\> nextStates = generateNextStates(state, transitions);
-        if(nextStates.isEmpty()) {
-            deadlockDetected = true;
-        }
-
-        nextStates.forEach(nextState -> {
-            Map\<String, Object> nextMachineState = evaluateState(nextState);
-            if(!states.contains(nextMachineState)) {
-                if(<invariants:{inv | !nextState.<inv>()}; separator=" || ">) {
-                    invariantViolated.set(true);
-                }
-                states.add(nextMachineState);
-                collection.add(nextState);
-                numberStates.getAndIncrement();
-                if(numberStates.get() % 10000 == 0) {
-                    System.out.println("VISITED STATES: " + numberStates.get());
-                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                    System.out.println("-------------------");
-                }
+        <machine> state = next(collection, lock, Type.MIXED);
+        Runnable task = () -> {
+            Set\<<machine>\> nextStates = generateNextStates(state, transitions);
+            if(nextStates.isEmpty()) {
+                deadlockDetected.set(true);
             }
-        });
+
+            if(<invariants:{inv | !state.<inv>()}; separator=" || ">) {
+                invariantViolated.set(true);
+            }
+
+            nextStates.forEach(nextState -> {
+                synchronized(lock) {
+                    if(!states.contains(nextState)) {
+                        numberStates.getAndIncrement();
+                        states.add(nextState);
+                        collection.add(nextState);
+                        if(numberStates.get() % 50000 == 0) {
+                            System.out.println("VISITED STATES: " + numberStates.get());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
+                        }
+                    }
+                }
+            });
+        };
+        Future\<?> submit = threadPool.submit(task);
+        while (collection.isEmpty() && !submit.isDone());
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected, invariantViolated.get());
+    threadPool.shutdown();
+    try {
+        threadPool.awaitTermination(5, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
 }
 >>
 

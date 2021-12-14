@@ -111,7 +111,7 @@ public class ModelCheckingGenerator {
             } else {
                 int j = 1;
                 for (int i = 0; i < declarationParams.size(); i++) {
-                    DeclarationNode paramNode = opNode.getParams().get(i);
+                    DeclarationNode paramNode = opNode.getParams().get(declarationParams.size() - 1 - i);
 
 
                     if (i < opNode.getParams().size() - 1) {

@@ -21,6 +21,14 @@ import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
 
+    <if(forModelChecking)>
+    private enum Type {
+        BFS,
+        DFS,
+        MIXED
+    }
+    <endif>
+
     <structs; separator= "\n\n">
 
     <constants_declarations; separator="\n">
@@ -826,6 +834,17 @@ private static void printResult(int states, int transitions, boolean deadlockDet
 
 
 model_check_main(machine, invariants) ::= <<
+private static <machine> next(LinkedList\<<machine>\> collection, Type type) {
+    synchronized(collection) {
+        return switch(type) {
+            case BFS -> collection.removeFirst();
+            case DFS -> collection.removeLast();
+            case MIXED -> collection.size() % 2 == 0 ? collection.removeFirst() : collection.removeLast();
+        };
+    }
+}
+
+
 public static void main(String[] args) {
     <machine> machine = new <machine>();
 
@@ -849,8 +868,7 @@ public static void main(String[] args) {
     AtomicInteger transitions = new AtomicInteger(0);
 
     while(!collection.isEmpty()) {
-        // TODO: BF, DF, MIXED
-        <machine> state = Math.random() > 0.5 ? collection.removeFirst() : collection.removeLast();
+        <machine> state = next(collection, Type.MIXED);
         Set\<<machine>\> nextStates = generateNextStates(state, transitions);
         if(nextStates.isEmpty()) {
             deadlockDetected = true;

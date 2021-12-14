@@ -88,7 +88,7 @@ public boolean equals(Object o) {
 >>
 
 machine_equal_predicate(var) ::= <<
-o1.<var>() == o2.<var>()
+o1.<var>().equals(o2.<var>())
 >>
 
 machine_hash(assignments) ::= <<

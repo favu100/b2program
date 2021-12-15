@@ -58,13 +58,18 @@ public class SetComprehensionGenerator {
     /*
     * This function generates code for a set comprehension from the belonging AST node
     */
-    public String generateSetComprehension(SetComprehensionNode node) {
+    public String generateSetComprehension(PredicateNode conditionalPredicate, SetComprehensionNode node) {
         machineGenerator.inIterationConstruct(node.getDeclarationList());
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
 
         ST template = group.getInstanceOf("set_comprehension");
+
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
 

@@ -49,7 +49,7 @@ public class BecomesSuchThatGenerator {
     /*
     * This function generates code for the becomes such that substitution
     */
-    public String generateBecomesSuchThat(BecomesSuchThatSubstitutionNode node) {
+    public String generateBecomesSuchThat(PredicateNode conditionalPredicate, BecomesSuchThatSubstitutionNode node) {
         machineGenerator.inIterationConstruct();
         PredicateNode predicate = node.getPredicate();
 
@@ -59,6 +59,10 @@ public class BecomesSuchThatGenerator {
                 .collect(Collectors.toList());
 
         ST template = group.getInstanceOf("becomes_such_that");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         generateLoads(template, predicate);
 

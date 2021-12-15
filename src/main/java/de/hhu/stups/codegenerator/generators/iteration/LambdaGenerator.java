@@ -49,7 +49,7 @@ public class LambdaGenerator {
     /*
     * This function generates code for a lambda expression from the belonging AST node
     */
-    public String generateLambda(LambdaNode node) {
+    public String generateLambda(PredicateNode conditionalPredicate, LambdaNode node) {
         machineGenerator.inIterationConstruct(node.getDeclarations());
         PredicateNode predicate = node.getPredicate();
         List<DeclarationNode> declarations = node.getDeclarations();
@@ -57,6 +57,11 @@ public class LambdaGenerator {
         BType type = node.getType();
 
         ST template = group.getInstanceOf("lambda");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
+
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate, expression);
 

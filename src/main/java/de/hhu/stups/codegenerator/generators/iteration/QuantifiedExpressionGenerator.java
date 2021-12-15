@@ -55,13 +55,17 @@ public class QuantifiedExpressionGenerator {
     /*
     * This function generates code for a quantified expression from the belonging AST node
     */
-    public String generateQuantifiedExpression(QuantifiedExpressionNode node) {
+    public String generateQuantifiedExpression(PredicateNode conditionalPredicate, QuantifiedExpressionNode node) {
         machineGenerator.inIterationConstruct(node.getDeclarationList());
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         ExprNode expression = node.getExpressionNode();
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_expression");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);

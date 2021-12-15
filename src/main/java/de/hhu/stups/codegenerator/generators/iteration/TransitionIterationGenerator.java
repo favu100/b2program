@@ -48,8 +48,12 @@ public class TransitionIterationGenerator {
     /*
     * This function generates code for evaluating transitions from the belonging AST node
     */
-    public String generateTransition(OperationNode node, List<DeclarationNode> declarations, PredicateNode predicate) {
+    public String generateTransition(PredicateNode conditionalPredicate, OperationNode node, List<DeclarationNode> declarations, PredicateNode predicate) {
         ST template = group.getInstanceOf("transition");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         boolean noParameters = declarations.size() == 0;
         TemplateHandler.add(template, "noParameters", noParameters);
         TemplateHandler.add(template, "operationName", node.getName());

@@ -273,9 +273,15 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
-let_expression_predicate(type, identifier, body) ::= <<
+let_expression_predicate(type, identifier, hasCondition, conditionalPredicate, body) ::= <<
 <type> <identifier> = null;
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    <body>
+}
+<else>
 <body>
+<endif>
 >>
 
 let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
@@ -283,9 +289,15 @@ let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
 <identifier> = <val>;
 >>
 
-set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, hasCondition, conditionalPredicate, comprehension) ::= <<
 <type> <identifier> = new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>();
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    <comprehension>
+}
+<else>
 <comprehension>
+<endif>
 >>
 
 set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType) ::= <<
@@ -299,9 +311,15 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-lambda(type, identifier, lambda, leftType, rightType) ::= <<
+lambda(type, identifier, lambda, leftType, rightType, hasCondition, conditionalPredicate) ::= <<
 <type> <identifier> = new BRelation\<<leftType>, <rightType>\>();
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    <lambda>
+}
+<else>
 <lambda>
+<endif>
 >>
 
 lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
@@ -325,9 +343,15 @@ lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
 <if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
-quantified_predicate(identifier, forall, predicate) ::= <<
+quantified_predicate(identifier, forall, hasCondition, conditionalPredicate, predicate) ::= <<
 BBoolean <identifier> = new BBoolean(<if(forall)>true<else>false<endif>);
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    <predicate>
+}
+<else>
 <predicate>
+<endif>
 >>
 
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
@@ -343,9 +367,15 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 <endif>
 >>
 
-quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
+quantified_expression(identifier, identity, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
 <if(isInteger)>BInteger <identifier> = new BInteger(<identity>);<else>BSet\<<setType>\> <identifier> = new BSet\<<setType>\>();<endif>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    <evaluation>
+}
+<else>
 <evaluation>
+<endif>
 >>
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
@@ -370,7 +400,7 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
 public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationName>() {
     <if(noParameters)>
     <if(noPredicate)>
@@ -380,7 +410,13 @@ public <if(noParameters)>boolean<else>BSet\<<subType>\><endif> _tr_<operationNam
     <endif>
     <else>
     BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();
+    <if(hasCondition)>
+    if(<conditionalPredicate>.booleanValue()) {
+        <combination>
+    }
+    <else>
     <combination>
+    <endif>
     return <identifier>;
     <endif>
 }

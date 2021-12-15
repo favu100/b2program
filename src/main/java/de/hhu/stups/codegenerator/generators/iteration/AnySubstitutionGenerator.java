@@ -42,13 +42,17 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the ANY substitution from the belonging AST node
     */
-    public String generateAnySubstitution(AnySubstitutionNode node) {
+    public String generateAnySubstitution(PredicateNode conditionalPredicate, AnySubstitutionNode node) {
         machineGenerator.inIterationConstruct(node.getParameters());
         PredicateNode predicate = node.getWherePredicate();
         SubstitutionNode substitution = node.getThenSubstitution();
         List<DeclarationNode> declarations = node.getParameters();
 
         ST template = group.getInstanceOf("any");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);

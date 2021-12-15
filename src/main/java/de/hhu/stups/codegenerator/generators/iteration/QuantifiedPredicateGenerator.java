@@ -41,12 +41,16 @@ public class QuantifiedPredicateGenerator {
     /*
     * This function generates code for a quantified predicate from the belonging AST node
     */
-    public String generateQuantifiedPredicate(QuantifiedPredicateNode node) {
+    public String generateQuantifiedPredicate(PredicateNode conditionalPredicate, QuantifiedPredicateNode node) {
         machineGenerator.inIterationConstruct(node.getDeclarationList());
         PredicateNode predicate = node.getPredicateNode();
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_predicate");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
 
@@ -72,7 +76,6 @@ public class QuantifiedPredicateGenerator {
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
         otherConstructsGenerator.getAllBoundedVariables().addAll(iterationConstructGenerator.getAllBoundedVariables());
-        System.out.println(predicate);
         for (String key : iterationConstructGenerator.getIterationsMapIdentifier().keySet()) {
             otherConstructsGenerator.getIterationsMapIdentifier().put(key, iterationConstructGenerator.getIterationsMapIdentifier().get(key));
         }

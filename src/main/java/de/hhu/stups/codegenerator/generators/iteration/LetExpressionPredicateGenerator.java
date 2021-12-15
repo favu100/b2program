@@ -47,7 +47,7 @@ public class LetExpressionPredicateGenerator {
     /*
     * This function generates code for a let expression from the belonging AST node
     */
-    public String generateLetExpression(LetExpressionNode node) {
+    public String generateLetExpression(PredicateNode conditionalPredicate, LetExpressionNode node) {
         machineGenerator.inIterationConstruct(node.getLocalIdentifiers());
         BType type = node.getType();
         PredicateNode predicate = node.getPredicate();
@@ -55,6 +55,11 @@ public class LetExpressionPredicateGenerator {
         List<DeclarationNode> declarations = node.getLocalIdentifiers();
 
         ST template = group.getInstanceOf("let_expression_predicate");
+
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
@@ -74,7 +79,7 @@ public class LetExpressionPredicateGenerator {
     /*
     * This function generates code for a let predicate from the belonging AST node
     */
-    public String generateLetPredicate(LetPredicateNode node) {
+    public String generateLetPredicate(PredicateNode conditionalPredicate, LetPredicateNode node) {
         machineGenerator.inIterationConstruct(node.getLocalIdentifiers());
         BType type = node.getType();
         PredicateNode letPredicate = node.getWherePredicate();
@@ -82,6 +87,10 @@ public class LetExpressionPredicateGenerator {
         List<DeclarationNode> declarations = node.getLocalIdentifiers();
 
         ST template = group.getInstanceOf("let_expression_predicate");
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         iterationConstructGenerator.prepareGeneration(letPredicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, letPredicate, false);

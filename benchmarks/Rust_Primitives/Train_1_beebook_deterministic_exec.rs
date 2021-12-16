@@ -133,3 +133,8 @@ impl Train_1_beebook_deterministic_exec {
     }
 }
 
+fn main() {
+    let mut exec = Train_1_beebook_deterministic_exec::new();
+    exec.simulate();
+}
+

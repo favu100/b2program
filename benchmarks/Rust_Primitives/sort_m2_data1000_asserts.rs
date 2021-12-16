@@ -8,7 +8,7 @@ use btypes::brelation::BRelation;
 use btypes::bset::BSet;
 use btypes::btuple::BTuple;
 
-
+// regenerate
 
 #[derive(Default, Debug)]
 pub struct sort_m2_data1000_asserts {

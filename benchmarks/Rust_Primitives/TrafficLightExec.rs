@@ -44,3 +44,7 @@ impl TrafficLightExec {
     }
 }
 
+fn main() {
+    let mut exec = TrafficLightExec::new();
+    exec.simulate();
+}

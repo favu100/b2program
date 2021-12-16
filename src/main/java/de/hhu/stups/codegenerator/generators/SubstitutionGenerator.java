@@ -129,7 +129,7 @@ public class SubstitutionGenerator {
         if (currentGroup.getInstanceOf("set_initialization") != null) {
             //Rust needs the Set declaration and initialization separat
             List<String> setInitializations = declarationGenerator.generateSetDeclarations(node, "set_initialization");
-            if (setInitializations.size() > 0) body += "\n" + String.join("\n", setInitializations);
+            if (setInitializations.size() > 0) TemplateHandler.add(initialization, "set_initializations", String.join("\n", setInitializations));
         }
         TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());
         if (body.trim().length() > 0) TemplateHandler.add(initialization, "body", body);

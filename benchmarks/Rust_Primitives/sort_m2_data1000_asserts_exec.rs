@@ -65,3 +65,7 @@ impl sort_m2_data1000_asserts_exec {
     }
 }
 
+fn main() {
+    let mut exec = sort_m2_data1000_asserts_exec::new();
+    exec.simulate();
+}

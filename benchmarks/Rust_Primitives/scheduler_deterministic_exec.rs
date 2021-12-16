@@ -71,3 +71,7 @@ impl scheduler_deterministic_exec {
     }
 }
 
+fn main() {
+    let mut exec = scheduler_deterministic_exec::new();
+    exec.simulate();
+}

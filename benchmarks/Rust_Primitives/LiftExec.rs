@@ -50,3 +50,7 @@ impl LiftExec {
     }
 }
 
+fn main() {
+    let mut exec = LiftExec::new();
+    exec.simulate();
+}

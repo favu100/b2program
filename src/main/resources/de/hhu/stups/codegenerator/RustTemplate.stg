@@ -40,7 +40,7 @@ import_type(type, useBigInteger) ::= <<
 use btypes::<type; format="lower">::<type>;
 >>
 
-initialization(machine, properties, values, body, sets, includesInitialization) ::= <<
+initialization(machine, properties, values, body, sets, set_initializations, includesInitialization) ::= <<
 
 pub fn new() -> <machine> {
 <if(values)>    //values: '<values>'<endif>
@@ -49,10 +49,11 @@ pub fn new() -> <machine> {
     return m;
 }
 fn init(&mut self) {
+    <properties; separator="\n">
     <sets; separator="\n">
+    <set_initializations; separator="\n">
     <body>
     <includesInitialization; separator="\n">
-    <properties; separator="\n">
 }
 >>
 

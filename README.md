@@ -431,7 +431,7 @@ Lift consists of operation to lift up and lift down and getting the floor.
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
-* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 Lift.mch ```
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false false Lift.mch ```
 * Write a main method in `Lift.java` 
 ```java
 public static void main(String[] args) {
@@ -452,7 +452,7 @@ public static void main(String[] args) {
 #### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
-* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 Lift.mch ```
+* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Lift.mch ```
 * Write a main method in `Lift.cpp` 
 ```cpp
 int main() {
@@ -486,7 +486,7 @@ Furthermore it has getter operations for all variables.
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
-* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 Cruise_finite1_deterministic.mch ```
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false false Cruise_finite1_deterministic.mch ```
 * Write a main method in `Cruise_finite1_deterministic_exec.java`
 ```java
 public static void main(String[] args) {
@@ -534,7 +534,7 @@ false
 #### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
-* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 Cruise_finite1_deterministic_exec.mch ```
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
 * Write a main method in `Cruise_finite1_deterministic_exec.cpp` 
 ```cpp
 int main() {

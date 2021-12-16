@@ -9,6 +9,7 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.prob.parser.ast.SourceCodePosition;
 import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -96,8 +97,6 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     private final boolean useConstraintSolving;
 
     private final List<PredicateNode> previousPredicates;
-
-    private PredicateOperatorNode.PredicateOperator operator;
 
     public IterationConstructGenerator(final IterationConstructHandler iterationConstructHandler, final MachineGenerator machineGenerator, final NameHandler nameHandler, final STGroup group,
                                        final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final ExpressionGenerator expressionGenerator,
@@ -217,15 +216,20 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     @Override
     public Void visitPredicateOperatorNode(PredicateOperatorNode node, Void expected) {
-        operator = node.getOperator();
-        node.getPredicateArguments().forEach(pred -> {
+        PredicateOperatorNode.PredicateOperator operator = node.getOperator();
+        List<DeclarationNode> parentDeclarations = extractDeclarations(node.getParent());
+
+        for(int i = 0; i < node.getPredicateArguments().size(); i++) {
+            PredicateNode pred = node.getPredicateArguments().get(i);
             visitPredicateNode(pred, expected);
-            if(operator == PredicateOperatorNode.PredicateOperator.OR) {
-                previousPredicates.add(new PredicateOperatorNode(node.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.NOT, Collections.singletonList(pred)));
-            } else {
-                previousPredicates.add(pred);
+            if(i >= parentDeclarations.size()) {
+                if (operator == PredicateOperatorNode.PredicateOperator.OR) {
+                    previousPredicates.add(new PredicateOperatorNode(node.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.NOT, Collections.singletonList(pred)));
+                } else {
+                    previousPredicates.add(pred);
+                }
             }
-        });
+        }
         previousPredicates.clear();
         return null;
     }
@@ -473,5 +477,34 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
             conditionalPredicate = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, previousPredicates);
         }
         return conditionalPredicate;
+    }
+
+    private List<DeclarationNode> extractDeclarations(Node node) {
+        if(node != null) {
+            if (node instanceof AnySubstitutionNode) {
+                return ((AnySubstitutionNode) node).getParameters();
+            } else if (node instanceof BecomesSuchThatSubstitutionNode) {
+                return ((BecomesSuchThatSubstitutionNode) node).getIdentifiers().stream().map(IdentifierExprNode::getDeclarationNode).collect(Collectors.toList());
+            } else if (node instanceof LambdaNode) {
+                return ((LambdaNode) node).getDeclarations();
+            } else if (node instanceof LetExpressionNode) {
+                return ((LetExpressionNode) node).getLocalIdentifiers();
+            } else if (node instanceof QuantifiedExpressionNode) {
+                return ((QuantifiedExpressionNode) node).getDeclarationList();
+            } else if (node instanceof QuantifiedPredicateNode) {
+                return ((QuantifiedPredicateNode) node).getDeclarationList();
+            } else if (node instanceof SetComprehensionNode) {
+                return ((SetComprehensionNode) node).getDeclarationList();
+            } else if (node instanceof ConditionSubstitutionNode) {
+                if(node.getParent() instanceof OperationNode && ((ConditionSubstitutionNode) node).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
+                    return ((OperationNode) node.getParent()).getParams();
+                }
+            } else if (node instanceof IfOrSelectSubstitutionsNode) {
+                if(node.getParent() instanceof OperationNode && ((IfOrSelectSubstitutionsNode) node).getOperator() == IfOrSelectSubstitutionsNode.Operator.SELECT) {
+                    return ((OperationNode) node.getParent()).getParams();
+                }
+            }
+        }
+        return new ArrayList<>();
     }
 }

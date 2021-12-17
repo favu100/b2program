@@ -110,7 +110,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.letExpressionPredicateGenerator = new LetExpressionPredicateGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.becomesSuchThatGenerator = new BecomesSuchThatGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
-        this.transitionGenerator = new TransitionIterationGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.transitionGenerator = new TransitionIterationGenerator(group, nameHandler, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.importGenerator = importGenerator;
         this.iterationsMapCode = new LinkedHashMap<>();
         this.iterationsMapIdentifier = new LinkedHashMap<>();

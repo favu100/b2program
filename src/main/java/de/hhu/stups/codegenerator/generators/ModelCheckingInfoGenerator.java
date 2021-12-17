@@ -55,7 +55,7 @@ public class ModelCheckingInfoGenerator {
         Map<String, String> transitionEvaluationFunctions = new HashMap<>();
         for(OperationNode operation : node.getOperations()) {
             String opName = nameHandler.handleIdentifier(operation.getName(), INCLUDED_MACHINES);
-            String transitionName = "_tr_" + operation.getName();
+            String transitionName = "_tr_" + opName;
             transitionEvaluationFunctions.put(opName, transitionName);
         }
         return transitionEvaluationFunctions;

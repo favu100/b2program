@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators.iteration;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
+import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.OperationNode;
@@ -24,6 +25,8 @@ public class TransitionIterationGenerator {
 
     private final STGroup group;
 
+    private final NameHandler nameHandler;
+
     private final MachineGenerator machineGenerator;
 
     private final TypeGenerator typeGenerator;
@@ -35,9 +38,10 @@ public class TransitionIterationGenerator {
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
 
-    public TransitionIterationGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator, final IterationConstructGenerator iterationConstructGenerator,
+    public TransitionIterationGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator, final IterationConstructGenerator iterationConstructGenerator,
                                         final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
         this.group = group;
+        this.nameHandler = nameHandler;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
@@ -56,7 +60,7 @@ public class TransitionIterationGenerator {
         }
         boolean noParameters = declarations.size() == 0;
         TemplateHandler.add(template, "noParameters", noParameters);
-        TemplateHandler.add(template, "operationName", node.getName());
+        TemplateHandler.add(template, "operationName", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
 
         if(noParameters) {
             if(predicate == null) {

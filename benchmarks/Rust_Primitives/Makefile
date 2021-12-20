@@ -20,7 +20,7 @@ CARGO_BUILD=cargo build --release --manifest-path $(CARGO_PROJ_PATH)/Cargo.toml
 
 % : clean %.cp
 	$(CARGO_BUILD)
-	/usr/bin/time -f "$(*) %E %M" $(CARGO_PROJ_PATH)/target/release/bmachine -ao $(OUTPUT)
+	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine
 
 clean:
 	rm -f $(CARGO_PROJ_PATH)/src/*.rs

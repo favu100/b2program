@@ -62,7 +62,7 @@ public class TestRS {
         Path mainPath = rsFilePaths.get(rsFilePaths.size() - 1);
         File newMainFile = typesPath.resolve(Paths.get("main.rs")).toFile();
         mainPath.toFile().renameTo(newMainFile);
-        Process process = runtime.exec("cargo build --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
+        Process process = runtime.exec("cargo build --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
         writeInputToSystem(process.getErrorStream());
         writeInputToOutput(process.getErrorStream(), process.getOutputStream());
         process.waitFor();
@@ -75,7 +75,7 @@ public class TestRS {
             return;
         }
 
-        Process executeProcess = runtime.exec("cargo run --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
+        Process executeProcess = runtime.exec("cargo run --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
         executeProcess.waitFor();
 
         String error = streamToString(executeProcess.getErrorStream());

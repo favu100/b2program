@@ -10,6 +10,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.nodes.expression.*;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
@@ -26,6 +27,7 @@ import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
+import org.antlr.v4.runtime.misc.OrderedHashSet;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.List.of;
 
@@ -153,17 +156,35 @@ public class SubstitutionGenerator {
     }
 
     /*
-    * This function generates code for initiailizing all constants from the given AST node of a machine
+    * This function generates code for initializing all constants from the given AST node of a machine
     */
     public List<String> generateConstantsInitializations(MachineNode node) {
-        // TODO: Check that constants must be declared in the order they appear in the PROPERTIES. Furthermore, also check that used constants in other constants has to be declared before.
+        // TODO: Check that used constants in other constants has to be declared before.
         Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
+        OrderedHashSet<String> propertiesIdentifiersSet = new OrderedHashSet<>();
+        predicateGenerator.extractProperties(node).forEach(prop -> {
+            if (!(prop instanceof PredicateOperatorWithExprArgsNode)) return;
+            ((PredicateOperatorWithExprArgsNode)prop).getExpressionNodes().forEach(exprNode -> {
+                if (exprNode instanceof IdentifierExprNode) propertiesIdentifiersSet.add(((IdentifierExprNode) exprNode).getName());
+            });
+        });
+        ArrayList<String> propertiesIdentifiers = new ArrayList<>(propertiesIdentifiersSet);
+
+        List<DeclarationNode> constants = node.getConstants().stream().sorted((nodeA, nodeB) -> {
+            int indexA = propertiesIdentifiers.indexOf(nodeA.getName());
+            int indexB = propertiesIdentifiers.indexOf(nodeB.getName());
+            if (indexA >= 0 && indexB >= 0) return Integer.compare(indexA, indexB);
+            if (indexA >= 0) return -1;
+            if (indexB >= 0) return +1;
+            return nodeA.getName().compareTo(nodeB.getName());
+        }).collect(Collectors.toList());
+
         List<String> constantsInitializations = new ArrayList<>();
-        constantsInitializations.addAll(node.getConstants().stream()
+        constantsInitializations.addAll(constants.stream()
                 .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
                 .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
                 .collect(Collectors.toList()));
-        constantsInitializations.addAll(node.getConstants().stream()
+        constantsInitializations.addAll(constants.stream()
                 .filter(constant -> !lambdaFunctions.contains(constant.getName()))
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList()));

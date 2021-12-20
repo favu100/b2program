@@ -306,7 +306,7 @@ public class PredicateGenerator {
      * This function extracts all conjuncts of the PROPERTIES clause. If the PROPERTIES clause is not a conjunction, it might not be analyzable by this code generator.
      * In this case, an exception is thrown.
      */
-    private List<PredicateNode> extractProperties(MachineNode node) {
+    public List<PredicateNode> extractProperties(MachineNode node) {
         List<PredicateNode> propertiesNodes = new ArrayList<>();
         if(node.getProperties() != null) {
             if(node.getProperties() instanceof PredicateOperatorWithExprArgsNode) {

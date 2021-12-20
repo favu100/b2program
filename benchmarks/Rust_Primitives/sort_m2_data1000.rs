@@ -29,17 +29,17 @@ impl sort_m2_data1000 {
         return m;
     }
     fn init(&mut self) {
-        self.g = self.f.clone().clone();
-        self.k = BInteger::new(1);
-        self.l = BInteger::new(1);
-        self.j = BInteger::new(1);
+        self.n = BInteger::new(1000);
         let mut _ic_set_0 = BRelation::<BInteger, BInteger>::new(vec![]);
         for _ic_i_1 in BSet::<BInteger>::interval(&BInteger::new(1), &self.n).clone().iter().cloned() {
             _ic_set_0 = _ic_set_0._union(&BRelation::<BInteger, BInteger>::new(vec![BTuple::new(_ic_i_1, BInteger::new(15000).minus(&_ic_i_1))]));
 
         }
         self.f = _ic_set_0;
-        self.n = BInteger::new(1000);
+        self.g = self.f.clone().clone();
+        self.k = BInteger::new(1);
+        self.l = BInteger::new(1);
+        self.j = BInteger::new(1);
     }
 
     pub fn get_f(&self) -> BRelation<BInteger, BInteger> {

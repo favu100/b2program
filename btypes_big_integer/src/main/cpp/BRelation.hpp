@@ -920,7 +920,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean isPartial(const BSet<S>& domain) const {
-    		return this->domain().strictSubset(domain);
+    		return this->domain().subset(domain);
     	}
 
 

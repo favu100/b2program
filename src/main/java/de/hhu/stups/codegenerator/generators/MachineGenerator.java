@@ -259,7 +259,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "transitions", transitionGenerator.generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", invariantGenerator.generateInvariants(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
-		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqual());
+		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqualToString());
 		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine, forVisualisation));
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());

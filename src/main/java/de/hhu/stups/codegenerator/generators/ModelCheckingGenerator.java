@@ -209,8 +209,8 @@ public class ModelCheckingGenerator {
         return result;
     }
 
-    public List<String> generateHashEqual() {
-        return Arrays.asList(generateEqual(), generateUnequal(), generateHash());
+    public List<String> generateHashEqualToString() {
+        return Arrays.asList(generateEqual(), generateUnequal(), generateHash(), generateToString());
     }
 
     public String generateEqual() {
@@ -259,6 +259,13 @@ public class ModelCheckingGenerator {
 
         TemplateHandler.add(template, "assignments1", assignments1);
         TemplateHandler.add(template, "assignments2", assignments2);
+        return template.render();
+    }
+
+    public String generateToString() {
+        ST template = currentGroup.getInstanceOf("machine_string");
+        TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
+        TemplateHandler.add(template, "variables", modelCheckingInfo.getVariables());
         return template.render();
     }
 

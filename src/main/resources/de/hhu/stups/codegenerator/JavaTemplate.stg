@@ -119,6 +119,13 @@ machine_hash_assignment(primeNumber, var) ::= <<
 result = (<primeNumber> * result) ^ ((this.<var>()).hashCode() \<\< 1);
 >>
 
+machine_string(variables) ::= <<
+@Override
+public String toString() {
+    return String.join("\n", <variables:{var | "<var>: " + (this.<var>()).toString()}; separator=", ">);
+}
+>>
+
 
 getter(returnType, variable) ::= <<
 public <returnType> _get_<variable>() {

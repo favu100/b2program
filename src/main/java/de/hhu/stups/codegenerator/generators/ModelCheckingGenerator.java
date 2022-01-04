@@ -241,16 +241,24 @@ public class ModelCheckingGenerator {
 
     public String generateHash() {
         ST template = currentGroup.getInstanceOf("machine_hash");
-        List<String> assignments = new ArrayList<>();
-        int i = 0;
+        List<String> assignments1 = new ArrayList<>();
         for(String var : modelCheckingInfo.getVariables()) {
             ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
-            TemplateHandler.add(assignmentTemplate, "isFirst", i == 0);
+            TemplateHandler.add(assignmentTemplate, "primeNumber", 1543);
             TemplateHandler.add(assignmentTemplate, "var", var);
-            assignments.add(assignmentTemplate.render());
-            i++;
+            assignments1.add(assignmentTemplate.render());
         }
-        TemplateHandler.add(template, "assignments", assignments);
+
+        List<String> assignments2 = new ArrayList<>();
+        for(String var : modelCheckingInfo.getVariables()) {
+            ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
+            TemplateHandler.add(assignmentTemplate, "primeNumber", 6151);
+            TemplateHandler.add(assignmentTemplate, "var", var);
+            assignments2.add(assignmentTemplate.render());
+        }
+
+        TemplateHandler.add(template, "assignments1", assignments1);
+        TemplateHandler.add(template, "assignments2", assignments2);
         return template.render();
     }
 

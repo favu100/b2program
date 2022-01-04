@@ -96,17 +96,27 @@ machine_equal_predicate(var) ::= <<
 o1.<var>().equals(o2.<var>())
 >>
 
-machine_hash(assignments) ::= <<
+machine_hash(assignments1, assignments2) ::= <<
 @Override
 public int hashCode() {
+    return this._hashCode_1();
+}
+
+public int _hashCode_1() {
     int result = 1;
-    <assignments; separator= "\n">
+    <assignments1; separator= "\n">
+    return result;
+}
+
+public int _hashCode_2() {
+    int result = 1;
+    <assignments2; separator= "\n">
     return result;
 }
 >>
 
-machine_hash_assignment(var) ::= <<
-result = (1543 * result) ^ ((this.<var>()).hashCode() \<\< 1);
+machine_hash_assignment(primeNumber, var) ::= <<
+result = (<primeNumber> * result) ^ ((this.<var>()).hashCode() \<\< 1);
 >>
 
 

@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 <endif>
 import java.util.Objects;
 import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
@@ -122,7 +124,11 @@ result = (<primeNumber> * result) ^ ((this.<var>()).hashCode() \<\< 1);
 machine_string(variables) ::= <<
 @Override
 public String toString() {
+    <if(variables)>
     return String.join("\n", <variables:{var | "<var>: " + (this.<var>()).toString()}; separator=", ">);
+    <else>
+    return "";
+    <endif>
 }
 >>
 
@@ -633,10 +639,25 @@ unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
+pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<if(isModelChecking && !isTopLevel)>
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()) {
+    <then>
+} else {
+    throw new PreconditionOrAssertionViolation("Precondition or Assertion Error occured.");
+}
+<else>
+<then>
+<endif>
+>>
+
 select(iterationConstruct, predicate, then) ::= <<
 <iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
+} else {
+    throw new StateNotReachableError("State is not reachable.");
 }
 >>
 

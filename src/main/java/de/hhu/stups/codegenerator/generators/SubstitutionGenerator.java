@@ -21,6 +21,7 @@ import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.BecomesElementOfSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.BecomesSuchThatSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ChoiceSubstitutionNode;
+import de.prob.parser.ast.nodes.substitution.ConditionSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.IfOrSelectSubstitutionsNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
@@ -182,6 +183,16 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(initialization, "val", declarationGenerator.callEnum(constant.getType().toString(), constant));
         return initialization.render();
+    }
+
+    public String visitConditionSubstitutionNode(ConditionSubstitutionNode node) {
+        ST template = currentGroup.getInstanceOf("pre_assert");
+        TemplateHandler.add(template, "isModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(template, "isTopLevel", node.getParent() instanceof OperationNode && !machineGenerator.isIncludedMachine());
+        TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(node.getCondition()).getIterationsMapCode().values());
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), null));
+        TemplateHandler.add(template, "then", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+        return template.render();
     }
 
     /*

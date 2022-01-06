@@ -287,6 +287,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testPitmanController_TIME_MC_v4_MC() throws Exception {
+        testJavaMC("visualisation/PitmanController_TIME_MC_v4");
+    }
+
+    @Test
     public void testButton() throws Exception {
         testJavaMC("visualisation/Button");
     }

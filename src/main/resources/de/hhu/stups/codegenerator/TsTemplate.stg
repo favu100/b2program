@@ -570,6 +570,10 @@ unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
+pre_assert(then) ::= <<
+<then>
+>>
+
 select(iterationConstruct, predicate, then) ::= <<
 <iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {

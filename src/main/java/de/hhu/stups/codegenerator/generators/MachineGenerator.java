@@ -193,7 +193,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
-		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation) && !isIncludedMachine);
+		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation));
 		TemplateHandler.add(machine, "forVisualisation", forVisualisation);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
@@ -470,7 +470,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	@Override
 	public String visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
-		return visitSubstitutionNode(node.getSubstitution(), expected);
+		return substitutionGenerator.visitConditionSubstitutionNode(node);
 	}
 
 	@Override

@@ -74,7 +74,7 @@ public class TransitionGenerator {
                 throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
             }
         } else if(nondeterministicSubstitutions.contains(bodySubstitution.getClass())) {
-            throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
+            throw new RuntimeException("Non-deterministic assignments and ANY substitution are not allowed in model checking mode");
         } else {
             if(operation.getParams().size() == 0) {
                 iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), null);

@@ -481,10 +481,14 @@ pre_assert(then) ::= <<
 <then>
 >>
 
-select(iterationConstruct, predicate, then) ::= <<
+select(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<if(isModelChecking && isTopLevel)>
+<then>
+<else>
 <iterationConstruct; separator="\n">
 if (<predicate>).booleanValue():
     <then>
+<endif>
 >>
 
 if(iterationConstruct, predicate, then, else1) ::= <<

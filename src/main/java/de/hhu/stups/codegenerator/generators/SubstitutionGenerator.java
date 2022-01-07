@@ -210,6 +210,8 @@ public class SubstitutionGenerator {
     */
     private String visitSelectSubstitution(IfOrSelectSubstitutionsNode node) {
         ST select = currentGroup.getInstanceOf("select");
+        TemplateHandler.add(select, "isModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(select, "isTopLevel", node.getParent() instanceof OperationNode && !machineGenerator.isIncludedMachine());
         TemplateHandler.add(select, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
         TemplateHandler.add(select, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(select, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));

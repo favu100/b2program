@@ -926,6 +926,7 @@ private static <machine> next(LinkedList\<<machine>\> collection, Object lock, T
 
 public static void main(String[] args) {
     Object lock = new Object();
+    Object waitLock = new Object();
     ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(6);
 
     <machine> machine = new <machine>();
@@ -933,6 +934,8 @@ public static void main(String[] args) {
 
     AtomicBoolean invariantViolated = new AtomicBoolean(false);
     AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+    AtomicBoolean stopThreads = new AtomicBoolean(false);
+    AtomicInteger possibleQueueChanges = new AtomicInteger(0);
 
     if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
         invariantViolated.set(true);
@@ -947,17 +950,11 @@ public static void main(String[] args) {
 
     AtomicInteger transitions = new AtomicInteger(0);
 
-    while(!collection.isEmpty()) {
+    while(!collection.isEmpty() && !stopThreads.get()) {
+        possibleQueueChanges.incrementAndGet();
         <machine> state = next(collection, lock, Type.MIXED);
         Runnable task = () -> {
             Set\<<machine>\> nextStates = generateNextStates(state, transitions);
-            if(nextStates.isEmpty()) {
-                deadlockDetected.set(true);
-            }
-
-            if(<invariants:{inv | !state.<inv>()}; separator=" || ">) {
-                invariantViolated.set(true);
-            }
 
             nextStates.forEach(nextState -> {
                 synchronized(lock) {
@@ -973,9 +970,39 @@ public static void main(String[] args) {
                     }
                 }
             });
+
+            synchronized (lock) {
+                int running = possibleQueueChanges.decrementAndGet();
+                if (!collection.isEmpty() || running == 0) {
+                    synchronized (waitLock) {
+                        waitLock.notify();
+                    }
+                }
+            }
+
+            if(nextStates.isEmpty()) {
+                deadlockDetected.set(true);
+                stopThreads.set(true);
+            }
+
+            if(<invariants:{inv | !state.<inv>()}; separator=" || ">) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+            }
+
+
         };
-        Future\<?> submit = threadPool.submit(task);
-        while (collection.isEmpty() && !submit.isDone());
+        threadPool.submit(task);
+        synchronized(waitLock) {
+            if (collection.isEmpty() && possibleQueueChanges.get() > 0) {
+                try {
+                    waitLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
     threadPool.shutdown();
     try {

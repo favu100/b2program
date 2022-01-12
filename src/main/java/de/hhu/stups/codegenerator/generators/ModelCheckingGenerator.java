@@ -77,8 +77,8 @@ public class ModelCheckingGenerator {
         }
         if(hasParameters) {
             TemplateHandler.add(template, "tupleType", typeGenerator.generate(tupleType));
-            TemplateHandler.add(template, "transitionIdentifier", "_trid_" + index);
         }
+        TemplateHandler.add(template, "transitionIdentifier", "_trid_" + index);
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
         TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType));

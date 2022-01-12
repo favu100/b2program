@@ -848,21 +848,40 @@ model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 >>
 
 model_check_next_states(machine, transitions) ::= <<
-private static Set\<<machine>\> generateNextStates(<machine> state, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, AtomicInteger transitions) {
+private static Set\<<machine>\> generateNextStates(<machine> state, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, Map\<String, Object>\> guardCache, Map\<<machine>, <machine>\> parents, AtomicInteger transitions) {
     Set\<<machine>\> result = new HashSet\<>();
+    Map\<String, Object> newCache = new HashMap\<>();
+    Set\<String> dependentGuardsOfState = null;
+    Map\<String, Object> parentsGuard = guardCache.get(parents.get(state));
     <transitions>
+    guardCache.put(state, newCache);
     return result;
 }
 >>
 
 model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions) ::= <<
 <if(hasParameters)>
-BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
+BSet\<<tupleType>\> <transitionIdentifier>;
+dependentGuardsOfState = dependentGuard.get(state);
+if(dependentGuardsOfState == null || parentsGuard == null || parentsGuard.get("<evalTransitions>") == null || dependentGuardsOfState.contains("<evalTransitions>")) {
+    <transitionIdentifier> = state.<evalTransitions>();
+} else {
+    <transitionIdentifier> = (BSet\<<tupleType>\>) parentsGuard.get("<evalTransitions>");
+}
+newCache.put("<transitionIdentifier>", <transitionIdentifier>);
 for(<tupleType> param : <transitionIdentifier>) {
     <execTransitions>
 }
 <else>
-if(state.<evalTransitions>()) {
+boolean <transitionIdentifier>;
+dependentGuardsOfState = dependentGuard.get(state);
+if(dependentGuardsOfState == null || parentsGuard == null || parentsGuard.get("<evalTransitions>") == null || dependentGuardsOfState.contains("<evalTransitions>")) {
+    <transitionIdentifier> = state.<evalTransitions>();
+} else {
+    <transitionIdentifier> = (boolean) parentsGuard.get("<evalTransitions>");
+}
+newCache.put("<transitionIdentifier>", <transitionIdentifier>);
+if(<transitionIdentifier>) {
     <execTransitions>
 }
 <endif>
@@ -870,14 +889,14 @@ if(state.<evalTransitions>()) {
 
 model_check_invariants(machine, checkInvariants) ::= <<
 public static boolean checkInvariants(<machine> state, Map\<<machine>, Set\<String>\> dependentInvariant) {
-    Set\<String> dependenInvariantsOfState = dependentInvariant.get(state);
+    Set\<String> dependentInvariantsOfState = dependentInvariant.get(state);
     <checkInvariants; separator="\n">
     return true;
 }
 >>
 
 model_check_invariant(invariant) ::= <<
-if(dependenInvariantsOfState.contains("<invariant>")) {
+if(dependentInvariantsOfState.contains("<invariant>")) {
     if(!state.<invariant>()) {
         return false;
     }
@@ -891,6 +910,8 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
+dependentGuard.put(copiedState, guardDependency.get("<operation>"));
+parents.put(copiedState, state);
 result.add(copiedState);
 transitions.getAndIncrement();
 >>
@@ -976,7 +997,10 @@ public static void main(String[] args) {
     <guardDependency; separator="\n">
 
     Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
+    Map\<<machine>, Map\<String, Object>\> guardCache = new HashMap\<>();
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    //Map from previous state to transition evaluation function to parameters
 
     AtomicInteger transitions = new AtomicInteger(0);
 
@@ -984,7 +1008,7 @@ public static void main(String[] args) {
         possibleQueueChanges.incrementAndGet();
         <machine> state = next(collection, lock, Type.MIXED);
         Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(state, invariantDependency, dependentInvariant, transitions);
+            Set\<<machine>\> nextStates = generateNextStates(state, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
                 synchronized(lock) {

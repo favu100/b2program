@@ -200,6 +200,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public int getAndIncCurrentExpressionCount() {
 		return currentExpressionCount++;
 	}
+	public boolean isUseBigInteger() { return useBigInteger; }
 
 	public int getCurrentExpressionCount() {
 		return currentExpressionCount;

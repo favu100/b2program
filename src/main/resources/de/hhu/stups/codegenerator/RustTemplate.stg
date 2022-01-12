@@ -9,7 +9,6 @@ use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
 <imports; separator="\n">
-<if(useBigInteger)>//TODO BigInt<endif>
 <includedMachines; separator="\n">
 
 <structs; separator="\n\n">
@@ -36,7 +35,6 @@ impl <machine> {
 >>
 
 import_type(type, useBigInteger) ::= <<
-<if(useBigInteger)>//TODO: import type with BigInteger<endif>
 use btypes::<type; format="lower">::<type>;
 >>
 
@@ -62,8 +60,8 @@ assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, ident
 <if(isIdentifierLhs)><identifier> = <if(lhsIsLocal && !lhsIsParam)>Option::Some(<endif><val><if(rightTypeIsCollection)>.clone()<endif><if(lhsIsLocal && !lhsIsParam)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
-identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigned, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable) ::= <<
-<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<elseif(isLocal && !isParam && !isAssigned && !isConstant)><identifier>.unwrap()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
+identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigned, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable, useBigInteger) ::= <<
+<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<elseif(isLocal && !isParam && !isAssigned && !isConstant)><identifier><if(useBigInteger)>.as_ref()<endif>.unwrap()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
@@ -104,8 +102,7 @@ let mut <identifier>: Option\<<type>\> = Option::None;
 >>
 
 number(number, useBigInteger) ::= <<
-<if(useBigInteger)>//TODO: BigInteger<endif>
-BInteger::new(<number>)
+BInteger::new(<if(useBigInteger)>b"<number>"<else><number><endif>)
 >>
 
 struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<

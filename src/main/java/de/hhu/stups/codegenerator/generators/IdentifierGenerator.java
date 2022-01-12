@@ -118,6 +118,7 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isReturn", isReturn);
         TemplateHandler.add(identifier, "isPrivate", isPrivate);
         TemplateHandler.add(identifier, "isAssigned", isAssigned);
+        TemplateHandler.add(identifier, "useBigInteger", machineGenerator.isUseBigInteger());
         TemplateHandler.add(identifier, "isLocal", !nameHandler.getGlobals().contains(nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))); //technically its just !isPrivate, but semantically !isPrivate could mean isGlobal, which is technically how isPrivate is defined here...
         if (node.getDeclarationNode() != null)
             TemplateHandler.add(identifier, "isParam", node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER));
@@ -159,6 +160,7 @@ public class IdentifierGenerator {
         TemplateHandler.add(identifier, "isParam", isParam);
         TemplateHandler.add(identifier, "rhsOnLhs", rhsOnLhs(name));
         TemplateHandler.add(identifier, "fromOtherMachine", false);
+        TemplateHandler.add(identifier, "useBigInteger", machineGenerator.isUseBigInteger());
         return identifier.render();
     }
 

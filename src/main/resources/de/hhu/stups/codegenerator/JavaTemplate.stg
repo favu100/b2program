@@ -18,6 +18,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import clojure.java.api.Clojure;
+import clojure.lang.PersistentHashMap;
+import clojure.lang.RT;
+import clojure.lang.Var;
 <endif>
 import java.util.Objects;
 import java.util.Arrays;
@@ -28,6 +32,15 @@ import de.hhu.stups.btypes.BUtils;
 public class <machine> {
 
     <if(forModelChecking)>
+    private static final Var ASSOC;
+    private static final Var GET;
+
+    static {
+        RT.var("clojure.core", "require").invoke(Clojure.read("clojure.set"));
+        ASSOC = RT.var("clojure.core", "assoc");
+        GET = RT.var("clojure.core", "get");
+    }
+
     private enum Type {
         BFS,
         DFS,
@@ -848,11 +861,14 @@ model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 >>
 
 model_check_next_states(machine, transitions) ::= <<
-private static Set\<<machine>\> generateNextStates(<machine> state, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, Map\<String, Object>\> guardCache, Map\<<machine>, <machine>\> parents, AtomicInteger transitions) {
+@SuppressWarnings("unchecked")
+private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> state, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, PersistentHashMap> guardCache, Map\<<machine>, <machine>\> parents, AtomicInteger transitions) {
     Set\<<machine>\> result = new HashSet\<>();
-    Map\<String, Object> newCache = new HashMap\<>();
+    PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
+    PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
     Set\<String> dependentGuardsOfState = null;
-    Map\<String, Object> parentsGuard = guardCache.get(parents.get(state));
+    Object cachedValue = null;
+    boolean dependentGuardsBoolean = true;
     <transitions>
     guardCache.put(state, newCache);
     return result;
@@ -862,25 +878,36 @@ private static Set\<<machine>\> generateNextStates(<machine> state, Map\<String,
 model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions) ::= <<
 <if(hasParameters)>
 BSet\<<tupleType>\> <transitionIdentifier>;
+
 dependentGuardsOfState = dependentGuard.get(state);
-if(dependentGuardsOfState == null || parentsGuard == null || parentsGuard.get("<evalTransitions>") == null || dependentGuardsOfState.contains("<evalTransitions>")) {
+if(dependentGuardsOfState != null) {
+    cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
+    dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
+}
+
+if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
     <transitionIdentifier> = state.<evalTransitions>();
 } else {
-    <transitionIdentifier> = (BSet\<<tupleType>\>) parentsGuard.get("<evalTransitions>");
+    <transitionIdentifier> = (BSet\<<tupleType>\>) cachedValue;
 }
-newCache.put("<transitionIdentifier>", <transitionIdentifier>);
+newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
 for(<tupleType> param : <transitionIdentifier>) {
     <execTransitions>
 }
 <else>
 boolean <transitionIdentifier>;
 dependentGuardsOfState = dependentGuard.get(state);
-if(dependentGuardsOfState == null || parentsGuard == null || parentsGuard.get("<evalTransitions>") == null || dependentGuardsOfState.contains("<evalTransitions>")) {
+if(dependentGuardsOfState != null) {
+    cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
+    dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
+}
+
+if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
     <transitionIdentifier> = state.<evalTransitions>();
 } else {
-    <transitionIdentifier> = (boolean) parentsGuard.get("<evalTransitions>");
+    <transitionIdentifier> = (boolean) cachedValue;
 }
-newCache.put("<transitionIdentifier>", <transitionIdentifier>);
+newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
 if(<transitionIdentifier>) {
     <execTransitions>
 }
@@ -909,9 +936,17 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
-dependentGuard.put(copiedState, guardDependency.get("<operation>"));
-parents.put(copiedState, state);
+if(!dependentInvariant.containsKey(copiedState)) {
+    dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
+}
+synchronized(guardLock) {
+    if(!dependentGuard.containsKey(copiedState)) {
+        dependentGuard.put(copiedState, guardDependency.get("<operation>"));
+    }
+    if(!parents.containsKey(copiedState)) {
+        parents.put(copiedState, state);
+    }
+}
 result.add(copiedState);
 transitions.getAndIncrement();
 >>
@@ -969,6 +1004,7 @@ private static <machine> next(LinkedList\<<machine>\> collection, Object lock, T
 
 public static void main(String[] args) {
     Object lock = new Object();
+    Object guardLock = new Object();
     Object waitLock = new Object();
     ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(6);
 
@@ -998,9 +1034,8 @@ public static void main(String[] args) {
 
     Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
     Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
-    Map\<<machine>, Map\<String, Object>\> guardCache = new HashMap\<>();
+    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
-    //Map from previous state to transition evaluation function to parameters
 
     AtomicInteger transitions = new AtomicInteger(0);
 
@@ -1008,7 +1043,7 @@ public static void main(String[] args) {
         possibleQueueChanges.incrementAndGet();
         <machine> state = next(collection, lock, Type.MIXED);
         Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(state, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
                 synchronized(lock) {

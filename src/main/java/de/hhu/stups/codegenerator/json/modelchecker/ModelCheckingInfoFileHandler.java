@@ -58,41 +58,31 @@ public class ModelCheckingInfoFileHandler {
         }
 
 
-        Map<String, List<String>> writeInformation = new HashMap<>();
-        JsonObject writeInformationObject = modelCheckingInfoObject.getAsJsonObject("writeInformation");
-        for(String writeKey : writeInformationObject.keySet()) {
-            List<String> writes = new ArrayList<>();
-            JsonArray writesArray = writeInformationObject.get(writeKey).getAsJsonArray();
-            for(int i = 0; i < writesArray.size(); i++) {
-                writes.add(writesArray.get(i).getAsString());
+        Map<String, List<String>> invariantDependency = new HashMap<>();
+        JsonObject dependentInvariantObject = modelCheckingInfoObject.getAsJsonObject("invariantDependency");
+        for(String key : dependentInvariantObject.keySet()) {
+            List<String> dependentInvariant = new ArrayList<>();
+            JsonArray dependentInvariantArray = dependentInvariantObject.get(key).getAsJsonArray();
+            for(int i = 0; i < dependentInvariantArray.size(); i++) {
+                dependentInvariant.add(dependentInvariantArray.get(i).getAsString());
             }
-            writeInformation.put(writeKey, writes);
+            invariantDependency.put(key, dependentInvariant);
         }
 
-        Map<String, List<String>> invariantReads = new HashMap<>();
-        JsonObject invariantReadsObject = modelCheckingInfoObject.getAsJsonObject("invariantReads");
-        for(String readKey : invariantReadsObject.keySet()) {
-            List<String> reads = new ArrayList<>();
-            JsonArray readsArray = invariantReadsObject.get(readKey).getAsJsonArray();
-            for(int i = 0; i < readsArray.size(); i++) {
-                reads.add(readsArray.get(i).getAsString());
+        Map<String, List<String>> guardDependency = new HashMap<>();
+        JsonObject dependentGuardObject = modelCheckingInfoObject.getAsJsonObject("guardDependency");
+        for(String key : dependentGuardObject.keySet()) {
+            List<String> dependenGuard = new ArrayList<>();
+            JsonArray dependentGuardArray = dependentGuardObject.get(key).getAsJsonArray();
+            for(int i = 0; i < dependentGuardArray.size(); i++) {
+                dependenGuard.add(dependentGuardArray.get(i).getAsString());
             }
-            invariantReads.put(readKey, reads);
+            guardDependency.put(key, dependenGuard);
         }
 
-        Map<String, List<String>> guardsReads = new HashMap<>();
-        JsonObject guardsReadsObject = modelCheckingInfoObject.getAsJsonObject("guardsReads");
-        for(String readKey : guardsReadsObject.keySet()) {
-            List<String> reads = new ArrayList<>();
-            JsonArray readsArray = guardsReadsObject.get(readKey).getAsJsonArray();
-            for(int i = 0; i < readsArray.size(); i++) {
-                reads.add(readsArray.get(i).getAsString());
-            }
-            guardsReads.put(readKey, reads);
-        }
 
         return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions,  operationFunctions, invariants,
-                                    writeInformation, invariantReads, guardsReads);
+                                    invariantDependency, guardDependency);
     }
 
 }

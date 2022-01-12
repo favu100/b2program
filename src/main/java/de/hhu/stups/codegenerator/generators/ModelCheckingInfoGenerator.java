@@ -17,8 +17,10 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
@@ -99,9 +101,48 @@ public class ModelCheckingInfoGenerator {
         Map<String, List<String>> invariantReads = generateInvariantReads(node.getInvariant(), node.getVariables());
         Map<String, List<String>> guardsReads = generateGuardsRead(node.getOperations(), node.getVariables());
 
+        // Map from event to invariant conjunct
+        Map<String, List<String>> invariantDependency = new HashMap<>();
+
+        for(String writeKey : writeInformation.keySet()) {
+            Set<String> dependentInvariant = new HashSet<>();
+            for(String invariantReadKey : invariantReads.keySet()) {
+                Set<String> writtenVariables = new HashSet<>(writeInformation.get(writeKey));
+                Set<String> readVariables = new HashSet<>(invariantReads.get(invariantReadKey));
+
+                for(String writtenVar : writtenVariables) {
+                    if(readVariables.contains(writtenVar)) {
+                        dependentInvariant.add(invariantReadKey);
+                    }
+                }
+            }
+            invariantDependency.put(writeKey, new ArrayList<>(dependentInvariant));
+        }
+
+
+        Map<String, List<String>> guardDependency = new HashMap<>();
+
+        for(String writeKey : writeInformation.keySet()) {
+            Set<String> dependentGuard = new HashSet<>();
+            for(String guardReadKey : guardsReads.keySet()) {
+                Set<String> writtenVariables = new HashSet<>(writeInformation.get(writeKey));
+                Set<String> readVariables = new HashSet<>(guardsReads.get(guardReadKey));
+
+                for(String writtenVar : writtenVariables) {
+                    if(readVariables.contains(writtenVar)) {
+                        dependentGuard.add(guardReadKey);
+                    }
+                }
+            }
+            guardDependency.put(writeKey, new ArrayList<>(dependentGuard));
+        }
+
+        System.out.println(invariantDependency);
+        System.out.println(guardDependency);
+
         // TODO: Split guards conjuncts
         return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
-                                    writeInformation, invariantReads, guardsReads);
+                invariantDependency, guardDependency);
     }
 
     public Map<String, List<String>> generateWriteInformation(List<OperationNode> operations, List<DeclarationNode> variables) {

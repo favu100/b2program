@@ -835,10 +835,12 @@ skip() ::= <<
 enum_import() ::= <<
 >>
 
-model_check(nextStates, evalState, printResult, main) ::= <<
+model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 <nextStates>
 
 <evalState>
+
+<checkInvariants>
 
 <printResult>
 
@@ -846,7 +848,7 @@ model_check(nextStates, evalState, printResult, main) ::= <<
 >>
 
 model_check_next_states(machine, transitions) ::= <<
-private static Set\<<machine>\> generateNextStates(<machine> state, AtomicInteger transitions) {
+private static Set\<<machine>\> generateNextStates(<machine> state, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, AtomicInteger transitions) {
     Set\<<machine>\> result = new HashSet\<>();
     <transitions>
     return result;
@@ -866,12 +868,28 @@ if(state.<evalTransitions>()) {
 <endif>
 >>
 
+model_check_invariants(machine, checkInvariants) ::= <<
+public static boolean checkInvariants(<machine> state, Map\<<machine>, Set\<String>\> dependentInvariant) {
+    <checkInvariants; separator="\n">
+    return true;
+}
+>>
+
+model_check_invariant(invariant) ::= <<
+if(dependentInvariant.get(state).contains("<invariant>")) {
+    if(!state.<invariant>()) {
+        return false;
+    }
+}
+>>
+
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
+dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
 result.add(copiedState);
 transitions.getAndIncrement();
 >>
@@ -911,8 +929,11 @@ private static void printResult(int states, int transitions, boolean deadlockDet
 }
 >>
 
+model_check_init_static(map, keyy, entries) ::= <<
+<map>.put("<keyy>", new HashSet\<>(Arrays.asList(<entries:{entry | "<entry>"}; separator=", ">)));
+>>
 
-model_check_main(machine, invariants) ::= <<
+model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
 private static <machine> next(LinkedList\<<machine>\> collection, Object lock, Type type) {
     synchronized(lock) {
         return switch(type) {
@@ -948,13 +969,21 @@ public static void main(String[] args) {
     LinkedList\<<machine>\> collection = new LinkedList\<>();
     collection.add(machine);
 
+    Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
+    <invariantDependency; separator="\n">
+    Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
+    <guardDependency; separator="\n">
+
+    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
+    Map\<<machine>, <machine>\> parents = new HashMap\<>();
+
     AtomicInteger transitions = new AtomicInteger(0);
 
     while(!collection.isEmpty() && !stopThreads.get()) {
         possibleQueueChanges.incrementAndGet();
         <machine> state = next(collection, lock, Type.MIXED);
         Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(state, transitions);
+            Set\<<machine>\> nextStates = generateNextStates(state, invariantDependency, dependentInvariant, transitions);
 
             nextStates.forEach(nextState -> {
                 synchronized(lock) {
@@ -985,7 +1014,7 @@ public static void main(String[] args) {
                 stopThreads.set(true);
             }
 
-            if(<invariants:{inv | !state.<inv>()}; separator=" || ">) {
+            if(!checkInvariants(state, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -1016,4 +1045,3 @@ public static void main(String[] args) {
 
 record_private_variable_prefix() ::= <<
 >>
-

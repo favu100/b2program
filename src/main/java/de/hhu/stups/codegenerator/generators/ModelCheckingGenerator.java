@@ -14,6 +14,7 @@ import org.stringtemplate.v4.STGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ModelCheckingGenerator {
 
@@ -38,6 +39,7 @@ public class ModelCheckingGenerator {
             ST template = currentGroup.getInstanceOf("model_check");
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
             TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
+            TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariantsFunction(machineNode));
             TemplateHandler.add(template, "printResult", generatePrintResult());
             TemplateHandler.add(template, "main", generateMain(machineNode));
             typeGenerator.setFromOutside(false);
@@ -191,7 +193,46 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("model_check_main");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
+        TemplateHandler.add(template, "invariantDependency", generateStaticInformation("invariantDependency", modelCheckingInfo.getInvariantDependency()));
+        TemplateHandler.add(template, "guardDependency", generateStaticInformation("guardDependency", modelCheckingInfo.getGuardDependency()));
         return template.render();
+    }
+
+    public List<String> generateStaticInformation(String mapName, Map<String, List<String>> map) {
+        List<String> information = new ArrayList<>();
+        for(String key : map.keySet()) {
+            information.add(generateStaticEntry(mapName, key, map.get(key)));
+        }
+        return information;
+    }
+
+    public String generateStaticEntry(String map, String key, List<String> entries) {
+        ST template = currentGroup.getInstanceOf("model_check_init_static");
+        TemplateHandler.add(template, "map", map);
+        TemplateHandler.add(template, "keyy", key);
+        TemplateHandler.add(template, "entries", entries);
+        return template.render();
+    }
+
+    public String generateModelCheckInvariantsFunction(MachineNode machineNode) {
+        ST template = currentGroup.getInstanceOf("model_check_invariants");
+        TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
+        TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariants());
+        return template.render();
+    }
+
+    public List<String> generateModelCheckInvariants() {
+        List<String> invariants = new ArrayList<>();
+        for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
+            ST template = currentGroup.getInstanceOf("model_check_invariant");
+            TemplateHandler.add(template, "invariant", invariant);
+            invariants.add(template.render());
+        }
+        return invariants;
+    }
+
+    public String generateModelCheckInvariant() {
+        return "";
     }
 
 

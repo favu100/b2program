@@ -870,13 +870,14 @@ if(state.<evalTransitions>()) {
 
 model_check_invariants(machine, checkInvariants) ::= <<
 public static boolean checkInvariants(<machine> state, Map\<<machine>, Set\<String>\> dependentInvariant) {
+    Set\<String> dependenInvariantsOfState = dependentInvariant.get(state);
     <checkInvariants; separator="\n">
     return true;
 }
 >>
 
 model_check_invariant(invariant) ::= <<
-if(dependentInvariant.get(state).contains("<invariant>")) {
+if(dependenInvariantsOfState.contains("<invariant>")) {
     if(!state.<invariant>()) {
         return false;
     }

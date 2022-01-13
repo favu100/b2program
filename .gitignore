@@ -156,8 +156,8 @@ classes
 send_user_interrupt
 probcli
 probcli.sh
-benchmarks/ProB/lib
-benchmarks/ProB/stdlib
+benchmarks/execution/ProB/lib
+benchmarks/execution/ProB/stdlib
 
 /*.c
 /*.cpp

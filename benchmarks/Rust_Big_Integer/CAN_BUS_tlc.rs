@@ -163,24 +163,24 @@ impl CAN_BUS_tlc {
         self._T2mode = BSet::new(vec![T2mode::T2MODE_SENSE, T2mode::T2MODE_TRANSMIT, T2mode::T2MODE_RELEASE]);
         self._T2state = BSet::new(vec![T2state::T2_EN, T2state::T2_RCV, T2state::T2_PROC, T2state::T2_CALC, T2state::T2_SEND, T2state::T2_WAIT, T2state::T2_RELEASE]);
         self._T3state = BSet::new(vec![T3state::T3_READY, T3state::T3_WRITE, T3state::T3_RELEASE, T3state::T3_READ, T3state::T3_PROC, T3state::T3_WAIT]);
-        self.T2v = BInteger::new(b"0");
-        self.T3_evaluated = BBoolean::new(true);
-        self.T3_enabled = BBoolean::new(true);
-        self.T1_state = T1state::T1_EN;
-        self.T2_state = T2state::T2_EN;
-        self.T3_state = T3state::T3_READY;
-        self.T1_writevalue = BInteger::new(b"0");
-        self.T2_writevalue = BInteger::new(b"0");
-        self.T2_readvalue = BInteger::new(b"0");
-        self.T2_readpriority = BInteger::new(b"0");
-        self.T3_readvalue = BInteger::new(b"0");
-        self.T3_readpriority = BInteger::new(b"0");
-        self.T1_timer = BInteger::new(b"2");
-        self.T2_timer = BInteger::new(b"3");
+        self.T2v = BInteger::new(b"0").clone();
+        self.T3_evaluated = BBoolean::new(true).clone();
+        self.T3_enabled = BBoolean::new(true).clone();
+        self.T1_state = T1state::T1_EN.clone();
+        self.T2_state = T2state::T2_EN.clone();
+        self.T3_state = T3state::T3_READY.clone();
+        self.T1_writevalue = BInteger::new(b"0").clone();
+        self.T2_writevalue = BInteger::new(b"0").clone();
+        self.T2_readvalue = BInteger::new(b"0").clone();
+        self.T2_readpriority = BInteger::new(b"0").clone();
+        self.T3_readvalue = BInteger::new(b"0").clone();
+        self.T3_readpriority = BInteger::new(b"0").clone();
+        self.T1_timer = BInteger::new(b"2").clone();
+        self.T2_timer = BInteger::new(b"3").clone();
         self.BUSwrite = BRelation::new(vec![BTuple::from_refs(&BInteger::new(b"0"), &BInteger::new(b"0"))]).clone().clone();
-        self.BUSvalue = BInteger::new(b"0");
-        self.BUSpriority = BInteger::new(b"0");
-        self.T2_mode = T2mode::T2MODE_SENSE;
+        self.BUSvalue = BInteger::new(b"0").clone();
+        self.BUSpriority = BInteger::new(b"0").clone();
+        self.T2_mode = T2mode::T2MODE_SENSE.clone();
     }
 
     pub fn get_NATSET(&self) -> BSet<BInteger> {
@@ -276,122 +276,122 @@ impl CAN_BUS_tlc {
     }
 
     pub fn T1Evaluate(&mut self) -> () {
-        self.T1_timer = BInteger::new(b"0");
-        self.T1_state = T1state::T1_CALC;
+        self.T1_timer = BInteger::new(b"0").clone();
+        self.T1_state = T1state::T1_CALC.clone();
     }
 
     pub fn T1Calculate(&mut self, mut p: BInteger) -> () {
-        self.T1_writevalue = p;
-        self.T1_state = T1state::T1_SEND;
+        self.T1_writevalue = p.clone();
+        self.T1_state = T1state::T1_SEND.clone();
     }
 
     pub fn T1SendResult(&mut self, mut ppriority: BInteger, mut pv: BInteger) -> () {
         let mut _ld_BUSwrite = self.BUSwrite.clone();
         self.BUSwrite = _ld_BUSwrite._override(&BRelation::new(vec![BTuple::from_refs(&ppriority, &pv)])).clone().clone();
-        self.T1_state = T1state::T1_WAIT;
+        self.T1_state = T1state::T1_WAIT.clone();
     }
 
     pub fn T1Wait(&mut self, mut pt: BInteger) -> () {
-        self.T1_timer = pt;
-        self.T1_state = T1state::T1_EN;
+        self.T1_timer = pt.clone();
+        self.T1_state = T1state::T1_EN.clone();
     }
 
     pub fn T2Evaluate(&mut self) -> () {
-        self.T2_timer = BInteger::new(b"0");
-        self.T2_state = T2state::T2_RCV;
+        self.T2_timer = BInteger::new(b"0").clone();
+        self.T2_state = T2state::T2_RCV.clone();
     }
 
     pub fn T2ReadBus(&mut self, mut ppriority: BInteger, mut pv: BInteger) -> () {
-        self.T2_readvalue = pv;
-        self.T2_readpriority = ppriority;
-        self.T2_state = T2state::T2_PROC;
+        self.T2_readvalue = pv.clone();
+        self.T2_readpriority = ppriority.clone();
+        self.T2_state = T2state::T2_PROC.clone();
     }
 
     pub fn T2Reset(&mut self) -> () {
         let mut _ld_T2v = self.T2v.clone();
-        self.T2_writevalue = _ld_T2v;
-        self.T2v = BInteger::new(b"0");
-        self.T2_state = T2state::T2_SEND;
-        self.T2_mode = T2mode::T2MODE_TRANSMIT;
+        self.T2_writevalue = _ld_T2v.clone();
+        self.T2v = BInteger::new(b"0").clone();
+        self.T2_state = T2state::T2_SEND.clone();
+        self.T2_mode = T2mode::T2MODE_TRANSMIT.clone();
     }
 
     pub fn T2Complete(&mut self) -> () {
-        self.T2_state = T2state::T2_RELEASE;
-        self.T2_mode = T2mode::T2MODE_SENSE;
+        self.T2_state = T2state::T2_RELEASE.clone();
+        self.T2_mode = T2mode::T2MODE_SENSE.clone();
     }
 
     pub fn T2ReleaseBus(&mut self, mut ppriority: BInteger) -> () {
         let mut _ld_BUSwrite = self.BUSwrite.clone();
         self.BUSwrite = _ld_BUSwrite.domainSubstraction(&BSet::new(vec![ppriority])).clone().clone();
-        self.T2_state = T2state::T2_WAIT;
+        self.T2_state = T2state::T2_WAIT.clone();
     }
 
     pub fn T2Calculate(&mut self) -> () {
-        self.T2v = self.T2_readvalue;
-        self.T2_state = T2state::T2_WAIT;
+        self.T2v = self.T2_readvalue.clone();
+        self.T2_state = T2state::T2_WAIT.clone();
     }
 
     pub fn T2WriteBus(&mut self, mut ppriority: BInteger, mut pv: BInteger) -> () {
         let mut _ld_BUSwrite = self.BUSwrite.clone();
         self.BUSwrite = _ld_BUSwrite._override(&BRelation::new(vec![BTuple::from_refs(&ppriority, &pv)])).clone().clone();
-        self.T2_state = T2state::T2_WAIT;
+        self.T2_state = T2state::T2_WAIT.clone();
     }
 
     pub fn T2Wait(&mut self, mut pt: BInteger) -> () {
-        self.T2_timer = pt;
-        self.T2_state = T2state::T2_EN;
+        self.T2_timer = pt.clone();
+        self.T2_state = T2state::T2_EN.clone();
     }
 
     pub fn T3Initiate(&mut self) -> () {
-        self.T3_state = T3state::T3_WRITE;
-        self.T3_enabled = BBoolean::new(false);
+        self.T3_state = T3state::T3_WRITE.clone();
+        self.T3_enabled = BBoolean::new(false).clone();
     }
 
     pub fn T3Evaluate(&mut self) -> () {
-        self.T3_state = T3state::T3_READ;
+        self.T3_state = T3state::T3_READ.clone();
     }
 
     pub fn T3writebus(&mut self, mut ppriority: BInteger, mut pv: BInteger) -> () {
         let mut _ld_BUSwrite = self.BUSwrite.clone();
         self.BUSwrite = _ld_BUSwrite._override(&BRelation::new(vec![BTuple::from_refs(&ppriority, &pv)])).clone().clone();
-        self.T3_state = T3state::T3_WAIT;
+        self.T3_state = T3state::T3_WAIT.clone();
     }
 
     pub fn T3Read(&mut self, mut ppriority: BInteger, mut pv: BInteger) -> () {
-        self.T3_readvalue = pv;
-        self.T3_readpriority = ppriority;
-        self.T3_state = T3state::T3_PROC;
+        self.T3_readvalue = pv.clone();
+        self.T3_readpriority = ppriority.clone();
+        self.T3_state = T3state::T3_PROC.clone();
     }
 
     pub fn T3Poll(&mut self) -> () {
-        self.T3_state = T3state::T3_WAIT;
+        self.T3_state = T3state::T3_WAIT.clone();
     }
 
     pub fn T3ReleaseBus(&mut self, mut ppriority: BInteger) -> () {
         let mut _ld_BUSwrite = self.BUSwrite.clone();
         self.BUSwrite = _ld_BUSwrite.domainSubstraction(&BSet::new(vec![ppriority])).clone().clone();
-        self.T3_state = T3state::T3_RELEASE;
+        self.T3_state = T3state::T3_RELEASE.clone();
     }
 
     pub fn T3Wait(&mut self) -> () {
-        self.T3_state = T3state::T3_READY;
-        self.T3_evaluated = BBoolean::new(true);
+        self.T3_state = T3state::T3_READY.clone();
+        self.T3_evaluated = BBoolean::new(true).clone();
     }
 
     pub fn T3ReEnableWait(&mut self) -> () {
-        self.T3_state = T3state::T3_READY;
-        self.T3_evaluated = BBoolean::new(true);
-        self.T3_enabled = BBoolean::new(true);
+        self.T3_state = T3state::T3_READY.clone();
+        self.T3_evaluated = BBoolean::new(true).clone();
+        self.T3_enabled = BBoolean::new(true).clone();
     }
 
     pub fn Update(&mut self, mut pmax: BInteger) -> () {
         let mut _ld_T1_timer = self.T1_timer.clone();
         let mut _ld_T2_timer = self.T2_timer.clone();
-        self.BUSvalue = self.BUSwrite.functionCall(&pmax);
-        self.BUSpriority = pmax;
-        self.T1_timer = _ld_T1_timer.minus(&BInteger::new(b"1"));
-        self.T2_timer = _ld_T2_timer.minus(&BInteger::new(b"1"));
-        self.T3_evaluated = BBoolean::new(false);
+        self.BUSvalue = self.BUSwrite.functionCall(&pmax).clone();
+        self.BUSpriority = pmax.clone();
+        self.T1_timer = _ld_T1_timer.minus(&BInteger::new(b"1")).clone();
+        self.T2_timer = _ld_T2_timer.minus(&BInteger::new(b"1")).clone();
+        self.T3_evaluated = BBoolean::new(false).clone();
     }
 }
 

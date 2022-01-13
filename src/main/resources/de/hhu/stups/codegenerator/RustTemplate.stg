@@ -55,9 +55,9 @@ fn init(&mut self) {
 }
 >>
 
-assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, lhsIsLocal, lhsIsParam) ::= <<
+assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, lhsIsLocal, lhsIsParam, useBigInteger) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <if(lhsIsLocal && !lhsIsParam)>Option::Some(<endif><val><if(rightTypeIsCollection)>.clone()<endif><if(lhsIsLocal && !lhsIsParam)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
+<if(isIdentifierLhs)><identifier> = <if(lhsIsLocal && !lhsIsParam)>Option::Some(<endif><val><if(rightTypeIsCollection || useBigInteger)>.clone()<endif><if(lhsIsLocal && !lhsIsParam)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
 >>
 
 identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigned, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable, useBigInteger) ::= <<

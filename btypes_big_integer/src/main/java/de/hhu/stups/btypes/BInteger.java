@@ -58,6 +58,8 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 		this.value = value;
 	}
 
+	public BInteger(int value) { new BInteger(String.valueOf(value)); }
+
 	public static BInteger build(int value) {
 		return new BInteger(String.valueOf(value));
 	}

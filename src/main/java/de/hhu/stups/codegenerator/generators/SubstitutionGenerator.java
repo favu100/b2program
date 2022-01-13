@@ -456,6 +456,7 @@ public class SubstitutionGenerator {
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("assignment");
+        TemplateHandler.add(substitution, "useBigInteger", machineGenerator.isUseBigInteger());
         generateAssignmentBody(substitution, lhs, rhs, 0, "", false);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "val", getNestedFunctionCall(lhs, rhs));

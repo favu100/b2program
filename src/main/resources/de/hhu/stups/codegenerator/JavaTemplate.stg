@@ -953,12 +953,13 @@ if(dependentInvariantsOfState.contains("<invariant>")) {
 }
 >>
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters) ::= <<
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
+<if(isCaching)>
 if(!dependentInvariant.containsKey(copiedState)) {
     dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
 }
@@ -970,6 +971,7 @@ synchronized(guardLock) {
         parents.put(copiedState, state);
     }
 }
+<endif>
 result.add(copiedState);
 transitions.getAndIncrement();
 >>

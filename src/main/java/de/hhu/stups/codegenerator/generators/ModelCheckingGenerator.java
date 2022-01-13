@@ -82,17 +82,18 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "transitionIdentifier", "_trid_" + index);
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
-        TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType));
+        TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType, isCaching));
         TemplateHandler.add(template, "isCaching", isCaching);
         return template.render();
     }
 
-    public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType) {
+    public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType, boolean isCaching) {
         ST template = currentGroup.getInstanceOf("model_check_transition_body");
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "operation", nameHandler.handle(opNode.getName()));
         TemplateHandler.add(template, "hasParameters", hasParameters);
+        TemplateHandler.add(template, "isCaching", isCaching);
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
 

@@ -29,7 +29,9 @@ import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
 import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class <machine> {
+
 
     <if(forModelChecking)>
     private static final Var ASSOC;
@@ -41,11 +43,12 @@ public class <machine> {
         GET = RT.var("clojure.core", "get");
     }
 
-    private enum Type {
+    public static enum Type {
         BFS,
         DFS,
         MIXED
     }
+
     <endif>
 
     <structs; separator= "\n\n">
@@ -860,23 +863,28 @@ model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 <main>
 >>
 
-model_check_next_states(machine, transitions) ::= <<
+model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 @SuppressWarnings("unchecked")
-private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> state, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, PersistentHashMap> guardCache, Map\<<machine>, <machine>\> parents, AtomicInteger transitions) {
+private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> state, boolean isCaching, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, PersistentHashMap> guardCache, Map\<<machine>, <machine>\> parents, AtomicInteger transitions) {
     Set\<<machine>\> result = new HashSet\<>();
-    PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
-    PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-    Set\<String> dependentGuardsOfState = null;
-    Object cachedValue = null;
-    boolean dependentGuardsBoolean = true;
-    <transitions>
-    guardCache.put(state, newCache);
+    if(isCaching) {
+        PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
+        PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
+        Set\<String> dependentGuardsOfState = null;
+        Object cachedValue = null;
+        boolean dependentGuardsBoolean = true;
+        <transitionsWithCaching>
+        guardCache.put(state, newCache);
+    } else {
+        <transitionsWithoutCaching>
+    }
     return result;
 }
 >>
 
-model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions) ::= <<
+model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
+<if(isCaching)>
 BSet\<<tupleType>\> <transitionIdentifier>;
 
 dependentGuardsOfState = dependentGuard.get(state);
@@ -895,6 +903,13 @@ for(<tupleType> param : <transitionIdentifier>) {
     <execTransitions>
 }
 <else>
+BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
+for(<tupleType> param : <transitionIdentifier>) {
+    <execTransitions>
+}
+<endif>
+<else>
+<if(isCaching)>
 boolean <transitionIdentifier>;
 dependentGuardsOfState = dependentGuard.get(state);
 if(dependentGuardsOfState != null) {
@@ -911,14 +926,22 @@ newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <tran
 if(<transitionIdentifier>) {
     <execTransitions>
 }
+<else>
+if(state.<evalTransitions>()) {
+    <execTransitions>
+}
+<endif>
 <endif>
 >>
 
-model_check_invariants(machine, checkInvariants) ::= <<
-public static boolean checkInvariants(<machine> state, Map\<<machine>, Set\<String>\> dependentInvariant) {
-    Set\<String> dependentInvariantsOfState = dependentInvariant.get(state);
-    <checkInvariants; separator="\n">
-    return true;
+model_check_invariants(machine, checkInvariants, invariants) ::= <<
+public static boolean checkInvariants(<machine> state, boolean isCaching, Map\<<machine>, Set\<String>\> dependentInvariant) {
+    if(isCaching) {
+        Set\<String> dependentInvariantsOfState = dependentInvariant.get(state);
+        <checkInvariants; separator="\n">
+        return true;
+    }
+    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
 }
 >>
 
@@ -1001,12 +1024,82 @@ private static <machine> next(LinkedList\<<machine>\> collection, Object lock, T
     }
 }
 
-
-public static void main(String[] args) {
+private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
     Object lock = new Object();
     Object guardLock = new Object();
     Object waitLock = new Object();
-    ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(6);
+
+    <machine> machine = new <machine>();
+
+
+    AtomicBoolean invariantViolated = new AtomicBoolean(false);
+    AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+    AtomicBoolean stopThreads = new AtomicBoolean(false);
+
+    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
+        invariantViolated.set(true);
+    }
+
+    Set\<<machine>\> states = new HashSet\<>();
+    states.add(machine);
+    AtomicInteger numberStates = new AtomicInteger(1);
+
+    LinkedList\<<machine>\> collection = new LinkedList\<>();
+    collection.add(machine);
+
+    Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
+    Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
+    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
+    Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    if(isCaching) {
+        <invariantDependency; separator="\n">
+        <guardDependency; separator="\n">
+        dependentInvariant.put(machine, new HashSet\<>());
+        parents.put(machine, null);
+    }
+
+    AtomicInteger transitions = new AtomicInteger(0);
+
+    while(!collection.isEmpty() && !stopThreads.get()) {
+        <machine> state = next(collection, lock, type);
+
+        Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+
+        nextStates.forEach(nextState -> {
+            if(!states.contains(nextState)) {
+                numberStates.getAndIncrement();
+                states.add(nextState);
+                collection.add(nextState);
+                if(numberStates.get() % 50000 == 0) {
+                    System.out.println("VISITED STATES: " + numberStates.get());
+                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                    System.out.println("-------------------");
+                }
+            }
+        });
+
+        if(nextStates.isEmpty()) {
+            deadlockDetected.set(true);
+            stopThreads.set(true);
+        }
+
+        if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            invariantViolated.set(true);
+            stopThreads.set(true);
+        }
+
+    }
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+}
+
+
+private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
+    Object lock = new Object();
+    Object guardLock = new Object();
+    Object waitLock = new Object();
+    ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
 
     <machine> machine = new <machine>();
 
@@ -1028,22 +1121,25 @@ public static void main(String[] args) {
     collection.add(machine);
 
     Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
-    <invariantDependency; separator="\n">
     Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
-    <guardDependency; separator="\n">
-
     Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
     Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
     Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    if(isCaching) {
+        <invariantDependency; separator="\n">
+        <guardDependency; separator="\n">
+        dependentInvariant.put(machine, new HashSet\<>());
+        parents.put(machine, null);
+    }
 
     AtomicInteger transitions = new AtomicInteger(0);
 
     while(!collection.isEmpty() && !stopThreads.get()) {
         possibleQueueChanges.incrementAndGet();
-        <machine> state = next(collection, lock, Type.MIXED);
+        <machine> state = next(collection, lock, type);
         Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
                 synchronized(lock) {
@@ -1074,7 +1170,7 @@ public static void main(String[] args) {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, dependentInvariant)) {
+            if(!checkInvariants(state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -1100,6 +1196,55 @@ public static void main(String[] args) {
         e.printStackTrace();
     }
     printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+}
+
+
+public static void main(String[] args) {
+    if(args.length != 3) {
+        System.out.println("Number of arguments errorneous");
+        return;
+    }
+    String strategy = args[0];
+    String numberThreads = args[1];
+    String caching = args[2];
+
+    Type type;
+
+    if("mixed".equals(strategy)) {
+        type = Type.MIXED;
+    } else if("bf".equals(strategy)) {
+        type = Type.BFS;
+    } else if ("df".equals(strategy)) {
+        type = Type.DFS;
+    } else {
+        System.out.println("Input for strategy is wrong.");
+        return;
+    }
+
+    int threads = 0;
+    try {
+        threads = Integer.parseInt(numberThreads);
+    } catch(NumberFormatException e) {
+        System.out.println("Input for number of threads is wrong.");
+        return;
+    }
+    if(threads \<= 0) {
+        System.out.println("Input for number of threads is wrong.");
+        return;
+    }
+
+    boolean isCaching = true;
+    try {
+        isCaching = Boolean.parseBoolean(caching);
+    } catch(Exception e) {
+        System.out.println("Input for caching is wrong.");
+        return;
+    }
+    if(threads == 1) {
+        modelCheckSingleThreaded(type, isCaching);
+    } else {
+        modelCheckMultiThreaded(type, threads, isCaching);
+    }
 }
 >>
 

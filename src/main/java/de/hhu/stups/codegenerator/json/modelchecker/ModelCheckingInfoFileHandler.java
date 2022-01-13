@@ -72,12 +72,12 @@ public class ModelCheckingInfoFileHandler {
         Map<String, List<String>> guardDependency = new HashMap<>();
         JsonObject dependentGuardObject = modelCheckingInfoObject.getAsJsonObject("guardDependency");
         for(String key : dependentGuardObject.keySet()) {
-            List<String> dependenGuard = new ArrayList<>();
+            List<String> dependentGuard = new ArrayList<>();
             JsonArray dependentGuardArray = dependentGuardObject.get(key).getAsJsonArray();
             for(int i = 0; i < dependentGuardArray.size(); i++) {
-                dependenGuard.add(dependentGuardArray.get(i).getAsString());
+                dependentGuard.add(dependentGuardArray.get(i).getAsString());
             }
-            guardDependency.put(key, dependenGuard);
+            guardDependency.put(key, dependentGuard);
         }
 
 

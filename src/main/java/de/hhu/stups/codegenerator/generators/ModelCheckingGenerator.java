@@ -51,20 +51,21 @@ public class ModelCheckingGenerator {
     public String generateNextStates(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_next_states");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
-        TemplateHandler.add(template, "transitions", generateTransitions(machineNode));
+        TemplateHandler.add(template, "transitionsWithCaching", generateTransitions(machineNode, true));
+        TemplateHandler.add(template, "transitionsWithoutCaching", generateTransitions(machineNode, false));
         return template.render();
     }
 
-    public List<String> generateTransitions(MachineNode machineNode) {
+    public List<String> generateTransitions(MachineNode machineNode, boolean isCaching) {
         List<String> transitions = new ArrayList<>();
         List<OperationNode> operations = machineNode.getOperations();
         for(int i = 0; i < operations.size(); i++) {
-            transitions.add(generateTransition(machineNode, operations.get(i), i+1));
+            transitions.add(generateTransition(machineNode, operations.get(i), i+1, isCaching));
         }
         return transitions;
     }
 
-    public String generateTransition(MachineNode machineNode, OperationNode operationNode, int index) {
+    public String generateTransition(MachineNode machineNode, OperationNode operationNode, int index, boolean isCaching) {
         ST template = currentGroup.getInstanceOf("model_check_transition");
         String opName = nameHandler.handle(operationNode.getName());
         boolean hasParameters = !operationNode.getParams().isEmpty();
@@ -82,6 +83,7 @@ public class ModelCheckingGenerator {
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
         TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType));
+        TemplateHandler.add(template, "isCaching", isCaching);
         return template.render();
     }
 
@@ -218,6 +220,7 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("model_check_invariants");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariants());
+        TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
         return template.render();
     }
 
@@ -229,10 +232,6 @@ public class ModelCheckingGenerator {
             invariants.add(template.render());
         }
         return invariants;
-    }
-
-    public String generateModelCheckInvariant() {
-        return "";
     }
 
 

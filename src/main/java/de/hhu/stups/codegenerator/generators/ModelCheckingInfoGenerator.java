@@ -137,9 +137,6 @@ public class ModelCheckingInfoGenerator {
             guardDependency.put(writeKey, new ArrayList<>(dependentGuard));
         }
 
-        System.out.println(invariantDependency);
-        System.out.println(guardDependency);
-
         // TODO: Split guards conjuncts
         return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
                 invariantDependency, guardDependency);

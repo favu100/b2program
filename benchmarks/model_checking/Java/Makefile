@@ -10,7 +10,7 @@ build:
 OUTPUT ?= runtimes.txt
 DEPENDENCIES ?= :btypes.jar
 STRATEGY=mixed
-THREADS=2
+THREADS=6
 CACHING=false
 
 %.class : %.java

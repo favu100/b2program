@@ -434,7 +434,7 @@ class BRelation : public BObject {
             return BRelation<S,T>(resultMap);
         }
 
-        BBoolean subset(const BRelation<S,T>& arg) {
+        BBoolean subset(const BRelation<S,T>& arg) const {
 
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,

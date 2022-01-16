@@ -1029,7 +1029,6 @@ private static <machine> next(LinkedList\<<machine>\> collection, Object lock, T
 private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
     Object lock = new Object();
     Object guardLock = new Object();
-    Object waitLock = new Object();
 
     <machine> machine = new <machine>();
 

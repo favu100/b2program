@@ -1031,7 +1031,63 @@ static <machine> next(std::list\<<machine>\>& collection, std::mutex& mutex, <ma
     };
 }
 
-int main() {
+static void modelCheckSingleThreaded() {
+    std::mutex mutex;
+
+    <machine> machine = <machine>();
+
+    std::atomic\<bool> invariantViolated;
+    invariantViolated = false;
+    std::atomic\<bool> deadlockDetected;
+    deadlockDetected = false;
+    std::atomic\<bool> stopThreads;
+    stopThreads = false;
+
+    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
+        invariantViolated = true;
+    }
+
+    std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
+    states.insert(machine);
+    std::atomic\<int> numberStates;
+    numberStates = 1;
+
+    std::list\<<machine>\> collection = std::list\<<machine>\>();
+    collection.push_back(machine);
+
+    std::atomic\<int> transitions;
+    transitions = 0;
+
+    while(!collection.empty() && !stopThreads) {
+        <machine> state = next(collection, mutex, <machine>::MIXED);
+        std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state, transitions);
+        for(auto nextState : nextStates) {
+            if(states.find(nextState) == states.end()) {
+                numberStates += 1;
+                states.insert(nextState);
+                collection.push_back(nextState);
+                if(numberStates % 50000 == 0) {
+                    cout \<\< "VISITED STATES: " \<\< numberStates \<\< "\n";
+                    cout \<\< "EVALUATED TRANSITIONS: " \<\< transitions \<\< "\n";
+                    cout \<\< "-------------------" \<\< "\n";
+                }
+            }
+        }
+
+        if(nextStates.empty()) {
+            deadlockDetected = true;
+            stopThreads = true;
+        }
+
+        if(<invariants:{inv | !state.<inv>()}; separator=" || ">) {
+            invariantViolated = true;
+            stopThreads = true;
+        }
+    }
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+}
+
+static void modelCheckMultiThreaded() {
     std::mutex mutex;
     std::mutex waitMutex;
     std::condition_variable waitCV;
@@ -1131,6 +1187,10 @@ int main() {
     }
     workers.join();
     printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+}
+
+int main() {
+    modelCheckMultiThreaded();
     return 0;
 }
 >>

@@ -13,8 +13,20 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<unordered_set>
 #include \<list>
 #include \<atomic>
+#include \<mutex>
+#include \<future>
+#include \<boost/asio/post.hpp>
+#include \<boost/asio/thread_pool.hpp>
 <endif>
-<if(useBigInteger)>#include \<btypes_big_integer/BUtils.hpp><else>#include \<btypes_primitives/BUtils.hpp><endif>
+<if(useBigInteger)>
+#include \<btypes_big_integer/BUtils.hpp>
+#include \<btypes_big_integer/StateNotReachableError.hpp>
+#include \<btypes_big_integer/PreconditionOrAssertionViolation.hpp>
+<else>
+#include \<btypes_primitives/BUtils.hpp>
+#include \<btypes_primitives/StateNotReachableError.hpp>
+#include \<btypes_primitives/PreconditionOrAssertionViolation.hpp>
+<endif>
 <imports; separator="\n">
 <includedMachines; separator="\n">
 
@@ -26,6 +38,10 @@ using namespace std;
 class <machine> {
 
     public:
+
+        <if(forModelChecking)>
+        enum Type { BFS, DFS, MIXED };
+        <endif>
 
         <structs; separator="\n\n">
 
@@ -119,16 +135,33 @@ machine_equal_predicate(var) ::= <<
 o1.<var>() == o2.<var>()
 >>
 
-machine_hash(assignments) ::= <<
+machine_hash(assignments1, assignments2) ::= <<
 int hashCode() const {
+    return this->_hashCode_1();
+}
+
+int _hashCode_1() const {
     int result = 1;
-    <assignments; separator= "\n">
+    <assignments1; separator= "\n">
+    return result;
+}
+
+int _hashCode_2() const {
+    int result = 1;
+    <assignments2; separator= "\n">
     return result;
 }
 >>
 
-machine_hash_assignment(var) ::= <<
-result = (31 * result) ^ ((this-><var>()).hashCode() \<\< 1);
+machine_hash_assignment(primeNumber, var) ::= <<
+result = (<primeNumber> * result) ^ ((this-><var>()).hashCode() \<\< 1);
+>>
+
+machine_string(machine, variables) ::= <<
+friend std::ostream& operator\<\<(std::ostream &strm, const <machine> &machine) {
+  <variables:{var | strm \<\< "<var>: " \<\< machine.<var>() \<\< "\n";}; separator="\n">
+  return strm;
+}
 >>
 
 
@@ -301,9 +334,15 @@ for(<type> <identifier> : <set>.pow().difference(<set>)) {
 }
 >>
 
-let_expression_predicate(type, identifier, body) ::= <<
+let_expression_predicate(type, identifier, hasCondition, conditionalPredicate, body) ::= <<
 <type> <identifier>;
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    <body>
+}
+<else>
 <body>
+<endif>
 >>
 
 let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
@@ -311,9 +350,15 @@ let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
 <identifier> = <val>;
 >>
 
-set_comprehension(type, identifier, comprehension) ::= <<
+set_comprehension(type, identifier, hasCondition, conditionalPredicate, comprehension) ::= <<
 <type> <identifier> = <type>();
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    <comprehension>
+}
+<else>
 <comprehension>
+<endif>
 >>
 
 set_comprehension_predicate(otherIterationConstructs, set, type, element, emptyPredicate, predicate, isRelation) ::= <<
@@ -327,9 +372,15 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-lambda(type, identifier, lambda) ::= <<
+lambda(type, identifier, hasCondition, conditionalPredicate, lambda) ::= <<
 <type> <identifier> = <type>();
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    <lambda>
+}
+<else>
 <lambda>
+<endif>
 >>
 
 lambda_expression(otherIterationConstructs, relation, leftType, rightType, element, expression, emptyPredicate, predicate) ::= <<
@@ -353,9 +404,15 @@ lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
 <if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
-quantified_predicate(identifier, forall, predicate) ::= <<
+quantified_predicate(identifier, forall, hasCondition, conditionalPredicate, predicate) ::= <<
 BBoolean <identifier> = BBoolean(<if(forall)>true<else>false<endif>);
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    <predicate>
+}
+<else>
 <predicate>
+<endif>
 >>
 
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
@@ -371,9 +428,15 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 <endif>
 >>
 
-quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
+quantified_expression(identifier, identity, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
 <if(isInteger)>BInteger <identifier> = BInteger(<identity>);<else>BSet\<<setType>\> <identifier> = BSet\<<setType>\>();<endif>
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    <evaluation>
+}
+<else>
 <evaluation>
+<endif>
 >>
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
@@ -398,8 +461,8 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
-<if(noParameters)>bool<else>BSet\<<subType>\><endif> _tr_<operationName>() {
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
+<if(noParameters)>bool<else>BSet\<<subType>\><endif> _tr_<operationName>() const {
     <if(noParameters)>
     <if(noPredicate)>
     return true;
@@ -408,14 +471,20 @@ transition(noParameters, noPredicate, identifier, subType, operationName, predic
     <endif>
     <else>
     BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
+    <if(hasCondition)>
+    if((<conditionalPredicate>).booleanValue()) {
+        <combination>
+    }
+    <else>
     <combination>
+    <endif>
     return <identifier>;
     <endif>
 }
 >>
 
 invariant(invariantFunction, iterationConstruct, predicate) ::= <<
-bool <invariantFunction>() {
+bool <invariantFunction>() const {
     <iterationConstruct; separator="\n">
     return (<predicate>).booleanValue();
 }
@@ -432,7 +501,7 @@ this-><variable> = <variable>;
 >>
 
 copy(machine, parameters) ::= <<
-<machine> _copy() {
+<machine> _copy() const {
     return <machine>(<parameters; separator=", ">);
 }
 >>
@@ -655,11 +724,30 @@ unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
-select(iterationConstruct, predicate, then) ::= <<
+pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<if(isModelChecking && !isTopLevel)>
 <iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
+} else {
+    throw PreconditionOrAssertionViolation();
 }
+<else>
+<then>
+<endif>
+>>
+
+select(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<if(isModelChecking && isTopLevel)>
+<then>
+<else>
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()) {
+    <then>
+} else {
+    throw StateNotReachableError();
+}
+<endif>
 >>
 
 if(iterationConstruct, predicate, then, else1) ::= <<
@@ -840,10 +928,10 @@ model_check(nextStates, printResult, main) ::= <<
 <main>
 >>
 
-model_check_next_states(machine, transitions) ::= <<
-static std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(<machine>& state, std::atomic\<int>& transitions) {
+model_check_next_states(machine, transitionsWithoutCaching) ::= <<
+static std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state, std::atomic\<int>& transitions) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
-    <transitions>
+    <transitionsWithoutCaching>
     return result;
 }
 >>
@@ -861,6 +949,12 @@ if(state.<evalTransitions>()) {
 <endif>
 >>
 
+model_check_invariants(machine, checkInvariants, invariants) ::= <<
+>>
+
+model_check_invariant(invariant) ::= <<
+>>
+
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters) ::= <<
 <if(hasParameters)>
 <readParameters>
@@ -868,7 +962,7 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 result.insert(copiedState);
-transitions = transitions.load(std::memory_order_relaxed) + 1;
+transitions += 1;
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -905,15 +999,52 @@ static void printResult(int states, int transitions, bool deadlockDetected, bool
 }
 >>
 
+model_check_init_static(map, keyy, entries) ::= <<
+>>
+
 
 model_check_main(machine, invariants) ::= <<
+static <machine> next(std::list\<<machine>\>& collection, std::mutex& mutex, <machine>::Type type) {
+    std::unique_lock\<std::mutex> lock(mutex);
+    switch(type) {
+        case <machine>::BFS: {
+            <machine> state = collection.front();
+            collection.pop_front();
+            return state;
+        }
+        case <machine>::DFS: {
+            <machine> state = collection.back();
+            collection.pop_back();
+            return state;
+        }
+        case <machine>::MIXED: {
+            if(collection.size() % 2 == 0) {
+                <machine> state = collection.front();
+                collection.pop_front();
+                return state;
+            } else {
+                <machine> state = collection.back();
+                collection.pop_back();
+                return state;
+            }
+        }
+    };
+}
+
 int main() {
+    std::mutex mutex;
+    std::mutex waitMutex;
+    std::condition_variable waitCV;
+
     <machine> machine = <machine>();
 
 
     std::atomic\<bool> invariantViolated;
     invariantViolated = false;
-    bool deadlockDetected = false;
+    std::atomic\<bool> deadlockDetected;
+    deadlockDetected = false;
+    std::atomic\<bool> stopThreads;
+    stopThreads = false;
 
     if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
         invariantViolated = true;
@@ -930,38 +1061,76 @@ int main() {
     std::atomic\<int> transitions;
     transitions = 0;
 
-    while(!collection.empty()) {
-        // TODO: BF, DF, MIXED
-        <machine> state;
-        if(rand() > 0.5) {
-            state = collection.front();
-            collection.pop_front();
-        } else {
-            state = collection.back();
-            collection.pop_back();
-        }
-        std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state, transitions);
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-        }
+    std::atomic\<int> possibleQueueChanges;
+    possibleQueueChanges = 0;
 
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                if(<invariants:{inv | !nextState.<inv>()}; separator=" || ">) {
-                    invariantViolated = true;
+    std::atomic\<bool> waitFlag;
+    waitFlag = true;
+
+    boost::asio::thread_pool workers(6);
+
+    while(!collection.empty() && !stopThreads) {
+        possibleQueueChanges += 1;
+        <machine> state = next(collection, mutex, <machine>::MIXED);
+        std::packaged_task\<void()> task([&, state] {
+            std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state, transitions);
+
+
+            for(auto nextState : nextStates) {
+                {
+                    std::unique_lock\<std::mutex> lock(mutex);
+                    if(states.find(nextState) == states.end()) {
+                        numberStates += 1;
+                        states.insert(nextState);
+                        collection.push_back(nextState);
+                        if(numberStates % 50000 == 0) {
+                            cout \<\< "VISITED STATES: " \<\< numberStates \<\< "\n";
+                            cout \<\< "EVALUATED TRANSITIONS: " \<\< transitions \<\< "\n";
+                            cout \<\< "-------------------" \<\< "\n";
+                        }
+                    }
                 }
-                states.insert(nextState);
-                collection.push_back(nextState);
-                numberStates += 1;
-                if(numberStates.load(std::memory_order_relaxed) % 10000 == 0) {
-                    cout \<\< "VISITED STATES: " \<\< numberStates.load(std::memory_order_relaxed) \<\< "\n";
-                    cout \<\< "EVALUATED TRANSITIONS: " \<\< transitions.load(std::memory_order_relaxed) \<\< "\n";
-                    cout \<\< "-------------------" \<\< "\n";
+            }
+
+            {
+                std::unique_lock\<std::mutex> lock(mutex);
+                possibleQueueChanges -= 1;
+                int running = possibleQueueChanges;
+                if (!collection.empty() || running == 0) {
+                    {
+                        std::unique_lock\<std::mutex> lock(waitMutex);
+                        waitFlag = false;
+                        waitCV.notify_one();
+                    }
                 }
+            }
+
+            if(nextStates.empty()) {
+                deadlockDetected = true;
+                stopThreads = true;
+            }
+
+            if(<invariants:{inv | !state.<inv>()}; separator=" || ">) {
+                invariantViolated = true;
+                stopThreads = true;
+            }
+
+
+        });
+        waitFlag = true;
+        boost::asio::post(workers, std::move(task));
+
+        {
+            std::unique_lock\<std::mutex> lock(waitMutex);
+            if (collection.empty() && possibleQueueChanges > 0) {
+                waitCV.wait(lock, [&] {
+                    return waitFlag == false;
+                });
             }
         }
     }
-    printResult(numberStates.load(std::memory_order_relaxed), transitions.load(std::memory_order_relaxed), deadlockDetected, invariantViolated.load(std::memory_order_relaxed));
+    workers.join();
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
     return 0;
 }
 >>

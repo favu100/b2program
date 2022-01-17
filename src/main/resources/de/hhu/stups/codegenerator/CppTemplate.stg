@@ -1050,9 +1050,13 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 >>
 
 model_check_invariants(machine, checkInvariants, invariants) ::= <<
-static bool checkInvariants(const <machine>& state, bool isCaching, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentInvariant) {
+static bool checkInvariants(std::mutex& guardMutex, const <machine>& state, bool isCaching, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentInvariant) {
     if(isCaching) {
-        std::unordered_set\<string> dependentInvariantsOfState = dependentInvariant[state];
+        std::unordered_set\<string> dependentInvariantsOfState;
+        {
+            std::unique_lock\<std::mutex> lock(guardMutex);
+            dependentInvariantsOfState = dependentInvariant[state];
+        }
         <checkInvariants; separator="\n">
         return true;
     }
@@ -1184,7 +1188,7 @@ static void modelCheckSingleThreaded(bool isCaching) {
             stopThreads = true;
         }
 
-        if(!checkInvariants(state, isCaching, dependentInvariant)) {
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
             invariantViolated = true;
             stopThreads = true;
         }
@@ -1285,7 +1289,7 @@ static void modelCheckMultiThreaded(bool isCaching) {
                 stopThreads = true;
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
             }

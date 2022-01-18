@@ -40,11 +40,13 @@ $(JAVAFILE): $(JAR) $(BFILE)
 	@echo "Generating Java Model Checker file $(JAVAFILE) from B file $(BFILE)"
 	java -jar $(JAR) java $(BIGINT) -2147483648 2147483647 10 false true $(BFILE)
 
+CACHING=false
+THREADS=1
 javamc: $(JAVAFILE) btypes.jar
 	@echo "Compiling Java Model Checker file $(JAVAFILE)"
 	time javac -cp .:btypes.jar $(JAVAFILE)
-	@echo "Running Java Model Checker file $(JAVAFILE)"
-	time java -cp .:btypes.jar $(JAVAFILE) df 1 false
+	@echo "Running Java Model Checker file $(JAVAFILE), THREADS=$(THREADS), CACHING=$(CACHING)"
+	time java -cp .:btypes.jar $(JAVAFILE) df $(THREADS) $(CACHING)
 
 clean:
 	-rm $(JAVAFILE)

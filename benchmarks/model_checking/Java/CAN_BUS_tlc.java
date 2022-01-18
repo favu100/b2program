@@ -759,11 +759,10 @@ public class CAN_BUS_tlc {
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = null;
+            Set<String> dependentGuardsOfState = dependentGuard.get(state);
             Object cachedValue = null;
             boolean dependentGuardsBoolean = true;
             boolean _trid_1;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T1Evaluate");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1Evaluate");
@@ -778,10 +777,10 @@ public class CAN_BUS_tlc {
             if(_trid_1) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1Evaluate();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T1Evaluate"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T1Evaluate"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T1Evaluate"));
                     }
@@ -793,8 +792,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BInteger> _trid_2;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T1Calculate");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1Calculate");
@@ -811,10 +808,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1Calculate(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T1Calculate"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T1Calculate"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T1Calculate"));
                     }
@@ -826,8 +823,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BInteger, BInteger>> _trid_3;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T1SendResult");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1SendResult");
@@ -845,10 +840,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1SendResult(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T1SendResult"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T1SendResult"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T1SendResult"));
                     }
@@ -860,8 +855,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BInteger> _trid_4;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T1Wait");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1Wait");
@@ -878,10 +871,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1Wait(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T1Wait"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T1Wait"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T1Wait"));
                     }
@@ -893,7 +886,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_5;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2Evaluate");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Evaluate");
@@ -908,10 +900,10 @@ public class CAN_BUS_tlc {
             if(_trid_5) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Evaluate();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2Evaluate"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2Evaluate"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2Evaluate"));
                     }
@@ -923,8 +915,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BInteger, BInteger>> _trid_6;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2ReadBus");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2ReadBus");
@@ -942,10 +932,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2ReadBus(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2ReadBus"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2ReadBus"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2ReadBus"));
                     }
@@ -957,7 +947,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_7;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2Reset");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Reset");
@@ -972,10 +961,10 @@ public class CAN_BUS_tlc {
             if(_trid_7) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Reset();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2Reset"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2Reset"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2Reset"));
                     }
@@ -987,7 +976,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_8;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2Complete");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Complete");
@@ -1002,10 +990,10 @@ public class CAN_BUS_tlc {
             if(_trid_8) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Complete();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2Complete"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2Complete"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2Complete"));
                     }
@@ -1017,8 +1005,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BInteger> _trid_9;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2ReleaseBus");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2ReleaseBus");
@@ -1035,10 +1021,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2ReleaseBus(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2ReleaseBus"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2ReleaseBus"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2ReleaseBus"));
                     }
@@ -1050,7 +1036,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_10;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2Calculate");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Calculate");
@@ -1065,10 +1050,10 @@ public class CAN_BUS_tlc {
             if(_trid_10) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Calculate();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2Calculate"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2Calculate"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2Calculate"));
                     }
@@ -1080,8 +1065,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BInteger, BInteger>> _trid_11;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2WriteBus");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2WriteBus");
@@ -1099,10 +1082,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2WriteBus(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2WriteBus"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2WriteBus"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2WriteBus"));
                     }
@@ -1114,8 +1097,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BInteger> _trid_12;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T2Wait");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Wait");
@@ -1132,10 +1113,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Wait(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T2Wait"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T2Wait"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T2Wait"));
                     }
@@ -1147,7 +1128,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_13;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3Initiate");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Initiate");
@@ -1162,10 +1142,10 @@ public class CAN_BUS_tlc {
             if(_trid_13) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Initiate();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3Initiate"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3Initiate"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3Initiate"));
                     }
@@ -1177,7 +1157,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_14;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3Evaluate");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Evaluate");
@@ -1192,10 +1171,10 @@ public class CAN_BUS_tlc {
             if(_trid_14) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Evaluate();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3Evaluate"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3Evaluate"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3Evaluate"));
                     }
@@ -1207,8 +1186,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BInteger, BInteger>> _trid_15;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3writebus");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3writebus");
@@ -1226,10 +1203,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3writebus(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3writebus"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3writebus"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3writebus"));
                     }
@@ -1241,8 +1218,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BInteger, BInteger>> _trid_16;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3Read");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Read");
@@ -1260,10 +1235,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Read(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3Read"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3Read"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3Read"));
                     }
@@ -1275,7 +1250,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_17;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3Poll");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Poll");
@@ -1290,10 +1264,10 @@ public class CAN_BUS_tlc {
             if(_trid_17) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Poll();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3Poll"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3Poll"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3Poll"));
                     }
@@ -1305,8 +1279,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BInteger> _trid_18;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3ReleaseBus");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3ReleaseBus");
@@ -1323,10 +1295,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3ReleaseBus(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3ReleaseBus"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3ReleaseBus"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3ReleaseBus"));
                     }
@@ -1338,7 +1310,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_19;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3Wait");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Wait");
@@ -1353,10 +1324,10 @@ public class CAN_BUS_tlc {
             if(_trid_19) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Wait();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3Wait"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3Wait"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3Wait"));
                     }
@@ -1368,7 +1339,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             boolean _trid_20;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_T3ReEnableWait");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3ReEnableWait");
@@ -1383,10 +1353,10 @@ public class CAN_BUS_tlc {
             if(_trid_20) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3ReEnableWait();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("T3ReEnableWait"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("T3ReEnableWait"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("T3ReEnableWait"));
                     }
@@ -1398,8 +1368,6 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
             BSet<BInteger> _trid_21;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_Update");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_Update");
@@ -1416,10 +1384,10 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.Update(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("Update"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("Update"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("Update"));
                     }
@@ -1431,7 +1399,9 @@ public class CAN_BUS_tlc {
                 transitions.getAndIncrement();
             }
 
-            guardCache.put(state, newCache);
+            synchronized(guardLock) {
+                guardCache.put(state, newCache);
+            }
         } else {
             if(state._tr_T1Evaluate()) {
                 CAN_BUS_tlc copiedState = state._copy();
@@ -1603,9 +1573,12 @@ public class CAN_BUS_tlc {
     }
 
 
-    public static boolean checkInvariants(CAN_BUS_tlc state, boolean isCaching, Map<CAN_BUS_tlc, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, CAN_BUS_tlc state, boolean isCaching, Map<CAN_BUS_tlc, Set<String>> dependentInvariant) {
         if(isCaching) {
-            Set<String> dependentInvariantsOfState = dependentInvariant.get(state);
+            Set<String> dependentInvariantsOfState;
+            synchronized(guardLock) {
+                dependentInvariantsOfState = dependentInvariant.get(state);
+            }
             if(dependentInvariantsOfState.contains("_check_inv_1")) {
                 if(!state._check_inv_1()) {
                     return false;
@@ -1738,7 +1711,6 @@ public class CAN_BUS_tlc {
     private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         Object lock = new Object();
         Object guardLock = new Object();
-        Object waitLock = new Object();
 
         CAN_BUS_tlc machine = new CAN_BUS_tlc();
 
@@ -1836,7 +1808,7 @@ public class CAN_BUS_tlc {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -1961,7 +1933,7 @@ public class CAN_BUS_tlc {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                 }

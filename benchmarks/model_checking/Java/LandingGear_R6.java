@@ -932,11 +932,10 @@ public class LandingGear_R6 {
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = null;
+            Set<String> dependentGuardsOfState = dependentGuard.get(state);
             Object cachedValue = null;
             boolean dependentGuardsBoolean = true;
             boolean _trid_1;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_begin_flying");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_begin_flying");
@@ -951,10 +950,10 @@ public class LandingGear_R6 {
             if(_trid_1) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.begin_flying();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("begin_flying"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("begin_flying"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("begin_flying"));
                     }
@@ -966,7 +965,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_2;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_land_plane");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_land_plane");
@@ -981,10 +979,10 @@ public class LandingGear_R6 {
             if(_trid_2) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.land_plane();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("land_plane"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("land_plane"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("land_plane"));
                     }
@@ -996,7 +994,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_3;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_open_valve_door_open");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_open_valve_door_open");
@@ -1011,10 +1008,10 @@ public class LandingGear_R6 {
             if(_trid_3) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_door_open();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("open_valve_door_open"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("open_valve_door_open"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("open_valve_door_open"));
                     }
@@ -1026,7 +1023,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_4;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_close_valve_door_open");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_close_valve_door_open");
@@ -1041,10 +1037,10 @@ public class LandingGear_R6 {
             if(_trid_4) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_door_open();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("close_valve_door_open"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("close_valve_door_open"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("close_valve_door_open"));
                     }
@@ -1056,7 +1052,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_5;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_open_valve_door_close");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_open_valve_door_close");
@@ -1071,10 +1066,10 @@ public class LandingGear_R6 {
             if(_trid_5) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_door_close();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("open_valve_door_close"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("open_valve_door_close"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("open_valve_door_close"));
                     }
@@ -1086,7 +1081,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_6;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_close_valve_door_close");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_close_valve_door_close");
@@ -1101,10 +1095,10 @@ public class LandingGear_R6 {
             if(_trid_6) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_door_close();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("close_valve_door_close"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("close_valve_door_close"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("close_valve_door_close"));
                     }
@@ -1116,7 +1110,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_7;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_open_valve_retract_gear");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_open_valve_retract_gear");
@@ -1131,10 +1124,10 @@ public class LandingGear_R6 {
             if(_trid_7) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_retract_gear();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("open_valve_retract_gear"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("open_valve_retract_gear"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("open_valve_retract_gear"));
                     }
@@ -1146,7 +1139,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_8;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_close_valve_retract_gear");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_close_valve_retract_gear");
@@ -1161,10 +1153,10 @@ public class LandingGear_R6 {
             if(_trid_8) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_retract_gear();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("close_valve_retract_gear"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("close_valve_retract_gear"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("close_valve_retract_gear"));
                     }
@@ -1176,7 +1168,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_9;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_open_valve_extend_gear");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_open_valve_extend_gear");
@@ -1191,10 +1182,10 @@ public class LandingGear_R6 {
             if(_trid_9) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_extend_gear();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("open_valve_extend_gear"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("open_valve_extend_gear"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("open_valve_extend_gear"));
                     }
@@ -1206,7 +1197,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_10;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_close_valve_extend_gear");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_close_valve_extend_gear");
@@ -1221,10 +1211,10 @@ public class LandingGear_R6 {
             if(_trid_10) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_extend_gear();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("close_valve_extend_gear"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("close_valve_extend_gear"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("close_valve_extend_gear"));
                     }
@@ -1236,7 +1226,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_11;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stimulate_open_door_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stimulate_open_door_valve");
@@ -1251,10 +1240,10 @@ public class LandingGear_R6 {
             if(_trid_11) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_open_door_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_open_door_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_open_door_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stimulate_open_door_valve"));
                     }
@@ -1266,7 +1255,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_12;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stop_stimulate_open_door_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stop_stimulate_open_door_valve");
@@ -1281,10 +1269,10 @@ public class LandingGear_R6 {
             if(_trid_12) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_open_door_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_open_door_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_open_door_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stop_stimulate_open_door_valve"));
                     }
@@ -1296,7 +1284,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_13;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stimulate_close_door_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stimulate_close_door_valve");
@@ -1311,10 +1298,10 @@ public class LandingGear_R6 {
             if(_trid_13) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_close_door_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_close_door_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_close_door_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stimulate_close_door_valve"));
                     }
@@ -1326,7 +1313,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_14;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stop_stimulate_close_door_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stop_stimulate_close_door_valve");
@@ -1341,10 +1327,10 @@ public class LandingGear_R6 {
             if(_trid_14) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_close_door_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_close_door_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_close_door_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stop_stimulate_close_door_valve"));
                     }
@@ -1356,7 +1342,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_15;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stimulate_retract_gear_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stimulate_retract_gear_valve");
@@ -1371,10 +1356,10 @@ public class LandingGear_R6 {
             if(_trid_15) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_retract_gear_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_retract_gear_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_retract_gear_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stimulate_retract_gear_valve"));
                     }
@@ -1386,7 +1371,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_16;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stop_stimulate_retract_gear_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stop_stimulate_retract_gear_valve");
@@ -1401,10 +1385,10 @@ public class LandingGear_R6 {
             if(_trid_16) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_retract_gear_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_retract_gear_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_retract_gear_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stop_stimulate_retract_gear_valve"));
                     }
@@ -1416,7 +1400,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_17;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stimulate_extend_gear_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stimulate_extend_gear_valve");
@@ -1431,10 +1414,10 @@ public class LandingGear_R6 {
             if(_trid_17) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_extend_gear_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_extend_gear_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_extend_gear_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stimulate_extend_gear_valve"));
                     }
@@ -1446,7 +1429,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_18;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stop_stimulate_extend_gear_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stop_stimulate_extend_gear_valve");
@@ -1461,10 +1443,10 @@ public class LandingGear_R6 {
             if(_trid_18) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_extend_gear_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_extend_gear_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_extend_gear_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stop_stimulate_extend_gear_valve"));
                     }
@@ -1476,8 +1458,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_19;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_start_retracting_first");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_start_retracting_first");
@@ -1494,10 +1474,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_retracting_first(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_start_retracting_first"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_start_retracting_first"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_start_retracting_first"));
                     }
@@ -1509,8 +1489,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_20;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_retract_gear_skip");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_retract_gear_skip");
@@ -1527,10 +1505,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_retract_gear_skip(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_retract_gear_skip"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_retract_gear_skip"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_retract_gear_skip"));
                     }
@@ -1542,8 +1520,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_21;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_retract_gear_last");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_retract_gear_last");
@@ -1560,10 +1536,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_retract_gear_last(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_retract_gear_last"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_retract_gear_last"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_retract_gear_last"));
                     }
@@ -1575,8 +1551,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_22;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_start_extending");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_start_extending");
@@ -1593,10 +1567,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_extending(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_start_extending"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_start_extending"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_start_extending"));
                     }
@@ -1608,8 +1582,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_23;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_extend_gear_last");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_extend_gear_last");
@@ -1626,10 +1598,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_extend_gear_last(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_extend_gear_last"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_extend_gear_last"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_extend_gear_last"));
                     }
@@ -1641,8 +1613,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_24;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_extend_gear_skip");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_extend_gear_skip");
@@ -1659,10 +1629,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_extend_gear_skip(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_extend_gear_skip"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_extend_gear_skip"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_extend_gear_skip"));
                     }
@@ -1674,8 +1644,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_25;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_start_open_door");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_start_open_door");
@@ -1692,10 +1660,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_open_door(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_start_open_door"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_start_open_door"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_start_open_door"));
                     }
@@ -1707,8 +1675,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_26;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_open_door_last");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_open_door_last");
@@ -1725,10 +1691,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_open_door_last(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_open_door_last"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_open_door_last"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_open_door_last"));
                     }
@@ -1740,8 +1706,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_27;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_open_door_skip");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_open_door_skip");
@@ -1758,10 +1722,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_open_door_skip(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_open_door_skip"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_open_door_skip"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_open_door_skip"));
                     }
@@ -1773,8 +1737,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_28;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_start_close_door");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_start_close_door");
@@ -1791,10 +1753,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_close_door(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_start_close_door"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_start_close_door"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_start_close_door"));
                     }
@@ -1806,8 +1768,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_29;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_close_door");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_close_door");
@@ -1824,10 +1784,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_close_door(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_close_door"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_close_door"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_close_door"));
                     }
@@ -1839,8 +1799,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             BSet<POSITION> _trid_30;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_close_door_skip");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_close_door_skip");
@@ -1857,10 +1815,10 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_close_door_skip(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_close_door_skip"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_close_door_skip"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_close_door_skip"));
                     }
@@ -1872,7 +1830,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_31;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_toggle_handle_up");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_toggle_handle_up");
@@ -1887,10 +1844,10 @@ public class LandingGear_R6 {
             if(_trid_31) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.toggle_handle_up();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("toggle_handle_up"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("toggle_handle_up"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("toggle_handle_up"));
                     }
@@ -1902,7 +1859,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_32;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_toggle_handle_down");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_toggle_handle_down");
@@ -1917,10 +1873,10 @@ public class LandingGear_R6 {
             if(_trid_32) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.toggle_handle_down();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("toggle_handle_down"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("toggle_handle_down"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("toggle_handle_down"));
                     }
@@ -1932,7 +1888,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_33;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stimulate_general_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stimulate_general_valve");
@@ -1947,10 +1902,10 @@ public class LandingGear_R6 {
             if(_trid_33) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_general_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_general_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stimulate_general_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stimulate_general_valve"));
                     }
@@ -1962,7 +1917,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_34;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_con_stop_stimulate_general_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_con_stop_stimulate_general_valve");
@@ -1977,10 +1931,10 @@ public class LandingGear_R6 {
             if(_trid_34) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_general_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_general_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("con_stop_stimulate_general_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("con_stop_stimulate_general_valve"));
                     }
@@ -1992,7 +1946,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_35;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_evn_open_general_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_evn_open_general_valve");
@@ -2007,10 +1960,10 @@ public class LandingGear_R6 {
             if(_trid_35) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.evn_open_general_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("evn_open_general_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("evn_open_general_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("evn_open_general_valve"));
                     }
@@ -2022,7 +1975,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_36;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_evn_close_general_valve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_evn_close_general_valve");
@@ -2037,10 +1989,10 @@ public class LandingGear_R6 {
             if(_trid_36) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.evn_close_general_valve();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("evn_close_general_valve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("evn_close_general_valve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("evn_close_general_valve"));
                     }
@@ -2052,7 +2004,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_37;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_close_analogical_switch");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_close_analogical_switch");
@@ -2067,10 +2018,10 @@ public class LandingGear_R6 {
             if(_trid_37) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_close_analogical_switch();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_close_analogical_switch"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_close_analogical_switch"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_close_analogical_switch"));
                     }
@@ -2082,7 +2033,6 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
             boolean _trid_38;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_env_open_analogical_switch");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_env_open_analogical_switch");
@@ -2097,10 +2047,10 @@ public class LandingGear_R6 {
             if(_trid_38) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_open_analogical_switch();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("env_open_analogical_switch"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("env_open_analogical_switch"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("env_open_analogical_switch"));
                     }
@@ -2112,7 +2062,9 @@ public class LandingGear_R6 {
                 transitions.getAndIncrement();
             }
 
-            guardCache.put(state, newCache);
+            synchronized(guardLock) {
+                guardCache.put(state, newCache);
+            }
         } else {
             if(state._tr_begin_flying()) {
                 LandingGear_R6 copiedState = state._copy();
@@ -2384,9 +2336,12 @@ public class LandingGear_R6 {
     }
 
 
-    public static boolean checkInvariants(LandingGear_R6 state, boolean isCaching, Map<LandingGear_R6, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, LandingGear_R6 state, boolean isCaching, Map<LandingGear_R6, Set<String>> dependentInvariant) {
         if(isCaching) {
-            Set<String> dependentInvariantsOfState = dependentInvariant.get(state);
+            Set<String> dependentInvariantsOfState;
+            synchronized(guardLock) {
+                dependentInvariantsOfState = dependentInvariant.get(state);
+            }
             if(dependentInvariantsOfState.contains("_check_inv_1")) {
                 if(!state._check_inv_1()) {
                     return false;
@@ -2544,7 +2499,6 @@ public class LandingGear_R6 {
     private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         Object lock = new Object();
         Object guardLock = new Object();
-        Object waitLock = new Object();
 
         LandingGear_R6 machine = new LandingGear_R6();
 
@@ -2676,7 +2630,7 @@ public class LandingGear_R6 {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -2835,7 +2789,7 @@ public class LandingGear_R6 {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                 }

@@ -537,12 +537,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = null;
+            Set<String> dependentGuardsOfState = dependentGuard.get(state);
             Object cachedValue = null;
             boolean dependentGuardsBoolean = true;
             BSet<ROUTES> _trid_1;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_route_reservation");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_route_reservation");
@@ -559,10 +557,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.route_reservation(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("route_reservation"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("route_reservation"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("route_reservation"));
                     }
@@ -574,8 +572,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<ROUTES> _trid_2;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_route_freeing");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_route_freeing");
@@ -592,10 +588,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.route_freeing(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("route_freeing"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("route_freeing"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("route_freeing"));
                     }
@@ -607,8 +603,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<ROUTES> _trid_3;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_FRONT_MOVE_1");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_FRONT_MOVE_1");
@@ -625,10 +619,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.FRONT_MOVE_1(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("FRONT_MOVE_1"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("FRONT_MOVE_1"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("FRONT_MOVE_1"));
                     }
@@ -640,8 +634,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<BLOCKS> _trid_4;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_FRONT_MOVE_2");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_FRONT_MOVE_2");
@@ -658,10 +650,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.FRONT_MOVE_2(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("FRONT_MOVE_2"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("FRONT_MOVE_2"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("FRONT_MOVE_2"));
                     }
@@ -673,8 +665,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<BLOCKS> _trid_5;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_BACK_MOVE_1");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_BACK_MOVE_1");
@@ -691,10 +681,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.BACK_MOVE_1(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("BACK_MOVE_1"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("BACK_MOVE_1"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("BACK_MOVE_1"));
                     }
@@ -706,8 +696,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<BLOCKS> _trid_6;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_BACK_MOVE_2");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_BACK_MOVE_2");
@@ -724,10 +712,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.BACK_MOVE_2(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("BACK_MOVE_2"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("BACK_MOVE_2"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("BACK_MOVE_2"));
                     }
@@ -739,8 +727,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<ROUTES> _trid_7;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_point_positionning");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_point_positionning");
@@ -757,10 +743,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.point_positionning(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("point_positionning"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("point_positionning"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("point_positionning"));
                     }
@@ -772,8 +758,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
             BSet<ROUTES> _trid_8;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_route_formation");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_route_formation");
@@ -790,10 +774,10 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
                 Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
                 copiedState.route_formation(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("route_formation"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("route_formation"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("route_formation"));
                     }
@@ -805,7 +789,9 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 transitions.getAndIncrement();
             }
 
-            guardCache.put(state, newCache);
+            synchronized(guardLock) {
+                guardCache.put(state, newCache);
+            }
         } else {
             BSet<ROUTES> _trid_1 = state._tr_route_reservation();
             for(ROUTES param : _trid_1) {
@@ -885,9 +871,12 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
 
-    public static boolean checkInvariants(Train_1_beebook_deterministic_MC_POR_v2 state, boolean isCaching, Map<Train_1_beebook_deterministic_MC_POR_v2, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, Train_1_beebook_deterministic_MC_POR_v2 state, boolean isCaching, Map<Train_1_beebook_deterministic_MC_POR_v2, Set<String>> dependentInvariant) {
         if(isCaching) {
-            Set<String> dependentInvariantsOfState = dependentInvariant.get(state);
+            Set<String> dependentInvariantsOfState;
+            synchronized(guardLock) {
+                dependentInvariantsOfState = dependentInvariant.get(state);
+            }
             if(dependentInvariantsOfState.contains("_check_inv_1")) {
                 if(!state._check_inv_1()) {
                     return false;
@@ -980,7 +969,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
     private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         Object lock = new Object();
         Object guardLock = new Object();
-        Object waitLock = new Object();
 
         Train_1_beebook_deterministic_MC_POR_v2 machine = new Train_1_beebook_deterministic_MC_POR_v2();
 
@@ -1052,7 +1040,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -1151,7 +1139,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                 }

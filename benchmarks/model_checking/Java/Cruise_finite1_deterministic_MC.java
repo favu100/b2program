@@ -791,11 +791,10 @@ public class Cruise_finite1_deterministic_MC {
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = null;
+            Set<String> dependentGuardsOfState = dependentGuard.get(state);
             Object cachedValue = null;
             boolean dependentGuardsBoolean = true;
             boolean _trid_1;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CruiseBecomesNotAllowed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CruiseBecomesNotAllowed");
@@ -810,10 +809,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_1) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseBecomesNotAllowed();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CruiseBecomesNotAllowed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CruiseBecomesNotAllowed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CruiseBecomesNotAllowed"));
                     }
@@ -825,7 +824,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_2;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CruiseBecomesAllowed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CruiseBecomesAllowed");
@@ -840,10 +838,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_2) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseBecomesAllowed();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CruiseBecomesAllowed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CruiseBecomesAllowed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CruiseBecomesAllowed"));
                     }
@@ -855,8 +853,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BBoolean, BBoolean>> _trid_3;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_SetCruiseSpeed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_SetCruiseSpeed");
@@ -874,10 +870,10 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("SetCruiseSpeed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("SetCruiseSpeed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("SetCruiseSpeed"));
                     }
@@ -889,8 +885,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BBoolean, BBoolean>> _trid_4;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CCInitialisationFinished");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CCInitialisationFinished");
@@ -908,10 +902,10 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CCInitialisationFinished"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CCInitialisationFinished"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CCInitialisationFinished"));
                     }
@@ -923,7 +917,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_5;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CCInitialisationDelayFinished");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CCInitialisationDelayFinished");
@@ -938,10 +931,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_5) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CCInitialisationDelayFinished();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CCInitialisationDelayFinished"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CCInitialisationDelayFinished"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CCInitialisationDelayFinished"));
                     }
@@ -953,8 +946,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BBoolean, BBoolean>> _trid_6;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CruiseSpeedChangeFinished");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CruiseSpeedChangeFinished");
@@ -972,10 +963,10 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CruiseSpeedChangeFinished"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CruiseSpeedChangeFinished"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CruiseSpeedChangeFinished"));
                     }
@@ -987,7 +978,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_7;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CruiseSpeedChangeDelayFinished");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CruiseSpeedChangeDelayFinished");
@@ -1002,10 +992,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_7) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseSpeedChangeDelayFinished();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CruiseSpeedChangeDelayFinished"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CruiseSpeedChangeDelayFinished"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CruiseSpeedChangeDelayFinished"));
                     }
@@ -1017,7 +1007,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_8;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_CruiseOff");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_CruiseOff");
@@ -1032,10 +1021,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_8) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseOff();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("CruiseOff"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("CruiseOff"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("CruiseOff"));
                     }
@@ -1047,7 +1036,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_9;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ExternalForcesBecomesExtreme");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ExternalForcesBecomesExtreme");
@@ -1062,10 +1050,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_9) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ExternalForcesBecomesExtreme();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ExternalForcesBecomesExtreme"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ExternalForcesBecomesExtreme"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ExternalForcesBecomesExtreme"));
                     }
@@ -1077,7 +1065,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_10;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ExternalForcesBecomesNormal");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ExternalForcesBecomesNormal");
@@ -1092,10 +1079,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_10) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ExternalForcesBecomesNormal();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ExternalForcesBecomesNormal"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ExternalForcesBecomesNormal"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ExternalForcesBecomesNormal"));
                     }
@@ -1107,7 +1094,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_11;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_VehicleLeavesCruiseSpeed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_VehicleLeavesCruiseSpeed");
@@ -1122,10 +1108,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_11) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleLeavesCruiseSpeed();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("VehicleLeavesCruiseSpeed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("VehicleLeavesCruiseSpeed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("VehicleLeavesCruiseSpeed"));
                     }
@@ -1137,7 +1123,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_12;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_VehicleReachesCruiseSpeed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_VehicleReachesCruiseSpeed");
@@ -1152,10 +1137,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_12) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleReachesCruiseSpeed();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("VehicleReachesCruiseSpeed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("VehicleReachesCruiseSpeed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("VehicleReachesCruiseSpeed"));
                     }
@@ -1167,7 +1152,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_13;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_VehicleExceedsMaxCruiseSpeed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_VehicleExceedsMaxCruiseSpeed");
@@ -1182,10 +1166,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_13) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleExceedsMaxCruiseSpeed();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("VehicleExceedsMaxCruiseSpeed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("VehicleExceedsMaxCruiseSpeed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("VehicleExceedsMaxCruiseSpeed"));
                     }
@@ -1197,7 +1181,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_14;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_VehicleFallsBelowMaxCruiseSpeed");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_VehicleFallsBelowMaxCruiseSpeed");
@@ -1212,10 +1195,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_14) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleFallsBelowMaxCruiseSpeed();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("VehicleFallsBelowMaxCruiseSpeed"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("VehicleFallsBelowMaxCruiseSpeed"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("VehicleFallsBelowMaxCruiseSpeed"));
                     }
@@ -1227,7 +1210,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_15;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleDistanceBecomesVeryClose");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleDistanceBecomesVeryClose");
@@ -1242,10 +1224,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_15) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDistanceBecomesVeryClose();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDistanceBecomesVeryClose"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDistanceBecomesVeryClose"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleDistanceBecomesVeryClose"));
                     }
@@ -1257,7 +1239,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_16;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleDistanceBecomesClose");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleDistanceBecomesClose");
@@ -1272,10 +1253,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_16) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDistanceBecomesClose();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDistanceBecomesClose"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDistanceBecomesClose"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleDistanceBecomesClose"));
                     }
@@ -1287,7 +1268,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_17;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleDistanceBecomesBig");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleDistanceBecomesBig");
@@ -1302,10 +1282,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_17) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDistanceBecomesBig();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDistanceBecomesBig"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDistanceBecomesBig"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleDistanceBecomesBig"));
                     }
@@ -1317,7 +1297,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_18;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleStartsTravelFaster");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleStartsTravelFaster");
@@ -1332,10 +1311,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_18) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStartsTravelFaster();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStartsTravelFaster"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStartsTravelFaster"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleStartsTravelFaster"));
                     }
@@ -1347,7 +1326,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_19;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleStopsTravelFaster");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleStopsTravelFaster");
@@ -1362,10 +1340,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_19) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStopsTravelFaster();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStopsTravelFaster"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStopsTravelFaster"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleStopsTravelFaster"));
                     }
@@ -1377,7 +1355,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_20;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleStartsTravelSlower");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleStartsTravelSlower");
@@ -1392,10 +1369,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_20) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStartsTravelSlower();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStartsTravelSlower"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStartsTravelSlower"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleStartsTravelSlower"));
                     }
@@ -1407,7 +1384,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_21;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleStopsTravelSlower");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleStopsTravelSlower");
@@ -1422,10 +1398,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_21) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStopsTravelSlower();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStopsTravelSlower"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleStopsTravelSlower"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleStopsTravelSlower"));
                     }
@@ -1437,8 +1413,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<RSset, ODset>> _trid_22;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleAppearsWhenCruiseActive");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleAppearsWhenCruiseActive");
@@ -1456,10 +1430,10 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleAppearsWhenCruiseActive"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleAppearsWhenCruiseActive"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleAppearsWhenCruiseActive"));
                     }
@@ -1471,8 +1445,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             BSet<RSset> _trid_23;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleAppearsWhenCruiseInactive");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleAppearsWhenCruiseInactive");
@@ -1489,10 +1461,10 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleAppearsWhenCruiseInactive"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleAppearsWhenCruiseInactive"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleAppearsWhenCruiseInactive"));
                     }
@@ -1504,7 +1476,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_24;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleDisappears");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleDisappears");
@@ -1519,10 +1490,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_24) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDisappears();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDisappears"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleDisappears"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleDisappears"));
                     }
@@ -1534,8 +1505,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             BSet<BTuple<BBoolean, BBoolean>> _trid_25;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_VehicleManageObstacle");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_VehicleManageObstacle");
@@ -1553,10 +1522,10 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("VehicleManageObstacle"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("VehicleManageObstacle"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("VehicleManageObstacle"));
                     }
@@ -1568,7 +1537,6 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_26;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_ObstacleBecomesOld");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_ObstacleBecomesOld");
@@ -1583,10 +1551,10 @@ public class Cruise_finite1_deterministic_MC {
             if(_trid_26) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleBecomesOld();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("ObstacleBecomesOld"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("ObstacleBecomesOld"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("ObstacleBecomesOld"));
                     }
@@ -1598,7 +1566,9 @@ public class Cruise_finite1_deterministic_MC {
                 transitions.getAndIncrement();
             }
 
-            guardCache.put(state, newCache);
+            synchronized(guardLock) {
+                guardCache.put(state, newCache);
+            }
         } else {
             if(state._tr_CruiseBecomesNotAllowed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
@@ -1785,9 +1755,12 @@ public class Cruise_finite1_deterministic_MC {
     }
 
 
-    public static boolean checkInvariants(Cruise_finite1_deterministic_MC state, boolean isCaching, Map<Cruise_finite1_deterministic_MC, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, Cruise_finite1_deterministic_MC state, boolean isCaching, Map<Cruise_finite1_deterministic_MC, Set<String>> dependentInvariant) {
         if(isCaching) {
-            Set<String> dependentInvariantsOfState = dependentInvariant.get(state);
+            Set<String> dependentInvariantsOfState;
+            synchronized(guardLock) {
+                dependentInvariantsOfState = dependentInvariant.get(state);
+            }
             if(dependentInvariantsOfState.contains("_check_inv_1")) {
                 if(!state._check_inv_1()) {
                     return false;
@@ -2015,7 +1988,6 @@ public class Cruise_finite1_deterministic_MC {
     private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         Object lock = new Object();
         Object guardLock = new Object();
-        Object waitLock = new Object();
 
         Cruise_finite1_deterministic_MC machine = new Cruise_finite1_deterministic_MC();
 
@@ -2123,7 +2095,7 @@ public class Cruise_finite1_deterministic_MC {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -2258,7 +2230,7 @@ public class Cruise_finite1_deterministic_MC {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                 }

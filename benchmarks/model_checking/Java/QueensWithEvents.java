@@ -187,12 +187,10 @@ public class QueensWithEvents {
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = null;
+            Set<String> dependentGuardsOfState = dependentGuard.get(state);
             Object cachedValue = null;
             boolean dependentGuardsBoolean = true;
             BSet<BRelation<BInteger, BInteger>> _trid_1;
-
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_Solve");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_Solve");
@@ -209,10 +207,10 @@ public class QueensWithEvents {
 
                 QueensWithEvents copiedState = state._copy();
                 copiedState.Solve(_tmp_1);
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("Solve"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("Solve"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("Solve"));
                     }
@@ -224,7 +222,9 @@ public class QueensWithEvents {
                 transitions.getAndIncrement();
             }
 
-            guardCache.put(state, newCache);
+            synchronized(guardLock) {
+                guardCache.put(state, newCache);
+            }
         } else {
             BSet<BRelation<BInteger, BInteger>> _trid_1 = state._tr_Solve();
             for(BRelation<BInteger, BInteger> param : _trid_1) {
@@ -241,9 +241,12 @@ public class QueensWithEvents {
     }
 
 
-    public static boolean checkInvariants(QueensWithEvents state, boolean isCaching, Map<QueensWithEvents, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, QueensWithEvents state, boolean isCaching, Map<QueensWithEvents, Set<String>> dependentInvariant) {
         if(isCaching) {
-            Set<String> dependentInvariantsOfState = dependentInvariant.get(state);
+            Set<String> dependentInvariantsOfState;
+            synchronized(guardLock) {
+                dependentInvariantsOfState = dependentInvariant.get(state);
+            }
             if(dependentInvariantsOfState.contains("_check_inv_1")) {
                 if(!state._check_inv_1()) {
                     return false;
@@ -281,7 +284,6 @@ public class QueensWithEvents {
     private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         Object lock = new Object();
         Object guardLock = new Object();
-        Object waitLock = new Object();
 
         QueensWithEvents machine = new QueensWithEvents();
 
@@ -339,7 +341,7 @@ public class QueensWithEvents {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -424,7 +426,7 @@ public class QueensWithEvents {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                 }

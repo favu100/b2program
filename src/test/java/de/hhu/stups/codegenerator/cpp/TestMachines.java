@@ -225,4 +225,9 @@ public class TestMachines extends TestCpp {
         testCpp("rether_mch1");
     }
 
+    @Test
+    public void testQueensWithEvents() throws Exception {
+        testCppMC("QueensWithEvents");
+    }
+
 }

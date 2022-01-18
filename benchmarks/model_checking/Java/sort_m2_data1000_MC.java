@@ -225,11 +225,10 @@ public class sort_m2_data1000_MC {
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = null;
+            Set<String> dependentGuardsOfState = dependentGuard.get(state);
             Object cachedValue = null;
             boolean dependentGuardsBoolean = true;
             boolean _trid_1;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_progress");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_progress");
@@ -244,10 +243,10 @@ public class sort_m2_data1000_MC {
             if(_trid_1) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.progress();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("progress"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("progress"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("progress"));
                     }
@@ -259,7 +258,6 @@ public class sort_m2_data1000_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_2;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_prog1");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_prog1");
@@ -274,10 +272,10 @@ public class sort_m2_data1000_MC {
             if(_trid_2) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.prog1();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("prog1"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("prog1"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("prog1"));
                     }
@@ -289,7 +287,6 @@ public class sort_m2_data1000_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_3;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_prog2");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_prog2");
@@ -304,10 +301,10 @@ public class sort_m2_data1000_MC {
             if(_trid_3) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.prog2();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("prog2"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("prog2"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("prog2"));
                     }
@@ -319,7 +316,6 @@ public class sort_m2_data1000_MC {
                 transitions.getAndIncrement();
             }
             boolean _trid_4;
-            dependentGuardsOfState = dependentGuard.get(state);
             if(dependentGuardsOfState != null) {
                 cachedValue = GET.invoke(parentsGuard, "_tr_final_evt");
                 dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_final_evt");
@@ -334,10 +330,10 @@ public class sort_m2_data1000_MC {
             if(_trid_4) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.final_evt();
-                if(!dependentInvariant.containsKey(copiedState)) {
-                    dependentInvariant.put(copiedState, invariantDependency.get("final_evt"));
-                }
                 synchronized(guardLock) {
+                    if(!dependentInvariant.containsKey(copiedState)) {
+                        dependentInvariant.put(copiedState, invariantDependency.get("final_evt"));
+                    }
                     if(!dependentGuard.containsKey(copiedState)) {
                         dependentGuard.put(copiedState, guardDependency.get("final_evt"));
                     }
@@ -349,7 +345,9 @@ public class sort_m2_data1000_MC {
                 transitions.getAndIncrement();
             }
 
-            guardCache.put(state, newCache);
+            synchronized(guardLock) {
+                guardCache.put(state, newCache);
+            }
         } else {
             if(state._tr_progress()) {
                 sort_m2_data1000_MC copiedState = state._copy();
@@ -381,9 +379,12 @@ public class sort_m2_data1000_MC {
     }
 
 
-    public static boolean checkInvariants(sort_m2_data1000_MC state, boolean isCaching, Map<sort_m2_data1000_MC, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, sort_m2_data1000_MC state, boolean isCaching, Map<sort_m2_data1000_MC, Set<String>> dependentInvariant) {
         if(isCaching) {
-            Set<String> dependentInvariantsOfState = dependentInvariant.get(state);
+            Set<String> dependentInvariantsOfState;
+            synchronized(guardLock) {
+                dependentInvariantsOfState = dependentInvariant.get(state);
+            }
             if(dependentInvariantsOfState.contains("_check_inv_1")) {
                 if(!state._check_inv_1()) {
                     return false;
@@ -446,7 +447,6 @@ public class sort_m2_data1000_MC {
     private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         Object lock = new Object();
         Object guardLock = new Object();
-        Object waitLock = new Object();
 
         sort_m2_data1000_MC machine = new sort_m2_data1000_MC();
 
@@ -510,7 +510,7 @@ public class sort_m2_data1000_MC {
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }
@@ -601,7 +601,7 @@ public class sort_m2_data1000_MC {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                 }

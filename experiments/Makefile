@@ -6,6 +6,7 @@ JAR=B2Program-all-$(VERS)-SNAPSHOT.jar
 
 FILE = Generated100
 FILE = ArithmeticLaws
+FILE = BoolLaws
 BFILE=$(FILE).mch
 JAVAFILE=$(FILE).java
 
@@ -13,6 +14,8 @@ probmc: $(BFILE)
 	time probcli $(BFILE) --model-check -disable-timeout
 opreuse: $(BFILE)
 	time probcli $(BFILE) --model-check -disable-timeout -df -p COMPRESSION TRUE -p OPERATION_REUSE full -p SAFETY_MODEL_CHECK TRUE -nodead -nogoal
+tlc: $(BFILE)
+	time probcli $(BFILE) --mc-with-tlc -disable-timeout -nodead -nogoal
 
 # for big integer:
 btypes.jar:

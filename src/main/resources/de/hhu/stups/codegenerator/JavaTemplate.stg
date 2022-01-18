@@ -870,11 +870,13 @@ private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> s
     if(isCaching) {
         PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
         PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-        Set\<String> dependentGuardsOfState = null;
+        Set\<String> dependentGuardsOfState = dependentGuard.get(state);
         Object cachedValue = null;
         boolean dependentGuardsBoolean = true;
         <transitionsWithCaching>
-        guardCache.put(state, newCache);
+        synchronized(guardLock) {
+            guardCache.put(state, newCache);
+        }
     } else {
         <transitionsWithoutCaching>
     }
@@ -886,8 +888,6 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 <if(hasParameters)>
 <if(isCaching)>
 BSet\<<tupleType>\> <transitionIdentifier>;
-
-dependentGuardsOfState = dependentGuard.get(state);
 if(dependentGuardsOfState != null) {
     cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
     dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
@@ -911,7 +911,6 @@ for(<tupleType> param : <transitionIdentifier>) {
 <else>
 <if(isCaching)>
 boolean <transitionIdentifier>;
-dependentGuardsOfState = dependentGuard.get(state);
 if(dependentGuardsOfState != null) {
     cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
     dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
@@ -934,25 +933,6 @@ if(state.<evalTransitions>()) {
 <endif>
 >>
 
-model_check_invariants(machine, checkInvariants, invariants) ::= <<
-public static boolean checkInvariants(<machine> state, boolean isCaching, Map\<<machine>, Set\<String>\> dependentInvariant) {
-    if(isCaching) {
-        Set\<String> dependentInvariantsOfState = dependentInvariant.get(state);
-        <checkInvariants; separator="\n">
-        return true;
-    }
-    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
-}
->>
-
-model_check_invariant(invariant) ::= <<
-if(dependentInvariantsOfState.contains("<invariant>")) {
-    if(!state.<invariant>()) {
-        return false;
-    }
-}
->>
-
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
@@ -960,10 +940,10 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 <if(isCaching)>
-if(!dependentInvariant.containsKey(copiedState)) {
-    dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
-}
 synchronized(guardLock) {
+    if(!dependentInvariant.containsKey(copiedState)) {
+        dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
+    }
     if(!dependentGuard.containsKey(copiedState)) {
         dependentGuard.put(copiedState, guardDependency.get("<operation>"));
     }
@@ -986,6 +966,28 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 <type> <param> = <val>.projection2();
 <endif>
 <endif>
+>>
+
+model_check_invariants(machine, checkInvariants, invariants) ::= <<
+public static boolean checkInvariants(Object guardLock, <machine> state, boolean isCaching, Map\<<machine>, Set\<String>\> dependentInvariant) {
+    if(isCaching) {
+        Set\<String> dependentInvariantsOfState;
+        synchronized(guardLock) {
+            dependentInvariantsOfState = dependentInvariant.get(state);
+        }
+        <checkInvariants; separator="\n">
+        return true;
+    }
+    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+}
+>>
+
+model_check_invariant(invariant) ::= <<
+if(dependentInvariantsOfState.contains("<invariant>")) {
+    if(!state.<invariant>()) {
+        return false;
+    }
+}
 >>
 
 model_check_evaluate_state(machine, variables) ::= <<
@@ -1086,7 +1088,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
             stopThreads.set(true);
         }
 
-        if(!checkInvariants(state, isCaching, dependentInvariant)) {
+        if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
             invariantViolated.set(true);
             stopThreads.set(true);
         }
@@ -1171,7 +1173,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
                 stopThreads.set(true);
             }
 
-            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
             }

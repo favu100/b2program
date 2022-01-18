@@ -1127,7 +1127,7 @@ static <machine> next(std::list\<<machine>\>& collection, std::mutex& mutex, <ma
     };
 }
 
-static void modelCheckSingleThreaded(bool isCaching) {
+static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
     std::mutex mutex;
     std::mutex guardMutex;
 
@@ -1168,7 +1168,7 @@ static void modelCheckSingleThreaded(bool isCaching) {
     }
 
     while(!collection.empty() && !stopThreads) {
-        <machine> state = next(collection, mutex, <machine>::MIXED);
+        <machine> state = next(collection, mutex, type);
         std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -1197,7 +1197,7 @@ static void modelCheckSingleThreaded(bool isCaching) {
     printResult(numberStates, transitions, deadlockDetected, invariantViolated);
 }
 
-static void modelCheckMultiThreaded(bool isCaching) {
+static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCaching) {
     std::mutex mutex;
     std::mutex waitMutex;
     std::mutex guardMutex;
@@ -1246,11 +1246,11 @@ static void modelCheckMultiThreaded(bool isCaching) {
         dependentInvariant.insert({machine, std::unordered_set\<string>()});
     }
 
-    boost::asio::thread_pool workers(6);
+    boost::asio::thread_pool workers(threads);
 
     while(!collection.empty() && !stopThreads) {
         possibleQueueChanges += 1;
-        <machine> state = next(collection, mutex, <machine>::MIXED);
+        <machine> state = next(collection, mutex, type);
         std::packaged_task\<void()> task([&, state] {
             std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
@@ -1312,8 +1312,58 @@ static void modelCheckMultiThreaded(bool isCaching) {
     printResult(numberStates, transitions, deadlockDetected, invariantViolated);
 }
 
-int main() {
-    modelCheckMultiThreaded(true);
+int main(int argc, char *argv[]) {
+    if(argc != 3) {
+        cout \<\< "Number of arguments errorneous\n";
+        return -1;
+    }
+    string strategy = argv[0];
+    string numberThreads = argv[1];
+    string caching = argv[2];
+
+    <machine>::Type type;
+
+    if(std::string("mixed").compare(strategy) == 0) {
+        type = <machine>::Type::MIXED;
+    } else if(std::string("bf").compare(strategy) == 0) {
+        type = <machine>::Type::BFS;
+    } else if (std::string("df").compare(strategy) == 0) {
+        type = <machine>::Type::DFS;
+    } else {
+        cout \<\< "Input for strategy is wrong.\n";
+        return -1;
+    }
+
+    int threads = 0;
+    try {
+        threads = std::stoi(numberThreads);
+    } catch(std::invalid_argument e) {
+        cout \<\< "Input for number of threads is wrong.\n";
+        return -1;
+    }
+
+    if(threads \<= 0) {
+        cout \<\< "Input for number of threads is wrong.\n";
+        return -1;
+    }
+
+    bool isCaching = true;
+
+
+    if(std::string("true").compare(caching) == 0) {
+        isCaching = true;
+    } else if(std::string("false").compare(strategy) == 0) {
+        isCaching = false;
+    } else {
+        cout \<\< "Input for caching is wrong.\n";
+        return - 1;
+    }
+
+    if(threads == 1) {
+        modelCheckSingleThreaded(type, isCaching);
+    } else {
+        modelCheckMultiThreaded(type, threads, isCaching);
+    }
     return 0;
 }
 >>

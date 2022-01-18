@@ -89,6 +89,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PLUS;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POW1;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.POWER_OF;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRED;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRJ1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PRJ2;
@@ -125,7 +126,7 @@ public class ExpressionGenerator {
     * Hard-coded lists for identifying the type of the operators for expression
     */
     private static final Set<ExpressionOperatorNode.ExpressionOperator> BINARY_EXPRESSION_OPERATORS =
-            new HashSet<>(Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD,INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
+            new HashSet<>(Arrays.asList(PLUS,MINUS,MULT,DIVIDE,MOD, POWER_OF, INTERSECTION, UNION, SET_SUBTRACTION, RELATIONAL_IMAGE,
                     OVERWRITE_RELATION, DOMAIN_RESTRICTION, DOMAIN_SUBTRACTION,
                     RANGE_RESTRICTION, RANGE_SUBTRACTION, DIRECT_PRODUCT, PARALLEL_PRODUCT, COMPOSITION, TOTAL_BIJECTION, TOTAL_FUNCTION, TOTAL_INJECTION,
                     TOTAL_RELATION, TOTAL_SURJECTION, TOTAL_SURJECTION_RELATION, PARTIAL_BIJECTION, PARTIAL_FUNCTION, PARTIAL_INJECTION,
@@ -495,6 +496,9 @@ public class ExpressionGenerator {
                 break;
             case MOD:
                 operatorName = "modulo";
+                break;
+            case POWER_OF:
+                operatorName = "power";
                 break;
             case INTERSECTION:
                 operatorName = "intersect";

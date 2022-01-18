@@ -430,8 +430,8 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 <endif>
 >>
 
-quantified_expression(identifier, identity, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
-<if(isInteger)>BInteger <identifier> = BInteger(<identity>);<else>BSet\<<setType>\> <identifier> = BSet\<<setType>\>();<endif>
+quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
+<if(isInteger)>BInteger <identifier> = <if(useBigInteger)>BInteger("<identity>")<else>BInteger(<identity>)<endif>;<else>BSet\<<setType>\> <identifier> = BSet\<<setType>\>();<endif>
 <if(hasCondition)>
 if((<conditionalPredicate>).booleanValue()) {
     <evaluation>

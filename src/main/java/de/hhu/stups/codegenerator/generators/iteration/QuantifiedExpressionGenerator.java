@@ -148,6 +148,7 @@ public class QuantifiedExpressionGenerator {
 
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "identity", getIdentity(operator));
+        TemplateHandler.add(template, "useBigInteger", machineGenerator.isUseBigInteger());
         if(node.getType() instanceof SetType) {
             TemplateHandler.add(template, "setType", typeGenerator.generate(((SetType) node.getType()).getSubType()));
         }

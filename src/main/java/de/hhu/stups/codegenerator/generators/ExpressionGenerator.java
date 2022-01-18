@@ -883,4 +883,7 @@ public class ExpressionGenerator {
         return this.nameHandler;
     }
 
+    public boolean isUseBigInteger() {
+        return useBigInteger;
+    }
 }

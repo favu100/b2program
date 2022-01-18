@@ -691,4 +691,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public boolean isIncludedMachine() {
 		return isIncludedMachine;
 	}
+
+	public boolean isUseBigInteger() {
+		return useBigInteger;
+	}
 }

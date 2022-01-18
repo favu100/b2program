@@ -9,6 +9,7 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<iostream>
 #include \<string>
 <if(forModelChecking)>
+#include <immer/map.hpp>
 #include \<map>
 #include \<unordered_set>
 #include \<unordered_map>
@@ -1313,13 +1314,13 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 3) {
+    if(argc != 4) {
         cout \<\< "Number of arguments errorneous\n";
         return -1;
     }
-    string strategy = argv[0];
-    string numberThreads = argv[1];
-    string caching = argv[2];
+    string strategy = argv[1];
+    string numberThreads = argv[2];
+    string caching = argv[3];
 
     <machine>::Type type;
 
@@ -1352,7 +1353,7 @@ int main(int argc, char *argv[]) {
 
     if(std::string("true").compare(caching) == 0) {
         isCaching = true;
-    } else if(std::string("false").compare(strategy) == 0) {
+    } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
         cout \<\< "Input for caching is wrong.\n";

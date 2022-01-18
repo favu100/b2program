@@ -24,7 +24,7 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 
 	private static final Var DEC = RT.var("clojure.core", "dec");
 
-	private static final Var POWER = RT.var("clojure.core", "^");
+	private static final Var POWER = RT.var("clojure.math.numeric-tower", "expt");
 
 	private static final Var BIGINT = RT.var("clojure.core", "bigint");
 

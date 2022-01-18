@@ -360,6 +360,8 @@ forModelchecking: false
 
 `-PuseConstraintSolving` and `-PforModelchecking` are also optional. They default to `false`.
 
+`-PuseConstraintSolving` is in an experimental stage.
+
 #### JAR-File
 
 1. Run `./gradlew fatJar` to build the JAR-file

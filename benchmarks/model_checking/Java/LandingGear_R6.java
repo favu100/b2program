@@ -2507,10 +2507,6 @@ public class LandingGear_R6 {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
 
-        if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25()) {
-            invariantViolated.set(true);
-        }
-
         Set<LandingGear_R6> states = new HashSet<>();
         states.add(machine);
         AtomicInteger numberStates = new AtomicInteger(1);
@@ -2653,10 +2649,6 @@ public class LandingGear_R6 {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
         AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25()) {
-            invariantViolated.set(true);
-        }
 
         Set<LandingGear_R6> states = new HashSet<>();
         states.add(machine);

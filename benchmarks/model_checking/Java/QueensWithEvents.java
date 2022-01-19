@@ -292,10 +292,6 @@ public class QueensWithEvents {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
 
-        if(!machine._check_inv_1()) {
-            invariantViolated.set(true);
-        }
-
         Set<QueensWithEvents> states = new HashSet<>();
         states.add(machine);
         AtomicInteger numberStates = new AtomicInteger(1);
@@ -364,10 +360,6 @@ public class QueensWithEvents {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
         AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        if(!machine._check_inv_1()) {
-            invariantViolated.set(true);
-        }
 
         Set<QueensWithEvents> states = new HashSet<>();
         states.add(machine);

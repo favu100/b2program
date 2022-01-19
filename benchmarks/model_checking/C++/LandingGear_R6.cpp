@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
@@ -40,8 +41,8 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum DOOR_STATE_type {
-                    open, 
-                    closed, 
+                    open,
+                    closed,
                     door_moving
                 };
 
@@ -95,8 +96,8 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum GEAR_STATE_type {
-                    retracted, 
-                    extended, 
+                    retracted,
+                    extended,
                     gear_moving
                 };
 
@@ -150,7 +151,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum HANDLE_STATE_type {
-                    up, 
+                    up,
                     down
                 };
 
@@ -203,8 +204,8 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum POSITION_type {
-                    fr, 
-                    lt, 
+                    fr,
+                    lt,
                     rt
                 };
 
@@ -258,7 +259,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum SWITCH_STATE_type {
-                    switch_open, 
+                    switch_open,
                     switch_closed
                 };
 
@@ -311,7 +312,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum PLANE_STATE_type {
-                    ground, 
+                    ground,
                     flight
                 };
 
@@ -364,7 +365,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum VALVE_STATE_type {
-                    valve_open, 
+                    valve_open,
                     valve_closed
                 };
 
@@ -2848,10 +2849,6 @@ static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) 
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25()) {
-        invariantViolated = true;
-    }
-
     std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> states = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
@@ -2994,10 +2991,6 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
     deadlockDetected = false;
     std::atomic<bool> stopThreads;
     stopThreads = false;
-
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25()) {
-        invariantViolated = true;
-    }
 
     std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> states = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
     states.insert(machine);
@@ -3169,13 +3162,13 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 3) {
+    if(argc != 4) {
         cout << "Number of arguments errorneous\n";
         return -1;
     }
-    string strategy = argv[0];
-    string numberThreads = argv[1];
-    string caching = argv[2];
+    string strategy = argv[1];
+    string numberThreads = argv[2];
+    string caching = argv[3];
 
     LandingGear_R6::Type type;
 
@@ -3208,7 +3201,7 @@ int main(int argc, char *argv[]) {
 
     if(std::string("true").compare(caching) == 0) {
         isCaching = true;
-    } else if(std::string("false").compare(strategy) == 0) {
+    } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
         cout << "Input for caching is wrong.\n";

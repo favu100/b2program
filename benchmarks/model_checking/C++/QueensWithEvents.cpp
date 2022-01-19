@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
@@ -330,10 +331,6 @@ static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    if(!machine._check_inv_1()) {
-        invariantViolated = true;
-    }
-
     std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> states = std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
@@ -402,10 +399,6 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
     deadlockDetected = false;
     std::atomic<bool> stopThreads;
     stopThreads = false;
-
-    if(!machine._check_inv_1()) {
-        invariantViolated = true;
-    }
 
     std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> states = std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>();
     states.insert(machine);
@@ -503,13 +496,13 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 3) {
+    if(argc != 4) {
         cout << "Number of arguments errorneous\n";
         return -1;
     }
-    string strategy = argv[0];
-    string numberThreads = argv[1];
-    string caching = argv[2];
+    string strategy = argv[1];
+    string numberThreads = argv[2];
+    string caching = argv[3];
 
     QueensWithEvents::Type type;
 
@@ -542,7 +535,7 @@ int main(int argc, char *argv[]) {
 
     if(std::string("true").compare(caching) == 0) {
         isCaching = true;
-    } else if(std::string("false").compare(strategy) == 0) {
+    } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
         cout << "Input for caching is wrong.\n";

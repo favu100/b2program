@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
@@ -40,9 +41,9 @@ class Cruise_finite1_deterministic_MC {
                 typedef void right_type;
 
                 enum RSset_type {
-                    RSnone, 
-                    RSpos, 
-                    RSneg, 
+                    RSnone,
+                    RSpos,
+                    RSneg,
                     RSequal
                 };
 
@@ -97,8 +98,8 @@ class Cruise_finite1_deterministic_MC {
                 typedef void right_type;
 
                 enum ODset_type {
-                    ODnone, 
-                    ODclose, 
+                    ODnone,
+                    ODclose,
                     ODveryclose
                 };
 
@@ -262,7 +263,7 @@ class Cruise_finite1_deterministic_MC {
             }
             if((_ld_NumberOfSetCruise.less((BInteger(1)))).booleanValue()) {
                 NumberOfSetCruise = _ld_NumberOfSetCruise.plus((BInteger(1)));
-            } 
+            }
 
         }
 
@@ -333,7 +334,7 @@ class Cruise_finite1_deterministic_MC {
             SpeedAboveMax = (BBoolean(false));
             if(((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && CruiseSpeedAtMax.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
                 VehicleAtCruiseSpeed = (BBoolean(true));
-            } 
+            }
 
         }
 
@@ -348,7 +349,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleStatusJustChanged = (BBoolean(true));
             if((ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))).booleanValue()) {
                 VehicleTryKeepTimeGap = (BBoolean(false));
-            } 
+            }
 
         }
 
@@ -363,10 +364,10 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSpos));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            } 
+            }
             if((ObstacleDistance.unequal((ODset(ODset::ODveryclose)))).booleanValue()) {
                 VehicleTryKeepTimeGap = (BBoolean(false));
-            } 
+            }
 
         }
 
@@ -374,7 +375,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSequal));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            } 
+            }
 
         }
 
@@ -382,7 +383,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSneg));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            } 
+            }
 
         }
 
@@ -390,7 +391,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSequal));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            } 
+            }
 
         }
 
@@ -414,7 +415,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSnone));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            } 
+            }
             ObstacleDistance = (ODset(ODset::ODnone));
             VehicleTryKeepTimeGap = (BBoolean(false));
 
@@ -2134,10 +2135,6 @@ static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type,
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25() || !machine._check_inv_26() || !machine._check_inv_27() || !machine._check_inv_28() || !machine._check_inv_29() || !machine._check_inv_30() || !machine._check_inv_31() || !machine._check_inv_32() || !machine._check_inv_33() || !machine._check_inv_34() || !machine._check_inv_35() || !machine._check_inv_36() || !machine._check_inv_37() || !machine._check_inv_38() || !machine._check_inv_39()) {
-        invariantViolated = true;
-    }
-
     std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> states = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
@@ -2256,10 +2253,6 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
     deadlockDetected = false;
     std::atomic<bool> stopThreads;
     stopThreads = false;
-
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25() || !machine._check_inv_26() || !machine._check_inv_27() || !machine._check_inv_28() || !machine._check_inv_29() || !machine._check_inv_30() || !machine._check_inv_31() || !machine._check_inv_32() || !machine._check_inv_33() || !machine._check_inv_34() || !machine._check_inv_35() || !machine._check_inv_36() || !machine._check_inv_37() || !machine._check_inv_38() || !machine._check_inv_39()) {
-        invariantViolated = true;
-    }
 
     std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> states = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
     states.insert(machine);
@@ -2407,13 +2400,13 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 3) {
+    if(argc != 4) {
         cout << "Number of arguments errorneous\n";
         return -1;
     }
-    string strategy = argv[0];
-    string numberThreads = argv[1];
-    string caching = argv[2];
+    string strategy = argv[1];
+    string numberThreads = argv[2];
+    string caching = argv[3];
 
     Cruise_finite1_deterministic_MC::Type type;
 
@@ -2446,7 +2439,7 @@ int main(int argc, char *argv[]) {
 
     if(std::string("true").compare(caching) == 0) {
         isCaching = true;
-    } else if(std::string("false").compare(strategy) == 0) {
+    } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
         cout << "Input for caching is wrong.\n";

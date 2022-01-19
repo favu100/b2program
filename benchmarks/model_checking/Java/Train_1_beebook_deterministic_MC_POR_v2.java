@@ -977,10 +977,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
 
-        if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12()) {
-            invariantViolated.set(true);
-        }
-
         Set<Train_1_beebook_deterministic_MC_POR_v2> states = new HashSet<>();
         states.add(machine);
         AtomicInteger numberStates = new AtomicInteger(1);
@@ -1063,10 +1059,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
         AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12()) {
-            invariantViolated.set(true);
-        }
 
         Set<Train_1_beebook_deterministic_MC_POR_v2> states = new HashSet<>();
         states.add(machine);

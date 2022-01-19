@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
@@ -41,9 +42,9 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T1state_type {
-                    T1_EN, 
-                    T1_CALC, 
-                    T1_SEND, 
+                    T1_EN,
+                    T1_CALC,
+                    T1_SEND,
                     T1_WAIT
                 };
 
@@ -98,8 +99,8 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T2mode_type {
-                    T2MODE_SENSE, 
-                    T2MODE_TRANSMIT, 
+                    T2MODE_SENSE,
+                    T2MODE_TRANSMIT,
                     T2MODE_RELEASE
                 };
 
@@ -153,12 +154,12 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T2state_type {
-                    T2_EN, 
-                    T2_RCV, 
-                    T2_PROC, 
-                    T2_CALC, 
-                    T2_SEND, 
-                    T2_WAIT, 
+                    T2_EN,
+                    T2_RCV,
+                    T2_PROC,
+                    T2_CALC,
+                    T2_SEND,
+                    T2_WAIT,
                     T2_RELEASE
                 };
 
@@ -216,11 +217,11 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T3state_type {
-                    T3_READY, 
-                    T3_WRITE, 
-                    T3_RELEASE, 
-                    T3_READ, 
-                    T3_PROC, 
+                    T3_READY,
+                    T3_WRITE,
+                    T3_RELEASE,
+                    T3_READ,
+                    T3_PROC,
                     T3_WAIT
                 };
 
@@ -1946,10 +1947,6 @@ static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20()) {
-        invariantViolated = true;
-    }
-
     std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> states = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
@@ -2058,10 +2055,6 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
     deadlockDetected = false;
     std::atomic<bool> stopThreads;
     stopThreads = false;
-
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20()) {
-        invariantViolated = true;
-    }
 
     std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> states = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
     states.insert(machine);
@@ -2199,13 +2192,13 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 3) {
+    if(argc != 4) {
         cout << "Number of arguments errorneous\n";
         return -1;
     }
-    string strategy = argv[0];
-    string numberThreads = argv[1];
-    string caching = argv[2];
+    string strategy = argv[1];
+    string numberThreads = argv[2];
+    string caching = argv[3];
 
     CAN_BUS_tlc::Type type;
 
@@ -2238,7 +2231,7 @@ int main(int argc, char *argv[]) {
 
     if(std::string("true").compare(caching) == 0) {
         isCaching = true;
-    } else if(std::string("false").compare(strategy) == 0) {
+    } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
         cout << "Input for caching is wrong.\n";

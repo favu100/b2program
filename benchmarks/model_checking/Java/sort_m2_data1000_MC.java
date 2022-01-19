@@ -455,10 +455,6 @@ public class sort_m2_data1000_MC {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
 
-        if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6()) {
-            invariantViolated.set(true);
-        }
-
         Set<sort_m2_data1000_MC> states = new HashSet<>();
         states.add(machine);
         AtomicInteger numberStates = new AtomicInteger(1);
@@ -533,10 +529,6 @@ public class sort_m2_data1000_MC {
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
         AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6()) {
-            invariantViolated.set(true);
-        }
 
         Set<sort_m2_data1000_MC> states = new HashSet<>();
         states.add(machine);

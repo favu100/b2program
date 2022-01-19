@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
@@ -40,14 +41,14 @@ class Train1_Lukas_POR_v3 {
                 typedef void right_type;
 
                 enum BLOCKS_type {
-                    A, 
-                    B, 
-                    C, 
-                    D, 
-                    E, 
-                    F, 
-                    G, 
-                    H, 
+                    A,
+                    B,
+                    C,
+                    D,
+                    E,
+                    F,
+                    G,
+                    H,
                     I
                 };
 
@@ -107,13 +108,13 @@ class Train1_Lukas_POR_v3 {
                 typedef void right_type;
 
                 enum ROUTES_type {
-                    R1, 
-                    R2, 
-                    R3, 
-                    R4, 
-                    R5, 
-                    R6, 
-                    R7, 
+                    R1,
+                    R2,
+                    R3,
+                    R4,
+                    R5,
+                    R6,
+                    R7,
                     R8
                 };
 
@@ -1094,10 +1095,6 @@ static void modelCheckSingleThreaded(Train1_Lukas_POR_v3::Type type, bool isCach
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12()) {
-        invariantViolated = true;
-    }
-
     std::unordered_set<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3::Hash, Train1_Lukas_POR_v3::HashEqual> states = std::unordered_set<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3::Hash, Train1_Lukas_POR_v3::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
@@ -1180,10 +1177,6 @@ static void modelCheckMultiThreaded(Train1_Lukas_POR_v3::Type type, int threads,
     deadlockDetected = false;
     std::atomic<bool> stopThreads;
     stopThreads = false;
-
-    if(!machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12()) {
-        invariantViolated = true;
-    }
 
     std::unordered_set<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3::Hash, Train1_Lukas_POR_v3::HashEqual> states = std::unordered_set<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3::Hash, Train1_Lukas_POR_v3::HashEqual>();
     states.insert(machine);
@@ -1295,13 +1288,13 @@ static void modelCheckMultiThreaded(Train1_Lukas_POR_v3::Type type, int threads,
 }
 
 int main(int argc, char *argv[]) {
-    if(argc != 3) {
+    if(argc != 4) {
         cout << "Number of arguments errorneous\n";
         return -1;
     }
-    string strategy = argv[0];
-    string numberThreads = argv[1];
-    string caching = argv[2];
+    string strategy = argv[1];
+    string numberThreads = argv[2];
+    string caching = argv[3];
 
     Train1_Lukas_POR_v3::Type type;
 
@@ -1334,7 +1327,7 @@ int main(int argc, char *argv[]) {
 
     if(std::string("true").compare(caching) == 0) {
         isCaching = true;
-    } else if(std::string("false").compare(strategy) == 0) {
+    } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
         cout << "Input for caching is wrong.\n";

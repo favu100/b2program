@@ -40,7 +40,7 @@ public class ModelCheckingGenerator {
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
             TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
             TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariantsFunction(machineNode));
-            TemplateHandler.add(template, "printResult", generatePrintResult());
+            TemplateHandler.add(template, "printResult", generatePrintResult(machineNode));
             TemplateHandler.add(template, "main", generateMain(machineNode));
             typeGenerator.setFromOutside(false);
             return template.render();
@@ -187,8 +187,9 @@ public class ModelCheckingGenerator {
         return variables;
     }
 
-    public String generatePrintResult() {
+    public String generatePrintResult(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_print");
+        TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         return template.render();
     }
 

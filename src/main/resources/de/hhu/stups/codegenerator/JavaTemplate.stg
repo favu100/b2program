@@ -9,6 +9,7 @@ machine(forModelChecking, imports, machine, structs, constants_declarations, inc
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -952,6 +953,11 @@ synchronized(guardLock) {
     }
 }
 <endif>
+synchronized(guardLock) {
+    if(!parents.containsKey(copiedState)) {
+        parents.put(copiedState, state);
+    }
+}
 result.add(copiedState);
 transitions.getAndIncrement();
 >>
@@ -997,13 +1003,28 @@ model_check_evaluate_variable(getter) ::= <<
 state.put("<getter>", machine.<getter>());
 >>
 
-model_check_print() ::= <<
-private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-    if(deadlockDetected) {
-        System.out.println("DEADLOCK DETECTED");
-    }
-    if(invariantViolated) {
-        System.out.println("INVARIANT VIOLATED");
+model_check_print(machine) ::= <<
+private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List\<<machine>\> counterExampleState, Map\<<machine>, <machine>\> parents) {
+
+    if(invariantViolated || deadlockDetected) {
+        if(deadlockDetected) {
+            System.out.println("DEADLOCK DETECTED");
+        }
+        if(invariantViolated) {
+            System.out.println("INVARIANT VIOLATED");
+        }
+        System.out.println("COUNTER EXAMPLE TRACE: ");
+        StringBuilder sb = new StringBuilder();
+        if(counterExampleState.size() == 1) {
+            <machine> currentState = counterExampleState.get(0);
+            while(currentState != null) {
+                sb.insert(0, currentState.toString());
+                sb.insert(0, "\n\n");
+                currentState = parents.get(currentState);
+            }
+        }
+        System.out.println(sb.toString());
+
     }
     if(!deadlockDetected && !invariantViolated) {
         System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -1056,19 +1077,14 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
         dependentInvariant.put(machine, new HashSet\<>());
-        parents.put(machine, null);
     }
+    List\<<machine>\> counterExampleState = new ArrayList\<>();
+    parents.put(machine, null);
 
     AtomicInteger transitions = new AtomicInteger(0);
 
     while(!collection.isEmpty() && !stopThreads.get()) {
         <machine> state = next(collection, lock, type);
-
-        if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-            invariantViolated.set(true);
-            stopThreads.set(true);
-            break;
-        }
 
         Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
@@ -1085,13 +1101,19 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
             }
         });
 
+        if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+            invariantViolated.set(true);
+            stopThreads.set(true);
+            counterExampleState.add(state);
+        }
+
         if(nextStates.isEmpty()) {
             deadlockDetected.set(true);
             stopThreads.set(true);
         }
 
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents);
 }
 
 
@@ -1126,8 +1148,9 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
         dependentInvariant.put(machine, new HashSet\<>());
-        parents.put(machine, null);
     }
+    List\<<machine>\> counterExampleState = new ArrayList\<>();
+    parents.put(machine, null);
 
     AtomicInteger transitions = new AtomicInteger(0);
 
@@ -1169,6 +1192,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
             if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                 invariantViolated.set(true);
                 stopThreads.set(true);
+                counterExampleState.add(state);
             }
 
 
@@ -1191,7 +1215,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents);
 }
 
 

@@ -866,7 +866,7 @@ model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 @SuppressWarnings("unchecked")
-private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> state, boolean isCaching, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, PersistentHashMap> guardCache, Map\<<machine>, <machine>\> parents, AtomicInteger transitions) {
+private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> state, boolean isCaching, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, PersistentHashMap> guardCache, Map\<<machine>, <machine>\> parents, Map\<<machine>, String> stateAccessedVia, AtomicInteger transitions) {
     Set\<<machine>\> result = new HashSet\<>();
     if(isCaching) {
         PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -951,13 +951,20 @@ synchronized(guardLock) {
     if(!parents.containsKey(copiedState)) {
         parents.put(copiedState, state);
     }
+    if(!stateAccessedVia.containsKey(copiedState)) {
+        stateAccessedVia.put(copiedState, "<operation>");
+    }
 }
-<endif>
+<else>
 synchronized(guardLock) {
     if(!parents.containsKey(copiedState)) {
         parents.put(copiedState, state);
     }
+    if(!stateAccessedVia.containsKey(copiedState)) {
+        stateAccessedVia.put(copiedState, "<operation>");
+    }
 }
+<endif>
 result.add(copiedState);
 transitions.getAndIncrement();
 >>
@@ -1004,7 +1011,7 @@ state.put("<getter>", machine.<getter>());
 >>
 
 model_check_print(machine) ::= <<
-private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List\<<machine>\> counterExampleState, Map\<<machine>, <machine>\> parents) {
+private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List\<<machine>\> counterExampleState, Map\<<machine>, <machine>\> parents, Map\<<machine>, String> stateAccessedVia) {
 
     if(invariantViolated || deadlockDetected) {
         if(deadlockDetected) {
@@ -1019,6 +1026,8 @@ private static void printResult(int states, int transitions, boolean deadlockDet
             <machine> currentState = counterExampleState.get(0);
             while(currentState != null) {
                 sb.insert(0, currentState.toString());
+                sb.insert(0, "\n");
+                sb.insert(0, stateAccessedVia.get(currentState));
                 sb.insert(0, "\n\n");
                 currentState = parents.get(currentState);
             }
@@ -1073,6 +1082,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
     Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
     Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
@@ -1086,7 +1096,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
     while(!collection.isEmpty() && !stopThreads.get()) {
         <machine> state = next(collection, lock, type);
 
-        Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
         nextStates.forEach(nextState -> {
             if(!states.contains(nextState)) {
@@ -1113,7 +1123,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
         }
 
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents);
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
 }
 
 
@@ -1144,6 +1154,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
     Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
@@ -1151,6 +1162,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     }
     List\<<machine>\> counterExampleState = new ArrayList\<>();
     parents.put(machine, null);
+    stateAccessedVia.put(machine, null);
 
     AtomicInteger transitions = new AtomicInteger(0);
 
@@ -1158,7 +1170,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
         possibleQueueChanges.incrementAndGet();
         <machine> state = next(collection, lock, type);
         Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 synchronized(lock) {
@@ -1215,7 +1227,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents);
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
 }
 
 

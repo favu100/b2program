@@ -1033,6 +1033,13 @@ copiedState.<operation>(<parameters; separator=", ">);
         parents.insert({copiedState, state});
     }
 }
+<else>
+{
+    std::unique_lock\<std::mutex> lock(guardMutex);
+    if(parents.find(copiedState) == parents.end()) {
+        parents.insert({copiedState, state});
+    }
+}
 <endif>
 result.insert(copiedState);
 transitions += 1;
@@ -1079,14 +1086,29 @@ model_check_evaluate_state() ::= <<
 model_check_evaluate_variable() ::= <<
 >>
 
-model_check_print() ::= <<
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout \<\< "DEADLOCK DETECTED" \<\< "\n";
+model_check_print(machine) ::= <<
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, <machine>& counterExampleState, std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual>& parents) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout \<\< "DEADLOCK DETECTED" \<\< "\n";
+        }
+        if(invariantViolated) {
+            cout \<\< "INVARIANT VIOLATED" \<\< "\n";
+        }
+        cout \<\< "COUNTER EXAMPLE TRACE: " \<\< "\n";
+
+        <machine> currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream \<\< currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout \<\< trace;
     }
-    if(invariantViolated) {
-        cout \<\< "INVARIANT VIOLATED" \<\< "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout \<\< "MODEL CHECKING SUCCESSFUL" \<\< "\n";
     }
@@ -1163,15 +1185,10 @@ static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
         <guardDependency; separator="\n">
         dependentInvariant.insert({machine, std::unordered_set\<string>()});
     }
+    <machine> counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         <machine> state = next(collection, mutex, type);
-
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
 
         std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
@@ -1187,13 +1204,20 @@ static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents);
 }
 
 static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCaching) {
@@ -1240,6 +1264,7 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
         <guardDependency; separator="\n">
         dependentInvariant.insert({machine, std::unordered_set\<string>()});
     }
+    <machine> counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -1282,11 +1307,13 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
             if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -1304,7 +1331,7 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents);
 }
 
 int main(int argc, char *argv[]) {

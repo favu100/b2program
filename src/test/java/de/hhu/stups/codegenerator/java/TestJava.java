@@ -148,7 +148,7 @@ public class TestJava {
 		CodeGenerator codeGenerator = new CodeGenerator();
 		List<Path> javaFilePaths = codeGenerator.generate(mchPath,
 				GeneratorMode.JAVA,
-				true,
+				false,
 				String.valueOf(Integer.MIN_VALUE),
 				String.valueOf(Integer.MAX_VALUE),
 				"10",

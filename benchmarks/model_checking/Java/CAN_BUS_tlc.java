@@ -1784,6 +1784,12 @@ public class CAN_BUS_tlc {
         while(!collection.isEmpty() && !stopThreads.get()) {
             CAN_BUS_tlc state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -1801,11 +1807,6 @@ public class CAN_BUS_tlc {
 
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
-                stopThreads.set(true);
-            }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
                 stopThreads.set(true);
             }
 

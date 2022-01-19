@@ -2071,6 +2071,12 @@ public class Cruise_finite1_deterministic_MC {
         while(!collection.isEmpty() && !stopThreads.get()) {
             Cruise_finite1_deterministic_MC state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<Cruise_finite1_deterministic_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -2088,11 +2094,6 @@ public class Cruise_finite1_deterministic_MC {
 
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
-                stopThreads.set(true);
-            }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
                 stopThreads.set(true);
             }
 

@@ -317,6 +317,12 @@ public class QueensWithEvents {
         while(!collection.isEmpty() && !stopThreads.get()) {
             QueensWithEvents state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -336,12 +342,6 @@ public class QueensWithEvents {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-            }
-
         }
         printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
     }

@@ -1016,6 +1016,12 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
         while(!collection.isEmpty() && !stopThreads.get()) {
             Train_1_beebook_deterministic_MC_POR_v2 state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<Train_1_beebook_deterministic_MC_POR_v2> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -1035,12 +1041,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-            }
-
         }
         printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
     }

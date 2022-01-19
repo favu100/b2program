@@ -999,6 +999,12 @@ public class Train1_Lukas_POR_v3 {
         while(!collection.isEmpty() && !stopThreads.get()) {
             Train1_Lukas_POR_v3 state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<Train1_Lukas_POR_v3> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -1018,12 +1024,6 @@ public class Train1_Lukas_POR_v3 {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-            }
-
         }
         printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
     }

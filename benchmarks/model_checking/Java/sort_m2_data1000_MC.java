@@ -486,6 +486,12 @@ public class sort_m2_data1000_MC {
         while(!collection.isEmpty() && !stopThreads.get()) {
             sort_m2_data1000_MC state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -505,12 +511,6 @@ public class sort_m2_data1000_MC {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-            }
-
         }
         printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
     }

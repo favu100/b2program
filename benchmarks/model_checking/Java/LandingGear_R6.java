@@ -2606,6 +2606,12 @@ public class LandingGear_R6 {
         while(!collection.isEmpty() && !stopThreads.get()) {
             LandingGear_R6 state = next(collection, lock, type);
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                break;
+            }
+
             Set<LandingGear_R6> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
             nextStates.forEach(nextState -> {
@@ -2623,11 +2629,6 @@ public class LandingGear_R6 {
 
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
-                stopThreads.set(true);
-            }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
                 stopThreads.set(true);
             }
 

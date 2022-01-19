@@ -1039,10 +1039,6 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
     AtomicBoolean deadlockDetected = new AtomicBoolean(false);
     AtomicBoolean stopThreads = new AtomicBoolean(false);
 
-    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
-        invariantViolated.set(true);
-    }
-
     Set\<<machine>\> states = new HashSet\<>();
     states.add(machine);
     AtomicInteger numberStates = new AtomicInteger(1);
@@ -1111,10 +1107,6 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     AtomicBoolean deadlockDetected = new AtomicBoolean(false);
     AtomicBoolean stopThreads = new AtomicBoolean(false);
     AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
-        invariantViolated.set(true);
-    }
 
     Set\<<machine>\> states = new HashSet\<>();
     states.add(machine);

@@ -1141,10 +1141,6 @@ static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
     std::atomic\<bool> stopThreads;
     stopThreads = false;
 
-    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
-        invariantViolated = true;
-    }
-
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
     states.insert(machine);
     std::atomic\<int> numberStates;
@@ -1213,10 +1209,6 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
     deadlockDetected = false;
     std::atomic\<bool> stopThreads;
     stopThreads = false;
-
-    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
-        invariantViolated = true;
-    }
 
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
     states.insert(machine);

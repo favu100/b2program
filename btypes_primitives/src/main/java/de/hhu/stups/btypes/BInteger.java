@@ -105,8 +105,20 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
         return new BInteger(this.value * o.value);
     }
 
-    public BInteger power(BInteger o) {
-        return new BInteger(this.value ^ o.value);
+    public BInteger power(BInteger exp) {
+        if(exp.intValue() == 0) {
+            return new BInteger(1);
+        }
+        BInteger tmp = power(exp.divide(new BInteger(2)));
+        if(exp.modulo(new BInteger(2)).equal(new BInteger(0)).booleanValue()) {
+            return tmp.multiply(tmp);
+        } else {
+            if(exp.greater(new BInteger(0)).booleanValue()) {
+                return this.multiply(tmp.multiply(tmp));
+            } else {
+                return (tmp.multiply(tmp)).divide(this);
+            }
+        }
     }
 
     public BInteger divide(BInteger o) {

@@ -148,7 +148,7 @@ public class TestJava {
 		CodeGenerator codeGenerator = new CodeGenerator();
 		List<Path> javaFilePaths = codeGenerator.generate(mchPath,
 				GeneratorMode.JAVA,
-				false,
+				true,
 				String.valueOf(Integer.MIN_VALUE),
 				String.valueOf(Integer.MAX_VALUE),
 				"10",
@@ -160,7 +160,7 @@ public class TestJava {
 				false,
 				null);
 		Process process = Runtime.getRuntime()
-				.exec("javac -classpath btypes_persistent.jar " + String.join(" ", javaFilePaths.stream()
+				.exec("javac -classpath btypes.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
 

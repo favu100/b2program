@@ -24,8 +24,6 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 
 	private static final Var DEC = RT.var("clojure.core", "dec");
 
-	private static final Var POWER = RT.var("clojure.math.numeric-tower", "expt");
-
 	private static final Var BIGINT = RT.var("clojure.core", "bigint");
 
 	@Override
@@ -134,11 +132,21 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 		return new BInteger((BigInt) MULTIPLY.invoke(this.value, other.value));
 	}
 
-	public BInteger power(BInteger o) {
-		BInteger other = (BInteger) o;
-		return new BInteger((BigInt) POWER.invoke(this.value, other.value));
+	public BInteger power(BInteger exp) {
+		if(exp.equal(new BInteger("0")).booleanValue()) {
+			return new BInteger("1");
+		}
+		BInteger tmp = power(exp.divide(new BInteger("2")));
+		if(exp.modulo(new BInteger("2")).equal(new BInteger("0")).booleanValue()) {
+			return tmp.multiply(tmp);
+		} else {
+			if(exp.greater(new BInteger("0")).booleanValue()) {
+				return this.multiply(tmp.multiply(tmp));
+			} else {
+				return (tmp.multiply(tmp)).divide(this);
+			}
+		}
 	}
-
 	public BInteger divide(BInteger o) {
 		BInteger other = (BInteger) o;
 		return new BInteger((BigInt) DIVIDE.invoke(this.value, other.value));

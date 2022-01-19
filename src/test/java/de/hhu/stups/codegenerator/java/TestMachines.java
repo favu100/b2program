@@ -306,6 +306,11 @@ public class TestMachines extends TestJava {
         testJavaMC("QueensWithEvents");
     }
 
+    @Test
+    public void testArithmeticLaws() throws Exception {
+        testJavaMC("ArithmeticLaws");
+    }
+
 
 
 }

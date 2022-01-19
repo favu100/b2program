@@ -78,6 +78,22 @@ class BInteger : public BObject {
             return BInteger(value * o.value);
         }
 
+        BInteger power(const BInteger& exp) const {
+            if(exp.equal(BInteger("0")).booleanValue()) {
+                return BInteger("1");
+            }
+            BInteger tmp = power(exp.divide(BInteger("2")));
+            if(exp.modulo(BInteger("2")).equal(BInteger("0")).booleanValue()) {
+                return tmp.multiply(tmp);
+            } else {
+                if(exp.greater(BInteger("0")).booleanValue()) {
+                    return this->multiply(tmp.multiply(tmp));
+                } else {
+                    return (tmp.multiply(tmp)).divide(*this);
+                }
+            }
+        }
+
         BInteger divide(const BInteger& o) const {
             return BInteger(value / o.value);
         }

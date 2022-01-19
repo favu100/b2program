@@ -1022,7 +1022,7 @@ private static void printResult(int states, int transitions, boolean deadlockDet
         }
         System.out.println("COUNTER EXAMPLE TRACE: ");
         StringBuilder sb = new StringBuilder();
-        if(counterExampleState.size() == 1) {
+        if(counterExampleState.size() >= 1) {
             <machine> currentState = counterExampleState.get(0);
             while(currentState != null) {
                 sb.insert(0, currentState.toString());

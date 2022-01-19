@@ -2948,6 +2948,13 @@ static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) 
 
     while(!collection.empty() && !stopThreads) {
         LandingGear_R6 state = next(collection, mutex, type);
+
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            break;
+        }
+
         std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -2964,11 +2971,6 @@ static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) 
 
         if(nextStates.empty()) {
             deadlockDetected = true;
-            stopThreads = true;
-        }
-
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
             stopThreads = true;
         }
 

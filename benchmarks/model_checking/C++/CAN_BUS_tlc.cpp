@@ -2012,6 +2012,13 @@ static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
 
     while(!collection.empty() && !stopThreads) {
         CAN_BUS_tlc state = next(collection, mutex, type);
+
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            break;
+        }
+
         std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -2028,11 +2035,6 @@ static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
 
         if(nextStates.empty()) {
             deadlockDetected = true;
-            stopThreads = true;
-        }
-
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
             stopThreads = true;
         }
 

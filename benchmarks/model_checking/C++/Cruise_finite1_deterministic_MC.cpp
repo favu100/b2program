@@ -2210,6 +2210,13 @@ static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type,
 
     while(!collection.empty() && !stopThreads) {
         Cruise_finite1_deterministic_MC state = next(collection, mutex, type);
+
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            break;
+        }
+
         std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -2226,11 +2233,6 @@ static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type,
 
         if(nextStates.empty()) {
             deadlockDetected = true;
-            stopThreads = true;
-        }
-
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
             stopThreads = true;
         }
 
@@ -2341,7 +2343,6 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
         std::packaged_task<void()> task([&, state] {
             std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
 
-
             for(auto nextState : nextStates) {
                 {
                     std::unique_lock<std::mutex> lock(mutex);
@@ -2373,11 +2374,6 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
 
             if(nextStates.empty()) {
                 deadlockDetected = true;
-                stopThreads = true;
-            }
-
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
                 stopThreads = true;
             }
 

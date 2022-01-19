@@ -1158,6 +1158,13 @@ static void modelCheckSingleThreaded(Train_1_beebook_deterministic_MC_POR_v2::Ty
 
     while(!collection.empty() && !stopThreads) {
         Train_1_beebook_deterministic_MC_POR_v2 state = next(collection, mutex, type);
+
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            break;
+        }
+
         std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -1174,11 +1181,6 @@ static void modelCheckSingleThreaded(Train_1_beebook_deterministic_MC_POR_v2::Ty
 
         if(nextStates.empty()) {
             deadlockDetected = true;
-            stopThreads = true;
-        }
-
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
             stopThreads = true;
         }
 

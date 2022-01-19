@@ -528,6 +528,13 @@ static void modelCheckSingleThreaded(sort_m2_data1000_MC::Type type, bool isCach
 
     while(!collection.empty() && !stopThreads) {
         sort_m2_data1000_MC state = next(collection, mutex, type);
+
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            break;
+        }
+
         std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -544,11 +551,6 @@ static void modelCheckSingleThreaded(sort_m2_data1000_MC::Type type, bool isCach
 
         if(nextStates.empty()) {
             deadlockDetected = true;
-            stopThreads = true;
-        }
-
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
             stopThreads = true;
         }
 

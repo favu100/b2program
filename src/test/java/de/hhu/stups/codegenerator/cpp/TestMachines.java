@@ -230,4 +230,9 @@ public class TestMachines extends TestCpp {
         testCppMC("QueensWithEvents");
     }
 
+    @Test
+    public void testArithmeticLaws() throws Exception {
+        testCppMC("ArithmeticLaws");
+    }
+
 }

@@ -1188,7 +1188,7 @@ static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
     std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
     std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
     std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
-    std::unordered_map\<<machine>, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> stateAccessedVia;
+    std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
     if(isCaching) {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
@@ -1268,7 +1268,7 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
     std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
     std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
     std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
-    std::unordered_map\<<machine>, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> stateAccessedVia;
+    std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
     if(isCaching) {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">

@@ -188,7 +188,7 @@ class QueensWithEvents {
 };
 
 
-static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> generateNextStates(std::mutex& guardMutex, const QueensWithEvents& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentGuard, std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& guardCache, std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& parents, std::atomic<int>& transitions) {
+static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> generateNextStates(std::mutex& guardMutex, const QueensWithEvents& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentGuard, std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& guardCache, std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& parents, std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
     std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> result = std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
@@ -236,6 +236,9 @@ static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEv
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "Solve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -252,6 +255,15 @@ static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEv
 
             QueensWithEvents copiedState = state._copy();
             copiedState.Solve(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "Solve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -260,13 +272,30 @@ static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEv
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout << "DEADLOCK DETECTED" << "\n";
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, QueensWithEvents& counterExampleState, std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& parents, std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& stateAccessedVia) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout << "DEADLOCK DETECTED" << "\n";
+        }
+        if(invariantViolated) {
+            cout << "INVARIANT VIOLATED" << "\n";
+        }
+        cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+        QueensWithEvents currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream << currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n");
+            trace.insert(0, stateAccessedVia[currentState]);
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout << trace;
     }
-    if(invariantViolated) {
-        cout << "INVARIANT VIOLATED" << "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout << "MODEL CHECKING SUCCESSFUL" << "\n";
     }
@@ -348,22 +377,18 @@ static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching
     std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> dependentGuard;
     std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> guardCache;
     std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> parents;
+    std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"Solve", {"_check_inv_1"}});
         guardDependency.insert({"Solve", {"_tr_Solve"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    QueensWithEvents counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         QueensWithEvents state = next(collection, mutex, type);
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
-
-        std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -377,13 +402,20 @@ static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bool isCaching) {
@@ -425,11 +457,13 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
     std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> dependentGuard;
     std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> guardCache;
     std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> parents;
+    std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"Solve", {"_check_inv_1"}});
         guardDependency.insert({"Solve", {"_tr_Solve"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    QueensWithEvents counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -437,7 +471,7 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
         possibleQueueChanges += 1;
         QueensWithEvents state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
 
             for(auto nextState : nextStates) {
@@ -472,11 +506,13 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
             if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -494,7 +530,7 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 int main(int argc, char *argv[]) {

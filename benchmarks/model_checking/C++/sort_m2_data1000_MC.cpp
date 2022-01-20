@@ -229,7 +229,7 @@ class sort_m2_data1000_MC {
 };
 
 
-static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> generateNextStates(std::mutex& guardMutex, const sort_m2_data1000_MC& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentGuard, std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& guardCache, std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& parents, std::atomic<int>& transitions) {
+static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> generateNextStates(std::mutex& guardMutex, const sort_m2_data1000_MC& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentGuard, std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& guardCache, std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& parents, std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
     std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> result = std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
@@ -275,6 +275,9 @@ static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "progress"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -303,6 +306,9 @@ static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "prog1"});
                 }
             }
             result.insert(copiedState);
@@ -333,6 +339,9 @@ static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "prog2"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -362,6 +371,9 @@ static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "final_evt"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -375,24 +387,60 @@ static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m
         if(state._tr_progress()) {
             sort_m2_data1000_MC copiedState = state._copy();
             copiedState.progress();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "progress"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_prog1()) {
             sort_m2_data1000_MC copiedState = state._copy();
             copiedState.prog1();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "prog1"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_prog2()) {
             sort_m2_data1000_MC copiedState = state._copy();
             copiedState.prog2();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "prog2"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_final_evt()) {
             sort_m2_data1000_MC copiedState = state._copy();
             copiedState.final_evt();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "final_evt"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -401,13 +449,30 @@ static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout << "DEADLOCK DETECTED" << "\n";
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, sort_m2_data1000_MC& counterExampleState, std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& parents, std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& stateAccessedVia) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout << "DEADLOCK DETECTED" << "\n";
+        }
+        if(invariantViolated) {
+            cout << "INVARIANT VIOLATED" << "\n";
+        }
+        cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+        sort_m2_data1000_MC currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream << currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n");
+            trace.insert(0, stateAccessedVia[currentState]);
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout << trace;
     }
-    if(invariantViolated) {
-        cout << "INVARIANT VIOLATED" << "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout << "MODEL CHECKING SUCCESSFUL" << "\n";
     }
@@ -514,6 +579,7 @@ static void modelCheckSingleThreaded(sort_m2_data1000_MC::Type type, bool isCach
     std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> dependentGuard;
     std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> guardCache;
     std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> parents;
+    std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"prog2", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
         invariantDependency.insert({"prog1", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
@@ -525,17 +591,12 @@ static void modelCheckSingleThreaded(sort_m2_data1000_MC::Type type, bool isCach
         guardDependency.insert({"final_evt", {}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    sort_m2_data1000_MC counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         sort_m2_data1000_MC state = next(collection, mutex, type);
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
-
-        std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -549,13 +610,20 @@ static void modelCheckSingleThreaded(sort_m2_data1000_MC::Type type, bool isCach
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads, bool isCaching) {
@@ -597,6 +665,7 @@ static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads,
     std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> dependentGuard;
     std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> guardCache;
     std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> parents;
+    std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"prog2", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
         invariantDependency.insert({"prog1", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
@@ -608,6 +677,7 @@ static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads,
         guardDependency.insert({"final_evt", {}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    sort_m2_data1000_MC counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -615,7 +685,7 @@ static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads,
         possibleQueueChanges += 1;
         sort_m2_data1000_MC state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
 
             for(auto nextState : nextStates) {
@@ -650,11 +720,13 @@ static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads,
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
             if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -672,7 +744,7 @@ static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads,
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 int main(int argc, char *argv[]) {

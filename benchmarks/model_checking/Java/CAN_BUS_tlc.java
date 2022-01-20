@@ -7,6 +7,7 @@ import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -754,7 +755,7 @@ public class CAN_BUS_tlc {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<CAN_BUS_tlc> generateNextStates(Object guardLock, CAN_BUS_tlc state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<CAN_BUS_tlc, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<CAN_BUS_tlc, Set<String>> dependentGuard, Map<CAN_BUS_tlc, PersistentHashMap> guardCache, Map<CAN_BUS_tlc, CAN_BUS_tlc> parents, AtomicInteger transitions) {
+    private static Set<CAN_BUS_tlc> generateNextStates(Object guardLock, CAN_BUS_tlc state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<CAN_BUS_tlc, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<CAN_BUS_tlc, Set<String>> dependentGuard, Map<CAN_BUS_tlc, PersistentHashMap> guardCache, Map<CAN_BUS_tlc, CAN_BUS_tlc> parents, Map<CAN_BUS_tlc, String> stateAccessedVia, AtomicInteger transitions) {
         Set<CAN_BUS_tlc> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -787,6 +788,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1Evaluate");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -817,6 +821,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1Calculate");
                     }
                 }
                 result.add(copiedState);
@@ -850,6 +857,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1SendResult");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -881,6 +891,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1Wait");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -909,6 +922,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Evaluate");
                     }
                 }
                 result.add(copiedState);
@@ -942,6 +958,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2ReadBus");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -971,6 +990,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Reset");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -999,6 +1021,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Complete");
                     }
                 }
                 result.add(copiedState);
@@ -1031,6 +1056,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2ReleaseBus");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1059,6 +1087,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Calculate");
                     }
                 }
                 result.add(copiedState);
@@ -1092,6 +1123,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2WriteBus");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1123,6 +1157,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Wait");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1152,6 +1189,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Initiate");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1180,6 +1220,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Evaluate");
                     }
                 }
                 result.add(copiedState);
@@ -1213,6 +1256,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3writebus");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1245,6 +1291,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Read");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1273,6 +1322,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Poll");
                     }
                 }
                 result.add(copiedState);
@@ -1305,6 +1357,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3ReleaseBus");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1334,6 +1389,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Wait");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1362,6 +1420,9 @@ public class CAN_BUS_tlc {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3ReEnableWait");
                     }
                 }
                 result.add(copiedState);
@@ -1394,6 +1455,9 @@ public class CAN_BUS_tlc {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "Update");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1406,6 +1470,14 @@ public class CAN_BUS_tlc {
             if(state._tr_T1Evaluate()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1Evaluate();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1Evaluate");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1415,6 +1487,14 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1Calculate(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1Calculate");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1425,6 +1505,14 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1SendResult(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1SendResult");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1434,12 +1522,28 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T1Wait(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T1Wait");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T2Evaluate()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Evaluate();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Evaluate");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1450,18 +1554,42 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2ReadBus");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T2Reset()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Reset();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Reset");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T2Complete()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Complete();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Complete");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1471,12 +1599,28 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2ReleaseBus(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2ReleaseBus");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T2Calculate()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Calculate();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Calculate");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1487,6 +1631,14 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2WriteBus");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1496,18 +1648,42 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T2Wait(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T2Wait");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T3Initiate()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Initiate();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Initiate");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T3Evaluate()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Evaluate();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Evaluate");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1518,6 +1694,14 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3writebus(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3writebus");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1528,12 +1712,28 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Read(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Read");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T3Poll()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Poll();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Poll");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1543,18 +1743,42 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3ReleaseBus(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3ReleaseBus");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T3Wait()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3Wait();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3Wait");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_T3ReEnableWait()) {
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.T3ReEnableWait();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "T3ReEnableWait");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1564,6 +1788,14 @@ public class CAN_BUS_tlc {
 
                 CAN_BUS_tlc copiedState = state._copy();
                 copiedState.Update(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "Update");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1684,12 +1916,29 @@ public class CAN_BUS_tlc {
         return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-        if(deadlockDetected) {
-            System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
-            System.out.println("INVARIANT VIOLATED");
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<CAN_BUS_tlc> counterExampleState, Map<CAN_BUS_tlc, CAN_BUS_tlc> parents, Map<CAN_BUS_tlc, String> stateAccessedVia) {
+
+        if(invariantViolated || deadlockDetected) {
+            if(deadlockDetected) {
+                System.out.println("DEADLOCK DETECTED");
+            }
+            if(invariantViolated) {
+                System.out.println("INVARIANT VIOLATED");
+            }
+            System.out.println("COUNTER EXAMPLE TRACE: ");
+            StringBuilder sb = new StringBuilder();
+            if(counterExampleState.size() >= 1) {
+                CAN_BUS_tlc currentState = counterExampleState.get(0);
+                while(currentState != null) {
+                    sb.insert(0, currentState.toString());
+                    sb.insert(0, "\n");
+                    sb.insert(0, stateAccessedVia.get(currentState));
+                    sb.insert(0, "\n\n");
+                    currentState = parents.get(currentState);
+                }
+            }
+            System.out.println(sb.toString());
+
         }
         if(!deadlockDetected && !invariantViolated) {
             System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -1732,6 +1981,7 @@ public class CAN_BUS_tlc {
         Map<CAN_BUS_tlc, Set<String>> dependentGuard = new HashMap<>();
         Map<CAN_BUS_tlc, PersistentHashMap> guardCache = new HashMap<>();
         Map<CAN_BUS_tlc, CAN_BUS_tlc> parents = new HashMap<>();
+        Map<CAN_BUS_tlc, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("T1Wait", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
             invariantDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_check_inv_7", "_check_inv_4")));
@@ -1776,21 +2026,16 @@ public class CAN_BUS_tlc {
             guardDependency.put("T3Wait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
             guardDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<CAN_BUS_tlc> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             CAN_BUS_tlc state = next(collection, lock, type);
 
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                break;
-            }
-
-            Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
@@ -1805,13 +2050,19 @@ public class CAN_BUS_tlc {
                 }
             });
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                counterExampleState.add(state);
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
 
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 
@@ -1842,6 +2093,7 @@ public class CAN_BUS_tlc {
         Map<CAN_BUS_tlc, Set<String>> dependentGuard = new HashMap<>();
         Map<CAN_BUS_tlc, PersistentHashMap> guardCache = new HashMap<>();
         Map<CAN_BUS_tlc, CAN_BUS_tlc> parents = new HashMap<>();
+        Map<CAN_BUS_tlc, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("T1Wait", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
             invariantDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_check_inv_7", "_check_inv_4")));
@@ -1886,8 +2138,10 @@ public class CAN_BUS_tlc {
             guardDependency.put("T3Wait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
             guardDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<CAN_BUS_tlc> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
+        stateAccessedVia.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
@@ -1895,7 +2149,7 @@ public class CAN_BUS_tlc {
             possibleQueueChanges.incrementAndGet();
             CAN_BUS_tlc state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+                Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -1929,6 +2183,7 @@ public class CAN_BUS_tlc {
                 if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
+                    counterExampleState.add(state);
                 }
 
 
@@ -1951,7 +2206,7 @@ public class CAN_BUS_tlc {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 

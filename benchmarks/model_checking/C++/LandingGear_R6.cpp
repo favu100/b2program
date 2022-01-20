@@ -41,8 +41,8 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum DOOR_STATE_type {
-                    open,
-                    closed,
+                    open, 
+                    closed, 
                     door_moving
                 };
 
@@ -96,8 +96,8 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum GEAR_STATE_type {
-                    retracted,
-                    extended,
+                    retracted, 
+                    extended, 
                     gear_moving
                 };
 
@@ -151,7 +151,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum HANDLE_STATE_type {
-                    up,
+                    up, 
                     down
                 };
 
@@ -204,8 +204,8 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum POSITION_type {
-                    fr,
-                    lt,
+                    fr, 
+                    lt, 
                     rt
                 };
 
@@ -259,7 +259,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum SWITCH_STATE_type {
-                    switch_open,
+                    switch_open, 
                     switch_closed
                 };
 
@@ -312,7 +312,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum PLANE_STATE_type {
-                    ground,
+                    ground, 
                     flight
                 };
 
@@ -365,7 +365,7 @@ class LandingGear_R6 {
                 typedef void right_type;
 
                 enum VALVE_STATE_type {
-                    valve_open,
+                    valve_open, 
                     valve_closed
                 };
 
@@ -1236,7 +1236,7 @@ class LandingGear_R6 {
 };
 
 
-static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> generateNextStates(std::mutex& guardMutex, const LandingGear_R6& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentGuard, std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& guardCache, std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& parents, std::atomic<int>& transitions) {
+static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> generateNextStates(std::mutex& guardMutex, const LandingGear_R6& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentGuard, std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& guardCache, std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& parents, std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
     std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> result = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
@@ -1282,6 +1282,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "begin_flying"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1310,6 +1313,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "land_plane"});
                 }
             }
             result.insert(copiedState);
@@ -1340,6 +1346,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_door_open"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1368,6 +1377,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_door_open"});
                 }
             }
             result.insert(copiedState);
@@ -1398,6 +1410,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_door_close"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1426,6 +1441,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_door_close"});
                 }
             }
             result.insert(copiedState);
@@ -1456,6 +1474,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_retract_gear"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1484,6 +1505,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_retract_gear"});
                 }
             }
             result.insert(copiedState);
@@ -1514,6 +1538,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_extend_gear"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1542,6 +1569,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_extend_gear"});
                 }
             }
             result.insert(copiedState);
@@ -1572,6 +1602,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_open_door_valve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1600,6 +1633,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_open_door_valve"});
                 }
             }
             result.insert(copiedState);
@@ -1630,6 +1666,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_close_door_valve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1658,6 +1697,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_close_door_valve"});
                 }
             }
             result.insert(copiedState);
@@ -1688,6 +1730,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_retract_gear_valve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1716,6 +1761,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_retract_gear_valve"});
                 }
             }
             result.insert(copiedState);
@@ -1746,6 +1794,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_extend_gear_valve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1774,6 +1825,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_extend_gear_valve"});
                 }
             }
             result.insert(copiedState);
@@ -1806,6 +1860,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_retracting_first"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1836,6 +1893,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_retract_gear_skip"});
                 }
             }
             result.insert(copiedState);
@@ -1868,6 +1928,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_retract_gear_last"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1898,6 +1961,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_extending"});
                 }
             }
             result.insert(copiedState);
@@ -1930,6 +1996,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_extend_gear_last"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1960,6 +2029,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_extend_gear_skip"});
                 }
             }
             result.insert(copiedState);
@@ -1992,6 +2064,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_open_door"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2022,6 +2097,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_open_door_last"});
                 }
             }
             result.insert(copiedState);
@@ -2054,6 +2132,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_open_door_skip"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2084,6 +2165,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_close_door"});
                 }
             }
             result.insert(copiedState);
@@ -2116,6 +2200,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_close_door"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2147,6 +2234,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_close_door_skip"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2175,6 +2265,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "toggle_handle_up"});
                 }
             }
             result.insert(copiedState);
@@ -2205,6 +2298,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "toggle_handle_down"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2233,6 +2329,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_general_valve"});
                 }
             }
             result.insert(copiedState);
@@ -2263,6 +2362,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_general_valve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2291,6 +2393,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "evn_open_general_valve"});
                 }
             }
             result.insert(copiedState);
@@ -2321,6 +2426,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "evn_close_general_valve"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2349,6 +2457,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_close_analogical_switch"});
                 }
             }
             result.insert(copiedState);
@@ -2379,6 +2490,9 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_open_analogical_switch"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -2392,108 +2506,270 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
         if(state._tr_begin_flying()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.begin_flying();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "begin_flying"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_land_plane()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.land_plane();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "land_plane"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_open_valve_door_open()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.open_valve_door_open();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_door_open"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_close_valve_door_open()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.close_valve_door_open();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_door_open"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_open_valve_door_close()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.open_valve_door_close();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_door_close"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_close_valve_door_close()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.close_valve_door_close();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_door_close"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_open_valve_retract_gear()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.open_valve_retract_gear();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_retract_gear"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_close_valve_retract_gear()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.close_valve_retract_gear();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_retract_gear"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_open_valve_extend_gear()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.open_valve_extend_gear();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "open_valve_extend_gear"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_close_valve_extend_gear()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.close_valve_extend_gear();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "close_valve_extend_gear"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stimulate_open_door_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stimulate_open_door_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_open_door_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stop_stimulate_open_door_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stop_stimulate_open_door_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_open_door_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stimulate_close_door_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stimulate_close_door_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_close_door_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stop_stimulate_close_door_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stop_stimulate_close_door_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_close_door_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stimulate_retract_gear_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stimulate_retract_gear_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_retract_gear_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stop_stimulate_retract_gear_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stop_stimulate_retract_gear_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_retract_gear_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stimulate_extend_gear_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stimulate_extend_gear_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_extend_gear_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stop_stimulate_extend_gear_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stop_stimulate_extend_gear_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_extend_gear_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2503,6 +2779,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_start_retracting_first(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_retracting_first"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2512,6 +2797,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_retract_gear_skip(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_retract_gear_skip"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2521,6 +2815,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_retract_gear_last(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_retract_gear_last"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2530,6 +2833,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_start_extending(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_extending"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2539,6 +2851,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_extend_gear_last(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_extend_gear_last"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2548,6 +2869,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_extend_gear_skip(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_extend_gear_skip"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2557,6 +2887,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_start_open_door(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_open_door"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2566,6 +2905,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_open_door_last(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_open_door_last"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2575,6 +2923,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_open_door_skip(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_open_door_skip"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2584,6 +2941,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_start_close_door(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_start_close_door"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2593,6 +2959,15 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_close_door(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_close_door"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2602,54 +2977,135 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
 
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_close_door_skip(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_close_door_skip"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_toggle_handle_up()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.toggle_handle_up();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "toggle_handle_up"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_toggle_handle_down()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.toggle_handle_down();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "toggle_handle_down"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stimulate_general_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stimulate_general_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stimulate_general_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_con_stop_stimulate_general_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.con_stop_stimulate_general_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_general_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_evn_open_general_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.evn_open_general_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "evn_open_general_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_evn_close_general_valve()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.evn_close_general_valve();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "evn_close_general_valve"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_env_close_analogical_switch()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_close_analogical_switch();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_close_analogical_switch"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_env_open_analogical_switch()) {
             LandingGear_R6 copiedState = state._copy();
             copiedState.env_open_analogical_switch();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "env_open_analogical_switch"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -2658,13 +3114,30 @@ static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout << "DEADLOCK DETECTED" << "\n";
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, LandingGear_R6& counterExampleState, std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& parents, std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& stateAccessedVia) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout << "DEADLOCK DETECTED" << "\n";
+        }
+        if(invariantViolated) {
+            cout << "INVARIANT VIOLATED" << "\n";
+        }
+        cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+        LandingGear_R6 currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream << currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n");
+            trace.insert(0, stateAccessedVia[currentState]);
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout << trace;
     }
-    if(invariantViolated) {
-        cout << "INVARIANT VIOLATED" << "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout << "MODEL CHECKING SUCCESSFUL" << "\n";
     }
@@ -2866,6 +3339,7 @@ static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) 
     std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> dependentGuard;
     std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> guardCache;
     std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> parents;
+    std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"close_valve_door_close", {"_check_inv_10"}});
         invariantDependency.insert({"close_valve_retract_gear", {"_check_inv_13"}});
@@ -2945,17 +3419,12 @@ static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) 
         guardDependency.insert({"env_start_open_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    LandingGear_R6 counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         LandingGear_R6 state = next(collection, mutex, type);
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
-
-        std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -2969,13 +3438,20 @@ static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) 
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool isCaching) {
@@ -3017,6 +3493,7 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
     std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> dependentGuard;
     std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> guardCache;
     std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> parents;
+    std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"close_valve_door_close", {"_check_inv_10"}});
         invariantDependency.insert({"close_valve_retract_gear", {"_check_inv_13"}});
@@ -3096,6 +3573,7 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
         guardDependency.insert({"env_start_open_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    LandingGear_R6 counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -3103,7 +3581,7 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
         possibleQueueChanges += 1;
         LandingGear_R6 state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
 
             for(auto nextState : nextStates) {
@@ -3138,11 +3616,13 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
             if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -3160,7 +3640,7 @@ static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 int main(int argc, char *argv[]) {

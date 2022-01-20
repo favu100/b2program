@@ -6,6 +6,7 @@ import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -220,7 +221,7 @@ public class sort_m2_data1000_MC {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<sort_m2_data1000_MC> generateNextStates(Object guardLock, sort_m2_data1000_MC state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<sort_m2_data1000_MC, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<sort_m2_data1000_MC, Set<String>> dependentGuard, Map<sort_m2_data1000_MC, PersistentHashMap> guardCache, Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents, AtomicInteger transitions) {
+    private static Set<sort_m2_data1000_MC> generateNextStates(Object guardLock, sort_m2_data1000_MC state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<sort_m2_data1000_MC, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<sort_m2_data1000_MC, Set<String>> dependentGuard, Map<sort_m2_data1000_MC, PersistentHashMap> guardCache, Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents, Map<sort_m2_data1000_MC, String> stateAccessedVia, AtomicInteger transitions) {
         Set<sort_m2_data1000_MC> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -253,6 +254,9 @@ public class sort_m2_data1000_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "progress");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -281,6 +285,9 @@ public class sort_m2_data1000_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "prog1");
                     }
                 }
                 result.add(copiedState);
@@ -311,6 +318,9 @@ public class sort_m2_data1000_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "prog2");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -340,6 +350,9 @@ public class sort_m2_data1000_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "final_evt");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -352,24 +365,56 @@ public class sort_m2_data1000_MC {
             if(state._tr_progress()) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.progress();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "progress");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_prog1()) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.prog1();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "prog1");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_prog2()) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.prog2();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "prog2");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_final_evt()) {
                 sort_m2_data1000_MC copiedState = state._copy();
                 copiedState.final_evt();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "final_evt");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -420,12 +465,29 @@ public class sort_m2_data1000_MC {
         return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-        if(deadlockDetected) {
-            System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
-            System.out.println("INVARIANT VIOLATED");
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<sort_m2_data1000_MC> counterExampleState, Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents, Map<sort_m2_data1000_MC, String> stateAccessedVia) {
+
+        if(invariantViolated || deadlockDetected) {
+            if(deadlockDetected) {
+                System.out.println("DEADLOCK DETECTED");
+            }
+            if(invariantViolated) {
+                System.out.println("INVARIANT VIOLATED");
+            }
+            System.out.println("COUNTER EXAMPLE TRACE: ");
+            StringBuilder sb = new StringBuilder();
+            if(counterExampleState.size() >= 1) {
+                sort_m2_data1000_MC currentState = counterExampleState.get(0);
+                while(currentState != null) {
+                    sb.insert(0, currentState.toString());
+                    sb.insert(0, "\n");
+                    sb.insert(0, stateAccessedVia.get(currentState));
+                    sb.insert(0, "\n\n");
+                    currentState = parents.get(currentState);
+                }
+            }
+            System.out.println(sb.toString());
+
         }
         if(!deadlockDetected && !invariantViolated) {
             System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -468,6 +530,7 @@ public class sort_m2_data1000_MC {
         Map<sort_m2_data1000_MC, Set<String>> dependentGuard = new HashMap<>();
         Map<sort_m2_data1000_MC, PersistentHashMap> guardCache = new HashMap<>();
         Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents = new HashMap<>();
+        Map<sort_m2_data1000_MC, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("prog2", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
             invariantDependency.put("prog1", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
@@ -478,21 +541,16 @@ public class sort_m2_data1000_MC {
             guardDependency.put("progress", new HashSet<>(Arrays.asList("_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2")));
             guardDependency.put("final_evt", new HashSet<>(Arrays.asList()));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<sort_m2_data1000_MC> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             sort_m2_data1000_MC state = next(collection, lock, type);
 
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                break;
-            }
-
-            Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
@@ -507,12 +565,19 @@ public class sort_m2_data1000_MC {
                 }
             });
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                counterExampleState.add(state);
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
+
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 
@@ -543,6 +608,7 @@ public class sort_m2_data1000_MC {
         Map<sort_m2_data1000_MC, Set<String>> dependentGuard = new HashMap<>();
         Map<sort_m2_data1000_MC, PersistentHashMap> guardCache = new HashMap<>();
         Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents = new HashMap<>();
+        Map<sort_m2_data1000_MC, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("prog2", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
             invariantDependency.put("prog1", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
@@ -553,8 +619,10 @@ public class sort_m2_data1000_MC {
             guardDependency.put("progress", new HashSet<>(Arrays.asList("_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2")));
             guardDependency.put("final_evt", new HashSet<>(Arrays.asList()));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<sort_m2_data1000_MC> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
+        stateAccessedVia.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
@@ -562,7 +630,7 @@ public class sort_m2_data1000_MC {
             possibleQueueChanges.incrementAndGet();
             sort_m2_data1000_MC state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+                Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -596,6 +664,7 @@ public class sort_m2_data1000_MC {
                 if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
+                    counterExampleState.add(state);
                 }
 
 
@@ -618,7 +687,7 @@ public class sort_m2_data1000_MC {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 

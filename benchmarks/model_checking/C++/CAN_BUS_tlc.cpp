@@ -42,9 +42,9 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T1state_type {
-                    T1_EN,
-                    T1_CALC,
-                    T1_SEND,
+                    T1_EN, 
+                    T1_CALC, 
+                    T1_SEND, 
                     T1_WAIT
                 };
 
@@ -99,8 +99,8 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T2mode_type {
-                    T2MODE_SENSE,
-                    T2MODE_TRANSMIT,
+                    T2MODE_SENSE, 
+                    T2MODE_TRANSMIT, 
                     T2MODE_RELEASE
                 };
 
@@ -154,12 +154,12 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T2state_type {
-                    T2_EN,
-                    T2_RCV,
-                    T2_PROC,
-                    T2_CALC,
-                    T2_SEND,
-                    T2_WAIT,
+                    T2_EN, 
+                    T2_RCV, 
+                    T2_PROC, 
+                    T2_CALC, 
+                    T2_SEND, 
+                    T2_WAIT, 
                     T2_RELEASE
                 };
 
@@ -217,11 +217,11 @@ class CAN_BUS_tlc {
                 typedef void right_type;
 
                 enum T3state_type {
-                    T3_READY,
-                    T3_WRITE,
-                    T3_RELEASE,
-                    T3_READ,
-                    T3_PROC,
+                    T3_READY, 
+                    T3_WRITE, 
+                    T3_RELEASE, 
+                    T3_READ, 
+                    T3_PROC, 
                     T3_WAIT
                 };
 
@@ -949,7 +949,7 @@ class CAN_BUS_tlc {
 };
 
 
-static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> generateNextStates(std::mutex& guardMutex, const CAN_BUS_tlc& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentGuard, std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& guardCache, std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& parents, std::atomic<int>& transitions) {
+static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> generateNextStates(std::mutex& guardMutex, const CAN_BUS_tlc& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentGuard, std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& guardCache, std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& parents, std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
     std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> result = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
@@ -995,6 +995,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1Evaluate"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1025,6 +1028,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1Calculate"});
                 }
             }
             result.insert(copiedState);
@@ -1058,6 +1064,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1SendResult"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1089,6 +1098,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1Wait"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1117,6 +1129,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Evaluate"});
                 }
             }
             result.insert(copiedState);
@@ -1150,6 +1165,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2ReadBus"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1179,6 +1197,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Reset"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1207,6 +1228,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Complete"});
                 }
             }
             result.insert(copiedState);
@@ -1239,6 +1263,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2ReleaseBus"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1267,6 +1294,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Calculate"});
                 }
             }
             result.insert(copiedState);
@@ -1300,6 +1330,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2WriteBus"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1331,6 +1364,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Wait"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1360,6 +1396,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Initiate"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1388,6 +1427,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Evaluate"});
                 }
             }
             result.insert(copiedState);
@@ -1421,6 +1463,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3writebus"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1453,6 +1498,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Read"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1481,6 +1529,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Poll"});
                 }
             }
             result.insert(copiedState);
@@ -1513,6 +1564,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3ReleaseBus"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1542,6 +1596,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Wait"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1570,6 +1627,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3ReEnableWait"});
                 }
             }
             result.insert(copiedState);
@@ -1602,6 +1662,9 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "Update"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1615,6 +1678,15 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
         if(state._tr_T1Evaluate()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T1Evaluate();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1Evaluate"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1624,6 +1696,15 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T1Calculate(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1Calculate"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1634,6 +1715,15 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T1SendResult(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1SendResult"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1643,12 +1733,30 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T1Wait(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T1Wait"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T2Evaluate()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2Evaluate();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Evaluate"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1659,18 +1767,45 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2ReadBus(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2ReadBus"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T2Reset()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2Reset();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Reset"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T2Complete()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2Complete();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Complete"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1680,12 +1815,30 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2ReleaseBus(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2ReleaseBus"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T2Calculate()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2Calculate();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Calculate"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1696,6 +1849,15 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2WriteBus(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2WriteBus"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1705,18 +1867,45 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T2Wait(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T2Wait"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T3Initiate()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3Initiate();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Initiate"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T3Evaluate()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3Evaluate();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Evaluate"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1727,6 +1916,15 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3writebus(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3writebus"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1737,12 +1935,30 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3Read(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Read"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T3Poll()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3Poll();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Poll"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1752,18 +1968,45 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3ReleaseBus(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3ReleaseBus"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T3Wait()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3Wait();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3Wait"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_T3ReEnableWait()) {
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.T3ReEnableWait();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "T3ReEnableWait"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1773,6 +2016,15 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
 
             CAN_BUS_tlc copiedState = state._copy();
             copiedState.Update(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "Update"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1781,13 +2033,30 @@ static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout << "DEADLOCK DETECTED" << "\n";
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, CAN_BUS_tlc& counterExampleState, std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& parents, std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& stateAccessedVia) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout << "DEADLOCK DETECTED" << "\n";
+        }
+        if(invariantViolated) {
+            cout << "INVARIANT VIOLATED" << "\n";
+        }
+        cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+        CAN_BUS_tlc currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream << currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n");
+            trace.insert(0, stateAccessedVia[currentState]);
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout << trace;
     }
-    if(invariantViolated) {
-        cout << "INVARIANT VIOLATED" << "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout << "MODEL CHECKING SUCCESSFUL" << "\n";
     }
@@ -1964,6 +2233,7 @@ static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
     std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> dependentGuard;
     std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> guardCache;
     std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> parents;
+    std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"T1Wait", {"_check_inv_10", "_check_inv_4"}});
         invariantDependency.insert({"T1Calculate", {"_check_inv_7", "_check_inv_4"}});
@@ -2009,17 +2279,12 @@ static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
         guardDependency.insert({"T2WriteBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    CAN_BUS_tlc counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         CAN_BUS_tlc state = next(collection, mutex, type);
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
-
-        std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -2033,13 +2298,20 @@ static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool isCaching) {
@@ -2081,6 +2353,7 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
     std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> dependentGuard;
     std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> guardCache;
     std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> parents;
+    std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"T1Wait", {"_check_inv_10", "_check_inv_4"}});
         invariantDependency.insert({"T1Calculate", {"_check_inv_7", "_check_inv_4"}});
@@ -2126,6 +2399,7 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
         guardDependency.insert({"T2WriteBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    CAN_BUS_tlc counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -2133,7 +2407,7 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
         possibleQueueChanges += 1;
         CAN_BUS_tlc state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
 
             for(auto nextState : nextStates) {
@@ -2168,11 +2442,13 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
             if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -2190,7 +2466,7 @@ static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool is
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 int main(int argc, char *argv[]) {

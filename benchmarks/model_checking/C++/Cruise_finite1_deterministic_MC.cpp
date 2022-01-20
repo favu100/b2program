@@ -41,9 +41,9 @@ class Cruise_finite1_deterministic_MC {
                 typedef void right_type;
 
                 enum RSset_type {
-                    RSnone,
-                    RSpos,
-                    RSneg,
+                    RSnone, 
+                    RSpos, 
+                    RSneg, 
                     RSequal
                 };
 
@@ -98,8 +98,8 @@ class Cruise_finite1_deterministic_MC {
                 typedef void right_type;
 
                 enum ODset_type {
-                    ODnone,
-                    ODclose,
+                    ODnone, 
+                    ODclose, 
                     ODveryclose
                 };
 
@@ -263,7 +263,7 @@ class Cruise_finite1_deterministic_MC {
             }
             if((_ld_NumberOfSetCruise.less((BInteger(1)))).booleanValue()) {
                 NumberOfSetCruise = _ld_NumberOfSetCruise.plus((BInteger(1)));
-            }
+            } 
 
         }
 
@@ -334,7 +334,7 @@ class Cruise_finite1_deterministic_MC {
             SpeedAboveMax = (BBoolean(false));
             if(((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && CruiseSpeedAtMax.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
                 VehicleAtCruiseSpeed = (BBoolean(true));
-            }
+            } 
 
         }
 
@@ -349,7 +349,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleStatusJustChanged = (BBoolean(true));
             if((ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))).booleanValue()) {
                 VehicleTryKeepTimeGap = (BBoolean(false));
-            }
+            } 
 
         }
 
@@ -364,10 +364,10 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSpos));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            }
+            } 
             if((ObstacleDistance.unequal((ODset(ODset::ODveryclose)))).booleanValue()) {
                 VehicleTryKeepTimeGap = (BBoolean(false));
-            }
+            } 
 
         }
 
@@ -375,7 +375,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSequal));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            }
+            } 
 
         }
 
@@ -383,7 +383,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSneg));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            }
+            } 
 
         }
 
@@ -391,7 +391,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSequal));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            }
+            } 
 
         }
 
@@ -415,7 +415,7 @@ class Cruise_finite1_deterministic_MC {
             ObstacleRelativeSpeed = (RSset(RSset::RSnone));
             if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
                 ObstacleStatusJustChanged = (BBoolean(true));
-            }
+            } 
             ObstacleDistance = (ODset(ODset::ODnone));
             VehicleTryKeepTimeGap = (BBoolean(false));
 
@@ -892,7 +892,7 @@ class Cruise_finite1_deterministic_MC {
 };
 
 
-static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> generateNextStates(std::mutex& guardMutex, const Cruise_finite1_deterministic_MC& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentGuard, std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& guardCache, std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& parents, std::atomic<int>& transitions) {
+static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> generateNextStates(std::mutex& guardMutex, const Cruise_finite1_deterministic_MC& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentGuard, std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& guardCache, std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& parents, std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
     std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> result = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
@@ -938,6 +938,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseBecomesNotAllowed"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -966,6 +969,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseBecomesAllowed"});
                 }
             }
             result.insert(copiedState);
@@ -999,6 +1005,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "SetCruiseSpeed"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1031,6 +1040,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CCInitialisationFinished"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1059,6 +1071,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CCInitialisationDelayFinished"});
                 }
             }
             result.insert(copiedState);
@@ -1092,6 +1107,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeFinished"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1120,6 +1138,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeDelayFinished"});
                 }
             }
             result.insert(copiedState);
@@ -1150,6 +1171,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseOff"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1178,6 +1202,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesExtreme"});
                 }
             }
             result.insert(copiedState);
@@ -1208,6 +1235,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesNormal"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1236,6 +1266,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleLeavesCruiseSpeed"});
                 }
             }
             result.insert(copiedState);
@@ -1266,6 +1299,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleReachesCruiseSpeed"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1294,6 +1330,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleExceedsMaxCruiseSpeed"});
                 }
             }
             result.insert(copiedState);
@@ -1324,6 +1363,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleFallsBelowMaxCruiseSpeed"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1352,6 +1394,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesVeryClose"});
                 }
             }
             result.insert(copiedState);
@@ -1382,6 +1427,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesClose"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1410,6 +1458,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesBig"});
                 }
             }
             result.insert(copiedState);
@@ -1440,6 +1491,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelFaster"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1468,6 +1522,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelFaster"});
                 }
             }
             result.insert(copiedState);
@@ -1498,6 +1555,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelSlower"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1526,6 +1586,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelSlower"});
                 }
             }
             result.insert(copiedState);
@@ -1559,6 +1622,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseActive"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1590,6 +1656,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseInactive"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1618,6 +1687,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDisappears"});
                 }
             }
             result.insert(copiedState);
@@ -1651,6 +1723,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleManageObstacle"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1680,6 +1755,9 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleBecomesOld"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -1693,12 +1771,30 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
         if(state._tr_CruiseBecomesNotAllowed()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CruiseBecomesNotAllowed();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseBecomesNotAllowed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_CruiseBecomesAllowed()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CruiseBecomesAllowed();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseBecomesAllowed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1709,6 +1805,15 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
 
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "SetCruiseSpeed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1719,12 +1824,30 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
 
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CCInitialisationFinished"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_CCInitialisationDelayFinished()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CCInitialisationDelayFinished();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CCInitialisationDelayFinished"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1735,96 +1858,240 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
 
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeFinished"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_CruiseSpeedChangeDelayFinished()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CruiseSpeedChangeDelayFinished();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeDelayFinished"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_CruiseOff()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.CruiseOff();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "CruiseOff"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ExternalForcesBecomesExtreme()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ExternalForcesBecomesExtreme();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesExtreme"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ExternalForcesBecomesNormal()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ExternalForcesBecomesNormal();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesNormal"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_VehicleLeavesCruiseSpeed()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.VehicleLeavesCruiseSpeed();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleLeavesCruiseSpeed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_VehicleReachesCruiseSpeed()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.VehicleReachesCruiseSpeed();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleReachesCruiseSpeed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_VehicleExceedsMaxCruiseSpeed()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.VehicleExceedsMaxCruiseSpeed();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleExceedsMaxCruiseSpeed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_VehicleFallsBelowMaxCruiseSpeed()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.VehicleFallsBelowMaxCruiseSpeed();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleFallsBelowMaxCruiseSpeed"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleDistanceBecomesVeryClose()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleDistanceBecomesVeryClose();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesVeryClose"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleDistanceBecomesClose()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleDistanceBecomesClose();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesClose"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleDistanceBecomesBig()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleDistanceBecomesBig();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesBig"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleStartsTravelFaster()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleStartsTravelFaster();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelFaster"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleStopsTravelFaster()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleStopsTravelFaster();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelFaster"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleStartsTravelSlower()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleStartsTravelSlower();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelSlower"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleStopsTravelSlower()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleStopsTravelSlower();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelSlower"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1835,6 +2102,15 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
 
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseActive"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1844,12 +2120,30 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
 
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseInactive"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleDisappears()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleDisappears();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleDisappears"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1860,12 +2154,30 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
 
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "VehicleManageObstacle"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
         if(state._tr_ObstacleBecomesOld()) {
             Cruise_finite1_deterministic_MC copiedState = state._copy();
             copiedState.ObstacleBecomesOld();
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "ObstacleBecomesOld"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -1874,13 +2186,30 @@ static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_determ
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout << "DEADLOCK DETECTED" << "\n";
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, Cruise_finite1_deterministic_MC& counterExampleState, std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& parents, std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& stateAccessedVia) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout << "DEADLOCK DETECTED" << "\n";
+        }
+        if(invariantViolated) {
+            cout << "INVARIANT VIOLATED" << "\n";
+        }
+        cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+        Cruise_finite1_deterministic_MC currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream << currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n");
+            trace.insert(0, stateAccessedVia[currentState]);
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout << trace;
     }
-    if(invariantViolated) {
-        cout << "INVARIANT VIOLATED" << "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout << "MODEL CHECKING SUCCESSFUL" << "\n";
     }
@@ -2152,6 +2481,7 @@ static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type,
     std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> dependentGuard;
     std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> guardCache;
     std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> parents;
+    std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"ObstacleStopsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
         invariantDependency.insert({"SetCruiseSpeed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
@@ -2207,17 +2537,12 @@ static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type,
         guardDependency.insert({"ObstacleDistanceBecomesBig", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    Cruise_finite1_deterministic_MC counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         Cruise_finite1_deterministic_MC state = next(collection, mutex, type);
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
-
-        std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -2231,13 +2556,20 @@ static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type,
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, int threads, bool isCaching) {
@@ -2279,6 +2611,7 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
     std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> dependentGuard;
     std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> guardCache;
     std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> parents;
+    std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"ObstacleStopsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
         invariantDependency.insert({"SetCruiseSpeed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
@@ -2334,6 +2667,7 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
         guardDependency.insert({"ObstacleDistanceBecomesBig", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    Cruise_finite1_deterministic_MC counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -2341,7 +2675,8 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
         possibleQueueChanges += 1;
         Cruise_finite1_deterministic_MC state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+
 
             for(auto nextState : nextStates) {
                 {
@@ -2375,6 +2710,13 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
+            }
+
+            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+                invariantViolated = true;
+                stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -2392,7 +2734,7 @@ static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, 
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 int main(int argc, char *argv[]) {

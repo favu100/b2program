@@ -6,6 +6,7 @@ import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -515,7 +516,7 @@ public class Train1_Lukas_POR_v3 {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<Train1_Lukas_POR_v3> generateNextStates(Object guardLock, Train1_Lukas_POR_v3 state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<Train1_Lukas_POR_v3, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<Train1_Lukas_POR_v3, Set<String>> dependentGuard, Map<Train1_Lukas_POR_v3, PersistentHashMap> guardCache, Map<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3> parents, AtomicInteger transitions) {
+    private static Set<Train1_Lukas_POR_v3> generateNextStates(Object guardLock, Train1_Lukas_POR_v3 state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<Train1_Lukas_POR_v3, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<Train1_Lukas_POR_v3, Set<String>> dependentGuard, Map<Train1_Lukas_POR_v3, PersistentHashMap> guardCache, Map<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3> parents, Map<Train1_Lukas_POR_v3, String> stateAccessedVia, AtomicInteger transitions) {
         Set<Train1_Lukas_POR_v3> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -550,6 +551,9 @@ public class Train1_Lukas_POR_v3 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "route_reservation");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -580,6 +584,9 @@ public class Train1_Lukas_POR_v3 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "route_freeing");
                     }
                 }
                 result.add(copiedState);
@@ -612,6 +619,9 @@ public class Train1_Lukas_POR_v3 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "FRONT_MOVE_1");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -642,6 +652,9 @@ public class Train1_Lukas_POR_v3 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "FRONT_MOVE_2");
                     }
                 }
                 result.add(copiedState);
@@ -674,6 +687,9 @@ public class Train1_Lukas_POR_v3 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "BACK_MOVE_1");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -704,6 +720,9 @@ public class Train1_Lukas_POR_v3 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "BACK_MOVE_2");
                     }
                 }
                 result.add(copiedState);
@@ -736,6 +755,9 @@ public class Train1_Lukas_POR_v3 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "point_positionning");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -767,6 +789,9 @@ public class Train1_Lukas_POR_v3 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "route_formation");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -782,6 +807,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.route_reservation(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "route_reservation");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -791,6 +824,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.route_freeing(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "route_freeing");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -800,6 +841,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.FRONT_MOVE_1(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "FRONT_MOVE_1");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -809,6 +858,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.FRONT_MOVE_2(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "FRONT_MOVE_2");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -818,6 +875,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.BACK_MOVE_1(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "BACK_MOVE_1");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -827,6 +892,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.BACK_MOVE_2(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "BACK_MOVE_2");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -836,6 +909,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.point_positionning(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "point_positionning");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -845,6 +926,14 @@ public class Train1_Lukas_POR_v3 {
 
                 Train1_Lukas_POR_v3 copiedState = state._copy();
                 copiedState.route_formation(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "route_formation");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -925,12 +1014,29 @@ public class Train1_Lukas_POR_v3 {
         return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-        if(deadlockDetected) {
-            System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
-            System.out.println("INVARIANT VIOLATED");
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<Train1_Lukas_POR_v3> counterExampleState, Map<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3> parents, Map<Train1_Lukas_POR_v3, String> stateAccessedVia) {
+
+        if(invariantViolated || deadlockDetected) {
+            if(deadlockDetected) {
+                System.out.println("DEADLOCK DETECTED");
+            }
+            if(invariantViolated) {
+                System.out.println("INVARIANT VIOLATED");
+            }
+            System.out.println("COUNTER EXAMPLE TRACE: ");
+            StringBuilder sb = new StringBuilder();
+            if(counterExampleState.size() >= 1) {
+                Train1_Lukas_POR_v3 currentState = counterExampleState.get(0);
+                while(currentState != null) {
+                    sb.insert(0, currentState.toString());
+                    sb.insert(0, "\n");
+                    sb.insert(0, stateAccessedVia.get(currentState));
+                    sb.insert(0, "\n\n");
+                    currentState = parents.get(currentState);
+                }
+            }
+            System.out.println(sb.toString());
+
         }
         if(!deadlockDetected && !invariantViolated) {
             System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -973,6 +1079,7 @@ public class Train1_Lukas_POR_v3 {
         Map<Train1_Lukas_POR_v3, Set<String>> dependentGuard = new HashMap<>();
         Map<Train1_Lukas_POR_v3, PersistentHashMap> guardCache = new HashMap<>();
         Map<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3> parents = new HashMap<>();
+        Map<Train1_Lukas_POR_v3, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("point_positionning", new HashSet<>(Arrays.asList("_check_inv_3", "_check_inv_1", "_check_inv_4")));
             invariantDependency.put("route_reservation", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11")));
@@ -991,21 +1098,16 @@ public class Train1_Lukas_POR_v3 {
             guardDependency.put("route_freeing", new HashSet<>(Arrays.asList("_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2")));
             guardDependency.put("BACK_MOVE_2", new HashSet<>(Arrays.asList("_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<Train1_Lukas_POR_v3> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             Train1_Lukas_POR_v3 state = next(collection, lock, type);
 
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                break;
-            }
-
-            Set<Train1_Lukas_POR_v3> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set<Train1_Lukas_POR_v3> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
@@ -1020,12 +1122,19 @@ public class Train1_Lukas_POR_v3 {
                 }
             });
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                counterExampleState.add(state);
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
+
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 
@@ -1056,6 +1165,7 @@ public class Train1_Lukas_POR_v3 {
         Map<Train1_Lukas_POR_v3, Set<String>> dependentGuard = new HashMap<>();
         Map<Train1_Lukas_POR_v3, PersistentHashMap> guardCache = new HashMap<>();
         Map<Train1_Lukas_POR_v3, Train1_Lukas_POR_v3> parents = new HashMap<>();
+        Map<Train1_Lukas_POR_v3, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("point_positionning", new HashSet<>(Arrays.asList("_check_inv_3", "_check_inv_1", "_check_inv_4")));
             invariantDependency.put("route_reservation", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11")));
@@ -1074,8 +1184,10 @@ public class Train1_Lukas_POR_v3 {
             guardDependency.put("route_freeing", new HashSet<>(Arrays.asList("_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2")));
             guardDependency.put("BACK_MOVE_2", new HashSet<>(Arrays.asList("_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<Train1_Lukas_POR_v3> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
+        stateAccessedVia.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
@@ -1083,7 +1195,7 @@ public class Train1_Lukas_POR_v3 {
             possibleQueueChanges.incrementAndGet();
             Train1_Lukas_POR_v3 state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<Train1_Lukas_POR_v3> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+                Set<Train1_Lukas_POR_v3> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -1117,6 +1229,7 @@ public class Train1_Lukas_POR_v3 {
                 if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
+                    counterExampleState.add(state);
                 }
 
 
@@ -1139,7 +1252,7 @@ public class Train1_Lukas_POR_v3 {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 

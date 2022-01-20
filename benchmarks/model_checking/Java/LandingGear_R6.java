@@ -6,6 +6,7 @@ import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -927,7 +928,7 @@ public class LandingGear_R6 {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<LandingGear_R6> generateNextStates(Object guardLock, LandingGear_R6 state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<LandingGear_R6, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<LandingGear_R6, Set<String>> dependentGuard, Map<LandingGear_R6, PersistentHashMap> guardCache, Map<LandingGear_R6, LandingGear_R6> parents, AtomicInteger transitions) {
+    private static Set<LandingGear_R6> generateNextStates(Object guardLock, LandingGear_R6 state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<LandingGear_R6, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<LandingGear_R6, Set<String>> dependentGuard, Map<LandingGear_R6, PersistentHashMap> guardCache, Map<LandingGear_R6, LandingGear_R6> parents, Map<LandingGear_R6, String> stateAccessedVia, AtomicInteger transitions) {
         Set<LandingGear_R6> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -960,6 +961,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "begin_flying");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -988,6 +992,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "land_plane");
                     }
                 }
                 result.add(copiedState);
@@ -1018,6 +1025,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_door_open");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1046,6 +1056,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_door_open");
                     }
                 }
                 result.add(copiedState);
@@ -1076,6 +1089,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_door_close");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1104,6 +1120,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_door_close");
                     }
                 }
                 result.add(copiedState);
@@ -1134,6 +1153,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_retract_gear");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1162,6 +1184,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_retract_gear");
                     }
                 }
                 result.add(copiedState);
@@ -1192,6 +1217,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_extend_gear");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1220,6 +1248,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_extend_gear");
                     }
                 }
                 result.add(copiedState);
@@ -1250,6 +1281,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_open_door_valve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1278,6 +1312,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_open_door_valve");
                     }
                 }
                 result.add(copiedState);
@@ -1308,6 +1345,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_close_door_valve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1336,6 +1376,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_close_door_valve");
                     }
                 }
                 result.add(copiedState);
@@ -1366,6 +1409,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_retract_gear_valve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1394,6 +1440,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_retract_gear_valve");
                     }
                 }
                 result.add(copiedState);
@@ -1424,6 +1473,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_extend_gear_valve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1452,6 +1504,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_extend_gear_valve");
                     }
                 }
                 result.add(copiedState);
@@ -1484,6 +1539,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_retracting_first");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1514,6 +1572,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_retract_gear_skip");
                     }
                 }
                 result.add(copiedState);
@@ -1546,6 +1607,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_retract_gear_last");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1576,6 +1640,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_extending");
                     }
                 }
                 result.add(copiedState);
@@ -1608,6 +1675,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_extend_gear_last");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1638,6 +1708,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_extend_gear_skip");
                     }
                 }
                 result.add(copiedState);
@@ -1670,6 +1743,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_open_door");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1700,6 +1776,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_open_door_last");
                     }
                 }
                 result.add(copiedState);
@@ -1732,6 +1811,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_open_door_skip");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1762,6 +1844,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_close_door");
                     }
                 }
                 result.add(copiedState);
@@ -1794,6 +1879,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_close_door");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1825,6 +1913,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_close_door_skip");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1853,6 +1944,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "toggle_handle_up");
                     }
                 }
                 result.add(copiedState);
@@ -1883,6 +1977,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "toggle_handle_down");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1911,6 +2008,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_general_valve");
                     }
                 }
                 result.add(copiedState);
@@ -1941,6 +2041,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_general_valve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1969,6 +2072,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "evn_open_general_valve");
                     }
                 }
                 result.add(copiedState);
@@ -1999,6 +2105,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "evn_close_general_valve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -2027,6 +2136,9 @@ public class LandingGear_R6 {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_close_analogical_switch");
                     }
                 }
                 result.add(copiedState);
@@ -2057,6 +2169,9 @@ public class LandingGear_R6 {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_open_analogical_switch");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -2069,108 +2184,252 @@ public class LandingGear_R6 {
             if(state._tr_begin_flying()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.begin_flying();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "begin_flying");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_land_plane()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.land_plane();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "land_plane");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_open_valve_door_open()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_door_open();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_door_open");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_close_valve_door_open()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_door_open();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_door_open");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_open_valve_door_close()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_door_close();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_door_close");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_close_valve_door_close()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_door_close();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_door_close");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_open_valve_retract_gear()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_retract_gear();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_retract_gear");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_close_valve_retract_gear()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_retract_gear();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_retract_gear");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_open_valve_extend_gear()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.open_valve_extend_gear();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "open_valve_extend_gear");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_close_valve_extend_gear()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.close_valve_extend_gear();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "close_valve_extend_gear");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stimulate_open_door_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_open_door_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_open_door_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stop_stimulate_open_door_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_open_door_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_open_door_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stimulate_close_door_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_close_door_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_close_door_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stop_stimulate_close_door_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_close_door_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_close_door_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stimulate_retract_gear_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_retract_gear_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_retract_gear_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stop_stimulate_retract_gear_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_retract_gear_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_retract_gear_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stimulate_extend_gear_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_extend_gear_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_extend_gear_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stop_stimulate_extend_gear_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_extend_gear_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_extend_gear_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2180,6 +2439,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_retracting_first(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_retracting_first");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2189,6 +2456,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_retract_gear_skip(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_retract_gear_skip");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2198,6 +2473,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_retract_gear_last(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_retract_gear_last");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2207,6 +2490,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_extending(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_extending");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2216,6 +2507,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_extend_gear_last(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_extend_gear_last");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2225,6 +2524,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_extend_gear_skip(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_extend_gear_skip");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2234,6 +2541,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_open_door(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_open_door");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2243,6 +2558,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_open_door_last(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_open_door_last");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2252,6 +2575,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_open_door_skip(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_open_door_skip");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2261,6 +2592,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_start_close_door(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_start_close_door");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2270,6 +2609,14 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_close_door(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_close_door");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2279,54 +2626,126 @@ public class LandingGear_R6 {
 
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_close_door_skip(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_close_door_skip");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_toggle_handle_up()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.toggle_handle_up();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "toggle_handle_up");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_toggle_handle_down()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.toggle_handle_down();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "toggle_handle_down");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stimulate_general_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stimulate_general_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stimulate_general_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_con_stop_stimulate_general_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.con_stop_stimulate_general_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "con_stop_stimulate_general_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_evn_open_general_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.evn_open_general_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "evn_open_general_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_evn_close_general_valve()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.evn_close_general_valve();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "evn_close_general_valve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_env_close_analogical_switch()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_close_analogical_switch();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_close_analogical_switch");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_env_open_analogical_switch()) {
                 LandingGear_R6 copiedState = state._copy();
                 copiedState.env_open_analogical_switch();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "env_open_analogical_switch");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -2472,12 +2891,29 @@ public class LandingGear_R6 {
         return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20() || !state._check_inv_21() || !state._check_inv_22() || !state._check_inv_23() || !state._check_inv_24() || !state._check_inv_25());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-        if(deadlockDetected) {
-            System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
-            System.out.println("INVARIANT VIOLATED");
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<LandingGear_R6> counterExampleState, Map<LandingGear_R6, LandingGear_R6> parents, Map<LandingGear_R6, String> stateAccessedVia) {
+
+        if(invariantViolated || deadlockDetected) {
+            if(deadlockDetected) {
+                System.out.println("DEADLOCK DETECTED");
+            }
+            if(invariantViolated) {
+                System.out.println("INVARIANT VIOLATED");
+            }
+            System.out.println("COUNTER EXAMPLE TRACE: ");
+            StringBuilder sb = new StringBuilder();
+            if(counterExampleState.size() >= 1) {
+                LandingGear_R6 currentState = counterExampleState.get(0);
+                while(currentState != null) {
+                    sb.insert(0, currentState.toString());
+                    sb.insert(0, "\n");
+                    sb.insert(0, stateAccessedVia.get(currentState));
+                    sb.insert(0, "\n\n");
+                    currentState = parents.get(currentState);
+                }
+            }
+            System.out.println(sb.toString());
+
         }
         if(!deadlockDetected && !invariantViolated) {
             System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -2520,6 +2956,7 @@ public class LandingGear_R6 {
         Map<LandingGear_R6, Set<String>> dependentGuard = new HashMap<>();
         Map<LandingGear_R6, PersistentHashMap> guardCache = new HashMap<>();
         Map<LandingGear_R6, LandingGear_R6> parents = new HashMap<>();
+        Map<LandingGear_R6, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("close_valve_door_close", new HashSet<>(Arrays.asList("_check_inv_10")));
             invariantDependency.put("close_valve_retract_gear", new HashSet<>(Arrays.asList("_check_inv_13")));
@@ -2598,21 +3035,16 @@ public class LandingGear_R6 {
             guardDependency.put("env_open_door_skip", new HashSet<>(Arrays.asList("_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip")));
             guardDependency.put("env_start_open_door", new HashSet<>(Arrays.asList("_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<LandingGear_R6> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             LandingGear_R6 state = next(collection, lock, type);
 
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                break;
-            }
-
-            Set<LandingGear_R6> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set<LandingGear_R6> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
@@ -2627,13 +3059,19 @@ public class LandingGear_R6 {
                 }
             });
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                counterExampleState.add(state);
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
 
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 
@@ -2664,6 +3102,7 @@ public class LandingGear_R6 {
         Map<LandingGear_R6, Set<String>> dependentGuard = new HashMap<>();
         Map<LandingGear_R6, PersistentHashMap> guardCache = new HashMap<>();
         Map<LandingGear_R6, LandingGear_R6> parents = new HashMap<>();
+        Map<LandingGear_R6, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("close_valve_door_close", new HashSet<>(Arrays.asList("_check_inv_10")));
             invariantDependency.put("close_valve_retract_gear", new HashSet<>(Arrays.asList("_check_inv_13")));
@@ -2742,8 +3181,10 @@ public class LandingGear_R6 {
             guardDependency.put("env_open_door_skip", new HashSet<>(Arrays.asList("_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip")));
             guardDependency.put("env_start_open_door", new HashSet<>(Arrays.asList("_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<LandingGear_R6> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
+        stateAccessedVia.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
@@ -2751,7 +3192,7 @@ public class LandingGear_R6 {
             possibleQueueChanges.incrementAndGet();
             LandingGear_R6 state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<LandingGear_R6> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+                Set<LandingGear_R6> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -2785,6 +3226,7 @@ public class LandingGear_R6 {
                 if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
+                    counterExampleState.add(state);
                 }
 
 
@@ -2807,7 +3249,7 @@ public class LandingGear_R6 {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 

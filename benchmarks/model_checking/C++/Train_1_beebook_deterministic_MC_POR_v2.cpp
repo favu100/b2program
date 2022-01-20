@@ -41,19 +41,19 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
                 typedef void right_type;
 
                 enum BLOCKS_type {
-                    A,
-                    B,
-                    C,
-                    D,
-                    E,
-                    F,
-                    G,
-                    H,
-                    I,
-                    J,
-                    K,
-                    L,
-                    M,
+                    A, 
+                    B, 
+                    C, 
+                    D, 
+                    E, 
+                    F, 
+                    G, 
+                    H, 
+                    I, 
+                    J, 
+                    K, 
+                    L, 
+                    M, 
                     N
                 };
 
@@ -118,15 +118,15 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
                 typedef void right_type;
 
                 enum ROUTES_type {
-                    R1,
-                    R2,
-                    R3,
-                    R4,
-                    R5,
-                    R6,
-                    R7,
-                    R8,
-                    R9,
+                    R1, 
+                    R2, 
+                    R3, 
+                    R4, 
+                    R5, 
+                    R6, 
+                    R7, 
+                    R8, 
+                    R9, 
                     R10
                 };
 
@@ -641,7 +641,7 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 };
 
 
-static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> generateNextStates(std::mutex& guardMutex, const Train_1_beebook_deterministic_MC_POR_v2& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentGuard, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& guardCache, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& parents, std::atomic<int>& transitions) {
+static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> generateNextStates(std::mutex& guardMutex, const Train_1_beebook_deterministic_MC_POR_v2& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentGuard, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& guardCache, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& parents, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
     std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> result = std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
@@ -689,6 +689,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "route_reservation"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -719,6 +722,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "route_freeing"});
                 }
             }
             result.insert(copiedState);
@@ -751,6 +757,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_1"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -781,6 +790,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_2"});
                 }
             }
             result.insert(copiedState);
@@ -813,6 +825,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "BACK_MOVE_1"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -843,6 +858,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 }
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "BACK_MOVE_2"});
                 }
             }
             result.insert(copiedState);
@@ -875,6 +893,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "point_positionning"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -906,6 +927,9 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
                 if(parents.find(copiedState) == parents.end()) {
                     parents.insert({copiedState, state});
                 }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "route_formation"});
+                }
             }
             result.insert(copiedState);
             transitions += 1;
@@ -922,6 +946,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.route_reservation(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "route_reservation"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -931,6 +964,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.route_freeing(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "route_freeing"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -940,6 +982,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.FRONT_MOVE_1(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_1"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -949,6 +1000,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.FRONT_MOVE_2(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_2"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -958,6 +1018,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.BACK_MOVE_1(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "BACK_MOVE_1"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -967,6 +1036,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.BACK_MOVE_2(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "BACK_MOVE_2"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -976,6 +1054,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.point_positionning(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "point_positionning"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -985,6 +1072,15 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
 
             Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
             copiedState.route_formation(_tmp_1);
+            {
+                std::unique_lock<std::mutex> lock(guardMutex);
+                if(parents.find(copiedState) == parents.end()) {
+                    parents.insert({copiedState, state});
+                }
+                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+                    stateAccessedVia.insert({copiedState, "route_formation"});
+                }
+            }
             result.insert(copiedState);
             transitions += 1;
         }
@@ -993,13 +1089,30 @@ static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebo
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated) {
-    if(deadlockDetected) {
-        cout << "DEADLOCK DETECTED" << "\n";
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, Train_1_beebook_deterministic_MC_POR_v2& counterExampleState, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& parents, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& stateAccessedVia) {
+    if(deadlockDetected || invariantViolated) {
+        if(deadlockDetected) {
+            cout << "DEADLOCK DETECTED" << "\n";
+        }
+        if(invariantViolated) {
+            cout << "INVARIANT VIOLATED" << "\n";
+        }
+        cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+        Train_1_beebook_deterministic_MC_POR_v2 currentState = counterExampleState;
+        std::string trace = "";
+        while(parents.find(currentState) != parents.end()) {
+            std::stringstream stringStream;
+            stringStream << currentState;
+            trace.insert(0, stringStream.str());
+            trace.insert(0, "\n");
+            trace.insert(0, stateAccessedVia[currentState]);
+            trace.insert(0, "\n\n");
+            currentState = parents[currentState];
+        }
+        cout << trace;
     }
-    if(invariantViolated) {
-        cout << "INVARIANT VIOLATED" << "\n";
-    }
+
     if(!deadlockDetected && !invariantViolated) {
         cout << "MODEL CHECKING SUCCESSFUL" << "\n";
     }
@@ -1136,6 +1249,7 @@ static void modelCheckSingleThreaded(Train_1_beebook_deterministic_MC_POR_v2::Ty
     std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> dependentGuard;
     std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> guardCache;
     std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> parents;
+    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"point_positionning", {"_check_inv_3", "_check_inv_1", "_check_inv_4"}});
         invariantDependency.insert({"route_reservation", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11"}});
@@ -1155,17 +1269,12 @@ static void modelCheckSingleThreaded(Train_1_beebook_deterministic_MC_POR_v2::Ty
         guardDependency.insert({"BACK_MOVE_2", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    Train_1_beebook_deterministic_MC_POR_v2 counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
         Train_1_beebook_deterministic_MC_POR_v2 state = next(collection, mutex, type);
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            break;
-        }
-
-        std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+        std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -1179,13 +1288,20 @@ static void modelCheckSingleThreaded(Train_1_beebook_deterministic_MC_POR_v2::Ty
             }
         }
 
+        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+            invariantViolated = true;
+            stopThreads = true;
+            counterExampleState = state;
+        }
+
         if(nextStates.empty()) {
             deadlockDetected = true;
             stopThreads = true;
+            counterExampleState = state;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Type type, int threads, bool isCaching) {
@@ -1227,6 +1343,7 @@ static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Typ
     std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> dependentGuard;
     std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> guardCache;
     std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> parents;
+    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"point_positionning", {"_check_inv_3", "_check_inv_1", "_check_inv_4"}});
         invariantDependency.insert({"route_reservation", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11"}});
@@ -1246,6 +1363,7 @@ static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Typ
         guardDependency.insert({"BACK_MOVE_2", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
+    Train_1_beebook_deterministic_MC_POR_v2 counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
@@ -1253,7 +1371,7 @@ static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Typ
         possibleQueueChanges += 1;
         Train_1_beebook_deterministic_MC_POR_v2 state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
 
             for(auto nextState : nextStates) {
@@ -1288,11 +1406,13 @@ static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Typ
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
             if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
                 invariantViolated = true;
                 stopThreads = true;
+                counterExampleState = state;
             }
 
 
@@ -1310,7 +1430,7 @@ static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Typ
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated);
+    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
 int main(int argc, char *argv[]) {

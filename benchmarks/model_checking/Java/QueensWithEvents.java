@@ -6,6 +6,7 @@ import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -182,7 +183,7 @@ public class QueensWithEvents {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<QueensWithEvents> generateNextStates(Object guardLock, QueensWithEvents state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<QueensWithEvents, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<QueensWithEvents, Set<String>> dependentGuard, Map<QueensWithEvents, PersistentHashMap> guardCache, Map<QueensWithEvents, QueensWithEvents> parents, AtomicInteger transitions) {
+    private static Set<QueensWithEvents> generateNextStates(Object guardLock, QueensWithEvents state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<QueensWithEvents, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<QueensWithEvents, Set<String>> dependentGuard, Map<QueensWithEvents, PersistentHashMap> guardCache, Map<QueensWithEvents, QueensWithEvents> parents, Map<QueensWithEvents, String> stateAccessedVia, AtomicInteger transitions) {
         Set<QueensWithEvents> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -217,6 +218,9 @@ public class QueensWithEvents {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "Solve");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -232,6 +236,14 @@ public class QueensWithEvents {
 
                 QueensWithEvents copiedState = state._copy();
                 copiedState.Solve(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "Solve");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -257,12 +269,29 @@ public class QueensWithEvents {
         return !(!state._check_inv_1());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-        if(deadlockDetected) {
-            System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
-            System.out.println("INVARIANT VIOLATED");
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<QueensWithEvents> counterExampleState, Map<QueensWithEvents, QueensWithEvents> parents, Map<QueensWithEvents, String> stateAccessedVia) {
+
+        if(invariantViolated || deadlockDetected) {
+            if(deadlockDetected) {
+                System.out.println("DEADLOCK DETECTED");
+            }
+            if(invariantViolated) {
+                System.out.println("INVARIANT VIOLATED");
+            }
+            System.out.println("COUNTER EXAMPLE TRACE: ");
+            StringBuilder sb = new StringBuilder();
+            if(counterExampleState.size() >= 1) {
+                QueensWithEvents currentState = counterExampleState.get(0);
+                while(currentState != null) {
+                    sb.insert(0, currentState.toString());
+                    sb.insert(0, "\n");
+                    sb.insert(0, stateAccessedVia.get(currentState));
+                    sb.insert(0, "\n\n");
+                    currentState = parents.get(currentState);
+                }
+            }
+            System.out.println(sb.toString());
+
         }
         if(!deadlockDetected && !invariantViolated) {
             System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -305,25 +334,21 @@ public class QueensWithEvents {
         Map<QueensWithEvents, Set<String>> dependentGuard = new HashMap<>();
         Map<QueensWithEvents, PersistentHashMap> guardCache = new HashMap<>();
         Map<QueensWithEvents, QueensWithEvents> parents = new HashMap<>();
+        Map<QueensWithEvents, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("Solve", new HashSet<>(Arrays.asList("_check_inv_1")));
             guardDependency.put("Solve", new HashSet<>(Arrays.asList("_tr_Solve")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<QueensWithEvents> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             QueensWithEvents state = next(collection, lock, type);
 
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                break;
-            }
-
-            Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
@@ -338,12 +363,19 @@ public class QueensWithEvents {
                 }
             });
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                counterExampleState.add(state);
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
+
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 
@@ -374,12 +406,15 @@ public class QueensWithEvents {
         Map<QueensWithEvents, Set<String>> dependentGuard = new HashMap<>();
         Map<QueensWithEvents, PersistentHashMap> guardCache = new HashMap<>();
         Map<QueensWithEvents, QueensWithEvents> parents = new HashMap<>();
+        Map<QueensWithEvents, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("Solve", new HashSet<>(Arrays.asList("_check_inv_1")));
             guardDependency.put("Solve", new HashSet<>(Arrays.asList("_tr_Solve")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<QueensWithEvents> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
+        stateAccessedVia.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
@@ -387,7 +422,7 @@ public class QueensWithEvents {
             possibleQueueChanges.incrementAndGet();
             QueensWithEvents state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+                Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -421,6 +456,7 @@ public class QueensWithEvents {
                 if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
+                    counterExampleState.add(state);
                 }
 
 
@@ -443,7 +479,7 @@ public class QueensWithEvents {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 

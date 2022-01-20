@@ -6,6 +6,7 @@ import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -786,7 +787,7 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<Cruise_finite1_deterministic_MC> generateNextStates(Object guardLock, Cruise_finite1_deterministic_MC state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<Cruise_finite1_deterministic_MC, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<Cruise_finite1_deterministic_MC, Set<String>> dependentGuard, Map<Cruise_finite1_deterministic_MC, PersistentHashMap> guardCache, Map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC> parents, AtomicInteger transitions) {
+    private static Set<Cruise_finite1_deterministic_MC> generateNextStates(Object guardLock, Cruise_finite1_deterministic_MC state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<Cruise_finite1_deterministic_MC, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<Cruise_finite1_deterministic_MC, Set<String>> dependentGuard, Map<Cruise_finite1_deterministic_MC, PersistentHashMap> guardCache, Map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC> parents, Map<Cruise_finite1_deterministic_MC, String> stateAccessedVia, AtomicInteger transitions) {
         Set<Cruise_finite1_deterministic_MC> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
@@ -819,6 +820,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseBecomesNotAllowed");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -847,6 +851,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseBecomesAllowed");
                     }
                 }
                 result.add(copiedState);
@@ -880,6 +887,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "SetCruiseSpeed");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -912,6 +922,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CCInitialisationFinished");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -940,6 +953,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CCInitialisationDelayFinished");
                     }
                 }
                 result.add(copiedState);
@@ -973,6 +989,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseSpeedChangeFinished");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1001,6 +1020,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseSpeedChangeDelayFinished");
                     }
                 }
                 result.add(copiedState);
@@ -1031,6 +1053,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseOff");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1059,6 +1084,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ExternalForcesBecomesExtreme");
                     }
                 }
                 result.add(copiedState);
@@ -1089,6 +1117,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ExternalForcesBecomesNormal");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1117,6 +1148,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleLeavesCruiseSpeed");
                     }
                 }
                 result.add(copiedState);
@@ -1147,6 +1181,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleReachesCruiseSpeed");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1175,6 +1212,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleExceedsMaxCruiseSpeed");
                     }
                 }
                 result.add(copiedState);
@@ -1205,6 +1245,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleFallsBelowMaxCruiseSpeed");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1233,6 +1276,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDistanceBecomesVeryClose");
                     }
                 }
                 result.add(copiedState);
@@ -1263,6 +1309,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDistanceBecomesClose");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1291,6 +1340,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDistanceBecomesBig");
                     }
                 }
                 result.add(copiedState);
@@ -1321,6 +1373,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStartsTravelFaster");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1349,6 +1404,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStopsTravelFaster");
                     }
                 }
                 result.add(copiedState);
@@ -1379,6 +1437,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStartsTravelSlower");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1407,6 +1468,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStopsTravelSlower");
                     }
                 }
                 result.add(copiedState);
@@ -1440,6 +1504,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleAppearsWhenCruiseActive");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1471,6 +1538,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleAppearsWhenCruiseInactive");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1499,6 +1569,9 @@ public class Cruise_finite1_deterministic_MC {
                     }
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDisappears");
                     }
                 }
                 result.add(copiedState);
@@ -1532,6 +1605,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleManageObstacle");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1561,6 +1637,9 @@ public class Cruise_finite1_deterministic_MC {
                     if(!parents.containsKey(copiedState)) {
                         parents.put(copiedState, state);
                     }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleBecomesOld");
+                    }
                 }
                 result.add(copiedState);
                 transitions.getAndIncrement();
@@ -1573,12 +1652,28 @@ public class Cruise_finite1_deterministic_MC {
             if(state._tr_CruiseBecomesNotAllowed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseBecomesNotAllowed();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseBecomesNotAllowed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_CruiseBecomesAllowed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseBecomesAllowed();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseBecomesAllowed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1589,6 +1684,14 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "SetCruiseSpeed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1599,12 +1702,28 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CCInitialisationFinished");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_CCInitialisationDelayFinished()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CCInitialisationDelayFinished();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CCInitialisationDelayFinished");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1615,96 +1734,224 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseSpeedChangeFinished");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_CruiseSpeedChangeDelayFinished()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseSpeedChangeDelayFinished();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseSpeedChangeDelayFinished");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_CruiseOff()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.CruiseOff();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "CruiseOff");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ExternalForcesBecomesExtreme()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ExternalForcesBecomesExtreme();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ExternalForcesBecomesExtreme");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ExternalForcesBecomesNormal()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ExternalForcesBecomesNormal();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ExternalForcesBecomesNormal");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_VehicleLeavesCruiseSpeed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleLeavesCruiseSpeed();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleLeavesCruiseSpeed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_VehicleReachesCruiseSpeed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleReachesCruiseSpeed();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleReachesCruiseSpeed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_VehicleExceedsMaxCruiseSpeed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleExceedsMaxCruiseSpeed();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleExceedsMaxCruiseSpeed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_VehicleFallsBelowMaxCruiseSpeed()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleFallsBelowMaxCruiseSpeed();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleFallsBelowMaxCruiseSpeed");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleDistanceBecomesVeryClose()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDistanceBecomesVeryClose();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDistanceBecomesVeryClose");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleDistanceBecomesClose()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDistanceBecomesClose();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDistanceBecomesClose");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleDistanceBecomesBig()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDistanceBecomesBig();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDistanceBecomesBig");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleStartsTravelFaster()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStartsTravelFaster();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStartsTravelFaster");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleStopsTravelFaster()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStopsTravelFaster();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStopsTravelFaster");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleStartsTravelSlower()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStartsTravelSlower();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStartsTravelSlower");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleStopsTravelSlower()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleStopsTravelSlower();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleStopsTravelSlower");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1715,6 +1962,14 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleAppearsWhenCruiseActive");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1724,12 +1979,28 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleAppearsWhenCruiseInactive");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleDisappears()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleDisappears();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleDisappears");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1740,12 +2011,28 @@ public class Cruise_finite1_deterministic_MC {
 
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "VehicleManageObstacle");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
             if(state._tr_ObstacleBecomesOld()) {
                 Cruise_finite1_deterministic_MC copiedState = state._copy();
                 copiedState.ObstacleBecomesOld();
+                synchronized(guardLock) {
+                    if(!parents.containsKey(copiedState)) {
+                        parents.put(copiedState, state);
+                    }
+                    if(!stateAccessedVia.containsKey(copiedState)) {
+                        stateAccessedVia.put(copiedState, "ObstacleBecomesOld");
+                    }
+                }
                 result.add(copiedState);
                 transitions.getAndIncrement();
             }
@@ -1961,12 +2248,29 @@ public class Cruise_finite1_deterministic_MC {
         return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20() || !state._check_inv_21() || !state._check_inv_22() || !state._check_inv_23() || !state._check_inv_24() || !state._check_inv_25() || !state._check_inv_26() || !state._check_inv_27() || !state._check_inv_28() || !state._check_inv_29() || !state._check_inv_30() || !state._check_inv_31() || !state._check_inv_32() || !state._check_inv_33() || !state._check_inv_34() || !state._check_inv_35() || !state._check_inv_36() || !state._check_inv_37() || !state._check_inv_38() || !state._check_inv_39());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-        if(deadlockDetected) {
-            System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
-            System.out.println("INVARIANT VIOLATED");
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<Cruise_finite1_deterministic_MC> counterExampleState, Map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC> parents, Map<Cruise_finite1_deterministic_MC, String> stateAccessedVia) {
+
+        if(invariantViolated || deadlockDetected) {
+            if(deadlockDetected) {
+                System.out.println("DEADLOCK DETECTED");
+            }
+            if(invariantViolated) {
+                System.out.println("INVARIANT VIOLATED");
+            }
+            System.out.println("COUNTER EXAMPLE TRACE: ");
+            StringBuilder sb = new StringBuilder();
+            if(counterExampleState.size() >= 1) {
+                Cruise_finite1_deterministic_MC currentState = counterExampleState.get(0);
+                while(currentState != null) {
+                    sb.insert(0, currentState.toString());
+                    sb.insert(0, "\n");
+                    sb.insert(0, stateAccessedVia.get(currentState));
+                    sb.insert(0, "\n\n");
+                    currentState = parents.get(currentState);
+                }
+            }
+            System.out.println(sb.toString());
+
         }
         if(!deadlockDetected && !invariantViolated) {
             System.out.println("MODEL CHECKING SUCCESSFUL");
@@ -2009,6 +2313,7 @@ public class Cruise_finite1_deterministic_MC {
         Map<Cruise_finite1_deterministic_MC, Set<String>> dependentGuard = new HashMap<>();
         Map<Cruise_finite1_deterministic_MC, PersistentHashMap> guardCache = new HashMap<>();
         Map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC> parents = new HashMap<>();
+        Map<Cruise_finite1_deterministic_MC, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("ObstacleStopsTravelSlower", new HashSet<>(Arrays.asList("_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24")));
             invariantDependency.put("SetCruiseSpeed", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3")));
@@ -2063,21 +2368,16 @@ public class Cruise_finite1_deterministic_MC {
             guardDependency.put("ObstacleBecomesOld", new HashSet<>(Arrays.asList("_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished")));
             guardDependency.put("ObstacleDistanceBecomesBig", new HashSet<>(Arrays.asList("_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<Cruise_finite1_deterministic_MC> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             Cruise_finite1_deterministic_MC state = next(collection, lock, type);
 
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                break;
-            }
-
-            Set<Cruise_finite1_deterministic_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+            Set<Cruise_finite1_deterministic_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
@@ -2092,13 +2392,19 @@ public class Cruise_finite1_deterministic_MC {
                 }
             });
 
+            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+                counterExampleState.add(state);
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 stopThreads.set(true);
             }
 
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 
@@ -2129,6 +2435,7 @@ public class Cruise_finite1_deterministic_MC {
         Map<Cruise_finite1_deterministic_MC, Set<String>> dependentGuard = new HashMap<>();
         Map<Cruise_finite1_deterministic_MC, PersistentHashMap> guardCache = new HashMap<>();
         Map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC> parents = new HashMap<>();
+        Map<Cruise_finite1_deterministic_MC, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("ObstacleStopsTravelSlower", new HashSet<>(Arrays.asList("_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24")));
             invariantDependency.put("SetCruiseSpeed", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3")));
@@ -2183,8 +2490,10 @@ public class Cruise_finite1_deterministic_MC {
             guardDependency.put("ObstacleBecomesOld", new HashSet<>(Arrays.asList("_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished")));
             guardDependency.put("ObstacleDistanceBecomesBig", new HashSet<>(Arrays.asList("_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished")));
             dependentInvariant.put(machine, new HashSet<>());
-            parents.put(machine, null);
         }
+        List<Cruise_finite1_deterministic_MC> counterExampleState = new ArrayList<>();
+        parents.put(machine, null);
+        stateAccessedVia.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
@@ -2192,7 +2501,7 @@ public class Cruise_finite1_deterministic_MC {
             possibleQueueChanges.incrementAndGet();
             Cruise_finite1_deterministic_MC state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<Cruise_finite1_deterministic_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, transitions);
+                Set<Cruise_finite1_deterministic_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -2226,6 +2535,7 @@ public class Cruise_finite1_deterministic_MC {
                 if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
+                    counterExampleState.add(state);
                 }
 
 
@@ -2248,7 +2558,7 @@ public class Cruise_finite1_deterministic_MC {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
 

@@ -5,8 +5,12 @@ VERS=0.1.0
 JAR=B2Program-all-$(VERS)-SNAPSHOT.jar
 
 FILE = Generated100
-FILE = ArithmeticLaws
+FILE = Generated1000
+#FILE = ArithmeticLaws
 #FILE = BoolLaws
+FILE=ERnice_nodata_V53 # does not work
+FILE=nota
+#FILE=Library_3_3
 BFILE=$(FILE).mch
 JAVAFILE=$(FILE).java
 
@@ -17,7 +21,7 @@ opreuse: $(BFILE)
 tlc: $(BFILE)
 	time probcli $(BFILE) --mc-with-tlc -disable-timeout -nodead -nogoal
 
-BIGINT=true
+BIGINT=false
 # for big integer:
 ifeq ($(BIGINT),true)
 btypes.jar:

@@ -1,4 +1,4 @@
-MACHINE Library
+MACHINE Library_3_3
     
     /* 
     Specification of a library system
@@ -20,10 +20,6 @@ CONCRETE_CONSTANTS
     
 DEFINITIONS
     FORCE_SYMMETRY_MEMBERID == TRUE; FORCE_SYMMETRY_BOOKID == TRUE;
-    BOOK_IS_NOT_RESERVED == reservation(book_) = [] ;
-    BOOK_IS_RESERVED == reservation(book_) /= [] ;
-    MEMBER_HAS_NO_RESERVATION == union(ran(reservation)) |> {member_} = {} ;
-    Indice (book_,member_) == (reservation(book_)~)(member_) ;
     /* 1 - A book can be acquired by the library if it is not currently acquired. */
     /*ASSERT_LTL_1 == "G( {b1 /: book} => e(Acquire(b1)) )" ; */
     /* 2 - A book can be acquired by the library only if it is not currently acquired. */
@@ -72,7 +68,7 @@ INVARIANT
     loan : book +-> member & 
     /*A member can't borrow more than the maxNbLoans of the system*/
     ! mm . ( mm : member => card ( loan |> { mm } ) <= maxNbLoans ) &
-    reservation : book --> iseq(member) 
+    reservation : book --> (NAT <-> member) // NOT SUPPORTED BY B2Program:  reservation : book --> iseq(member) 
 INITIALISATION
     loan := {} ||
     book := {} ||
@@ -93,14 +89,14 @@ OPERATIONS
     Cancel ( member_ , book_ ) =
     PRE
         member_ : MEMBERID &
-        member_ : member &
         book_ : BOOKID &
+        member_ : member &
         book_ : book &
         book_ : dom(reservation) &
         member_ : ran(reservation(book_))
     THEN
         reservation(book_) :=
-            (reservation(book_) /|\ ((reservation(book_)~)(member_) - 1)) 
+            (reservation(book_) /|\ ((reservation(book_)~)(member_) - 1))
             ^ 
             (reservation (book_) \|/ (reservation(book_)~)(member_))
     END ;
@@ -110,7 +106,7 @@ OPERATIONS
         book_ : BOOKID &
         book_ : book &
         book_ /: dom ( loan ) &
-        BOOK_IS_NOT_RESERVED 
+        reservation(book_) = []
     THEN
         book := book - { book_ } ||
         reservation := {book_} <<| reservation 
@@ -129,7 +125,7 @@ OPERATIONS
         member_ : MEMBERID &
         member_ : member &
         member_ /: ran(loan) &
-        MEMBER_HAS_NO_RESERVATION 
+        union(ran(reservation)) |> {member_} = {}
     THEN
         member := member - { member_ }
     END ;
@@ -137,11 +133,11 @@ OPERATIONS
     Lend ( member_ , book_ ) =
     PRE
         member_ : MEMBERID &
-        member_ : member &
         book_ : BOOKID &
+        member_ : member &
         book_ : book &
         book_ /: dom ( loan ) &
-        BOOK_IS_NOT_RESERVED &
+        reservation(book_) = [] &
         card ( loan |> { member_ } ) < maxNbLoans 
     THEN
         loan ( book_ ) := member_
@@ -154,7 +150,7 @@ OPERATIONS
         member_ : member &
         book_ : book &
         ( book_ |-> member_ ) : loan &
-        BOOK_IS_NOT_RESERVED 
+        reservation(book_) = []
     THEN
         skip
     END ;
@@ -170,7 +166,7 @@ OPERATIONS
         (
             book_ : dom ( loan )
             or
-            BOOK_IS_RESERVED
+            reservation(book_) /= []
         )
     THEN
         reservation := reservation <+ { book_ |-> ((reservation(book_) <- member_)) }

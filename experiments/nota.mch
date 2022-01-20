@@ -212,8 +212,10 @@ rm_register(self,ss,ii) =
   ss : services 
  THEN
   CHOICE
+   SELECT ss:dom(rm_sids) THEN // ADDED
    err := RM_SERVICE_FOUND ||
-   sid := {rm_sids(ss)} 
+   sid := {rm_sids(ss)}  // ORIGINALLY WD ERROR
+   END
   OR
    sid := {} ||
    err := RM_SERVICE_NOT_FOUND

@@ -4,6 +4,7 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
@@ -139,7 +140,16 @@ public class PredicateGenerator {
         } else if (PREDICATE_BOOLEANS.contains(operator)) {
             return generateBoolean(operator);
         }
-        throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
+        throw new RuntimeException("Given operator is not implemented: " + node.getOperator()
+                                     + " " + GetNodeLocationAndText(node));
+    }
+    
+    // todo: probably move this somewhere else so that we can use it for other error messages
+    public static String GetNodeLocationAndText (Node node) {
+      return 
+            "at line " + node.getSourceCodePosition().getStartLine() + 
+            " and column " + node.getSourceCodePosition().getStartColumn() + 
+            ": " + node.getSourceCodePosition().getText();
     }
 
     public String generateQuantifiedPredicateNode(QuantifiedPredicateNode node) {
@@ -302,7 +312,8 @@ public class PredicateGenerator {
             } else {
                 PredicateOperatorNode properties = (PredicateOperatorNode) node.getProperties();
                 if(properties.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                    throw new CodeGenerationException("Predicate for iteration must be a conjunction");
+                    throw new CodeGenerationException("Predicate for iteration must be a conjunction "
+                                                       + " " + GetNodeLocationAndText(node));
                 }
                 propertiesNodes.addAll(properties.getPredicateArguments());
             }

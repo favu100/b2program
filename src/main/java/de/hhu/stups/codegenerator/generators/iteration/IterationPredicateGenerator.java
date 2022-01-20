@@ -18,6 +18,8 @@ import org.stringtemplate.v4.STGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 /**
  * Created by fabian on 04.03.19.
  */
@@ -57,21 +59,21 @@ public class IterationPredicateGenerator {
     public void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations, boolean universalQuantification) {
         if(!(predicate instanceof PredicateOperatorNode)) {
             if(universalQuantification) {
-                throw new CodeGenerationException("Predicate for universal quantification must contain an implication at top-level");
+                throw new CodeGenerationException("Predicate for universal quantification must contain an implication at top-level " + GetNodeLocationAndText(predicate));
             }
             if(declarations.size() != 1) {
-                throw new CodeGenerationException("Predicate for iteration must be a conjunction");
+                throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
             }
         } else {
             PredicateOperatorNode predicateOperatorNode = ((PredicateOperatorNode) predicate);
             if(universalQuantification) {
                 if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.IMPLIES) {
-                    throw new CodeGenerationException("Predicate for universal quantification must contain an implicaton at top-level");
+                    throw new CodeGenerationException("Predicate for universal quantification must contain an implicaton at top-level " + GetNodeLocationAndText(predicate));
                 }
                 checkPredicate(predicateOperatorNode.getPredicateArguments().get(0), declarations, false);
             } else {
                 if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
-                    throw new CodeGenerationException("Predicate for iteration must be a conjunction");
+                    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
                 }
                 checkPredicateIteration(declarations, predicateOperatorNode);
             }
@@ -83,12 +85,12 @@ public class IterationPredicateGenerator {
     */
     private void checkPredicateIteration(List<DeclarationNode> declarations, PredicateOperatorNode predicate) {
         if(predicate.getPredicateArguments().size() < declarations.size()) {
-            throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n. The failed predicate is: \n" + predicate.getSourceCodePosition().getText());
+            throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n.\nThe failed predicate is " +  GetNodeLocationAndText(predicate));
         }
         for(int i = 0; i < declarations.size(); i++) {
             PredicateNode innerPredicate = predicate.getPredicateArguments().get(i);
             if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n. The failed predicate is: \n" + innerPredicate.getSourceCodePosition().getText());
+                throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n.\nThe failed predicate is " + GetNodeLocationAndText(innerPredicate));
             }
         }
     }
@@ -98,7 +100,7 @@ public class IterationPredicateGenerator {
     */
     private void checkEnumerationPredicate(ExprNode lhs, DeclarationNode declarationNode) {
         if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
-            throw new CodeGenerationException("The expression on the left-hand side of the first predicates must match the first identifier names");
+            throw new CodeGenerationException("The expression on the left-hand side of the first predicates must match the first identifier names " + GetNodeLocationAndText(lhs));
         }
     }
 
@@ -122,11 +124,11 @@ public class IterationPredicateGenerator {
             }
             return subpredicate((PredicateOperatorNode) predicate, n);
         }
-        throw new RuntimeException("Given predicate is not supported" + GetPredicateLocationAndText(predicate));
+        throw new RuntimeException("Given predicate is not supported" + GetNodeLocationAndText(predicate));
     }
    
     // todo: probably move this somewhere else so that we can use it for other error messages
-    public static String GetPredicateLocationAndText (Node node) {
+    public static String GetNodeLocationAndText (Node node) {
       return 
             "at line " + node.getSourceCodePosition().getStartLine() + 
             " and column " + node.getSourceCodePosition().getStartColumn() + 
@@ -245,7 +247,7 @@ public class IterationPredicateGenerator {
             inLoop = true;
         } else {
             throw new RuntimeException("Only =,:,<:,<<: operators are supported within the enumeration predicate " +
-                                       GetPredicateLocationAndText(innerPredicate));
+                                       GetNodeLocationAndText(innerPredicate));
         }
         return enumerationTemplate;
     }

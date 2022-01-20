@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -121,7 +122,15 @@ public class IterationPredicateGenerator {
             }
             return subpredicate((PredicateOperatorNode) predicate, n);
         }
-        throw new RuntimeException("Given predicate is not supported");
+        throw new RuntimeException("Given predicate is not supported" + GetPredicateLocationAndText(predicate));
+    }
+   
+    // todo: probably move this somewhere else so that we can use it for other error messages
+    public static String GetPredicateLocationAndText (Node node) {
+      return 
+            "at line " + node.getSourceCodePosition().getStartLine() + 
+            " and column " + node.getSourceCodePosition().getStartColumn() + 
+            ": " + node.getSourceCodePosition().getText();
     }
 
     /*
@@ -235,7 +244,8 @@ public class IterationPredicateGenerator {
             enumerationTemplate = getSubsetNeqTemplate(declaration, innerPredicate.getExpressionNodes().get(0));
             inLoop = true;
         } else {
-            throw new RuntimeException("Other operators within predicate node are not supported");
+            throw new RuntimeException("Only =,:,<:,<<: operators are supported within the enumeration predicate " +
+                                       GetPredicateLocationAndText(innerPredicate));
         }
         return enumerationTemplate;
     }

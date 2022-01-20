@@ -184,7 +184,7 @@ public class RecordStructGenerator {
             TemplateHandler.add(function, "type", typeGenerator.generate(recordType.getSubtypes().get(i)));
             final int currentIndex = i;
             TemplateHandler.add(function,"parameters", identifiers.stream().map(
-                    identifier -> (identifiers.indexOf(identifier) != currentIndex)? privateVariablePrefix + identifier: identifier).collect(Collectors.toSet()));
+                    identifier -> (identifiers.indexOf(identifier) != currentIndex)? privateVariablePrefix + identifier: identifier).collect(Collectors.toList()));
             functions.add(function.render());
         }
         return functions;

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -84,10 +85,10 @@ public class RecordStructGenerator {
     /*
     * This function generates code for all structs
     */
-    public List<String> generateStructs() {
+    public Set<String> generateStructs() {
         return generatedStructs.stream()
                 .map(this::generateStruct)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     /*

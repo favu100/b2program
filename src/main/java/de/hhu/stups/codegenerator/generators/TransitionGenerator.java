@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.generators.iteration.IterationConstructGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.prob.parser.ast.nodes.OperationNode;
+import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.BecomesElementOfSubstitutionNode;
@@ -54,6 +55,14 @@ public class TransitionGenerator {
         return transitions;
     }
 
+    // todo: probably move this somewhere else so that we can use it for other error messages
+    public static String GetNodeLocationAndText (Node node) {
+      return 
+            "at line " + node.getSourceCodePosition().getStartLine() + 
+            " and column " + node.getSourceCodePosition().getStartColumn() + 
+            ": " + node.getSourceCodePosition().getText();
+    }
+    
     private String generateTransition(OperationNode operation) {
         SubstitutionNode bodySubstitution = operation.getSubstitution();
         IterationConstructGenerator iterationConstructGenerator = iterationConstructHandler.getNewIterationConstructGenerator();
@@ -63,7 +72,7 @@ public class TransitionGenerator {
                 iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
                 return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
             } else {
-                throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
+                throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters " + GetNodeLocationAndText(bodySubstitution));
             }
         } else if(bodySubstitution instanceof ConditionSubstitutionNode) {
             if (((ConditionSubstitutionNode) bodySubstitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
@@ -71,16 +80,17 @@ public class TransitionGenerator {
                 iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), predicate);
                 return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
             } else {
-                throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters");
+                throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution when there are parameters "+ GetNodeLocationAndText(bodySubstitution));
             }
         } else if(nondeterministicSubstitutions.contains(bodySubstitution.getClass())) {
-            throw new RuntimeException("Non-deterministic assignments and ANY substitution are not allowed in model checking mode");
+            throw new RuntimeException("Non-deterministic assignments and ANY substitution are not allowed in model checking mode " + GetNodeLocationAndText(bodySubstitution));
         } else {
             if(operation.getParams().size() == 0) {
                 iterationConstructGenerator.visitOperationNode(operation, operation.getParams(), null);
                 return iterationConstructGenerator.getIterationsMapCode().get(operation.toString());
             } else {
-                throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution");
+                throw new RuntimeException("Top-level substitution must either be a SELECT or a PRE substitution "
+                                           + GetNodeLocationAndText(bodySubstitution));
             }
         }
     }

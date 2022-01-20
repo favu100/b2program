@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 rand = "0.8.3"
-lazy_static = "1.4.0"
+im = "15.0.0"
 btypes = { path = "../btypes" }
 
 [profile.release]

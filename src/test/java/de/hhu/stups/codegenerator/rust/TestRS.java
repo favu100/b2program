@@ -40,13 +40,22 @@ public class TestRS {
     }
 
     public void testRS(String machine, String machineName, String addition, boolean execute) throws Exception {
+        testRS(machine, machineName, addition, execute, false);
+    }
+
+    public void testRSMC(String machine) throws Exception {
+        testRS(machine, machine, "DefaultAddition.strs", false, true);
+        //TODO: validation of MC result
+    }
+
+    public void testRS(String machine, String machineName, String addition, boolean execute, boolean modelChecking) throws Exception {
         Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
                 .getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
         CodeGenerator codeGenerator = new CodeGenerator();
         List<Path> rsFilePaths = codeGenerator.generate(mchPath, GeneratorMode.RS,
                 false, String.valueOf(Integer.MIN_VALUE),
                 String.valueOf(Integer.MAX_VALUE), "10",
-                false, false,true,
+                modelChecking, false,true,
                 addition, false, false, null);
 
         Path typesPath = Paths.get(this.getClass().getClassLoader().getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust/bmachine/src"));
@@ -92,10 +101,6 @@ public class TestRS {
         assertEquals(expectedOutput, result);
         cleanUp(newMainFile);
         rsFilePaths.forEach(p -> cleanUp(p.toFile()));
-    }
-
-    public void testRSMC(String machine) { //model checking
-        throw new NotImplementedException();
     }
 
     private void cleanUp(File file) {

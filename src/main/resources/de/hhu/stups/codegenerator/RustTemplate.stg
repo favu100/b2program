@@ -3,19 +3,29 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 >>
 
 
-machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck) ::= <<
 #![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+<if(forModelChecking)>
+use std::sync::atomic::{AtomicI32, AtomicI64, AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::collections::{HashMap, HashSet, LinkedList};
+use im::OrdMap;
+<endif>
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
 <imports; separator="\n">
 <includedMachines; separator="\n">
 
+<if(forModelChecking)>
+    pub enum MC_TYPE { BFS, DFS, MIXED }
+<endif>
+
 <structs; separator="\n\n">
 
 <enums; separator="\n\n">
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug)]
 pub struct <machine> {
     <if(declarations)><declarations; separator="\n"><endif>
     <if(includes)><includes; separator="\n"><endif>
@@ -28,6 +38,18 @@ impl <machine> {
     <if(getters)><\n><getters; separator="\n\n"><endif>
     <if(operations)><\n><operations; separator="\n\n">
     <endif>
+
+<if(forModelChecking)>
+
+    <transitions; separator="\n\n">
+
+    <invariant; separator="\n\n">
+
+    <copy>
+
+    <modelcheck>
+
+<endif>
 }
 
 <lambdaFunctions; separator="\n\n">
@@ -672,4 +694,491 @@ machine_hash_assignment()
 >>
 
 enum_import() ::= <<
+>>
+model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
+<nextStates>
+
+<evalState>
+
+<checkInvariants>
+
+<printResult>
+
+<main>
+>>
+
+model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
+//model_check_next_states
+fn generateNextStates(guardLock: Object,
+                      state: Lift_MC,
+                      isCaching: bool,
+                      invariant_dependency: HashMap\<String, Set\<String>\>,
+                      dependent_invariant_m: Arc\<Mutex\<HashMap\<Lift_MC, Set\<String>\>\>>,
+                      guard_dependency: HashMap\<String, Set\<String\>>,
+                      dependent_guard_m: Arc\<Mutex\<HashMap\<Lift_MC, Set\<String>\>\>>,
+                      guardCache: HashMap\<Lift_MC, OrdMap\<L, R>\>,
+                      parents_m: Arc\<Mutex\<HashMap\<Lift_MC, Lift_MC>\>>,
+                      transitions: AtomicI32) -> Set\<<machine>\> {
+    let mut result: Set\<<machine>\> = HashSet::new();
+    if isCaching {
+        let mut parentsGuard = guardCache.get(parents_m.lock().unwrap().get(&state).unwrap());
+        let mut newCache = if parentsGuard.is_none() { OrdMap::new() } else { parentsGuard.unwrap() };
+        let mut dependentGuardsOfState = Option::\<HashSet\<String\>>::None;
+        let mut cachedValue = Option::None;
+        let mut dependentGuardsBoolean = true;
+        <transitionsWithCaching>
+        guardCache.put(state, newCache);
+    } else {
+        <transitionsWithoutCaching>
+    }
+    return result;
+}
+>>
+
+model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
+//model_check_transition
+<if(hasParameters)>
+<if(isCaching)>
+BSet\<<tupleType>\> <transitionIdentifier>;
+
+dependentGuardsOfState = dependentGuard.get(state);
+if(dependentGuardsOfState != null) {
+    cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
+    dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
+}
+
+if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+    <transitionIdentifier> = state.<evalTransitions>();
+} else {
+    <transitionIdentifier> = (BSet\<<tupleType>\>) cachedValue;
+}
+newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
+for(<tupleType> param : <transitionIdentifier>) {
+    <execTransitions>
+}
+<else>
+BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
+for(<tupleType> param : <transitionIdentifier>) {
+    <execTransitions>
+}
+<endif>
+<else>
+<if(isCaching)>
+let mut <transitionIdentifier> = false; //was undefined
+dependentGuardsOfState = dependentGuard.get(&state);
+if dependentGuardsOfState.is_some() {
+    cachedValue = parentsGuard.get("<evalTransitions>");
+    dependentGuardsBoolean = dependentGuardsOfState.unwrap().contains("<evalTransitions>");
+}
+
+if dependentGuardsOfState.is_none() || dependentGuardsBoolean || parentsGuard.is_none() || cachedValue.is_none() {
+    <transitionIdentifier> = state.<evalTransitions>();
+} else {
+    _trid_1 = cachedValue.unwrap();
+}
+newCache.insert("<evalTransitions>", <transitionIdentifier>);
+if <transitionIdentifier> {
+    <execTransitions>
+}
+<else>
+if state.<evalTransitions>() {
+    <execTransitions>
+}
+<endif>
+<endif>
+>>
+
+model_check_invariants(machine, checkInvariants, invariants) ::= <<
+//model_check_invariants
+pub fn checkInvariants(state: <machine>,
+                       isCaching: bool,
+                       dependent_invariant: HashMap\<<machine>, HashSet\<String>\> ) -> bool {
+    if isCaching {
+        let mut dependent_invariants_of_state = dependent_invariant.get(&state).unwrap();
+        <checkInvariants; separator="\n">
+        return true;
+    }
+    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+}
+>>
+
+model_check_invariant(invariant) ::= <<
+//model_check_invariant
+if dependent_invariants_of_state.contains("<invariant>") {
+    if !state.<invariant>() {
+        return false;
+    }
+}
+>>
+
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
+//model_check_transition_body
+<if(hasParameters)>
+<readParameters>
+<endif>
+let mut copiedState = state.clone();
+copiedState.<operation>(<parameters; separator=", ">);
+<if(isCaching)>
+{
+    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
+    let mut dependent_guard = dependent_guard_m.lock().unwrap();
+    let mut parents = parents_m.lock().unwrap();
+
+    if !dependent_invariant.contains_key(&copiedState) {
+        dependent_invariant.put(copiedState.clone(), invariant_dependency.get("<operation>"));
+    }
+    if !dependent_guard.contains_key(&copiedState) {
+        dependent_guard.insert(copiedState.clone(), guardDependency.get("<operation>"));
+    }
+    if !parents.contains_key(&copiedState) {
+        parents.put(copiedState.clone(), state.clone());
+    }
+}
+<endif>
+result.add(copiedState);
+transitions.getAndIncrement();
+>>
+
+model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
+//model_check_transition_param_assignment
+<if(isLhs)>
+<type> <param> = <val>.projection1();
+<else>
+<if(oneParameter)>
+<type> <param> = <val>;
+<else>
+<type> <param> = <val>.projection2();
+<endif>
+<endif>
+>>
+
+model_check_evaluate_state(machine, variables) ::= <<
+//model_check_evaluate_state
+>>
+
+model_check_evaluate_variable(getter) ::= <<
+//model_check_evaluate_variable
+state.put("<getter>", machine.<getter>());
+>>
+
+model_check_print() ::= <<
+//model_check_print
+fn printResult(states: i32, transitions: i32, deadlock_detected: bool, invariant_violated: bool) {
+    if deadlock_detected { println!("DEADLOCK DETECTED"); }
+    if invariant_violated { println!("INVARIANT VIOLATED"); }
+    if !deadlock_detected && !invariant_violated { println!("MODEL CHECKING SUCCESSFUL"); }
+    println!("Number of States: " + states);
+    println!("Number of Transitions: " + transitions);
+}
+>>
+
+model_check_init_static(map, keyy, entries) ::= <<
+//model_check_init_static
+<map>.put("<keyy>", new HashSet\<>(Arrays.asList(<entries:{entry | "<entry>"}; separator=", ">)));
+>>
+
+model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
+//model_check_main
+fn next(collection_m: Arc\<Mutex\<LinkedList\<Lift_MC>\>>, mc_type: MC_TYPE) -> Lift_MC {
+    let mut collection = collection_m.lock().unwrap();
+    return match mc_type {
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
+}
+
+fn model_check_single_threaded(mc_type: MC_TYPE, isCaching: bool) {
+    //Object lock = new Object();
+    //Object guardLock = new Object();
+
+    let mut machine = <machine>::new();
+
+
+    let mut invariant_violated = AtomicBool::new(false);
+    let mut deadlock_detected = AtomicBool::new(false);
+    let mut stop_threads = AtomicBool::new(false);;
+
+    if <invariants:{inv | !machine.<inv>()}; separator=" || "> {
+        invariant_violated.store(true, Ordering::Relaxed);
+    }
+
+    let mut states = HashSet::\<<machine>\>::new();
+    states.add(machine.clone());
+    let mut numberStates = AtomicI64::new(1);
+
+    LinkedList\<<machine>\> collection = new LinkedList\<>();
+    collection.add(machine);
+
+    Map\<String, Set\<String>\> invariant_dependency = new HashMap\<>();
+    Map\<String, Set\<String>\> guard_dependency = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
+    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
+    Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    if(isCaching) {
+        <invariantDependency; separator="\n">
+        <guardDependency; separator="\n">
+        dependentInvariant.put(machine, new HashSet\<>());
+        parents.put(machine, null);
+    }
+
+    AtomicInteger transitions = new AtomicInteger(0);
+
+    while(!collection.isEmpty() && !stopThreads.get()) {
+        <machine> state = next(collection, lock, type);
+
+        Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariant_dependency, dependentInvariant, guard_dependency, dependentGuard, guardCache, parents, transitions);
+
+        nextStates.forEach(nextState -> {
+            if(!states.contains(nextState)) {
+                numberStates.getAndIncrement();
+                states.add(nextState);
+                collection.add(nextState);
+                if(numberStates.get() % 50000 == 0) {
+                    System.out.println("VISITED STATES: " + numberStates.get());
+                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                    System.out.println("-------------------");
+                }
+            }
+        });
+
+        if(nextStates.isEmpty()) {
+            deadlockDetected.set(true);
+            stopThreads.set(true);
+        }
+
+        if(!checkInvariants(state, isCaching, dependentInvariant)) {
+            invariantViolated.set(true);
+            stopThreads.set(true);
+        }
+
+    }
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+}
+
+
+private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
+    Object lock = new Object();
+    Object guardLock = new Object();
+    Object waitLock = new Object();
+    ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
+
+    <machine> machine = new <machine>();
+
+
+    AtomicBoolean invariantViolated = new AtomicBoolean(false);
+    AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+    AtomicBoolean stopThreads = new AtomicBoolean(false);
+    AtomicInteger possibleQueueChanges = new AtomicInteger(0);
+
+    if(<invariants:{inv | !machine.<inv>()}; separator=" || ">) {
+        invariantViolated.set(true);
+    }
+
+    Set\<<machine>\> states = new HashSet\<>();
+    states.add(machine);
+    AtomicInteger numberStates = new AtomicInteger(1);
+
+    LinkedList\<<machine>\> collection = new LinkedList\<>();
+    collection.add(machine);
+
+    Map\<String, Set\<String>\> invariant_dependency = new HashMap\<>();
+    Map\<String, Set\<String>\> guard_dependency = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
+    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
+    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
+    Map\<<machine>, <machine>\> parents = new HashMap\<>();
+    if(isCaching) {
+        <invariantDependency; separator="\n">
+        <guardDependency; separator="\n">
+        dependentInvariant.put(machine, new HashSet\<>());
+        parents.put(machine, null);
+    }
+
+    AtomicInteger transitions = new AtomicInteger(0);
+
+    while(!collection.isEmpty() && !stopThreads.get()) {
+        possibleQueueChanges.incrementAndGet();
+        <machine> state = next(collection, lock, type);
+        Runnable task = () -> {
+            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariant_dependency, dependentInvariant, guard_dependency, dependentGuard, guardCache, parents, transitions);
+
+            nextStates.forEach(nextState -> {
+                synchronized(lock) {
+                    if(!states.contains(nextState)) {
+                        numberStates.getAndIncrement();
+                        states.add(nextState);
+                        collection.add(nextState);
+                        if(numberStates.get() % 50000 == 0) {
+                            System.out.println("VISITED STATES: " + numberStates.get());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
+                        }
+                    }
+                }
+            });
+
+            synchronized (lock) {
+                int running = possibleQueueChanges.decrementAndGet();
+                if (!collection.isEmpty() || running == 0) {
+                    synchronized (waitLock) {
+                        waitLock.notify();
+                    }
+                }
+            }
+
+            if(nextStates.isEmpty()) {
+                deadlockDetected.set(true);
+                stopThreads.set(true);
+            }
+
+            if(!checkInvariants(state, isCaching, dependentInvariant)) {
+                invariantViolated.set(true);
+                stopThreads.set(true);
+            }
+
+
+        };
+        threadPool.submit(task);
+        synchronized(waitLock) {
+            if (collection.isEmpty() && possibleQueueChanges.get() > 0) {
+                try {
+                    waitLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+    threadPool.shutdown();
+    try {
+        threadPool.awaitTermination(5, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+}
+
+
+public static void main(String[] args) {
+    if(args.length != 3) {
+        System.out.println("Number of arguments errorneous");
+        return;
+    }
+    String strategy = args[0];
+    String numberThreads = args[1];
+    String caching = args[2];
+
+    Type type;
+
+    if("mixed".equals(strategy)) {
+        type = Type.MIXED;
+    } else if("bf".equals(strategy)) {
+        type = Type.BFS;
+    } else if ("df".equals(strategy)) {
+        type = Type.DFS;
+    } else {
+        System.out.println("Input for strategy is wrong.");
+        return;
+    }
+
+    int threads = 0;
+    try {
+        threads = Integer.parseInt(numberThreads);
+    } catch(NumberFormatException e) {
+        System.out.println("Input for number of threads is wrong.");
+        return;
+    }
+    if(threads \<= 0) {
+        System.out.println("Input for number of threads is wrong.");
+        return;
+    }
+
+    boolean isCaching = true;
+    try {
+        isCaching = Boolean.parseBoolean(caching);
+    } catch(Exception e) {
+        System.out.println("Input for caching is wrong.");
+        return;
+    }
+    if(threads == 1) {
+        model_check_single_threaded(type, isCaching);
+    } else {
+        modelCheckMultiThreaded(type, threads, isCaching);
+    }
+}
+>>
+
+copy_constructor(machine, parameters, assignments) ::= <<
+public <machine>(<parameters; separator=", ">) {
+    //copy_constructor
+    <assignments; separator="\n">
+}
+>>
+
+copy_assignment(variable) ::= <<
+//copy_assignment
+this.<variable> = <variable>;
+>>
+
+pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+//pre_assert
+<if(isModelChecking && !isTopLevel)>
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()) {
+    <then>
+} else {
+    throw new PreconditionOrAssertionViolation("Precondition or Assertion Error occured.");
+}
+<else>
+<then>
+<endif>
+>>
+
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
+pub fn _tr_<operationName>(&self) -> <if(noParameters)>boolean<else>BSet\<<subType>\><endif> {
+    //transition
+    <if(noParameters)>
+    <if(noPredicate)>
+    return true;
+    <else>
+    return <predicate>.booleanValue();
+    <endif>
+    <else>
+    let mut <identifier>: BSet\<<subType>\> = BSet::new();
+    <if(hasCondition)>
+    if <conditionalPredicate>.booleanValue() {
+        <combination>
+    }
+    <else>
+    <combination>
+    <endif>
+    return <identifier>;
+    <endif>
+}
+>>
+
+invariant(invariantFunction, iterationConstruct, predicate) ::= <<
+pub fn <invariantFunction>(&self) -> bool {
+    //invariant
+    <iterationConstruct; separator="\n">
+    return <predicate>.booleanValue();
+}
+>>
+
+copy(machine, parameters) ::= <<
+>>
+
+machine_string(variables) ::= <<
+@Override
+public String toString() {
+    //machine_string
+    <if(variables)>
+    return String.join("\n", <variables:{var | "<var>: " + (this.<var>()).toString()}; separator=", ">);
+    <else>
+    return "";
+    <endif>
+}
 >>

@@ -50,7 +50,6 @@ public class TestMachines extends TestRS {
         testRS("Lift", "Lift", "LiftAddition.strs", true);
     }
 
-    @Ignore //MC
     @Test
     public void testLift_MC() throws Exception {
         testRSMC("Lift_MC");

@@ -1058,7 +1058,7 @@ private static <machine> next(LinkedList\<<machine>\> collection, Object lock, T
     }
 }
 
-private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
+private static void modelCheckSingleThreaded(Type type, boolean isCaching, boolean isDebug) {
     Object lock = new Object();
     Object guardLock = new Object();
 
@@ -1103,7 +1103,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
                 numberStates.getAndIncrement();
                 states.add(nextState);
                 collection.add(nextState);
-                if(numberStates.get() % 50000 == 0) {
+                if(numberStates.get() % 5000 == 0) {
                     System.out.println("VISITED STATES: " + numberStates.get());
                     System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
                     System.out.println("-------------------");
@@ -1127,7 +1127,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
 }
 
 
-private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
+private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching, boolean isDebug) {
     Object lock = new Object();
     Object guardLock = new Object();
     Object waitLock = new Object();
@@ -1178,10 +1178,12 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
                         numberStates.getAndIncrement();
                         states.add(nextState);
                         collection.add(nextState);
-                        if(numberStates.get() % 50000 == 0) {
-                            System.out.println("VISITED STATES: " + numberStates.get());
-                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                            System.out.println("-------------------");
+                        if(numberStates.get() % 5000 == 0) {
+                            if( isDebug || numberStates.get() % 50000 == 0) {
+                                System.out.println("VISITED STATES: " + numberStates.get());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
+                            }
                         }
                     }
                 }
@@ -1230,52 +1232,69 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
 }
 
+public static void debugPrint (String msg, Boolean isDebug) {
+   if (isDebug) {
+      System.out.println(msg);
+   }
+}
 
 public static void main(String[] args) {
-    if(args.length != 3) {
-        System.out.println("Number of arguments errorneous");
+    if(args.length > 4) {
+        System.out.println("Expecting 3 command-line arguments: STRATEGY THREADS CACHING DEBUG");
         return;
     }
-    String strategy = args[0];
-    String numberThreads = args[1];
-    String caching = args[2];
-
-    Type type;
-
-    if("mixed".equals(strategy)) {
-        type = Type.MIXED;
-    } else if("bf".equals(strategy)) {
-        type = Type.BFS;
-    } else if ("df".equals(strategy)) {
-        type = Type.DFS;
-    } else {
-        System.out.println("Input for strategy is wrong.");
-        return;
-    }
-
+    Type type = Type.MIXED;
     int threads = 0;
-    try {
-        threads = Integer.parseInt(numberThreads);
-    } catch(NumberFormatException e) {
-        System.out.println("Input for number of threads is wrong.");
-        return;
+    boolean isCaching = false;
+    boolean isDebug = false;
+    
+    if(args.length > 0) { 
+        if("mixed".equals(args[0])) {
+            type = Type.MIXED;
+        } else if("bf".equals(args[0])) {
+            type = Type.BFS;
+        } else if ("df".equals(args[0])) {
+            type = Type.DFS;
+        } else {
+            System.out.println("Value for command-line argument STRATEGY is wrong.");
+            System.out.println("Expecting mixed, bf or df.");
+            return;
+        }
     }
-    if(threads \<= 0) {
-        System.out.println("Input for number of threads is wrong.");
-        return;
+    if(args.length > 1) { 
+        try {
+            threads = Integer.parseInt(args[1]);
+        } catch(NumberFormatException e) {
+            System.out.println("Value for command-line argument THREADS is not a number.");
+            return;
+        }
+        if(threads \<= 0) {
+            System.out.println("Value for command-line argument THREADS must be positive.");
+            return;
+        }
     }
-
-    boolean isCaching = true;
-    try {
-        isCaching = Boolean.parseBoolean(caching);
-    } catch(Exception e) {
-        System.out.println("Input for caching is wrong.");
-        return;
+    if(args.length > 2) { 
+        try {
+            isCaching = Boolean.parseBoolean(args[2]);
+        } catch(Exception e) {
+            System.out.println("Value for command-line argument CACHING is not a boolean.");
+            return;
+        }
     }
+    if(args.length > 3) { 
+        try {
+            isDebug = Boolean.parseBoolean(args[3]);
+        } catch(Exception e) {
+            System.out.println("Value for command-line argument DEBUG is not a boolean.");
+            return;
+        }
+    }
+    
+    debugPrint("Starting Modelchecking, STRATEGY=" + type + "THREADS=" + threads + ", CACHING=" + isCaching, isDebug);
     if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
+        modelCheckSingleThreaded(type, isCaching, isDebug);
     } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
+        modelCheckMultiThreaded(type, threads, isCaching, isDebug);
     }
 }
 >>

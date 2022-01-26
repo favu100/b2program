@@ -166,4 +166,5 @@ benchmarks/execution/ProB/stdlib
 /*.mch
 /*.py
 **/Cargo.lock
+**/vendor/
 btypes_primitives/**/*.js

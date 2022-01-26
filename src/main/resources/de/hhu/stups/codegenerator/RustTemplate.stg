@@ -6,10 +6,11 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck) ::= <<
 #![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
 <if(forModelChecking)>
+use std::env;
 use std::sync::atomic::{AtomicI32, AtomicI64, AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::collections::{HashMap, HashSet, LinkedList};
-use im::OrdMap;
+use im::HashMap as PersistentHashMap;
 <endif>
 use std::fmt;
 use rand::{thread_rng, Rng};
@@ -18,7 +19,8 @@ use btypes::butils;
 <includedMachines; separator="\n">
 
 <if(forModelChecking)>
-    pub enum MC_TYPE { BFS, DFS, MIXED }
+#[derive(Copy)]
+pub enum MC_TYPE { BFS, DFS, MIXED }
 <endif>
 
 <structs; separator="\n\n">
@@ -709,20 +711,19 @@ model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 //model_check_next_states
-fn generateNextStates(guardLock: Object,
-                      state: Lift_MC,
+fn generateNextStates(state: Lift_MC,
                       isCaching: bool,
-                      invariant_dependency: HashMap\<String, Set\<String>\>,
-                      dependent_invariant_m: Arc\<Mutex\<HashMap\<Lift_MC, Set\<String>\>\>>,
-                      guard_dependency: HashMap\<String, Set\<String\>>,
-                      dependent_guard_m: Arc\<Mutex\<HashMap\<Lift_MC, Set\<String>\>\>>,
-                      guardCache: HashMap\<Lift_MC, OrdMap\<L, R>\>,
+                      invariant_dependency: &mut HashMap\<String, HashSet\<String>\>,
+                      dependent_invariant_m: Arc\<Mutex\<HashMap\<Lift_MC, HashSet\<String>\>\>>,
+                      guard_dependency: &mut HashMap\<String, HashSet\<String\>>,
+                      dependent_guard_m: Arc\<Mutex\<HashMap\<Lift_MC, HashSet\<String>\>\>>,
+                      guardCache: &mut HashMap\<Lift_MC, PersistentHashMap\<&str, bool>\>,
                       parents_m: Arc\<Mutex\<HashMap\<Lift_MC, Lift_MC>\>>,
-                      transitions: AtomicI32) -> Set\<<machine>\> {
-    let mut result: Set\<<machine>\> = HashSet::new();
+                      transitions: Arc\<AtomicI64>) -> HashSet\<<machine>\> {
+    let mut result = HashSet::<machine>::new();
     if isCaching {
         let mut parentsGuard = guardCache.get(parents_m.lock().unwrap().get(&state).unwrap());
-        let mut newCache = if parentsGuard.is_none() { OrdMap::new() } else { parentsGuard.unwrap() };
+        let mut newCache = if parentsGuard.is_none() { PersistentHashMap::new() } else { parentsGuard.unwrap() };
         let mut dependentGuardsOfState = Option::\<HashSet\<String\>>::None;
         let mut cachedValue = Option::None;
         let mut dependentGuardsBoolean = true;
@@ -790,7 +791,7 @@ if state.<evalTransitions>() {
 
 model_check_invariants(machine, checkInvariants, invariants) ::= <<
 //model_check_invariants
-pub fn checkInvariants(state: <machine>,
+pub fn checkInvariants(state: &<machine>,
                        isCaching: bool,
                        dependent_invariant: HashMap\<<machine>, HashSet\<String>\> ) -> bool {
     if isCaching {
@@ -867,14 +868,14 @@ fn printResult(states: i32, transitions: i32, deadlock_detected: bool, invariant
     if deadlock_detected { println!("DEADLOCK DETECTED"); }
     if invariant_violated { println!("INVARIANT VIOLATED"); }
     if !deadlock_detected && !invariant_violated { println!("MODEL CHECKING SUCCESSFUL"); }
-    println!("Number of States: " + states);
-    println!("Number of Transitions: " + transitions);
+    println!("Number of States: {}", states);
+    println!("Number of Transitions: {}", transitions);
 }
 >>
 
 model_check_init_static(map, keyy, entries) ::= <<
 //model_check_init_static
-<map>.put("<keyy>", new HashSet\<>(Arrays.asList(<entries:{entry | "<entry>"}; separator=", ">)));
+<map>.insert("<keyy>", HashSet::String::from(<entries:{entry | "<entry>"}; separator=", ">));
 >>
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
@@ -888,7 +889,7 @@ fn next(collection_m: Arc\<Mutex\<LinkedList\<Lift_MC>\>>, mc_type: MC_TYPE) -> 
         };
 }
 
-fn model_check_single_threaded(mc_type: MC_TYPE, isCaching: bool) {
+fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
     //Object lock = new Object();
     //Object guardLock = new Object();
 
@@ -900,64 +901,65 @@ fn model_check_single_threaded(mc_type: MC_TYPE, isCaching: bool) {
     let mut stop_threads = AtomicBool::new(false);;
 
     if <invariants:{inv | !machine.<inv>()}; separator=" || "> {
-        invariant_violated.store(true, Ordering::Relaxed);
+        invariant_violated.store(true, Ordering::Release);
     }
 
     let mut states = HashSet::\<<machine>\>::new();
     states.add(machine.clone());
-    let mut numberStates = AtomicI64::new(1);
+    let mut number_states = AtomicI64::new(1);
 
-    LinkedList\<<machine>\> collection = new LinkedList\<>();
-    collection.add(machine);
+    let mut collection_m = Arc::new(Mutex::new(LinkedList::<machine>::new()));
+    collection_m.lock().unwrap().push_back(machine.copy());
 
-    Map\<String, Set\<String>\> invariant_dependency = new HashMap\<>();
-    Map\<String, Set\<String>\> guard_dependency = new HashMap\<>();
-    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
-    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
-    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
-    Map\<<machine>, <machine>\> parents = new HashMap\<>();
-    if(isCaching) {
+    let mut invariantDependency = HashMap::\<&str, HashSet\<String>\>::new();
+    let mut guardDependency = HashMap::\<&str, HashSet\<String>\>::new();
+    let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<String>\>::new()));
+    let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<String>\>::new()));
+    let mut guard_cache = HashMap::\<<machine>, PersistentHashMap\<&str, bool\>>::new();
+    let mut parents = Arc::new(Mutex::new(HashMap::\<<machine>, <machine>\>::new()));
+
+    if is_caching {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
-        dependentInvariant.put(machine, new HashSet\<>());
-        parents.put(machine, null);
+        dependent_invariant.insert(machine.clone(), HashSet::new());
+        parents.remove(&machine);
     }
 
-    AtomicInteger transitions = new AtomicInteger(0);
+    let mut transitions = Arc::new(AtomicI64::new(0));
 
-    while(!collection.isEmpty() && !stopThreads.get()) {
-        <machine> state = next(collection, lock, type);
+    while !stop_threads.fetch_or(collection_m.lock().unwrap().is_empty(), Ordering::Acquire) {
+        let mut state = Self::next(Arc::clone(&collection_m), mc_type);
 
-        Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariant_dependency, dependentInvariant, guard_dependency, dependentGuard, guardCache, parents, transitions);
+        let mut next_states = Self::generateNextStates(state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), &mut guard_cache, Arc::clone(&parents), Arc::clone(&transitions));
 
-        nextStates.forEach(nextState -> {
-            if(!states.contains(nextState)) {
-                numberStates.getAndIncrement();
-                states.add(nextState);
-                collection.add(nextState);
-                if(numberStates.get() % 50000 == 0) {
-                    System.out.println("VISITED STATES: " + numberStates.get());
-                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                    System.out.println("-------------------");
+        next_states.iter().for_each(|next_state| {
+            if !states.contains(next_state) {
+                let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
+                states.add(next_state.clone());
+                collection.add(next_state.clone());
+                if cnum_states % 50000 == 0 {
+                    println!("VISITED STATES: {}", cnum_states);
+                    println!("EVALUATED TRANSITIONS: {}", transitions.get());
+                    println!("-------------------");
                 }
             }
         });
 
-        if(nextStates.isEmpty()) {
-            deadlockDetected.set(true);
-            stopThreads.set(true);
+        if next_states.is_empty() {
+            deadlock_detected.store(true, Ordering::Release);
+            stop_threads.store(true, Ordering::Release);
         }
 
-        if(!checkInvariants(state, isCaching, dependentInvariant)) {
-            invariantViolated.set(true);
-            stopThreads.set(true);
+        if !Self::checkInvariants(&state, is_caching, dependentInvariant) {
+            invariant_violated.store(true, Ordering::Release);
+            stop_threads.store(true, Ordering::Release);
         }
 
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+    printResult(number_states.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
 }
 
-
+/*
 private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
     Object lock = new Object();
     Object guardLock = new Object();
@@ -978,7 +980,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
 
     Set\<<machine>\> states = new HashSet\<>();
     states.add(machine);
-    AtomicInteger numberStates = new AtomicInteger(1);
+    AtomicInteger number_states = new AtomicInteger(1);
 
     LinkedList\<<machine>\> collection = new LinkedList\<>();
     collection.add(machine);
@@ -1007,11 +1009,11 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
             nextStates.forEach(nextState -> {
                 synchronized(lock) {
                     if(!states.contains(nextState)) {
-                        numberStates.getAndIncrement();
+                        number_states.getAndIncrement();
                         states.add(nextState);
                         collection.add(nextState);
-                        if(numberStates.get() % 50000 == 0) {
-                            System.out.println("VISITED STATES: " + numberStates.get());
+                        if(number_states.get() % 50000 == 0) {
+                            System.out.println("VISITED STATES: " + number_states.get());
                             System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
                             System.out.println("-------------------");
                         }
@@ -1058,55 +1060,29 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
+    printResult(number_states.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get());
 }
+*/
 
+fn main() {
+    let args: Vec\<String> = env::args().collect();
+    if args.len() != 3 { panic!("Number of arguments errorneous"); }
 
-public static void main(String[] args) {
-    if(args.length != 3) {
-        System.out.println("Number of arguments errorneous");
-        return;
-    }
-    String strategy = args[0];
-    String numberThreads = args[1];
-    String caching = args[2];
+    let threads = args.get(2).unwrap().parse::\<i32>().unwrap();
+    if threads \<= 0 { panic!("Input for number of threads is wrong."); }
 
-    Type type;
+    let is_caching = args.get(3).unwrap().parse::\<bool>().unwrap();
+    let mc_type = match args.get(1).unwrap().as_str() {
+        "mixed" => MC_TYPE::MIXED,
+        "bf" => MC_TYPE::BFS,
+        "df" => MC_TYPE::DFS,
+        _    => panic!("Input for strategy is wrong.")
+    };
 
-    if("mixed".equals(strategy)) {
-        type = Type.MIXED;
-    } else if("bf".equals(strategy)) {
-        type = Type.BFS;
-    } else if ("df".equals(strategy)) {
-        type = Type.DFS;
+    if threads == 1 {
+        model_check_single_threaded(mc_type, isCaching);
     } else {
-        System.out.println("Input for strategy is wrong.");
-        return;
-    }
-
-    int threads = 0;
-    try {
-        threads = Integer.parseInt(numberThreads);
-    } catch(NumberFormatException e) {
-        System.out.println("Input for number of threads is wrong.");
-        return;
-    }
-    if(threads \<= 0) {
-        System.out.println("Input for number of threads is wrong.");
-        return;
-    }
-
-    boolean isCaching = true;
-    try {
-        isCaching = Boolean.parseBoolean(caching);
-    } catch(Exception e) {
-        System.out.println("Input for caching is wrong.");
-        return;
-    }
-    if(threads == 1) {
-        model_check_single_threaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
+        //modelCheckMultiThreaded(mc_type, threads, isCaching);
     }
 }
 >>
@@ -1138,7 +1114,7 @@ if((<predicate>).booleanValue()) {
 >>
 
 transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
-pub fn _tr_<operationName>(&self) -> <if(noParameters)>boolean<else>BSet\<<subType>\><endif> {
+pub fn _tr_<operationName>(&self) -> <if(noParameters)>bool<else>BSet\<<subType>\><endif> {
     //transition
     <if(noParameters)>
     <if(noPredicate)>

@@ -6,7 +6,7 @@ all: CAN_BUS_tlc_exec Cruise_finite1_deterministic_exec LiftExec scheduler_deter
 
 OUTPUT ?= runtimes.txt
 
-CARGO_PROJ_PATH=../../btypes_big_integer/src/main/rust/bmachine
+CARGO_PROJ_PATH=../../../btypes_big_integer/src/main/rust/bmachine
 CARGO_BUILD=cargo build --release --manifest-path $(CARGO_PROJ_PATH)/Cargo.toml
 
 %.main : %.rs

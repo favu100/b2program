@@ -44,7 +44,7 @@ public class TestRS {
     }
 
     public void testRSMC(String machine) throws Exception {
-        testRS(machine, machine, "DefaultAddition.strs", false, true);
+        testRS(machine, machine, null, false, true);
         //TODO: validation of MC result
     }
 

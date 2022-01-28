@@ -1,4 +1,4 @@
-MACHINE Train1_Lukas_POR_v3  /* uses POR style reduction by giving priority to route_freeing */
+MACHINE Train1_Lukas_POR  /* uses POR style reduction by giving priority to route_freeing */
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I};
   ROUTES={R1,R2,R3,R4,R5,R6,R7,R8}  /* a simplified topology by Lukas; not the one by Abrial */
@@ -44,19 +44,17 @@ PROPERTIES
 INVARIANT
   /* @inv1 */ TRK : BLOCKS >+> BLOCKS
 
-  & /* @inv4 */ !(r,a).(r : resrt \ frm & a = {r} => rtbl |> a = rsrtbl |> a)
+  & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
   & /* @inv5 */ !(x,y).(x : dom(TRK) & y : TRK[{x}] => #(r).(r : ROUTES & x |-> y : nxt(r)))
-  & /* @inv6 */ !(r,a).(r : frm & a = (rsrtbl~)[{r}] => a <| nxt(r) = a <| TRK)
+  & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
   & /* @inv7 */ LBT <: OCC
-  & /* @inv8 */ !(a,b,c,d).(a : dom(rsrtbl) & b : LBT & c = rsrtbl(b) & d = nxt(c) &
-                            (b : ran(d) & (a = (d~)(b))) => rsrtbl(a) /= c)
-  & /* @inv9 */ rsrtbl : resbl --> resrt
-  & /* @inv10 */ rsrtbl <: rtbl
-  & /* @inv11 */ OCC <: resbl
-  & /* @inv12 */ !(r,a,b,c).(r : ROUTES & a = nxt(r) & b = (rsrtbl~)[{r}] & c = b \ OCC =>
-                                    a[(rtbl~)[{r}] \ b] /\ c = {} &
-                                    a[b] <: b &
-                                    a[c] <: c)
+  & /* @inv8 */ !(a,b).((a : BLOCKS & b : LBT & (b : dom(rsrtbl) & b : ran(nxt(rsrtbl(b))) & (a : dom(rsrtbl) & a = (nxt(rsrtbl(b))~)(b)))) => rsrtbl(a) /= rsrtbl(b))
+  & /* @inv3 */ rsrtbl : resbl --> resrt
+  & /* @inv5 */ rsrtbl <: rtbl
+  & /* @inv4 */ OCC <: resbl
+  & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
+  & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
+  & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
   & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl[OCC] <: frm
 INITIALISATION
@@ -76,54 +74,53 @@ INITIALISATION
 
 OPERATIONS
   route_reservation(r) =
-
+    
     PRE
         /* @grd1 */ r : ROUTES \ resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          resrt := resrt \/ {r}
       ||
          rsrtbl := rsrtbl \/ (rtbl |> {r})
       ||
          resbl := resbl \/ (rtbl~)[{r}]
     END;
-
+  
   route_freeing(r) =
     PRE
         /* @grd1 */ r : resrt \ ran(rsrtbl)
-    THEN
+    THEN 
          resrt := resrt \ {r}
       ||
          frm := frm \ {r}
     END;
-
+  
   FRONT_MOVE_1(r) =
      PRE
           /* @grd1 */ r : frm
         & /* @grd3 */ fst(r) : resbl \ OCC
         & /* @grd2 */ r = rsrtbl(fst(r))
         & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          OCC := OCC \/ {fst(r)}
       ||
          LBT := LBT \/ {fst(r)}
     END;
-
+  
   FRONT_MOVE_2(b) =
      PRE
         /* @grd1 */ b : OCC /\ dom(TRK)
       & /* @grd3 */ TRK(b) /: OCC
-      & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          OCC := OCC \/ {TRK(b)}
     END;
-
+  
   BACK_MOVE_1(b) =
     PRE
         /* @grd1 */ b : LBT \ dom(TRK)
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          OCC := OCC \ {b}
       ||
          rsrtbl := {b} <<| rsrtbl
@@ -132,13 +129,13 @@ OPERATIONS
       ||
          LBT := LBT \ {b}
     END;
-
+  
   BACK_MOVE_2(b) =
      PRE
         /* @grd1 */ b : LBT /\ dom(TRK)
       & /* @grd3 */ TRK(b) : OCC
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          OCC := OCC \ {b}
       ||
          rsrtbl := {b} <<| rsrtbl
@@ -147,21 +144,21 @@ OPERATIONS
       ||
          LBT := LBT \ {b} \/ {TRK(b)}
     END;
-
+  
   point_positionning(r) =
     PRE
         /* @grd1 */ r : resrt \ frm
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          TRK := ((dom(nxt(r)) <<| TRK) |>> ran(nxt(r))) \/ nxt(r)
     END;
-
+  
   route_formation(r) =
     PRE
         /* @grd1 */ r : resrt \ frm
       & /* @grd2 */ (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
-    THEN
+    THEN 
          frm := frm \/ {r}
     END
 END

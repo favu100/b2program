@@ -1,6 +1,6 @@
-MACHINE QueensWithEvents
+MACHINE QueensWithEvents_Original_8 // close to the original
 // rewritten for B2Program by inlining DEFINITIONS
-// v2: rewrote perm(1..n)
+// but not rewriting perm
 CONSTANTS n, interval, allFields
 PROPERTIES
  n : NATURAL &
@@ -15,11 +15,8 @@ INITIALISATION
 OPERATIONS
   Solve(solution) = SELECT
         solution : allFields
-      // & solution : perm(interval)
-      &  dom(solution) = interval
-      &  ran(solution) = interval
-      & !(x,y,z).(x : interval & y:interval & z:interval & x|->y : solution & x|->z: solution => y=z)
-        // this actually implies it is a bijection
+      & solution : perm(interval)
+      
       &
         !(q1,q2).(
          (

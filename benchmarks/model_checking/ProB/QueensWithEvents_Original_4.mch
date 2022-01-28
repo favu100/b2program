@@ -1,10 +1,10 @@
-MACHINE QueensWithEvents_Original // close to the original
+MACHINE QueensWithEvents_Original_4 // close to the original
 // rewritten for B2Program by inlining DEFINITIONS
 // but not rewriting perm
 CONSTANTS n, interval, allFields
 PROPERTIES
  n : NATURAL &
- n = 8 &
+ n = 4 &
  interval = 1..n &
  allFields = POW(interval * interval)
 VARIABLES queens

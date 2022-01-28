@@ -302,13 +302,33 @@ public class TestMachines extends TestJava {
     }
 
     @Test
-    public void testQueensWithEvents() throws Exception {
-        testJavaMC("QueensWithEvents");
+    public void testQueensWithEvents_4() throws Exception {
+        testJavaMC("QueensWithEvents_4");
+    }
+
+    @Test
+    public void testQueensWithEvents_8() throws Exception {
+        testJavaMC("QueensWithEvents_8");
     }
 
     @Test
     public void testArithmeticLaws() throws Exception {
         testJavaMC("ArithmeticLaws");
+    }
+
+    @Test
+    public void testNota() throws Exception {
+        testJavaMC("nota");
+    }
+
+    @Test
+    public void testNota2() throws Exception {
+        testJavaMC("nota_v2");
+    }
+
+    @Test
+    public void testLibrary3_3() throws Exception {
+        testJavaMC("Library_3_3");
     }
 
 

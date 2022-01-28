@@ -46,9 +46,9 @@ class <machine> {
         enum Type { BFS, DFS, MIXED };
         <endif>
 
-        <structs; separator="\n\n">
-
         <enums; separator="\n\n">
+
+        <structs; separator="\n\n">
 
         <if(forModelChecking)>
         struct Hash {

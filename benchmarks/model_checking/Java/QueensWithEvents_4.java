@@ -27,7 +27,7 @@ import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
 
-public class QueensWithEvents {
+public class QueensWithEvents_4 {
 
 
     private static final Var ASSOC;
@@ -57,16 +57,16 @@ public class QueensWithEvents {
     private BRelation<BInteger, BInteger> queens;
 
     static {
-        n = new BInteger(8);
+        n = new BInteger(4);
         interval = BSet.interval(new BInteger(1), n);
         allFields = BRelation.cartesianProduct(interval, interval).pow();
     }
 
-    public QueensWithEvents() {
+    public QueensWithEvents_4() {
         queens = new BRelation<BInteger, BInteger>();
     }
 
-    public QueensWithEvents(BInteger n, BSet<BInteger> interval, BSet<BRelation<BInteger, BInteger>> allFields, BRelation<BInteger, BInteger> queens) {
+    public QueensWithEvents_4(BInteger n, BSet<BInteger> interval, BSet<BRelation<BInteger, BInteger>> allFields, BRelation<BInteger, BInteger> queens) {
         this.n = n;
         this.interval = interval;
         this.allFields = allFields;
@@ -96,65 +96,72 @@ public class QueensWithEvents {
 
 
     public BSet<BRelation<BInteger, BInteger>> _tr_Solve() {
-        BSet<BRelation<BInteger, BInteger>> _ic_set_3 = new BSet<BRelation<BInteger, BInteger>>();
+        BSet<BRelation<BInteger, BInteger>> _ic_set_4 = new BSet<BRelation<BInteger, BInteger>>();
         for(BRelation<BInteger, BInteger> _ic_solution_1 : allFields) {
-            BBoolean _ic_boolean_3 = new BBoolean(true);
+            BBoolean _ic_boolean_5 = new BBoolean(true);
             if(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue()) {
                 for(BInteger _ic_x_1 : interval) {
                     for(BInteger _ic_y_1 : interval) {
+                        BBoolean _ic_boolean_4 = new BBoolean(true);
                         for(BInteger _ic_z_1 : interval) {
-                            if(!(new BBoolean(!new BBoolean(_ic_solution_1.elementOf(new BTuple<>(_ic_x_1, _ic_y_1)).booleanValue() && _ic_solution_1.elementOf(new BTuple<>(_ic_x_1, _ic_z_1)).booleanValue()).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue())).booleanValue()) {
-                                _ic_boolean_3 = new BBoolean(false);
+                            if(!(new BBoolean(!_ic_solution_1.elementOf(new BTuple<>(_ic_x_1, _ic_z_1)).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue())).booleanValue()) {
+                                _ic_boolean_4 = new BBoolean(false);
                                 break;
                             }
 
                         }
-                    }
-                }
-            }
-            BBoolean _ic_boolean_4 = new BBoolean(true);
-            if(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue()) {
-                for(BInteger _ic_q1_1 : interval) {
-                    for(BInteger _ic_q2_1 : interval.difference(new BSet<BInteger>(new BInteger(1)))) {
-                        if(!(new BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || new BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue()).booleanValue())).booleanValue()) {
-                            _ic_boolean_4 = new BBoolean(false);
+
+                        if(!(new BBoolean(!_ic_solution_1.elementOf(new BTuple<>(_ic_x_1, _ic_y_1)).booleanValue() || _ic_boolean_4.booleanValue())).booleanValue()) {
+                            _ic_boolean_5 = new BBoolean(false);
                             break;
                         }
 
                     }
                 }
             }
-            BBoolean _ic_boolean_5 = new BBoolean(true);
-            if(new BBoolean(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue()) {
+            BBoolean _ic_boolean_6 = new BBoolean(true);
+            if(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue()) {
+                for(BInteger _ic_q1_1 : interval) {
+                    for(BInteger _ic_q2_1 : interval.difference(new BSet<BInteger>(new BInteger(1)))) {
+                        if(!(new BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || new BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue()).booleanValue())).booleanValue()) {
+                            _ic_boolean_6 = new BBoolean(false);
+                            break;
+                        }
+
+                    }
+                }
+            }
+            BBoolean _ic_boolean_7 = new BBoolean(true);
+            if(new BBoolean(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue()) {
                 for(BInteger _ic_x_1 : queens.domain()) {
                     if(!(_ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1))).booleanValue()) {
-                        _ic_boolean_5 = new BBoolean(false);
+                        _ic_boolean_7 = new BBoolean(false);
                         break;
                     }
 
                 }
             }
 
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue()) {
-                _ic_set_3 = _ic_set_3.union(new BSet<BRelation<BInteger, BInteger>>(_ic_solution_1));
+            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue())).booleanValue()) {
+                _ic_set_4 = _ic_set_4.union(new BSet<BRelation<BInteger, BInteger>>(_ic_solution_1));
             }
 
         }
-        return _ic_set_3;
+        return _ic_set_4;
     }
 
     public boolean _check_inv_1() {
         return queens.checkDomain(interval).and(queens.checkRange(interval)).and(queens.isFunction()).and(queens.isPartial(interval)).booleanValue();
     }
 
-    public QueensWithEvents _copy() {
-        return new QueensWithEvents(n, interval, allFields, queens);
+    public QueensWithEvents_4 _copy() {
+        return new QueensWithEvents_4(n, interval, allFields, queens);
     }
 
     @Override
     public boolean equals(Object o) {
-        QueensWithEvents o1 = this;
-        QueensWithEvents o2 = (QueensWithEvents) o;
+        QueensWithEvents_4 o1 = this;
+        QueensWithEvents_4 o2 = (QueensWithEvents_4) o;
         return o1._get_queens().equals(o2._get_queens());
     }
 
@@ -183,8 +190,8 @@ public class QueensWithEvents {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<QueensWithEvents> generateNextStates(Object guardLock, QueensWithEvents state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<QueensWithEvents, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<QueensWithEvents, Set<String>> dependentGuard, Map<QueensWithEvents, PersistentHashMap> guardCache, Map<QueensWithEvents, QueensWithEvents> parents, Map<QueensWithEvents, String> stateAccessedVia, AtomicInteger transitions) {
-        Set<QueensWithEvents> result = new HashSet<>();
+    private static Set<QueensWithEvents_4> generateNextStates(Object guardLock, QueensWithEvents_4 state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<QueensWithEvents_4, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<QueensWithEvents_4, Set<String>> dependentGuard, Map<QueensWithEvents_4, PersistentHashMap> guardCache, Map<QueensWithEvents_4, QueensWithEvents_4> parents, Map<QueensWithEvents_4, String> stateAccessedVia, AtomicInteger transitions) {
+        Set<QueensWithEvents_4> result = new HashSet<>();
         if(isCaching) {
             PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
             PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
@@ -206,7 +213,7 @@ public class QueensWithEvents {
             for(BRelation<BInteger, BInteger> param : _trid_1) {
                 BRelation<BInteger, BInteger> _tmp_1 = param;
 
-                QueensWithEvents copiedState = state._copy();
+                QueensWithEvents_4 copiedState = state._copy();
                 copiedState.Solve(_tmp_1);
                 synchronized(guardLock) {
                     if(!dependentInvariant.containsKey(copiedState)) {
@@ -234,7 +241,7 @@ public class QueensWithEvents {
             for(BRelation<BInteger, BInteger> param : _trid_1) {
                 BRelation<BInteger, BInteger> _tmp_1 = param;
 
-                QueensWithEvents copiedState = state._copy();
+                QueensWithEvents_4 copiedState = state._copy();
                 copiedState.Solve(_tmp_1);
                 synchronized(guardLock) {
                     if(!parents.containsKey(copiedState)) {
@@ -253,7 +260,7 @@ public class QueensWithEvents {
     }
 
 
-    public static boolean checkInvariants(Object guardLock, QueensWithEvents state, boolean isCaching, Map<QueensWithEvents, Set<String>> dependentInvariant) {
+    public static boolean checkInvariants(Object guardLock, QueensWithEvents_4 state, boolean isCaching, Map<QueensWithEvents_4, Set<String>> dependentInvariant) {
         if(isCaching) {
             Set<String> dependentInvariantsOfState;
             synchronized(guardLock) {
@@ -269,7 +276,7 @@ public class QueensWithEvents {
         return !(!state._check_inv_1());
     }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<QueensWithEvents> counterExampleState, Map<QueensWithEvents, QueensWithEvents> parents, Map<QueensWithEvents, String> stateAccessedVia) {
+    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<QueensWithEvents_4> counterExampleState, Map<QueensWithEvents_4, QueensWithEvents_4> parents, Map<QueensWithEvents_4, String> stateAccessedVia) {
 
         if(invariantViolated || deadlockDetected) {
             if(deadlockDetected) {
@@ -281,7 +288,7 @@ public class QueensWithEvents {
             System.out.println("COUNTER EXAMPLE TRACE: ");
             StringBuilder sb = new StringBuilder();
             if(counterExampleState.size() >= 1) {
-                QueensWithEvents currentState = counterExampleState.get(0);
+                QueensWithEvents_4 currentState = counterExampleState.get(0);
                 while(currentState != null) {
                     sb.insert(0, currentState.toString());
                     sb.insert(0, "\n");
@@ -300,7 +307,7 @@ public class QueensWithEvents {
         System.out.println("Number of Transitions: " + transitions);
     }
 
-    private static QueensWithEvents next(LinkedList<QueensWithEvents> collection, Object lock, Type type) {
+    private static QueensWithEvents_4 next(LinkedList<QueensWithEvents_4> collection, Object lock, Type type) {
         synchronized(lock) {
             return switch(type) {
                 case BFS -> collection.removeFirst();
@@ -310,52 +317,52 @@ public class QueensWithEvents {
         }
     }
 
-    private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
+    private static void modelCheckSingleThreaded(Type type, boolean isCaching, boolean isDebug) {
         Object lock = new Object();
         Object guardLock = new Object();
 
-        QueensWithEvents machine = new QueensWithEvents();
+        QueensWithEvents_4 machine = new QueensWithEvents_4();
 
 
         AtomicBoolean invariantViolated = new AtomicBoolean(false);
         AtomicBoolean deadlockDetected = new AtomicBoolean(false);
         AtomicBoolean stopThreads = new AtomicBoolean(false);
 
-        Set<QueensWithEvents> states = new HashSet<>();
+        Set<QueensWithEvents_4> states = new HashSet<>();
         states.add(machine);
         AtomicInteger numberStates = new AtomicInteger(1);
 
-        LinkedList<QueensWithEvents> collection = new LinkedList<>();
+        LinkedList<QueensWithEvents_4> collection = new LinkedList<>();
         collection.add(machine);
 
         Map<String, Set<String>> invariantDependency = new HashMap<>();
         Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<QueensWithEvents, Set<String>> dependentInvariant = new HashMap<>();
-        Map<QueensWithEvents, Set<String>> dependentGuard = new HashMap<>();
-        Map<QueensWithEvents, PersistentHashMap> guardCache = new HashMap<>();
-        Map<QueensWithEvents, QueensWithEvents> parents = new HashMap<>();
-        Map<QueensWithEvents, String> stateAccessedVia = new HashMap<>();
+        Map<QueensWithEvents_4, Set<String>> dependentInvariant = new HashMap<>();
+        Map<QueensWithEvents_4, Set<String>> dependentGuard = new HashMap<>();
+        Map<QueensWithEvents_4, PersistentHashMap> guardCache = new HashMap<>();
+        Map<QueensWithEvents_4, QueensWithEvents_4> parents = new HashMap<>();
+        Map<QueensWithEvents_4, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("Solve", new HashSet<>(Arrays.asList("_check_inv_1")));
             guardDependency.put("Solve", new HashSet<>(Arrays.asList("_tr_Solve")));
             dependentInvariant.put(machine, new HashSet<>());
         }
-        List<QueensWithEvents> counterExampleState = new ArrayList<>();
+        List<QueensWithEvents_4> counterExampleState = new ArrayList<>();
         parents.put(machine, null);
 
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
-            QueensWithEvents state = next(collection, lock, type);
+            QueensWithEvents_4 state = next(collection, lock, type);
 
-            Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+            Set<QueensWithEvents_4> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
             nextStates.forEach(nextState -> {
                 if(!states.contains(nextState)) {
                     numberStates.getAndIncrement();
                     states.add(nextState);
                     collection.add(nextState);
-                    if(numberStates.get() % 50000 == 0) {
+                    if(numberStates.get() % 5000 == 0) {
                         System.out.println("VISITED STATES: " + numberStates.get());
                         System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
                         System.out.println("-------------------");
@@ -379,13 +386,13 @@ public class QueensWithEvents {
     }
 
 
-    private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
+    private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching, boolean isDebug) {
         Object lock = new Object();
         Object guardLock = new Object();
         Object waitLock = new Object();
         ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
 
-        QueensWithEvents machine = new QueensWithEvents();
+        QueensWithEvents_4 machine = new QueensWithEvents_4();
 
 
         AtomicBoolean invariantViolated = new AtomicBoolean(false);
@@ -393,26 +400,26 @@ public class QueensWithEvents {
         AtomicBoolean stopThreads = new AtomicBoolean(false);
         AtomicInteger possibleQueueChanges = new AtomicInteger(0);
 
-        Set<QueensWithEvents> states = new HashSet<>();
+        Set<QueensWithEvents_4> states = new HashSet<>();
         states.add(machine);
         AtomicInteger numberStates = new AtomicInteger(1);
 
-        LinkedList<QueensWithEvents> collection = new LinkedList<>();
+        LinkedList<QueensWithEvents_4> collection = new LinkedList<>();
         collection.add(machine);
 
         Map<String, Set<String>> invariantDependency = new HashMap<>();
         Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<QueensWithEvents, Set<String>> dependentInvariant = new HashMap<>();
-        Map<QueensWithEvents, Set<String>> dependentGuard = new HashMap<>();
-        Map<QueensWithEvents, PersistentHashMap> guardCache = new HashMap<>();
-        Map<QueensWithEvents, QueensWithEvents> parents = new HashMap<>();
-        Map<QueensWithEvents, String> stateAccessedVia = new HashMap<>();
+        Map<QueensWithEvents_4, Set<String>> dependentInvariant = new HashMap<>();
+        Map<QueensWithEvents_4, Set<String>> dependentGuard = new HashMap<>();
+        Map<QueensWithEvents_4, PersistentHashMap> guardCache = new HashMap<>();
+        Map<QueensWithEvents_4, QueensWithEvents_4> parents = new HashMap<>();
+        Map<QueensWithEvents_4, String> stateAccessedVia = new HashMap<>();
         if(isCaching) {
             invariantDependency.put("Solve", new HashSet<>(Arrays.asList("_check_inv_1")));
             guardDependency.put("Solve", new HashSet<>(Arrays.asList("_tr_Solve")));
             dependentInvariant.put(machine, new HashSet<>());
         }
-        List<QueensWithEvents> counterExampleState = new ArrayList<>();
+        List<QueensWithEvents_4> counterExampleState = new ArrayList<>();
         parents.put(machine, null);
         stateAccessedVia.put(machine, null);
 
@@ -420,9 +427,9 @@ public class QueensWithEvents {
 
         while(!collection.isEmpty() && !stopThreads.get()) {
             possibleQueueChanges.incrementAndGet();
-            QueensWithEvents state = next(collection, lock, type);
+            QueensWithEvents_4 state = next(collection, lock, type);
             Runnable task = () -> {
-                Set<QueensWithEvents> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+                Set<QueensWithEvents_4> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
                 nextStates.forEach(nextState -> {
                     synchronized(lock) {
@@ -430,10 +437,12 @@ public class QueensWithEvents {
                             numberStates.getAndIncrement();
                             states.add(nextState);
                             collection.add(nextState);
-                            if(numberStates.get() % 50000 == 0) {
-                                System.out.println("VISITED STATES: " + numberStates.get());
-                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                System.out.println("-------------------");
+                            if(numberStates.get() % 5000 == 0) {
+                                if( isDebug || numberStates.get() % 50000 == 0) {
+                                    System.out.println("VISITED STATES: " + numberStates.get());
+                                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                    System.out.println("-------------------");
+                                }
                             }
                         }
                     }
@@ -482,52 +491,69 @@ public class QueensWithEvents {
         printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
     }
 
+    public static void debugPrint (String msg, Boolean isDebug) {
+       if (isDebug) {
+          System.out.println(msg);
+       }
+    }
 
     public static void main(String[] args) {
-        if(args.length != 3) {
-            System.out.println("Number of arguments errorneous");
+        if(args.length > 4) {
+            System.out.println("Expecting 3 command-line arguments: STRATEGY THREADS CACHING DEBUG");
             return;
         }
-        String strategy = args[0];
-        String numberThreads = args[1];
-        String caching = args[2];
-
-        Type type;
-
-        if("mixed".equals(strategy)) {
-            type = Type.MIXED;
-        } else if("bf".equals(strategy)) {
-            type = Type.BFS;
-        } else if ("df".equals(strategy)) {
-            type = Type.DFS;
-        } else {
-            System.out.println("Input for strategy is wrong.");
-            return;
-        }
-
+        Type type = Type.MIXED;
         int threads = 0;
-        try {
-            threads = Integer.parseInt(numberThreads);
-        } catch(NumberFormatException e) {
-            System.out.println("Input for number of threads is wrong.");
-            return;
+        boolean isCaching = false;
+        boolean isDebug = false;
+
+        if(args.length > 0) { 
+            if("mixed".equals(args[0])) {
+                type = Type.MIXED;
+            } else if("bf".equals(args[0])) {
+                type = Type.BFS;
+            } else if ("df".equals(args[0])) {
+                type = Type.DFS;
+            } else {
+                System.out.println("Value for command-line argument STRATEGY is wrong.");
+                System.out.println("Expecting mixed, bf or df.");
+                return;
+            }
         }
-        if(threads <= 0) {
-            System.out.println("Input for number of threads is wrong.");
-            return;
+        if(args.length > 1) { 
+            try {
+                threads = Integer.parseInt(args[1]);
+            } catch(NumberFormatException e) {
+                System.out.println("Value for command-line argument THREADS is not a number.");
+                return;
+            }
+            if(threads <= 0) {
+                System.out.println("Value for command-line argument THREADS must be positive.");
+                return;
+            }
+        }
+        if(args.length > 2) { 
+            try {
+                isCaching = Boolean.parseBoolean(args[2]);
+            } catch(Exception e) {
+                System.out.println("Value for command-line argument CACHING is not a boolean.");
+                return;
+            }
+        }
+        if(args.length > 3) { 
+            try {
+                isDebug = Boolean.parseBoolean(args[3]);
+            } catch(Exception e) {
+                System.out.println("Value for command-line argument DEBUG is not a boolean.");
+                return;
+            }
         }
 
-        boolean isCaching = true;
-        try {
-            isCaching = Boolean.parseBoolean(caching);
-        } catch(Exception e) {
-            System.out.println("Input for caching is wrong.");
-            return;
-        }
+        debugPrint("Starting Modelchecking, STRATEGY=" + type + "THREADS=" + threads + ", CACHING=" + isCaching, isDebug);
         if(threads == 1) {
-            modelCheckSingleThreaded(type, isCaching);
+            modelCheckSingleThreaded(type, isCaching, isDebug);
         } else {
-            modelCheckMultiThreaded(type, threads, isCaching);
+            modelCheckMultiThreaded(type, threads, isCaching, isDebug);
         }
     }
 

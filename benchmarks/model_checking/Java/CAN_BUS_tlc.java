@@ -52,9 +52,9 @@ public class CAN_BUS_tlc {
 
 
     public enum T1state implements BObject {
-        T1_EN, 
-        T1_CALC, 
-        T1_SEND, 
+        T1_EN,
+        T1_CALC,
+        T1_SEND,
         T1_WAIT;
 
         public BBoolean equal(T1state o) {
@@ -67,8 +67,8 @@ public class CAN_BUS_tlc {
     }
 
     public enum T2mode implements BObject {
-        T2MODE_SENSE, 
-        T2MODE_TRANSMIT, 
+        T2MODE_SENSE,
+        T2MODE_TRANSMIT,
         T2MODE_RELEASE;
 
         public BBoolean equal(T2mode o) {
@@ -81,12 +81,12 @@ public class CAN_BUS_tlc {
     }
 
     public enum T2state implements BObject {
-        T2_EN, 
-        T2_RCV, 
-        T2_PROC, 
-        T2_CALC, 
-        T2_SEND, 
-        T2_WAIT, 
+        T2_EN,
+        T2_RCV,
+        T2_PROC,
+        T2_CALC,
+        T2_SEND,
+        T2_WAIT,
         T2_RELEASE;
 
         public BBoolean equal(T2state o) {
@@ -99,11 +99,11 @@ public class CAN_BUS_tlc {
     }
 
     public enum T3state implements BObject {
-        T3_READY, 
-        T3_WRITE, 
-        T3_RELEASE, 
-        T3_READ, 
-        T3_PROC, 
+        T3_READY,
+        T3_WRITE,
+        T3_RELEASE,
+        T3_READ,
+        T3_PROC,
         T3_WAIT;
 
         public BBoolean equal(T3state o) {

@@ -20,12 +20,12 @@
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BTuple.hpp>
 
-#ifndef QueensWithEvents_H
-#define QueensWithEvents_H
+#ifndef QueensWithEvents_8_H
+#define QueensWithEvents_8_H
 
 using namespace std;
 
-class QueensWithEvents {
+class QueensWithEvents_8 {
 
     public:
 
@@ -35,14 +35,14 @@ class QueensWithEvents {
 
         struct Hash {
             public:
-                size_t operator()(const QueensWithEvents& obj) const {
+                size_t operator()(const QueensWithEvents_8& obj) const {
                     return obj.hashCode();
                 }
         };
 
         struct HashEqual {
             public:
-                bool operator()(const QueensWithEvents& obj1, const QueensWithEvents& obj2) const {
+                bool operator()(const QueensWithEvents_8& obj1, const QueensWithEvents_8& obj2) const {
                     if (obj1 == obj2)
                         return true;
                     else
@@ -63,14 +63,14 @@ class QueensWithEvents {
 
     public:
 
-        QueensWithEvents() {
+        QueensWithEvents_8() {
             n = (BInteger(8));
             interval = (BSet<BInteger>::interval((BInteger(1)),n));
             allFields = (BRelation<BInteger, BInteger >::cartesianProduct(interval, interval)).pow();
             queens = (BRelation<BInteger, BInteger >());
         }
 
-        QueensWithEvents(const BInteger& n, const BSet<BInteger >& interval, const BSet<BRelation<BInteger, BInteger > >& allFields, const BRelation<BInteger, BInteger >& queens) {
+        QueensWithEvents_8(const BInteger& n, const BSet<BInteger >& interval, const BSet<BRelation<BInteger, BInteger > >& allFields, const BRelation<BInteger, BInteger >& queens) {
             this->n = n;
             this->interval = interval;
             this->allFields = allFields;
@@ -100,66 +100,73 @@ class QueensWithEvents {
 
 
         BSet<BRelation<BInteger, BInteger >> _tr_Solve() const {
-            BSet<BRelation<BInteger, BInteger >> _ic_set_3 = BSet<BRelation<BInteger, BInteger >>();
+            BSet<BRelation<BInteger, BInteger >> _ic_set_4 = BSet<BRelation<BInteger, BInteger >>();
             for(BRelation<BInteger, BInteger > _ic_solution_1 : allFields) {
-                BBoolean _ic_boolean_3 = BBoolean(true);
+                BBoolean _ic_boolean_5 = BBoolean(true);
                 if(((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()))).booleanValue()) {
                     for(BInteger _ic_x_1 : interval) {
                         for(BInteger _ic_y_1 : interval) {
+                            BBoolean _ic_boolean_4 = BBoolean(true);
                             for(BInteger _ic_z_1 : interval) {
-                                if(!((BBoolean(!(BBoolean(_ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_y_1))).booleanValue() && _ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_z_1))).booleanValue())).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue()))).booleanValue()) {
-                                    _ic_boolean_3 = BBoolean(false);
+                                if(!((BBoolean(!_ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_z_1))).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue()))).booleanValue()) {
+                                    _ic_boolean_4 = BBoolean(false);
                                     break;
                                 }
 
                             }
-                        }
-                    }
-                }
-                BBoolean _ic_boolean_4 = BBoolean(true);
-                if(((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_3.booleanValue()))).booleanValue()) {
-                    for(BInteger _ic_q1_1 : interval) {
-                        for(BInteger _ic_q2_1 : interval.difference((BSet<BInteger >((BInteger(1)))))) {
-                            if(!((BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || (BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue())).booleanValue()))).booleanValue()) {
-                                _ic_boolean_4 = BBoolean(false);
+
+                            if(!((BBoolean(!_ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_y_1))).booleanValue() || _ic_boolean_4.booleanValue()))).booleanValue()) {
+                                _ic_boolean_5 = BBoolean(false);
                                 break;
                             }
 
                         }
                     }
                 }
-                BBoolean _ic_boolean_5 = BBoolean(true);
-                if(((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_3.booleanValue())).booleanValue() && _ic_boolean_4.booleanValue()))).booleanValue()) {
+                BBoolean _ic_boolean_6 = BBoolean(true);
+                if(((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue()))).booleanValue()) {
+                    for(BInteger _ic_q1_1 : interval) {
+                        for(BInteger _ic_q2_1 : interval.difference((BSet<BInteger >((BInteger(1)))))) {
+                            if(!((BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || (BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue())).booleanValue()))).booleanValue()) {
+                                _ic_boolean_6 = BBoolean(false);
+                                break;
+                            }
+
+                        }
+                    }
+                }
+                BBoolean _ic_boolean_7 = BBoolean(true);
+                if(((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue()))).booleanValue()) {
                     for(BInteger _ic_x_1 : queens.domain()) {
                         if(!(_ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1))).booleanValue()) {
-                            _ic_boolean_5 = BBoolean(false);
+                            _ic_boolean_7 = BBoolean(false);
                             break;
                         }
 
                     }
                 }
 
-                if(((BBoolean((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_3.booleanValue())).booleanValue() && _ic_boolean_4.booleanValue())).booleanValue() && _ic_boolean_5.booleanValue()))).booleanValue()) {
-                    _ic_set_3 = _ic_set_3._union(BSet<BRelation<BInteger, BInteger >>(_ic_solution_1));
+                if(((BBoolean((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue())).booleanValue() && _ic_boolean_7.booleanValue()))).booleanValue()) {
+                    _ic_set_4 = _ic_set_4._union(BSet<BRelation<BInteger, BInteger >>(_ic_solution_1));
                 }
 
             }
-            return _ic_set_3;
+            return _ic_set_4;
         }
 
         bool _check_inv_1() const {
             return (((queens.checkDomain(interval))._and((queens.checkRange(interval)))._and((queens.isFunction()))._and((queens.isPartial(interval))))).booleanValue();
         }
 
-        QueensWithEvents _copy() const {
-            return QueensWithEvents(n, interval, allFields, queens);
+        QueensWithEvents_8 _copy() const {
+            return QueensWithEvents_8(n, interval, allFields, queens);
         }
 
-        friend bool operator ==(const QueensWithEvents& o1, const QueensWithEvents& o2) {
+        friend bool operator ==(const QueensWithEvents_8& o1, const QueensWithEvents_8& o2) {
             return o1._get_queens() == o2._get_queens();
         }
 
-        friend bool operator !=(const QueensWithEvents& o1, const QueensWithEvents& o2) {
+        friend bool operator !=(const QueensWithEvents_8& o1, const QueensWithEvents_8& o2) {
             return o1._get_queens() != o2._get_queens();
         }
 
@@ -179,7 +186,7 @@ class QueensWithEvents {
             return result;
         }
 
-        friend std::ostream& operator<<(std::ostream &strm, const QueensWithEvents &machine) {
+        friend std::ostream& operator<<(std::ostream &strm, const QueensWithEvents_8 &machine) {
           strm << "_get_queens: " << machine._get_queens() << "\n";
           return strm;
         }
@@ -188,8 +195,8 @@ class QueensWithEvents {
 };
 
 
-static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> generateNextStates(std::mutex& guardMutex, const QueensWithEvents& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentGuard, std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& guardCache, std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& parents, std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> result = std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>();
+static std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> generateNextStates(std::mutex& guardMutex, const QueensWithEvents_8& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& dependentGuard, std::unordered_map<QueensWithEvents_8, immer::map<string, boost::any>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& guardCache, std::unordered_map<QueensWithEvents_8, QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& parents, std::unordered_map<QueensWithEvents_8, string, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
+    std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> result = std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>();
     if(isCaching) {
         immer::map<string, boost::any> parentsGuard;
         std::unordered_set<string> dependentGuardsOfState;
@@ -223,7 +230,7 @@ static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEv
         for(const BRelation<BInteger, BInteger >& param : _trid_1) {
             BRelation<BInteger, BInteger > _tmp_1 = param;
 
-            QueensWithEvents copiedState = state._copy();
+            QueensWithEvents_8 copiedState = state._copy();
             copiedState.Solve(_tmp_1);
             {
                 std::unique_lock<std::mutex> lock(guardMutex);
@@ -253,7 +260,7 @@ static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEv
         for(const BRelation<BInteger, BInteger >& param : _trid_1) {
             BRelation<BInteger, BInteger > _tmp_1 = param;
 
-            QueensWithEvents copiedState = state._copy();
+            QueensWithEvents_8 copiedState = state._copy();
             copiedState.Solve(_tmp_1);
             {
                 std::unique_lock<std::mutex> lock(guardMutex);
@@ -272,7 +279,7 @@ static std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEv
     return result;
 }
 
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, QueensWithEvents& counterExampleState, std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& parents, std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& stateAccessedVia) {
+static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, QueensWithEvents_8& counterExampleState, std::unordered_map<QueensWithEvents_8, QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& parents, std::unordered_map<QueensWithEvents_8, string, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& stateAccessedVia) {
     if(deadlockDetected || invariantViolated) {
         if(deadlockDetected) {
             cout << "DEADLOCK DETECTED" << "\n";
@@ -282,7 +289,7 @@ static void printResult(int states, int transitions, bool deadlockDetected, bool
         }
         cout << "COUNTER EXAMPLE TRACE: " << "\n";
 
-        QueensWithEvents currentState = counterExampleState;
+        QueensWithEvents_8 currentState = counterExampleState;
         std::string trace = "";
         while(parents.find(currentState) != parents.end()) {
             std::stringstream stringStream;
@@ -303,7 +310,7 @@ static void printResult(int states, int transitions, bool deadlockDetected, bool
     cout << "Number of Transitions: " << transitions << "\n";
 }
 
-static bool checkInvariants(std::mutex& guardMutex, const QueensWithEvents& state, bool isCaching, std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual>& dependentInvariant) {
+static bool checkInvariants(std::mutex& guardMutex, const QueensWithEvents_8& state, bool isCaching, std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>& dependentInvariant) {
     if(isCaching) {
         std::unordered_set<string> dependentInvariantsOfState;
         {
@@ -320,26 +327,26 @@ static bool checkInvariants(std::mutex& guardMutex, const QueensWithEvents& stat
     return !(!state._check_inv_1());
 }
 
-static QueensWithEvents next(std::list<QueensWithEvents>& collection, std::mutex& mutex, QueensWithEvents::Type type) {
+static QueensWithEvents_8 next(std::list<QueensWithEvents_8>& collection, std::mutex& mutex, QueensWithEvents_8::Type type) {
     std::unique_lock<std::mutex> lock(mutex);
     switch(type) {
-        case QueensWithEvents::BFS: {
-            QueensWithEvents state = collection.front();
+        case QueensWithEvents_8::BFS: {
+            QueensWithEvents_8 state = collection.front();
             collection.pop_front();
             return state;
         }
-        case QueensWithEvents::DFS: {
-            QueensWithEvents state = collection.back();
+        case QueensWithEvents_8::DFS: {
+            QueensWithEvents_8 state = collection.back();
             collection.pop_back();
             return state;
         }
-        case QueensWithEvents::MIXED: {
+        case QueensWithEvents_8::MIXED: {
             if(collection.size() % 2 == 0) {
-                QueensWithEvents state = collection.front();
+                QueensWithEvents_8 state = collection.front();
                 collection.pop_front();
                 return state;
             } else {
-                QueensWithEvents state = collection.back();
+                QueensWithEvents_8 state = collection.back();
                 collection.pop_back();
                 return state;
             }
@@ -347,11 +354,11 @@ static QueensWithEvents next(std::list<QueensWithEvents>& collection, std::mutex
     };
 }
 
-static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching) {
+static void modelCheckSingleThreaded(QueensWithEvents_8::Type type, bool isCaching) {
     std::mutex mutex;
     std::mutex guardMutex;
 
-    QueensWithEvents machine = QueensWithEvents();
+    QueensWithEvents_8 machine = QueensWithEvents_8();
 
     std::atomic<bool> invariantViolated;
     invariantViolated = false;
@@ -360,12 +367,12 @@ static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> states = std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>();
+    std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> states = std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
     numberStates = 1;
 
-    std::list<QueensWithEvents> collection = std::list<QueensWithEvents>();
+    std::list<QueensWithEvents_8> collection = std::list<QueensWithEvents_8>();
     collection.push_back(machine);
 
     std::atomic<int> transitions;
@@ -373,22 +380,22 @@ static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching
 
     std::unordered_map<string, std::unordered_set<string>> invariantDependency;
     std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> dependentInvariant;
-    std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> dependentGuard;
-    std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> guardCache;
-    std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> parents;
-    std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual> stateAccessedVia;
+    std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> dependentInvariant;
+    std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> dependentGuard;
+    std::unordered_map<QueensWithEvents_8, immer::map<string, boost::any>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> guardCache;
+    std::unordered_map<QueensWithEvents_8, QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> parents;
+    std::unordered_map<QueensWithEvents_8, string, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"Solve", {"_check_inv_1"}});
         guardDependency.insert({"Solve", {"_tr_Solve"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
-    QueensWithEvents counterExampleState;
+    QueensWithEvents_8 counterExampleState;
 
     while(!collection.empty() && !stopThreads) {
-        QueensWithEvents state = next(collection, mutex, type);
+        QueensWithEvents_8 state = next(collection, mutex, type);
 
-        std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+        std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 numberStates += 1;
@@ -418,13 +425,13 @@ static void modelCheckSingleThreaded(QueensWithEvents::Type type, bool isCaching
     printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
 }
 
-static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bool isCaching) {
+static void modelCheckMultiThreaded(QueensWithEvents_8::Type type, int threads, bool isCaching) {
     std::mutex mutex;
     std::mutex waitMutex;
     std::mutex guardMutex;
     std::condition_variable waitCV;
 
-    QueensWithEvents machine = QueensWithEvents();
+    QueensWithEvents_8 machine = QueensWithEvents_8();
 
 
     std::atomic<bool> invariantViolated;
@@ -434,12 +441,12 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
     std::atomic<bool> stopThreads;
     stopThreads = false;
 
-    std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> states = std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual>();
+    std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> states = std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual>();
     states.insert(machine);
     std::atomic<int> numberStates;
     numberStates = 1;
 
-    std::list<QueensWithEvents> collection = std::list<QueensWithEvents>();
+    std::list<QueensWithEvents_8> collection = std::list<QueensWithEvents_8>();
     collection.push_back(machine);
 
     std::atomic<int> transitions;
@@ -453,25 +460,25 @@ static void modelCheckMultiThreaded(QueensWithEvents::Type type, int threads, bo
 
     std::unordered_map<string, std::unordered_set<string>> invariantDependency;
     std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> dependentInvariant;
-    std::unordered_map<QueensWithEvents, std::unordered_set<string>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> dependentGuard;
-    std::unordered_map<QueensWithEvents, immer::map<string, boost::any>, QueensWithEvents::Hash, QueensWithEvents::HashEqual> guardCache;
-    std::unordered_map<QueensWithEvents, QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> parents;
-    std::unordered_map<QueensWithEvents, string, QueensWithEvents::Hash, QueensWithEvents::HashEqual> stateAccessedVia;
+    std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> dependentInvariant;
+    std::unordered_map<QueensWithEvents_8, std::unordered_set<string>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> dependentGuard;
+    std::unordered_map<QueensWithEvents_8, immer::map<string, boost::any>, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> guardCache;
+    std::unordered_map<QueensWithEvents_8, QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> parents;
+    std::unordered_map<QueensWithEvents_8, string, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> stateAccessedVia;
     if(isCaching) {
         invariantDependency.insert({"Solve", {"_check_inv_1"}});
         guardDependency.insert({"Solve", {"_tr_Solve"}});
         dependentInvariant.insert({machine, std::unordered_set<string>()});
     }
-    QueensWithEvents counterExampleState;
+    QueensWithEvents_8 counterExampleState;
 
     boost::asio::thread_pool workers(threads);
 
     while(!collection.empty() && !stopThreads) {
         possibleQueueChanges += 1;
-        QueensWithEvents state = next(collection, mutex, type);
+        QueensWithEvents_8 state = next(collection, mutex, type);
         std::packaged_task<void()> task([&, state] {
-            std::unordered_set<QueensWithEvents, QueensWithEvents::Hash, QueensWithEvents::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+            std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
 
 
             for(auto nextState : nextStates) {
@@ -542,14 +549,14 @@ int main(int argc, char *argv[]) {
     string numberThreads = argv[2];
     string caching = argv[3];
 
-    QueensWithEvents::Type type;
+    QueensWithEvents_8::Type type;
 
     if(std::string("mixed").compare(strategy) == 0) {
-        type = QueensWithEvents::Type::MIXED;
+        type = QueensWithEvents_8::Type::MIXED;
     } else if(std::string("bf").compare(strategy) == 0) {
-        type = QueensWithEvents::Type::BFS;
+        type = QueensWithEvents_8::Type::BFS;
     } else if (std::string("df").compare(strategy) == 0) {
-        type = QueensWithEvents::Type::DFS;
+        type = QueensWithEvents_8::Type::DFS;
     } else {
         cout << "Input for strategy is wrong.\n";
         return -1;

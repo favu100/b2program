@@ -226,8 +226,18 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
-    public void testQueensWithEvents() throws Exception {
-        testCppMC("QueensWithEvents");
+    public void testQueensWithEvents_4() throws Exception {
+        testCppMC("QueensWithEvents_4");
+    }
+
+    @Test
+    public void testQueensWithEvents_8() throws Exception {
+        testCppMC("QueensWithEvents_8");
+    }
+
+    @Test
+    public void testNota2() throws Exception {
+        testCppMC("nota_v2");
     }
 
     @Test

@@ -186,7 +186,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 															typeGenerator, recordStructGenerator);
 		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator, backtrackingGenerator);
 		this.invariantGenerator = new InvariantGenerator(mode, currentGroup, this, iterationConstructHandler);
-		this.transitionGenerator = new TransitionGenerator(this, iterationConstructHandler);
+		this.transitionGenerator = new TransitionGenerator(currentGroup, nameHandler, this, typeGenerator, iterationConstructHandler);
 		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, transitionGenerator, typeGenerator);
 		this.iterationConstructDepth = 0;
 		this.isIncludedMachine = isIncludedMachine;
@@ -324,6 +324,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		});
 		TemplateHandler.add(machine, "getters", generateGetters(gettableNodes));
 		TemplateHandler.add(machine, "transitions", transitionGenerator.generateTransitions(node.getOperations()));
+		TemplateHandler.add(machine, "transitionCachesDeclaration", transitionGenerator.generateTransitionCaches(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", invariantGenerator.generateInvariants(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqualToString());
@@ -397,6 +398,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			TemplateHandler.add(template, "parameters", parameters.stream()
 					.map(variable -> nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+					.collect(Collectors.toList()));
+			TemplateHandler.add(template, "operations", node.getOperations().stream()
+					.map(op -> nameHandler.handleIdentifier(op.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES))
 					.collect(Collectors.toList()));
 			return template.render();
 		}

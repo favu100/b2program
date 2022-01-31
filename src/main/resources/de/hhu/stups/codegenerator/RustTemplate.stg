@@ -3,7 +3,7 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 >>
 
 
-machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck, transitionCachesDeclaration) ::= <<
 #![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
 <if(forModelChecking)>
 use std::env;
@@ -36,6 +36,8 @@ pub struct <machine> {
     <if(includes)><includes; separator="\n"><endif>
     <if(constants_declarations)><constants_declarations; separator="\n"><endif>
     <sets; separator="\n">
+    <if(forModelChecking)><transitionCachesDeclaration; separator="\n"><endif>
+    //TODO: take _tr_cahces out of hash
 }
 
 impl <machine> {
@@ -425,6 +427,10 @@ global_declaration(type, identifier) ::= <<
 <identifier>: <type>,
 >>
 
+transition_cache_declaration(type, identifier, operationHasParams) ::= <<
+_tr_cache_<identifier>: Option\<<if(operationHasParams)>BSet\<<type>\><else>bool<endif>\>,
+>>
+
 constant_declaration(type, identifier) ::= <<
 <identifier>: <type>,
 >>
@@ -738,22 +744,19 @@ model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 //model_check_next_states
-fn generateNextStates(state: &Lift_MC,
+fn generateNextStates(state: &mut <machine>,
                       isCaching: bool,
                       invariant_dependency: &HashMap\<&str, HashSet\<&'static str>\>,
-                      dependent_invariant_m: Arc\<Mutex\<HashMap\<Lift_MC, HashSet\<&str>\>\>>,
+                      dependent_invariant_m: Arc\<Mutex\<HashMap\<<machine>, HashSet\<&str>\>\>>,
                       guard_dependency: &HashMap\<&str, HashSet\<&'static str\>>,
-                      dependent_guard_m: Arc\<Mutex\<HashMap\<Lift_MC, HashSet\<&str>\>\>>,
-                      guardCache: Arc\<Mutex\<HashMap\<Lift_MC, PersistentHashMap\<&str, bool>\>\>>,
-                      parents_m: Arc\<Mutex\<HashMap\<Lift_MC, Lift_MC>\>>,
+                      dependent_guard_m: Arc\<Mutex\<HashMap\<<machine>, HashSet\<&str>\>\>>,
+                      guardCache: Arc\<Mutex\<HashMap\<<machine>, PersistentHashMap\<&str, bool>\>\>>,
+                      parents_m: Arc\<Mutex\<HashMap\<<machine>, <machine>\>\>>,
                       transitions: Arc\<AtomicI64>) -> HashSet\<<machine>\> {
     let mut result = HashSet::\<<machine>\>::new();
     if isCaching {
         let mut parents_guard_o = parents_m.lock().unwrap().get(state).and_then(|p| guardCache.lock().unwrap().get(p).cloned());
         let mut newCache = if parents_guard_o.is_none() { PersistentHashMap::new() } else { parents_guard_o.as_ref().unwrap().clone() };
-        let mut dependentGuardsOfState = Option::\<HashSet\<&str\>>::None;
-        let mut cachedValue = Option::None;
-        let mut dependentGuardsBoolean = true;
         <transitionsWithCaching>
         guardCache.lock().unwrap().insert(state.clone(), newCache);
     } else {
@@ -767,49 +770,24 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 //model_check_transition
 <if(hasParameters)>
 <if(isCaching)>
-BSet\<<tupleType>\> <transitionIdentifier>;
-
-dependentGuardsOfState = dependentGuard.get(state);
-if(dependentGuardsOfState != null) {
-    cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
-    dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
-}
-
-if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = (BSet\<<tupleType>\>) cachedValue;
-}
-newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
-for(<tupleType> param : <transitionIdentifier>) {
+let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
+for param in <transitionIdentifier>.iter().cloned() {
     <execTransitions>
 }
 <else>
-BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
-for(<tupleType> param : <transitionIdentifier>) {
+let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
+for param in <transitionIdentifier>.iter().cloned() {
     <execTransitions>
 }
 <endif>
 <else>
 <if(isCaching)>
-let mut <transitionIdentifier> = false; //was undefined
-dependentGuardsOfState = dependent_guard_m.lock().unwrap().get(state).map(|s| s.clone());
-if dependentGuardsOfState.is_some() {
-    if parents_guard_o.is_some() { cachedValue = parents_guard_o.as_ref().unwrap().get("<evalTransitions>").cloned(); }
-    dependentGuardsBoolean = dependentGuardsOfState.as_ref().unwrap().contains("<evalTransitions>");
-}
-
-if dependentGuardsOfState.is_none() || dependentGuardsBoolean || parents_guard_o.is_none() || cachedValue.is_none() {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = cachedValue.unwrap().clone();
-}
-newCache.insert("<evalTransitions>", <transitionIdentifier>);
+let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
 if <transitionIdentifier> {
     <execTransitions>
 }
 <else>
-if state.<evalTransitions>() {
+if state.<evalTransitions>(isCaching) {
     <execTransitions>
 }
 <endif>
@@ -846,6 +824,7 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <endif>
 let mut copiedState = state.clone();
 copiedState.<operation>(<parameters; separator=", ">);
+match guard_dependency.get("<operation>") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
 <if(isCaching)>
 {
     let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
@@ -870,12 +849,12 @@ transitions.fetch_add(1, Ordering::AcqRel);
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
 //model_check_transition_param_assignment
 <if(isLhs)>
-<type> <param> = <val>.projection1();
+let mut <param> = <val>.projection1();
 <else>
 <if(oneParameter)>
-<type> <param> = <val>;
+let mut <param> = <val>;
 <else>
-<type> <param> = <val>.projection2();
+let mut <param> = <val>.projection2();
 <endif>
 <endif>
 >>
@@ -907,7 +886,7 @@ model_check_init_static(map, keyy, entries) ::= <<
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
 //model_check_main
-fn next(collection_m: Arc\<Mutex\<LinkedList\<Lift_MC>\>>, mc_type: MC_TYPE) -> Lift_MC {
+fn next(collection_m: Arc\<Mutex\<LinkedList\<<machine>\>\>>, mc_type: MC_TYPE) -> <machine> {
     let mut collection = collection_m.lock().unwrap();
     return match mc_type {
             MC_TYPE::BFS   => collection.pop_front().unwrap(),
@@ -951,9 +930,9 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
     let transitions = Arc::new(AtomicI64::new(0));
 
     while !stop_threads.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
-        let state = Self::next(Arc::clone(&collection_m), mc_type);
+        let mut state = Self::next(Arc::clone(&collection_m), mc_type);
 
-        let next_states = Self::generateNextStates(&state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
+        let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
         next_states.iter().for_each(|next_state| {
             if !states.contains(next_state) {
@@ -1026,7 +1005,7 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
     //println!("Thread {:?} starting threads", thread::current().id());
     while !stop_threads_b.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
         possible_queue_changes_b.fetch_add(1, Ordering::AcqRel);
-        let state = Self::next(Arc::clone(&collection_m), mc_type);
+        let mut state = Self::next(Arc::clone(&collection_m), mc_type);
 
         let invariant_violated = Arc::clone(&invariant_violated_b);
         let deadlock_detected = Arc::clone(&deadlock_detected_b);
@@ -1045,7 +1024,7 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
         let tx = tx.clone();
         //println!("Thread {:?} spawning a thread", thread::current().id());
         threadPool.execute(move|| {
-            let next_states = Self::generateNextStates(&state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
+            let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
             //println!("Thread {:?} executing", thread::current().id());
             next_states.iter().for_each(|next_state| {
@@ -1116,25 +1095,33 @@ if((<predicate>).booleanValue()) {
 >>
 
 transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
-pub fn _tr_<operationName>(&self) -> <if(noParameters)>bool<else>BSet\<<subType>\><endif> {
+pub fn _tr_<operationName>(&mut self, is_caching: bool) -> <if(noParameters)>bool<else>BSet\<<subType>\><endif> {
     //transition
-    <if(noParameters)>
-    <if(noPredicate)>
-    return true;
-    <else>
-    return <predicate>.booleanValue();
-    <endif>
-    <else>
-    let mut <identifier>: BSet\<<subType>\> = BSet::new();
-    <if(hasCondition)>
-    if <conditionalPredicate>.booleanValue() {
+    if !is_caching || self._tr_cache_<operationName>.is_none() {
+        <if(noParameters)>
+        <if(noPredicate)>
+        self._tr_cache_<operationName> = Option::Some(true);
+        return true;
+        <else>
+        let mut __tmp__val__ = <predicate>.booleanValue();
+        self._tr_cache_<operationName> = Option::Some(__tmp__val__);
+        return __tmp__val__;
+        <endif>
+        <else>
+        let mut <identifier>: BSet\<<subType>\> = BSet::new(vec![]);
+        <if(hasCondition)>
+        if <conditionalPredicate>.booleanValue() {
+            <combination>
+        }
+        <else>
         <combination>
+        <endif>
+        self._tr_cache_<operationName> = Option::Some(<identifier>.clone());
+        return <identifier>;
+        <endif>
+    } else {
+        return self._tr_cache_<operationName>.as_ref().unwrap().clone();
     }
-    <else>
-    <combination>
-    <endif>
-    return <identifier>;
-    <endif>
 }
 >>
 
@@ -1146,7 +1133,17 @@ pub fn <invariantFunction>(&self) -> bool {
 }
 >>
 
-copy(machine, parameters) ::= <<
+copy(machine, parameters, operations) ::= <<
+fn invalidate_caches(&mut self, to_invalidate: &HashSet\<&'static str>) {
+    //calling the given functions without caching will recalculate them and cache them afterwards
+    //if caching is enabled globally, this will just prefill those, if caching is
+    for trans in to_invalidate.iter() {
+        match *trans {
+            <operations: {op | "_tr_<op>" => <\u007B>self._tr_<op>(false);<\u007D>, }; separator="\n">
+            _ => {},
+        }
+    }
+}
 >>
 
 machine_string(variables) ::= <<
@@ -1159,4 +1156,15 @@ public String toString() {
     return "";
     <endif>
 }
+>>
+
+parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>_.union(&BSet::new(vec![<element>]));
+<else>
+if (<predicate>).booleanValue() {
+    <set> = <set>._union(&BSet::new(vec![<element>]));
+}
+<endif>
 >>

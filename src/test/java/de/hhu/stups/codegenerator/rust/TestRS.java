@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestRS {
     public static void writeInputToOutput(InputStream inputStream, OutputStream outputStream) throws IOException {
@@ -44,7 +45,7 @@ public class TestRS {
     }
 
     public void testRSMC(String machine) throws Exception {
-        testRS(machine, machine, null, false, true);
+        testRS(machine, machine, null, true, true);
         //TODO: validation of MC result
     }
 
@@ -84,7 +85,10 @@ public class TestRS {
             return;
         }
 
-        Process executeProcess = runtime.exec("cargo run --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
+        String progArgs = "";
+        if (modelChecking) { progArgs = " -- mixed 2 true"; }
+
+        Process executeProcess = runtime.exec("cargo run --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml" + progArgs);
         executeProcess.waitFor();
 
         String error = streamToString(executeProcess.getErrorStream());
@@ -92,13 +96,19 @@ public class TestRS {
             throw new RuntimeException(error);
         }
 
-        String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
-        File outFile = Paths.get(CodeGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/" + machine + ".out").toURI()).toFile();
-        String expectedOutput = streamToString(new FileInputStream(outFile)).replaceAll("[\n\r]", "");
+        String result = streamToString(executeProcess.getInputStream());
 
-        System.out.println("Assert: " + result + " = " + expectedOutput);
-
-        assertEquals(expectedOutput, result);
+        if (!modelChecking) {
+            result = result.replaceAll("\n", "");
+            File outFile = Paths.get(CodeGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/" + machine + ".out").toURI()).toFile();
+            String expectedOutput = streamToString(new FileInputStream(outFile)).replaceAll("[\n\r]", "");
+            System.out.println("Assert: " + result + " = " + expectedOutput);
+            assertEquals(expectedOutput, result);
+        } else {
+            System.out.println("Asserting Success: ");
+            System.out.println(result);
+            assertTrue(result.contains("SUCCESSFUL"));
+        }
         cleanUp(newMainFile);
         rsFilePaths.forEach(p -> cleanUp(p.toFile()));
     }

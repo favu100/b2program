@@ -66,7 +66,6 @@ public class TestMachines extends TestRS {
         testRS("TrafficLight", "TrafficLight", "TrafficLightAddition.strs", true);
     }
 
-    @Ignore //MC
     @Test
     public void testTrafficLightMC() throws Exception {
         testRSMC("TrafficLight_MC");
@@ -112,7 +111,6 @@ public class TestMachines extends TestRS {
         testRS("Cruise_finite1_deterministic");
     }
 
-    @Ignore //MC
     @Test
     public void testCruiseControllerDeterministic_MC() throws Exception {
         testRSMC("Cruise_finite1_deterministic_MC");

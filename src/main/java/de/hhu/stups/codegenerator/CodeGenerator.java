@@ -72,18 +72,18 @@ public class CodeGenerator {
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
 		String addition = null;
-		if(args.length >= 9) {
+		if(args.length >= 9 && args[8].length() > 0) {
 			addition = args[8];
 		}
 		boolean forVisualisation = false;
 		if(args.length >= 10) {
 			forVisualisation = Boolean.parseBoolean(args[9]);
 		}
+		if(forVisualisation && mode != GeneratorMode.TS) {
+			throw new CodeGenerationException("Generating a visualisation is only supported for TypeScript");
+		}
 		String visualisationFile = null;
-		if(args.length == 11) {
-			if (mode != GeneratorMode.TS) {
-				System.err.println("Generating a visulisation is only supported for TypeScript");
-			}
+		if(args.length == 11 && args[10].length() > 0) {
 			visualisationFile = args[10];
 		}
 		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
@@ -101,7 +101,7 @@ public class CodeGenerator {
 	}
 
 	/*
-	* This function extracts the generator mode representing the language code should be generated from from the given string
+	* This function extracts the generator mode representing the language code should be generated from the given string
 	*/
 	private static GeneratorMode getMode(String languageOption) {
 		GeneratorMode mode;
@@ -125,7 +125,7 @@ public class CodeGenerator {
 
 
 	/*
-	* This functon extracts boolean for using big integer from the given string
+	* This function extracts boolean for using big integer from the given string
 	*/
 	private static boolean useBigInteger(String integerOption) {
 		boolean useBigInteger;
@@ -140,7 +140,7 @@ public class CodeGenerator {
 	}
 
 	/*
-	 * This functon extracts boolean for using constraint solving from the given string
+	 * This function extracts boolean for using constraint solving from the given string
 	 */
 	private static boolean useConstraintSolving(String constraintOption) {
 		boolean useConstraintSolving;
@@ -219,9 +219,9 @@ public class CodeGenerator {
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
 
 		String code = generator.generateMachine(node);
-		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code, forVisualisation);
+		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code);
 
-		if(forVisualisation) {
+		if(forVisualisation && !isIncludedMachine) {
 
 			VisBProject visBProject;
 			if(visualisationFile != null) {
@@ -240,17 +240,17 @@ public class CodeGenerator {
 	private void generateVisualisation(VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
 		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(generator.getImportGenerator(), generator.getExpressionGenerator());
 		String htmlCode = visualisationGenerator.generateHTML(visBProject);
-		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode, false);
+		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode);
 		//Has to be saved as <machineName>-visualisation.js
-		String jsVisulisationCode = visualisationGenerator.generateVisualisation(visBProject);
+		String jsVisualisationCode = visualisationGenerator.generateVisualisation(visBProject);
 		Path visualisationPath = Paths.get(mainMachinePath.toString().replace(".mch", "-visualisation.mch")).toAbsolutePath();
-		writeToFile(visualisationPath, GeneratorMode.JS, false, null, false, generator, jsVisulisationCode, false);
+		writeToFile(visualisationPath, GeneratorMode.JS, false, null, false, generator, jsVisualisationCode);
 	}
 
 	/*
 	 * This function writes code for a targeted programming language with creating the belonging file
 	 */
-	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code, boolean forVisualisation) {
+	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code) {
 
 
 		String fileName = path.getFileName().toString().replace(".mch", "");
@@ -285,7 +285,7 @@ public class CodeGenerator {
 	}
 
 	/*
-	* This function executes parsing and semantic checkings on a project
+	* This function executes parsing and semantic checking on a project
 	*/
 	private BProject parseProject(Path path) throws CodeGenerationException {
 		BProject project;

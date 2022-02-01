@@ -165,3 +165,4 @@ benchmarks/execution/ProB/stdlib
 /*.java
 /*.mch
 /*.py
+btypes_primitives/**/*.js

@@ -8,6 +8,7 @@ machine(forModelChecking, forVisualisation, imports, includedMachines, machine, 
 <enum_imports; separator="\n">
 <includedMachines; separator="\n">
 import {BUtils} from "./btypes/BUtils.js";
+<if(forVisualisation)>import {SelectError} from "./btypes/BUtils.js";<endif>
 
 <enums; separator="\n\n">
 
@@ -65,9 +66,9 @@ machine_hash() ::= <<
 machine_hash_assignment() ::= <<
 >>
 
-getter(returnType, variable) ::= <<
+getter(returnType, variable, isConstant, machineName) ::= <<
 _get_<variable>(): <returnType> {
-    return this.<variable>;
+    return <if(isConstant)><machineName>.<else>this.<endif><variable>;
 }
 >>
 
@@ -192,7 +193,7 @@ no_return() ::=<<
 >>
 
 set_declaration(identifier, type, enums) ::= <<
-private <identifier>: BSet\<<type>\> = <set_enumeration("", type, "", enums, false)>;
+private static <identifier>: BSet\<<type>\> = <set_enumeration("", type, "", enums, false)>;
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
@@ -353,23 +354,18 @@ _check_inv() {
 >>
 
 copy_constructor(machine, parameters, properties, assignments) ::= <<
-public <machine>(<parameters; separator=", ">): <machine> {
-    let _instance = Object.create(<machine>.prototype);
-    //TODO Fix assignment with enums and constants
-    for(let key of Object.keys(this)) {
-        _instance[key] = this[key]._copy?.() ?? this[key];
-    }
-    return _instance;
-}
 >>
 
 copy_assignment(variable) ::= <<
-    _instance.<variable> = this.<variable>;
 >>
 
 copy(machine, parameters) ::= <<
 public _copy(): <machine> {
-    return this.<machine>(<if(parameters)>this.<endif><parameters; separator=", this.">);
+    let _instance = Object.create(<machine>.prototype);
+    for(let key of Object.keys(this)) {
+        _instance[key] = this[key]._copy?.() ?? this[key];
+    }
+    return _instance;
 }
 >>
 
@@ -438,12 +434,12 @@ let <declaration(type, identifier)> = null;
 >>
 
 constant_declaration(type, identifier) ::= <<
-private <identifier>: <type>;
+private static <identifier>: <type>;
 >>
 
-constant_initialization(iterationConstruct, identifier, val) ::= <<
+constant_initialization(iterationConstruct, identifier, val, machineName) ::= <<
 <iterationConstruct; separator="\n">
-this.<identifier> = <val>;
+<machineName>.<identifier> = <val>;
 >>
 
 values(assignments) ::= <<
@@ -574,11 +570,13 @@ pre_assert(then) ::= <<
 <then>
 >>
 
-select(iterationConstruct, predicate, then) ::= <<
+select(iterationConstruct, predicate, then, forVisualisation) ::= <<
 <iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
-}
+} <if(forVisualisation)> else {
+    throw new SelectError("Parameters are invalid!");
+}<endif>
 >>
 
 if(iterationConstruct, predicate, then, else1) ::= <<
@@ -680,12 +678,12 @@ boolean_val(val) ::= <<
 <if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
 >>
 
-identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant, isDefiningLdVariable) ::= <<
-<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(!isDefiningLdVariable)><if(isPrivate || isConstant)>this.<endif><endif><identifier><endif><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant, isDefiningLdVariable, machine) ::= <<
+<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(!isDefiningLdVariable)><if(isConstant)><machine>.<else><if(isPrivate)>this.<endif><endif><endif><identifier><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<
-<if(useBigInteger)>new BInteger("<number>")<else>new BInteger(<number>)<endif>
+<if(useBigInteger)>new BInteger(<number>n)<else>new BInteger(<number>)<endif>
 >>
 
 infinite_predicate(arg, operator) ::= <<

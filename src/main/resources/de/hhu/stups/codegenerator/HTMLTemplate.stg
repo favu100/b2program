@@ -14,7 +14,7 @@ html(machineName, svgName, btypeImports) ::= <<
 \<body>
   <if(svgName)>\<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml" height="300" width="300">\</object><endif>
   \<div id="_operations_view">
-    \<div class="param">Parameter\</div>
+    \<div class="param" style="grid-column: span 2;">Parameter\</div>
     \<div style="text-align: center; grid-column: -1;">Event\</div>
   \</div>
   \<div>
@@ -51,7 +51,7 @@ function collapse(element) {
 \<style>
 #_operations_view{
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     gap: 0.5%;
     margin-bottom: auto;
     margin-right: 1rem;
@@ -61,7 +61,8 @@ function collapse(element) {
 }
 .param{
     display: var(--noneOrGrid);
-    grid-template-columns: auto auto;
+    grid-column: span 2;
+    grid-template-columns: subgrid;
     gap: 5px;
 }
 #_history_view{

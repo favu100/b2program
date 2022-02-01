@@ -34,7 +34,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	static fromSet<S extends BObject,T extends BObject>(set: BSet<BTuple<S, T>> ): BRelation<S,T> {
 		let resultMap = immutable.Map();
-		set.getSet().forEach(e => {
+		set.getSet().forEach((e: BTuple<S, T>) => {
 			let key: S = e.projection1();
 			let value: T = e.projection2();
 			let range: any = resultMap.get(key);
@@ -210,7 +210,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 			for(let domainElement of thisDomain) {
 				let range = <immutable.Set<T>> thisMap.get(domainElement);
-				range.forEach(rangeElement => {
+				range.forEach((rangeElement: T) => {
 					let nextRelation: BRelation<S,T>  = currentSet.union(BRelation.fromSet(new BSet(new BTuple<S,T>(domainElement, rangeElement))));
 					let previousSize: number = result.size().intValue();
 					result = result.union(new BSet<BRelation<S,T>>(nextRelation));
@@ -442,8 +442,8 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	directProduct<R extends BObject>(arg: BRelation<S,R>): BRelation<S,BTuple<T,R>> {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		let thisDomain = immutable.Set(thisMap.keys());
-		let otherMap = arg.map;
+		let thisDomain: immutable.Set<S> = immutable.Set(thisMap.keys());
+		let otherMap: immutable.Map<S, immutable.Set<R>> = arg.map;
 
 		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
 		for(let domainElement of thisDomain) {
@@ -453,8 +453,8 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 				continue;
 			}
 			let resultRange = immutable.Set();
-			thisRange.forEach(lhs => {
-				otherRange!.forEach(rhs => {
+			thisRange.forEach((lhs: T) => {
+				otherRange!.forEach((rhs: R) => {
 					resultRange = immutable.Set.union([resultRange, immutable.Set([new BTuple<T,R>(lhs, rhs)])]);
 				});
 			});
@@ -478,9 +478,9 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 				let otherRange: immutable.Set<A> = <immutable.Set<A>> otherMap.get(domainElementOther);
 
 				let resultRange = immutable.Set();
-				thisRange.forEach(lhs => {
-					otherRange.forEach(rhs => {
-						resultRange = resultRange.union(immutable.Set([new BTuple<T,A>(lhs, rhs)]));
+				thisRange.forEach((lhs: T) => {
+					otherRange.forEach((rhs: A) => {
+						resultRange = resultRange.union(immutable.Set([new BTuple<T, A>(lhs, rhs)]));
 					});
 				});
 				let tuple: BTuple<S,R> = new BTuple<S,R>(domainElementThis, domainElementOther);
@@ -492,13 +492,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	
 	composition<R extends BObject>(arg: BRelation<T,R>): BRelation<S,R> {
-		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		let otherMap = arg.map;
+		let otherMap: immutable.Map<T, immutable.Set<R>> = arg.map;
 
 		let resultMap: immutable.Map<S, immutable.Set<R>> = immutable.Map()
 
 		for(let domainElement of this.map.keys()) {
-			let range: immutable.Set<T> = <immutable.Set<T>> this.map.get(domainElement)
+			let range: immutable.Set<T> = this.map.get(domainElement)
 
 			let set: immutable.Set<R> = immutable.Set<R>();
 			range.forEach((rangeElement: T) => {
@@ -516,7 +515,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	iterate(n: BInteger): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S,S>><unknown>this;
-		let result: BRelation<S,S> = BRelation.identity(this.domain().union(this.range()));
+		let result: BRelation<S,S> = BRelation.identity(this.domain().union(<immutable.Set<S>> this.range()));
 		for(let i: BInteger = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
 			result = result.composition(thisRelation);
 		}
@@ -526,7 +525,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	closure(): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S, S>><unknown>this;
-		let result: BRelation<S,S> = BRelation.identity(this.domain().union(this.range()));
+		let result: BRelation<S,S> = BRelation.identity(this.domain().union(<immutable.Set<S>> this.range()));
 		let nextResult: BRelation<S,S> = result.composition(thisRelation);
 		let lastResult: BRelation<S,S> = result;
 		do {
@@ -557,8 +556,8 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let argSet2 = arg2.getSet();
 
 		let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
-		argSet1.forEach(e1 => {
-			argSet2.forEach(e2 => {
+		argSet1.forEach((e1: S) => {
+			argSet2.forEach((e2: T) => {
 				let tuple: BTuple<S,T> = new BTuple<S,T>(e1, e2);
 				resultMap = resultMap.set(tuple, immutable.Set([e1]));
 			});
@@ -572,8 +571,8 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let argSet2 = arg2.getSet();
 
 		let resultMap: immutable.Map<BTuple<S, T>, immutable.Set<T>> = immutable.Map()
-		argSet1.forEach(e1 => {
-			argSet2.forEach(e2 => {
+		argSet1.forEach((e1: S) => {
+			argSet2.forEach((e2: T) => {
 
 				let tuple: BTuple<S,T> = new BTuple<S,T>(e1, e2);
 				resultMap = resultMap.set(tuple, immutable.Set([e2]));
@@ -585,10 +584,10 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	fnc(): BRelation<S,BSet<T>> {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		let domain = this.domain().getSet();
+		let domain: immutable.Set<S> = this.domain().getSet();
 
 		let resultMap: immutable.Map<S, immutable.Set<BSet<T>>> = immutable.Map()
-		domain.forEach(domainElement => {
+		domain.forEach((domainElement: S) => {
 			let range = thisMap.get(domainElement);
 			let rangeSet: BSet<T> = new BSet<T>([range]);
 			resultMap = resultMap.set(domainElement, immutable.Set([rangeSet]));
@@ -600,7 +599,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		let domain: immutable.Set<S> = this.domain().getSet();
 
 		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
-		domain.forEach(domainElement => {
+		domain.forEach((domainElement: S) => {
 			let range: BSet<R> = <BSet<R>><unknown>this.functionCall(domainElement);
 			let rangeSet = range.getSet();
 			resultMap = resultMap.set(domainElement, <Set<T>><unknown>rangeSet);
@@ -610,7 +609,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
     static identity<T extends BObject>(arg: BSet<T>):  BRelation<T,T> {
 		let resultMap: immutable.Map<T, immutable.Set<T>> = immutable.Map()
-		arg.getSet().forEach(e => {
+		arg.getSet().forEach((e: T) => {
 			resultMap = resultMap.set(e, immutable.Set([e]));
 		});
 		return new BRelation<T, T>(resultMap);
@@ -619,7 +618,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 	static cartesianProduct<S extends BObject,T extends BObject>(arg1: BSet<S>, arg2: BSet<T>): BRelation<S,T> {
 		let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map()
-		arg1.getSet().forEach(e1 => {
+		arg1.getSet().forEach((e1: S) => {
 			resultMap = resultMap.set(e1, arg2.getSet());
 		});
 		return new BRelation<S, T>(resultMap);
@@ -686,7 +685,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	isPartialInteger(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
@@ -697,7 +696,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	isPartialNatural(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BInteger && !(<BInteger>e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -706,7 +705,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	isPartialNatural1(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -715,7 +714,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	isPartialString(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BString && !(<BString>e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -724,7 +723,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	isPartialStruct(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BStruct && !(<BStruct>e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -737,7 +736,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkDomainInteger(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
@@ -748,7 +747,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkDomainNatural(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BInteger && !(<BInteger>e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -757,7 +756,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkDomainNatural1(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -766,7 +765,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkDomainString(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BString && !(<BString>e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -775,7 +774,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkDomainStruct(): BBoolean {
-		this.domain().getSet().forEach(e => {
+		this.domain().getSet().forEach((e: S) => {
 			if(e instanceof BStruct && !(<BStruct>e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -788,7 +787,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkRangeInteger(): BBoolean {
-		this.range().getSet().forEach(e => {
+		this.range().getSet().forEach((e: T) => {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
@@ -799,7 +798,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkRangeNatural(): BBoolean {
-		this.range().getSet().forEach(e => {
+		this.range().getSet().forEach((e: T) => {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -808,7 +807,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkRangeNatural1(): BBoolean {
-		this.range().getSet().forEach(e => {
+		this.range().getSet().forEach((e: T) => {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural1().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -817,7 +816,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkRangeString(): BBoolean {
-		this.range().getSet().forEach(e => {
+		this.range().getSet().forEach((e: T) => {
 			if(e instanceof BString && !(<BString> e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -826,7 +825,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	checkRangeStruct(): BBoolean {
-		this.range().getSet().forEach(e => {
+		this.range().getSet().forEach((e: T) => {
 			if(e instanceof BStruct && !(<BStruct> e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
@@ -839,7 +838,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	}
 
 	isFunction(): BBoolean {
-		this.domain().getSet().forEach(element => {
+		this.domain().getSet().forEach((element: S) => {
 			let range = <immutable.Set<T>> this.map.get(element);
 			if(range.size > 1) {
 				return new BBoolean(false);
@@ -875,9 +874,9 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 	
 	isInjection(): BBoolean {
 		let visited = immutable.Set();
-		this.domain().getSet().forEach(element => {
+		this.domain().getSet().forEach((element: S) => {
 			let range = <immutable.Set<T>> this.map.get(element);
-			range.forEach(rangeElement => {
+			range.forEach((rangeElement: T) => {
 				if(visited.contains(rangeElement)) {
 					return new BBoolean(false);
 				}
@@ -920,7 +919,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		sb = sb + "{";
 		for(let domainElement of this.map.keys()) {
 			let range = <immutable.Set<T>> this.map.get(domainElement)
-			range.forEach(rangeElement => {
+			range.forEach((rangeElement: T) => {
 				sb += "(";
 				sb += domainElement.toString();
 				sb += " |-> ";

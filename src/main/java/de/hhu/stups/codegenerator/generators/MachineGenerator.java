@@ -169,7 +169,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.substitutionGenerator = new SubstitutionGenerator(currentGroup, this, nameHandler, typeGenerator,
 																expressionGenerator, predicateGenerator, identifierGenerator, iterationConstructHandler,
 																parallelConstructHandler, recordStructGenerator, declarationGenerator, lambdaFunctionGenerator,
-																infiniteSetGenerator);
+																infiniteSetGenerator, forVisualisation);
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
@@ -285,6 +285,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		ST getter = currentGroup.getInstanceOf("getter");
 		TemplateHandler.add(getter, "variable", (variable.getKind().equals(DeclarationNode.Kind.ENUMERATED_SET) ? "_": "") + nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
 		TemplateHandler.add(getter, "returnType", typeGenerator.generate(variable.getType()));
+		TemplateHandler.add(getter, "isConstant", variable.getKind().equals(DeclarationNode.Kind.CONSTANT) || variable.getKind().equals(DeclarationNode.Kind.ENUMERATED_SET));
+		TemplateHandler.add(getter, "machineName", machineNode.getName());
 		return getter.render();
 	}
 

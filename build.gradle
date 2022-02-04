@@ -109,7 +109,18 @@ tasks.withType(JavaExec) {
 
         if(project.hasProperty('addition')) {
             arguments.add(addition)
+        } else {
+            arguments.add("")
         }
+
+        if(project.hasProperty('forVisualisation')) {
+            arguments.add(forVisualisation)
+        }
+
+        if(project.hasProperty('visualisation')) {
+            arguments.add(visualisation)
+        }
+
         args(arguments)
     }
 

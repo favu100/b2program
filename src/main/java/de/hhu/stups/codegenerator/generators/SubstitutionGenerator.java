@@ -78,12 +78,14 @@ public class SubstitutionGenerator {
 
     private int recordCounter;
 
+    private final boolean forVisualisation;
+
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                                  final TypeGenerator typeGenerator, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator,
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
                                  final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator,
-                                 final InfiniteSetGenerator infiniteSetGenerator) {
+                                 final InfiniteSetGenerator infiniteSetGenerator, final boolean forVisualisation) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -102,6 +104,7 @@ public class SubstitutionGenerator {
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
         this.recordCounter = 0;
+        this.forVisualisation = forVisualisation;
     }
 
     /*
@@ -150,7 +153,7 @@ public class SubstitutionGenerator {
                 .collect(Collectors.toList());
         constantsInitializations.addAll(node.getConstants().stream()
                 .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
-                .map(this::generateConstantFromDeferredSet)
+                .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
                 .collect(Collectors.toList()));
         return constantsInitializations;
     }
@@ -175,13 +178,15 @@ public class SubstitutionGenerator {
         }
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
         TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+        TemplateHandler.add(initialization, "machineName", node.getName());
         return initialization.render();
     }
 
-    private String generateConstantFromDeferredSet(DeclarationNode constant) {
+    private String generateConstantFromDeferredSet(DeclarationNode constant, String machineName) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         TemplateHandler.add(initialization, "val", declarationGenerator.callEnum(constant.getType().toString(), constant));
+        TemplateHandler.add(initialization, "machineName", machineName);
         return initialization.render();
     }
 
@@ -215,6 +220,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(select, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
         TemplateHandler.add(select, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(select, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
+        TemplateHandler.add(select, "forVisualisation", forVisualisation);
         return select.render();
     }
 

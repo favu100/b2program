@@ -28,7 +28,7 @@ export class BSet<T extends BObject> implements BObject{
 
 	toString(): string {
 		let sb: string = "{";
-		this.set.forEach(element => {
+		this.set.forEach((element: T) => {
 			if(sb.length >1) {
 				sb += ", ";
 			}
@@ -238,11 +238,11 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	min(): T {
-		return this.set.reduce((a, v) => {if(a<v){return a} return v});
+		return this.set.reduce((a: T, v: T) => {if(a<v){return a} return v});
 	}
 
 	max(): T {
-		return this.set.reduce((a, v) => {if(a>v){return a} return v});
+		return this.set.reduce((a: T, v: T) => {if(a>v){return a} return v});
 	}
 
 	pow(): BSet<BSet<T>> {

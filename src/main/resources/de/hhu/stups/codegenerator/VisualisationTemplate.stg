@@ -4,7 +4,8 @@ document, false, for, function, import, true, var
 
 
 visulisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, variableUpdates, includedMachines) ::= <<
-import <machineName> from "./<machineName>.js"
+import <machineName> from "./<machineName>.js";
+import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">
 <machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
 <machineEnums : {enum | import {enum_<enum>\} from "./<machineName>.js"<\n>}>
@@ -12,6 +13,7 @@ import <machineName> from "./<machineName>.js"
 
 var <initialMachineVar()> = new <machineName>();
 var _state_list = [];
+var _transition_list = [];
 var _included_machines = {};
 _included_machines["<machineName>"] = function(){return <initialMachineVar()>};
 <includedMachines; separator="\n">
@@ -41,12 +43,31 @@ var _buttonLeft = document.createElement("button");
 var _buttonRight = document.createElement("button");
 
 function checkTransitions () {
+    let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
     for(event in _machine_events) {
-      var transition = <initialMachineVar()>["_tr_" + event]();
+      var transition;
+      if(_transition_list[index]?.[event] == null ?? true) {
+         transition = <initialMachineVar()>["_tr_" + event]();
+         _transition_list[index][event] = transition;
+      } else {
+         transition = _transition_list[index][event];
+      }
       if(!(transition instanceof BSet)) {
         _machine_events[event].disabled = !transition;
       } else if (transition.size().intValue() == 0) {
         _machine_events[event].disabled = true;
+      } else {
+        let collator = new Intl.Collator([], {numeric: true});
+        for(let parameter of _machine_events[event].parameterNames) {
+            var datalist = document.querySelector("#" + event + "_" + parameter + "_datalist");
+            datalist.replaceChildren();
+
+            for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
+                let option = document.createElement("option");
+                option.text = value.toString();
+                datalist.appendChild(option);
+            }
+        }
       }
     }
     _buttonLeft.disabled = document.querySelector(".active").index \<= 0;
@@ -67,11 +88,13 @@ function createHistoryElement(text, index) {
   var history_element = document.createElement("span");
   history_element.innerHTML = text + "\</br>";
   history_element.index = index;
-  document.querySelectorAll("span").forEach(element => element.classList.remove("active"));
+  document.querySelectorAll("span.active").forEach(element => element.classList.remove("active"));
   history_element.classList.add("active");
   history_element.onclick = _history_onclick_function;
   _state_list = _state_list.slice(0, index);
   _state_list.push(<initialMachineVar()>._copy());
+  _transition_list = _transition_list.slice(0, index);
+  _transition_list.push({});
   while(_history_view.querySelectorAll("span").length > index && _history_view.lastChild !== null) {
     _history_view.removeChild(_history_view.lastChild);
   }
@@ -101,6 +124,7 @@ _history_view_buttons.appendChild(_buttonRight);
 createHistoryElement("Initialisation", 0);
 
 var _param_div;
+var _param_datalist;
 var _onclick_function;
 var _machine_events = {};
 <if(svgName)>var _svg_events = {};<endif>
@@ -134,6 +158,7 @@ _operations_view.appendChild(_param_div);
 
 _machine_events["<machineEvent>"].style.gridColumn="-1";
 _machine_events["<machineEvent>"].innerHTML = "<machineEvent>";
+_machine_events["<machineEvent>"].parameterNames = [<parameterNames: {param | "<param>", }>];
 _machine_events["<machineEvent>"].onclick = <onclick_function(false, machineEvent, parameterNames)>
 _operations_view.appendChild(_machine_events["<machineEvent>"]);
 
@@ -148,7 +173,14 @@ _svg_events["<machineEventId>"].onclick = <onclick_function(parameterMap, machin
 onclick_function(parameterMap, machineEvent, parameterNames) ::= <<
 function() {
   var parameters = <if(parameterMap)><parameterMap><else>{}<endif>;
-  var transition = <initialMachineVar()>._tr_<machineEvent>();
+  let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+  var transition;
+  if(_transition_list[index]?.["<machineEvent>"] == null ?? true) {
+      transition = <initialMachineVar()>["_tr_<machineEvent>"]();
+      _transition_list[index]["<machineEvent>"] = transition;
+  } else {
+      transition = _transition_list[index]["<machineEvent>"];
+  }
   if(!(transition instanceof BSet)) {
     if(!transition) {
         alert("Event <machineEvent> is not enabled!");
@@ -166,9 +198,35 @@ function() {
         return;
     }
   }
-  var returnValue = <initialMachineVar()>.<machineEvent>(<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>);
-  createHistoryElement("<machineEvent>" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-  updateVisuals();
+  try {
+    var returnValue = <initialMachineVar()>.<machineEvent>(<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>);
+    createHistoryElement("<machineEvent>" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+    updateVisuals();
+  } catch (error) {
+    if(! error instanceof SelectError) {
+        throw error;
+    }
+    if(transition instanceof BSet) {
+        var parameterTuple = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>].reduce((a, e) => new BTuple(a, e));
+        transition = transition.difference(new BSet(parameterTuple));
+        _transition_list[index]["<machineEvent>"] = transition;
+        if(transition.size().intValue() == 0) {
+            _machine_events["<machineEvent>"].disabled = true;
+        }
+
+        let collator = new Intl.Collator([], {numeric: true});
+        for(let parameter of _machine_events["<machineEvent>"].parameterNames) {
+            var datalist = document.querySelector("#<machineEvent>_" + parameter + "_datalist");
+            datalist.replaceChildren();
+            for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
+                let option = document.createElement("option");
+                option.text = value.toString();
+                datalist.appendChild(option);
+            }
+        }
+    }
+    alert(error.message);
+  }
 }
 
 >>
@@ -180,6 +238,10 @@ var <name>_label = document.createElement("label")
 _param_div.appendChild(<name>_label);
 var <name> = document.createElement("input");
 <name>.id="<name>";
+_param_datalist = document.createElement("datalist");
+_param_datalist.id="<eventName>_<name>_datalist";
+_param_div.appendChild(_param_datalist);
+<name>.setAttribute("list", "<eventName>_<name>_datalist");
 <getValueMethod>
 _param_div.appendChild(<name>);
 _machine_events["<eventName>"]["<name>"] = <name>;

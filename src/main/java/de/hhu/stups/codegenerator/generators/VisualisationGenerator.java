@@ -166,7 +166,7 @@ public class VisualisationGenerator{
     ST visualUpdate = visualisationGroup.getInstanceOf("visualUpdate");
     TemplateHandler.add(visualUpdate, "machineVar", item.getId());
     TemplateHandler.add(visualUpdate, "attribute", item.getAttribute());
-    TemplateHandler.add(visualUpdate, "expression", expressionGenerator.visitExprNode(item.getExprNode()).replaceAll("this.", "_machine.").replaceAll("_machine." + visBProject.getProject().getMainMachine().getName() + ".", "_machine.")+ ".getValue()");
+    TemplateHandler.add(visualUpdate, "expression", expressionGenerator.visitExprNode(item.getExprNode()).replaceAll("BRelation<.*>", "BRelation").replaceAll("this.", "_machine.").replaceAll("_machine." + visBProject.getProject().getMainMachine().getName() + ".", "_machine.")+ ".getValue()");
 
     return visualUpdate.render();
   }

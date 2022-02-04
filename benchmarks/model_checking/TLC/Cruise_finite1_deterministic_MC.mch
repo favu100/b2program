@@ -3,31 +3,13 @@ VOLVO CRUISE CONTROLLER ABSTRACT MODEL
 *
 ******************************************************************************/
 
- MACHINE 
+ MACHINE
     Cruise_finite1_deterministic_MC
 
 SETS
     RSset = {RSnone, RSpos, RSneg, RSequal};
     ODset = {ODnone, ODclose, ODveryclose}
 
-DEFINITIONS
-	/*(ObstacleStatusJustChanged = FALSE & 			       CCInitialisationInProgress = FALSE & 			       CruiseSpeedChangeInProgress = FALSE) == (ObstacleStatusJustChanged = FALSE &
-			       CCInitialisationInProgress = FALSE &
-			       CruiseSpeedChangeInProgress = FALSE);*/
-  ASSERT_LTL == "G (e(SetCruiseSpeed) => e(CruiseBecomesNotAllowed))";
-  ASSERT_LTL1 == "G (e(CruiseBecomesNotAllowed) => e(SetCruiseSpeed))";
-  ASSERT_LTL2 == "G (e(CruiseBecomesNotAllowed) => e(ObstacleDisappears))"
-/* LTL Formulas
-   G (e(SetCruiseSpeed) -> e(CruiseBecomesNotAllowed)) TRUE  (2.62 seconds)
-   G (e(CruiseBecomesNotAllowed) -> e(SetCruiseSpeed)) TRUE
-   G (e(CruiseBecomesNotAllowed) -> e(ObstacleDisappears))  FALSE
-   G (e(CruiseBecomesAllowed) -> X e(SetCruiseSpeed))  FALSE (12.78 seconds)
-   G ([CruiseBecomesAllowed] -> X e(SetCruiseSpeed))  TRUE (14.11 seconds)
-
-  G( e(CruiseOff) => Y O [SetCruiseSpeed]) TRUE 12.05 secs (10850 atoms)
-
-G( e(CruiseOff) => O [CruiseBecomesNotAllowed])  -> FALSE
-*/
  VARIABLES
  /* User level variables */
     CruiseAllowed,
@@ -146,7 +128,7 @@ G( e(CruiseOff) => O [CruiseBecomesNotAllowed])  -> FALSE
 
 
     CruiseBecomesAllowed = SELECT
-        CruiseAllowed = FALSE 
+        CruiseAllowed = FALSE
     THEN
         CruiseAllowed := TRUE
     END;
@@ -275,7 +257,7 @@ G( e(CruiseOff) => O [CruiseBecomesNotAllowed])  -> FALSE
                 => vtktg = FALSE) &
            CruiseSpeedChangeInProgress  = TRUE
     THEN
-	
+
         VehicleTryKeepTimeGap := vtktg ||
         VehicleTryKeepSpeed := vtks
     END;
@@ -552,7 +534,7 @@ END
 /*
 CTL:
   e(b(\'SetCruiseSpeed\'/0))
-  ef(and(e(b(\'SetCruiseSpeed\'/0)),not(e(b(\'CruiseBecomesNotAllowed\'/0))))) 
+  ef(and(e(b(\'SetCruiseSpeed\'/0)),not(e(b(\'CruiseBecomesNotAllowed\'/0)))))
 
 ProB: has explored all states (1360 states)
 No invariant violation or deadlock found

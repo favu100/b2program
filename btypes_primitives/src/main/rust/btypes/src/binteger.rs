@@ -104,11 +104,11 @@ impl BInteger {
         return *self;
     }
 
-    pub fn isInteger() -> BBoolean {
+    pub fn isInteger(&self) -> BBoolean {
         return BBoolean::new(true);
     }
 
-    pub fn isNotInteger() -> BBoolean {
+    pub fn isNotInteger(&self) -> BBoolean {
         return BBoolean::new(false);
     }
 

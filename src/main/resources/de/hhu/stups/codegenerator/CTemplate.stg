@@ -310,3 +310,6 @@ record_private_variable_prefix() ::= <<
 
 include_initialization() ::= <<
 >>
+
+transition_cache_declaration(type, identifier, operationHasParams) ::= <<
+>>

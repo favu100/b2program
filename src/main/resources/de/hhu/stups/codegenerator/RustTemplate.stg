@@ -14,6 +14,7 @@ use std::collections::{HashMap, HashSet, LinkedList};
 use im::HashMap as PersistentHashMap;
 use threadpool::ThreadPool;
 use std::sync::mpsc::channel;
+use derivative::Derivative;
 <endif>
 use std::fmt;
 use rand::{thread_rng, Rng};
@@ -30,14 +31,18 @@ pub enum MC_TYPE { BFS, DFS, MIXED }
 
 <enums; separator="\n\n">
 
-#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
+<if(forModelChecking)>
+#[derive(Derivative)]
+#[derivative(Clone, Default, Debug, Hash, PartialEq, Eq)]
+<else>#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]<\n><endif>
 pub struct <machine> {
     <if(declarations)><declarations; separator="\n"><endif>
     <if(includes)><includes; separator="\n"><endif>
     <if(constants_declarations)><constants_declarations; separator="\n"><endif>
     <sets; separator="\n">
-    <if(forModelChecking)><transitionCachesDeclaration; separator="\n"><endif>
-    //TODO: take _tr_cahces out of hash
+    <if(forModelChecking)>
+    #[derivative(Hash="ignore", PartialEq="ignore")]
+    <transitionCachesDeclaration; separator="\n#[derivative(Hash=\"ignore\", PartialEq=\"ignore\")]\n"><endif>
 }
 
 impl <machine> {
@@ -645,15 +650,15 @@ relation_predicate(predicates, checkElementOf) ::= <<
 >>
 
 relation_check_domain(arg, domain) ::= <<
-<arg>.checkDomain(<domain>)
+<arg>.checkDomain(&<domain>)
 >>
 
 relation_check_range(arg, range) ::= <<
-<arg>.checkRange(<range>)
+<arg>.checkRange(&<range>)
 >>
 
 relation_total_partial(arg, operator, domain) ::= <<
-<arg>.<operator>(<domain>)
+<arg>.<operator>(&<domain>)
 >>
 
 relation_function(arg, operator) ::= <<
@@ -661,7 +666,7 @@ relation_function(arg, operator) ::= <<
 >>
 
 relation_surjection(arg, range) ::= <<
-<arg>.isSurjection(<range>)
+<arg>.isSurjection(&<range>)
 >>
 
 relation_injection(arg) ::= <<
@@ -669,7 +674,7 @@ relation_injection(arg) ::= <<
 >>
 
 relation_bijection(arg, range) ::=<<
-<arg>.isBijection(<range>)
+<arg>.isBijection(&<range>)
 >>
 
 string(string) ::= <<
@@ -1161,7 +1166,7 @@ public String toString() {
 parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<set> = <set>_.union(&BSet::new(vec![<element>]));
+<set> = <set>._union(&BSet::new(vec![<element>]));
 <else>
 if (<predicate>).booleanValue() {
     <set> = <set>._union(&BSet::new(vec![<element>]));

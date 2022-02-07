@@ -9,6 +9,7 @@ edition = "2018"
 rand = "0.8.3"
 im = "15.0.0"
 threadpool = "1.8.1"
+derivative = "2.2.0"
 btypes = { path = "../btypes" }
 
 [profile.release]

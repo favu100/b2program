@@ -728,3 +728,6 @@ enum_import() ::= <<
 
 include_initialization() ::= <<
 >>
+
+transition_cache_declaration(type, identifier, operationHasParams) ::= <<
+>>

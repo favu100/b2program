@@ -2,7 +2,6 @@ package de.hhu.stups.codegenerator.rust;
 
 import de.hhu.stups.codegenerator.CodeGenerator;
 import de.hhu.stups.codegenerator.GeneratorMode;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -45,7 +44,11 @@ public class TestRS {
     }
 
     public void testRSMC(String machine) throws Exception {
-        testRS(machine, machine, null, true, true);
+        testRSMC(machine, true);
+    }
+
+    public void testRSMC(String machine, boolean execute) throws Exception {
+        testRS(machine, machine, null, execute, true);
         //TODO: validation of MC result
     }
 

@@ -331,6 +331,10 @@ public class TestMachines extends TestJava {
         testJavaMC("Library_3_3");
     }
 
+    @Test
+    public void testLift_MC_Large() throws Exception {
+        testJavaMC("Lift_MC_Large");
+    }
 
 
 }

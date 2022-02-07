@@ -245,4 +245,9 @@ public class TestMachines extends TestCpp {
         testCppMC("ArithmeticLaws");
     }
 
+    @Test
+    public void testLift_MC_Large() throws Exception {
+        testCppMC("Lift_MC_Large");
+    }
+
 }

@@ -183,7 +183,6 @@ public class TestMachines extends TestRS {
 
     @Test
     public void Train1BeebookDeterministic_MC() throws Exception {
-        // 1.044.337 states and way too many transitions
         testRSMC("Train_1_beebook_deterministic_MC", false);
     }
 
@@ -209,12 +208,12 @@ public class TestMachines extends TestRS {
 
     @Test
     public void Train1BeebookDeterministic_MC_POR() throws Exception {
-        testRSMC("Train_1_beebook_deterministic_MC_POR");
+        testRSMC("Train_1_beebook_deterministic_MC_POR", false);
     }
 
     @Test
     public void Train1BeebookDeterministic_MC_POR_v2() throws Exception {
-        testRSMC("Train_1_beebook_deterministic_MC_POR_v2");
+        testRSMC("Train_1_beebook_deterministic_MC_POR_v2", false);
     }
 
     @Test
@@ -224,7 +223,7 @@ public class TestMachines extends TestRS {
 
     @Test
     public void IncrementalStagePackingTestLargeSlow() throws Exception {
-        testRSMC("IncrementalStatePackingTestLargeSlow", false);
+        testRSMC("IncrementalStatePackingTestLargeSlow");
     }
 
     @Test
@@ -280,11 +279,6 @@ public class TestMachines extends TestRS {
     @Test
     public void testPitmanController_TIME_MC_v4() throws Exception {
         testRS("visualisation/PitmanController_TIME_MC_v4");
-    }
-
-    @Test
-    public void testButton() throws Exception {
-        testRSMC("visualisation/Button");
     }
 
     @Test

@@ -100,17 +100,18 @@ public class TestRS {
         }
 
         String result = streamToString(executeProcess.getInputStream());
+        if (modelChecking && !machine.contains("MC")) machine += "_MC";
+        File outFile = Paths.get(CodeGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/" + machine + ".out").toURI()).toFile();
+        String expectedOutput = streamToString(new FileInputStream(outFile)).replaceAll("[\n\r]", "");
+        result = result.replaceAll("\n", "");
 
         if (!modelChecking) {
-            result = result.replaceAll("\n", "");
-            File outFile = Paths.get(CodeGenerator.class.getClassLoader().getResource("de/hhu/stups/codegenerator/" + machine + ".out").toURI()).toFile();
-            String expectedOutput = streamToString(new FileInputStream(outFile)).replaceAll("[\n\r]", "");
             System.out.println("Assert: " + result + " = " + expectedOutput);
             assertEquals(expectedOutput, result);
         } else {
             System.out.println("Asserting Success: ");
             System.out.println(result);
-            assertTrue(result.contains("SUCCESSFUL"));
+            assertTrue(result.contains(expectedOutput));
         }
         cleanUp(newMainFile);
         rsFilePaths.forEach(p -> cleanUp(p.toFile()));

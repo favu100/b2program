@@ -205,13 +205,13 @@ m.<identifier> = <identifier>;
 
 record_field_get(type, field) ::= <<
 pub fn get_<field>(&self) -> <type> {
-    return self.<field>;
+    return self.<field>.clone();
 }
 >>
 
 record_field_override(name, field, type, val, parameters) ::= <<
 pub fn override_<field>(&self, <field>: <type>) -> <name> {
-    return <name>::new(<parameters; separator=", ">);
+    return <name>::new(<parameters; separator=".clone(), "><if(parameters)>.clone()<endif>);
 }
 <if(val)>// val = '<val>'<endif>
 >>
@@ -229,7 +229,6 @@ self.<field> != other.<field>
 >>
 
 record_assignment(identifier) ::= <<
-//TODO: record_assignment(<identifier>)
 >>
 
 record(struct, parameters) ::= <<
@@ -804,8 +803,9 @@ model_check_invariants(machine, checkInvariants, invariants) ::= <<
 pub fn checkInvariants(state: &<machine>,
                        isCaching: bool,
                        dependent_invariant_m: Arc\<Mutex\<HashMap\<<machine>, HashSet\<&str>\>>\> ) -> bool {
-    if isCaching {
-        let dependent_invariants_of_state = dependent_invariant_m.lock().unwrap().get(&state).unwrap().clone();
+    let cached_invariants = dependent_invariant_m.lock().unwrap().get(&state).cloned();
+    if cached_invariants.is_some() && isCaching {
+        let dependent_invariants_of_state = cached_invariants.unwrap().clone();
         <checkInvariants; separator="\n">
         return true;
     }
@@ -939,11 +939,11 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
 
         let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-        next_states.iter().for_each(|next_state| {
-            if !states.contains(next_state) {
+        next_states.iter().cloned().for_each(|next_state| {
+            if !states.contains(&next_state) {
                 let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                 states.insert(next_state.clone());
-                collection_m.lock().unwrap().push_back(next_state.clone());
+                collection_m.lock().unwrap().push_back(next_state);
                 if cnum_states % 50000 == 0 {
                     println!("VISITED STATES: {}", cnum_states);
                     println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -1032,14 +1032,14 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
             let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
             //println!("Thread {:?} executing", thread::current().id());
-            next_states.iter().for_each(|next_state| {
+            next_states.iter().cloned().for_each(|next_state| {
                 {
                     let mut states = states_m2.lock().unwrap();
                     let mut collection = collection_m2.lock().unwrap();
-                    if !states.contains(next_state) {
+                    if !states.contains(&next_state) {
                         let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                         states.insert(next_state.clone());
-                        collection.push_back(next_state.clone());
+                        collection.push_back(next_state);
                         //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                         if cnum_states % 50000 == 0 {
                             println!("VISITED STATES: {}", cnum_states);

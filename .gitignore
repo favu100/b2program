@@ -168,3 +168,5 @@ benchmarks/execution/ProB/stdlib
 **/Cargo.lock
 **/vendor/
 btypes_primitives/**/*.js
+benchmarks/model_checking/ProB/lib
+benchmarks/model_checking/ProB/stdlib

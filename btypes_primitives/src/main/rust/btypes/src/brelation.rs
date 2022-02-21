@@ -6,7 +6,7 @@ use crate::binteger::{BInt, BInteger, FromBInt};
 use crate::btuple::BTuple;
 
 use std::fmt;
-use std::hash::Hash;
+use std::hash::{Hash, Hasher};
 use std::convert::TryInto;
 use std::iter::FromIterator;
 use rand::prelude::IteratorRandom;
@@ -23,9 +23,20 @@ enum CombiningType {
     UNION
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct BRelation<L: BObject, R: BObject> {
     map: HashMap<L, OrdSet<R>>,
+}
+
+impl<L: BObject, R: BObject> Hash for BRelation<L, R> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let mut kvs = self.map.iter().collect::<Vec<(&L, &OrdSet<R>)>>();
+        kvs.sort_by(|(k1, _v1), (k2, _v2)| k1.cmp(k2));
+        for (key, value) in kvs {
+            key.hash(state);
+            value.iter().for_each(|v| v.hash(state));
+        }
+    }
 }
 
 pub trait TBRelation {

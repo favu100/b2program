@@ -147,7 +147,12 @@ public class TestMachines extends TestRS {
 
     @Test
     public void testCanBusMC() throws Exception {
-        testRSMC("CAN_BUS_tlc", false);
+        testRSMC("CAN_BUS_tlc");
+    }
+
+    @Test
+    public void testCanBus_testMC() throws Exception {
+        testRSMC("CAN_BUS_tlc_test");
     }
 
     @Test
@@ -183,7 +188,7 @@ public class TestMachines extends TestRS {
 
     @Test
     public void Train1BeebookDeterministic_MC() throws Exception {
-        testRSMC("Train_1_beebook_deterministic_MC", false);
+        testRSMC("Train_1_beebook_deterministic_MC");
     }
 
     @Test
@@ -208,7 +213,7 @@ public class TestMachines extends TestRS {
 
     @Test
     public void Train1BeebookDeterministic_MC_POR() throws Exception {
-        testRSMC("Train_1_beebook_deterministic_MC_POR", false);
+        testRSMC("Train_1_beebook_deterministic_MC_POR");
     }
 
     @Test
@@ -268,7 +273,7 @@ public class TestMachines extends TestRS {
 
     @Test
     public void testsort_m2_data1000_MC() throws Exception {
-        testRSMC("sort_m2_data1000_MC", false);
+        testRSMC("sort_m2_data1000_MC");
     }
 
     @Test
@@ -283,6 +288,11 @@ public class TestMachines extends TestRS {
 
     @Test
     public void testLandingGear_MC() throws Exception {
-        testRSMC("landing_gear/LandingGear_R6", false);
+        testRSMC("landing_gear/LandingGear_R6");
+    }
+
+    @Test
+    public void testNotaV2_MC() throws Exception {
+        testRSMC("nota_v2");
     }
 }

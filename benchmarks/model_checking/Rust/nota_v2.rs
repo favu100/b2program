@@ -22,58 +22,7 @@ use btypes::btuple::BTuple;
 #[derive(Clone, Copy)]
 pub enum MC_TYPE { BFS, DFS, MIXED }
 
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct _Struct1 {
-    sid: BSet<SID>,
-    err: RM_ERROR_CODES,
-}
-
-impl fmt::Display for _Struct1 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "sid: {},err: {}", self.sid ,self.err)
-    }
-}
-
-impl BObject for _Struct1 {}
-impl BStruct for _Struct1 {}
-
-impl _Struct1 {
-    pub fn new(mut sid: BSet<SID>, mut err: RM_ERROR_CODES) -> _Struct1 {
-        let mut m: _Struct1 = Default::default();
-        m.sid = sid;m.err = err;
-        return m;
-    }
-
-    pub fn get_sid(&self) -> BSet<SID> {
-        return self.sid;
-    }
-
-    pub fn get_err(&self) -> RM_ERROR_CODES {
-        return self.err;
-    }
-
-    pub fn override_sid(&self, sid: BSet<SID>) -> _Struct1 {
-        return _Struct1::new(sid, self.err);
-    }
-
-
-    pub fn override_err(&self, err: RM_ERROR_CODES) -> _Struct1 {
-        return _Struct1::new(self.sid, err);
-    }
-
-
-    pub fn equal(&self, other: &_Struct1) -> BBoolean {
-        return BBoolean::new(self.sid == other.sid && self.err == other.err);
-    }
-
-    pub fn unequal(&self, other: &_Struct1) -> BBoolean {
-        return BBoolean::new(self.sid != other.sid || self.err != other.err);
-    }
-
-    //TODO: record_assignment(sid)//TODO: record_assignment(err)
-}
-
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct _Struct5 {
     soc: BSet<SOCKET>,
     err: IN_ERROR_CODES,
@@ -96,20 +45,20 @@ impl _Struct5 {
     }
 
     pub fn get_soc(&self) -> BSet<SOCKET> {
-        return self.soc;
+        return self.soc.clone();
     }
 
     pub fn get_err(&self) -> IN_ERROR_CODES {
-        return self.err;
+        return self.err.clone();
     }
 
     pub fn override_soc(&self, soc: BSet<SOCKET>) -> _Struct5 {
-        return _Struct5::new(soc, self.err);
+        return _Struct5::new(soc.clone(), self.err.clone());
     }
 
 
     pub fn override_err(&self, err: IN_ERROR_CODES) -> _Struct5 {
-        return _Struct5::new(self.soc, err);
+        return _Struct5::new(self.soc.clone(), err.clone());
     }
 
 
@@ -121,10 +70,9 @@ impl _Struct5 {
         return BBoolean::new(self.soc != other.soc || self.err != other.err);
     }
 
-    //TODO: record_assignment(soc)//TODO: record_assignment(err)
 }
 
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct _Struct3 {
     sid: BSet<SID>,
     err: IN_ERROR_CODES,
@@ -147,20 +95,20 @@ impl _Struct3 {
     }
 
     pub fn get_sid(&self) -> BSet<SID> {
-        return self.sid;
+        return self.sid.clone();
     }
 
     pub fn get_err(&self) -> IN_ERROR_CODES {
-        return self.err;
+        return self.err.clone();
     }
 
     pub fn override_sid(&self, sid: BSet<SID>) -> _Struct3 {
-        return _Struct3::new(sid, self.err);
+        return _Struct3::new(sid.clone(), self.err.clone());
     }
 
 
     pub fn override_err(&self, err: IN_ERROR_CODES) -> _Struct3 {
-        return _Struct3::new(self.sid, err);
+        return _Struct3::new(self.sid.clone(), err.clone());
     }
 
 
@@ -172,12 +120,61 @@ impl _Struct3 {
         return BBoolean::new(self.sid != other.sid || self.err != other.err);
     }
 
-    //TODO: record_assignment(sid)//TODO: record_assignment(err)
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct _Struct1 {
+    sid: BSet<SID>,
+    err: RM_ERROR_CODES,
+}
+
+impl fmt::Display for _Struct1 {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "sid: {},err: {}", self.sid ,self.err)
+    }
+}
+
+impl BObject for _Struct1 {}
+impl BStruct for _Struct1 {}
+
+impl _Struct1 {
+    pub fn new(mut sid: BSet<SID>, mut err: RM_ERROR_CODES) -> _Struct1 {
+        let mut m: _Struct1 = Default::default();
+        m.sid = sid;m.err = err;
+        return m;
+    }
+
+    pub fn get_sid(&self) -> BSet<SID> {
+        return self.sid.clone();
+    }
+
+    pub fn get_err(&self) -> RM_ERROR_CODES {
+        return self.err.clone();
+    }
+
+    pub fn override_sid(&self, sid: BSet<SID>) -> _Struct1 {
+        return _Struct1::new(sid.clone(), self.err.clone());
+    }
+
+
+    pub fn override_err(&self, err: RM_ERROR_CODES) -> _Struct1 {
+        return _Struct1::new(self.sid.clone(), err.clone());
+    }
+
+
+    pub fn equal(&self, other: &_Struct1) -> BBoolean {
+        return BBoolean::new(self.sid == other.sid && self.err == other.err);
+    }
+
+    pub fn unequal(&self, other: &_Struct1) -> BBoolean {
+        return BBoolean::new(self.sid != other.sid || self.err != other.err);
+    }
+
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum INTERCONNECTNODE {
-    node1, 
+    node1,
     node2
 }
 impl INTERCONNECTNODE {
@@ -190,16 +187,16 @@ impl Default for INTERCONNECTNODE {
 }
 impl fmt::Display for INTERCONNECTNODE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           INTERCONNECTNODE::node1 => write!(f, "node1"),
-           INTERCONNECTNODE::node2 => write!(f, "node2"),
-       }
+        match *self {
+            INTERCONNECTNODE::node1 => write!(f, "node1"),
+            INTERCONNECTNODE::node2 => write!(f, "node2"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SOCKET {
-    socket1, 
+    socket1,
     socket2
 }
 impl SOCKET {
@@ -212,16 +209,16 @@ impl Default for SOCKET {
 }
 impl fmt::Display for SOCKET {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           SOCKET::socket1 => write!(f, "socket1"),
-           SOCKET::socket2 => write!(f, "socket2"),
-       }
+        match *self {
+            SOCKET::socket1 => write!(f, "socket1"),
+            SOCKET::socket2 => write!(f, "socket2"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SERVICE {
-    service1, 
+    service1,
     service2
 }
 impl SERVICE {
@@ -234,16 +231,16 @@ impl Default for SERVICE {
 }
 impl fmt::Display for SERVICE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           SERVICE::service1 => write!(f, "service1"),
-           SERVICE::service2 => write!(f, "service2"),
-       }
+        match *self {
+            SERVICE::service1 => write!(f, "service1"),
+            SERVICE::service2 => write!(f, "service2"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RESOURCEMANAGER {
-    resource1, 
+    resource1,
     resource2
 }
 impl RESOURCEMANAGER {
@@ -256,16 +253,16 @@ impl Default for RESOURCEMANAGER {
 }
 impl fmt::Display for RESOURCEMANAGER {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           RESOURCEMANAGER::resource1 => write!(f, "resource1"),
-           RESOURCEMANAGER::resource2 => write!(f, "resource2"),
-       }
+        match *self {
+            RESOURCEMANAGER::resource1 => write!(f, "resource1"),
+            RESOURCEMANAGER::resource2 => write!(f, "resource2"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SID {
-    SID1, 
+    SID1,
     SID2
 }
 impl SID {
@@ -278,16 +275,16 @@ impl Default for SID {
 }
 impl fmt::Display for SID {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           SID::SID1 => write!(f, "SID1"),
-           SID::SID2 => write!(f, "SID2"),
-       }
+        match *self {
+            SID::SID1 => write!(f, "SID1"),
+            SID::SID2 => write!(f, "SID2"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RM_ERROR_CODES {
-    RM_SERVICE_FOUND, 
+    RM_SERVICE_FOUND,
     RM_SERVICE_NOT_FOUND
 }
 impl RM_ERROR_CODES {
@@ -300,24 +297,24 @@ impl Default for RM_ERROR_CODES {
 }
 impl fmt::Display for RM_ERROR_CODES {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           RM_ERROR_CODES::RM_SERVICE_FOUND => write!(f, "RM_SERVICE_FOUND"),
-           RM_ERROR_CODES::RM_SERVICE_NOT_FOUND => write!(f, "RM_SERVICE_NOT_FOUND"),
-       }
+        match *self {
+            RM_ERROR_CODES::RM_SERVICE_FOUND => write!(f, "RM_SERVICE_FOUND"),
+            RM_ERROR_CODES::RM_SERVICE_NOT_FOUND => write!(f, "RM_SERVICE_NOT_FOUND"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum IN_ERROR_CODES {
-    IN_REGISTRATION_OK, 
-    IN_REGISTRATION_FAILED, 
-    IN_DEREGISTRATION_OK, 
-    IN_DEREGISTRATION_FAILED, 
-    IN_NO_SOCKET_CONNECTION, 
-    IN_SOCKET_CONNECTION_OK, 
-    IN_NO_AVAILABLE_SERVICE, 
-    IN_SERVICE_AVAILABLE, 
-    IN_TARGET_SOCKET_GRANTED, 
+    IN_REGISTRATION_OK,
+    IN_REGISTRATION_FAILED,
+    IN_DEREGISTRATION_OK,
+    IN_DEREGISTRATION_FAILED,
+    IN_NO_SOCKET_CONNECTION,
+    IN_SOCKET_CONNECTION_OK,
+    IN_NO_AVAILABLE_SERVICE,
+    IN_SERVICE_AVAILABLE,
+    IN_TARGET_SOCKET_GRANTED,
     IN_TARGET_SOCKET_NOT_GRANTED
 }
 impl IN_ERROR_CODES {
@@ -330,18 +327,18 @@ impl Default for IN_ERROR_CODES {
 }
 impl fmt::Display for IN_ERROR_CODES {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           IN_ERROR_CODES::IN_REGISTRATION_OK => write!(f, "IN_REGISTRATION_OK"),
-           IN_ERROR_CODES::IN_REGISTRATION_FAILED => write!(f, "IN_REGISTRATION_FAILED"),
-           IN_ERROR_CODES::IN_DEREGISTRATION_OK => write!(f, "IN_DEREGISTRATION_OK"),
-           IN_ERROR_CODES::IN_DEREGISTRATION_FAILED => write!(f, "IN_DEREGISTRATION_FAILED"),
-           IN_ERROR_CODES::IN_NO_SOCKET_CONNECTION => write!(f, "IN_NO_SOCKET_CONNECTION"),
-           IN_ERROR_CODES::IN_SOCKET_CONNECTION_OK => write!(f, "IN_SOCKET_CONNECTION_OK"),
-           IN_ERROR_CODES::IN_NO_AVAILABLE_SERVICE => write!(f, "IN_NO_AVAILABLE_SERVICE"),
-           IN_ERROR_CODES::IN_SERVICE_AVAILABLE => write!(f, "IN_SERVICE_AVAILABLE"),
-           IN_ERROR_CODES::IN_TARGET_SOCKET_GRANTED => write!(f, "IN_TARGET_SOCKET_GRANTED"),
-           IN_ERROR_CODES::IN_TARGET_SOCKET_NOT_GRANTED => write!(f, "IN_TARGET_SOCKET_NOT_GRANTED"),
-       }
+        match *self {
+            IN_ERROR_CODES::IN_REGISTRATION_OK => write!(f, "IN_REGISTRATION_OK"),
+            IN_ERROR_CODES::IN_REGISTRATION_FAILED => write!(f, "IN_REGISTRATION_FAILED"),
+            IN_ERROR_CODES::IN_DEREGISTRATION_OK => write!(f, "IN_DEREGISTRATION_OK"),
+            IN_ERROR_CODES::IN_DEREGISTRATION_FAILED => write!(f, "IN_DEREGISTRATION_FAILED"),
+            IN_ERROR_CODES::IN_NO_SOCKET_CONNECTION => write!(f, "IN_NO_SOCKET_CONNECTION"),
+            IN_ERROR_CODES::IN_SOCKET_CONNECTION_OK => write!(f, "IN_SOCKET_CONNECTION_OK"),
+            IN_ERROR_CODES::IN_NO_AVAILABLE_SERVICE => write!(f, "IN_NO_AVAILABLE_SERVICE"),
+            IN_ERROR_CODES::IN_SERVICE_AVAILABLE => write!(f, "IN_SERVICE_AVAILABLE"),
+            IN_ERROR_CODES::IN_TARGET_SOCKET_GRANTED => write!(f, "IN_TARGET_SOCKET_GRANTED"),
+            IN_ERROR_CODES::IN_TARGET_SOCKET_NOT_GRANTED => write!(f, "IN_TARGET_SOCKET_NOT_GRANTED"),
+        }
     }
 }
 
@@ -588,7 +585,8 @@ impl nota_v2 {
     }
 
     pub fn rm_getSid(&mut self, mut _self: RESOURCEMANAGER, mut ss: SERVICE) -> _Struct1 {
-        let mut sid: Option<BSet<SID>> = Option::None;|let mut err: Option<RM_ERROR_CODES> = Option::None;
+        let mut sid: Option<BSet<SID>> = Option::None;
+        let mut err: Option<RM_ERROR_CODES> = Option::None;
         //pre_assert
         err = Option::Some(RM_ERROR_CODES::RM_SERVICE_FOUND);
         sid = Option::Some(BSet::new(vec![self.rm_sids.functionCall(&ss)]).clone()).clone();
@@ -597,7 +595,8 @@ impl nota_v2 {
     }
 
     pub fn rm_getSid_Not_Found(&mut self, mut _self: RESOURCEMANAGER, mut ss: SERVICE) -> _Struct1 {
-        let mut sid: Option<BSet<SID>> = Option::None;|let mut err: Option<RM_ERROR_CODES> = Option::None;
+        let mut sid: Option<BSet<SID>> = Option::None;
+        let mut err: Option<RM_ERROR_CODES> = Option::None;
         //pre_assert
         sid = Option::Some(self._SID.difference(&self._SID).clone()).clone();
         err = Option::Some(RM_ERROR_CODES::RM_SERVICE_NOT_FOUND);
@@ -612,7 +611,8 @@ impl nota_v2 {
     }
 
     pub fn in_register_success(&mut self, mut _self: INTERCONNECTNODE, mut ss: SERVICE, mut si: SID) -> _Struct3 {
-        let mut sid: Option<BSet<SID>> = Option::None;|let mut err: Option<IN_ERROR_CODES> = Option::None;
+        let mut sid: Option<BSet<SID>> = Option::None;
+        let mut err: Option<IN_ERROR_CODES> = Option::None;
         //pre_assert
         let mut _ld_sids = self.sids.clone();
 
@@ -626,7 +626,8 @@ impl nota_v2 {
     }
 
     pub fn in_register_failed(&mut self, mut _self: INTERCONNECTNODE, mut ss: SERVICE) -> _Struct3 {
-        let mut sid: Option<BSet<SID>> = Option::None;|let mut err: Option<IN_ERROR_CODES> = Option::None;
+        let mut sid: Option<BSet<SID>> = Option::None;
+        let mut err: Option<IN_ERROR_CODES> = Option::None;
         //pre_assert
         sid = Option::Some(self._SID.difference(&self._SID).clone()).clone();
         err = Option::Some(IN_ERROR_CODES::IN_REGISTRATION_FAILED);
@@ -635,7 +636,8 @@ impl nota_v2 {
     }
 
     pub fn in_requestTargetSocket_Granted(&mut self, mut _self: INTERCONNECTNODE, mut ii: INTERCONNECTNODE, mut srcsoc: SOCKET, mut srcsid: SID, mut targsid: SID, mut newsoc: SOCKET) -> _Struct5 {
-        let mut soc: Option<BSet<SOCKET>> = Option::None;|let mut err: Option<IN_ERROR_CODES> = Option::None;
+        let mut soc: Option<BSet<SOCKET>> = Option::None;
+        let mut err: Option<IN_ERROR_CODES> = Option::None;
         //pre_assert
         let mut _ld_sockets = self.sockets.clone();
         let mut _ld_in_sockets = self.in_sockets.clone();
@@ -650,7 +652,8 @@ impl nota_v2 {
     }
 
     pub fn in_requestTargetSocket_NotGranted(&mut self, mut _self: INTERCONNECTNODE, mut ii: INTERCONNECTNODE, mut srcsoc: SOCKET, mut srcsid: SID, mut targsid: SID) -> _Struct5 {
-        let mut soc: Option<BSet<SOCKET>> = Option::None;|let mut err: Option<IN_ERROR_CODES> = Option::None;
+        let mut soc: Option<BSet<SOCKET>> = Option::None;
+        let mut err: Option<IN_ERROR_CODES> = Option::None;
         //pre_assert
         soc = Option::Some(self._SOCKET.difference(&self._SOCKET).clone()).clone();
         err = Option::Some(IN_ERROR_CODES::IN_TARGET_SOCKET_NOT_GRANTED);
@@ -1039,20 +1042,20 @@ impl nota_v2 {
         //if caching is enabled globally, this will just prefill those, if caching is
         for trans in to_invalidate.iter() {
             match *trans {
-                "_tr_constructor_interconnectNode" => {self._tr_constructor_interconnectNode(false);}, 
-                "_tr_constructor_resourceManager" => {self._tr_constructor_resourceManager(false);}, 
-                "_tr_constructor_service" => {self._tr_constructor_service(false);}, 
-                "_tr_constructor_socket" => {self._tr_constructor_socket(false);}, 
-                "_tr_rm_register" => {self._tr_rm_register(false);}, 
-                "_tr_rm_deregister" => {self._tr_rm_deregister(false);}, 
-                "_tr_rm_getSid" => {self._tr_rm_getSid(false);}, 
-                "_tr_rm_getSid_Not_Found" => {self._tr_rm_getSid_Not_Found(false);}, 
-                "_tr_in_announceResourceManager" => {self._tr_in_announceResourceManager(false);}, 
-                "_tr_in_register_success" => {self._tr_in_register_success(false);}, 
-                "_tr_in_register_failed" => {self._tr_in_register_failed(false);}, 
-                "_tr_in_requestTargetSocket_Granted" => {self._tr_in_requestTargetSocket_Granted(false);}, 
-                "_tr_in_requestTargetSocket_NotGranted" => {self._tr_in_requestTargetSocket_NotGranted(false);}, 
-                "_tr_svc_register" => {self._tr_svc_register(false);}, 
+                "_tr_constructor_interconnectNode" => {self._tr_constructor_interconnectNode(false);},
+                "_tr_constructor_resourceManager" => {self._tr_constructor_resourceManager(false);},
+                "_tr_constructor_service" => {self._tr_constructor_service(false);},
+                "_tr_constructor_socket" => {self._tr_constructor_socket(false);},
+                "_tr_rm_register" => {self._tr_rm_register(false);},
+                "_tr_rm_deregister" => {self._tr_rm_deregister(false);},
+                "_tr_rm_getSid" => {self._tr_rm_getSid(false);},
+                "_tr_rm_getSid_Not_Found" => {self._tr_rm_getSid_Not_Found(false);},
+                "_tr_in_announceResourceManager" => {self._tr_in_announceResourceManager(false);},
+                "_tr_in_register_success" => {self._tr_in_register_success(false);},
+                "_tr_in_register_failed" => {self._tr_in_register_failed(false);},
+                "_tr_in_requestTargetSocket_Granted" => {self._tr_in_requestTargetSocket_Granted(false);},
+                "_tr_in_requestTargetSocket_NotGranted" => {self._tr_in_requestTargetSocket_NotGranted(false);},
+                "_tr_svc_register" => {self._tr_svc_register(false);},
                 _ => {},
             }
         }
@@ -1929,10 +1932,10 @@ impl nota_v2 {
     fn next(collection_m: Arc<Mutex<LinkedList<nota_v2>>>, mc_type: MC_TYPE) -> nota_v2 {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
-                MC_TYPE::BFS   => collection.pop_front().unwrap(),
-                MC_TYPE::DFS   => collection.pop_back().unwrap(),
-                MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
-            };
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
     }
 
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
@@ -2028,11 +2031,11 @@ impl nota_v2 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-            next_states.iter().for_each(|next_state| {
-                if !states.contains(next_state) {
+            next_states.iter().cloned().for_each(|next_state| {
+                if !states.contains(&next_state) {
                     let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                     states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state.clone());
+                    collection_m.lock().unwrap().push_back(next_state);
                     if cnum_states % 50000 == 0 {
                         println!("VISITED STATES: {}", cnum_states);
                         println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -2067,7 +2070,7 @@ impl nota_v2 {
         let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
 
         if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() {
-                invariant_violated_b.store(true, Ordering::Release);
+            invariant_violated_b.store(true, Ordering::Release);
         }
 
         let states_m = Arc::new(Mutex::new(HashSet::<nota_v2>::new()));
@@ -2175,14 +2178,14 @@ impl nota_v2 {
                 let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().for_each(|next_state| {
+                next_states.iter().cloned().for_each(|next_state| {
                     {
                         let mut states = states_m2.lock().unwrap();
                         let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(next_state) {
+                        if !states.contains(&next_state) {
                             let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                             states.insert(next_state.clone());
-                            collection.push_back(next_state.clone());
+                            collection.push_back(next_state);
                             //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                             if cnum_states % 50000 == 0 {
                                 println!("VISITED STATES: {}", cnum_states);

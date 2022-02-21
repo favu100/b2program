@@ -130,7 +130,7 @@ pub fn get_<variable>(&self) -> <returnType> {
 
 operation(returnType, operationName, parameters, locals, body, return) ::= <<
 pub fn <operationName>(&mut self<if(parameters)>, <endif><parameters; separator=", ">) -> <returnType> {
-    <locals; separator="|">
+    <locals; separator="\n">
     <body>
     <return>
 }
@@ -164,7 +164,7 @@ BInteger::new(<if(useBigInteger)>b"<number>"<else><number><endif>)
 >>
 
 struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
-#[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct <name> {
     <if(declarations)><declarations; separator="\n"><endif>
 }

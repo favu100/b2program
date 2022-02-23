@@ -386,7 +386,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     pub fn isTotalNatural1(&self) -> BBoolean { return BBoolean::new(false); }
     pub fn isTotalString(&self) -> BBoolean { return BBoolean::new(false); }
     pub fn isTotalStruct(&self) -> BBoolean { return BBoolean::new(false); }
-    pub fn isPartial(&self, domain: &BSet<L>) -> BBoolean { return self.domain().strictSubset(domain); }
+    pub fn isPartial(&self, domain: &BSet<L>) -> BBoolean { return self.domain().subset(domain); }
     pub fn checkDomain(&self, domain: &BSet<L>) -> BBoolean { return self.domain().subset(domain); }
     pub fn checkRange(&self, range: &BSet<R>) -> BBoolean { return self.range().subset(range); }
 

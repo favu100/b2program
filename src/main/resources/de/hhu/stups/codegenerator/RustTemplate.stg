@@ -343,9 +343,16 @@ lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
 <if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
-quantified_predicate(identifier, forall, predicate) ::= <<
+quantified_predicate(identifier, forall, hasCondition, conditionalPredicate, predicate) ::= <<
+//quantified_predicate
 let mut <identifier> = BBoolean::new(<if(forall)>true<else>false<endif>);
+<if(hasCondition)>
+if <conditionalPredicate>.booleanValue() {
+    <predicate>
+}
+<else>
 <predicate>
+<endif>
 >>
 
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
@@ -361,9 +368,16 @@ if <if(forall)>!<endif>(<predicate>).booleanValue() {
 <endif>
 >>
 
-quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
+quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
+//quantified_expression
 let mut <identifier> = <if(isInteger)>BInteger::new(<identity>);<else>BSet::\<<setType>\>::new(vec![]);<endif>
+<if(hasCondition)>
+if <conditionalPredicate>.booleanValue() {
+    <evaluation>
+}
+<else>
 <evaluation>
+<endif>
 >>
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
@@ -591,10 +605,13 @@ any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <body>
+break;
 <else>
 if (<predicate>).booleanValue() {
     <body>
-}<endif>
+    break;
+}
+<endif>
 >>
 
 becomes_such_that(loads, body) ::= <<
@@ -1119,6 +1136,7 @@ pub fn _tr_<operationName>(&mut self, is_caching: bool) -> <if(noParameters)>boo
             <combination>
         }
         <else>
+        //transition, parameters, no condidtion
         <combination>
         <endif>
         self._tr_cache_<operationName> = Option::Some(<identifier>.clone());

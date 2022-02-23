@@ -111,11 +111,6 @@ public class TestMachines extends TestRS {
     }
 
     @Test
-    public void testCruiseControllerDeterministic_MC() throws Exception {
-        testRSMC("Cruise_finite1_deterministic_MC");
-    }
-
-    @Test
     public void testCruiseControllerDeterministicExec() throws Exception {
         testRS("Cruise_finite1_deterministic_exec");
     }
@@ -143,16 +138,6 @@ public class TestMachines extends TestRS {
     @Test
     public void testCanBusTLC() throws Exception {
         testRS("CAN_BUS_tlc");
-    }
-
-    @Test
-    public void testCanBusMC() throws Exception {
-        testRSMC("CAN_BUS_tlc");
-    }
-
-    @Test
-    public void testCanBus_testMC() throws Exception {
-        testRSMC("CAN_BUS_tlc_test");
     }
 
     @Test
@@ -284,15 +269,5 @@ public class TestMachines extends TestRS {
     @Test
     public void testPitmanController_TIME_MC_v4() throws Exception {
         testRS("visualisation/PitmanController_TIME_MC_v4");
-    }
-
-    @Test
-    public void testLandingGear_MC() throws Exception {
-        testRSMC("landing_gear/LandingGear_R6");
-    }
-
-    @Test
-    public void testNotaV2_MC() throws Exception {
-        testRSMC("nota_v2");
     }
 }

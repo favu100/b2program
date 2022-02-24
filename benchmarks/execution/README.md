@@ -4,6 +4,13 @@
 
 Executing benchmarks is done by executing ``make`` in each of the directories.
 
+## Technical Data
+- Java: Java HotSpot(TM) 64-Bit Server VM (build 12.0.1+12,mixed mode, sharing)
+- C++ Compiler: Apple LLVM version 10.0.1 (clang-1001.0.46.4) with -O1 and -O2 
+- ProB: 1.9.0-nightly (c5a6e9d31022d0bfe40cbcdf68e910041665ec41)
+- B2Program Commit: edce3cc7af2e7dd678ddb90ea1a1360062f94313
+- Device: MacBook Air with 8 GBof RAM and a 1.6 GHz Intel i5 processor with two cores
+
 ## Results
 
 | Machines          |             | ProB      | Java BI   | Java PI   | C++ PI -O1 | C++ PI -O2 |

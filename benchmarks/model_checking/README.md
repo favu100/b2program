@@ -108,3 +108,32 @@ TH = Thread
 
 Entries as v1/v2 for without/with caching
 
+
+### Overhead
+
+| Machines          |                     | ProB | TLC  | Java | C++           |
+|-------------------|---------------------|------|------|------|---------------|
+| Counter           | Parsing/Translation | 2.52 | 2.95 | 1.32 | 1.35          |
+|                   | Compiling           | -    | -    | 2.15 | 6.22 / 7.31   |
+| Cruise Controller | Parsing/Translation | 3.05 | 3.97 | 2.34 | 2.52          |
+|                   | Compiling           | -    | -    | 3.33 | 20.84 / 37.48 |
+| Landing Gear      | Parsing/Translation | 3.04 | 3.91 | 2.53 | 2.74          |
+|                   | Compiling           | -    | -    | 3.61 | 16.17 / 23.45 |
+| CAN BUS           | Parsing/Translation | 2.85 | 3.45 | 1.87 | 2.05          |
+|                   | Compiling           | -    | -    | 3.05 | 16.4 / 20.64  |
+| Train_6           | Parsing/Translation | 2.83 | 3.5  | 2.1  | 2.19          |
+|                   | Compiling           | -    | -    | 2.8  | 15.52 / 20.05 |
+| Train_10          | Parsing/Translation | 2.9  | 3.59 | 2.07 | 2.21          |
+|                   | Compiling           | -    | -    | 2.84 | 15.52 / 20.05 |
+| nota              | Parsing/Translation | 2.94 | 3.65 | 2.14 | 2.32          |
+|                   | Compiling           | -    | -    | 3.03 | 29.23 / 39.76 |
+| sort_1000         | Parsing/Translation | 2.61 | 3.1  | 1.53 | 1.58          |
+|                   | Compiling           | -    | -    | 2.26 | 8.51 / 10.37  |
+| N Queens (N=4)    | Parsing/Translation | 2.61 | 3.07 | 1.45 | 1.5           |
+|                   | Compiling           | -    | -    | 2.2  | 9.11 / 11.33  |
+| N Queens (N=8)    | Parsing/Translation | 2.59 | 3.08 | 1.46 | 1.53          |
+|                   | Compiling           | -    | -    | 2.1  | 9.14 / 11.35  |
+
+Time in Seconds
+
+Entries as v1/v2 for -O1/-O2

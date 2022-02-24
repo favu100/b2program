@@ -23,8 +23,8 @@ pub enum MC_TYPE { BFS, DFS, MIXED }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum DOOR_STATE {
-    open, 
-    closed, 
+    open,
+    closed,
     door_moving
 }
 impl DOOR_STATE {
@@ -37,18 +37,18 @@ impl Default for DOOR_STATE {
 }
 impl fmt::Display for DOOR_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           DOOR_STATE::open => write!(f, "open"),
-           DOOR_STATE::closed => write!(f, "closed"),
-           DOOR_STATE::door_moving => write!(f, "door_moving"),
-       }
+        match *self {
+            DOOR_STATE::open => write!(f, "open"),
+            DOOR_STATE::closed => write!(f, "closed"),
+            DOOR_STATE::door_moving => write!(f, "door_moving"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum GEAR_STATE {
-    retracted, 
-    extended, 
+    retracted,
+    extended,
     gear_moving
 }
 impl GEAR_STATE {
@@ -61,17 +61,17 @@ impl Default for GEAR_STATE {
 }
 impl fmt::Display for GEAR_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           GEAR_STATE::retracted => write!(f, "retracted"),
-           GEAR_STATE::extended => write!(f, "extended"),
-           GEAR_STATE::gear_moving => write!(f, "gear_moving"),
-       }
+        match *self {
+            GEAR_STATE::retracted => write!(f, "retracted"),
+            GEAR_STATE::extended => write!(f, "extended"),
+            GEAR_STATE::gear_moving => write!(f, "gear_moving"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum HANDLE_STATE {
-    up, 
+    up,
     down
 }
 impl HANDLE_STATE {
@@ -84,17 +84,17 @@ impl Default for HANDLE_STATE {
 }
 impl fmt::Display for HANDLE_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           HANDLE_STATE::up => write!(f, "up"),
-           HANDLE_STATE::down => write!(f, "down"),
-       }
+        match *self {
+            HANDLE_STATE::up => write!(f, "up"),
+            HANDLE_STATE::down => write!(f, "down"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum POSITION {
-    fr, 
-    lt, 
+    fr,
+    lt,
     rt
 }
 impl POSITION {
@@ -107,17 +107,17 @@ impl Default for POSITION {
 }
 impl fmt::Display for POSITION {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           POSITION::fr => write!(f, "fr"),
-           POSITION::lt => write!(f, "lt"),
-           POSITION::rt => write!(f, "rt"),
-       }
+        match *self {
+            POSITION::fr => write!(f, "fr"),
+            POSITION::lt => write!(f, "lt"),
+            POSITION::rt => write!(f, "rt"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SWITCH_STATE {
-    switch_open, 
+    switch_open,
     switch_closed
 }
 impl SWITCH_STATE {
@@ -130,16 +130,16 @@ impl Default for SWITCH_STATE {
 }
 impl fmt::Display for SWITCH_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           SWITCH_STATE::switch_open => write!(f, "switch_open"),
-           SWITCH_STATE::switch_closed => write!(f, "switch_closed"),
-       }
+        match *self {
+            SWITCH_STATE::switch_open => write!(f, "switch_open"),
+            SWITCH_STATE::switch_closed => write!(f, "switch_closed"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PLANE_STATE {
-    ground, 
+    ground,
     flight
 }
 impl PLANE_STATE {
@@ -152,16 +152,16 @@ impl Default for PLANE_STATE {
 }
 impl fmt::Display for PLANE_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           PLANE_STATE::ground => write!(f, "ground"),
-           PLANE_STATE::flight => write!(f, "flight"),
-       }
+        match *self {
+            PLANE_STATE::ground => write!(f, "ground"),
+            PLANE_STATE::flight => write!(f, "flight"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum VALVE_STATE {
-    valve_open, 
+    valve_open,
     valve_closed
 }
 impl VALVE_STATE {
@@ -174,10 +174,10 @@ impl Default for VALVE_STATE {
 }
 impl fmt::Display for VALVE_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           VALVE_STATE::valve_open => write!(f, "valve_open"),
-           VALVE_STATE::valve_closed => write!(f, "valve_closed"),
-       }
+        match *self {
+            VALVE_STATE::valve_open => write!(f, "valve_open"),
+            VALVE_STATE::valve_closed => write!(f, "valve_closed"),
+        }
     }
 }
 
@@ -1365,44 +1365,44 @@ impl LandingGear_R6 {
         //if caching is enabled globally, this will just prefill those, if caching is
         for trans in to_invalidate.iter() {
             match *trans {
-                "_tr_begin_flying" => {self._tr_begin_flying(false);}, 
-                "_tr_land_plane" => {self._tr_land_plane(false);}, 
-                "_tr_open_valve_door_open" => {self._tr_open_valve_door_open(false);}, 
-                "_tr_close_valve_door_open" => {self._tr_close_valve_door_open(false);}, 
-                "_tr_open_valve_door_close" => {self._tr_open_valve_door_close(false);}, 
-                "_tr_close_valve_door_close" => {self._tr_close_valve_door_close(false);}, 
-                "_tr_open_valve_retract_gear" => {self._tr_open_valve_retract_gear(false);}, 
-                "_tr_close_valve_retract_gear" => {self._tr_close_valve_retract_gear(false);}, 
-                "_tr_open_valve_extend_gear" => {self._tr_open_valve_extend_gear(false);}, 
-                "_tr_close_valve_extend_gear" => {self._tr_close_valve_extend_gear(false);}, 
-                "_tr_con_stimulate_open_door_valve" => {self._tr_con_stimulate_open_door_valve(false);}, 
-                "_tr_con_stop_stimulate_open_door_valve" => {self._tr_con_stop_stimulate_open_door_valve(false);}, 
-                "_tr_con_stimulate_close_door_valve" => {self._tr_con_stimulate_close_door_valve(false);}, 
-                "_tr_con_stop_stimulate_close_door_valve" => {self._tr_con_stop_stimulate_close_door_valve(false);}, 
-                "_tr_con_stimulate_retract_gear_valve" => {self._tr_con_stimulate_retract_gear_valve(false);}, 
-                "_tr_con_stop_stimulate_retract_gear_valve" => {self._tr_con_stop_stimulate_retract_gear_valve(false);}, 
-                "_tr_con_stimulate_extend_gear_valve" => {self._tr_con_stimulate_extend_gear_valve(false);}, 
-                "_tr_con_stop_stimulate_extend_gear_valve" => {self._tr_con_stop_stimulate_extend_gear_valve(false);}, 
-                "_tr_env_start_retracting_first" => {self._tr_env_start_retracting_first(false);}, 
-                "_tr_env_retract_gear_skip" => {self._tr_env_retract_gear_skip(false);}, 
-                "_tr_env_retract_gear_last" => {self._tr_env_retract_gear_last(false);}, 
-                "_tr_env_start_extending" => {self._tr_env_start_extending(false);}, 
-                "_tr_env_extend_gear_last" => {self._tr_env_extend_gear_last(false);}, 
-                "_tr_env_extend_gear_skip" => {self._tr_env_extend_gear_skip(false);}, 
-                "_tr_env_start_open_door" => {self._tr_env_start_open_door(false);}, 
-                "_tr_env_open_door_last" => {self._tr_env_open_door_last(false);}, 
-                "_tr_env_open_door_skip" => {self._tr_env_open_door_skip(false);}, 
-                "_tr_env_start_close_door" => {self._tr_env_start_close_door(false);}, 
-                "_tr_env_close_door" => {self._tr_env_close_door(false);}, 
-                "_tr_env_close_door_skip" => {self._tr_env_close_door_skip(false);}, 
-                "_tr_toggle_handle_up" => {self._tr_toggle_handle_up(false);}, 
-                "_tr_toggle_handle_down" => {self._tr_toggle_handle_down(false);}, 
-                "_tr_con_stimulate_general_valve" => {self._tr_con_stimulate_general_valve(false);}, 
-                "_tr_con_stop_stimulate_general_valve" => {self._tr_con_stop_stimulate_general_valve(false);}, 
-                "_tr_evn_open_general_valve" => {self._tr_evn_open_general_valve(false);}, 
-                "_tr_evn_close_general_valve" => {self._tr_evn_close_general_valve(false);}, 
-                "_tr_env_close_analogical_switch" => {self._tr_env_close_analogical_switch(false);}, 
-                "_tr_env_open_analogical_switch" => {self._tr_env_open_analogical_switch(false);}, 
+                "_tr_begin_flying" => {self._tr_begin_flying(false);},
+                "_tr_land_plane" => {self._tr_land_plane(false);},
+                "_tr_open_valve_door_open" => {self._tr_open_valve_door_open(false);},
+                "_tr_close_valve_door_open" => {self._tr_close_valve_door_open(false);},
+                "_tr_open_valve_door_close" => {self._tr_open_valve_door_close(false);},
+                "_tr_close_valve_door_close" => {self._tr_close_valve_door_close(false);},
+                "_tr_open_valve_retract_gear" => {self._tr_open_valve_retract_gear(false);},
+                "_tr_close_valve_retract_gear" => {self._tr_close_valve_retract_gear(false);},
+                "_tr_open_valve_extend_gear" => {self._tr_open_valve_extend_gear(false);},
+                "_tr_close_valve_extend_gear" => {self._tr_close_valve_extend_gear(false);},
+                "_tr_con_stimulate_open_door_valve" => {self._tr_con_stimulate_open_door_valve(false);},
+                "_tr_con_stop_stimulate_open_door_valve" => {self._tr_con_stop_stimulate_open_door_valve(false);},
+                "_tr_con_stimulate_close_door_valve" => {self._tr_con_stimulate_close_door_valve(false);},
+                "_tr_con_stop_stimulate_close_door_valve" => {self._tr_con_stop_stimulate_close_door_valve(false);},
+                "_tr_con_stimulate_retract_gear_valve" => {self._tr_con_stimulate_retract_gear_valve(false);},
+                "_tr_con_stop_stimulate_retract_gear_valve" => {self._tr_con_stop_stimulate_retract_gear_valve(false);},
+                "_tr_con_stimulate_extend_gear_valve" => {self._tr_con_stimulate_extend_gear_valve(false);},
+                "_tr_con_stop_stimulate_extend_gear_valve" => {self._tr_con_stop_stimulate_extend_gear_valve(false);},
+                "_tr_env_start_retracting_first" => {self._tr_env_start_retracting_first(false);},
+                "_tr_env_retract_gear_skip" => {self._tr_env_retract_gear_skip(false);},
+                "_tr_env_retract_gear_last" => {self._tr_env_retract_gear_last(false);},
+                "_tr_env_start_extending" => {self._tr_env_start_extending(false);},
+                "_tr_env_extend_gear_last" => {self._tr_env_extend_gear_last(false);},
+                "_tr_env_extend_gear_skip" => {self._tr_env_extend_gear_skip(false);},
+                "_tr_env_start_open_door" => {self._tr_env_start_open_door(false);},
+                "_tr_env_open_door_last" => {self._tr_env_open_door_last(false);},
+                "_tr_env_open_door_skip" => {self._tr_env_open_door_skip(false);},
+                "_tr_env_start_close_door" => {self._tr_env_start_close_door(false);},
+                "_tr_env_close_door" => {self._tr_env_close_door(false);},
+                "_tr_env_close_door_skip" => {self._tr_env_close_door_skip(false);},
+                "_tr_toggle_handle_up" => {self._tr_toggle_handle_up(false);},
+                "_tr_toggle_handle_down" => {self._tr_toggle_handle_down(false);},
+                "_tr_con_stimulate_general_valve" => {self._tr_con_stimulate_general_valve(false);},
+                "_tr_con_stop_stimulate_general_valve" => {self._tr_con_stop_stimulate_general_valve(false);},
+                "_tr_evn_open_general_valve" => {self._tr_evn_open_general_valve(false);},
+                "_tr_evn_close_general_valve" => {self._tr_evn_close_general_valve(false);},
+                "_tr_env_close_analogical_switch" => {self._tr_env_close_analogical_switch(false);},
+                "_tr_env_open_analogical_switch" => {self._tr_env_open_analogical_switch(false);},
                 _ => {},
             }
         }
@@ -2983,10 +2983,10 @@ impl LandingGear_R6 {
     fn next(collection_m: Arc<Mutex<LinkedList<LandingGear_R6>>>, mc_type: MC_TYPE) -> LandingGear_R6 {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
-                MC_TYPE::BFS   => collection.pop_front().unwrap(),
-                MC_TYPE::DFS   => collection.pop_back().unwrap(),
-                MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
-            };
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
     }
 
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
@@ -3178,11 +3178,11 @@ impl LandingGear_R6 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-            next_states.iter().for_each(|next_state| {
-                if !states.contains(next_state) {
+            next_states.iter().cloned().for_each(|next_state| {
+                if !states.contains(&next_state) {
                     let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                     states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state.clone());
+                    collection_m.lock().unwrap().push_back(next_state);
                     if cnum_states % 50000 == 0 {
                         println!("VISITED STATES: {}", cnum_states);
                         println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -3217,7 +3217,7 @@ impl LandingGear_R6 {
         let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
 
         if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25() {
-                invariant_violated_b.store(true, Ordering::Release);
+            invariant_violated_b.store(true, Ordering::Release);
         }
 
         let states_m = Arc::new(Mutex::new(HashSet::<LandingGear_R6>::new()));
@@ -3421,14 +3421,14 @@ impl LandingGear_R6 {
                 let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().for_each(|next_state| {
+                next_states.iter().cloned().for_each(|next_state| {
                     {
                         let mut states = states_m2.lock().unwrap();
                         let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(next_state) {
+                        if !states.contains(&next_state) {
                             let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                             states.insert(next_state.clone());
-                            collection.push_back(next_state.clone());
+                            collection.push_back(next_state);
                             //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                             if cnum_states % 50000 == 0 {
                                 println!("VISITED STATES: {}", cnum_states);

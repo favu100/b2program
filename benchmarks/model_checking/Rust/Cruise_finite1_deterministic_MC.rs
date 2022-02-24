@@ -23,9 +23,9 @@ pub enum MC_TYPE { BFS, DFS, MIXED }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RSset {
-    RSnone, 
-    RSpos, 
-    RSneg, 
+    RSnone,
+    RSpos,
+    RSneg,
     RSequal
 }
 impl RSset {
@@ -38,19 +38,19 @@ impl Default for RSset {
 }
 impl fmt::Display for RSset {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           RSset::RSnone => write!(f, "RSnone"),
-           RSset::RSpos => write!(f, "RSpos"),
-           RSset::RSneg => write!(f, "RSneg"),
-           RSset::RSequal => write!(f, "RSequal"),
-       }
+        match *self {
+            RSset::RSnone => write!(f, "RSnone"),
+            RSset::RSpos => write!(f, "RSpos"),
+            RSset::RSneg => write!(f, "RSneg"),
+            RSset::RSequal => write!(f, "RSequal"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ODset {
-    ODnone, 
-    ODclose, 
+    ODnone,
+    ODclose,
     ODveryclose
 }
 impl ODset {
@@ -63,11 +63,11 @@ impl Default for ODset {
 }
 impl fmt::Display for ODset {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           ODset::ODnone => write!(f, "ODnone"),
-           ODset::ODclose => write!(f, "ODclose"),
-           ODset::ODveryclose => write!(f, "ODveryclose"),
-       }
+        match *self {
+            ODset::ODnone => write!(f, "ODnone"),
+            ODset::ODclose => write!(f, "ODclose"),
+            ODset::ODveryclose => write!(f, "ODveryclose"),
+        }
     }
 }
 
@@ -287,7 +287,7 @@ impl Cruise_finite1_deterministic_MC {
         }
         if (_ld_NumberOfSetCruise.less(&BInteger::new(1))).booleanValue() {
             self.NumberOfSetCruise = _ld_NumberOfSetCruise.plus(&BInteger::new(1));
-        } 
+        }
 
     }
 
@@ -387,7 +387,7 @@ impl Cruise_finite1_deterministic_MC {
             self.SpeedAboveMax = BBoolean::new(false);
             if (self.CruiseActive.equal(&BBoolean::new(true)).and(&self.CruiseSpeedAtMax.equal(&BBoolean::new(true)))).booleanValue() {
                 self.VehicleAtCruiseSpeed = BBoolean::new(true);
-            } 
+            }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -408,7 +408,7 @@ impl Cruise_finite1_deterministic_MC {
             self.ObstacleStatusJustChanged = BBoolean::new(true);
             if (self.ObstacleRelativeSpeed.equal(&RSset::RSpos)).booleanValue() {
                 self.VehicleTryKeepTimeGap = BBoolean::new(false);
-            } 
+            }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -429,10 +429,10 @@ impl Cruise_finite1_deterministic_MC {
             self.ObstacleRelativeSpeed = RSset::RSpos;
             if (self.CruiseActive.equal(&BBoolean::new(true))).booleanValue() {
                 self.ObstacleStatusJustChanged = BBoolean::new(true);
-            } 
+            }
             if (self.ObstacleDistance.unequal(&ODset::ODveryclose)).booleanValue() {
                 self.VehicleTryKeepTimeGap = BBoolean::new(false);
-            } 
+            }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -443,7 +443,7 @@ impl Cruise_finite1_deterministic_MC {
             self.ObstacleRelativeSpeed = RSset::RSequal;
             if (self.CruiseActive.equal(&BBoolean::new(true))).booleanValue() {
                 self.ObstacleStatusJustChanged = BBoolean::new(true);
-            } 
+            }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -454,7 +454,7 @@ impl Cruise_finite1_deterministic_MC {
             self.ObstacleRelativeSpeed = RSset::RSneg;
             if (self.CruiseActive.equal(&BBoolean::new(true))).booleanValue() {
                 self.ObstacleStatusJustChanged = BBoolean::new(true);
-            } 
+            }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -465,7 +465,7 @@ impl Cruise_finite1_deterministic_MC {
             self.ObstacleRelativeSpeed = RSset::RSequal;
             if (self.CruiseActive.equal(&BBoolean::new(true))).booleanValue() {
                 self.ObstacleStatusJustChanged = BBoolean::new(true);
-            } 
+            }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -494,7 +494,7 @@ impl Cruise_finite1_deterministic_MC {
             self.ObstacleRelativeSpeed = RSset::RSnone;
             if (self.CruiseActive.equal(&BBoolean::new(true))).booleanValue() {
                 self.ObstacleStatusJustChanged = BBoolean::new(true);
-            } 
+            }
             self.ObstacleDistance = ODset::ODnone;
             self.VehicleTryKeepTimeGap = BBoolean::new(false);
         } else {
@@ -1051,32 +1051,32 @@ impl Cruise_finite1_deterministic_MC {
         //if caching is enabled globally, this will just prefill those, if caching is
         for trans in to_invalidate.iter() {
             match *trans {
-                "_tr_CruiseBecomesNotAllowed" => {self._tr_CruiseBecomesNotAllowed(false);}, 
-                "_tr_CruiseBecomesAllowed" => {self._tr_CruiseBecomesAllowed(false);}, 
-                "_tr_SetCruiseSpeed" => {self._tr_SetCruiseSpeed(false);}, 
-                "_tr_CCInitialisationFinished" => {self._tr_CCInitialisationFinished(false);}, 
-                "_tr_CCInitialisationDelayFinished" => {self._tr_CCInitialisationDelayFinished(false);}, 
-                "_tr_CruiseSpeedChangeFinished" => {self._tr_CruiseSpeedChangeFinished(false);}, 
-                "_tr_CruiseSpeedChangeDelayFinished" => {self._tr_CruiseSpeedChangeDelayFinished(false);}, 
-                "_tr_CruiseOff" => {self._tr_CruiseOff(false);}, 
-                "_tr_ExternalForcesBecomesExtreme" => {self._tr_ExternalForcesBecomesExtreme(false);}, 
-                "_tr_ExternalForcesBecomesNormal" => {self._tr_ExternalForcesBecomesNormal(false);}, 
-                "_tr_VehicleLeavesCruiseSpeed" => {self._tr_VehicleLeavesCruiseSpeed(false);}, 
-                "_tr_VehicleReachesCruiseSpeed" => {self._tr_VehicleReachesCruiseSpeed(false);}, 
-                "_tr_VehicleExceedsMaxCruiseSpeed" => {self._tr_VehicleExceedsMaxCruiseSpeed(false);}, 
-                "_tr_VehicleFallsBelowMaxCruiseSpeed" => {self._tr_VehicleFallsBelowMaxCruiseSpeed(false);}, 
-                "_tr_ObstacleDistanceBecomesVeryClose" => {self._tr_ObstacleDistanceBecomesVeryClose(false);}, 
-                "_tr_ObstacleDistanceBecomesClose" => {self._tr_ObstacleDistanceBecomesClose(false);}, 
-                "_tr_ObstacleDistanceBecomesBig" => {self._tr_ObstacleDistanceBecomesBig(false);}, 
-                "_tr_ObstacleStartsTravelFaster" => {self._tr_ObstacleStartsTravelFaster(false);}, 
-                "_tr_ObstacleStopsTravelFaster" => {self._tr_ObstacleStopsTravelFaster(false);}, 
-                "_tr_ObstacleStartsTravelSlower" => {self._tr_ObstacleStartsTravelSlower(false);}, 
-                "_tr_ObstacleStopsTravelSlower" => {self._tr_ObstacleStopsTravelSlower(false);}, 
-                "_tr_ObstacleAppearsWhenCruiseActive" => {self._tr_ObstacleAppearsWhenCruiseActive(false);}, 
-                "_tr_ObstacleAppearsWhenCruiseInactive" => {self._tr_ObstacleAppearsWhenCruiseInactive(false);}, 
-                "_tr_ObstacleDisappears" => {self._tr_ObstacleDisappears(false);}, 
-                "_tr_VehicleManageObstacle" => {self._tr_VehicleManageObstacle(false);}, 
-                "_tr_ObstacleBecomesOld" => {self._tr_ObstacleBecomesOld(false);}, 
+                "_tr_CruiseBecomesNotAllowed" => {self._tr_CruiseBecomesNotAllowed(false);},
+                "_tr_CruiseBecomesAllowed" => {self._tr_CruiseBecomesAllowed(false);},
+                "_tr_SetCruiseSpeed" => {self._tr_SetCruiseSpeed(false);},
+                "_tr_CCInitialisationFinished" => {self._tr_CCInitialisationFinished(false);},
+                "_tr_CCInitialisationDelayFinished" => {self._tr_CCInitialisationDelayFinished(false);},
+                "_tr_CruiseSpeedChangeFinished" => {self._tr_CruiseSpeedChangeFinished(false);},
+                "_tr_CruiseSpeedChangeDelayFinished" => {self._tr_CruiseSpeedChangeDelayFinished(false);},
+                "_tr_CruiseOff" => {self._tr_CruiseOff(false);},
+                "_tr_ExternalForcesBecomesExtreme" => {self._tr_ExternalForcesBecomesExtreme(false);},
+                "_tr_ExternalForcesBecomesNormal" => {self._tr_ExternalForcesBecomesNormal(false);},
+                "_tr_VehicleLeavesCruiseSpeed" => {self._tr_VehicleLeavesCruiseSpeed(false);},
+                "_tr_VehicleReachesCruiseSpeed" => {self._tr_VehicleReachesCruiseSpeed(false);},
+                "_tr_VehicleExceedsMaxCruiseSpeed" => {self._tr_VehicleExceedsMaxCruiseSpeed(false);},
+                "_tr_VehicleFallsBelowMaxCruiseSpeed" => {self._tr_VehicleFallsBelowMaxCruiseSpeed(false);},
+                "_tr_ObstacleDistanceBecomesVeryClose" => {self._tr_ObstacleDistanceBecomesVeryClose(false);},
+                "_tr_ObstacleDistanceBecomesClose" => {self._tr_ObstacleDistanceBecomesClose(false);},
+                "_tr_ObstacleDistanceBecomesBig" => {self._tr_ObstacleDistanceBecomesBig(false);},
+                "_tr_ObstacleStartsTravelFaster" => {self._tr_ObstacleStartsTravelFaster(false);},
+                "_tr_ObstacleStopsTravelFaster" => {self._tr_ObstacleStopsTravelFaster(false);},
+                "_tr_ObstacleStartsTravelSlower" => {self._tr_ObstacleStartsTravelSlower(false);},
+                "_tr_ObstacleStopsTravelSlower" => {self._tr_ObstacleStopsTravelSlower(false);},
+                "_tr_ObstacleAppearsWhenCruiseActive" => {self._tr_ObstacleAppearsWhenCruiseActive(false);},
+                "_tr_ObstacleAppearsWhenCruiseInactive" => {self._tr_ObstacleAppearsWhenCruiseInactive(false);},
+                "_tr_ObstacleDisappears" => {self._tr_ObstacleDisappears(false);},
+                "_tr_VehicleManageObstacle" => {self._tr_VehicleManageObstacle(false);},
+                "_tr_ObstacleBecomesOld" => {self._tr_ObstacleBecomesOld(false);},
                 _ => {},
             }
         }
@@ -2311,10 +2311,10 @@ impl Cruise_finite1_deterministic_MC {
     fn next(collection_m: Arc<Mutex<LinkedList<Cruise_finite1_deterministic_MC>>>, mc_type: MC_TYPE) -> Cruise_finite1_deterministic_MC {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
-                MC_TYPE::BFS   => collection.pop_front().unwrap(),
-                MC_TYPE::DFS   => collection.pop_back().unwrap(),
-                MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
-            };
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
     }
 
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
@@ -2458,11 +2458,11 @@ impl Cruise_finite1_deterministic_MC {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-            next_states.iter().for_each(|next_state| {
-                if !states.contains(next_state) {
+            next_states.iter().cloned().for_each(|next_state| {
+                if !states.contains(&next_state) {
                     let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                     states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state.clone());
+                    collection_m.lock().unwrap().push_back(next_state);
                     if cnum_states % 50000 == 0 {
                         println!("VISITED STATES: {}", cnum_states);
                         println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -2497,7 +2497,7 @@ impl Cruise_finite1_deterministic_MC {
         let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
 
         if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25() || !machine._check_inv_26() || !machine._check_inv_27() || !machine._check_inv_28() || !machine._check_inv_29() || !machine._check_inv_30() || !machine._check_inv_31() || !machine._check_inv_32() || !machine._check_inv_33() || !machine._check_inv_34() || !machine._check_inv_35() || !machine._check_inv_36() || !machine._check_inv_37() || !machine._check_inv_38() || !machine._check_inv_39() {
-                invariant_violated_b.store(true, Ordering::Release);
+            invariant_violated_b.store(true, Ordering::Release);
         }
 
         let states_m = Arc::new(Mutex::new(HashSet::<Cruise_finite1_deterministic_MC>::new()));
@@ -2653,14 +2653,14 @@ impl Cruise_finite1_deterministic_MC {
                 let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().for_each(|next_state| {
+                next_states.iter().cloned().for_each(|next_state| {
                     {
                         let mut states = states_m2.lock().unwrap();
                         let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(next_state) {
+                        if !states.contains(&next_state) {
                             let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                             states.insert(next_state.clone());
-                            collection.push_back(next_state.clone());
+                            collection.push_back(next_state);
                             //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                             if cnum_states % 50000 == 0 {
                                 println!("VISITED STATES: {}", cnum_states);

@@ -64,42 +64,56 @@ impl QueensWithEvents_8 {
     }
 
     pub fn Solve(&mut self, mut solution: BRelation<BInteger, BInteger>) -> () {
+        //quantified_predicate
         let mut _ic_boolean_1 = BBoolean::new(true);
-        for _ic_x_1 in self.interval.clone().iter().cloned() {
-            for _ic_y_1 in self.interval.clone().iter().cloned() {
-                let mut _ic_boolean_0 = BBoolean::new(true);
-                for _ic_z_1 in self.interval.clone().iter().cloned() {
-                    if !(solution.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_z_1)).implies(&_ic_y_1.equal(&_ic_z_1))).booleanValue() {
-                        _ic_boolean_0 = BBoolean::new(false);
+        if solution.domain().equal(&self.interval).and(&solution.range().equal(&self.interval)).booleanValue() {
+            for _ic_x_1 in self.interval.clone().iter().cloned() {
+                for _ic_y_1 in self.interval.clone().iter().cloned() {
+                    //quantified_predicate
+                    let mut _ic_boolean_0 = BBoolean::new(true);
+                    for _ic_z_1 in self.interval.clone().iter().cloned() {
+                        if !(solution.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_z_1)).implies(&_ic_y_1.equal(&_ic_z_1))).booleanValue() {
+                            _ic_boolean_0 = BBoolean::new(false);
+                            break;
+                        }
+
+                    }
+
+                    if !(solution.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_y_1)).implies(&_ic_boolean_0)).booleanValue() {
+                        _ic_boolean_1 = BBoolean::new(false);
                         break;
                     }
 
                 }
-                if !(solution.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_y_1)).implies(&_ic_boolean_0)).booleanValue() {
-                    _ic_boolean_1 = BBoolean::new(false);
-                    break;
-                }
-
             }
         }
+
+        //quantified_predicate
         let mut _ic_boolean_2 = BBoolean::new(true);
-        for _ic_q1_1 in self.interval.clone().iter().cloned() {
-            for _ic_q2_1 in self.interval.difference(&BSet::new(vec![BInteger::new(1)])).clone().iter().cloned() {
-                if !(_ic_q2_1.greater(&_ic_q1_1).implies(&solution.functionCall(&_ic_q1_1).plus(&_ic_q2_1).minus(&_ic_q1_1).unequal(&solution.functionCall(&_ic_q2_1)).and(&solution.functionCall(&_ic_q1_1).minus(&_ic_q2_1).plus(&_ic_q1_1).unequal(&solution.functionCall(&_ic_q2_1))))).booleanValue() {
-                    _ic_boolean_2 = BBoolean::new(false);
+        if solution.domain().equal(&self.interval).and(&solution.range().equal(&self.interval)).and(&_ic_boolean_1).booleanValue() {
+            for _ic_q1_1 in self.interval.clone().iter().cloned() {
+                for _ic_q2_1 in self.interval.difference(&BSet::new(vec![BInteger::new(1)])).clone().iter().cloned() {
+                    if !(_ic_q2_1.greater(&_ic_q1_1).implies(&solution.functionCall(&_ic_q1_1).plus(&_ic_q2_1).minus(&_ic_q1_1).unequal(&solution.functionCall(&_ic_q2_1)).and(&solution.functionCall(&_ic_q1_1).minus(&_ic_q2_1).plus(&_ic_q1_1).unequal(&solution.functionCall(&_ic_q2_1))))).booleanValue() {
+                        _ic_boolean_2 = BBoolean::new(false);
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        //quantified_predicate
+        let mut _ic_boolean_3 = BBoolean::new(true);
+        if solution.domain().equal(&self.interval).and(&solution.range().equal(&self.interval)).and(&_ic_boolean_1).and(&_ic_boolean_2).booleanValue() {
+            for _ic_x_1 in self.queens.domain().clone().iter().cloned() {
+                if !(solution.functionCall(&_ic_x_1).equal(&self.queens.functionCall(&_ic_x_1))).booleanValue() {
+                    _ic_boolean_3 = BBoolean::new(false);
                     break;
                 }
 
             }
         }
-        let mut _ic_boolean_3 = BBoolean::new(true);
-        for _ic_x_1 in self.queens.domain().clone().iter().cloned() {
-            if !(solution.functionCall(&_ic_x_1).equal(&self.queens.functionCall(&_ic_x_1))).booleanValue() {
-                _ic_boolean_3 = BBoolean::new(false);
-                break;
-            }
 
-        }
         if (self.allFields.elementOf(&solution).and(&solution.domain().equal(&self.interval)).and(&solution.range().equal(&self.interval)).and(&_ic_boolean_1).and(&_ic_boolean_2).and(&_ic_boolean_3)).booleanValue() {
             self.queens = solution.clone().clone();
         } else {
@@ -111,41 +125,56 @@ impl QueensWithEvents_8 {
         //transition
         if !is_caching || self._tr_cache_Solve.is_none() {
             let mut _ic_set_4: BSet<BRelation<BInteger, BInteger>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_solution_1 in self.allFields.clone().iter().cloned() {
+                //quantified_predicate
                 let mut _ic_boolean_5 = BBoolean::new(true);
-                for _ic_x_1 in self.interval.clone().iter().cloned() {
-                    for _ic_y_1 in self.interval.clone().iter().cloned() {
-                        let mut _ic_boolean_4 = BBoolean::new(true);
-                        for _ic_z_1 in self.interval.clone().iter().cloned() {
-                            if !(_ic_solution_1.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_z_1)).implies(&_ic_y_1.equal(&_ic_z_1))).booleanValue() {
-                                _ic_boolean_4 = BBoolean::new(false);
+                if _ic_solution_1.domain().equal(&self.interval).and(&_ic_solution_1.range().equal(&self.interval)).booleanValue() {
+                    for _ic_x_1 in self.interval.clone().iter().cloned() {
+                        for _ic_y_1 in self.interval.clone().iter().cloned() {
+                            //quantified_predicate
+                            let mut _ic_boolean_4 = BBoolean::new(true);
+                            for _ic_z_1 in self.interval.clone().iter().cloned() {
+                                if !(_ic_solution_1.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_z_1)).implies(&_ic_y_1.equal(&_ic_z_1))).booleanValue() {
+                                    _ic_boolean_4 = BBoolean::new(false);
+                                    break;
+                                }
+
+                            }
+
+                            if !(_ic_solution_1.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_y_1)).implies(&_ic_boolean_4)).booleanValue() {
+                                _ic_boolean_5 = BBoolean::new(false);
                                 break;
                             }
 
                         }
-                        if !(_ic_solution_1.elementOf(&BTuple::from_refs(&_ic_x_1, &_ic_y_1)).implies(&_ic_boolean_4)).booleanValue() {
-                            _ic_boolean_5 = BBoolean::new(false);
-                            break;
-                        }
-
                     }
-                }let mut _ic_boolean_6 = BBoolean::new(true);
-                for _ic_q1_1 in self.interval.clone().iter().cloned() {
-                    for _ic_q2_1 in self.interval.difference(&BSet::new(vec![BInteger::new(1)])).clone().iter().cloned() {
-                        if !(_ic_q2_1.greater(&_ic_q1_1).implies(&_ic_solution_1.functionCall(&_ic_q1_1).plus(&_ic_q2_1).minus(&_ic_q1_1).unequal(&_ic_solution_1.functionCall(&_ic_q2_1)).and(&_ic_solution_1.functionCall(&_ic_q1_1).minus(&_ic_q2_1).plus(&_ic_q1_1).unequal(&_ic_solution_1.functionCall(&_ic_q2_1))))).booleanValue() {
-                            _ic_boolean_6 = BBoolean::new(false);
-                            break;
-                        }
-
-                    }
-                }let mut _ic_boolean_7 = BBoolean::new(true);
-                for _ic_x_1 in self.queens.domain().clone().iter().cloned() {
-                    if !(_ic_solution_1.functionCall(&_ic_x_1).equal(&self.queens.functionCall(&_ic_x_1))).booleanValue() {
-                        _ic_boolean_7 = BBoolean::new(false);
-                        break;
-                    }
-
                 }
+                //quantified_predicate
+                let mut _ic_boolean_6 = BBoolean::new(true);
+                if _ic_solution_1.domain().equal(&self.interval).and(&_ic_solution_1.range().equal(&self.interval)).and(&_ic_boolean_5).booleanValue() {
+                    for _ic_q1_1 in self.interval.clone().iter().cloned() {
+                        for _ic_q2_1 in self.interval.difference(&BSet::new(vec![BInteger::new(1)])).clone().iter().cloned() {
+                            if !(_ic_q2_1.greater(&_ic_q1_1).implies(&_ic_solution_1.functionCall(&_ic_q1_1).plus(&_ic_q2_1).minus(&_ic_q1_1).unequal(&_ic_solution_1.functionCall(&_ic_q2_1)).and(&_ic_solution_1.functionCall(&_ic_q1_1).minus(&_ic_q2_1).plus(&_ic_q1_1).unequal(&_ic_solution_1.functionCall(&_ic_q2_1))))).booleanValue() {
+                                _ic_boolean_6 = BBoolean::new(false);
+                                break;
+                            }
+
+                        }
+                    }
+                }
+                //quantified_predicate
+                let mut _ic_boolean_7 = BBoolean::new(true);
+                if _ic_solution_1.domain().equal(&self.interval).and(&_ic_solution_1.range().equal(&self.interval)).and(&_ic_boolean_5).and(&_ic_boolean_6).booleanValue() {
+                    for _ic_x_1 in self.queens.domain().clone().iter().cloned() {
+                        if !(_ic_solution_1.functionCall(&_ic_x_1).equal(&self.queens.functionCall(&_ic_x_1))).booleanValue() {
+                            _ic_boolean_7 = BBoolean::new(false);
+                            break;
+                        }
+
+                    }
+                }
+
                 if (_ic_solution_1.domain().equal(&self.interval).and(&_ic_solution_1.range().equal(&self.interval)).and(&_ic_boolean_5).and(&_ic_boolean_6).and(&_ic_boolean_7)).booleanValue() {
                     _ic_set_4 = _ic_set_4._union(&BSet::new(vec![_ic_solution_1]));
                 }
@@ -168,7 +197,7 @@ impl QueensWithEvents_8 {
         //if caching is enabled globally, this will just prefill those, if caching is
         for trans in to_invalidate.iter() {
             match *trans {
-                "_tr_Solve" => {self._tr_Solve(false);}, 
+                "_tr_Solve" => {self._tr_Solve(false);},
                 _ => {},
             }
         }
@@ -270,10 +299,10 @@ impl QueensWithEvents_8 {
     fn next(collection_m: Arc<Mutex<LinkedList<QueensWithEvents_8>>>, mc_type: MC_TYPE) -> QueensWithEvents_8 {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
-                MC_TYPE::BFS   => collection.pop_front().unwrap(),
-                MC_TYPE::DFS   => collection.pop_back().unwrap(),
-                MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
-            };
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
     }
 
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
@@ -317,11 +346,11 @@ impl QueensWithEvents_8 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-            next_states.iter().for_each(|next_state| {
-                if !states.contains(next_state) {
+            next_states.iter().cloned().for_each(|next_state| {
+                if !states.contains(&next_state) {
                     let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                     states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state.clone());
+                    collection_m.lock().unwrap().push_back(next_state);
                     if cnum_states % 50000 == 0 {
                         println!("VISITED STATES: {}", cnum_states);
                         println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -356,7 +385,7 @@ impl QueensWithEvents_8 {
         let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
 
         if !machine._check_inv_1() {
-                invariant_violated_b.store(true, Ordering::Release);
+            invariant_violated_b.store(true, Ordering::Release);
         }
 
         let states_m = Arc::new(Mutex::new(HashSet::<QueensWithEvents_8>::new()));
@@ -412,14 +441,14 @@ impl QueensWithEvents_8 {
                 let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().for_each(|next_state| {
+                next_states.iter().cloned().for_each(|next_state| {
                     {
                         let mut states = states_m2.lock().unwrap();
                         let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(next_state) {
+                        if !states.contains(&next_state) {
                             let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                             states.insert(next_state.clone());
-                            collection.push_back(next_state.clone());
+                            collection.push_back(next_state);
                             //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                             if cnum_states % 50000 == 0 {
                                 println!("VISITED STATES: {}", cnum_states);

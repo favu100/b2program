@@ -36,7 +36,7 @@ public class TestMCBenchmarks extends TestRS {
 
     @Test
     public void testQueens8_MC() throws Exception {
-        testRSMC("QueensWithEvents_8");
+        testRSMC("QueensWithEvents_8", false);
     }
 
     @Test

@@ -24,9 +24,9 @@ pub enum MC_TYPE { BFS, DFS, MIXED }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum T1state {
-    T1_EN, 
-    T1_CALC, 
-    T1_SEND, 
+    T1_EN,
+    T1_CALC,
+    T1_SEND,
     T1_WAIT
 }
 impl T1state {
@@ -39,19 +39,19 @@ impl Default for T1state {
 }
 impl fmt::Display for T1state {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           T1state::T1_EN => write!(f, "T1_EN"),
-           T1state::T1_CALC => write!(f, "T1_CALC"),
-           T1state::T1_SEND => write!(f, "T1_SEND"),
-           T1state::T1_WAIT => write!(f, "T1_WAIT"),
-       }
+        match *self {
+            T1state::T1_EN => write!(f, "T1_EN"),
+            T1state::T1_CALC => write!(f, "T1_CALC"),
+            T1state::T1_SEND => write!(f, "T1_SEND"),
+            T1state::T1_WAIT => write!(f, "T1_WAIT"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum T2mode {
-    T2MODE_SENSE, 
-    T2MODE_TRANSMIT, 
+    T2MODE_SENSE,
+    T2MODE_TRANSMIT,
     T2MODE_RELEASE
 }
 impl T2mode {
@@ -64,22 +64,22 @@ impl Default for T2mode {
 }
 impl fmt::Display for T2mode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           T2mode::T2MODE_SENSE => write!(f, "T2MODE_SENSE"),
-           T2mode::T2MODE_TRANSMIT => write!(f, "T2MODE_TRANSMIT"),
-           T2mode::T2MODE_RELEASE => write!(f, "T2MODE_RELEASE"),
-       }
+        match *self {
+            T2mode::T2MODE_SENSE => write!(f, "T2MODE_SENSE"),
+            T2mode::T2MODE_TRANSMIT => write!(f, "T2MODE_TRANSMIT"),
+            T2mode::T2MODE_RELEASE => write!(f, "T2MODE_RELEASE"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum T2state {
-    T2_EN, 
-    T2_RCV, 
-    T2_PROC, 
-    T2_CALC, 
-    T2_SEND, 
-    T2_WAIT, 
+    T2_EN,
+    T2_RCV,
+    T2_PROC,
+    T2_CALC,
+    T2_SEND,
+    T2_WAIT,
     T2_RELEASE
 }
 impl T2state {
@@ -92,25 +92,25 @@ impl Default for T2state {
 }
 impl fmt::Display for T2state {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           T2state::T2_EN => write!(f, "T2_EN"),
-           T2state::T2_RCV => write!(f, "T2_RCV"),
-           T2state::T2_PROC => write!(f, "T2_PROC"),
-           T2state::T2_CALC => write!(f, "T2_CALC"),
-           T2state::T2_SEND => write!(f, "T2_SEND"),
-           T2state::T2_WAIT => write!(f, "T2_WAIT"),
-           T2state::T2_RELEASE => write!(f, "T2_RELEASE"),
-       }
+        match *self {
+            T2state::T2_EN => write!(f, "T2_EN"),
+            T2state::T2_RCV => write!(f, "T2_RCV"),
+            T2state::T2_PROC => write!(f, "T2_PROC"),
+            T2state::T2_CALC => write!(f, "T2_CALC"),
+            T2state::T2_SEND => write!(f, "T2_SEND"),
+            T2state::T2_WAIT => write!(f, "T2_WAIT"),
+            T2state::T2_RELEASE => write!(f, "T2_RELEASE"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum T3state {
-    T3_READY, 
-    T3_WRITE, 
-    T3_RELEASE, 
-    T3_READ, 
-    T3_PROC, 
+    T3_READY,
+    T3_WRITE,
+    T3_RELEASE,
+    T3_READ,
+    T3_PROC,
     T3_WAIT
 }
 impl T3state {
@@ -123,14 +123,14 @@ impl Default for T3state {
 }
 impl fmt::Display for T3state {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           T3state::T3_READY => write!(f, "T3_READY"),
-           T3state::T3_WRITE => write!(f, "T3_WRITE"),
-           T3state::T3_RELEASE => write!(f, "T3_RELEASE"),
-           T3state::T3_READ => write!(f, "T3_READ"),
-           T3state::T3_PROC => write!(f, "T3_PROC"),
-           T3state::T3_WAIT => write!(f, "T3_WAIT"),
-       }
+        match *self {
+            T3state::T3_READY => write!(f, "T3_READY"),
+            T3state::T3_WRITE => write!(f, "T3_WRITE"),
+            T3state::T3_RELEASE => write!(f, "T3_RELEASE"),
+            T3state::T3_READ => write!(f, "T3_READ"),
+            T3state::T3_PROC => write!(f, "T3_PROC"),
+            T3state::T3_WAIT => write!(f, "T3_WAIT"),
+        }
     }
 }
 
@@ -917,27 +917,27 @@ impl CAN_BUS_tlc {
         //if caching is enabled globally, this will just prefill those, if caching is
         for trans in to_invalidate.iter() {
             match *trans {
-                "_tr_T1Evaluate" => {self._tr_T1Evaluate(false);}, 
-                "_tr_T1Calculate" => {self._tr_T1Calculate(false);}, 
-                "_tr_T1SendResult" => {self._tr_T1SendResult(false);}, 
-                "_tr_T1Wait" => {self._tr_T1Wait(false);}, 
-                "_tr_T2Evaluate" => {self._tr_T2Evaluate(false);}, 
-                "_tr_T2ReadBus" => {self._tr_T2ReadBus(false);}, 
-                "_tr_T2Reset" => {self._tr_T2Reset(false);}, 
-                "_tr_T2Complete" => {self._tr_T2Complete(false);}, 
-                "_tr_T2ReleaseBus" => {self._tr_T2ReleaseBus(false);}, 
-                "_tr_T2Calculate" => {self._tr_T2Calculate(false);}, 
-                "_tr_T2WriteBus" => {self._tr_T2WriteBus(false);}, 
-                "_tr_T2Wait" => {self._tr_T2Wait(false);}, 
-                "_tr_T3Initiate" => {self._tr_T3Initiate(false);}, 
-                "_tr_T3Evaluate" => {self._tr_T3Evaluate(false);}, 
-                "_tr_T3writebus" => {self._tr_T3writebus(false);}, 
-                "_tr_T3Read" => {self._tr_T3Read(false);}, 
-                "_tr_T3Poll" => {self._tr_T3Poll(false);}, 
-                "_tr_T3ReleaseBus" => {self._tr_T3ReleaseBus(false);}, 
-                "_tr_T3Wait" => {self._tr_T3Wait(false);}, 
-                "_tr_T3ReEnableWait" => {self._tr_T3ReEnableWait(false);}, 
-                "_tr_Update" => {self._tr_Update(false);}, 
+                "_tr_T1Evaluate" => {self._tr_T1Evaluate(false);},
+                "_tr_T1Calculate" => {self._tr_T1Calculate(false);},
+                "_tr_T1SendResult" => {self._tr_T1SendResult(false);},
+                "_tr_T1Wait" => {self._tr_T1Wait(false);},
+                "_tr_T2Evaluate" => {self._tr_T2Evaluate(false);},
+                "_tr_T2ReadBus" => {self._tr_T2ReadBus(false);},
+                "_tr_T2Reset" => {self._tr_T2Reset(false);},
+                "_tr_T2Complete" => {self._tr_T2Complete(false);},
+                "_tr_T2ReleaseBus" => {self._tr_T2ReleaseBus(false);},
+                "_tr_T2Calculate" => {self._tr_T2Calculate(false);},
+                "_tr_T2WriteBus" => {self._tr_T2WriteBus(false);},
+                "_tr_T2Wait" => {self._tr_T2Wait(false);},
+                "_tr_T3Initiate" => {self._tr_T3Initiate(false);},
+                "_tr_T3Evaluate" => {self._tr_T3Evaluate(false);},
+                "_tr_T3writebus" => {self._tr_T3writebus(false);},
+                "_tr_T3Read" => {self._tr_T3Read(false);},
+                "_tr_T3Poll" => {self._tr_T3Poll(false);},
+                "_tr_T3ReleaseBus" => {self._tr_T3ReleaseBus(false);},
+                "_tr_T3Wait" => {self._tr_T3Wait(false);},
+                "_tr_T3ReEnableWait" => {self._tr_T3ReEnableWait(false);},
+                "_tr_Update" => {self._tr_Update(false);},
                 _ => {},
             }
         }
@@ -1923,10 +1923,10 @@ impl CAN_BUS_tlc {
     fn next(collection_m: Arc<Mutex<LinkedList<CAN_BUS_tlc>>>, mc_type: MC_TYPE) -> CAN_BUS_tlc {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
-                MC_TYPE::BFS   => collection.pop_front().unwrap(),
-                MC_TYPE::DFS   => collection.pop_back().unwrap(),
-                MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
-            };
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
     }
 
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
@@ -2050,11 +2050,11 @@ impl CAN_BUS_tlc {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-            next_states.iter().for_each(|next_state| {
-                if !states.contains(next_state) {
+            next_states.iter().cloned().for_each(|next_state| {
+                if !states.contains(&next_state) {
                     let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                     states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state.clone());
+                    collection_m.lock().unwrap().push_back(next_state);
                     if cnum_states % 50000 == 0 {
                         println!("VISITED STATES: {}", cnum_states);
                         println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -2089,7 +2089,7 @@ impl CAN_BUS_tlc {
         let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
 
         if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() {
-                invariant_violated_b.store(true, Ordering::Release);
+            invariant_violated_b.store(true, Ordering::Release);
         }
 
         let states_m = Arc::new(Mutex::new(HashSet::<CAN_BUS_tlc>::new()));
@@ -2225,14 +2225,14 @@ impl CAN_BUS_tlc {
                 let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().for_each(|next_state| {
+                next_states.iter().cloned().for_each(|next_state| {
                     {
                         let mut states = states_m2.lock().unwrap();
                         let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(next_state) {
+                        if !states.contains(&next_state) {
                             let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                             states.insert(next_state.clone());
-                            collection.push_back(next_state.clone());
+                            collection.push_back(next_state);
                             //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                             if cnum_states % 50000 == 0 {
                                 println!("VISITED STATES: {}", cnum_states);

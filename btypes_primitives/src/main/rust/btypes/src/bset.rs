@@ -1,6 +1,6 @@
 #![ allow( dead_code, non_snake_case) ]
 
-use crate::bboolean::BBoolean;
+use crate::bboolean::{IntoBool, BBoolean};
 use crate::binteger::{BInt, BInteger};
 use crate::bstring::BString;
 use crate::bobject::BObject;

@@ -23,19 +23,19 @@ pub enum MC_TYPE { BFS, DFS, MIXED }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BLOCKS {
-    A, 
-    B, 
-    C, 
-    D, 
-    E, 
-    F, 
-    G, 
-    H, 
-    I, 
-    J, 
-    K, 
-    L, 
-    M, 
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    I,
+    J,
+    K,
+    L,
+    M,
     N
 }
 impl BLOCKS {
@@ -48,36 +48,36 @@ impl Default for BLOCKS {
 }
 impl fmt::Display for BLOCKS {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           BLOCKS::A => write!(f, "A"),
-           BLOCKS::B => write!(f, "B"),
-           BLOCKS::C => write!(f, "C"),
-           BLOCKS::D => write!(f, "D"),
-           BLOCKS::E => write!(f, "E"),
-           BLOCKS::F => write!(f, "F"),
-           BLOCKS::G => write!(f, "G"),
-           BLOCKS::H => write!(f, "H"),
-           BLOCKS::I => write!(f, "I"),
-           BLOCKS::J => write!(f, "J"),
-           BLOCKS::K => write!(f, "K"),
-           BLOCKS::L => write!(f, "L"),
-           BLOCKS::M => write!(f, "M"),
-           BLOCKS::N => write!(f, "N"),
-       }
+        match *self {
+            BLOCKS::A => write!(f, "A"),
+            BLOCKS::B => write!(f, "B"),
+            BLOCKS::C => write!(f, "C"),
+            BLOCKS::D => write!(f, "D"),
+            BLOCKS::E => write!(f, "E"),
+            BLOCKS::F => write!(f, "F"),
+            BLOCKS::G => write!(f, "G"),
+            BLOCKS::H => write!(f, "H"),
+            BLOCKS::I => write!(f, "I"),
+            BLOCKS::J => write!(f, "J"),
+            BLOCKS::K => write!(f, "K"),
+            BLOCKS::L => write!(f, "L"),
+            BLOCKS::M => write!(f, "M"),
+            BLOCKS::N => write!(f, "N"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ROUTES {
-    R1, 
-    R2, 
-    R3, 
-    R4, 
-    R5, 
-    R6, 
-    R7, 
-    R8, 
-    R9, 
+    R1,
+    R2,
+    R3,
+    R4,
+    R5,
+    R6,
+    R7,
+    R8,
+    R9,
     R10
 }
 impl ROUTES {
@@ -90,18 +90,18 @@ impl Default for ROUTES {
 }
 impl fmt::Display for ROUTES {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           ROUTES::R1 => write!(f, "R1"),
-           ROUTES::R2 => write!(f, "R2"),
-           ROUTES::R3 => write!(f, "R3"),
-           ROUTES::R4 => write!(f, "R4"),
-           ROUTES::R5 => write!(f, "R5"),
-           ROUTES::R6 => write!(f, "R6"),
-           ROUTES::R7 => write!(f, "R7"),
-           ROUTES::R8 => write!(f, "R8"),
-           ROUTES::R9 => write!(f, "R9"),
-           ROUTES::R10 => write!(f, "R10"),
-       }
+        match *self {
+            ROUTES::R1 => write!(f, "R1"),
+            ROUTES::R2 => write!(f, "R2"),
+            ROUTES::R3 => write!(f, "R3"),
+            ROUTES::R4 => write!(f, "R4"),
+            ROUTES::R5 => write!(f, "R5"),
+            ROUTES::R6 => write!(f, "R6"),
+            ROUTES::R7 => write!(f, "R7"),
+            ROUTES::R8 => write!(f, "R8"),
+            ROUTES::R9 => write!(f, "R9"),
+            ROUTES::R10 => write!(f, "R10"),
+        }
     }
 }
 
@@ -568,14 +568,14 @@ impl Train_1_beebook_deterministic_MC_POR_v2 {
         //if caching is enabled globally, this will just prefill those, if caching is
         for trans in to_invalidate.iter() {
             match *trans {
-                "_tr_route_reservation" => {self._tr_route_reservation(false);}, 
-                "_tr_route_freeing" => {self._tr_route_freeing(false);}, 
-                "_tr_FRONT_MOVE_1" => {self._tr_FRONT_MOVE_1(false);}, 
-                "_tr_FRONT_MOVE_2" => {self._tr_FRONT_MOVE_2(false);}, 
-                "_tr_BACK_MOVE_1" => {self._tr_BACK_MOVE_1(false);}, 
-                "_tr_BACK_MOVE_2" => {self._tr_BACK_MOVE_2(false);}, 
-                "_tr_point_positionning" => {self._tr_point_positionning(false);}, 
-                "_tr_route_formation" => {self._tr_route_formation(false);}, 
+                "_tr_route_reservation" => {self._tr_route_reservation(false);},
+                "_tr_route_freeing" => {self._tr_route_freeing(false);},
+                "_tr_FRONT_MOVE_1" => {self._tr_FRONT_MOVE_1(false);},
+                "_tr_FRONT_MOVE_2" => {self._tr_FRONT_MOVE_2(false);},
+                "_tr_BACK_MOVE_1" => {self._tr_BACK_MOVE_1(false);},
+                "_tr_BACK_MOVE_2" => {self._tr_BACK_MOVE_2(false);},
+                "_tr_point_positionning" => {self._tr_point_positionning(false);},
+                "_tr_route_formation" => {self._tr_route_formation(false);},
                 _ => {},
             }
         }
@@ -1030,10 +1030,10 @@ impl Train_1_beebook_deterministic_MC_POR_v2 {
     fn next(collection_m: Arc<Mutex<LinkedList<Train_1_beebook_deterministic_MC_POR_v2>>>, mc_type: MC_TYPE) -> Train_1_beebook_deterministic_MC_POR_v2 {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
-                MC_TYPE::BFS   => collection.pop_front().unwrap(),
-                MC_TYPE::DFS   => collection.pop_back().unwrap(),
-                MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
-            };
+            MC_TYPE::BFS   => collection.pop_front().unwrap(),
+            MC_TYPE::DFS   => collection.pop_back().unwrap(),
+            MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+        };
     }
 
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
@@ -1105,11 +1105,11 @@ impl Train_1_beebook_deterministic_MC_POR_v2 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
 
-            next_states.iter().for_each(|next_state| {
-                if !states.contains(next_state) {
+            next_states.iter().cloned().for_each(|next_state| {
+                if !states.contains(&next_state) {
                     let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                     states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state.clone());
+                    collection_m.lock().unwrap().push_back(next_state);
                     if cnum_states % 50000 == 0 {
                         println!("VISITED STATES: {}", cnum_states);
                         println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
@@ -1144,7 +1144,7 @@ impl Train_1_beebook_deterministic_MC_POR_v2 {
         let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
 
         if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() {
-                invariant_violated_b.store(true, Ordering::Release);
+            invariant_violated_b.store(true, Ordering::Release);
         }
 
         let states_m = Arc::new(Mutex::new(HashSet::<Train_1_beebook_deterministic_MC_POR_v2>::new()));
@@ -1228,14 +1228,14 @@ impl Train_1_beebook_deterministic_MC_POR_v2 {
                 let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().for_each(|next_state| {
+                next_states.iter().cloned().for_each(|next_state| {
                     {
                         let mut states = states_m2.lock().unwrap();
                         let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(next_state) {
+                        if !states.contains(&next_state) {
                             let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
                             states.insert(next_state.clone());
-                            collection.push_back(next_state.clone());
+                            collection.push_back(next_state);
                             //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
                             if cnum_states % 50000 == 0 {
                                 println!("VISITED STATES: {}", cnum_states);

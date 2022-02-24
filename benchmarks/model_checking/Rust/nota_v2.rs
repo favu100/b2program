@@ -1,4 +1,4 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments, unused ) ]
 use std::env;
 use std::sync::atomic::{AtomicI32, AtomicI64, AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};

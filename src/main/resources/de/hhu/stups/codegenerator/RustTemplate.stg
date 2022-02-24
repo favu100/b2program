@@ -19,6 +19,7 @@ use derivative::Derivative;
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bboolean::IntoBool;
 <imports; separator="\n">
 <includedMachines; separator="\n">
 
@@ -533,11 +534,11 @@ binary(arg1,operator,arg2) ::= <<
 >>
 
 or(arg1, arg2) ::= <<
-<arg1>.or(&<arg2>)
+<arg1>.booleanValue() || <arg2>.booleanValue()
 >>
 
 and(arg1, arg2) ::= <<
-<arg1>.and(&<arg2>)
+<arg1>.booleanValue() && <arg2>.booleanValue()
 >>
 
 implies(arg1, arg2) ::= <<

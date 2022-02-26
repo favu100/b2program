@@ -1,6 +1,8 @@
 #![ allow( dead_code, non_snake_case) ]
 
+use std::collections::hash_map::DefaultHasher;
 use std::collections::LinkedList;
+use std::cell::RefCell;
 use crate::bobject::BObject;
 use crate::binteger::{BInt, BInteger, FromBInt};
 use crate::btuple::BTuple;
@@ -23,19 +25,43 @@ enum CombiningType {
     UNION
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Eq, PartialOrd, Ord)]
 pub struct BRelation<L: BObject, R: BObject> {
     map: HashMap<L, OrdSet<R>>,
+    hash_cache: RefCell<Option<u64>>,
+}
+
+impl <L: BObject, R: BObject> Clone for BRelation<L, R> {
+    fn clone(&self) -> Self {
+        BRelation { map: self.map.clone(), hash_cache: RefCell::new(Option::None) }
+    }
+}
+
+impl<L: BObject, R: BObject> PartialEq for BRelation<L, R> {
+    fn eq(&self, other: &BRelation<L, R>) -> bool {
+        self.map.eq(&other.map)
+    }
 }
 
 impl<L: BObject, R: BObject> Hash for BRelation<L, R> {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        let mut kvs = self.map.iter().collect::<Vec<(&L, &OrdSet<R>)>>();
-        kvs.sort_by(|(k1, _v1), (k2, _v2)| k1.cmp(k2));
-        for (key, value) in kvs {
-            key.hash(state);
-            value.iter().for_each(|v| v.hash(state));
+    fn hash<H: Hasher>(self: &BRelation<L, R>, state: &mut H) {
+        let cache = self.hash_cache.clone().take();
+        let hash: u64;
+
+        if cache.is_none() {
+            let mut hasher = DefaultHasher::new();
+            let mut kvs = self.map.iter().collect::<Vec<(&L, &OrdSet<R>)>>();
+            kvs.sort_by(|(k1, _v1), (k2, _v2)| k1.cmp(k2));
+            for (key, value) in kvs {
+                key.hash(&mut hasher);
+                value.iter().for_each(|v| v.hash(&mut hasher));
+            }
+            hash = hasher.finish();
+            self.hash_cache.replace(Option::Some(hash));
+        } else {
+            hash = cache.unwrap();
         }
+        hash.hash(state);
     }
 }
 
@@ -86,7 +112,7 @@ impl<L: BObject, R: BObject> BObject for BRelation<L, R> {}
 
 impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     pub fn new(mut args: Vec<BTuple<L, R>>) -> BRelation<L,R> {
-        let mut ret: BRelation<L, R> = BRelation {map: HashMap::new() };
+        let mut ret: BRelation<L, R> = BRelation {map: HashMap::new(), hash_cache: RefCell::new(Option::None) };
         while !args.is_empty() {
             let current_tuple = args.remove(0);
             ret.insert(&current_tuple);
@@ -95,7 +121,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     }
 
     pub fn fromSet(set: BSet<BTuple<L, R>>) -> BRelation<L, R> {
-        let mut ret: BRelation<L, R> = BRelation {map: HashMap::new()};
+        let mut ret: BRelation<L, R> = BRelation {map: HashMap::new(), hash_cache: RefCell::new(Option::None)};
         set.iter().for_each(|current_tuple| ret.insert(current_tuple));
         return ret;
     }
@@ -112,7 +138,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     }
 
     fn update(&self, key: L, value: OrdSet<R>) -> Self {
-        BRelation{ map: self.map.update(key, value) }
+        BRelation{ map: self.map.update(key, value), hash_cache: RefCell::new(Option::None) }
     }
 
     fn update_unit(&self, key: L, value: R) -> Self {
@@ -159,7 +185,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
         }
 
         let empty_map = OrdSet::new();
-        let mut result_map = BRelation{map: self.map.clone()};
+        let mut result_map = BRelation{map: self.map.clone(), hash_cache: RefCell::new(Option::None)};
         for domain_element in loop1_set {
             let this_range_set = self.map.get(&domain_element).unwrap_or(&empty_map).clone();
             let other_range_set = other_map.get(&domain_element).unwrap_or(&empty_map).clone();
@@ -279,7 +305,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     }
 
     pub fn domainSubstraction(&self, arg: &BSet<L>) -> BRelation<L, R> {
-        return BRelation {map: arg.iter().fold(self.map.clone(), |map, e| map.without(e))}
+        return BRelation {map: arg.iter().fold(self.map.clone(), |map, e| map.without(e)), hash_cache: RefCell::new(Option::None)}
     }
 
     pub fn rangeRestriction(&self, arg: &BSet<R>) -> BRelation<L, R> {
@@ -311,7 +337,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     }
 
     pub fn _override(&self, arg: &BRelation<L, R>) -> BRelation<L, R> {
-        return BRelation { map: arg.map.clone().union(self.map.clone())}
+        return BRelation { map: arg.map.clone().union(self.map.clone()), hash_cache: RefCell::new(Option::None)}
     }
 
     pub fn directProduct<ArgR: 'static + BObject>(&self, arg: &BRelation<L, ArgR>) -> BRelation<L, BTuple<R, ArgR>> {
@@ -474,6 +500,7 @@ where L: 'static + BInt + FromBInt,
             map: self.map.iter().fold(HashMap::<L, OrdSet<R>>::new(),
                                       |result, (k, v)|
                                           result.update(L::from(&size.minus(&k.get_binteger_value())), v.clone())),
+            hash_cache: RefCell::new(Option::None)
         }
     }
 

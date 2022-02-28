@@ -11,6 +11,7 @@ use derivative::Derivative;
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bboolean::IntoBool;
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 use btypes::brelation::BRelation;
@@ -49,7 +50,7 @@ impl sort_m2_data1000_MC {
         return m;
     }
     fn init(&mut self) {
-        self.n = BInteger::new(1000);
+        self.n = BInteger::new(300);
         let mut _ic_set_0 = BRelation::<BInteger, BInteger>::new(vec![]);
         for _ic_i_1 in BSet::<BInteger>::interval(&BInteger::new(1), &self.n).clone().iter().cloned() {
             _ic_set_0 = _ic_set_0._union(&BRelation::<BInteger, BInteger>::new(vec![BTuple::new(_ic_i_1, BInteger::new(15000).minus(&_ic_i_1))]));
@@ -87,7 +88,7 @@ impl sort_m2_data1000_MC {
     }
 
     pub fn progress(&mut self) -> () {
-        if (self.k.unequal(&self.n).and(&self.j.equal(&self.n))).booleanValue() {
+        if (self.k.unequal(&self.n).booleanValue() && self.j.equal(&self.n).booleanValue()).booleanValue() {
             let mut _ld_g = self.g.clone();
             let mut _ld_k = self.k.clone();
             let mut _ld_l = self.l.clone();
@@ -101,7 +102,7 @@ impl sort_m2_data1000_MC {
     }
 
     pub fn prog1(&mut self) -> () {
-        if (self.k.unequal(&self.n).and(&self.j.unequal(&self.n)).and(&self.g.functionCall(&self.l).lessEqual(&self.g.functionCall(&self.j.plus(&BInteger::new(1)))))).booleanValue() {
+        if (self.k.unequal(&self.n).booleanValue() && self.j.unequal(&self.n).booleanValue().booleanValue() && self.g.functionCall(&self.l).lessEqual(&self.g.functionCall(&self.j.plus(&BInteger::new(1)))).booleanValue()).booleanValue() {
             let mut _ld_j = self.j.clone();
             let mut _ld_l = self.l.clone();
             self.l = _ld_l;
@@ -112,7 +113,7 @@ impl sort_m2_data1000_MC {
     }
 
     pub fn prog2(&mut self) -> () {
-        if (self.k.unequal(&self.n).and(&self.j.unequal(&self.n)).and(&self.g.functionCall(&self.l).greater(&self.g.functionCall(&self.j.plus(&BInteger::new(1)))))).booleanValue() {
+        if (self.k.unequal(&self.n).booleanValue() && self.j.unequal(&self.n).booleanValue().booleanValue() && self.g.functionCall(&self.l).greater(&self.g.functionCall(&self.j.plus(&BInteger::new(1)))).booleanValue()).booleanValue() {
             let mut _ld_j = self.j.clone();
             self.j = _ld_j.plus(&BInteger::new(1));
             self.l = _ld_j.plus(&BInteger::new(1));
@@ -131,7 +132,7 @@ impl sort_m2_data1000_MC {
     pub fn _tr_progress(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_progress.is_none() {
-            let mut __tmp__val__ = self.k.unequal(&self.n).and(&self.j.equal(&self.n)).booleanValue();
+            let mut __tmp__val__ = self.k.unequal(&self.n).booleanValue() && self.j.equal(&self.n).booleanValue().booleanValue();
             self._tr_cache_progress = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -142,7 +143,7 @@ impl sort_m2_data1000_MC {
     pub fn _tr_prog1(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_prog1.is_none() {
-            let mut __tmp__val__ = self.k.unequal(&self.n).and(&self.j.unequal(&self.n)).and(&self.g.functionCall(&self.l).lessEqual(&self.g.functionCall(&self.j.plus(&BInteger::new(1))))).booleanValue();
+            let mut __tmp__val__ = self.k.unequal(&self.n).booleanValue() && self.j.unequal(&self.n).booleanValue().booleanValue() && self.g.functionCall(&self.l).lessEqual(&self.g.functionCall(&self.j.plus(&BInteger::new(1)))).booleanValue().booleanValue();
             self._tr_cache_prog1 = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -153,7 +154,7 @@ impl sort_m2_data1000_MC {
     pub fn _tr_prog2(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_prog2.is_none() {
-            let mut __tmp__val__ = self.k.unequal(&self.n).and(&self.j.unequal(&self.n)).and(&self.g.functionCall(&self.l).greater(&self.g.functionCall(&self.j.plus(&BInteger::new(1))))).booleanValue();
+            let mut __tmp__val__ = self.k.unequal(&self.n).booleanValue() && self.j.unequal(&self.n).booleanValue().booleanValue() && self.g.functionCall(&self.l).greater(&self.g.functionCall(&self.j.plus(&BInteger::new(1)))).booleanValue().booleanValue();
             self._tr_cache_prog2 = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -222,14 +223,9 @@ impl sort_m2_data1000_MC {
                           invariant_dependency: &HashMap<&str, HashSet<&'static str>>,
                           dependent_invariant_m: Arc<Mutex<HashMap<sort_m2_data1000_MC, HashSet<&str>>>>,
                           guard_dependency: &HashMap<&str, HashSet<&'static str>>,
-                          dependent_guard_m: Arc<Mutex<HashMap<sort_m2_data1000_MC, HashSet<&str>>>>,
-                          guardCache: Arc<Mutex<HashMap<sort_m2_data1000_MC, PersistentHashMap<&str, bool>>>>,
-                          parents_m: Arc<Mutex<HashMap<sort_m2_data1000_MC, sort_m2_data1000_MC>>>,
                           transitions: Arc<AtomicI64>) -> HashSet<sort_m2_data1000_MC> {
         let mut result = HashSet::<sort_m2_data1000_MC>::new();
         if isCaching {
-            let mut parents_guard_o = parents_m.lock().unwrap().get(state).and_then(|p| guardCache.lock().unwrap().get(p).cloned());
-            let mut newCache = if parents_guard_o.is_none() { PersistentHashMap::new() } else { parents_guard_o.as_ref().unwrap().clone() };
             //model_check_transition
             let mut _trid_1 = state._tr_progress(isCaching);
             if _trid_1 {
@@ -239,17 +235,9 @@ impl sort_m2_data1000_MC {
                 match guard_dependency.get("progress") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
                 {
                     let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
 
                     if !dependent_invariant.contains_key(&copiedState) {
                         dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("progress").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("progress").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
                     }
                 }
                 result.insert(copiedState);
@@ -264,17 +252,9 @@ impl sort_m2_data1000_MC {
                 match guard_dependency.get("prog1") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
                 {
                     let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
 
                     if !dependent_invariant.contains_key(&copiedState) {
                         dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("prog1").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("prog1").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
                     }
                 }
                 result.insert(copiedState);
@@ -289,17 +269,9 @@ impl sort_m2_data1000_MC {
                 match guard_dependency.get("prog2") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
                 {
                     let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
 
                     if !dependent_invariant.contains_key(&copiedState) {
                         dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("prog2").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("prog2").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
                     }
                 }
                 result.insert(copiedState);
@@ -314,24 +286,14 @@ impl sort_m2_data1000_MC {
                 match guard_dependency.get("final_evt") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
                 {
                     let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
 
                     if !dependent_invariant.contains_key(&copiedState) {
                         dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("final_evt").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("final_evt").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
                     }
                 }
                 result.insert(copiedState);
                 transitions.fetch_add(1, Ordering::AcqRel);
             }
-
-            guardCache.lock().unwrap().insert(state.clone(), newCache);
         } else {
             //model_check_transition
             if state._tr_progress(isCaching) {
@@ -379,7 +341,8 @@ impl sort_m2_data1000_MC {
     //model_check_invariants
     pub fn checkInvariants(state: &sort_m2_data1000_MC,
                            isCaching: bool,
-                           dependent_invariant_m: Arc<Mutex<HashMap<sort_m2_data1000_MC, HashSet<&str>>>> ) -> bool {
+                           dependent_invariant_m: Arc<Mutex<HashMap<sort_m2_data1000_MC, HashSet<&str>>>> ) -> bool
+    {
         let cached_invariants = dependent_invariant_m.lock().unwrap().get(&state).cloned();
         if cached_invariants.is_some() && isCaching {
             let dependent_invariants_of_state = cached_invariants.unwrap().clone();
@@ -464,9 +427,6 @@ impl sort_m2_data1000_MC {
         let mut invariantDependency = HashMap::<&str, HashSet<&'static str>>::new();
         let mut guardDependency = HashMap::<&str, HashSet<&'static str>>::new();
         let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, HashSet<&str>>::new()));
-        let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, HashSet<&str>>::new()));
-        let mut guard_cache = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, PersistentHashMap<&'static str, bool>>::new()));
-        let mut parents_m = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, sort_m2_data1000_MC>::new()));
 
         if is_caching {
             //model_check_init_static
@@ -486,7 +446,6 @@ impl sort_m2_data1000_MC {
             //model_check_init_static
             guardDependency.insert("final_evt", HashSet::from([]));
             dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-            parents_m.lock().unwrap().remove(&machine);
         }
 
         let transitions = Arc::new(AtomicI64::new(0));
@@ -494,7 +453,7 @@ impl sort_m2_data1000_MC {
         while !stop_threads.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
             let mut state = Self::next(Arc::clone(&collection_m), mc_type);
 
-            let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
+            let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&transitions));
 
             next_states.iter().cloned().for_each(|next_state| {
                 if !states.contains(&next_state) {
@@ -548,9 +507,6 @@ impl sort_m2_data1000_MC {
         let mut invariantDependency = HashMap::<&str, HashSet<&'static str>>::new();
         let mut guardDependency = HashMap::<&str, HashSet<&'static str>>::new();
         let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, HashSet<&str>>::new()));
-        let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, HashSet<&str>>::new()));
-        let mut guard_cache_b = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, PersistentHashMap<&'static str, bool>>::new()));
-        let mut parents_m = Arc::new(Mutex::new(HashMap::<sort_m2_data1000_MC, sort_m2_data1000_MC>::new()));
 
         if is_caching {
             //model_check_init_static
@@ -570,7 +526,6 @@ impl sort_m2_data1000_MC {
             //model_check_init_static
             guardDependency.insert("final_evt", HashSet::from([]));
             dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-            parents_m.lock().unwrap().remove(&machine);
         }
 
         let num_transitions = Arc::new(AtomicI64::new(0));
@@ -591,16 +546,13 @@ impl sort_m2_data1000_MC {
             let invariant_dependency = Arc::clone(&invariant_dependency_arc);
             let guard_dependency = Arc::clone(&guard_dependency_arc);
             let dependent_invariant_m2 = Arc::clone(&dependent_invariant_m);
-            let dependent_guard_m2 = Arc::clone(&dependent_guard_m);
-            let parents_m2 = Arc::clone(&parents_m);
-            let guard_cache = Arc::clone(&guard_cache_b);
             let transitions = Arc::clone(&num_transitions);
             let states_m2 = Arc::clone(&states_m);
             let number_states = Arc::clone(&number_states_arc);
             let tx = tx.clone();
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
-                let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
+                let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, Arc::clone(&transitions));
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.iter().cloned().for_each(|next_state| {

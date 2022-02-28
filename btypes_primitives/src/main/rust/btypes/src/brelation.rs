@@ -12,7 +12,8 @@ use std::hash::{Hash, Hasher};
 use std::convert::TryInto;
 use std::iter::FromIterator;
 use rand::prelude::IteratorRandom;
-use im::{HashMap, OrdSet};
+use crate::orderedhashset::OrderedHashSet as OrdSet; //TODO try OrdMap instead
+use im::OrdMap as HashMap;
 use crate::bboolean::BBoolean;
 use crate::brelation::CombiningType::{DIFFERENCE, INTERSECTION, UNION};
 use crate::bset::{BSet, SetLike, TBSet};
@@ -50,12 +51,15 @@ impl<L: BObject, R: BObject> Hash for BRelation<L, R> {
 
         if cache.is_none() {
             let mut hasher = DefaultHasher::new();
+            self.map.hash(&mut hasher);
+            /*
             let mut kvs = self.map.iter().collect::<Vec<(&L, &OrdSet<R>)>>();
             kvs.sort_by(|(k1, _v1), (k2, _v2)| k1.cmp(k2));
             for (key, value) in kvs {
                 key.hash(&mut hasher);
                 value.iter().for_each(|v| v.hash(&mut hasher));
             }
+            */
             hash = hasher.finish();
             self.hash_cache.replace(Option::Some(hash));
         } else {

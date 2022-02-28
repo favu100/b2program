@@ -771,16 +771,10 @@ fn generateNextStates(state: &mut <machine>,
                       invariant_dependency: &HashMap\<&str, HashSet\<&'static str>\>,
                       dependent_invariant_m: Arc\<Mutex\<HashMap\<<machine>, HashSet\<&str>\>\>>,
                       guard_dependency: &HashMap\<&str, HashSet\<&'static str\>>,
-                      dependent_guard_m: Arc\<Mutex\<HashMap\<<machine>, HashSet\<&str>\>\>>,
-                      guardCache: Arc\<Mutex\<HashMap\<<machine>, PersistentHashMap\<&str, bool>\>\>>,
-                      parents_m: Arc\<Mutex\<HashMap\<<machine>, <machine>\>\>>,
                       transitions: Arc\<AtomicI64>) -> HashSet\<<machine>\> {
     let mut result = HashSet::\<<machine>\>::new();
     if isCaching {
-        let mut parents_guard_o = parents_m.lock().unwrap().get(state).and_then(|p| guardCache.lock().unwrap().get(p).cloned());
-        let mut newCache = if parents_guard_o.is_none() { PersistentHashMap::new() } else { parents_guard_o.as_ref().unwrap().clone() };
         <transitionsWithCaching>
-        guardCache.lock().unwrap().insert(state.clone(), newCache);
     } else {
         <transitionsWithoutCaching>
     }
@@ -804,12 +798,12 @@ for param in <transitionIdentifier>.iter().cloned() {
 <endif>
 <else>
 <if(isCaching)>
-let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
+let mut <transitionIdentifier> = state.<evalTransitions>(true);
 if <transitionIdentifier> {
     <execTransitions>
 }
 <else>
-if state.<evalTransitions>(isCaching) {
+if state.<evalTransitions>(false) {
     <execTransitions>
 }
 <endif>
@@ -851,17 +845,9 @@ match guard_dependency.get("<operation>") { Some(map) => copiedState.invalidate_
 <if(isCaching)>
 {
     let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-    let mut parents = parents_m.lock().unwrap();
 
     if !dependent_invariant.contains_key(&copiedState) {
         dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("<operation>").unwrap().clone());
-    }
-    if !dependent_guard.contains_key(&copiedState) {
-        dependent_guard.insert(copiedState.clone(), guard_dependency.get("<operation>").unwrap().clone());
-    }
-    if !parents.contains_key(&copiedState) {
-        parents.insert(copiedState.clone(), state.clone());
     }
 }
 <endif>
@@ -939,15 +925,11 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
     let mut invariantDependency = HashMap::\<&str, HashSet\<&'static str>\>::new();
     let mut guardDependency = HashMap::\<&str, HashSet\<&'static str>\>::new();
     let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<&str>\>::new()));
-    let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<&str>\>::new()));
-    let mut guard_cache = Arc::new(Mutex::new(HashMap::\<<machine>, PersistentHashMap\<&'static str, bool\>>::new()));
-    let mut parents_m = Arc::new(Mutex::new(HashMap::\<<machine>, <machine>\>::new()));
 
     if is_caching {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
         dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-        parents_m.lock().unwrap().remove(&machine);
     }
 
     let transitions = Arc::new(AtomicI64::new(0));
@@ -955,7 +937,7 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
     while !stop_threads.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
         let mut state = Self::next(Arc::clone(&collection_m), mc_type);
 
-        let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
+        let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&transitions));
 
         next_states.iter().cloned().for_each(|next_state| {
             if !states.contains(&next_state) {
@@ -1009,15 +991,11 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
     let mut invariantDependency = HashMap::\<&str, HashSet\<&'static str>\>::new();
     let mut guardDependency = HashMap::\<&str, HashSet\<&'static str>\>::new();
     let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<&str>\>::new()));
-    let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<&str>\>::new()));
-    let mut guard_cache_b = Arc::new(Mutex::new(HashMap::\<<machine>, PersistentHashMap\<&'static str, bool\>>::new()));
-    let mut parents_m = Arc::new(Mutex::new(HashMap::\<<machine>, <machine>\>::new()));
 
     if is_caching {
         <invariantDependency; separator="\n">
         <guardDependency; separator="\n">
         dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-        parents_m.lock().unwrap().remove(&machine);
     }
 
     let num_transitions = Arc::new(AtomicI64::new(0));
@@ -1038,16 +1016,13 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
         let invariant_dependency = Arc::clone(&invariant_dependency_arc);
         let guard_dependency = Arc::clone(&guard_dependency_arc);
         let dependent_invariant_m2 = Arc::clone(&dependent_invariant_m);
-        let dependent_guard_m2 = Arc::clone(&dependent_guard_m);
-        let parents_m2 = Arc::clone(&parents_m);
-        let guard_cache = Arc::clone(&guard_cache_b);
         let transitions = Arc::clone(&num_transitions);
         let states_m2 = Arc::clone(&states_m);
         let number_states = Arc::clone(&number_states_arc);
         let tx = tx.clone();
         //println!("Thread {:?} spawning a thread", thread::current().id());
         threadPool.execute(move|| {
-            let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
+            let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, Arc::clone(&transitions));
 
             //println!("Thread {:?} executing", thread::current().id());
             next_states.iter().cloned().for_each(|next_state| {

@@ -10,3 +10,4 @@ pub mod bstring;
 pub mod btuple;
 pub mod brelation;
 pub mod butils;
+pub mod orderedhashset;

@@ -36,6 +36,11 @@ Note:
   An example where code generation for C works is the machine Lift.
 * Executing all tests requires building Java B Types and installing C++ B Types
 
+## Performance
+
+Performance Evaluation for Execution described in [benchmarks/README.md](benchmarks/execution/README.md).
+Performance Evaluation for Model Checking described in [benchmarks/README.md](benchmarks/model_checking/README.md).
+
 ## Build Java B Types
 
 Primitive Integer: `make btypes_primitives`
@@ -587,7 +592,3 @@ false
 false
 ```
 
-## Performance
-
-Analysis of the Performance is described in
-[benchmarks/README.md](benchmarks/execution/README.md).

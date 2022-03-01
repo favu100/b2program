@@ -923,7 +923,9 @@ skip() ::= <<
 enum-import() ::= <<
 >>
 
-model_check(nextStates, printResult, checkInvariants, main) ::= <<
+model_check(addCachedInfos, nextStates, printResult, checkInvariants, main) ::= <<
+<addCachedInfos>
+
 <nextStates>
 
 <printResult>
@@ -1014,39 +1016,41 @@ if(state.<evalTransitions>()) {
 <endif>
 >>
 
+model_check_add_cached_infos(machine) ::= <<
+static void addCachedInfos(const std::string& operation, bool isCaching, std::mutex& guardMutex, const <machine>& state, const <machine>& copiedState, std::unordered_map\<string, std::unordered_set\<string>\>& invariantDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentInvariant, std::unordered_map\<string, std::unordered_set\<string>\>& guardDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentGuard, std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual>& parents, std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia) {
+    if(isCaching) {
+        std::unique_lock\<std::mutex> lock(guardMutex);
+        if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
+            dependentInvariant.insert({copiedState, invariantDependency[operation]});
+        }
+        if(dependentGuard.find(copiedState) == dependentGuard.end()) {
+            dependentGuard.insert({copiedState, guardDependency[operation]});
+        }
+        if(parents.find(copiedState) == parents.end()) {
+            parents.insert({copiedState, state});
+        }
+        if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+            stateAccessedVia.insert({copiedState, operation});
+        }
+    } else {
+        std::unique_lock\<std::mutex> lock(guardMutex);
+        if(parents.find(copiedState) == parents.end()) {
+            parents.insert({copiedState, state});
+        }
+        if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
+            stateAccessedVia.insert({copiedState, operation});
+        }
+    }
+}
+>>
+
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-<if(isCaching)>
-{
-    std::unique_lock\<std::mutex> lock(guardMutex);
-    if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-        dependentInvariant.insert({copiedState, invariantDependency["<operation>"]});
-    }
-    if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-        dependentGuard.insert({copiedState, guardDependency["<operation>"]});
-    }
-    if(parents.find(copiedState) == parents.end()) {
-        parents.insert({copiedState, state});
-    }
-    if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-        stateAccessedVia.insert({copiedState, "<operation>"});
-    }
-}
-<else>
-{
-    std::unique_lock\<std::mutex> lock(guardMutex);
-    if(parents.find(copiedState) == parents.end()) {
-        parents.insert({copiedState, state});
-    }
-    if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-        stateAccessedVia.insert({copiedState, "<operation>"});
-    }
-}
-<endif>
+addCachedInfos(std::string("<operation>"), isCaching, guardMutex, state, copiedState, invariantDependency, dependentInvariant, guardDependency, dependentGuard, parents, stateAccessedVia);
 result.insert(copiedState);
 transitions += 1;
 >>

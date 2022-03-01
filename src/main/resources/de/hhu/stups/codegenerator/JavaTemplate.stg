@@ -852,7 +852,9 @@ skip() ::= <<
 enum_import() ::= <<
 >>
 
-model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
+model_check(addCachedInfos, nextStates, evalState, checkInvariants, printResult, main) ::= <<
+<addCachedInfos>
+
 <nextStates>
 
 <evalState>
@@ -934,37 +936,43 @@ if(state.<evalTransitions>()) {
 <endif>
 >>
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
+model_check_add_cached_infos(machine) ::= <<
+private static void addCachedInfos(String operation, boolean isCaching, Object guardLock, <machine> state, <machine> copiedState, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, <machine>\> parents, Map\<<machine>, String> stateAccessedVia) {
+    if(isCaching) {
+        synchronized(guardLock) {
+            if(!dependentInvariant.containsKey(copiedState)) {
+                dependentInvariant.put(copiedState, invariantDependency.get(operation));
+            }
+            if(!dependentGuard.containsKey(copiedState)) {
+                dependentGuard.put(copiedState, guardDependency.get(operation));
+            }
+            if(!parents.containsKey(copiedState)) {
+                parents.put(copiedState, state);
+            }
+            if(!stateAccessedVia.containsKey(copiedState)) {
+                stateAccessedVia.put(copiedState, operation);
+            }
+        }
+    } else {
+        synchronized(guardLock) {
+            if(!parents.containsKey(copiedState)) {
+                parents.put(copiedState, state);
+            }
+            if(!stateAccessedVia.containsKey(copiedState)) {
+                stateAccessedVia.put(copiedState, operation);
+            }
+        }
+    }
+}
+>>
+
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, caching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-<if(isCaching)>
-synchronized(guardLock) {
-    if(!dependentInvariant.containsKey(copiedState)) {
-        dependentInvariant.put(copiedState, invariantDependency.get("<operation>"));
-    }
-    if(!dependentGuard.containsKey(copiedState)) {
-        dependentGuard.put(copiedState, guardDependency.get("<operation>"));
-    }
-    if(!parents.containsKey(copiedState)) {
-        parents.put(copiedState, state);
-    }
-    if(!stateAccessedVia.containsKey(copiedState)) {
-        stateAccessedVia.put(copiedState, "<operation>");
-    }
-}
-<else>
-synchronized(guardLock) {
-    if(!parents.containsKey(copiedState)) {
-        parents.put(copiedState, state);
-    }
-    if(!stateAccessedVia.containsKey(copiedState)) {
-        stateAccessedVia.put(copiedState, "<operation>");
-    }
-}
-<endif>
+addCachedInfos("<operation>", isCaching, guardLock, state, copiedState, invariantDependency, dependentInvariant, guardDependency, dependentGuard, parents, stateAccessedVia);
 result.add(copiedState);
 transitions.getAndIncrement();
 >>

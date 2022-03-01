@@ -37,6 +37,7 @@ public class ModelCheckingGenerator {
         if((forModelChecking || forVisualisation) && !isIncludedMachine) {
             typeGenerator.setFromOutside(true);
             ST template = currentGroup.getInstanceOf("model_check");
+            TemplateHandler.add(template, "addCachedInfos", generateAddCachedInfos(machineNode));
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
             TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
             TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariantsFunction(machineNode));
@@ -87,13 +88,18 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
+    private String generateAddCachedInfos(MachineNode machineNode) {
+        ST template = currentGroup.getInstanceOf("model_check_add_cached_infos");
+        TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
+        return template.render();
+    }
+
     public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType, boolean isCaching) {
         ST template = currentGroup.getInstanceOf("model_check_transition_body");
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "operation", nameHandler.handle(opNode.getName()));
         TemplateHandler.add(template, "hasParameters", hasParameters);
-        TemplateHandler.add(template, "isCaching", isCaching);
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
 

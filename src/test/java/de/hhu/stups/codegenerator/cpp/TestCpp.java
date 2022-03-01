@@ -65,7 +65,7 @@ public class TestCpp {
 				null);
 
 		Process process = Runtime.getRuntime()
-				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+				.exec("g++ -std=c++14 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
@@ -99,7 +99,7 @@ public class TestCpp {
 		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machine + ".cpp").toString();
 
 		Process compileProcess = runtime
-				.exec("g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+				.exec("g++ -std=c++14 -O2 -flto -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		compileProcess.waitFor();
 
 		String error = streamToString(compileProcess.getErrorStream());
@@ -147,7 +147,7 @@ public class TestCpp {
 				null);
 
 		Process process = Runtime.getRuntime()
-				.exec("g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+				.exec("g++ -std=c++14 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();

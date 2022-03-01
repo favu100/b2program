@@ -19,14 +19,14 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile group: 'org.clojure', name: 'clojure', version: '1.10.0'
-    testCompile 'junit:junit:4.8.2'
+    implementation group: 'org.clojure', name: 'clojure', version: '1.10.0'
+    testImplementation 'junit:junit:4.8.2'
 }
 
 task fatJar(type: Jar) {
     baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from('src/main/python'){include 'btypes/*.py'}
     with jar
 }
 

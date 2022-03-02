@@ -1162,6 +1162,12 @@ static <machine> next(std::list\<<machine>\>& collection, std::mutex& mutex, <ma
     };
 }
 
+static void initCache(<machine> machine, std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency, std::unordered_map\<string, std::unordered_set\<string>\> guardDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant) {
+    <invariantDependency; separator="\n">
+    <guardDependency; separator="\n">
+    dependentInvariant.insert({machine, std::unordered_set\<string>()});
+}
+
 static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
     std::mutex mutex;
     std::mutex guardMutex;
@@ -1194,9 +1200,7 @@ static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
     std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
     std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
     if(isCaching) {
-        <invariantDependency; separator="\n">
-        <guardDependency; separator="\n">
-        dependentInvariant.insert({machine, std::unordered_set\<string>()});
+        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
     }
     <machine> counterExampleState;
 
@@ -1274,9 +1278,7 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
     std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
     std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
     if(isCaching) {
-        <invariantDependency; separator="\n">
-        <guardDependency; separator="\n">
-        dependentInvariant.insert({machine, std::unordered_set\<string>()});
+        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
     }
     <machine> counterExampleState;
 

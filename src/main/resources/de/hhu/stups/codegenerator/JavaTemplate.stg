@@ -1066,6 +1066,12 @@ private static <machine> next(LinkedList\<<machine>\> collection, Object lock, T
     }
 }
 
+private static void initCache(<machine> machine, Map\<String, Set\<String>\> invariantDependency, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentInvariant) {
+    <invariantDependency; separator="\n">
+    <guardDependency; separator="\n">
+    dependentInvariant.put(machine, new HashSet\<>());
+}
+
 private static void modelCheckSingleThreaded(Type type, boolean isCaching, boolean isDebug) {
     Object lock = new Object();
     Object guardLock = new Object();
@@ -1092,9 +1098,7 @@ private static void modelCheckSingleThreaded(Type type, boolean isCaching, boole
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
     Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
-        <invariantDependency; separator="\n">
-        <guardDependency; separator="\n">
-        dependentInvariant.put(machine, new HashSet\<>());
+        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
     }
     List\<<machine>\> counterExampleState = new ArrayList\<>();
     parents.put(machine, null);
@@ -1164,9 +1168,7 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     Map\<<machine>, <machine>\> parents = new HashMap\<>();
     Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
-        <invariantDependency; separator="\n">
-        <guardDependency; separator="\n">
-        dependentInvariant.put(machine, new HashSet\<>());
+        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
     }
     List\<<machine>\> counterExampleState = new ArrayList\<>();
     parents.put(machine, null);

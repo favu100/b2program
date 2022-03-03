@@ -5,10 +5,11 @@ use crate::binteger::{BInt, BInteger};
 use crate::bstring::BString;
 use crate::bobject::BObject;
 use crate::btuple::BTuple;
+use crate::orderedhashset::OrderedHashSet as OrdSet;
 
 use std::any::TypeId;
 use std::convert::TryInto;
-use im::ordset::{OrdSet, Iter};
+use im::ordset::Iter;
 use std::hash::Hash;
 use std::collections::LinkedList;
 use std::fmt;
@@ -65,6 +66,9 @@ where
         self.iter()
     }
 }
+
+//TODO: check if replacing cache with mutex works and does not impact permormance too much
+unsafe impl<T: BObject> Sync for BSet<T> {}
 
 impl<T: 'static + BObject> BSet<T> {
 

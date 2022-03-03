@@ -10,7 +10,6 @@ use crate::btuple::BTuple;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::convert::TryInto;
-use std::iter::FromIterator;
 use rand::prelude::IteratorRandom;
 use crate::orderedhashset::OrderedHashSet as OrdSet; //TODO try OrdMap instead
 use im::OrdMap as HashMap;
@@ -26,17 +25,14 @@ enum CombiningType {
     UNION
 }
 
-#[derive(Default, Debug, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Eq, PartialOrd, Ord, Clone)]
 pub struct BRelation<L: BObject, R: BObject> {
     map: HashMap<L, OrdSet<R>>,
     hash_cache: RefCell<Option<u64>>,
 }
 
-impl <L: BObject, R: BObject> Clone for BRelation<L, R> {
-    fn clone(&self) -> Self {
-        BRelation { map: self.map.clone(), hash_cache: RefCell::new(Option::None) }
-    }
-}
+//TODO: check if replacing cache with mutex works and does not impact permormance too much
+unsafe impl<L: BObject, R: BObject> Sync for BRelation<L, R> {}
 
 impl<L: BObject, R: BObject> PartialEq for BRelation<L, R> {
     fn eq(&self, other: &BRelation<L, R>) -> bool {
@@ -61,8 +57,10 @@ impl<L: BObject, R: BObject> Hash for BRelation<L, R> {
             }
             */
             hash = hasher.finish();
+            //println!("BRelation: cache miss");
             self.hash_cache.replace(Option::Some(hash));
         } else {
+            //println!("BRelation: cache hit");
             hash = cache.unwrap();
         }
         hash.hash(state);
@@ -139,6 +137,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
             new_set = OrdSet::from(vec![tuple.projection2()]);
         }
         self.map.insert(tuple.projection1(), new_set);
+        self.hash_cache.replace(Option::None);
     }
 
     fn update(&self, key: L, value: OrdSet<R>) -> Self {
@@ -175,8 +174,8 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
 
     fn relation_combine(&self, relation: &BRelation<L, R>, comb_type: CombiningType) -> BRelation<L, R> {
         let other_map = &relation.map;
-        let other_domain: OrdSet<L> = OrdSet::from_iter(relation.map.keys().cloned().collect::<Vec<L>>());
-        let this_domain: OrdSet<L> = OrdSet::from_iter(self.map.keys().cloned().collect::<Vec<L>>());
+        let other_domain: OrdSet<L> = OrdSet::from(relation.map.keys().cloned().collect::<Vec<L>>());
+        let this_domain: OrdSet<L> = OrdSet::from(self.map.keys().cloned().collect::<Vec<L>>());
         let intersection_domain = this_domain.clone().intersection(other_domain.clone());
         let difference_domain = this_domain.relative_complement(other_domain.clone());
 

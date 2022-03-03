@@ -1,3 +1,4 @@
+use std::convert::TryInto;
 use crate::bboolean::BBoolean;
 use crate::bobject::BObject;
 
@@ -9,7 +10,7 @@ pub trait FromBInt { fn from<T: BInt>(value: &T) -> Self; }
 
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct BInteger {
-    val: i32,
+    val: i64,
 }
 
 impl BObject for BInteger {}
@@ -26,15 +27,15 @@ impl FromBInt for BInteger {
 impl BInteger {
     #![allow(non_snake_case, dead_code)]
 
-    pub const fn new(init: i32) -> BInteger {
+    pub const fn new(init: i64) -> BInteger {
         return BInteger {
             val: init,
         }
     }
 
-    pub fn get_val(&self) -> i32 { return self.val; }
+    pub fn get_val(&self) -> i64 { return self.val; }
 
-    pub fn compareTo(&self, o: &BInteger) -> i32 {
+    pub fn compareTo(&self, o: &BInteger) -> i64 {
         return self.val - o.val;
     }
 
@@ -76,7 +77,8 @@ impl BInteger {
 
     pub fn power(&self, v: &BInteger) -> BInteger {
         if v.val < 0 { panic!("Power with negative exponent!") }
-        return BInteger::new(self.val.pow(v.val.unsigned_abs()));
+        let exp: u32 = v.val.unsigned_abs().try_into().unwrap();
+        return BInteger::new(self.val.pow(exp));
     }
 
     pub fn divide(&self, v: &BInteger) -> BInteger {

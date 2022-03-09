@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -50,6 +50,8 @@ public class <machine> {
         MIXED
     }
 
+    public <machine> parent;
+
     <endif>
 
     <structs; separator= "\n\n">
@@ -68,6 +70,8 @@ public class <machine> {
 
     <if(forModelChecking)>
     <copyConstructor>
+
+    <mainMethod>
     <endif>
 
     <operations; separator="\n\n">
@@ -852,32 +856,73 @@ skip() ::= <<
 enum_import() ::= <<
 >>
 
-model_check(addCachedInfos, nextStates, evalState, checkInvariants, printResult, main) ::= <<
-<addCachedInfos>
+modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
 
-<nextStates>
+private static class ModelChecker {
+    private final Type type;
+    private final int threads;
+    private final boolean isCaching;
+    private final boolean isDebug;
 
-<evalState>
+    private final LinkedList\<<machine>\> unvisitedStates = new LinkedList\<>();
+    private final Set\<<machine>\> states = new HashSet\<>();
+    private AtomicInteger transitions = new AtomicInteger(0);
+    private ThreadPoolExecutor threadPool;
+    private Object waitLock = new Object();
+    private Object guardLock = new Object();
 
-<checkInvariants>
+    private AtomicBoolean invariantViolated = new AtomicBoolean(false);
+    private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+    private <machine> counterExampleState = null;
 
-<printResult>
+    private final Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
+    private final Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
+    private final Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
+    private final Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
+    private final Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
 
-<main>
+    public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
+        this.type = type;
+        this.threads = threads;
+        this.isCaching = isCaching;
+        this.isDebug = isDebug;
+    }
+
+    <main>
+
+    private <machine> next() {
+        synchronized(this.unvisitedStates) {
+            return switch(type) {
+                case BFS -> this.unvisitedStates.removeFirst();
+                case DFS -> this.unvisitedStates.removeLast();
+                case MIXED -> this.unvisitedStates.size() % 2 == 0 ? this.unvisitedStates.removeFirst() : this.unvisitedStates.removeLast();
+            };
+        }
+    }
+
+    <nextStates>
+
+    <invariantViolated>
+
+    <addCachedInfos>
+
+    <printResult>
+}
+
 >>
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 @SuppressWarnings("unchecked")
-private static Set\<<machine>\> generateNextStates(Object guardLock, <machine> state, boolean isCaching, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, PersistentHashMap> guardCache, Map\<<machine>, <machine>\> parents, Map\<<machine>, String> stateAccessedVia, AtomicInteger transitions) {
+private Set\<<machine>\> generateNextStates(final <machine> state, final Map\<<machine>, String> stateAccessedVia) {
     Set\<<machine>\> result = new HashSet\<>();
     if(isCaching) {
-        PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
+        PersistentHashMap parentsGuard = guardCache.get(state.parent);
         PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
         Set\<String> dependentGuardsOfState = dependentGuard.get(state);
         Object cachedValue = null;
         boolean dependentGuardsBoolean = true;
         <transitionsWithCaching>
-        synchronized(guardLock) {
+        synchronized(guardCache) { // TODO: ?
             guardCache.put(state, newCache);
         }
     } else {
@@ -924,6 +969,7 @@ if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == n
 } else {
     <transitionIdentifier> = (boolean) cachedValue;
 }
+
 newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
 if(<transitionIdentifier>) {
     <execTransitions>
@@ -937,27 +983,19 @@ if(state.<evalTransitions>()) {
 >>
 
 model_check_add_cached_infos(machine) ::= <<
-private static void addCachedInfos(String operation, boolean isCaching, Object guardLock, <machine> state, <machine> copiedState, Map\<String, Set\<String>\> invariantDependency, Map\<<machine>, Set\<String>\> dependentInvariant, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentGuard, Map\<<machine>, <machine>\> parents, Map\<<machine>, String> stateAccessedVia) {
-    if(isCaching) {
-        synchronized(guardLock) {
+private void addCachedInfos(final String operation, final <machine> state, final <machine> copiedState, final Map\<<machine>, String> stateAccessedVia) {
+    synchronized(guardLock) {
+        if(isCaching) {
             if(!dependentInvariant.containsKey(copiedState)) {
                 dependentInvariant.put(copiedState, invariantDependency.get(operation));
             }
             if(!dependentGuard.containsKey(copiedState)) {
                 dependentGuard.put(copiedState, guardDependency.get(operation));
             }
-            if(!parents.containsKey(copiedState)) {
-                parents.put(copiedState, state);
-            }
             if(!stateAccessedVia.containsKey(copiedState)) {
                 stateAccessedVia.put(copiedState, operation);
             }
-        }
-    } else {
-        synchronized(guardLock) {
-            if(!parents.containsKey(copiedState)) {
-                parents.put(copiedState, state);
-            }
+        } else {
             if(!stateAccessedVia.containsKey(copiedState)) {
                 stateAccessedVia.put(copiedState, operation);
             }
@@ -972,9 +1010,9 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-addCachedInfos("<operation>", isCaching, guardLock, state, copiedState, invariantDependency, dependentInvariant, guardDependency, dependentGuard, parents, stateAccessedVia);
+copiedState.parent = state;
+addCachedInfos("<operation>", state, copiedState, stateAccessedVia);
 result.add(copiedState);
-transitions.getAndIncrement();
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -989,24 +1027,21 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 <endif>
 >>
 
-model_check_invariants(machine, checkInvariants, invariants) ::= <<
-public static boolean checkInvariants(Object guardLock, <machine> state, boolean isCaching, Map\<<machine>, Set\<String>\> dependentInvariant) {
+model_check_invariants(machine, invariantViolated, invariants) ::= <<
+private boolean invariantViolated(final <machine> state) {
     if(isCaching) {
-        Set\<String> dependentInvariantsOfState;
-        synchronized(guardLock) {
-            dependentInvariantsOfState = dependentInvariant.get(state);
-        }
-        <checkInvariants; separator="\n">
-        return true;
+        Set\<String> dependentInvariantsOfState = dependentInvariant.get(state);
+        <invariantViolated; separator="\n">
+        return false;
     }
-    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+    return !(<invariants:{inv | state.<inv>()}; separator=" && ">);
 }
 >>
 
 model_check_invariant(invariant) ::= <<
 if(dependentInvariantsOfState.contains("<invariant>")) {
     if(!state.<invariant>()) {
-        return false;
+        return true;
     }
 }
 >>
@@ -1019,33 +1054,30 @@ state.put("<getter>", machine.<getter>());
 >>
 
 model_check_print(machine) ::= <<
-private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List\<<machine>\> counterExampleState, Map\<<machine>, <machine>\> parents, Map\<<machine>, String> stateAccessedVia) {
-
-    if(invariantViolated || deadlockDetected) {
-        if(deadlockDetected) {
+private void printResult(final int states, final int transitions, final Map\<<machine>, String> stateAccessedVia) {
+    if(invariantViolated.get() || deadlockDetected.get()) {
+        if(deadlockDetected.get()) {
             System.out.println("DEADLOCK DETECTED");
-        }
-        if(invariantViolated) {
+        } else {
             System.out.println("INVARIANT VIOLATED");
         }
+
         System.out.println("COUNTER EXAMPLE TRACE: ");
         StringBuilder sb = new StringBuilder();
-        if(counterExampleState.size() >= 1) {
-            <machine> currentState = counterExampleState.get(0);
-            while(currentState != null) {
-                sb.insert(0, currentState.toString());
-                sb.insert(0, "\n");
-                sb.insert(0, stateAccessedVia.get(currentState));
-                sb.insert(0, "\n\n");
-                currentState = parents.get(currentState);
+        while(counterExampleState != null) {
+            sb.insert(0, counterExampleState);
+            sb.insert(0, "\n");
+            if(stateAccessedVia.containsKey(counterExampleState)) {
+                sb.insert(0, stateAccessedVia.get(counterExampleState));
             }
+            sb.insert(0, "\n\n");
+            counterExampleState = counterExampleState.parent;
         }
-        System.out.println(sb.toString());
-
-    }
-    if(!deadlockDetected && !invariantViolated) {
+        System.out.println(sb);
+    } else {
         System.out.println("MODEL CHECKING SUCCESSFUL");
     }
+
     System.out.println("Number of States: " + states);
     System.out.println("Number of Transitions: " + transitions);
 }
@@ -1056,174 +1088,127 @@ model_check_init_static(map, keyy, entries) ::= <<
 >>
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
-private static <machine> next(LinkedList\<<machine>\> collection, Object lock, Type type) {
-    synchronized(lock) {
-        return switch(type) {
-            case BFS -> collection.removeFirst();
-            case DFS -> collection.removeLast();
-            case MIXED -> collection.size() % 2 == 0 ? collection.removeFirst() : collection.removeLast();
-        };
+public void modelCheck() {
+    if (isDebug) {
+        System.out.println("Starting Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
+    }
+
+    if (threads \<= 1) {
+        modelCheckSingleThreaded();
+    } else {
+        this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);
+        modelCheckMultiThreaded();
     }
 }
 
-private static void initCache(<machine> machine, Map\<String, Set\<String>\> invariantDependency, Map\<String, Set\<String>\> guardDependency, Map\<<machine>, Set\<String>\> dependentInvariant) {
-    <invariantDependency; separator="\n">
-    <guardDependency; separator="\n">
-    dependentInvariant.put(machine, new HashSet\<>());
-}
-
-private static void modelCheckSingleThreaded(Type type, boolean isCaching, boolean isDebug) {
-    Object lock = new Object();
-    Object guardLock = new Object();
-
+private void modelCheckSingleThreaded() {
     <machine> machine = new <machine>();
+    states.add(machine); // TODO: store hashes instead of machine?
+    unvisitedStates.add(machine);
 
-
-    AtomicBoolean invariantViolated = new AtomicBoolean(false);
-    AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-    AtomicBoolean stopThreads = new AtomicBoolean(false);
-
-    Set\<<machine>\> states = new HashSet\<>();
-    states.add(machine);
-    AtomicInteger numberStates = new AtomicInteger(1);
-
-    LinkedList\<<machine>\> collection = new LinkedList\<>();
-    collection.add(machine);
-
-    Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
-    Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
-    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
-    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
-    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
-    Map\<<machine>, <machine>\> parents = new HashMap\<>();
-    Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
-        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
+        initCache(machine);
     }
-    List\<<machine>\> counterExampleState = new ArrayList\<>();
-    parents.put(machine, null);
 
-    AtomicInteger transitions = new AtomicInteger(0);
+    Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
 
-    while(!collection.isEmpty() && !stopThreads.get()) {
-        <machine> state = next(collection, lock, type);
+    while(!unvisitedStates.isEmpty()) {
+        <machine> state = next();
 
-        Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+        Set\<<machine>\> nextStates = generateNextStates(state, stateAccessedVia);
+        transitions.addAndGet(nextStates.size());
 
         nextStates.forEach(nextState -> {
             if(!states.contains(nextState)) {
-                numberStates.getAndIncrement();
                 states.add(nextState);
-                collection.add(nextState);
-                if(numberStates.get() % 5000 == 0) {
-                    System.out.println("VISITED STATES: " + numberStates.get());
+                unvisitedStates.add(nextState);
+                if(states.size() % 50000 == 0 && isDebug) {
+                    System.out.println("VISITED STATES: " + states.size());
                     System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
                     System.out.println("-------------------");
                 }
             }
         });
 
-        if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+        if(invariantViolated(state)) {
             invariantViolated.set(true);
-            stopThreads.set(true);
-            counterExampleState.add(state);
+            counterExampleState = state;
+            break;
         }
 
         if(nextStates.isEmpty()) {
             deadlockDetected.set(true);
-            stopThreads.set(true);
+            counterExampleState = state;
+            break;
         }
 
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
+    printResult(states.size(), transitions.get(), stateAccessedVia);
 }
 
-
-private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching, boolean isDebug) {
-    Object lock = new Object();
-    Object guardLock = new Object();
-    Object waitLock = new Object();
-    ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
-
+private void modelCheckMultiThreaded() {
     <machine> machine = new <machine>();
+    states.add(machine);
+    unvisitedStates.add(machine);
 
-
-    AtomicBoolean invariantViolated = new AtomicBoolean(false);
-    AtomicBoolean deadlockDetected = new AtomicBoolean(false);
     AtomicBoolean stopThreads = new AtomicBoolean(false);
     AtomicInteger possibleQueueChanges = new AtomicInteger(0);
 
-    Set\<<machine>\> states = new HashSet\<>();
-    states.add(machine);
-    AtomicInteger numberStates = new AtomicInteger(1);
-
-    LinkedList\<<machine>\> collection = new LinkedList\<>();
-    collection.add(machine);
-
-    Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
-    Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
-    Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
-    Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
-    Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
-    Map\<<machine>, <machine>\> parents = new HashMap\<>();
     Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
-        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
+        initCache(machine);
     }
-    List\<<machine>\> counterExampleState = new ArrayList\<>();
-    parents.put(machine, null);
     stateAccessedVia.put(machine, null);
 
-    AtomicInteger transitions = new AtomicInteger(0);
-
-    while(!collection.isEmpty() && !stopThreads.get()) {
+    while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
         possibleQueueChanges.incrementAndGet();
-        <machine> state = next(collection, lock, type);
+        <machine> state = next();
         Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+            Set\<<machine>\> nextStates = generateNextStates(state, stateAccessedVia);
+            transitions.addAndGet(nextStates.size());
 
             nextStates.forEach(nextState -> {
-                synchronized(lock) {
+                synchronized (states) {
                     if(!states.contains(nextState)) {
-                        numberStates.getAndIncrement();
                         states.add(nextState);
-                        collection.add(nextState);
-                        if(numberStates.get() % 5000 == 0) {
-                            if( isDebug || numberStates.get() % 50000 == 0) {
-                                System.out.println("VISITED STATES: " + numberStates.get());
-                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                System.out.println("-------------------");
-                            }
+                        synchronized (unvisitedStates) {
+                            unvisitedStates.add(nextState);
+                        }
+                        if(states.size() % 50000 == 0 && isDebug) {
+                            System.out.println("VISITED STATES: " + states.size());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
                         }
                     }
                 }
             });
 
-            synchronized (lock) {
+            synchronized (unvisitedStates) {
                 int running = possibleQueueChanges.decrementAndGet();
-                if (!collection.isEmpty() || running == 0) {
+                if (!unvisitedStates.isEmpty() || running == 0) {
                     synchronized (waitLock) {
                         waitLock.notify();
                     }
                 }
             }
 
+            if(invariantViolated(state)) {
+                invariantViolated.set(true);
+                counterExampleState = state;
+                return;
+            }
+
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
-                stopThreads.set(true);
+                counterExampleState = state;
+                return;
             }
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                counterExampleState.add(state);
-            }
-
 
         };
+
         threadPool.submit(task);
         synchronized(waitLock) {
-            if (collection.isEmpty() && possibleQueueChanges.get() > 0) {
+            if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
                 try {
                     waitLock.wait();
                 } catch (InterruptedException e) {
@@ -1239,15 +1224,17 @@ private static void modelCheckMultiThreaded(Type type, int threads, boolean isCa
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
-    printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
+    printResult(states.size(), transitions.get(), stateAccessedVia);
 }
 
-public static void debugPrint (String msg, Boolean isDebug) {
-   if (isDebug) {
-      System.out.println(msg);
-   }
+private void initCache(final <machine> machine) {
+    <invariantDependency; separator="\n">
+    <guardDependency; separator="\n">
+    dependentInvariant.put(machine, new HashSet\<>());
 }
+>>
 
+model_check_main_method() ::= <<
 public static void main(String[] args) {
     if(args.length > 4) {
         System.out.println("Expecting 3 command-line arguments: STRATEGY THREADS CACHING DEBUG");
@@ -1299,13 +1286,9 @@ public static void main(String[] args) {
             return;
         }
     }
-    
-    debugPrint("Starting Modelchecking, STRATEGY=" + type + "THREADS=" + threads + ", CACHING=" + isCaching, isDebug);
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching, isDebug);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching, isDebug);
-    }
+
+    ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
 }
 >>
 

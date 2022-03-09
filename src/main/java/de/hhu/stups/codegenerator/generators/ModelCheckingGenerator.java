@@ -36,13 +36,22 @@ public class ModelCheckingGenerator {
     public String generate(MachineNode machineNode, boolean forModelChecking, boolean isIncludedMachine, boolean forVisualisation) {
         if((forModelChecking || forVisualisation) && !isIncludedMachine) {
             typeGenerator.setFromOutside(true);
-            ST template = currentGroup.getInstanceOf("model_check");
+//            ST template = currentGroup.getInstanceOf("model_check");
+//            TemplateHandler.add(template, "addCachedInfos", generateAddCachedInfos(machineNode));
+//            TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
+//            TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
+//            TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariantsFunction(machineNode));
+//            TemplateHandler.add(template, "printResult", generatePrintResult(machineNode));
+//            TemplateHandler.add(template, "main", generateMain(machineNode));
+
+            ST template = currentGroup.getInstanceOf("modelchecker");
+            TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
             TemplateHandler.add(template, "addCachedInfos", generateAddCachedInfos(machineNode));
-            TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
-            TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
-            TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariantsFunction(machineNode));
-            TemplateHandler.add(template, "printResult", generatePrintResult(machineNode));
             TemplateHandler.add(template, "main", generateMain(machineNode));
+            TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
+            TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariantsFunction(machineNode));
+            TemplateHandler.add(template, "printResult", generatePrintResult(machineNode));
+
             typeGenerator.setFromOutside(false);
             return template.render();
         }
@@ -208,6 +217,11 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
+    public String generateMainMethod() {
+        ST template = currentGroup.getInstanceOf("model_check_main_method");
+        return template.render();
+    }
+
     public List<String> generateStaticInformation(String mapName, Map<String, List<String>> map) {
         List<String> information = new ArrayList<>();
         for(String key : map.keySet()) {
@@ -227,7 +241,7 @@ public class ModelCheckingGenerator {
     public String generateModelCheckInvariantsFunction(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_invariants");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
-        TemplateHandler.add(template, "checkInvariants", generateModelCheckInvariants());
+        TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariants());
         TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
         return template.render();
     }

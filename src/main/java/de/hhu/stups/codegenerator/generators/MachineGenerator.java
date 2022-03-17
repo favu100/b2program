@@ -247,7 +247,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
-		TemplateHandler.add(machine, "mainMethod", modelCheckingGenerator.generateMainMethod());
+		TemplateHandler.add(machine, "mainMethod", modelCheckingGenerator.generateMainMethod(node));
 		TemplateHandler.add(machine, "copyConstructor", this.generateCopyConstructor(node));
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
 		List<DeclarationNode> gettableNodes = new ArrayList<>();

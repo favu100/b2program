@@ -217,8 +217,9 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
-    public String generateMainMethod() {
+    public String generateMainMethod(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_main_method");
+        TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         return template.render();
     }
 

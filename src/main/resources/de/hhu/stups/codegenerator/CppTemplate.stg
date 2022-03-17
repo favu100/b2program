@@ -44,11 +44,15 @@ class <machine> {
 
         <if(forModelChecking)>
         enum Type { BFS, DFS, MIXED };
+
+        <machine> *parent;
         <endif>
 
         <enums; separator="\n\n">
 
         <structs; separator="\n\n">
+
+        class ModelChecker;
 
         <if(forModelChecking)>
         struct Hash {
@@ -923,6 +927,82 @@ skip() ::= <<
 enum-import() ::= <<
 >>
 
+modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
+class <machine>::ModelChecker {
+    private:
+        <machine>::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
+
+        std::list\<<machine>\> unvisitedStates = std::list\<<machine>\>();
+        std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
+        std::atomic\<int> transitions = 0;
+        boost::asio::thread_pool;
+        std::mutex mutex;
+        std::mutex guardMutex;
+
+        std::atomic\<bool> invariantViolated = false;
+        std::atomic\<bool> deadlockDetected = false;
+        <machine> counterExampleState;
+
+        std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency;
+        std::unordered_map\<string, std::unordered_set\<string>\> guardDependency;
+        std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant;
+        std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
+        std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
+
+
+    public:
+        <machine>::ModelChecker(<machine>::Type& type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+        }
+
+        <main>
+
+
+    private:
+        <machine> next() {
+            std::unique_lock\<std::mutex> lock(mutex);
+            switch(type) {
+                case <machine>::BFS: {
+                    <machine> state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case <machine>::DFS: {
+                    <machine> state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case <machine>::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        <machine> state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        <machine> state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
+            };
+        }
+
+        <nextStates>
+
+        <invariantViolated>
+
+        <addCachedInfos>
+
+        <printResult>
+};
+>>
+
+// TODO: delete
 model_check(addCachedInfos, nextStates, printResult, checkInvariants, main) ::= <<
 <addCachedInfos>
 
@@ -936,25 +1016,22 @@ model_check(addCachedInfos, nextStates, printResult, checkInvariants, main) ::= 
 >>
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
-static std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(std::mutex& guardMutex, const <machine>& state, bool isCaching, std::unordered_map\<string, std::unordered_set\<string>\>& invariantDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentInvariant, std::unordered_map\<string, std::unordered_set\<string>\>& guardDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentGuard, std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual>& guardCache, std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual>& parents, std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia, std::atomic\<int>& transitions) {
+std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state, std::unordered_map\<<machine>, std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
     if(isCaching) {
-        immer::map\<string, boost::any> parentsGuard;
+        immer::map\<string, boost::any> newCache;
         std::unordered_set\<string> dependentGuardsOfState;
-        bool parentsExist = false;
         bool dependentGuardsExist = false;
         {
             std::unique_lock\<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
             dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
+            if(state.parent != NULL) {
+                newCache = guardCache[state.parent];
             }
-            if(dependentGuardsExist) {
+            if((dependentGuardsExist)) {
                 dependentGuardsOfState = dependentGuard[state];
             }
         }
-        immer::map\<string, boost::any> newCache = parentsGuard;
         boost::any cachedValue;
         bool dependentGuardsBoolean = true;
         <transitionsWithCaching>
@@ -1017,7 +1094,7 @@ if(state.<evalTransitions>()) {
 >>
 
 model_check_add_cached_infos(machine) ::= <<
-static void addCachedInfos(const std::string& operation, bool isCaching, std::mutex& guardMutex, const <machine>& state, const <machine>& copiedState, std::unordered_map\<string, std::unordered_set\<string>\>& invariantDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentInvariant, std::unordered_map\<string, std::unordered_set\<string>\>& guardDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentGuard, std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual>& parents, std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia) {
+void addCachedInfos(const std::string& operation, const <machine>& state, const <machine>& copiedState, std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia) {
     if(isCaching) {
         std::unique_lock\<std::mutex> lock(guardMutex);
         if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
@@ -1026,17 +1103,11 @@ static void addCachedInfos(const std::string& operation, bool isCaching, std::mu
         if(dependentGuard.find(copiedState) == dependentGuard.end()) {
             dependentGuard.insert({copiedState, guardDependency[operation]});
         }
-        if(parents.find(copiedState) == parents.end()) {
-            parents.insert({copiedState, state});
-        }
         if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
             stateAccessedVia.insert({copiedState, operation});
         }
     } else {
         std::unique_lock\<std::mutex> lock(guardMutex);
-        if(parents.find(copiedState) == parents.end()) {
-            parents.insert({copiedState, state});
-        }
         if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
             stateAccessedVia.insert({copiedState, operation});
         }
@@ -1050,9 +1121,9 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-addCachedInfos(std::string("<operation>"), isCaching, guardMutex, state, copiedState, invariantDependency, dependentInvariant, guardDependency, dependentGuard, parents, stateAccessedVia);
+copiedState.parent = state;
+addCachedInfos(std::string("<operation>"), state, copiedState, stateAccessedVia);
 result.insert(copiedState);
-transitions += 1;
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -1067,18 +1138,14 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 <endif>
 >>
 
-model_check_invariants(machine, checkInvariants, invariants) ::= <<
-static bool checkInvariants(std::mutex& guardMutex, const <machine>& state, bool isCaching, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual>& dependentInvariant) {
+model_check_invariants(machine, invariantViolated, invariants) ::= <<
+bool invariantViolated(const <machine>& state) {
     if(isCaching) {
-        std::unordered_set\<string> dependentInvariantsOfState;
-        {
-            std::unique_lock\<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        <checkInvariants; separator="\n">
-        return true;
+        std::unordered_set\<string> dependentInvariantsOfState = dependentInvariant[state];
+        <invariantViolated; separator="\n">
+        return false;
     }
-    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+    return !(<invariants:{inv | state.<inv>()}; separator=" && ">);
 }
 >>
 
@@ -1097,34 +1164,31 @@ model_check_evaluate_variable() ::= <<
 >>
 
 model_check_print(machine) ::= <<
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, <machine>& counterExampleState, std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual>& parents, std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia) {
+void printResult(std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual>& stateAccessedVia) {
     if(deadlockDetected || invariantViolated) {
         if(deadlockDetected) {
             cout \<\< "DEADLOCK DETECTED" \<\< "\n";
-        }
-        if(invariantViolated) {
+        } else {
             cout \<\< "INVARIANT VIOLATED" \<\< "\n";
         }
-        cout \<\< "COUNTER EXAMPLE TRACE: " \<\< "\n";
 
-        <machine> currentState = counterExampleState;
+        cout \<\< "COUNTER EXAMPLE TRACE: " \<\< "\n";
         std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
+        while(counterExampleState != NULL) {
             std::stringstream stringStream;
             stringStream \<\< currentState;
             trace.insert(0, stringStream.str());
             trace.insert(0, "\n");
             trace.insert(0, stateAccessedVia[currentState]);
             trace.insert(0, "\n\n");
-            currentState = parents[currentState];
+            counterExampleState = counterExampleState.parent;
         }
         cout \<\< trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
+    } else {
         cout \<\< "MODEL CHECKING SUCCESSFUL" \<\< "\n";
     }
-    cout \<\< "Number of States: " \<\< states \<\< "\n";
+
+    cout \<\< "Number of States: " \<\< states.size() \<\< "\n";
     cout \<\< "Number of Transitions: " \<\< transitions \<\< "\n";
 }
 >>
@@ -1133,173 +1197,103 @@ model_check_init_static(map, keyy, entries) ::= <<
 <map>.insert({"<keyy>", {<entries:{entry | "<entry>"}; separator=", ">}});
 >>
 
-
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
-static <machine> next(std::list\<<machine>\>& collection, std::mutex& mutex, <machine>::Type type) {
-    std::unique_lock\<std::mutex> lock(mutex);
-    switch(type) {
-        case <machine>::BFS: {
-            <machine> state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case <machine>::DFS: {
-            <machine> state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case <machine>::MIXED: {
-            if(collection.size() % 2 == 0) {
-                <machine> state = collection.front();
-                collection.pop_front();
-                return state;
-            } else {
-                <machine> state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void initCache(<machine> machine, std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency, std::unordered_map\<string, std::unordered_set\<string>\> guardDependency, std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant) {
-    <invariantDependency; separator="\n">
-    <guardDependency; separator="\n">
-    dependentInvariant.insert({machine, std::unordered_set\<string>()});
-}
-
-static void modelCheckSingleThreaded(<machine>::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    <machine> machine = <machine>();
-
-    std::atomic\<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic\<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic\<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
-    states.insert(machine);
-    std::atomic\<int> numberStates;
-    numberStates = 1;
-
-    std::list\<<machine>\> collection = std::list\<<machine>\>();
-    collection.push_back(machine);
-
-    std::atomic\<int> transitions;
-    transitions = 0;
-
-    std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency;
-    std::unordered_map\<string, std::unordered_set\<string>\> guardDependency;
-    std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant;
-    std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
-    std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
-    std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
-    std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
+void modelCheck() {
+    if (isDebug) {
+        cout \<\< "Starting Modelchecking, STRATEGY=" \<\< type \<\< ", THREADS=" \<\< threads \<\< ", CACHING=" \<\< isCaching;
     }
-    <machine> counterExampleState;
 
-    while(!collection.empty() && !stopThreads) {
-        <machine> state = next(collection, mutex, type);
+    if (threads \<= 1) {
+        modelCheckSingleThreaded();
+    } else {
+        thread_pool = workers(threads-1);
+        modelCheckMultiThreaded();
+    }
+}
 
-        std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+void modelCheckSingleThreaded() {
+    <machine> machine = <machine>();
+    states.insert(machine);
+    unvisitedStates.push_back(machine);
+
+    if (isCaching) {
+        initCache(machine);
+    }
+
+    std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
+
+    while(!unvisitedStates.empty()) {
+        <machine> state = next();
+
+        std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state, stateAccessedVia);
+        transitions += nextStates.size();
+
         for(auto nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
-                numberStates += 1;
                 states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout \<\< "VISITED STATES: " \<\< numberStates \<\< "\n";
+                unvisitedStates.push_back(nextState);
+                if(states.size() % 50000 == 0) {
+                    cout \<\< "VISITED STATES: " \<\< states.size() \<\< "\n";
                     cout \<\< "EVALUATED TRANSITIONS: " \<\< transitions \<\< "\n";
                     cout \<\< "-------------------" \<\< "\n";
                 }
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
+        if(invariantViolated(state)) {
             invariantViolated = true;
-            stopThreads = true;
             counterExampleState = state;
+            break;
         }
 
         if(nextStates.empty()) {
             deadlockDetected = true;
-            stopThreads = true;
             counterExampleState = state;
+            break;
         }
 
     }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
+    printResult(stateAccessedVia);
 }
 
-static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCaching) {
+void modelCheckMultiThreaded() {
+    <machine> machine = <machine>();
+    states.insert(machine);
+    unvisitedStates.push_back(machine);
+
+    std::atomic\<bool> stopThreads;
+    stopThreads = false;
+    std::atomic\<int> possibleQueueChanges;
+    possibleQueueChanges = 0;
+
+    std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
+    if(isCaching) {
+        initCache(machine);
+    }
+    stateAccessedVia.insert(machine, NULL);
+
     std::mutex mutex;
     std::mutex waitMutex;
     std::mutex guardMutex;
     std::condition_variable waitCV;
-
-    <machine> machine = <machine>();
-
-
-    std::atomic\<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic\<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic\<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
-    states.insert(machine);
-    std::atomic\<int> numberStates;
-    numberStates = 1;
-
-    std::list\<<machine>\> collection = std::list\<<machine>\>();
-    collection.push_back(machine);
-
-    std::atomic\<int> transitions;
-    transitions = 0;
-
-    std::atomic\<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
     std::atomic\<bool> waitFlag;
     waitFlag = true;
 
-    std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency;
-    std::unordered_map\<string, std::unordered_set\<string>\> guardDependency;
-    std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant;
-    std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
-    std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
-    std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
-    std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        initCache(machine, invariantDependency, guardDependency, dependentInvariant);
-    }
-    <machine> counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
+    while(!unvisitedStates.empty() && !stopThreads) {
         possibleQueueChanges += 1;
-        <machine> state = next(collection, mutex, type);
+        <machine> state = next();
         std::packaged_task\<void()> task([&, state] {
-            std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
+            std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state, stateAccessedVia);
+            transitions += nextStates.size();
 
             for(auto nextState : nextStates) {
                 {
                     std::unique_lock\<std::mutex> lock(mutex);
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout \<\< "VISITED STATES: " \<\< numberStates \<\< "\n";
+                        unvisitedStates.push_back(nextState); // TODO: sync ?
+                        if(isDebug && states.size() % 50000 == 0) {
+                            cout \<\< "VISITED STATES: " \<\< states.size() \<\< "\n";
                             cout \<\< "EVALUATED TRANSITIONS: " \<\< transitions \<\< "\n";
                             cout \<\< "-------------------" \<\< "\n";
                         }
@@ -1311,7 +1305,7 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
                 std::unique_lock\<std::mutex> lock(mutex);
                 possibleQueueChanges -= 1;
                 int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+                if (!unvisitedStates.empty() || running == 0) {
                     {
                         std::unique_lock\<std::mutex> lock(waitMutex);
                         waitFlag = false;
@@ -1320,26 +1314,26 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
                 }
             }
 
+            if(invariantViolated(state)) {
+                invariantViolated = true;
+                counterExampleState = state;
+                stopThreads = true;
+            }
+
             if(nextStates.empty()) {
                 deadlockDetected = true;
-                stopThreads = true;
                 counterExampleState = state;
-            }
-
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
                 stopThreads = true;
-                counterExampleState = state;
             }
-
 
         });
+
         waitFlag = true;
         boost::asio::post(workers, std::move(task));
 
         {
             std::unique_lock\<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
+            if (unvisitedStates.empty() && possibleQueueChanges > 0) {
                 waitCV.wait(lock, [&] {
                     return waitFlag == false;
                 });
@@ -1347,9 +1341,17 @@ static void modelCheckMultiThreaded(<machine>::Type type, int threads, bool isCa
         }
     }
     workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
+    printResult(stateAccessedVia);
 }
 
+void initCache(<machine> machine) {
+    <invariantDependency; separator="\n">
+    <guardDependency; separator="\n">
+    dependentInvariant.insert({machine, std::unordered_set\<string>()});
+}
+>>
+
+model_check_main_method(machine) ::= <<
 int main(int argc, char *argv[]) {
     if(argc != 4) {
         cout \<\< "Number of arguments errorneous\n";
@@ -1397,11 +1399,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    <machine>::ModelChecker modelchecker = <machine>::ModelChecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 >>

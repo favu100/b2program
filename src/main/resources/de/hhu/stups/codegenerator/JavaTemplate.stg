@@ -1195,13 +1195,13 @@ private void modelCheckMultiThreaded() {
             if(invariantViolated(state)) {
                 invariantViolated.set(true);
                 counterExampleState = state;
-                return;
+                stopThreads.set(true);
             }
 
             if(nextStates.isEmpty()) {
                 deadlockDetected.set(true);
                 counterExampleState = state;
-                return;
+                stopThreads.set(true);
             }
 
         };
@@ -1234,7 +1234,7 @@ private void initCache(final <machine> machine) {
 }
 >>
 
-model_check_main_method() ::= <<
+model_check_main_method(machine) ::= <<
 public static void main(String[] args) {
     if(args.length > 4) {
         System.out.println("Expecting 3 command-line arguments: STRATEGY THREADS CACHING DEBUG");

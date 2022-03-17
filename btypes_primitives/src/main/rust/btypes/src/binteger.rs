@@ -1,5 +1,5 @@
 use std::convert::TryInto;
-use crate::bboolean::BBoolean;
+use crate::bboolean::{BBoolean, BBooleanT};
 use crate::bobject::BObject;
 
 use std::fmt;

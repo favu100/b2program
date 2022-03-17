@@ -4,21 +4,22 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 
 
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck, transitionCachesDeclaration) ::= <<
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 <if(forModelChecking)>
 use std::env;
 use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, mpsc, Mutex};
 use std::collections::{HashSet, LinkedList};
 use dashmap::DashSet;
 use threadpool::ThreadPool;
 use std::sync::mpsc::channel;
 use derivative::Derivative;
+use std::time::{Duration};
 <endif>
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
-use btypes::bboolean::IntoBool;
+use btypes::bboolean::{IntoBool, BBooleanT};
 <imports; separator="\n">
 <includedMachines; separator="\n">
 
@@ -83,11 +84,11 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
-    //TODO: if threads == 1 {
-    //    <machine>::model_check_single_threaded(mc_type, is_caching);
-    //} else {
+    if threads == 1 {
+        <machine>::model_check_single_threaded(mc_type, is_caching);
+    } else {
         <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching);
-    //}
+    }
 }
 <endif>
 >>
@@ -187,7 +188,8 @@ impl <name> {
 
     <functions; separator="\n\n">
 
-    pub fn equal(&self, other: &<name>) -> BBoolean {
+    pub fn equal(
+    &self, other: &<name>) -> BBoolean {
         return BBoolean::new(<equalPredicates; separator=" && ">);
     }
 
@@ -533,11 +535,11 @@ binary(arg1,operator,arg2) ::= <<
 >>
 
 or(arg1, arg2) ::= <<
-<arg1>.booleanValue() || <arg2>.booleanValue()
+(<arg1> || <arg2>)
 >>
 
 and(arg1, arg2) ::= <<
-<arg1>.booleanValue() && <arg2>.booleanValue()
+(<arg1> && <arg2>)
 >>
 
 implies(arg1, arg2) ::= <<
@@ -769,9 +771,10 @@ fn generateNextStates(state: &mut <machine>,
                       isCaching: bool,
                       transitions: Arc\<AtomicU64>) -> HashSet\<(<machine>, &'static str)> {
     let mut result = HashSet::\<(<machine>, &'static str)>::new();
+    let mut evaluated_transitions: u64 = 0;
     <transitionsWithCaching>
 
-    transitions.fetch_add(result.len() as u64, Ordering::AcqRel);
+    transitions.fetch_add(evaluated_transitions, Ordering::AcqRel);
     return result;
 }
 >>
@@ -779,17 +782,10 @@ fn generateNextStates(state: &mut <machine>,
 model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 //model_check_transition
 <if(hasParameters)>
-<if(isCaching)>
 let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
 for param in <transitionIdentifier>.iter().cloned() {
     <execTransitions>
 }
-<else>
-let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
-for param in <transitionIdentifier>.iter().cloned() {
-    <execTransitions>
-}
-<endif>
 <else>
 if state.<evalTransitions>(isCaching) {
     <execTransitions>
@@ -827,6 +823,7 @@ let mut copiedState = state.clone();
 copiedState.<operation>(<parameters; separator=", ">);
 if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("<operation>")); }
 result.insert((copiedState, "<operation>"));
+evaluated_transitions += 1;
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -889,68 +886,47 @@ fn get_invariant_dependencies(op: &'static str) -> Vec\<&str> {
         _ => vec![],
     }
 }
-/*
+
 fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
     let mut machine = <machine>::new();
 
-    let invariant_violated = AtomicBool::new(false);
-    let deadlock_detected = AtomicBool::new(false);
-    let stop_threads = AtomicBool::new(false);
+    let mut all_states = HashSet::\<<machine>\>::new();
+    all_states.insert(machine.clone());
 
-    if <invariants:{inv | !machine.<inv>()}; separator=" || "> {
-        invariant_violated.store(true, Ordering::Release);
-    }
+    let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::\<(<machine>, &'static str)>::new()));
+    states_to_process_mutex.lock().unwrap().push_back((machine.clone(), ""));
 
-    let mut states = HashSet::\<<machine>\>::new();
-    states.insert(machine.clone());
+    let num_transitions = Arc::new(AtomicU64::new(0));
 
-    let collection_m = Arc::new(Mutex::new(LinkedList::\<<machine>\>::new()));
-    collection_m.lock().unwrap().push_back(machine.clone());
+    let mut stop_threads = false;
 
-    let mut invariantDependency = HashMap::\<&str, HashSet\<&'static str>\>::new();
-    let mut guardDependency = HashMap::\<&str, HashSet\<&'static str>\>::new();
-    let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::\<<machine>, HashSet\<&str>\>::new()));
+    while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+        let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
 
-    if is_caching {
-        <invariantDependency; separator="\n">
-        <guardDependency; separator="\n">
-        dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-    }
+        let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-    let transitions = Arc::new(AtomicU64::new(0));
-
-    while !stop_threads.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
-        let mut state = Self::next(Arc::clone(&collection_m), mc_type);
-
-        let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&transitions));
-
-        next_states.iter().cloned().for_each(|next_state| {
-            if !states.contains(&next_state) {
-                states.insert(next_state.clone());
-                let cnum_states = states.len();
-                collection_m.lock().unwrap().push_back(next_state);
-                if cnum_states % 50000 == 0 {
-                    println!("VISITED STATES: {}", cnum_states);
-                    println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
-                    println!("-------------------");
-                }
-            }
-        });
-
+        if !Self::checkInvariants(&state, last_op, is_caching) {
+            println!("INVARIANT VIOLATED");
+            stop_threads = true;
+        }
         if next_states.is_empty() {
-            deadlock_detected.store(true, Ordering::Release);
-            stop_threads.store(true, Ordering::Release);
+            print!("DEADLOCK DETECTED");
+            stop_threads = true;
         }
 
-        if !Self::checkInvariants(&state, is_caching, Arc::clone(&dependent_invariant_m)) {
-            invariant_violated.store(true, Ordering::Release);
-            stop_threads.store(true, Ordering::Release);
-        }
+        next_states.into_iter()
+                   .filter(|(next_state, _)| all_states.insert((*next_state).clone()))
+                   .for_each(|(next_state, last_op)| states_to_process_mutex.lock().unwrap().push_back((next_state, last_op)));
 
+        if all_states.len() % 50000 == 0 {
+            println!("VISITED STATES: {}", all_states.len());
+            println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+            println!("-------------------");
+        }
     }
-    Self::print_result(states.len(), transitions.load(Ordering::Acquire), deadlock_detected.load(Ordering::Acquire), invariant_violated.load(Ordering::Acquire));
+    Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
 }
-*/
+
 fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
     let threadPool = ThreadPool::new(threads);
 
@@ -980,11 +956,11 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
         //println!("Thread {:?} spawning a thread", thread::current().id());
         threadPool.execute(move|| {
             if !Self::checkInvariants(&state, last_op, is_caching) {
-                tx.send(Err("INVARIANT VIOLATED")).expect("");
+                let _ = tx.send(Err("INVARIANT VIOLATED"));
             }
 
             let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-            if next_states.is_empty() { tx.send(Err("DEADLOCK DETECTED")).expect(""); }
+            if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
             //println!("Thread {:?} executing", thread::current().id());
             next_states.into_iter()
@@ -992,7 +968,7 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
                        .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
             //println!("Thread {:?} done", thread::current().id());
-            tx.send(Ok(1)).expect("");
+            let _ = tx.send(Ok(1));
         });
 
         spawned_tasks += 1;
@@ -1004,10 +980,14 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
 
         while states_to_process_mutex.lock().unwrap().is_empty() && spawned_tasks - finished_tasks > 0 {
             //println!("Thread {:?} (main) waiting for a thread to finish", thread::current().id());
-            match rx.recv() {
-                Ok(_)  => finished_tasks += 1,
-                Err(_) => stop_threads = true,
+            match rx.recv_timeout(Duration::from_secs(1)) {
+                Ok(val)  => match val {
+                        Ok(_) => finished_tasks += 1,
+                        Err(msg) => { println!("{}", msg); stop_threads = true; },
+                    },
+                Err(_) => (),
             }
+            if threadPool.panic_count() > 0 { stop_threads = true; }
         }
     }
 
@@ -1086,7 +1066,7 @@ fn invalidate_caches(&mut self, to_invalidate: Vec\<&'static str>) {
     //calling the given functions without caching will recalculate them and cache them afterwards
     for trans in to_invalidate {
         match trans {
-            <operations: {op | "_tr_<op>" => <\u007B>self._tr_<op>(false);<\u007D>, }; separator="\n">
+            <operations: {op | "_tr_<op>" => <\u007B>self._tr_<op>(false);<\u007D>,}; separator="\n">
             _ => {},
         }
     }

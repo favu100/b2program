@@ -1,4 +1,4 @@
-use crate::bboolean::BBoolean;
+use crate::bboolean::{BBoolean, BBooleanT};
 use crate::bset::BSet;
 
 lazy_static! {

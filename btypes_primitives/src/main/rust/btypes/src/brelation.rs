@@ -13,7 +13,7 @@ use std::convert::TryInto;
 use rand::prelude::IteratorRandom;
 use crate::orderedhashset::OrderedHashSet as OrdSet; //TODO try OrdMap instead
 use im::OrdMap as HashMap;
-use crate::bboolean::BBoolean;
+use crate::bboolean::{BBoolean, BBooleanT};
 use crate::brelation::CombiningType::{DIFFERENCE, INTERSECTION, UNION};
 use crate::bset::{BSet, SetLike, TBSet};
 use crate::bstring::TBString;

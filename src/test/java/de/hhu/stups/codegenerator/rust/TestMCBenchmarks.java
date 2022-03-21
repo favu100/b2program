@@ -45,12 +45,12 @@ public class TestMCBenchmarks extends TestRS {
     }
 
     @Test
-    public void testTrain1_Lukas_POR() throws Exception {
-        testRSMC("Train1_Lukas_POR");
+    public void testTrain1_Lukas_POR_v3() throws Exception {
+        testRSMC("Train1_Lukas_POR_v3");
     }
 
     @Test
-    public void testTrain_1_beebook_deterministic_MC_POR() throws Exception {
-        testRSMC("Train_1_beebook_deterministic_MC_POR", false);
+    public void testTrain_1_beebook_deterministic_MC_POR_v2() throws Exception {
+        testRSMC("Train_1_beebook_deterministic_MC_POR_v2");
     }
 }

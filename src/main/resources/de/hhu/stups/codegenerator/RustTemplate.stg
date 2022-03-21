@@ -3,7 +3,7 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 >>
 
 
-machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck, transitionCachesDeclaration) ::= <<
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck, transitionCachesDeclaration, hash_equal) ::= <<
 #![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 <if(forModelChecking)>
 use std::env;
@@ -45,6 +45,8 @@ pub struct <machine> {
     #[derivative(Hash="ignore", PartialEq="ignore")]
     <transitionCachesDeclaration; separator="\n#[derivative(Hash=\"ignore\", PartialEq=\"ignore\")]\n"><endif>
 }
+
+<hash_equal>
 
 impl <machine> {
     <initialization>
@@ -97,7 +99,7 @@ import_type(type, useBigInteger) ::= <<
 use btypes::<type; format="lower">::<type>;
 >>
 
-initialization(machine, properties, values, body, sets, set_initializations, includesInitialization) ::= <<
+initialization(machine, properties, values, body, set_initializations, includesInitialization) ::= <<
 
 pub fn new() -> <machine> {
 <if(values)>    //values: '<values>'<endif>
@@ -106,9 +108,8 @@ pub fn new() -> <machine> {
     return m;
 }
 fn init(&mut self) {
-    <properties; separator="\n">
-    <sets; separator="\n">
     <set_initializations; separator="\n">
+    <properties; separator="\n">
     <body>
     <includesInitialization; separator="\n">
 }
@@ -124,7 +125,7 @@ identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigne
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
-pub fn get_<variable>(&self) -> <returnType> {
+pub fn _get_<variable>(&self) -> <returnType> {
     return self.<variable>.clone();
 }
 >>
@@ -728,27 +729,21 @@ mc_info_type(<isSet>, <machine>, <type>)
 >>
 
 machine_equal() ::= <<
-machine_equal()
 >>
 
 machine_unequal() ::= <<
-machine_equal()
 >>
 
 machine_equal_predicate() ::= <<
-machine_equal_predicate()
 >>
 
 machine_unequal_predicate() ::= <<
-machine_equal_predicate()
 >>
 
 machine_hash() ::= <<
-machine_hash()
 >>
 
 machine_hash_assignment() ::= <<
-machine_hash_assignment()
 >>
 
 enum_import() ::= <<
@@ -809,6 +804,7 @@ model_check_invariant(invariant) ::= <<
 //model_check_invariant
 if dependent_invariants_of_state.contains(&"<invariant>") {
     if !state.<invariant>() {
+        println!("<invariant> failed!");
         return false;
     }
 }
@@ -1073,15 +1069,14 @@ fn invalidate_caches(&mut self, to_invalidate: Vec\<&'static str>) {
 }
 >>
 
-machine_string(variables) ::= <<
-@Override
-public String toString() {
-    //machine_string
-    <if(variables)>
-    return String.join("\n", <variables:{var | "<var>: " + (this.<var>()).toString()}; separator=", ">);
-    <else>
-    return "";
-    <endif>
+machine_string(variables, machine) ::= <<
+impl fmt::Display for <machine> {
+    fn fmt(&self, f: &mut fmt::Formatter\<'_>) -> fmt::Result {
+        let mut result = "<machine>: (".to_owned();
+        <variables:{var | result += &format!("<var>: <\u007B><\u007D>, ", self.<var>());}; separator="\n">
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 >>
 

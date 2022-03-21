@@ -1,16 +1,58 @@
 use std::borrow::Borrow;
 use std::collections::hash_map::DefaultHasher;
 use std::cell::RefCell;
+use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 
 use im::OrdSet;
 use im::ordset::Iter;
 use crate::bobject::BObject;
 
-#[derive(Default, Debug, Eq, PartialOrd, Ord, Clone)]
+#[derive(Default, Debug, Eq)]
 pub struct OrderedHashSet<I: BObject> {
     set: OrdSet<I>,
     hash_cache: RefCell<Option<u64>>,
+}
+
+impl<I: BObject> Clone for OrderedHashSet<I> {
+    fn clone(&self) -> Self {
+        OrderedHashSet { set: self.set.clone(), hash_cache: RefCell::new(self.hash_cache.borrow().clone()) }
+    }
+}
+
+impl<I: BObject> PartialOrd for OrderedHashSet<I> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> { self.set.partial_cmp(&other.set) }
+    fn lt(&self, other: &Self) -> bool { self.set.lt(&other.set) }
+    fn le(&self, other: &Self) -> bool { self.set.le(&other.set) }
+    fn gt(&self, other: &Self) -> bool { self.set.gt(&other.set) }
+    fn ge(&self, other: &Self) -> bool { self.set.ge(&other.set) }
+}
+
+impl<I: BObject> Ord for OrderedHashSet<I> {
+    fn cmp(&self, other: &Self) -> Ordering { self.set.cmp(&other.set) }
+    fn max(self, other: Self) -> Self {
+        match self.cmp(&other) {
+            Ordering::Less => other,
+            Ordering::Greater => self,
+            Ordering::Equal => other,
+        }
+    }
+    fn min(self, other: Self) -> Self {
+        match self.cmp(&other) {
+            Ordering::Less => self,
+            Ordering::Greater => other,
+            Ordering::Equal => self,
+        }
+    }
+    fn clamp(self, min: Self, max: Self) -> Self {
+        if self < min {
+            min
+        } else if self > max {
+            max
+        } else {
+            self
+        }
+    }
 }
 
 //TODO: check if replacing cache with mutex works and does not impact permormance too much
@@ -24,7 +66,7 @@ impl<I: BObject> PartialEq for OrderedHashSet<I> {
 
 impl<I: BObject> Hash for OrderedHashSet<I> {
     fn hash<H: Hasher>(self: &OrderedHashSet<I>, state: &mut H) {
-        let cache = self.hash_cache.clone().take();
+        let cache = self.hash_cache.borrow().clone();
         let hash: u64;
 
         if cache.is_none() {

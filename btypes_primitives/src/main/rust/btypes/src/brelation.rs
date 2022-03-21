@@ -3,6 +3,7 @@
 use std::collections::hash_map::DefaultHasher;
 use std::collections::LinkedList;
 use std::cell::RefCell;
+use std::cmp::Ordering;
 use crate::bobject::BObject;
 use crate::binteger::{BInt, BInteger, FromBInt};
 use crate::btuple::BTuple;
@@ -25,10 +26,45 @@ enum CombiningType {
     UNION
 }
 
-#[derive(Default, Debug, Eq, PartialOrd, Ord, Clone)]
+#[derive(Default, Debug, Eq, Clone)]
 pub struct BRelation<L: BObject, R: BObject> {
     map: HashMap<L, OrdSet<R>>,
     hash_cache: RefCell<Option<u64>>,
+}
+
+impl<L: BObject, R: BObject> PartialOrd for BRelation<L, R> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> { self.map.partial_cmp(&other.map) }
+    fn lt(&self, other: &Self) -> bool { self.map.lt(&other.map) }
+    fn le(&self, other: &Self) -> bool { self.map.le(&other.map) }
+    fn gt(&self, other: &Self) -> bool { self.map.gt(&other.map) }
+    fn ge(&self, other: &Self) -> bool { self.map.ge(&other.map) }
+}
+
+impl<L: BObject, R: BObject> Ord for BRelation<L, R> {
+    fn cmp(&self, other: &Self) -> Ordering { self.map.cmp(&other.map) }
+    fn max(self, other: Self) -> Self {
+        match self.cmp(&other) {
+            Ordering::Less => other,
+            Ordering::Greater => self,
+            Ordering::Equal => other,
+        }
+    }
+    fn min(self, other: Self) -> Self {
+        match self.cmp(&other) {
+            Ordering::Less => self,
+            Ordering::Greater => other,
+            Ordering::Equal => self,
+        }
+    }
+    fn clamp(self, min: Self, max: Self) -> Self {
+        if self < min {
+            min
+        } else if self > max {
+            max
+        } else {
+            self
+        }
+    }
 }
 
 //TODO: check if replacing cache with mutex works and does not impact permormance too much

@@ -1,16 +1,17 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments, unused ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::env;
-use std::sync::atomic::{AtomicI32, AtomicI64, AtomicBool, Ordering};
-use std::sync::{Arc, Mutex};
-use std::thread;
-use std::collections::{HashMap, HashSet, LinkedList};
-use im::HashMap as PersistentHashMap;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, mpsc, Mutex};
+use std::collections::{HashSet, LinkedList};
+use dashmap::DashSet;
 use threadpool::ThreadPool;
 use std::sync::mpsc::channel;
 use derivative::Derivative;
+use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::binteger::BInteger;
 use btypes::brelation::BRelation;
@@ -62,62 +63,13 @@ impl _Struct5 {
     }
 
 
-    pub fn equal(&self, other: &_Struct5) -> BBoolean {
+    pub fn equal(
+    &self, other: &_Struct5) -> BBoolean {
         return BBoolean::new(self.soc == other.soc && self.err == other.err);
     }
 
     pub fn unequal(&self, other: &_Struct5) -> BBoolean {
         return BBoolean::new(self.soc != other.soc || self.err != other.err);
-    }
-
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct _Struct3 {
-    sid: BSet<SID>,
-    err: IN_ERROR_CODES,
-}
-
-impl fmt::Display for _Struct3 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "sid: {},err: {}", self.sid ,self.err)
-    }
-}
-
-impl BObject for _Struct3 {}
-impl BStruct for _Struct3 {}
-
-impl _Struct3 {
-    pub fn new(mut sid: BSet<SID>, mut err: IN_ERROR_CODES) -> _Struct3 {
-        let mut m: _Struct3 = Default::default();
-        m.sid = sid;m.err = err;
-        return m;
-    }
-
-    pub fn get_sid(&self) -> BSet<SID> {
-        return self.sid.clone();
-    }
-
-    pub fn get_err(&self) -> IN_ERROR_CODES {
-        return self.err.clone();
-    }
-
-    pub fn override_sid(&self, sid: BSet<SID>) -> _Struct3 {
-        return _Struct3::new(sid.clone(), self.err.clone());
-    }
-
-
-    pub fn override_err(&self, err: IN_ERROR_CODES) -> _Struct3 {
-        return _Struct3::new(self.sid.clone(), err.clone());
-    }
-
-
-    pub fn equal(&self, other: &_Struct3) -> BBoolean {
-        return BBoolean::new(self.sid == other.sid && self.err == other.err);
-    }
-
-    pub fn unequal(&self, other: &_Struct3) -> BBoolean {
-        return BBoolean::new(self.sid != other.sid || self.err != other.err);
     }
 
 }
@@ -162,7 +114,8 @@ impl _Struct1 {
     }
 
 
-    pub fn equal(&self, other: &_Struct1) -> BBoolean {
+    pub fn equal(
+    &self, other: &_Struct1) -> BBoolean {
         return BBoolean::new(self.sid == other.sid && self.err == other.err);
     }
 
@@ -172,9 +125,60 @@ impl _Struct1 {
 
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct _Struct3 {
+    sid: BSet<SID>,
+    err: IN_ERROR_CODES,
+}
+
+impl fmt::Display for _Struct3 {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "sid: {},err: {}", self.sid ,self.err)
+    }
+}
+
+impl BObject for _Struct3 {}
+impl BStruct for _Struct3 {}
+
+impl _Struct3 {
+    pub fn new(mut sid: BSet<SID>, mut err: IN_ERROR_CODES) -> _Struct3 {
+        let mut m: _Struct3 = Default::default();
+        m.sid = sid;m.err = err;
+        return m;
+    }
+
+    pub fn get_sid(&self) -> BSet<SID> {
+        return self.sid.clone();
+    }
+
+    pub fn get_err(&self) -> IN_ERROR_CODES {
+        return self.err.clone();
+    }
+
+    pub fn override_sid(&self, sid: BSet<SID>) -> _Struct3 {
+        return _Struct3::new(sid.clone(), self.err.clone());
+    }
+
+
+    pub fn override_err(&self, err: IN_ERROR_CODES) -> _Struct3 {
+        return _Struct3::new(self.sid.clone(), err.clone());
+    }
+
+
+    pub fn equal(
+    &self, other: &_Struct3) -> BBoolean {
+        return BBoolean::new(self.sid == other.sid && self.err == other.err);
+    }
+
+    pub fn unequal(&self, other: &_Struct3) -> BBoolean {
+        return BBoolean::new(self.sid != other.sid || self.err != other.err);
+    }
+
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum INTERCONNECTNODE {
-    node1,
+    node1, 
     node2
 }
 impl INTERCONNECTNODE {
@@ -187,16 +191,16 @@ impl Default for INTERCONNECTNODE {
 }
 impl fmt::Display for INTERCONNECTNODE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            INTERCONNECTNODE::node1 => write!(f, "node1"),
-            INTERCONNECTNODE::node2 => write!(f, "node2"),
-        }
+       match *self {
+           INTERCONNECTNODE::node1 => write!(f, "node1"),
+           INTERCONNECTNODE::node2 => write!(f, "node2"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SOCKET {
-    socket1,
+    socket1, 
     socket2
 }
 impl SOCKET {
@@ -209,16 +213,16 @@ impl Default for SOCKET {
 }
 impl fmt::Display for SOCKET {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SOCKET::socket1 => write!(f, "socket1"),
-            SOCKET::socket2 => write!(f, "socket2"),
-        }
+       match *self {
+           SOCKET::socket1 => write!(f, "socket1"),
+           SOCKET::socket2 => write!(f, "socket2"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SERVICE {
-    service1,
+    service1, 
     service2
 }
 impl SERVICE {
@@ -231,16 +235,16 @@ impl Default for SERVICE {
 }
 impl fmt::Display for SERVICE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SERVICE::service1 => write!(f, "service1"),
-            SERVICE::service2 => write!(f, "service2"),
-        }
+       match *self {
+           SERVICE::service1 => write!(f, "service1"),
+           SERVICE::service2 => write!(f, "service2"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RESOURCEMANAGER {
-    resource1,
+    resource1, 
     resource2
 }
 impl RESOURCEMANAGER {
@@ -253,16 +257,16 @@ impl Default for RESOURCEMANAGER {
 }
 impl fmt::Display for RESOURCEMANAGER {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            RESOURCEMANAGER::resource1 => write!(f, "resource1"),
-            RESOURCEMANAGER::resource2 => write!(f, "resource2"),
-        }
+       match *self {
+           RESOURCEMANAGER::resource1 => write!(f, "resource1"),
+           RESOURCEMANAGER::resource2 => write!(f, "resource2"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SID {
-    SID1,
+    SID1, 
     SID2
 }
 impl SID {
@@ -275,16 +279,16 @@ impl Default for SID {
 }
 impl fmt::Display for SID {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SID::SID1 => write!(f, "SID1"),
-            SID::SID2 => write!(f, "SID2"),
-        }
+       match *self {
+           SID::SID1 => write!(f, "SID1"),
+           SID::SID2 => write!(f, "SID2"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum RM_ERROR_CODES {
-    RM_SERVICE_FOUND,
+    RM_SERVICE_FOUND, 
     RM_SERVICE_NOT_FOUND
 }
 impl RM_ERROR_CODES {
@@ -297,24 +301,24 @@ impl Default for RM_ERROR_CODES {
 }
 impl fmt::Display for RM_ERROR_CODES {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            RM_ERROR_CODES::RM_SERVICE_FOUND => write!(f, "RM_SERVICE_FOUND"),
-            RM_ERROR_CODES::RM_SERVICE_NOT_FOUND => write!(f, "RM_SERVICE_NOT_FOUND"),
-        }
+       match *self {
+           RM_ERROR_CODES::RM_SERVICE_FOUND => write!(f, "RM_SERVICE_FOUND"),
+           RM_ERROR_CODES::RM_SERVICE_NOT_FOUND => write!(f, "RM_SERVICE_NOT_FOUND"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum IN_ERROR_CODES {
-    IN_REGISTRATION_OK,
-    IN_REGISTRATION_FAILED,
-    IN_DEREGISTRATION_OK,
-    IN_DEREGISTRATION_FAILED,
-    IN_NO_SOCKET_CONNECTION,
-    IN_SOCKET_CONNECTION_OK,
-    IN_NO_AVAILABLE_SERVICE,
-    IN_SERVICE_AVAILABLE,
-    IN_TARGET_SOCKET_GRANTED,
+    IN_REGISTRATION_OK, 
+    IN_REGISTRATION_FAILED, 
+    IN_DEREGISTRATION_OK, 
+    IN_DEREGISTRATION_FAILED, 
+    IN_NO_SOCKET_CONNECTION, 
+    IN_SOCKET_CONNECTION_OK, 
+    IN_NO_AVAILABLE_SERVICE, 
+    IN_SERVICE_AVAILABLE, 
+    IN_TARGET_SOCKET_GRANTED, 
     IN_TARGET_SOCKET_NOT_GRANTED
 }
 impl IN_ERROR_CODES {
@@ -327,18 +331,18 @@ impl Default for IN_ERROR_CODES {
 }
 impl fmt::Display for IN_ERROR_CODES {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            IN_ERROR_CODES::IN_REGISTRATION_OK => write!(f, "IN_REGISTRATION_OK"),
-            IN_ERROR_CODES::IN_REGISTRATION_FAILED => write!(f, "IN_REGISTRATION_FAILED"),
-            IN_ERROR_CODES::IN_DEREGISTRATION_OK => write!(f, "IN_DEREGISTRATION_OK"),
-            IN_ERROR_CODES::IN_DEREGISTRATION_FAILED => write!(f, "IN_DEREGISTRATION_FAILED"),
-            IN_ERROR_CODES::IN_NO_SOCKET_CONNECTION => write!(f, "IN_NO_SOCKET_CONNECTION"),
-            IN_ERROR_CODES::IN_SOCKET_CONNECTION_OK => write!(f, "IN_SOCKET_CONNECTION_OK"),
-            IN_ERROR_CODES::IN_NO_AVAILABLE_SERVICE => write!(f, "IN_NO_AVAILABLE_SERVICE"),
-            IN_ERROR_CODES::IN_SERVICE_AVAILABLE => write!(f, "IN_SERVICE_AVAILABLE"),
-            IN_ERROR_CODES::IN_TARGET_SOCKET_GRANTED => write!(f, "IN_TARGET_SOCKET_GRANTED"),
-            IN_ERROR_CODES::IN_TARGET_SOCKET_NOT_GRANTED => write!(f, "IN_TARGET_SOCKET_NOT_GRANTED"),
-        }
+       match *self {
+           IN_ERROR_CODES::IN_REGISTRATION_OK => write!(f, "IN_REGISTRATION_OK"),
+           IN_ERROR_CODES::IN_REGISTRATION_FAILED => write!(f, "IN_REGISTRATION_FAILED"),
+           IN_ERROR_CODES::IN_DEREGISTRATION_OK => write!(f, "IN_DEREGISTRATION_OK"),
+           IN_ERROR_CODES::IN_DEREGISTRATION_FAILED => write!(f, "IN_DEREGISTRATION_FAILED"),
+           IN_ERROR_CODES::IN_NO_SOCKET_CONNECTION => write!(f, "IN_NO_SOCKET_CONNECTION"),
+           IN_ERROR_CODES::IN_SOCKET_CONNECTION_OK => write!(f, "IN_SOCKET_CONNECTION_OK"),
+           IN_ERROR_CODES::IN_NO_AVAILABLE_SERVICE => write!(f, "IN_NO_AVAILABLE_SERVICE"),
+           IN_ERROR_CODES::IN_SERVICE_AVAILABLE => write!(f, "IN_SERVICE_AVAILABLE"),
+           IN_ERROR_CODES::IN_TARGET_SOCKET_GRANTED => write!(f, "IN_TARGET_SOCKET_GRANTED"),
+           IN_ERROR_CODES::IN_TARGET_SOCKET_NOT_GRANTED => write!(f, "IN_TARGET_SOCKET_NOT_GRANTED"),
+       }
     }
 }
 
@@ -397,6 +401,30 @@ pub struct nota_v2 {
     #[derivative(Hash="ignore", PartialEq="ignore")]
     _tr_cache_svc_register: Option<BSet<SERVICE>>,}
 
+impl fmt::Display for nota_v2 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "nota_v2: (".to_owned();
+        result += &format!("_get_interconnectNodes: {}, ", self._get_interconnectNodes());
+        result += &format!("_get_sockets: {}, ", self._get_sockets());
+        result += &format!("_get_services: {}, ", self._get_services());
+        result += &format!("_get_resourceManagers: {}, ", self._get_resourceManagers());
+        result += &format!("_get_sids: {}, ", self._get_sids());
+        result += &format!("_get_rm_services: {}, ", self._get_rm_services());
+        result += &format!("_get_rm_sids: {}, ", self._get_rm_sids());
+        result += &format!("_get_in_localServices: {}, ", self._get_in_localServices());
+        result += &format!("_get_in_sockets: {}, ", self._get_in_sockets());
+        result += &format!("_get_in_resourceManager: {}, ", self._get_in_resourceManager());
+        result += &format!("_get_soc_to: {}, ", self._get_soc_to());
+        result += &format!("_get_soc_from: {}, ", self._get_soc_from());
+        result += &format!("_get_svc_serviceID: {}, ", self._get_svc_serviceID());
+        result += &format!("_get_svc_sockets: {}, ", self._get_svc_sockets());
+        result += &format!("_get_svc_ICNode: {}, ", self._get_svc_ICNode());
+        result += &format!("_get_svc_registered: {}, ", self._get_svc_registered());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
+}
+
 impl nota_v2 {
 
     pub fn new() -> nota_v2 {
@@ -431,95 +459,95 @@ impl nota_v2 {
         self.svc_registered = BRelation::new(vec![]).clone().clone();
     }
 
-    pub fn get_interconnectNodes(&self) -> BSet<INTERCONNECTNODE> {
+    pub fn _get_interconnectNodes(&self) -> BSet<INTERCONNECTNODE> {
         return self.interconnectNodes.clone();
     }
 
-    pub fn get_sockets(&self) -> BSet<SOCKET> {
+    pub fn _get_sockets(&self) -> BSet<SOCKET> {
         return self.sockets.clone();
     }
 
-    pub fn get_services(&self) -> BSet<SERVICE> {
+    pub fn _get_services(&self) -> BSet<SERVICE> {
         return self.services.clone();
     }
 
-    pub fn get_resourceManagers(&self) -> BSet<RESOURCEMANAGER> {
+    pub fn _get_resourceManagers(&self) -> BSet<RESOURCEMANAGER> {
         return self.resourceManagers.clone();
     }
 
-    pub fn get_sids(&self) -> BSet<SID> {
+    pub fn _get_sids(&self) -> BSet<SID> {
         return self.sids.clone();
     }
 
-    pub fn get_rm_services(&self) -> BRelation<RESOURCEMANAGER, BSet<SERVICE>> {
+    pub fn _get_rm_services(&self) -> BRelation<RESOURCEMANAGER, BSet<SERVICE>> {
         return self.rm_services.clone();
     }
 
-    pub fn get_rm_sids(&self) -> BRelation<SERVICE, SID> {
+    pub fn _get_rm_sids(&self) -> BRelation<SERVICE, SID> {
         return self.rm_sids.clone();
     }
 
-    pub fn get_in_localServices(&self) -> BRelation<SID, INTERCONNECTNODE> {
+    pub fn _get_in_localServices(&self) -> BRelation<SID, INTERCONNECTNODE> {
         return self.in_localServices.clone();
     }
 
-    pub fn get_in_sockets(&self) -> BRelation<SOCKET, INTERCONNECTNODE> {
+    pub fn _get_in_sockets(&self) -> BRelation<SOCKET, INTERCONNECTNODE> {
         return self.in_sockets.clone();
     }
 
-    pub fn get_in_resourceManager(&self) -> BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>> {
+    pub fn _get_in_resourceManager(&self) -> BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>> {
         return self.in_resourceManager.clone();
     }
 
-    pub fn get_soc_to(&self) -> BRelation<SOCKET, SID> {
+    pub fn _get_soc_to(&self) -> BRelation<SOCKET, SID> {
         return self.soc_to.clone();
     }
 
-    pub fn get_soc_from(&self) -> BRelation<SOCKET, SID> {
+    pub fn _get_soc_from(&self) -> BRelation<SOCKET, SID> {
         return self.soc_from.clone();
     }
 
-    pub fn get_svc_serviceID(&self) -> BRelation<SERVICE, SID> {
+    pub fn _get_svc_serviceID(&self) -> BRelation<SERVICE, SID> {
         return self.svc_serviceID.clone();
     }
 
-    pub fn get_svc_sockets(&self) -> BRelation<SERVICE, BSet<SOCKET>> {
+    pub fn _get_svc_sockets(&self) -> BRelation<SERVICE, BSet<SOCKET>> {
         return self.svc_sockets.clone();
     }
 
-    pub fn get_svc_ICNode(&self) -> BRelation<SERVICE, INTERCONNECTNODE> {
+    pub fn _get_svc_ICNode(&self) -> BRelation<SERVICE, INTERCONNECTNODE> {
         return self.svc_ICNode.clone();
     }
 
-    pub fn get_svc_registered(&self) -> BRelation<SERVICE, BBoolean> {
+    pub fn _get_svc_registered(&self) -> BRelation<SERVICE, BBoolean> {
         return self.svc_registered.clone();
     }
 
-    pub fn get__INTERCONNECTNODE(&self) -> BSet<INTERCONNECTNODE> {
+    pub fn _get__INTERCONNECTNODE(&self) -> BSet<INTERCONNECTNODE> {
         return self._INTERCONNECTNODE.clone();
     }
 
-    pub fn get__SOCKET(&self) -> BSet<SOCKET> {
+    pub fn _get__SOCKET(&self) -> BSet<SOCKET> {
         return self._SOCKET.clone();
     }
 
-    pub fn get__SERVICE(&self) -> BSet<SERVICE> {
+    pub fn _get__SERVICE(&self) -> BSet<SERVICE> {
         return self._SERVICE.clone();
     }
 
-    pub fn get__RESOURCEMANAGER(&self) -> BSet<RESOURCEMANAGER> {
+    pub fn _get__RESOURCEMANAGER(&self) -> BSet<RESOURCEMANAGER> {
         return self._RESOURCEMANAGER.clone();
     }
 
-    pub fn get__SID(&self) -> BSet<SID> {
+    pub fn _get__SID(&self) -> BSet<SID> {
         return self._SID.clone();
     }
 
-    pub fn get__RM_ERROR_CODES(&self) -> BSet<RM_ERROR_CODES> {
+    pub fn _get__RM_ERROR_CODES(&self) -> BSet<RM_ERROR_CODES> {
         return self._RM_ERROR_CODES.clone();
     }
 
-    pub fn get__IN_ERROR_CODES(&self) -> BSet<IN_ERROR_CODES> {
+    pub fn _get__IN_ERROR_CODES(&self) -> BSet<IN_ERROR_CODES> {
         return self._IN_ERROR_CODES.clone();
     }
 
@@ -671,6 +699,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_constructor_interconnectNode.is_none() {
             let mut _ic_set_0: BSet<INTERCONNECTNODE> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_newic_1 in self._INTERCONNECTNODE.difference(&self.interconnectNodes).clone().iter().cloned() {
                 _ic_set_0 = _ic_set_0._union(&BSet::new(vec![_ic_newic_1]));
 
@@ -686,8 +715,9 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_constructor_resourceManager.is_none() {
             let mut _ic_set_1: BSet<RESOURCEMANAGER> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_newrm_1 in self._RESOURCEMANAGER.difference(&self.resourceManagers).clone().iter().cloned() {
-                if (self.rm_services.domain().notElementOf(&_ic_newrm_1).and(&self.resourceManagers.equal(&BSet::new(vec![])))).booleanValue() {
+                if ((self.rm_services.domain().notElementOf(&_ic_newrm_1) && self.resourceManagers.equal(&BSet::new(vec![])))).booleanValue() {
                     _ic_set_1 = _ic_set_1._union(&BSet::new(vec![_ic_newrm_1]));
                 }
 
@@ -703,6 +733,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_constructor_service.is_none() {
             let mut _ic_set_2: BSet<BTuple<INTERCONNECTNODE, SERVICE>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_newsvc_1 in self._SERVICE.difference(&self.services).clone().iter().cloned() {
                     _ic_set_2 = _ic_set_2._union(&BSet::new(vec![BTuple::from_refs(&_ic_ii_1, &_ic_newsvc_1)]));
@@ -720,6 +751,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_constructor_socket.is_none() {
             let mut _ic_set_3: BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_srcsid_1 in self.sids.clone().iter().cloned() {
                     for _ic_targsid_1 in self.sids.clone().iter().cloned() {
@@ -741,6 +773,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_rm_register.is_none() {
             let mut _ic_set_4: BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
@@ -760,6 +793,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_rm_deregister.is_none() {
             let mut _ic_set_5: BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
@@ -779,6 +813,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_rm_getSid.is_none() {
             let mut _ic_set_6: BSet<BTuple<RESOURCEMANAGER, SERVICE>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     if (self.rm_sids.domain().elementOf(&_ic_ss_1)).booleanValue() {
@@ -798,6 +833,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_rm_getSid_Not_Found.is_none() {
             let mut _ic_set_7: BSet<BTuple<RESOURCEMANAGER, SERVICE>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     _ic_set_7 = _ic_set_7._union(&BSet::new(vec![BTuple::from_refs(&_ic_self_1, &_ic_ss_1)]));
@@ -815,6 +851,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_in_announceResourceManager.is_none() {
             let mut _ic_set_8: BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_rm_1 in self.resourceManagers.clone().iter().cloned() {
                     if (self.in_resourceManager.functionCall(&_ic_self_1).equal(&BSet::new(vec![]))).booleanValue() {
@@ -834,6 +871,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_in_register_success.is_none() {
             let mut _ic_set_9: BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     for _ic_si_1 in self._SID.difference(&self.sids).clone().iter().cloned() {
@@ -855,6 +893,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_in_register_failed.is_none() {
             let mut _ic_set_10: BSet<BTuple<INTERCONNECTNODE, SERVICE>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     _ic_set_10 = _ic_set_10._union(&BSet::new(vec![BTuple::from_refs(&_ic_self_1, &_ic_ss_1)]));
@@ -872,13 +911,14 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_in_requestTargetSocket_Granted.is_none() {
             let mut _ic_set_11: BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
                     for _ic_srcsoc_1 in self.sockets.clone().iter().cloned() {
                         for _ic_srcsid_1 in self.sids.clone().iter().cloned() {
                             for _ic_targsid_1 in self.sids.clone().iter().cloned() {
                                 for _ic_newsoc_1 in self._SOCKET.difference(&self.sockets).clone().iter().cloned() {
-                                    if (_ic_self_1.unequal(&_ic_ii_1).and(&self.in_sockets.functionCall(&_ic_srcsoc_1).equal(&_ic_ii_1))).booleanValue() {
+                                    if ((_ic_self_1.unequal(&_ic_ii_1) && self.in_sockets.functionCall(&_ic_srcsoc_1).equal(&_ic_ii_1))).booleanValue() {
                                         _ic_set_11 = _ic_set_11._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ii_1), &_ic_srcsoc_1), &_ic_srcsid_1), &_ic_targsid_1), &_ic_newsoc_1)]));
                                     }
 
@@ -899,12 +939,13 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_in_requestTargetSocket_NotGranted.is_none() {
             let mut _ic_set_12: BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
                     for _ic_srcsoc_1 in self.sockets.clone().iter().cloned() {
                         for _ic_srcsid_1 in self.sids.clone().iter().cloned() {
                             for _ic_targsid_1 in self.sids.clone().iter().cloned() {
-                                if (_ic_self_1.unequal(&_ic_ii_1).and(&self.in_sockets.functionCall(&_ic_srcsoc_1).equal(&_ic_ii_1))).booleanValue() {
+                                if ((_ic_self_1.unequal(&_ic_ii_1) && self.in_sockets.functionCall(&_ic_srcsoc_1).equal(&_ic_ii_1))).booleanValue() {
                                     _ic_set_12 = _ic_set_12._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ii_1), &_ic_srcsoc_1), &_ic_srcsid_1), &_ic_targsid_1)]));
                                 }
 
@@ -924,6 +965,7 @@ impl nota_v2 {
         //transition
         if !is_caching || self._tr_cache_svc_register.is_none() {
             let mut _ic_set_13: BSet<SERVICE> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_self_1 in self.services.clone().iter().cloned() {
                 if (self.svc_registered.functionCall(&_ic_self_1).equal(&BBoolean::new(false))).booleanValue() {
                     _ic_set_13 = _ic_set_13._union(&BSet::new(vec![_ic_self_1]));
@@ -969,6 +1011,7 @@ impl nota_v2 {
 
     pub fn _check_inv_7(&self) -> bool {
         //invariant
+        //quantified_predicate
         let mut _ic_boolean_14 = BBoolean::new(true);
         for _ic_a1_1 in self.rm_services.domain().clone().iter().cloned() {
             for _ic_a2_1 in self.rm_services.domain().clone().iter().cloned() {
@@ -979,6 +1022,7 @@ impl nota_v2 {
 
             }
         }
+
         return _ic_boolean_14.booleanValue();
     }
 
@@ -1037,11 +1081,10 @@ impl nota_v2 {
         return self.resourceManagers.equal(&BSet::new(vec![])).not().implies(&self.resourceManagers.card().equal(&BInteger::new(1))).booleanValue();
     }
 
-    fn invalidate_caches(&mut self, to_invalidate: &HashSet<&'static str>) {
+    fn invalidate_caches(&mut self, to_invalidate: Vec<&'static str>) {
         //calling the given functions without caching will recalculate them and cache them afterwards
-        //if caching is enabled globally, this will just prefill those, if caching is
-        for trans in to_invalidate.iter() {
-            match *trans {
+        for trans in to_invalidate {
+            match trans {
                 "_tr_constructor_interconnectNode" => {self._tr_constructor_interconnectNode(false);},
                 "_tr_constructor_resourceManager" => {self._tr_constructor_resourceManager(false);},
                 "_tr_constructor_service" => {self._tr_constructor_service(false);},
@@ -1064,853 +1107,396 @@ impl nota_v2 {
     //model_check_next_states
     fn generateNextStates(state: &mut nota_v2,
                           isCaching: bool,
-                          invariant_dependency: &HashMap<&str, HashSet<&'static str>>,
-                          dependent_invariant_m: Arc<Mutex<HashMap<nota_v2, HashSet<&str>>>>,
-                          guard_dependency: &HashMap<&str, HashSet<&'static str>>,
-                          dependent_guard_m: Arc<Mutex<HashMap<nota_v2, HashSet<&str>>>>,
-                          guardCache: Arc<Mutex<HashMap<nota_v2, PersistentHashMap<&str, bool>>>>,
-                          parents_m: Arc<Mutex<HashMap<nota_v2, nota_v2>>>,
-                          transitions: Arc<AtomicI64>) -> HashSet<nota_v2> {
-        let mut result = HashSet::<nota_v2>::new();
-        if isCaching {
-            let mut parents_guard_o = parents_m.lock().unwrap().get(state).and_then(|p| guardCache.lock().unwrap().get(p).cloned());
-            let mut newCache = if parents_guard_o.is_none() { PersistentHashMap::new() } else { parents_guard_o.as_ref().unwrap().clone() };
-            //model_check_transition
-            let mut _trid_1 = state._tr_constructor_interconnectNode(isCaching);
-            for param in _trid_1.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
+                          transitions: Arc<AtomicU64>) -> HashSet<(nota_v2, &'static str)> {
+        let mut result = HashSet::<(nota_v2, &'static str)>::new();
+        let mut evaluated_transitions: u64 = 0;
+        //model_check_transition
+        let mut _trid_1 = state._tr_constructor_interconnectNode(isCaching);
+        for param in _trid_1.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
 
-                let mut copiedState = state.clone();
-                copiedState.constructor_interconnectNode(_tmp_1);
-                match guard_dependency.get("constructor_interconnectNode") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("constructor_interconnectNode").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("constructor_interconnectNode").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_2 = state._tr_constructor_resourceManager(isCaching);
-            for param in _trid_2.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_resourceManager(_tmp_1);
-                match guard_dependency.get("constructor_resourceManager") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("constructor_resourceManager").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("constructor_resourceManager").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_3 = state._tr_constructor_service(isCaching);
-            for param in _trid_3.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_service(_tmp_2, _tmp_1);
-                match guard_dependency.get("constructor_service") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("constructor_service").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("constructor_service").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_4 = state._tr_constructor_socket(isCaching);
-            for param in _trid_4.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_5 = _tmp_4.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_6 = _tmp_4.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                match guard_dependency.get("constructor_socket") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("constructor_socket").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("constructor_socket").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_5 = state._tr_rm_register(isCaching);
-            for param in _trid_5.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                match guard_dependency.get("rm_register") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("rm_register").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("rm_register").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_6 = state._tr_rm_deregister(isCaching);
-            for param in _trid_6.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                match guard_dependency.get("rm_deregister") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("rm_deregister").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("rm_deregister").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_7 = state._tr_rm_getSid(isCaching);
-            for param in _trid_7.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_getSid(_tmp_2, _tmp_1);
-                match guard_dependency.get("rm_getSid") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("rm_getSid").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("rm_getSid").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_8 = state._tr_rm_getSid_Not_Found(isCaching);
-            for param in _trid_8.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                match guard_dependency.get("rm_getSid_Not_Found") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("rm_getSid_Not_Found").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("rm_getSid_Not_Found").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_9 = state._tr_in_announceResourceManager(isCaching);
-            for param in _trid_9.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                match guard_dependency.get("in_announceResourceManager") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("in_announceResourceManager").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("in_announceResourceManager").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_10 = state._tr_in_register_success(isCaching);
-            for param in _trid_10.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                match guard_dependency.get("in_register_success") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("in_register_success").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("in_register_success").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_11 = state._tr_in_register_failed(isCaching);
-            for param in _trid_11.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_register_failed(_tmp_2, _tmp_1);
-                match guard_dependency.get("in_register_failed") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("in_register_failed").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("in_register_failed").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_12 = state._tr_in_requestTargetSocket_Granted(isCaching);
-            for param in _trid_12.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_5 = _tmp_4.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_6 = _tmp_4.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_7 = _tmp_6.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_8 = _tmp_6.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_9 = _tmp_8.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_10 = _tmp_8.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                match guard_dependency.get("in_requestTargetSocket_Granted") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("in_requestTargetSocket_Granted").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("in_requestTargetSocket_Granted").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_13 = state._tr_in_requestTargetSocket_NotGranted(isCaching);
-            for param in _trid_13.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_5 = _tmp_4.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_6 = _tmp_4.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_7 = _tmp_6.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_8 = _tmp_6.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                match guard_dependency.get("in_requestTargetSocket_NotGranted") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("in_requestTargetSocket_NotGranted").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("in_requestTargetSocket_NotGranted").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_14 = state._tr_svc_register(isCaching);
-            for param in _trid_14.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.svc_register(_tmp_1);
-                match guard_dependency.get("svc_register") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("svc_register").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("svc_register").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-
-            guardCache.lock().unwrap().insert(state.clone(), newCache);
-        } else {
-            //model_check_transition
-            let mut _trid_1 = state._tr_constructor_interconnectNode(isCaching);
-            for param in _trid_1.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_interconnectNode(_tmp_1);
-                match guard_dependency.get("constructor_interconnectNode") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_2 = state._tr_constructor_resourceManager(isCaching);
-            for param in _trid_2.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_resourceManager(_tmp_1);
-                match guard_dependency.get("constructor_resourceManager") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_3 = state._tr_constructor_service(isCaching);
-            for param in _trid_3.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_service(_tmp_2, _tmp_1);
-                match guard_dependency.get("constructor_service") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_4 = state._tr_constructor_socket(isCaching);
-            for param in _trid_4.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_5 = _tmp_4.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_6 = _tmp_4.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                match guard_dependency.get("constructor_socket") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_5 = state._tr_rm_register(isCaching);
-            for param in _trid_5.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                match guard_dependency.get("rm_register") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_6 = state._tr_rm_deregister(isCaching);
-            for param in _trid_6.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                match guard_dependency.get("rm_deregister") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_7 = state._tr_rm_getSid(isCaching);
-            for param in _trid_7.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_getSid(_tmp_2, _tmp_1);
-                match guard_dependency.get("rm_getSid") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_8 = state._tr_rm_getSid_Not_Found(isCaching);
-            for param in _trid_8.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                match guard_dependency.get("rm_getSid_Not_Found") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_9 = state._tr_in_announceResourceManager(isCaching);
-            for param in _trid_9.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                match guard_dependency.get("in_announceResourceManager") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_10 = state._tr_in_register_success(isCaching);
-            for param in _trid_10.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                match guard_dependency.get("in_register_success") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_11 = state._tr_in_register_failed(isCaching);
-            for param in _trid_11.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_register_failed(_tmp_2, _tmp_1);
-                match guard_dependency.get("in_register_failed") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_12 = state._tr_in_requestTargetSocket_Granted(isCaching);
-            for param in _trid_12.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_5 = _tmp_4.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_6 = _tmp_4.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_7 = _tmp_6.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_8 = _tmp_6.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_9 = _tmp_8.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_10 = _tmp_8.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                match guard_dependency.get("in_requestTargetSocket_Granted") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_13 = state._tr_in_requestTargetSocket_NotGranted(isCaching);
-            for param in _trid_13.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_2 = param.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_3 = _tmp_2.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_4 = _tmp_2.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_5 = _tmp_4.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_6 = _tmp_4.projection1();
-                //model_check_transition_param_assignment
-                let mut _tmp_7 = _tmp_6.projection2();
-                //model_check_transition_param_assignment
-                let mut _tmp_8 = _tmp_6.projection1();
-
-                let mut copiedState = state.clone();
-                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                match guard_dependency.get("in_requestTargetSocket_NotGranted") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_14 = state._tr_svc_register(isCaching);
-            for param in _trid_14.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.svc_register(_tmp_1);
-                match guard_dependency.get("svc_register") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-
+            let mut copiedState = state.clone();
+            copiedState.constructor_interconnectNode(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("constructor_interconnectNode")); }
+            result.insert((copiedState, "constructor_interconnectNode"));
+            evaluated_transitions += 1;
         }
+        //model_check_transition
+        let mut _trid_2 = state._tr_constructor_resourceManager(isCaching);
+        for param in _trid_2.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.constructor_resourceManager(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("constructor_resourceManager")); }
+            result.insert((copiedState, "constructor_resourceManager"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_3 = state._tr_constructor_service(isCaching);
+        for param in _trid_3.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.constructor_service(_tmp_2, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("constructor_service")); }
+            result.insert((copiedState, "constructor_service"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_4 = state._tr_constructor_socket(isCaching);
+        for param in _trid_4.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_3 = _tmp_2.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_4 = _tmp_2.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_5 = _tmp_4.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_6 = _tmp_4.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("constructor_socket")); }
+            result.insert((copiedState, "constructor_socket"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_5 = state._tr_rm_register(isCaching);
+        for param in _trid_5.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_3 = _tmp_2.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_4 = _tmp_2.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("rm_register")); }
+            result.insert((copiedState, "rm_register"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_6 = state._tr_rm_deregister(isCaching);
+        for param in _trid_6.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_3 = _tmp_2.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_4 = _tmp_2.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("rm_deregister")); }
+            result.insert((copiedState, "rm_deregister"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_7 = state._tr_rm_getSid(isCaching);
+        for param in _trid_7.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.rm_getSid(_tmp_2, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("rm_getSid")); }
+            result.insert((copiedState, "rm_getSid"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_8 = state._tr_rm_getSid_Not_Found(isCaching);
+        for param in _trid_8.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("rm_getSid_Not_Found")); }
+            result.insert((copiedState, "rm_getSid_Not_Found"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_9 = state._tr_in_announceResourceManager(isCaching);
+        for param in _trid_9.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("in_announceResourceManager")); }
+            result.insert((copiedState, "in_announceResourceManager"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_10 = state._tr_in_register_success(isCaching);
+        for param in _trid_10.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_3 = _tmp_2.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_4 = _tmp_2.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("in_register_success")); }
+            result.insert((copiedState, "in_register_success"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_11 = state._tr_in_register_failed(isCaching);
+        for param in _trid_11.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.in_register_failed(_tmp_2, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("in_register_failed")); }
+            result.insert((copiedState, "in_register_failed"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_12 = state._tr_in_requestTargetSocket_Granted(isCaching);
+        for param in _trid_12.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_3 = _tmp_2.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_4 = _tmp_2.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_5 = _tmp_4.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_6 = _tmp_4.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_7 = _tmp_6.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_8 = _tmp_6.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_9 = _tmp_8.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_10 = _tmp_8.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("in_requestTargetSocket_Granted")); }
+            result.insert((copiedState, "in_requestTargetSocket_Granted"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_13 = state._tr_in_requestTargetSocket_NotGranted(isCaching);
+        for param in _trid_13.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_2 = param.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_3 = _tmp_2.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_4 = _tmp_2.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_5 = _tmp_4.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_6 = _tmp_4.projection1();
+            //model_check_transition_param_assignment
+            let mut _tmp_7 = _tmp_6.projection2();
+            //model_check_transition_param_assignment
+            let mut _tmp_8 = _tmp_6.projection1();
+
+            let mut copiedState = state.clone();
+            copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("in_requestTargetSocket_NotGranted")); }
+            result.insert((copiedState, "in_requestTargetSocket_NotGranted"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_14 = state._tr_svc_register(isCaching);
+        for param in _trid_14.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.svc_register(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("svc_register")); }
+            result.insert((copiedState, "svc_register"));
+            evaluated_transitions += 1;
+        }
+
+
+        transitions.fetch_add(evaluated_transitions, Ordering::AcqRel);
         return result;
     }
 
     //model_check_evaluate_state
 
     //model_check_invariants
-    pub fn checkInvariants(state: &nota_v2,
-                           isCaching: bool,
-                           dependent_invariant_m: Arc<Mutex<HashMap<nota_v2, HashSet<&str>>>> ) -> bool {
-        let cached_invariants = dependent_invariant_m.lock().unwrap().get(&state).cloned();
-        if cached_invariants.is_some() && isCaching {
-            let dependent_invariants_of_state = cached_invariants.unwrap().clone();
+    pub fn checkInvariants(state: &nota_v2, last_op: &'static str, isCaching: bool) -> bool {
+        if isCaching {
+            let dependent_invariants_of_state = Self::get_invariant_dependencies(last_op);
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_1") {
+            if dependent_invariants_of_state.contains(&"_check_inv_1") {
                 if !state._check_inv_1() {
+                    println!("_check_inv_1 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_2") {
+            if dependent_invariants_of_state.contains(&"_check_inv_2") {
                 if !state._check_inv_2() {
+                    println!("_check_inv_2 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_3") {
+            if dependent_invariants_of_state.contains(&"_check_inv_3") {
                 if !state._check_inv_3() {
+                    println!("_check_inv_3 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_4") {
+            if dependent_invariants_of_state.contains(&"_check_inv_4") {
                 if !state._check_inv_4() {
+                    println!("_check_inv_4 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_5") {
+            if dependent_invariants_of_state.contains(&"_check_inv_5") {
                 if !state._check_inv_5() {
+                    println!("_check_inv_5 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_6") {
+            if dependent_invariants_of_state.contains(&"_check_inv_6") {
                 if !state._check_inv_6() {
+                    println!("_check_inv_6 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_7") {
+            if dependent_invariants_of_state.contains(&"_check_inv_7") {
                 if !state._check_inv_7() {
+                    println!("_check_inv_7 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_8") {
+            if dependent_invariants_of_state.contains(&"_check_inv_8") {
                 if !state._check_inv_8() {
+                    println!("_check_inv_8 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_9") {
+            if dependent_invariants_of_state.contains(&"_check_inv_9") {
                 if !state._check_inv_9() {
+                    println!("_check_inv_9 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_10") {
+            if dependent_invariants_of_state.contains(&"_check_inv_10") {
                 if !state._check_inv_10() {
+                    println!("_check_inv_10 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_11") {
+            if dependent_invariants_of_state.contains(&"_check_inv_11") {
                 if !state._check_inv_11() {
+                    println!("_check_inv_11 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_12") {
+            if dependent_invariants_of_state.contains(&"_check_inv_12") {
                 if !state._check_inv_12() {
+                    println!("_check_inv_12 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_13") {
+            if dependent_invariants_of_state.contains(&"_check_inv_13") {
                 if !state._check_inv_13() {
+                    println!("_check_inv_13 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_14") {
+            if dependent_invariants_of_state.contains(&"_check_inv_14") {
                 if !state._check_inv_14() {
+                    println!("_check_inv_14 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_15") {
+            if dependent_invariants_of_state.contains(&"_check_inv_15") {
                 if !state._check_inv_15() {
+                    println!("_check_inv_15 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_16") {
+            if dependent_invariants_of_state.contains(&"_check_inv_16") {
                 if !state._check_inv_16() {
+                    println!("_check_inv_16 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_17") {
+            if dependent_invariants_of_state.contains(&"_check_inv_17") {
                 if !state._check_inv_17() {
+                    println!("_check_inv_17 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_18") {
+            if dependent_invariants_of_state.contains(&"_check_inv_18") {
                 if !state._check_inv_18() {
+                    println!("_check_inv_18 failed!");
                     return false;
                 }
             }
@@ -1920,16 +1506,14 @@ impl nota_v2 {
     }
 
     //model_check_print
-    fn print_result(states: i64, transitions: i64, deadlock_detected: bool, invariant_violated: bool) {
-        if deadlock_detected { println!("DEADLOCK DETECTED"); }
-        if invariant_violated { println!("INVARIANT VIOLATED"); }
-        if !deadlock_detected && !invariant_violated { println!("MODEL CHECKING SUCCESSFUL"); }
+    fn print_result(states: usize, transitions: u64, error_detected: bool) {
+        if !error_detected { println!("MODEL CHECKING SUCCESSFUL"); }
         println!("Number of States: {}", states);
         println!("Number of Transitions: {}", transitions);
     }
 
     //model_check_main
-    fn next(collection_m: Arc<Mutex<LinkedList<nota_v2>>>, mc_type: MC_TYPE) -> nota_v2 {
+    fn next(collection_m: Arc<Mutex<LinkedList<(nota_v2, &'static str)>>>, mc_type: MC_TYPE) -> (nota_v2, &'static str) {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
             MC_TYPE::BFS   => collection.pop_front().unwrap(),
@@ -1938,124 +1522,112 @@ impl nota_v2 {
         };
     }
 
+    fn get_guard_dependencies(op: &'static str) -> Vec<&str> {
+        return match op {
+            //model_check_init_static
+            "in_register_success" => vec!["_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"],
+            //model_check_init_static
+            "in_announceResourceManager" => vec!["_tr_in_announceResourceManager"],
+            //model_check_init_static
+            "in_requestTargetSocket_Granted" => vec!["_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"],
+            //model_check_init_static
+            "constructor_service" => vec!["_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister"],
+            //model_check_init_static
+            "constructor_socket" => vec!["_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"],
+            //model_check_init_static
+            "in_requestTargetSocket_NotGranted" => vec![],
+            //model_check_init_static
+            "constructor_interconnectNode" => vec!["_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager"],
+            //model_check_init_static
+            "rm_getSid" => vec![],
+            //model_check_init_static
+            "rm_deregister" => vec![],
+            //model_check_init_static
+            "constructor_resourceManager" => vec!["_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager"],
+            //model_check_init_static
+            "in_register_failed" => vec![],
+            //model_check_init_static
+            "rm_register" => vec![],
+            //model_check_init_static
+            "rm_getSid_Not_Found" => vec![],
+            //model_check_init_static
+            "svc_register" => vec!["_tr_svc_register"],
+            _ => vec![],
+        }
+    }
+
+    fn get_invariant_dependencies(op: &'static str) -> Vec<&str> {
+        return match op {
+            //model_check_init_static
+            "in_register_success" => vec!["_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9"],
+            //model_check_init_static
+            "in_announceResourceManager" => vec!["_check_inv_11"],
+            //model_check_init_static
+            "in_requestTargetSocket_Granted" => vec!["_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"],
+            //model_check_init_static
+            "constructor_service" => vec!["_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8"],
+            //model_check_init_static
+            "constructor_socket" => vec!["_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"],
+            //model_check_init_static
+            "in_requestTargetSocket_NotGranted" => vec![],
+            //model_check_init_static
+            "constructor_interconnectNode" => vec!["_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11"],
+            //model_check_init_static
+            "rm_getSid" => vec![],
+            //model_check_init_static
+            "rm_deregister" => vec![],
+            //model_check_init_static
+            "constructor_resourceManager" => vec!["_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11"],
+            //model_check_init_static
+            "in_register_failed" => vec![],
+            //model_check_init_static
+            "rm_register" => vec![],
+            //model_check_init_static
+            "rm_getSid_Not_Found" => vec![],
+            //model_check_init_static
+            "svc_register" => vec!["_check_inv_17"],
+            _ => vec![],
+        }
+    }
+
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
         let mut machine = nota_v2::new();
 
-        let invariant_violated = AtomicBool::new(false);
-        let deadlock_detected = AtomicBool::new(false);
-        let stop_threads = AtomicBool::new(false);
+        let mut all_states = HashSet::<nota_v2>::new();
+        all_states.insert(machine.clone());
 
-        if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() {
-            invariant_violated.store(true, Ordering::Release);
-        }
+        let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::<(nota_v2, &'static str)>::new()));
+        states_to_process_mutex.lock().unwrap().push_back((machine.clone(), ""));
 
-        let mut states = HashSet::<nota_v2>::new();
-        states.insert(machine.clone());
-        let number_states = AtomicI64::new(1);
+        let num_transitions = Arc::new(AtomicU64::new(0));
 
-        let collection_m = Arc::new(Mutex::new(LinkedList::<nota_v2>::new()));
-        collection_m.lock().unwrap().push_back(machine.clone());
+        let mut stop_threads = false;
 
-        let mut invariantDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut guardDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::<nota_v2, HashSet<&str>>::new()));
-        let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::<nota_v2, HashSet<&str>>::new()));
-        let mut guard_cache = Arc::new(Mutex::new(HashMap::<nota_v2, PersistentHashMap<&'static str, bool>>::new()));
-        let mut parents_m = Arc::new(Mutex::new(HashMap::<nota_v2, nota_v2>::new()));
+        while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+            let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
 
-        if is_caching {
-            //model_check_init_static
-            invariantDependency.insert("in_register_success", HashSet::from(["_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9"]));
-            //model_check_init_static
-            invariantDependency.insert("in_announceResourceManager", HashSet::from(["_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("in_requestTargetSocket_Granted", HashSet::from(["_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_service", HashSet::from(["_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8"]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_socket", HashSet::from(["_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("in_requestTargetSocket_NotGranted", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_interconnectNode", HashSet::from(["_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("rm_getSid", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("rm_deregister", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_resourceManager", HashSet::from(["_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("in_register_failed", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("rm_register", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("rm_getSid_Not_Found", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("svc_register", HashSet::from(["_check_inv_17"]));
-            //model_check_init_static
-            guardDependency.insert("in_register_success", HashSet::from(["_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"]));
-            //model_check_init_static
-            guardDependency.insert("in_announceResourceManager", HashSet::from(["_tr_in_announceResourceManager"]));
-            //model_check_init_static
-            guardDependency.insert("in_requestTargetSocket_Granted", HashSet::from(["_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"]));
-            //model_check_init_static
-            guardDependency.insert("constructor_service", HashSet::from(["_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister"]));
-            //model_check_init_static
-            guardDependency.insert("constructor_socket", HashSet::from(["_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"]));
-            //model_check_init_static
-            guardDependency.insert("in_requestTargetSocket_NotGranted", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("constructor_interconnectNode", HashSet::from(["_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager"]));
-            //model_check_init_static
-            guardDependency.insert("rm_getSid", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("rm_deregister", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("constructor_resourceManager", HashSet::from(["_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager"]));
-            //model_check_init_static
-            guardDependency.insert("in_register_failed", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("rm_register", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("rm_getSid_Not_Found", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("svc_register", HashSet::from(["_tr_svc_register"]));
-            dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-            parents_m.lock().unwrap().remove(&machine);
-        }
+            let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-        let transitions = Arc::new(AtomicI64::new(0));
-
-        while !stop_threads.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
-            let mut state = Self::next(Arc::clone(&collection_m), mc_type);
-
-            let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
-
-            next_states.iter().cloned().for_each(|next_state| {
-                if !states.contains(&next_state) {
-                    let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
-                    states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state);
-                    if cnum_states % 50000 == 0 {
-                        println!("VISITED STATES: {}", cnum_states);
-                        println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
-                        println!("-------------------");
-                    }
-                }
-            });
-
+            if !Self::checkInvariants(&state, last_op, is_caching) {
+                println!("INVARIANT VIOLATED");
+                stop_threads = true;
+            }
             if next_states.is_empty() {
-                deadlock_detected.store(true, Ordering::Release);
-                stop_threads.store(true, Ordering::Release);
+                print!("DEADLOCK DETECTED");
+                stop_threads = true;
             }
 
-            if !Self::checkInvariants(&state, is_caching, Arc::clone(&dependent_invariant_m)) {
-                invariant_violated.store(true, Ordering::Release);
-                stop_threads.store(true, Ordering::Release);
-            }
+            next_states.into_iter()
+                       .filter(|(next_state, _)| all_states.insert((*next_state).clone()))
+                       .for_each(|(next_state, last_op)| states_to_process_mutex.lock().unwrap().push_back((next_state, last_op)));
 
+            if all_states.len() % 50000 == 0 {
+                println!("VISITED STATES: {}", all_states.len());
+                println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+                println!("-------------------");
+            }
         }
-        Self::print_result(number_states.load(Ordering::Acquire), transitions.load(Ordering::Acquire), deadlock_detected.load(Ordering::Acquire), invariant_violated.load(Ordering::Acquire));
+        Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
     fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
@@ -2063,159 +1635,66 @@ impl nota_v2 {
 
         let machine = nota_v2::new();
 
+        let all_states = Arc::new(DashSet::<nota_v2>::new());
+        all_states.insert(machine.clone());
 
-        let invariant_violated_b = Arc::new(AtomicBool::new(false));
-        let deadlock_detected_b = Arc::new(AtomicBool::new(false));
-        let stop_threads_b = Arc::new(AtomicBool::new(false));
-        let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
+        let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::<(nota_v2, &'static str)>::new()));
+        states_to_process_mutex.lock().unwrap().push_back((machine, ""));
 
-        if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() {
-            invariant_violated_b.store(true, Ordering::Release);
-        }
+        let num_transitions = Arc::new(AtomicU64::new(0));
 
-        let states_m = Arc::new(Mutex::new(HashSet::<nota_v2>::new()));
-        states_m.lock().unwrap().insert(machine.clone());
-        let number_states_arc = Arc::new(AtomicI64::new(1));
-
-        let collection_m = Arc::new(Mutex::new(LinkedList::<nota_v2>::new()));
-        collection_m.lock().unwrap().push_back(machine.clone());
-
-        let mut invariantDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut guardDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::<nota_v2, HashSet<&str>>::new()));
-        let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::<nota_v2, HashSet<&str>>::new()));
-        let mut guard_cache_b = Arc::new(Mutex::new(HashMap::<nota_v2, PersistentHashMap<&'static str, bool>>::new()));
-        let mut parents_m = Arc::new(Mutex::new(HashMap::<nota_v2, nota_v2>::new()));
-
-        if is_caching {
-            //model_check_init_static
-            invariantDependency.insert("in_register_success", HashSet::from(["_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9"]));
-            //model_check_init_static
-            invariantDependency.insert("in_announceResourceManager", HashSet::from(["_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("in_requestTargetSocket_Granted", HashSet::from(["_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_service", HashSet::from(["_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8"]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_socket", HashSet::from(["_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("in_requestTargetSocket_NotGranted", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_interconnectNode", HashSet::from(["_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("rm_getSid", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("rm_deregister", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("constructor_resourceManager", HashSet::from(["_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("in_register_failed", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("rm_register", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("rm_getSid_Not_Found", HashSet::from([]));
-            //model_check_init_static
-            invariantDependency.insert("svc_register", HashSet::from(["_check_inv_17"]));
-            //model_check_init_static
-            guardDependency.insert("in_register_success", HashSet::from(["_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"]));
-            //model_check_init_static
-            guardDependency.insert("in_announceResourceManager", HashSet::from(["_tr_in_announceResourceManager"]));
-            //model_check_init_static
-            guardDependency.insert("in_requestTargetSocket_Granted", HashSet::from(["_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"]));
-            //model_check_init_static
-            guardDependency.insert("constructor_service", HashSet::from(["_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister"]));
-            //model_check_init_static
-            guardDependency.insert("constructor_socket", HashSet::from(["_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"]));
-            //model_check_init_static
-            guardDependency.insert("in_requestTargetSocket_NotGranted", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("constructor_interconnectNode", HashSet::from(["_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager"]));
-            //model_check_init_static
-            guardDependency.insert("rm_getSid", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("rm_deregister", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("constructor_resourceManager", HashSet::from(["_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager"]));
-            //model_check_init_static
-            guardDependency.insert("in_register_failed", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("rm_register", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("rm_getSid_Not_Found", HashSet::from([]));
-            //model_check_init_static
-            guardDependency.insert("svc_register", HashSet::from(["_tr_svc_register"]));
-            dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-            parents_m.lock().unwrap().remove(&machine);
-        }
-
-        let num_transitions = Arc::new(AtomicI64::new(0));
-        let invariant_dependency_arc = Arc::new(invariantDependency);
-        let guard_dependency_arc = Arc::new(guardDependency);
+        let mut stop_threads = false;
+        let mut spawned_tasks: u64 = 0;
+        let mut finished_tasks: u64 = 0;
 
         let (tx, rx) = channel();
         //println!("Thread {:?} starting threads", thread::current().id());
-        while !stop_threads_b.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
-            possible_queue_changes_b.fetch_add(1, Ordering::AcqRel);
-            let mut state = Self::next(Arc::clone(&collection_m), mc_type);
+        while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+            let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
 
-            let invariant_violated = Arc::clone(&invariant_violated_b);
-            let deadlock_detected = Arc::clone(&deadlock_detected_b);
-            let stop_threads = Arc::clone(&stop_threads_b);
-            let possible_queue_changes = Arc::clone(&possible_queue_changes_b);
-            let collection_m2 = Arc::clone(&collection_m);
-            let invariant_dependency = Arc::clone(&invariant_dependency_arc);
-            let guard_dependency = Arc::clone(&guard_dependency_arc);
-            let dependent_invariant_m2 = Arc::clone(&dependent_invariant_m);
-            let dependent_guard_m2 = Arc::clone(&dependent_guard_m);
-            let parents_m2 = Arc::clone(&parents_m);
-            let guard_cache = Arc::clone(&guard_cache_b);
+            let states_to_process = Arc::clone(&states_to_process_mutex);
             let transitions = Arc::clone(&num_transitions);
-            let states_m2 = Arc::clone(&states_m);
-            let number_states = Arc::clone(&number_states_arc);
+            let states = Arc::clone(&all_states);
             let tx = tx.clone();
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
-                let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
+                if !Self::checkInvariants(&state, last_op, is_caching) {
+                    let _ = tx.send(Err("INVARIANT VIOLATED"));
+                }
+
+                let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
+                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().cloned().for_each(|next_state| {
-                    {
-                        let mut states = states_m2.lock().unwrap();
-                        let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(&next_state) {
-                            let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
-                            states.insert(next_state.clone());
-                            collection.push_back(next_state);
-                            //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
-                            if cnum_states % 50000 == 0 {
-                                println!("VISITED STATES: {}", cnum_states);
-                                println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
-                                println!("-------------------");
-                            }
-                        }
-                    }
-                });
-                possible_queue_changes.fetch_sub(1, Ordering::AcqRel);
+                next_states.into_iter()
+                           .filter(|(next_state, _)| states.insert((*next_state).clone()))
+                           .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if next_states.is_empty() {
-                    deadlock_detected.store(true, Ordering::Release);
-                    stop_threads.store(true, Ordering::Release);
-                }
-
-                if !Self::checkInvariants(&state, is_caching, Arc::clone(&dependent_invariant_m2)) {
-                    invariant_violated.store(true, Ordering::Release);
-                    stop_threads.store(true, Ordering::Release);
-                }
                 //println!("Thread {:?} done", thread::current().id());
-                tx.send(1).expect("");
+                let _ = tx.send(Ok(1));
             });
-            while collection_m.lock().unwrap().is_empty() && possible_queue_changes_b.load(Ordering::Acquire) > 0 {
+
+            spawned_tasks += 1;
+            if spawned_tasks % 50000 == 0 {
+                println!("VISITED STATES: {}", all_states.len());
+                println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+                println!("-------------------");
+            }
+
+            while states_to_process_mutex.lock().unwrap().is_empty() && spawned_tasks - finished_tasks > 0 {
                 //println!("Thread {:?} (main) waiting for a thread to finish", thread::current().id());
-                rx.recv().expect("Waiting for a thread to finish: ");
+                match rx.recv_timeout(Duration::from_secs(1)) {
+                    Ok(val)  => match val {
+                            Ok(_) => finished_tasks += 1,
+                            Err(msg) => { println!("{}", msg); stop_threads = true; },
+                        },
+                    Err(_) => (),
+                }
+                if threadPool.panic_count() > 0 { stop_threads = true; }
             }
         }
 
-        Self::print_result(number_states_arc.load(Ordering::Acquire), num_transitions.load(Ordering::Acquire), deadlock_detected_b.load(Ordering::Acquire), invariant_violated_b.load(Ordering::Acquire));
+        Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
 }

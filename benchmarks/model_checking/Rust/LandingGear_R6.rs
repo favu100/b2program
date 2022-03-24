@@ -1,16 +1,17 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::env;
-use std::sync::atomic::{AtomicI32, AtomicI64, AtomicBool, Ordering};
-use std::sync::{Arc, Mutex};
-use std::thread;
-use std::collections::{HashMap, HashSet, LinkedList};
-use im::HashMap as PersistentHashMap;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, mpsc, Mutex};
+use std::collections::{HashSet, LinkedList};
+use dashmap::DashSet;
 use threadpool::ThreadPool;
 use std::sync::mpsc::channel;
 use derivative::Derivative;
+use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::brelation::BRelation;
 use btypes::bset::BSet;
@@ -23,8 +24,8 @@ pub enum MC_TYPE { BFS, DFS, MIXED }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum DOOR_STATE {
-    open,
-    closed,
+    open, 
+    closed, 
     door_moving
 }
 impl DOOR_STATE {
@@ -37,18 +38,18 @@ impl Default for DOOR_STATE {
 }
 impl fmt::Display for DOOR_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            DOOR_STATE::open => write!(f, "open"),
-            DOOR_STATE::closed => write!(f, "closed"),
-            DOOR_STATE::door_moving => write!(f, "door_moving"),
-        }
+       match *self {
+           DOOR_STATE::open => write!(f, "open"),
+           DOOR_STATE::closed => write!(f, "closed"),
+           DOOR_STATE::door_moving => write!(f, "door_moving"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum GEAR_STATE {
-    retracted,
-    extended,
+    retracted, 
+    extended, 
     gear_moving
 }
 impl GEAR_STATE {
@@ -61,17 +62,17 @@ impl Default for GEAR_STATE {
 }
 impl fmt::Display for GEAR_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            GEAR_STATE::retracted => write!(f, "retracted"),
-            GEAR_STATE::extended => write!(f, "extended"),
-            GEAR_STATE::gear_moving => write!(f, "gear_moving"),
-        }
+       match *self {
+           GEAR_STATE::retracted => write!(f, "retracted"),
+           GEAR_STATE::extended => write!(f, "extended"),
+           GEAR_STATE::gear_moving => write!(f, "gear_moving"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum HANDLE_STATE {
-    up,
+    up, 
     down
 }
 impl HANDLE_STATE {
@@ -84,17 +85,17 @@ impl Default for HANDLE_STATE {
 }
 impl fmt::Display for HANDLE_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            HANDLE_STATE::up => write!(f, "up"),
-            HANDLE_STATE::down => write!(f, "down"),
-        }
+       match *self {
+           HANDLE_STATE::up => write!(f, "up"),
+           HANDLE_STATE::down => write!(f, "down"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum POSITION {
-    fr,
-    lt,
+    fr, 
+    lt, 
     rt
 }
 impl POSITION {
@@ -107,17 +108,17 @@ impl Default for POSITION {
 }
 impl fmt::Display for POSITION {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            POSITION::fr => write!(f, "fr"),
-            POSITION::lt => write!(f, "lt"),
-            POSITION::rt => write!(f, "rt"),
-        }
+       match *self {
+           POSITION::fr => write!(f, "fr"),
+           POSITION::lt => write!(f, "lt"),
+           POSITION::rt => write!(f, "rt"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SWITCH_STATE {
-    switch_open,
+    switch_open, 
     switch_closed
 }
 impl SWITCH_STATE {
@@ -130,16 +131,16 @@ impl Default for SWITCH_STATE {
 }
 impl fmt::Display for SWITCH_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            SWITCH_STATE::switch_open => write!(f, "switch_open"),
-            SWITCH_STATE::switch_closed => write!(f, "switch_closed"),
-        }
+       match *self {
+           SWITCH_STATE::switch_open => write!(f, "switch_open"),
+           SWITCH_STATE::switch_closed => write!(f, "switch_closed"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PLANE_STATE {
-    ground,
+    ground, 
     flight
 }
 impl PLANE_STATE {
@@ -152,16 +153,16 @@ impl Default for PLANE_STATE {
 }
 impl fmt::Display for PLANE_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            PLANE_STATE::ground => write!(f, "ground"),
-            PLANE_STATE::flight => write!(f, "flight"),
-        }
+       match *self {
+           PLANE_STATE::ground => write!(f, "ground"),
+           PLANE_STATE::flight => write!(f, "flight"),
+       }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum VALVE_STATE {
-    valve_open,
+    valve_open, 
     valve_closed
 }
 impl VALVE_STATE {
@@ -174,10 +175,10 @@ impl Default for VALVE_STATE {
 }
 impl fmt::Display for VALVE_STATE {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            VALVE_STATE::valve_open => write!(f, "valve_open"),
-            VALVE_STATE::valve_closed => write!(f, "valve_closed"),
-        }
+       match *self {
+           VALVE_STATE::valve_open => write!(f, "valve_open"),
+           VALVE_STATE::valve_closed => write!(f, "valve_closed"),
+       }
     }
 }
 
@@ -286,6 +287,32 @@ pub struct LandingGear_R6 {
     #[derivative(Hash="ignore", PartialEq="ignore")]
     _tr_cache_env_open_analogical_switch: Option<bool>,}
 
+impl fmt::Display for LandingGear_R6 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "LandingGear_R6: (".to_owned();
+        result += &format!("_get_analogical_switch: {}, ", self._get_analogical_switch());
+        result += &format!("_get_general_EV: {}, ", self._get_general_EV());
+        result += &format!("_get_general_valve: {}, ", self._get_general_valve());
+        result += &format!("_get_handle_move: {}, ", self._get_handle_move());
+        result += &format!("_get_close_EV: {}, ", self._get_close_EV());
+        result += &format!("_get_extend_EV: {}, ", self._get_extend_EV());
+        result += &format!("_get_open_EV: {}, ", self._get_open_EV());
+        result += &format!("_get_retract_EV: {}, ", self._get_retract_EV());
+        result += &format!("_get_shock_absorber: {}, ", self._get_shock_absorber());
+        result += &format!("_get_valve_close_door: {}, ", self._get_valve_close_door());
+        result += &format!("_get_valve_extend_gear: {}, ", self._get_valve_extend_gear());
+        result += &format!("_get_valve_open_door: {}, ", self._get_valve_open_door());
+        result += &format!("_get_valve_retract_gear: {}, ", self._get_valve_retract_gear());
+        result += &format!("_get_doors: {}, ", self._get_doors());
+        result += &format!("_get_gears: {}, ", self._get_gears());
+        result += &format!("_get_handle: {}, ", self._get_handle());
+        result += &format!("_get_door: {}, ", self._get_door());
+        result += &format!("_get_gear: {}, ", self._get_gear());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
+}
+
 impl LandingGear_R6 {
 
     pub fn new() -> LandingGear_R6 {
@@ -322,103 +349,103 @@ impl LandingGear_R6 {
         self.door = DOOR_STATE::closed;
     }
 
-    pub fn get_analogical_switch(&self) -> SWITCH_STATE {
+    pub fn _get_analogical_switch(&self) -> SWITCH_STATE {
         return self.analogical_switch.clone();
     }
 
-    pub fn get_general_EV(&self) -> BBoolean {
+    pub fn _get_general_EV(&self) -> BBoolean {
         return self.general_EV.clone();
     }
 
-    pub fn get_general_valve(&self) -> VALVE_STATE {
+    pub fn _get_general_valve(&self) -> VALVE_STATE {
         return self.general_valve.clone();
     }
 
-    pub fn get_handle_move(&self) -> BBoolean {
+    pub fn _get_handle_move(&self) -> BBoolean {
         return self.handle_move.clone();
     }
 
-    pub fn get_close_EV(&self) -> BBoolean {
+    pub fn _get_close_EV(&self) -> BBoolean {
         return self.close_EV.clone();
     }
 
-    pub fn get_extend_EV(&self) -> BBoolean {
+    pub fn _get_extend_EV(&self) -> BBoolean {
         return self.extend_EV.clone();
     }
 
-    pub fn get_open_EV(&self) -> BBoolean {
+    pub fn _get_open_EV(&self) -> BBoolean {
         return self.open_EV.clone();
     }
 
-    pub fn get_retract_EV(&self) -> BBoolean {
+    pub fn _get_retract_EV(&self) -> BBoolean {
         return self.retract_EV.clone();
     }
 
-    pub fn get_shock_absorber(&self) -> PLANE_STATE {
+    pub fn _get_shock_absorber(&self) -> PLANE_STATE {
         return self.shock_absorber.clone();
     }
 
-    pub fn get_valve_close_door(&self) -> VALVE_STATE {
+    pub fn _get_valve_close_door(&self) -> VALVE_STATE {
         return self.valve_close_door.clone();
     }
 
-    pub fn get_valve_extend_gear(&self) -> VALVE_STATE {
+    pub fn _get_valve_extend_gear(&self) -> VALVE_STATE {
         return self.valve_extend_gear.clone();
     }
 
-    pub fn get_valve_open_door(&self) -> VALVE_STATE {
+    pub fn _get_valve_open_door(&self) -> VALVE_STATE {
         return self.valve_open_door.clone();
     }
 
-    pub fn get_valve_retract_gear(&self) -> VALVE_STATE {
+    pub fn _get_valve_retract_gear(&self) -> VALVE_STATE {
         return self.valve_retract_gear.clone();
     }
 
-    pub fn get_doors(&self) -> BRelation<POSITION, DOOR_STATE> {
+    pub fn _get_doors(&self) -> BRelation<POSITION, DOOR_STATE> {
         return self.doors.clone();
     }
 
-    pub fn get_gears(&self) -> BRelation<POSITION, GEAR_STATE> {
+    pub fn _get_gears(&self) -> BRelation<POSITION, GEAR_STATE> {
         return self.gears.clone();
     }
 
-    pub fn get_handle(&self) -> HANDLE_STATE {
+    pub fn _get_handle(&self) -> HANDLE_STATE {
         return self.handle.clone();
     }
 
-    pub fn get_door(&self) -> DOOR_STATE {
+    pub fn _get_door(&self) -> DOOR_STATE {
         return self.door.clone();
     }
 
-    pub fn get_gear(&self) -> GEAR_STATE {
+    pub fn _get_gear(&self) -> GEAR_STATE {
         return self.gear.clone();
     }
 
-    pub fn get__DOOR_STATE(&self) -> BSet<DOOR_STATE> {
+    pub fn _get__DOOR_STATE(&self) -> BSet<DOOR_STATE> {
         return self._DOOR_STATE.clone();
     }
 
-    pub fn get__GEAR_STATE(&self) -> BSet<GEAR_STATE> {
+    pub fn _get__GEAR_STATE(&self) -> BSet<GEAR_STATE> {
         return self._GEAR_STATE.clone();
     }
 
-    pub fn get__HANDLE_STATE(&self) -> BSet<HANDLE_STATE> {
+    pub fn _get__HANDLE_STATE(&self) -> BSet<HANDLE_STATE> {
         return self._HANDLE_STATE.clone();
     }
 
-    pub fn get__POSITION(&self) -> BSet<POSITION> {
+    pub fn _get__POSITION(&self) -> BSet<POSITION> {
         return self._POSITION.clone();
     }
 
-    pub fn get__SWITCH_STATE(&self) -> BSet<SWITCH_STATE> {
+    pub fn _get__SWITCH_STATE(&self) -> BSet<SWITCH_STATE> {
         return self._SWITCH_STATE.clone();
     }
 
-    pub fn get__PLANE_STATE(&self) -> BSet<PLANE_STATE> {
+    pub fn _get__PLANE_STATE(&self) -> BSet<PLANE_STATE> {
         return self._PLANE_STATE.clone();
     }
 
-    pub fn get__VALVE_STATE(&self) -> BSet<VALVE_STATE> {
+    pub fn _get__VALVE_STATE(&self) -> BSet<VALVE_STATE> {
         return self._VALVE_STATE.clone();
     }
 
@@ -439,7 +466,7 @@ impl LandingGear_R6 {
     }
 
     pub fn open_valve_door_open(&mut self) -> () {
-        if (self.valve_open_door.equal(&VALVE_STATE::valve_closed).and(&self.open_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((self.valve_open_door.equal(&VALVE_STATE::valve_closed) && self.open_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.valve_open_door = VALVE_STATE::valve_open;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -447,7 +474,7 @@ impl LandingGear_R6 {
     }
 
     pub fn close_valve_door_open(&mut self) -> () {
-        if (self.valve_open_door.equal(&VALVE_STATE::valve_open).and(&self.open_EV.equal(&BBoolean::new(false)))).booleanValue() {
+        if ((self.valve_open_door.equal(&VALVE_STATE::valve_open) && self.open_EV.equal(&BBoolean::new(false)))).booleanValue() {
             self.valve_open_door = VALVE_STATE::valve_closed;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -455,7 +482,7 @@ impl LandingGear_R6 {
     }
 
     pub fn open_valve_door_close(&mut self) -> () {
-        if (self.valve_close_door.equal(&VALVE_STATE::valve_closed).and(&self.close_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((self.valve_close_door.equal(&VALVE_STATE::valve_closed) && self.close_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.valve_close_door = VALVE_STATE::valve_open;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -463,7 +490,7 @@ impl LandingGear_R6 {
     }
 
     pub fn close_valve_door_close(&mut self) -> () {
-        if (self.valve_close_door.equal(&VALVE_STATE::valve_open).and(&self.close_EV.equal(&BBoolean::new(false)))).booleanValue() {
+        if ((self.valve_close_door.equal(&VALVE_STATE::valve_open) && self.close_EV.equal(&BBoolean::new(false)))).booleanValue() {
             self.valve_close_door = VALVE_STATE::valve_closed;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -471,7 +498,7 @@ impl LandingGear_R6 {
     }
 
     pub fn open_valve_retract_gear(&mut self) -> () {
-        if (self.valve_retract_gear.equal(&VALVE_STATE::valve_closed).and(&self.retract_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((self.valve_retract_gear.equal(&VALVE_STATE::valve_closed) && self.retract_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.valve_retract_gear = VALVE_STATE::valve_open;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -479,7 +506,7 @@ impl LandingGear_R6 {
     }
 
     pub fn close_valve_retract_gear(&mut self) -> () {
-        if (self.valve_retract_gear.equal(&VALVE_STATE::valve_open).and(&self.retract_EV.equal(&BBoolean::new(false)))).booleanValue() {
+        if ((self.valve_retract_gear.equal(&VALVE_STATE::valve_open) && self.retract_EV.equal(&BBoolean::new(false)))).booleanValue() {
             self.valve_retract_gear = VALVE_STATE::valve_closed;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -487,7 +514,7 @@ impl LandingGear_R6 {
     }
 
     pub fn open_valve_extend_gear(&mut self) -> () {
-        if (self.valve_extend_gear.equal(&VALVE_STATE::valve_closed).and(&self.extend_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((self.valve_extend_gear.equal(&VALVE_STATE::valve_closed) && self.extend_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.valve_extend_gear = VALVE_STATE::valve_open;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -495,7 +522,7 @@ impl LandingGear_R6 {
     }
 
     pub fn close_valve_extend_gear(&mut self) -> () {
-        if (self.valve_extend_gear.equal(&VALVE_STATE::valve_open).and(&self.extend_EV.equal(&BBoolean::new(false)))).booleanValue() {
+        if ((self.valve_extend_gear.equal(&VALVE_STATE::valve_open) && self.extend_EV.equal(&BBoolean::new(false)))).booleanValue() {
             self.valve_extend_gear = VALVE_STATE::valve_closed;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -503,7 +530,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_open_door_valve(&mut self) -> () {
-        if (self.open_EV.equal(&BBoolean::new(false)).and(&self.close_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.shock_absorber.equal(&PLANE_STATE::ground)).not()))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((((self.open_EV.equal(&BBoolean::new(false)) && self.close_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) || ((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.shock_absorber.equal(&PLANE_STATE::ground)).not()))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.open_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -511,7 +538,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_open_door_valve(&mut self) -> () {
-        if (self.open_EV.equal(&BBoolean::new(true)).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((self.open_EV.equal(&BBoolean::new(true)) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.open_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -519,7 +546,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_close_door_valve(&mut self) -> () {
-        if (self.close_EV.equal(&BBoolean::new(false)).and(&self.open_EV.equal(&BBoolean::new(false))).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.shock_absorber.equal(&PLANE_STATE::ground))))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed])).not()).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((((self.close_EV.equal(&BBoolean::new(false)) && self.open_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || (self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed])).not()) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.close_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -527,7 +554,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_close_door_valve(&mut self) -> () {
-        if (self.close_EV.equal(&BBoolean::new(true)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((self.close_EV.equal(&BBoolean::new(true)) && (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.close_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -535,7 +562,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_retract_gear_valve(&mut self) -> () {
-        if (self.retract_EV.equal(&BBoolean::new(false)).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.open_EV.equal(&BBoolean::new(true))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()).and(&self.shock_absorber.equal(&PLANE_STATE::flight)).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((((((((self.retract_EV.equal(&BBoolean::new(false)) && self.extend_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && self.shock_absorber.equal(&PLANE_STATE::flight)) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.retract_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -543,7 +570,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_retract_gear_valve(&mut self) -> () {
-        if (self.retract_EV.equal(&BBoolean::new(true)).and(&self.handle.equal(&HANDLE_STATE::down).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((self.retract_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::down) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.retract_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -551,7 +578,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_extend_gear_valve(&mut self) -> () {
-        if (self.extend_EV.equal(&BBoolean::new(false)).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.open_EV.equal(&BBoolean::new(true))).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((((self.extend_EV.equal(&BBoolean::new(false)) && self.retract_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.extend_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -559,7 +586,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_extend_gear_valve(&mut self) -> () {
-        if (self.extend_EV.equal(&BBoolean::new(true)).and(&self.handle.equal(&HANDLE_STATE::up).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).and(&self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((self.extend_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::up) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.extend_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -567,7 +594,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_retracting_first(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.functionCall(&gr).equal(&GEAR_STATE::extended)).and(&self.valve_retract_gear.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::gear_moving]).elementOf(&self.gear)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::extended)) && self.valve_retract_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::gear_moving]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::gear_moving)])).clone().clone();
             self.gear = GEAR_STATE::gear_moving;
@@ -577,7 +604,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_retract_gear_skip(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![GEAR_STATE::retracted]))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if ((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.gears = self.gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::retracted)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -585,7 +612,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_retract_gear_last(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![GEAR_STATE::retracted]))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.gear.equal(&GEAR_STATE::gear_moving)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::retracted)])).clone().clone();
             self.gear = GEAR_STATE::retracted;
@@ -595,7 +622,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_extending(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.functionCall(&gr).equal(&GEAR_STATE::retracted)).and(&self.valve_extend_gear.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![GEAR_STATE::gear_moving, GEAR_STATE::retracted]).elementOf(&self.gear)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::retracted)) && self.valve_extend_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::gear_moving, GEAR_STATE::retracted]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::gear_moving)])).clone().clone();
             self.gear = GEAR_STATE::gear_moving;
@@ -605,7 +632,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_extend_gear_last(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.gear.equal(&GEAR_STATE::gear_moving)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::extended)])).clone().clone();
             self.gear = GEAR_STATE::extended;
@@ -615,7 +642,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_extend_gear_skip(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if ((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.gears = self.gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::extended)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -623,7 +650,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_open_door(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.functionCall(&gr).equal(&DOOR_STATE::closed)).and(&self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_open_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![DOOR_STATE::closed, DOOR_STATE::door_moving]).elementOf(&self.door)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::retracted)).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+        if ((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::closed)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::closed, DOOR_STATE::door_moving]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::door_moving)])).clone().clone();
             self.door = DOOR_STATE::door_moving;
@@ -633,7 +660,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_open_door_last(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)).and(&self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_open_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.door.equal(&DOOR_STATE::door_moving)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::retracted)).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+        if (((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::open)])).clone().clone();
             self.door = DOOR_STATE::open;
@@ -643,7 +670,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_open_door_skip(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)).and(&self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_open_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.doors = self.doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::open)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -651,7 +678,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_close_door(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.functionCall(&gr).equal(&DOOR_STATE::open)).and(&self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_close_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![DOOR_STATE::door_moving, DOOR_STATE::open]).elementOf(&self.door)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::extended)).or(&self.handle.equal(&HANDLE_STATE::up).and(&BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+        if (((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::open)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::door_moving, DOOR_STATE::open]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::door_moving)])).clone().clone();
             self.door = DOOR_STATE::door_moving;
@@ -661,7 +688,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_close_door(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)).and(&self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_close_door.equal(&VALVE_STATE::valve_open)).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.door.equal(&DOOR_STATE::door_moving)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::extended)).or(&self.handle.equal(&HANDLE_STATE::up).and(&BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+        if ((((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::closed)])).clone().clone();
             self.door = DOOR_STATE::closed;
@@ -671,7 +698,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_close_door_skip(&mut self, mut gr: POSITION) -> () {
-        if (self.gears.domain().elementOf(&gr).and(&self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)).and(&self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_close_door.equal(&VALVE_STATE::valve_open)).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if (((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.doors = self.doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::closed)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -697,7 +724,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_general_valve(&mut self) -> () {
-        if (self.general_EV.equal(&BBoolean::new(false)).and(&self.handle_move.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((self.general_EV.equal(&BBoolean::new(false)) && self.handle_move.equal(&BBoolean::new(true)))).booleanValue() {
             self.general_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -705,7 +732,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_general_valve(&mut self) -> () {
-        if (self.general_EV.equal(&BBoolean::new(true)).and(&self.open_EV.equal(&BBoolean::new(false))).and(&self.close_EV.equal(&BBoolean::new(false))).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.close_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.open_EV.equal(&BBoolean::new(false))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.open_EV.equal(&BBoolean::new(false)))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.open_EV.equal(&BBoolean::new(false)))))).booleanValue() {
+        if (((((((self.general_EV.equal(&BBoolean::new(true)) && self.open_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && (((((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false))) || (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false)))) || (((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false)))))).booleanValue() {
             self.general_EV = BBoolean::new(false);
             self.handle_move = BBoolean::new(false);
         } else {
@@ -714,7 +741,7 @@ impl LandingGear_R6 {
     }
 
     pub fn evn_open_general_valve(&mut self) -> () {
-        if (self.general_EV.equal(&BBoolean::new(true)).and(&self.general_valve.equal(&VALVE_STATE::valve_closed)).and(&self.analogical_switch.equal(&SWITCH_STATE::switch_closed))).booleanValue() {
+        if (((self.general_EV.equal(&BBoolean::new(true)) && self.general_valve.equal(&VALVE_STATE::valve_closed)) && self.analogical_switch.equal(&SWITCH_STATE::switch_closed))).booleanValue() {
             self.general_valve = VALVE_STATE::valve_open;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -722,7 +749,7 @@ impl LandingGear_R6 {
     }
 
     pub fn evn_close_general_valve(&mut self) -> () {
-        if (self.general_EV.equal(&BBoolean::new(false)).or(&self.analogical_switch.equal(&SWITCH_STATE::switch_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if (((self.general_EV.equal(&BBoolean::new(false)) || self.analogical_switch.equal(&SWITCH_STATE::switch_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.general_valve = VALVE_STATE::valve_closed;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -730,7 +757,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_close_analogical_switch(&mut self) -> () {
-        if (self.analogical_switch.equal(&SWITCH_STATE::switch_open).and(&self.handle_move.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((self.analogical_switch.equal(&SWITCH_STATE::switch_open) && self.handle_move.equal(&BBoolean::new(true)))).booleanValue() {
             self.analogical_switch = SWITCH_STATE::switch_closed;
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -770,7 +797,7 @@ impl LandingGear_R6 {
     pub fn _tr_open_valve_door_open(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_open_valve_door_open.is_none() {
-            let mut __tmp__val__ = self.valve_open_door.equal(&VALVE_STATE::valve_closed).and(&self.open_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (self.valve_open_door.equal(&VALVE_STATE::valve_closed) && self.open_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_open_valve_door_open = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -781,7 +808,7 @@ impl LandingGear_R6 {
     pub fn _tr_close_valve_door_open(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_close_valve_door_open.is_none() {
-            let mut __tmp__val__ = self.valve_open_door.equal(&VALVE_STATE::valve_open).and(&self.open_EV.equal(&BBoolean::new(false))).booleanValue();
+            let mut __tmp__val__ = (self.valve_open_door.equal(&VALVE_STATE::valve_open) && self.open_EV.equal(&BBoolean::new(false))).booleanValue();
             self._tr_cache_close_valve_door_open = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -792,7 +819,7 @@ impl LandingGear_R6 {
     pub fn _tr_open_valve_door_close(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_open_valve_door_close.is_none() {
-            let mut __tmp__val__ = self.valve_close_door.equal(&VALVE_STATE::valve_closed).and(&self.close_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (self.valve_close_door.equal(&VALVE_STATE::valve_closed) && self.close_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_open_valve_door_close = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -803,7 +830,7 @@ impl LandingGear_R6 {
     pub fn _tr_close_valve_door_close(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_close_valve_door_close.is_none() {
-            let mut __tmp__val__ = self.valve_close_door.equal(&VALVE_STATE::valve_open).and(&self.close_EV.equal(&BBoolean::new(false))).booleanValue();
+            let mut __tmp__val__ = (self.valve_close_door.equal(&VALVE_STATE::valve_open) && self.close_EV.equal(&BBoolean::new(false))).booleanValue();
             self._tr_cache_close_valve_door_close = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -814,7 +841,7 @@ impl LandingGear_R6 {
     pub fn _tr_open_valve_retract_gear(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_open_valve_retract_gear.is_none() {
-            let mut __tmp__val__ = self.valve_retract_gear.equal(&VALVE_STATE::valve_closed).and(&self.retract_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (self.valve_retract_gear.equal(&VALVE_STATE::valve_closed) && self.retract_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_open_valve_retract_gear = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -825,7 +852,7 @@ impl LandingGear_R6 {
     pub fn _tr_close_valve_retract_gear(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_close_valve_retract_gear.is_none() {
-            let mut __tmp__val__ = self.valve_retract_gear.equal(&VALVE_STATE::valve_open).and(&self.retract_EV.equal(&BBoolean::new(false))).booleanValue();
+            let mut __tmp__val__ = (self.valve_retract_gear.equal(&VALVE_STATE::valve_open) && self.retract_EV.equal(&BBoolean::new(false))).booleanValue();
             self._tr_cache_close_valve_retract_gear = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -836,7 +863,7 @@ impl LandingGear_R6 {
     pub fn _tr_open_valve_extend_gear(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_open_valve_extend_gear.is_none() {
-            let mut __tmp__val__ = self.valve_extend_gear.equal(&VALVE_STATE::valve_closed).and(&self.extend_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (self.valve_extend_gear.equal(&VALVE_STATE::valve_closed) && self.extend_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_open_valve_extend_gear = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -847,7 +874,7 @@ impl LandingGear_R6 {
     pub fn _tr_close_valve_extend_gear(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_close_valve_extend_gear.is_none() {
-            let mut __tmp__val__ = self.valve_extend_gear.equal(&VALVE_STATE::valve_open).and(&self.extend_EV.equal(&BBoolean::new(false))).booleanValue();
+            let mut __tmp__val__ = (self.valve_extend_gear.equal(&VALVE_STATE::valve_open) && self.extend_EV.equal(&BBoolean::new(false))).booleanValue();
             self._tr_cache_close_valve_extend_gear = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -858,7 +885,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_open_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_open_door_valve.is_none() {
-            let mut __tmp__val__ = self.open_EV.equal(&BBoolean::new(false)).and(&self.close_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.shock_absorber.equal(&PLANE_STATE::ground)).not()))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (((self.open_EV.equal(&BBoolean::new(false)) && self.close_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) || ((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.shock_absorber.equal(&PLANE_STATE::ground)).not()))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_open_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -869,7 +896,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_open_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_open_door_valve.is_none() {
-            let mut __tmp__val__ = self.open_EV.equal(&BBoolean::new(true)).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((((self.open_EV.equal(&BBoolean::new(true)) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_open_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -880,7 +907,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_close_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_close_door_valve.is_none() {
-            let mut __tmp__val__ = self.close_EV.equal(&BBoolean::new(false)).and(&self.open_EV.equal(&BBoolean::new(false))).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.shock_absorber.equal(&PLANE_STATE::ground))))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed])).not()).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((((((self.close_EV.equal(&BBoolean::new(false)) && self.open_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || (self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed])).not()) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_close_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -891,7 +918,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_close_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_close_door_valve.is_none() {
-            let mut __tmp__val__ = self.close_EV.equal(&BBoolean::new(true)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((self.close_EV.equal(&BBoolean::new(true)) && (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_close_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -902,7 +929,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_retract_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_retract_gear_valve.is_none() {
-            let mut __tmp__val__ = self.retract_EV.equal(&BBoolean::new(false)).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.open_EV.equal(&BBoolean::new(true))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()).and(&self.shock_absorber.equal(&PLANE_STATE::flight)).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (((((((self.retract_EV.equal(&BBoolean::new(false)) && self.extend_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && self.shock_absorber.equal(&PLANE_STATE::flight)) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_retract_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -913,7 +940,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_retract_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_retract_gear_valve.is_none() {
-            let mut __tmp__val__ = self.retract_EV.equal(&BBoolean::new(true)).and(&self.handle.equal(&HANDLE_STATE::down).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((self.retract_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::down) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_retract_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -924,7 +951,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_extend_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_extend_gear_valve.is_none() {
-            let mut __tmp__val__ = self.extend_EV.equal(&BBoolean::new(false)).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.open_EV.equal(&BBoolean::new(true))).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((((((self.extend_EV.equal(&BBoolean::new(false)) && self.retract_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_extend_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -935,7 +962,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_extend_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_extend_gear_valve.is_none() {
-            let mut __tmp__val__ = self.extend_EV.equal(&BBoolean::new(true)).and(&self.handle.equal(&HANDLE_STATE::up).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).and(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((self.extend_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::up) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_extend_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -947,8 +974,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_start_retracting_first.is_none() {
             let mut _ic_set_18: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::extended)).and(&self.valve_retract_gear.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::gear_moving]).elementOf(&self.gear)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::extended)) && self.valve_retract_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::gear_moving]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_18 = _ic_set_18._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -964,8 +992,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_retract_gear_skip.is_none() {
             let mut _ic_set_19: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![GEAR_STATE::retracted]))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                if (((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_19 = _ic_set_19._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -981,8 +1010,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_retract_gear_last.is_none() {
             let mut _ic_set_20: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![GEAR_STATE::retracted]))).and(&self.handle.equal(&HANDLE_STATE::up)).and(&self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.gear.equal(&GEAR_STATE::gear_moving)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_20 = _ic_set_20._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -998,8 +1028,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_start_extending.is_none() {
             let mut _ic_set_21: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::retracted)).and(&self.valve_extend_gear.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![GEAR_STATE::gear_moving, GEAR_STATE::retracted]).elementOf(&self.gear)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::retracted)) && self.valve_extend_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::gear_moving, GEAR_STATE::retracted]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_21 = _ic_set_21._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1015,8 +1046,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_extend_gear_last.is_none() {
             let mut _ic_set_22: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.gear.equal(&GEAR_STATE::gear_moving)).and(&self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_22 = _ic_set_22._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1032,8 +1064,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_extend_gear_skip.is_none() {
             let mut _ic_set_23: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])).and(&self.handle.equal(&HANDLE_STATE::down)).and(&self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                if (((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_23 = _ic_set_23._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1049,8 +1082,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_start_open_door.is_none() {
             let mut _ic_set_24: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::closed).and(&self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_open_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![DOOR_STATE::closed, DOOR_STATE::door_moving]).elementOf(&self.door)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::retracted)).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+                if (((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::closed) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::closed, DOOR_STATE::door_moving]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
                     _ic_set_24 = _ic_set_24._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1066,8 +1100,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_open_door_last.is_none() {
             let mut _ic_set_25: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving).and(&self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_open_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.door.equal(&DOOR_STATE::door_moving)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::retracted)).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+                if ((((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
                     _ic_set_25 = _ic_set_25._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1083,8 +1118,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_open_door_skip.is_none() {
             let mut _ic_set_26: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving).and(&self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![DOOR_STATE::open]))).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_open_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                if (((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_26 = _ic_set_26._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1100,8 +1136,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_start_close_door.is_none() {
             let mut _ic_set_27: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::open).and(&self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_close_door.equal(&VALVE_STATE::valve_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&BSet::new(vec![DOOR_STATE::door_moving, DOOR_STATE::open]).elementOf(&self.door)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::extended)).or(&self.handle.equal(&HANDLE_STATE::up).and(&BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+                if ((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::open) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::door_moving, DOOR_STATE::open]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
                     _ic_set_27 = _ic_set_27._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1117,8 +1154,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_close_door.is_none() {
             let mut _ic_set_28: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving).and(&self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_close_door.equal(&VALVE_STATE::valve_open)).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).and(&self.door.equal(&DOOR_STATE::door_moving)).and(&self.gear.unequal(&GEAR_STATE::gear_moving)).and(&self.handle.equal(&HANDLE_STATE::down).and(&self.gear.equal(&GEAR_STATE::extended)).or(&self.handle.equal(&HANDLE_STATE::up).and(&BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+                if (((((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
                     _ic_set_28 = _ic_set_28._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1134,8 +1172,9 @@ impl LandingGear_R6 {
         //transition
         if !is_caching || self._tr_cache_env_close_door_skip.is_none() {
             let mut _ic_set_29: BSet<POSITION> = BSet::new(vec![]);
+            //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving).and(&self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)).and(&self.gears.range().notElementOf(&GEAR_STATE::gear_moving)).and(&self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).or(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))).and(&self.valve_close_door.equal(&VALVE_STATE::valve_open)).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))).and(&self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                if ((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_29 = _ic_set_29._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1172,7 +1211,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_general_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_general_valve.is_none() {
-            let mut __tmp__val__ = self.general_EV.equal(&BBoolean::new(false)).and(&self.handle_move.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (self.general_EV.equal(&BBoolean::new(false)) && self.handle_move.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_general_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -1183,7 +1222,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_general_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_general_valve.is_none() {
-            let mut __tmp__val__ = self.general_EV.equal(&BBoolean::new(true)).and(&self.open_EV.equal(&BBoolean::new(false))).and(&self.close_EV.equal(&BBoolean::new(false))).and(&self.retract_EV.equal(&BBoolean::new(false))).and(&self.extend_EV.equal(&BBoolean::new(false))).and(&self.close_EV.equal(&BBoolean::new(false))).and(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.open_EV.equal(&BBoolean::new(false))).or(&self.handle.equal(&HANDLE_STATE::down).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.open_EV.equal(&BBoolean::new(false)))).or(&self.handle.equal(&HANDLE_STATE::up).and(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).and(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).and(&self.open_EV.equal(&BBoolean::new(false))))).booleanValue();
+            let mut __tmp__val__ = ((((((self.general_EV.equal(&BBoolean::new(true)) && self.open_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && (((((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false))) || (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false)))) || (((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false))))).booleanValue();
             self._tr_cache_con_stop_stimulate_general_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -1194,7 +1233,7 @@ impl LandingGear_R6 {
     pub fn _tr_evn_open_general_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_evn_open_general_valve.is_none() {
-            let mut __tmp__val__ = self.general_EV.equal(&BBoolean::new(true)).and(&self.general_valve.equal(&VALVE_STATE::valve_closed)).and(&self.analogical_switch.equal(&SWITCH_STATE::switch_closed)).booleanValue();
+            let mut __tmp__val__ = ((self.general_EV.equal(&BBoolean::new(true)) && self.general_valve.equal(&VALVE_STATE::valve_closed)) && self.analogical_switch.equal(&SWITCH_STATE::switch_closed)).booleanValue();
             self._tr_cache_evn_open_general_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -1205,7 +1244,7 @@ impl LandingGear_R6 {
     pub fn _tr_evn_close_general_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_evn_close_general_valve.is_none() {
-            let mut __tmp__val__ = self.general_EV.equal(&BBoolean::new(false)).or(&self.analogical_switch.equal(&SWITCH_STATE::switch_open)).and(&self.general_valve.equal(&VALVE_STATE::valve_open)).booleanValue();
+            let mut __tmp__val__ = ((self.general_EV.equal(&BBoolean::new(false)) || self.analogical_switch.equal(&SWITCH_STATE::switch_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)).booleanValue();
             self._tr_cache_evn_close_general_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -1216,7 +1255,7 @@ impl LandingGear_R6 {
     pub fn _tr_env_close_analogical_switch(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_env_close_analogical_switch.is_none() {
-            let mut __tmp__val__ = self.analogical_switch.equal(&SWITCH_STATE::switch_open).and(&self.handle_move.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (self.analogical_switch.equal(&SWITCH_STATE::switch_open) && self.handle_move.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_env_close_analogical_switch = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -1317,12 +1356,12 @@ impl LandingGear_R6 {
 
     pub fn _check_inv_17(&self) -> bool {
         //invariant
-        return self.open_EV.equal(&BBoolean::new(true)).or(&self.close_EV.equal(&BBoolean::new(true))).or(&self.retract_EV.equal(&BBoolean::new(true))).or(&self.extend_EV.equal(&BBoolean::new(true))).implies(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+        return (((self.open_EV.equal(&BBoolean::new(true)) || self.close_EV.equal(&BBoolean::new(true))) || self.retract_EV.equal(&BBoolean::new(true))) || self.extend_EV.equal(&BBoolean::new(true))).implies(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
     }
 
     pub fn _check_inv_18(&self) -> bool {
         //invariant
-        return self.open_EV.equal(&BBoolean::new(true)).and(&self.close_EV.equal(&BBoolean::new(true))).not().booleanValue();
+        return (self.open_EV.equal(&BBoolean::new(true)) && self.close_EV.equal(&BBoolean::new(true))).not().booleanValue();
     }
 
     pub fn _check_inv_19(&self) -> bool {
@@ -1360,11 +1399,10 @@ impl LandingGear_R6 {
         return self.gear.equal(&GEAR_STATE::gear_moving).implies(&self.door.equal(&DOOR_STATE::open)).booleanValue();
     }
 
-    fn invalidate_caches(&mut self, to_invalidate: &HashSet<&'static str>) {
+    fn invalidate_caches(&mut self, to_invalidate: Vec<&'static str>) {
         //calling the given functions without caching will recalculate them and cache them afterwards
-        //if caching is enabled globally, this will just prefill those, if caching is
-        for trans in to_invalidate.iter() {
-            match *trans {
+        for trans in to_invalidate {
+            match trans {
                 "_tr_begin_flying" => {self._tr_begin_flying(false);},
                 "_tr_land_plane" => {self._tr_land_plane(false);},
                 "_tr_open_valve_door_open" => {self._tr_open_valve_door_open(false);},
@@ -1411,1557 +1449,583 @@ impl LandingGear_R6 {
     //model_check_next_states
     fn generateNextStates(state: &mut LandingGear_R6,
                           isCaching: bool,
-                          invariant_dependency: &HashMap<&str, HashSet<&'static str>>,
-                          dependent_invariant_m: Arc<Mutex<HashMap<LandingGear_R6, HashSet<&str>>>>,
-                          guard_dependency: &HashMap<&str, HashSet<&'static str>>,
-                          dependent_guard_m: Arc<Mutex<HashMap<LandingGear_R6, HashSet<&str>>>>,
-                          guardCache: Arc<Mutex<HashMap<LandingGear_R6, PersistentHashMap<&str, bool>>>>,
-                          parents_m: Arc<Mutex<HashMap<LandingGear_R6, LandingGear_R6>>>,
-                          transitions: Arc<AtomicI64>) -> HashSet<LandingGear_R6> {
-        let mut result = HashSet::<LandingGear_R6>::new();
-        if isCaching {
-            let mut parents_guard_o = parents_m.lock().unwrap().get(state).and_then(|p| guardCache.lock().unwrap().get(p).cloned());
-            let mut newCache = if parents_guard_o.is_none() { PersistentHashMap::new() } else { parents_guard_o.as_ref().unwrap().clone() };
-            //model_check_transition
-            let mut _trid_1 = state._tr_begin_flying(isCaching);
-            if _trid_1 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.begin_flying();
-                match guard_dependency.get("begin_flying") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("begin_flying").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("begin_flying").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_2 = state._tr_land_plane(isCaching);
-            if _trid_2 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.land_plane();
-                match guard_dependency.get("land_plane") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("land_plane").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("land_plane").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_3 = state._tr_open_valve_door_open(isCaching);
-            if _trid_3 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_door_open();
-                match guard_dependency.get("open_valve_door_open") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("open_valve_door_open").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("open_valve_door_open").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_4 = state._tr_close_valve_door_open(isCaching);
-            if _trid_4 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_door_open();
-                match guard_dependency.get("close_valve_door_open") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("close_valve_door_open").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("close_valve_door_open").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_5 = state._tr_open_valve_door_close(isCaching);
-            if _trid_5 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_door_close();
-                match guard_dependency.get("open_valve_door_close") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("open_valve_door_close").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("open_valve_door_close").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_6 = state._tr_close_valve_door_close(isCaching);
-            if _trid_6 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_door_close();
-                match guard_dependency.get("close_valve_door_close") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("close_valve_door_close").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("close_valve_door_close").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_7 = state._tr_open_valve_retract_gear(isCaching);
-            if _trid_7 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_retract_gear();
-                match guard_dependency.get("open_valve_retract_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("open_valve_retract_gear").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("open_valve_retract_gear").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_8 = state._tr_close_valve_retract_gear(isCaching);
-            if _trid_8 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_retract_gear();
-                match guard_dependency.get("close_valve_retract_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("close_valve_retract_gear").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("close_valve_retract_gear").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_9 = state._tr_open_valve_extend_gear(isCaching);
-            if _trid_9 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_extend_gear();
-                match guard_dependency.get("open_valve_extend_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("open_valve_extend_gear").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("open_valve_extend_gear").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_10 = state._tr_close_valve_extend_gear(isCaching);
-            if _trid_10 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_extend_gear();
-                match guard_dependency.get("close_valve_extend_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("close_valve_extend_gear").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("close_valve_extend_gear").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_11 = state._tr_con_stimulate_open_door_valve(isCaching);
-            if _trid_11 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_open_door_valve();
-                match guard_dependency.get("con_stimulate_open_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stimulate_open_door_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stimulate_open_door_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_12 = state._tr_con_stop_stimulate_open_door_valve(isCaching);
-            if _trid_12 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_open_door_valve();
-                match guard_dependency.get("con_stop_stimulate_open_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stop_stimulate_open_door_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stop_stimulate_open_door_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_13 = state._tr_con_stimulate_close_door_valve(isCaching);
-            if _trid_13 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_close_door_valve();
-                match guard_dependency.get("con_stimulate_close_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stimulate_close_door_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stimulate_close_door_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_14 = state._tr_con_stop_stimulate_close_door_valve(isCaching);
-            if _trid_14 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_close_door_valve();
-                match guard_dependency.get("con_stop_stimulate_close_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stop_stimulate_close_door_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stop_stimulate_close_door_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_15 = state._tr_con_stimulate_retract_gear_valve(isCaching);
-            if _trid_15 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_retract_gear_valve();
-                match guard_dependency.get("con_stimulate_retract_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stimulate_retract_gear_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stimulate_retract_gear_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_16 = state._tr_con_stop_stimulate_retract_gear_valve(isCaching);
-            if _trid_16 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_retract_gear_valve();
-                match guard_dependency.get("con_stop_stimulate_retract_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stop_stimulate_retract_gear_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stop_stimulate_retract_gear_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_17 = state._tr_con_stimulate_extend_gear_valve(isCaching);
-            if _trid_17 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_extend_gear_valve();
-                match guard_dependency.get("con_stimulate_extend_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stimulate_extend_gear_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stimulate_extend_gear_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_18 = state._tr_con_stop_stimulate_extend_gear_valve(isCaching);
-            if _trid_18 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_extend_gear_valve();
-                match guard_dependency.get("con_stop_stimulate_extend_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stop_stimulate_extend_gear_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stop_stimulate_extend_gear_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_19 = state._tr_env_start_retracting_first(isCaching);
-            for param in _trid_19.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_retracting_first(_tmp_1);
-                match guard_dependency.get("env_start_retracting_first") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_start_retracting_first").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_start_retracting_first").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_20 = state._tr_env_retract_gear_skip(isCaching);
-            for param in _trid_20.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_retract_gear_skip(_tmp_1);
-                match guard_dependency.get("env_retract_gear_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_retract_gear_skip").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_retract_gear_skip").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_21 = state._tr_env_retract_gear_last(isCaching);
-            for param in _trid_21.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_retract_gear_last(_tmp_1);
-                match guard_dependency.get("env_retract_gear_last") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_retract_gear_last").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_retract_gear_last").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_22 = state._tr_env_start_extending(isCaching);
-            for param in _trid_22.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_extending(_tmp_1);
-                match guard_dependency.get("env_start_extending") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_start_extending").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_start_extending").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_23 = state._tr_env_extend_gear_last(isCaching);
-            for param in _trid_23.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_extend_gear_last(_tmp_1);
-                match guard_dependency.get("env_extend_gear_last") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_extend_gear_last").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_extend_gear_last").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_24 = state._tr_env_extend_gear_skip(isCaching);
-            for param in _trid_24.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_extend_gear_skip(_tmp_1);
-                match guard_dependency.get("env_extend_gear_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_extend_gear_skip").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_extend_gear_skip").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_25 = state._tr_env_start_open_door(isCaching);
-            for param in _trid_25.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_open_door(_tmp_1);
-                match guard_dependency.get("env_start_open_door") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_start_open_door").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_start_open_door").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_26 = state._tr_env_open_door_last(isCaching);
-            for param in _trid_26.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_open_door_last(_tmp_1);
-                match guard_dependency.get("env_open_door_last") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_open_door_last").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_open_door_last").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_27 = state._tr_env_open_door_skip(isCaching);
-            for param in _trid_27.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_open_door_skip(_tmp_1);
-                match guard_dependency.get("env_open_door_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_open_door_skip").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_open_door_skip").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_28 = state._tr_env_start_close_door(isCaching);
-            for param in _trid_28.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_close_door(_tmp_1);
-                match guard_dependency.get("env_start_close_door") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_start_close_door").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_start_close_door").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_29 = state._tr_env_close_door(isCaching);
-            for param in _trid_29.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_close_door(_tmp_1);
-                match guard_dependency.get("env_close_door") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_close_door").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_close_door").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_30 = state._tr_env_close_door_skip(isCaching);
-            for param in _trid_30.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_close_door_skip(_tmp_1);
-                match guard_dependency.get("env_close_door_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_close_door_skip").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_close_door_skip").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_31 = state._tr_toggle_handle_up(isCaching);
-            if _trid_31 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.toggle_handle_up();
-                match guard_dependency.get("toggle_handle_up") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("toggle_handle_up").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("toggle_handle_up").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_32 = state._tr_toggle_handle_down(isCaching);
-            if _trid_32 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.toggle_handle_down();
-                match guard_dependency.get("toggle_handle_down") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("toggle_handle_down").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("toggle_handle_down").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_33 = state._tr_con_stimulate_general_valve(isCaching);
-            if _trid_33 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_general_valve();
-                match guard_dependency.get("con_stimulate_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stimulate_general_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stimulate_general_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_34 = state._tr_con_stop_stimulate_general_valve(isCaching);
-            if _trid_34 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_general_valve();
-                match guard_dependency.get("con_stop_stimulate_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("con_stop_stimulate_general_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("con_stop_stimulate_general_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_35 = state._tr_evn_open_general_valve(isCaching);
-            if _trid_35 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.evn_open_general_valve();
-                match guard_dependency.get("evn_open_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("evn_open_general_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("evn_open_general_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_36 = state._tr_evn_close_general_valve(isCaching);
-            if _trid_36 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.evn_close_general_valve();
-                match guard_dependency.get("evn_close_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("evn_close_general_valve").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("evn_close_general_valve").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_37 = state._tr_env_close_analogical_switch(isCaching);
-            if _trid_37 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.env_close_analogical_switch();
-                match guard_dependency.get("env_close_analogical_switch") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_close_analogical_switch").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_close_analogical_switch").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_38 = state._tr_env_open_analogical_switch(isCaching);
-            if _trid_38 {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.env_open_analogical_switch();
-                match guard_dependency.get("env_open_analogical_switch") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                {
-                    let mut dependent_invariant = dependent_invariant_m.lock().unwrap();
-                    let mut dependent_guard = dependent_guard_m.lock().unwrap();
-                    let mut parents = parents_m.lock().unwrap();
-
-                    if !dependent_invariant.contains_key(&copiedState) {
-                        dependent_invariant.insert(copiedState.clone(), invariant_dependency.get("env_open_analogical_switch").unwrap().clone());
-                    }
-                    if !dependent_guard.contains_key(&copiedState) {
-                        dependent_guard.insert(copiedState.clone(), guard_dependency.get("env_open_analogical_switch").unwrap().clone());
-                    }
-                    if !parents.contains_key(&copiedState) {
-                        parents.insert(copiedState.clone(), state.clone());
-                    }
-                }
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-
-            guardCache.lock().unwrap().insert(state.clone(), newCache);
-        } else {
-            //model_check_transition
-            if state._tr_begin_flying(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.begin_flying();
-                match guard_dependency.get("begin_flying") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_land_plane(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.land_plane();
-                match guard_dependency.get("land_plane") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_open_valve_door_open(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_door_open();
-                match guard_dependency.get("open_valve_door_open") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_close_valve_door_open(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_door_open();
-                match guard_dependency.get("close_valve_door_open") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_open_valve_door_close(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_door_close();
-                match guard_dependency.get("open_valve_door_close") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_close_valve_door_close(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_door_close();
-                match guard_dependency.get("close_valve_door_close") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_open_valve_retract_gear(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_retract_gear();
-                match guard_dependency.get("open_valve_retract_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_close_valve_retract_gear(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_retract_gear();
-                match guard_dependency.get("close_valve_retract_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_open_valve_extend_gear(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.open_valve_extend_gear();
-                match guard_dependency.get("open_valve_extend_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_close_valve_extend_gear(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.close_valve_extend_gear();
-                match guard_dependency.get("close_valve_extend_gear") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stimulate_open_door_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_open_door_valve();
-                match guard_dependency.get("con_stimulate_open_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stop_stimulate_open_door_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_open_door_valve();
-                match guard_dependency.get("con_stop_stimulate_open_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stimulate_close_door_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_close_door_valve();
-                match guard_dependency.get("con_stimulate_close_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stop_stimulate_close_door_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_close_door_valve();
-                match guard_dependency.get("con_stop_stimulate_close_door_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stimulate_retract_gear_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_retract_gear_valve();
-                match guard_dependency.get("con_stimulate_retract_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stop_stimulate_retract_gear_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_retract_gear_valve();
-                match guard_dependency.get("con_stop_stimulate_retract_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stimulate_extend_gear_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_extend_gear_valve();
-                match guard_dependency.get("con_stimulate_extend_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stop_stimulate_extend_gear_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_extend_gear_valve();
-                match guard_dependency.get("con_stop_stimulate_extend_gear_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_19 = state._tr_env_start_retracting_first(isCaching);
-            for param in _trid_19.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_retracting_first(_tmp_1);
-                match guard_dependency.get("env_start_retracting_first") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_20 = state._tr_env_retract_gear_skip(isCaching);
-            for param in _trid_20.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_retract_gear_skip(_tmp_1);
-                match guard_dependency.get("env_retract_gear_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_21 = state._tr_env_retract_gear_last(isCaching);
-            for param in _trid_21.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_retract_gear_last(_tmp_1);
-                match guard_dependency.get("env_retract_gear_last") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_22 = state._tr_env_start_extending(isCaching);
-            for param in _trid_22.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_extending(_tmp_1);
-                match guard_dependency.get("env_start_extending") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_23 = state._tr_env_extend_gear_last(isCaching);
-            for param in _trid_23.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_extend_gear_last(_tmp_1);
-                match guard_dependency.get("env_extend_gear_last") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_24 = state._tr_env_extend_gear_skip(isCaching);
-            for param in _trid_24.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_extend_gear_skip(_tmp_1);
-                match guard_dependency.get("env_extend_gear_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_25 = state._tr_env_start_open_door(isCaching);
-            for param in _trid_25.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_open_door(_tmp_1);
-                match guard_dependency.get("env_start_open_door") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_26 = state._tr_env_open_door_last(isCaching);
-            for param in _trid_26.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_open_door_last(_tmp_1);
-                match guard_dependency.get("env_open_door_last") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_27 = state._tr_env_open_door_skip(isCaching);
-            for param in _trid_27.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_open_door_skip(_tmp_1);
-                match guard_dependency.get("env_open_door_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_28 = state._tr_env_start_close_door(isCaching);
-            for param in _trid_28.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_start_close_door(_tmp_1);
-                match guard_dependency.get("env_start_close_door") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_29 = state._tr_env_close_door(isCaching);
-            for param in _trid_29.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_close_door(_tmp_1);
-                match guard_dependency.get("env_close_door") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            let mut _trid_30 = state._tr_env_close_door_skip(isCaching);
-            for param in _trid_30.iter().cloned() {
-                //model_check_transition_body
-                //model_check_transition_param_assignment
-                let mut _tmp_1 = param;
-
-                let mut copiedState = state.clone();
-                copiedState.env_close_door_skip(_tmp_1);
-                match guard_dependency.get("env_close_door_skip") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_toggle_handle_up(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.toggle_handle_up();
-                match guard_dependency.get("toggle_handle_up") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_toggle_handle_down(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.toggle_handle_down();
-                match guard_dependency.get("toggle_handle_down") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stimulate_general_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stimulate_general_valve();
-                match guard_dependency.get("con_stimulate_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_con_stop_stimulate_general_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.con_stop_stimulate_general_valve();
-                match guard_dependency.get("con_stop_stimulate_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_evn_open_general_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.evn_open_general_valve();
-                match guard_dependency.get("evn_open_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_evn_close_general_valve(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.evn_close_general_valve();
-                match guard_dependency.get("evn_close_general_valve") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_env_close_analogical_switch(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.env_close_analogical_switch();
-                match guard_dependency.get("env_close_analogical_switch") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-            //model_check_transition
-            if state._tr_env_open_analogical_switch(isCaching) {
-                //model_check_transition_body
-                let mut copiedState = state.clone();
-                copiedState.env_open_analogical_switch();
-                match guard_dependency.get("env_open_analogical_switch") { Some(map) => copiedState.invalidate_caches(map), _ => (),}
-                result.insert(copiedState);
-                transitions.fetch_add(1, Ordering::AcqRel);
-            }
-
+                          transitions: Arc<AtomicU64>) -> HashSet<(LandingGear_R6, &'static str)> {
+        let mut result = HashSet::<(LandingGear_R6, &'static str)>::new();
+        let mut evaluated_transitions: u64 = 0;
+        //model_check_transition
+        if state._tr_begin_flying(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.begin_flying();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("begin_flying")); }
+            result.insert((copiedState, "begin_flying"));
+            evaluated_transitions += 1;
         }
+        //model_check_transition
+        if state._tr_land_plane(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.land_plane();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("land_plane")); }
+            result.insert((copiedState, "land_plane"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_open_valve_door_open(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.open_valve_door_open();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("open_valve_door_open")); }
+            result.insert((copiedState, "open_valve_door_open"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_close_valve_door_open(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.close_valve_door_open();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("close_valve_door_open")); }
+            result.insert((copiedState, "close_valve_door_open"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_open_valve_door_close(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.open_valve_door_close();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("open_valve_door_close")); }
+            result.insert((copiedState, "open_valve_door_close"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_close_valve_door_close(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.close_valve_door_close();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("close_valve_door_close")); }
+            result.insert((copiedState, "close_valve_door_close"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_open_valve_retract_gear(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.open_valve_retract_gear();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("open_valve_retract_gear")); }
+            result.insert((copiedState, "open_valve_retract_gear"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_close_valve_retract_gear(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.close_valve_retract_gear();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("close_valve_retract_gear")); }
+            result.insert((copiedState, "close_valve_retract_gear"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_open_valve_extend_gear(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.open_valve_extend_gear();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("open_valve_extend_gear")); }
+            result.insert((copiedState, "open_valve_extend_gear"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_close_valve_extend_gear(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.close_valve_extend_gear();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("close_valve_extend_gear")); }
+            result.insert((copiedState, "close_valve_extend_gear"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stimulate_open_door_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stimulate_open_door_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stimulate_open_door_valve")); }
+            result.insert((copiedState, "con_stimulate_open_door_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stop_stimulate_open_door_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stop_stimulate_open_door_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stop_stimulate_open_door_valve")); }
+            result.insert((copiedState, "con_stop_stimulate_open_door_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stimulate_close_door_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stimulate_close_door_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stimulate_close_door_valve")); }
+            result.insert((copiedState, "con_stimulate_close_door_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stop_stimulate_close_door_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stop_stimulate_close_door_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stop_stimulate_close_door_valve")); }
+            result.insert((copiedState, "con_stop_stimulate_close_door_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stimulate_retract_gear_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stimulate_retract_gear_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stimulate_retract_gear_valve")); }
+            result.insert((copiedState, "con_stimulate_retract_gear_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stop_stimulate_retract_gear_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stop_stimulate_retract_gear_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stop_stimulate_retract_gear_valve")); }
+            result.insert((copiedState, "con_stop_stimulate_retract_gear_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stimulate_extend_gear_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stimulate_extend_gear_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stimulate_extend_gear_valve")); }
+            result.insert((copiedState, "con_stimulate_extend_gear_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stop_stimulate_extend_gear_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stop_stimulate_extend_gear_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stop_stimulate_extend_gear_valve")); }
+            result.insert((copiedState, "con_stop_stimulate_extend_gear_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_19 = state._tr_env_start_retracting_first(isCaching);
+        for param in _trid_19.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_start_retracting_first(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_start_retracting_first")); }
+            result.insert((copiedState, "env_start_retracting_first"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_20 = state._tr_env_retract_gear_skip(isCaching);
+        for param in _trid_20.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_retract_gear_skip(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_retract_gear_skip")); }
+            result.insert((copiedState, "env_retract_gear_skip"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_21 = state._tr_env_retract_gear_last(isCaching);
+        for param in _trid_21.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_retract_gear_last(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_retract_gear_last")); }
+            result.insert((copiedState, "env_retract_gear_last"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_22 = state._tr_env_start_extending(isCaching);
+        for param in _trid_22.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_start_extending(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_start_extending")); }
+            result.insert((copiedState, "env_start_extending"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_23 = state._tr_env_extend_gear_last(isCaching);
+        for param in _trid_23.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_extend_gear_last(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_extend_gear_last")); }
+            result.insert((copiedState, "env_extend_gear_last"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_24 = state._tr_env_extend_gear_skip(isCaching);
+        for param in _trid_24.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_extend_gear_skip(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_extend_gear_skip")); }
+            result.insert((copiedState, "env_extend_gear_skip"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_25 = state._tr_env_start_open_door(isCaching);
+        for param in _trid_25.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_start_open_door(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_start_open_door")); }
+            result.insert((copiedState, "env_start_open_door"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_26 = state._tr_env_open_door_last(isCaching);
+        for param in _trid_26.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_open_door_last(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_open_door_last")); }
+            result.insert((copiedState, "env_open_door_last"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_27 = state._tr_env_open_door_skip(isCaching);
+        for param in _trid_27.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_open_door_skip(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_open_door_skip")); }
+            result.insert((copiedState, "env_open_door_skip"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_28 = state._tr_env_start_close_door(isCaching);
+        for param in _trid_28.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_start_close_door(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_start_close_door")); }
+            result.insert((copiedState, "env_start_close_door"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_29 = state._tr_env_close_door(isCaching);
+        for param in _trid_29.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_close_door(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_close_door")); }
+            result.insert((copiedState, "env_close_door"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        let mut _trid_30 = state._tr_env_close_door_skip(isCaching);
+        for param in _trid_30.iter().cloned() {
+            //model_check_transition_body
+            //model_check_transition_param_assignment
+            let mut _tmp_1 = param;
+
+            let mut copiedState = state.clone();
+            copiedState.env_close_door_skip(_tmp_1);
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_close_door_skip")); }
+            result.insert((copiedState, "env_close_door_skip"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_toggle_handle_up(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.toggle_handle_up();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("toggle_handle_up")); }
+            result.insert((copiedState, "toggle_handle_up"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_toggle_handle_down(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.toggle_handle_down();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("toggle_handle_down")); }
+            result.insert((copiedState, "toggle_handle_down"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stimulate_general_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stimulate_general_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stimulate_general_valve")); }
+            result.insert((copiedState, "con_stimulate_general_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_con_stop_stimulate_general_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.con_stop_stimulate_general_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("con_stop_stimulate_general_valve")); }
+            result.insert((copiedState, "con_stop_stimulate_general_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_evn_open_general_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.evn_open_general_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("evn_open_general_valve")); }
+            result.insert((copiedState, "evn_open_general_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_evn_close_general_valve(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.evn_close_general_valve();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("evn_close_general_valve")); }
+            result.insert((copiedState, "evn_close_general_valve"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_env_close_analogical_switch(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.env_close_analogical_switch();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_close_analogical_switch")); }
+            result.insert((copiedState, "env_close_analogical_switch"));
+            evaluated_transitions += 1;
+        }
+        //model_check_transition
+        if state._tr_env_open_analogical_switch(isCaching) {
+            //model_check_transition_body
+            let mut copiedState = state.clone();
+            copiedState.env_open_analogical_switch();
+            if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("env_open_analogical_switch")); }
+            result.insert((copiedState, "env_open_analogical_switch"));
+            evaluated_transitions += 1;
+        }
+
+
+        transitions.fetch_add(evaluated_transitions, Ordering::AcqRel);
         return result;
     }
 
     //model_check_evaluate_state
 
     //model_check_invariants
-    pub fn checkInvariants(state: &LandingGear_R6,
-                           isCaching: bool,
-                           dependent_invariant_m: Arc<Mutex<HashMap<LandingGear_R6, HashSet<&str>>>> ) -> bool {
-        let cached_invariants = dependent_invariant_m.lock().unwrap().get(&state).cloned();
-        if cached_invariants.is_some() && isCaching {
-            let dependent_invariants_of_state = cached_invariants.unwrap().clone();
+    pub fn checkInvariants(state: &LandingGear_R6, last_op: &'static str, isCaching: bool) -> bool {
+        if isCaching {
+            let dependent_invariants_of_state = Self::get_invariant_dependencies(last_op);
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_1") {
+            if dependent_invariants_of_state.contains(&"_check_inv_1") {
                 if !state._check_inv_1() {
+                    println!("_check_inv_1 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_2") {
+            if dependent_invariants_of_state.contains(&"_check_inv_2") {
                 if !state._check_inv_2() {
+                    println!("_check_inv_2 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_3") {
+            if dependent_invariants_of_state.contains(&"_check_inv_3") {
                 if !state._check_inv_3() {
+                    println!("_check_inv_3 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_4") {
+            if dependent_invariants_of_state.contains(&"_check_inv_4") {
                 if !state._check_inv_4() {
+                    println!("_check_inv_4 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_5") {
+            if dependent_invariants_of_state.contains(&"_check_inv_5") {
                 if !state._check_inv_5() {
+                    println!("_check_inv_5 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_6") {
+            if dependent_invariants_of_state.contains(&"_check_inv_6") {
                 if !state._check_inv_6() {
+                    println!("_check_inv_6 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_7") {
+            if dependent_invariants_of_state.contains(&"_check_inv_7") {
                 if !state._check_inv_7() {
+                    println!("_check_inv_7 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_8") {
+            if dependent_invariants_of_state.contains(&"_check_inv_8") {
                 if !state._check_inv_8() {
+                    println!("_check_inv_8 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_9") {
+            if dependent_invariants_of_state.contains(&"_check_inv_9") {
                 if !state._check_inv_9() {
+                    println!("_check_inv_9 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_10") {
+            if dependent_invariants_of_state.contains(&"_check_inv_10") {
                 if !state._check_inv_10() {
+                    println!("_check_inv_10 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_11") {
+            if dependent_invariants_of_state.contains(&"_check_inv_11") {
                 if !state._check_inv_11() {
+                    println!("_check_inv_11 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_12") {
+            if dependent_invariants_of_state.contains(&"_check_inv_12") {
                 if !state._check_inv_12() {
+                    println!("_check_inv_12 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_13") {
+            if dependent_invariants_of_state.contains(&"_check_inv_13") {
                 if !state._check_inv_13() {
+                    println!("_check_inv_13 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_14") {
+            if dependent_invariants_of_state.contains(&"_check_inv_14") {
                 if !state._check_inv_14() {
+                    println!("_check_inv_14 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_15") {
+            if dependent_invariants_of_state.contains(&"_check_inv_15") {
                 if !state._check_inv_15() {
+                    println!("_check_inv_15 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_16") {
+            if dependent_invariants_of_state.contains(&"_check_inv_16") {
                 if !state._check_inv_16() {
+                    println!("_check_inv_16 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_17") {
+            if dependent_invariants_of_state.contains(&"_check_inv_17") {
                 if !state._check_inv_17() {
+                    println!("_check_inv_17 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_18") {
+            if dependent_invariants_of_state.contains(&"_check_inv_18") {
                 if !state._check_inv_18() {
+                    println!("_check_inv_18 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_19") {
+            if dependent_invariants_of_state.contains(&"_check_inv_19") {
                 if !state._check_inv_19() {
+                    println!("_check_inv_19 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_20") {
+            if dependent_invariants_of_state.contains(&"_check_inv_20") {
                 if !state._check_inv_20() {
+                    println!("_check_inv_20 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_21") {
+            if dependent_invariants_of_state.contains(&"_check_inv_21") {
                 if !state._check_inv_21() {
+                    println!("_check_inv_21 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_22") {
+            if dependent_invariants_of_state.contains(&"_check_inv_22") {
                 if !state._check_inv_22() {
+                    println!("_check_inv_22 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_23") {
+            if dependent_invariants_of_state.contains(&"_check_inv_23") {
                 if !state._check_inv_23() {
+                    println!("_check_inv_23 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_24") {
+            if dependent_invariants_of_state.contains(&"_check_inv_24") {
                 if !state._check_inv_24() {
+                    println!("_check_inv_24 failed!");
                     return false;
                 }
             }
             //model_check_invariant
-            if dependent_invariants_of_state.contains("_check_inv_25") {
+            if dependent_invariants_of_state.contains(&"_check_inv_25") {
                 if !state._check_inv_25() {
+                    println!("_check_inv_25 failed!");
                     return false;
                 }
             }
@@ -2971,16 +2035,14 @@ impl LandingGear_R6 {
     }
 
     //model_check_print
-    fn print_result(states: i64, transitions: i64, deadlock_detected: bool, invariant_violated: bool) {
-        if deadlock_detected { println!("DEADLOCK DETECTED"); }
-        if invariant_violated { println!("INVARIANT VIOLATED"); }
-        if !deadlock_detected && !invariant_violated { println!("MODEL CHECKING SUCCESSFUL"); }
+    fn print_result(states: usize, transitions: u64, error_detected: bool) {
+        if !error_detected { println!("MODEL CHECKING SUCCESSFUL"); }
         println!("Number of States: {}", states);
         println!("Number of Transitions: {}", transitions);
     }
 
     //model_check_main
-    fn next(collection_m: Arc<Mutex<LinkedList<LandingGear_R6>>>, mc_type: MC_TYPE) -> LandingGear_R6 {
+    fn next(collection_m: Arc<Mutex<LinkedList<(LandingGear_R6, &'static str)>>>, mc_type: MC_TYPE) -> (LandingGear_R6, &'static str) {
         let mut collection = collection_m.lock().unwrap();
         return match mc_type {
             MC_TYPE::BFS   => collection.pop_front().unwrap(),
@@ -2989,220 +2051,208 @@ impl LandingGear_R6 {
         };
     }
 
+    fn get_guard_dependencies(op: &'static str) -> Vec<&str> {
+        return match op {
+            //model_check_init_static
+            "close_valve_door_close" => vec!["_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"],
+            //model_check_init_static
+            "close_valve_retract_gear" => vec!["_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"],
+            //model_check_init_static
+            "con_stimulate_open_door_valve" => vec!["_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"],
+            //model_check_init_static
+            "env_close_door" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "env_start_close_door" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "toggle_handle_up" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"],
+            //model_check_init_static
+            "toggle_handle_down" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"],
+            //model_check_init_static
+            "open_valve_door_open" => vec!["_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"],
+            //model_check_init_static
+            "env_retract_gear_last" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "env_open_door_last" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "con_stop_stimulate_retract_gear_valve" => vec!["_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"],
+            //model_check_init_static
+            "env_close_door_skip" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "con_stop_stimulate_close_door_valve" => vec!["_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"],
+            //model_check_init_static
+            "env_open_analogical_switch" => vec!["_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"],
+            //model_check_init_static
+            "con_stop_stimulate_general_valve" => vec!["_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve"],
+            //model_check_init_static
+            "env_extend_gear_last" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "evn_open_general_valve" => vec!["_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "land_plane" => vec!["_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"],
+            //model_check_init_static
+            "con_stimulate_retract_gear_valve" => vec!["_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"],
+            //model_check_init_static
+            "con_stimulate_general_valve" => vec!["_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"],
+            //model_check_init_static
+            "env_start_retracting_first" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "env_retract_gear_skip" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "open_valve_extend_gear" => vec!["_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"],
+            //model_check_init_static
+            "begin_flying" => vec!["_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"],
+            //model_check_init_static
+            "open_valve_retract_gear" => vec!["_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"],
+            //model_check_init_static
+            "env_close_analogical_switch" => vec!["_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"],
+            //model_check_init_static
+            "env_start_extending" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "open_valve_door_close" => vec!["_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"],
+            //model_check_init_static
+            "con_stop_stimulate_open_door_valve" => vec!["_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"],
+            //model_check_init_static
+            "con_stop_stimulate_extend_gear_valve" => vec!["_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"],
+            //model_check_init_static
+            "evn_close_general_valve" => vec!["_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "close_valve_extend_gear" => vec!["_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"],
+            //model_check_init_static
+            "con_stimulate_extend_gear_valve" => vec!["_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"],
+            //model_check_init_static
+            "close_valve_door_open" => vec!["_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"],
+            //model_check_init_static
+            "con_stimulate_close_door_valve" => vec!["_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"],
+            //model_check_init_static
+            "env_extend_gear_skip" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "env_open_door_skip" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            //model_check_init_static
+            "env_start_open_door" => vec!["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"],
+            _ => vec![],
+        }
+    }
+
+    fn get_invariant_dependencies(op: &'static str) -> Vec<&str> {
+        return match op {
+            //model_check_init_static
+            "close_valve_door_close" => vec!["_check_inv_10"],
+            //model_check_init_static
+            "close_valve_retract_gear" => vec!["_check_inv_13"],
+            //model_check_init_static
+            "con_stimulate_open_door_valve" => vec!["_check_inv_18", "_check_inv_17", "_check_inv_7"],
+            //model_check_init_static
+            "env_close_door" => vec!["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"],
+            //model_check_init_static
+            "env_start_close_door" => vec!["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"],
+            //model_check_init_static
+            "toggle_handle_up" => vec!["_check_inv_4", "_check_inv_14"],
+            //model_check_init_static
+            "toggle_handle_down" => vec!["_check_inv_4", "_check_inv_14"],
+            //model_check_init_static
+            "open_valve_door_open" => vec!["_check_inv_12"],
+            //model_check_init_static
+            "env_retract_gear_last" => vec!["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"],
+            //model_check_init_static
+            "env_open_door_last" => vec!["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"],
+            //model_check_init_static
+            "con_stop_stimulate_retract_gear_valve" => vec!["_check_inv_17", "_check_inv_8"],
+            //model_check_init_static
+            "env_close_door_skip" => vec!["_check_inv_21", "_check_inv_20", "_check_inv_22"],
+            //model_check_init_static
+            "con_stop_stimulate_close_door_valve" => vec!["_check_inv_18", "_check_inv_17", "_check_inv_5"],
+            //model_check_init_static
+            "env_open_analogical_switch" => vec!["_check_inv_1"],
+            //model_check_init_static
+            "con_stop_stimulate_general_valve" => vec!["_check_inv_17", "_check_inv_2", "_check_inv_4"],
+            //model_check_init_static
+            "env_extend_gear_last" => vec!["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"],
+            //model_check_init_static
+            "evn_open_general_valve" => vec!["_check_inv_3"],
+            //model_check_init_static
+            "land_plane" => vec!["_check_inv_9"],
+            //model_check_init_static
+            "con_stimulate_retract_gear_valve" => vec!["_check_inv_17", "_check_inv_8"],
+            //model_check_init_static
+            "con_stimulate_general_valve" => vec!["_check_inv_17", "_check_inv_2"],
+            //model_check_init_static
+            "env_start_retracting_first" => vec!["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"],
+            //model_check_init_static
+            "env_retract_gear_skip" => vec!["_check_inv_19", "_check_inv_24", "_check_inv_23"],
+            //model_check_init_static
+            "open_valve_extend_gear" => vec!["_check_inv_11"],
+            //model_check_init_static
+            "begin_flying" => vec!["_check_inv_9"],
+            //model_check_init_static
+            "open_valve_retract_gear" => vec!["_check_inv_13"],
+            //model_check_init_static
+            "env_close_analogical_switch" => vec!["_check_inv_1"],
+            //model_check_init_static
+            "env_start_extending" => vec!["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"],
+            //model_check_init_static
+            "open_valve_door_close" => vec!["_check_inv_10"],
+            //model_check_init_static
+            "con_stop_stimulate_open_door_valve" => vec!["_check_inv_18", "_check_inv_17", "_check_inv_7"],
+            //model_check_init_static
+            "con_stop_stimulate_extend_gear_valve" => vec!["_check_inv_17", "_check_inv_6"],
+            //model_check_init_static
+            "evn_close_general_valve" => vec!["_check_inv_3"],
+            //model_check_init_static
+            "close_valve_extend_gear" => vec!["_check_inv_11"],
+            //model_check_init_static
+            "con_stimulate_extend_gear_valve" => vec!["_check_inv_17", "_check_inv_6"],
+            //model_check_init_static
+            "close_valve_door_open" => vec!["_check_inv_12"],
+            //model_check_init_static
+            "con_stimulate_close_door_valve" => vec!["_check_inv_18", "_check_inv_17", "_check_inv_5"],
+            //model_check_init_static
+            "env_extend_gear_skip" => vec!["_check_inv_19", "_check_inv_24", "_check_inv_23"],
+            //model_check_init_static
+            "env_open_door_skip" => vec!["_check_inv_21", "_check_inv_20", "_check_inv_22"],
+            //model_check_init_static
+            "env_start_open_door" => vec!["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"],
+            _ => vec![],
+        }
+    }
+
     fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
         let mut machine = LandingGear_R6::new();
 
-        let invariant_violated = AtomicBool::new(false);
-        let deadlock_detected = AtomicBool::new(false);
-        let stop_threads = AtomicBool::new(false);
+        let mut all_states = HashSet::<LandingGear_R6>::new();
+        all_states.insert(machine.clone());
 
-        if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25() {
-            invariant_violated.store(true, Ordering::Release);
-        }
+        let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::<(LandingGear_R6, &'static str)>::new()));
+        states_to_process_mutex.lock().unwrap().push_back((machine.clone(), ""));
 
-        let mut states = HashSet::<LandingGear_R6>::new();
-        states.insert(machine.clone());
-        let number_states = AtomicI64::new(1);
+        let num_transitions = Arc::new(AtomicU64::new(0));
 
-        let collection_m = Arc::new(Mutex::new(LinkedList::<LandingGear_R6>::new()));
-        collection_m.lock().unwrap().push_back(machine.clone());
+        let mut stop_threads = false;
 
-        let mut invariantDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut guardDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::<LandingGear_R6, HashSet<&str>>::new()));
-        let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::<LandingGear_R6, HashSet<&str>>::new()));
-        let mut guard_cache = Arc::new(Mutex::new(HashMap::<LandingGear_R6, PersistentHashMap<&'static str, bool>>::new()));
-        let mut parents_m = Arc::new(Mutex::new(HashMap::<LandingGear_R6, LandingGear_R6>::new()));
+        while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+            let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
 
-        if is_caching {
-            //model_check_init_static
-            invariantDependency.insert("close_valve_door_close", HashSet::from(["_check_inv_10"]));
-            //model_check_init_static
-            invariantDependency.insert("close_valve_retract_gear", HashSet::from(["_check_inv_13"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_open_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_7"]));
-            //model_check_init_static
-            invariantDependency.insert("env_close_door", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_close_door", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("toggle_handle_up", HashSet::from(["_check_inv_4", "_check_inv_14"]));
-            //model_check_init_static
-            invariantDependency.insert("toggle_handle_down", HashSet::from(["_check_inv_4", "_check_inv_14"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_door_open", HashSet::from(["_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("env_retract_gear_last", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("env_open_door_last", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_retract_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_8"]));
-            //model_check_init_static
-            invariantDependency.insert("env_close_door_skip", HashSet::from(["_check_inv_21", "_check_inv_20", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_close_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_5"]));
-            //model_check_init_static
-            invariantDependency.insert("env_open_analogical_switch", HashSet::from(["_check_inv_1"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_general_valve", HashSet::from(["_check_inv_17", "_check_inv_2", "_check_inv_4"]));
-            //model_check_init_static
-            invariantDependency.insert("env_extend_gear_last", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("evn_open_general_valve", HashSet::from(["_check_inv_3"]));
-            //model_check_init_static
-            invariantDependency.insert("land_plane", HashSet::from(["_check_inv_9"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_retract_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_8"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_general_valve", HashSet::from(["_check_inv_17", "_check_inv_2"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_retracting_first", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("env_retract_gear_skip", HashSet::from(["_check_inv_19", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_extend_gear", HashSet::from(["_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("begin_flying", HashSet::from(["_check_inv_9"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_retract_gear", HashSet::from(["_check_inv_13"]));
-            //model_check_init_static
-            invariantDependency.insert("env_close_analogical_switch", HashSet::from(["_check_inv_1"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_extending", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_door_close", HashSet::from(["_check_inv_10"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_open_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_7"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_extend_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_6"]));
-            //model_check_init_static
-            invariantDependency.insert("evn_close_general_valve", HashSet::from(["_check_inv_3"]));
-            //model_check_init_static
-            invariantDependency.insert("close_valve_extend_gear", HashSet::from(["_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_extend_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_6"]));
-            //model_check_init_static
-            invariantDependency.insert("close_valve_door_open", HashSet::from(["_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_close_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_5"]));
-            //model_check_init_static
-            invariantDependency.insert("env_extend_gear_skip", HashSet::from(["_check_inv_19", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("env_open_door_skip", HashSet::from(["_check_inv_21", "_check_inv_20", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_open_door", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_door_close", HashSet::from(["_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_retract_gear", HashSet::from(["_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_open_door_valve", HashSet::from(["_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("env_close_door", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_close_door", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("toggle_handle_up", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"]));
-            //model_check_init_static
-            guardDependency.insert("toggle_handle_down", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_door_open", HashSet::from(["_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("env_retract_gear_last", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_open_door_last", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_retract_gear_valve", HashSet::from(["_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_close_door_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_close_door_valve", HashSet::from(["_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("env_open_analogical_switch", HashSet::from(["_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_general_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_extend_gear_last", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("evn_open_general_valve", HashSet::from(["_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("land_plane", HashSet::from(["_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_retract_gear_valve", HashSet::from(["_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_general_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_retracting_first", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_retract_gear_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_extend_gear", HashSet::from(["_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"]));
-            //model_check_init_static
-            guardDependency.insert("begin_flying", HashSet::from(["_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_retract_gear", HashSet::from(["_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"]));
-            //model_check_init_static
-            guardDependency.insert("env_close_analogical_switch", HashSet::from(["_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_extending", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_door_close", HashSet::from(["_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_open_door_valve", HashSet::from(["_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_extend_gear_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("evn_close_general_valve", HashSet::from(["_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_extend_gear", HashSet::from(["_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_extend_gear_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_door_open", HashSet::from(["_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_close_door_valve", HashSet::from(["_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("env_extend_gear_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_open_door_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_open_door", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-            parents_m.lock().unwrap().remove(&machine);
-        }
+            let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-        let transitions = Arc::new(AtomicI64::new(0));
-
-        while !stop_threads.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
-            let mut state = Self::next(Arc::clone(&collection_m), mc_type);
-
-            let next_states = Self::generateNextStates(&mut state, is_caching, &mut invariantDependency, Arc::clone(&dependent_invariant_m), &mut guardDependency, Arc::clone(&dependent_guard_m), Arc::clone(&guard_cache), Arc::clone(&parents_m), Arc::clone(&transitions));
-
-            next_states.iter().cloned().for_each(|next_state| {
-                if !states.contains(&next_state) {
-                    let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
-                    states.insert(next_state.clone());
-                    collection_m.lock().unwrap().push_back(next_state);
-                    if cnum_states % 50000 == 0 {
-                        println!("VISITED STATES: {}", cnum_states);
-                        println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
-                        println!("-------------------");
-                    }
-                }
-            });
-
+            if !Self::checkInvariants(&state, last_op, is_caching) {
+                println!("INVARIANT VIOLATED");
+                stop_threads = true;
+            }
             if next_states.is_empty() {
-                deadlock_detected.store(true, Ordering::Release);
-                stop_threads.store(true, Ordering::Release);
+                print!("DEADLOCK DETECTED");
+                stop_threads = true;
             }
 
-            if !Self::checkInvariants(&state, is_caching, Arc::clone(&dependent_invariant_m)) {
-                invariant_violated.store(true, Ordering::Release);
-                stop_threads.store(true, Ordering::Release);
-            }
+            next_states.into_iter()
+                       .filter(|(next_state, _)| all_states.insert((*next_state).clone()))
+                       .for_each(|(next_state, last_op)| states_to_process_mutex.lock().unwrap().push_back((next_state, last_op)));
 
+            if all_states.len() % 50000 == 0 {
+                println!("VISITED STATES: {}", all_states.len());
+                println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+                println!("-------------------");
+            }
         }
-        Self::print_result(number_states.load(Ordering::Acquire), transitions.load(Ordering::Acquire), deadlock_detected.load(Ordering::Acquire), invariant_violated.load(Ordering::Acquire));
+        Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
     fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
@@ -3210,255 +2260,66 @@ impl LandingGear_R6 {
 
         let machine = LandingGear_R6::new();
 
+        let all_states = Arc::new(DashSet::<LandingGear_R6>::new());
+        all_states.insert(machine.clone());
 
-        let invariant_violated_b = Arc::new(AtomicBool::new(false));
-        let deadlock_detected_b = Arc::new(AtomicBool::new(false));
-        let stop_threads_b = Arc::new(AtomicBool::new(false));
-        let possible_queue_changes_b = Arc::new(AtomicI32::new(0));
+        let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::<(LandingGear_R6, &'static str)>::new()));
+        states_to_process_mutex.lock().unwrap().push_back((machine, ""));
 
-        if !machine._check_inv_1() || !machine._check_inv_2() || !machine._check_inv_3() || !machine._check_inv_4() || !machine._check_inv_5() || !machine._check_inv_6() || !machine._check_inv_7() || !machine._check_inv_8() || !machine._check_inv_9() || !machine._check_inv_10() || !machine._check_inv_11() || !machine._check_inv_12() || !machine._check_inv_13() || !machine._check_inv_14() || !machine._check_inv_15() || !machine._check_inv_16() || !machine._check_inv_17() || !machine._check_inv_18() || !machine._check_inv_19() || !machine._check_inv_20() || !machine._check_inv_21() || !machine._check_inv_22() || !machine._check_inv_23() || !machine._check_inv_24() || !machine._check_inv_25() {
-            invariant_violated_b.store(true, Ordering::Release);
-        }
+        let num_transitions = Arc::new(AtomicU64::new(0));
 
-        let states_m = Arc::new(Mutex::new(HashSet::<LandingGear_R6>::new()));
-        states_m.lock().unwrap().insert(machine.clone());
-        let number_states_arc = Arc::new(AtomicI64::new(1));
-
-        let collection_m = Arc::new(Mutex::new(LinkedList::<LandingGear_R6>::new()));
-        collection_m.lock().unwrap().push_back(machine.clone());
-
-        let mut invariantDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut guardDependency = HashMap::<&str, HashSet<&'static str>>::new();
-        let mut dependent_invariant_m = Arc::new(Mutex::new(HashMap::<LandingGear_R6, HashSet<&str>>::new()));
-        let mut dependent_guard_m = Arc::new(Mutex::new(HashMap::<LandingGear_R6, HashSet<&str>>::new()));
-        let mut guard_cache_b = Arc::new(Mutex::new(HashMap::<LandingGear_R6, PersistentHashMap<&'static str, bool>>::new()));
-        let mut parents_m = Arc::new(Mutex::new(HashMap::<LandingGear_R6, LandingGear_R6>::new()));
-
-        if is_caching {
-            //model_check_init_static
-            invariantDependency.insert("close_valve_door_close", HashSet::from(["_check_inv_10"]));
-            //model_check_init_static
-            invariantDependency.insert("close_valve_retract_gear", HashSet::from(["_check_inv_13"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_open_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_7"]));
-            //model_check_init_static
-            invariantDependency.insert("env_close_door", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_close_door", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("toggle_handle_up", HashSet::from(["_check_inv_4", "_check_inv_14"]));
-            //model_check_init_static
-            invariantDependency.insert("toggle_handle_down", HashSet::from(["_check_inv_4", "_check_inv_14"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_door_open", HashSet::from(["_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("env_retract_gear_last", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("env_open_door_last", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_retract_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_8"]));
-            //model_check_init_static
-            invariantDependency.insert("env_close_door_skip", HashSet::from(["_check_inv_21", "_check_inv_20", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_close_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_5"]));
-            //model_check_init_static
-            invariantDependency.insert("env_open_analogical_switch", HashSet::from(["_check_inv_1"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_general_valve", HashSet::from(["_check_inv_17", "_check_inv_2", "_check_inv_4"]));
-            //model_check_init_static
-            invariantDependency.insert("env_extend_gear_last", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("evn_open_general_valve", HashSet::from(["_check_inv_3"]));
-            //model_check_init_static
-            invariantDependency.insert("land_plane", HashSet::from(["_check_inv_9"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_retract_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_8"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_general_valve", HashSet::from(["_check_inv_17", "_check_inv_2"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_retracting_first", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("env_retract_gear_skip", HashSet::from(["_check_inv_19", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_extend_gear", HashSet::from(["_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("begin_flying", HashSet::from(["_check_inv_9"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_retract_gear", HashSet::from(["_check_inv_13"]));
-            //model_check_init_static
-            invariantDependency.insert("env_close_analogical_switch", HashSet::from(["_check_inv_1"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_extending", HashSet::from(["_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("open_valve_door_close", HashSet::from(["_check_inv_10"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_open_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_7"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stop_stimulate_extend_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_6"]));
-            //model_check_init_static
-            invariantDependency.insert("evn_close_general_valve", HashSet::from(["_check_inv_3"]));
-            //model_check_init_static
-            invariantDependency.insert("close_valve_extend_gear", HashSet::from(["_check_inv_11"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_extend_gear_valve", HashSet::from(["_check_inv_17", "_check_inv_6"]));
-            //model_check_init_static
-            invariantDependency.insert("close_valve_door_open", HashSet::from(["_check_inv_12"]));
-            //model_check_init_static
-            invariantDependency.insert("con_stimulate_close_door_valve", HashSet::from(["_check_inv_18", "_check_inv_17", "_check_inv_5"]));
-            //model_check_init_static
-            invariantDependency.insert("env_extend_gear_skip", HashSet::from(["_check_inv_19", "_check_inv_24", "_check_inv_23"]));
-            //model_check_init_static
-            invariantDependency.insert("env_open_door_skip", HashSet::from(["_check_inv_21", "_check_inv_20", "_check_inv_22"]));
-            //model_check_init_static
-            invariantDependency.insert("env_start_open_door", HashSet::from(["_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_door_close", HashSet::from(["_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_retract_gear", HashSet::from(["_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_open_door_valve", HashSet::from(["_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("env_close_door", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_close_door", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("toggle_handle_up", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"]));
-            //model_check_init_static
-            guardDependency.insert("toggle_handle_down", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_door_open", HashSet::from(["_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("env_retract_gear_last", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_open_door_last", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_retract_gear_valve", HashSet::from(["_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_close_door_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_close_door_valve", HashSet::from(["_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("env_open_analogical_switch", HashSet::from(["_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_general_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_extend_gear_last", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("evn_open_general_valve", HashSet::from(["_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("land_plane", HashSet::from(["_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_retract_gear_valve", HashSet::from(["_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_general_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_retracting_first", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_retract_gear_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_extend_gear", HashSet::from(["_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"]));
-            //model_check_init_static
-            guardDependency.insert("begin_flying", HashSet::from(["_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_retract_gear", HashSet::from(["_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"]));
-            //model_check_init_static
-            guardDependency.insert("env_close_analogical_switch", HashSet::from(["_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_extending", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("open_valve_door_close", HashSet::from(["_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_open_door_valve", HashSet::from(["_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("con_stop_stimulate_extend_gear_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("evn_close_general_valve", HashSet::from(["_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_extend_gear", HashSet::from(["_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_extend_gear_valve", HashSet::from(["_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"]));
-            //model_check_init_static
-            guardDependency.insert("close_valve_door_open", HashSet::from(["_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"]));
-            //model_check_init_static
-            guardDependency.insert("con_stimulate_close_door_valve", HashSet::from(["_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"]));
-            //model_check_init_static
-            guardDependency.insert("env_extend_gear_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_open_door_skip", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            //model_check_init_static
-            guardDependency.insert("env_start_open_door", HashSet::from(["_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"]));
-            dependent_invariant_m.lock().unwrap().insert(machine.clone(), HashSet::new());
-            parents_m.lock().unwrap().remove(&machine);
-        }
-
-        let num_transitions = Arc::new(AtomicI64::new(0));
-        let invariant_dependency_arc = Arc::new(invariantDependency);
-        let guard_dependency_arc = Arc::new(guardDependency);
+        let mut stop_threads = false;
+        let mut spawned_tasks: u64 = 0;
+        let mut finished_tasks: u64 = 0;
 
         let (tx, rx) = channel();
         //println!("Thread {:?} starting threads", thread::current().id());
-        while !stop_threads_b.load(Ordering::Acquire) && !collection_m.lock().unwrap().is_empty() {
-            possible_queue_changes_b.fetch_add(1, Ordering::AcqRel);
-            let mut state = Self::next(Arc::clone(&collection_m), mc_type);
+        while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+            let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
 
-            let invariant_violated = Arc::clone(&invariant_violated_b);
-            let deadlock_detected = Arc::clone(&deadlock_detected_b);
-            let stop_threads = Arc::clone(&stop_threads_b);
-            let possible_queue_changes = Arc::clone(&possible_queue_changes_b);
-            let collection_m2 = Arc::clone(&collection_m);
-            let invariant_dependency = Arc::clone(&invariant_dependency_arc);
-            let guard_dependency = Arc::clone(&guard_dependency_arc);
-            let dependent_invariant_m2 = Arc::clone(&dependent_invariant_m);
-            let dependent_guard_m2 = Arc::clone(&dependent_guard_m);
-            let parents_m2 = Arc::clone(&parents_m);
-            let guard_cache = Arc::clone(&guard_cache_b);
+            let states_to_process = Arc::clone(&states_to_process_mutex);
             let transitions = Arc::clone(&num_transitions);
-            let states_m2 = Arc::clone(&states_m);
-            let number_states = Arc::clone(&number_states_arc);
+            let states = Arc::clone(&all_states);
             let tx = tx.clone();
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
-                let next_states = Self::generateNextStates(&mut state, is_caching, &invariant_dependency, Arc::clone(&dependent_invariant_m2), &guard_dependency, dependent_guard_m2, guard_cache, parents_m2, Arc::clone(&transitions));
+                if !Self::checkInvariants(&state, last_op, is_caching) {
+                    let _ = tx.send(Err("INVARIANT VIOLATED"));
+                }
+
+                let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
+                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
-                next_states.iter().cloned().for_each(|next_state| {
-                    {
-                        let mut states = states_m2.lock().unwrap();
-                        let mut collection = collection_m2.lock().unwrap();
-                        if !states.contains(&next_state) {
-                            let cnum_states = number_states.fetch_add(1, Ordering::AcqRel) + 1;
-                            states.insert(next_state.clone());
-                            collection.push_back(next_state);
-                            //println!("Thread {:?}: states in collection {}", thread::current().id(), collection.len());
-                            if cnum_states % 50000 == 0 {
-                                println!("VISITED STATES: {}", cnum_states);
-                                println!("EVALUATED TRANSITIONS: {}", transitions.load(Ordering::Acquire));
-                                println!("-------------------");
-                            }
-                        }
-                    }
-                });
-                possible_queue_changes.fetch_sub(1, Ordering::AcqRel);
+                next_states.into_iter()
+                           .filter(|(next_state, _)| states.insert((*next_state).clone()))
+                           .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if next_states.is_empty() {
-                    deadlock_detected.store(true, Ordering::Release);
-                    stop_threads.store(true, Ordering::Release);
-                }
-
-                if !Self::checkInvariants(&state, is_caching, Arc::clone(&dependent_invariant_m2)) {
-                    invariant_violated.store(true, Ordering::Release);
-                    stop_threads.store(true, Ordering::Release);
-                }
                 //println!("Thread {:?} done", thread::current().id());
-                tx.send(1).expect("");
+                let _ = tx.send(Ok(1));
             });
-            while collection_m.lock().unwrap().is_empty() && possible_queue_changes_b.load(Ordering::Acquire) > 0 {
+
+            spawned_tasks += 1;
+            if spawned_tasks % 50000 == 0 {
+                println!("VISITED STATES: {}", all_states.len());
+                println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+                println!("-------------------");
+            }
+
+            while states_to_process_mutex.lock().unwrap().is_empty() && spawned_tasks - finished_tasks > 0 {
                 //println!("Thread {:?} (main) waiting for a thread to finish", thread::current().id());
-                rx.recv().expect("Waiting for a thread to finish: ");
+                match rx.recv_timeout(Duration::from_secs(1)) {
+                    Ok(val)  => match val {
+                            Ok(_) => finished_tasks += 1,
+                            Err(msg) => { println!("{}", msg); stop_threads = true; },
+                        },
+                    Err(_) => (),
+                }
+                if threadPool.panic_count() > 0 { stop_threads = true; }
             }
         }
 
-        Self::print_result(number_states_arc.load(Ordering::Acquire), num_transitions.load(Ordering::Acquire), deadlock_detected_b.load(Ordering::Acquire), invariant_violated_b.load(Ordering::Acquire));
+        Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
 }

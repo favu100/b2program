@@ -11,16 +11,16 @@ CARGO_BUILD=cargo build --release --manifest-path $(CARGO_PROJ_PATH)/Cargo.toml
 #CARGO_BUILD=minicargo build --offline --release --manifest-path $(CARGO_PROJ_PATH)/Cargo.toml
 STRATEGY=mixed
 THREADS=1
-CACHING=false
+CACHING=true
 
 % : clean %.rs
 	cp $(*).rs $(CARGO_PROJ_PATH)/src/main.rs
 	$(CARGO_BUILD)
-	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
-	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
-	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
-	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
-	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
+	/usr/bin/time -f "$(*) $(STRATEGY) $(THREADS) $(CACHING) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
+	/usr/bin/time -f "$(*) $(STRATEGY) $(THREADS) $(CACHING) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
+	/usr/bin/time -f "$(*) $(STRATEGY) $(THREADS) $(CACHING) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
+	/usr/bin/time -f "$(*) $(STRATEGY) $(THREADS) $(CACHING) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
+	/usr/bin/time -f "$(*) $(STRATEGY) $(THREADS) $(CACHING) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine $(STRATEGY) $(THREADS) $(CACHING)
 
 clean:
 	rm -f $(CARGO_PROJ_PATH)/src/*.rs

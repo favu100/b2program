@@ -937,7 +937,9 @@ class ModelChecker {
         std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> states;
         std::atomic\<int> transitions;
         std::mutex mutex;
+        std::mutex waitMutex;
         std::mutex guardMutex;
+        std::condition_variable waitCV;
 
         std::atomic\<bool> invariantViolatedBool;
         std::atomic\<bool> deadlockDetected;
@@ -1024,7 +1026,7 @@ std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNe
     if(isCaching) {
         immer::map\<string, boost::any> parentsGuard;
         immer::map\<string, boost::any> newCache;
-        bool parentsExist = (parents.find(state) != parents.end());;
+        bool parentsExist = (parents.find(state) != parents.end());
         std::unordered_set\<string> dependentGuardsOfState;
         bool dependentGuardsExist = false;
         {
@@ -1275,10 +1277,6 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
         initCache(machine);
     }
 
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
     std::atomic\<bool> waitFlag;
     waitFlag = true;
 

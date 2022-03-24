@@ -133,7 +133,7 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* otherRangePtr = otherMap.find(domainElement);
                 if(otherRangePtr == nullptr) {
@@ -142,7 +142,7 @@ class BRelation : public BObject {
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> otherRange = *otherRangePtr;
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRange = thisMap[domainElement];
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultSet = otherRange;
-                    for(T rangeElement : otherRange) {
+                    for(const T& rangeElement : otherRange) {
                         if(thisRange.count(rangeElement) == 0) {
                             resultSet = resultSet.erase(rangeElement);
                         }
@@ -170,14 +170,14 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* otherRangePtr = otherMap.find(domainElement);
                 if(otherRangePtr != nullptr) {
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> otherRange = *otherRangePtr;
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRange = thisMap[domainElement];
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultSet = thisRange;
-                    for(T rangeElement : otherRange) {
+                    for(const T& rangeElement : otherRange) {
                         if(thisRange.count(rangeElement) > 0) {
                             resultSet = resultSet.erase(rangeElement);
                         }
@@ -207,7 +207,7 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : otherMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : otherMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> otherRange = pair.second;
                 const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* thisRangePtr = thisMap.find(domainElement);
@@ -216,7 +216,7 @@ class BRelation : public BObject {
                 } else {
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRange = *thisRangePtr;
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultSet = *thisRangePtr;
-                    for(T rangeElement : otherRange) {
+                    for(const T& rangeElement : otherRange) {
                         if(thisRange.count(rangeElement) == 0) {
                             resultSet = resultSet.insert(rangeElement);
                         }
@@ -229,7 +229,7 @@ class BRelation : public BObject {
 
         int size() const {
             int size = 0;
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
                 size += thisRangeSet.size();
             }
@@ -287,7 +287,7 @@ class BRelation : public BObject {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap;
-            for(R e1 : arg1.getSet()) {
+            for(const R& e1 : arg1.getSet()) {
                 resultMap = resultMap.set(e1, arg2.getSet());
             }
             return BRelation<R,A>(resultMap);
@@ -295,7 +295,7 @@ class BRelation : public BObject {
 
     	BSet<S> domain() const {
             immer::set<S, typename BSet<S>::Hash, typename BSet<S>::HashEqual> resultSet;
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
                 if(thisRangeSet.size() > 0) {
@@ -307,7 +307,7 @@ class BRelation : public BObject {
 
     	BSet<T> range() const {
             immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultSet;
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
                 for (const T& obj : thisRangeSet) {
                     if(resultSet.count(obj) == 0) {
@@ -328,10 +328,10 @@ class BRelation : public BObject {
                                                                typename BSet<T>::HashEqual> resultMap;
 
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
-                for(T rangeElement : range) {
+                for(const T& rangeElement : range) {
                     const immer::set<S, typename BSet<S>::Hash, typename BSet<S>::HashEqual>* currentRangePtr = resultMap.find(rangeElement);
                     immer::set<S, typename BSet<S>::Hash, typename BSet<S>::HashEqual> currentRange;
                     if(currentRangePtr != nullptr) {
@@ -351,7 +351,7 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 S domainElement = pair.first;
                 if(otherSet.count(domainElement) == 0) {
                     resultMap = resultMap.erase(domainElement);
@@ -383,12 +383,12 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultRange = range;
 
-                for(T rangeElement : range) {
+                for(const T& rangeElement : range) {
                     if(otherSet.count(rangeElement) == 0) {
                         resultRange = resultRange.erase(rangeElement);
                     }
@@ -414,7 +414,7 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultRange = range;
@@ -443,7 +443,7 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> otherMap = arg.map;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
 
@@ -492,11 +492,11 @@ class BRelation : public BObject {
     			BRelation<S,T> currentSet = q.front();
     			q.pop();
 
-                for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+                for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                     S domainElement = pair.first;
                     immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
 
-                    for(T rangeElement : range) {
+                    for(const T& rangeElement : range) {
                         BRelation<S,T> nextRelation = currentSet._union(BRelation<S,T>(BSet<BTuple<S,T>>(BTuple<S,T>(domainElement, rangeElement))));
                         int previousSize = result.size();
                         result = result._union(BSet<BRelation<S,T>>(nextRelation));
@@ -529,7 +529,7 @@ class BRelation : public BObject {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap = this->map;
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : otherMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : otherMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = otherMap[domainElement];
                 if(range.size() == 0) {
@@ -686,7 +686,7 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : this->map) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRange = pair.second;
                 const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* otherRangePtr = otherMap.find(domainElement);
@@ -695,8 +695,8 @@ class BRelation : public BObject {
                 }
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> otherRange = *otherRangePtr;
                 immer::set<BTuple<T,R>, typename BSet<BTuple<T,R>>::Hash, typename BSet<BTuple<T,R>>::HashEqual> resultRange;
-                for(T lhsElement : thisRange) {
-                    for(R rhsElement : otherRange) {
+                for(const T& lhsElement : thisRange) {
+                    for(const R& rhsElement : otherRange) {
                         resultRange = resultRange.insert(BTuple<T,R>(lhsElement, rhsElement));
                     }
                 }
@@ -719,8 +719,8 @@ class BRelation : public BObject {
                                                                typename BSet<BTuple<S,R>>::Hash,
                                                                typename BSet<BTuple<S,R>>::HashEqual> resultMap;
 
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair1 : thisMap) {
-                for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair2 : otherMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair1 : thisMap) {
+                for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair2 : otherMap) {
                     S domainElementThisElement = pair1.first;
                     R domainElementOtherElement = pair2.first;
 
@@ -729,8 +729,8 @@ class BRelation : public BObject {
 
                     immer::set<BTuple<T,A>, typename BSet<BTuple<T,A>>::Hash, typename BSet<BTuple<T,A>>::HashEqual> resultRange;
 
-                    for(T lhsElement : thisRange) {
-                        for(A rhsElement : otherRange) {
+                    for(const T& lhsElement : thisRange) {
+                        for(const A& rhsElement : otherRange) {
                             resultRange = resultRange.insert(BTuple<T,A>(lhsElement, rhsElement));
                         }
                     }
@@ -754,14 +754,14 @@ class BRelation : public BObject {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap;
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
 
                 immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual> set;
-                for(T rangeElement : range) {
+                for(const T& rangeElement : range) {
                     immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual> otherRange = otherMap[rangeElement];
-                    for(R otherRangeElement : otherRange) {
+                    for(const R& otherRangeElement : otherRange) {
                         set = set.insert(otherRangeElement);
                     }
                 }
@@ -868,7 +868,7 @@ class BRelation : public BObject {
                                                                  typename BSet<S>::Hash,
                                                                  typename BSet<S>::HashEqual> resultMap;
 
-            for(S domainElement : domain) {
+            for(const S& domainElement : domain) {
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = thisMap[domainElement];
                 BSet<T> rangeSet = BSet<T>(range);
 
@@ -887,7 +887,7 @@ class BRelation : public BObject {
                                                                  typename BSet<S>::Hash,
                                                                  typename BSet<S>::HashEqual> resultMap;
 
-            for(S domainElement : domain.getSet()) {
+            for(const S& domainElement : domain.getSet()) {
                 BSet<R> range = (BSet<R>) this->functionCall(domainElement);
                 immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual> rangeSet = range.getSet();
                 resultMap = resultMap.set(domainElement, rangeSet);
@@ -925,7 +925,7 @@ class BRelation : public BObject {
 
 
     	BBoolean isPartialInteger() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger)) {
     				return BBoolean(true);
     			} else {
@@ -936,7 +936,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean isPartialNatural() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger) element).isNatural().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -945,7 +945,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean isPartialNatural1() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -954,7 +954,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean isPartialString() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -963,7 +963,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean isPartialStruct() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -976,7 +976,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkDomainInteger() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger)) {
     				return BBoolean(true);
     			} else {
@@ -987,7 +987,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkDomainNatural() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -996,7 +996,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkDomainNatural1() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1005,7 +1005,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkDomainString() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1014,7 +1014,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkDomainStruct() const {
-    		for(S element : this->domain()) {
+    		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1027,7 +1027,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkRangeInteger() const {
-    		for(T element : this->range()) {
+    		for(const T& element : this->range()) {
     			if(typeid(element) == typeid(BInteger)) {
     				return BBoolean(true);
     			} else {
@@ -1038,7 +1038,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkRangeNatural() const {
-    		for(T element : this->range()) {
+    		for(const T& element : this->range()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1047,7 +1047,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkRangeNatural1() const {
-    		for(T element : this->range()) {
+    		for(const T& element : this->range()) {
     			if(typeid(element) == typeid(BInteger) && !((BInteger)element).isNatural1().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1056,7 +1056,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkRangeString() const {
-    		for(T element : this->range()) {
+    		for(const T& element : this->range()) {
     			if(typeid(element) == typeid(BString) && !((BString)element).isString().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1065,7 +1065,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean checkRangeStruct() const {
-    		for(T element : this->range()) {
+    		for(const T& element : this->range()) {
     			if(typeid(element) == typeid(BStruct) && !((BStruct) element).isRecord().booleanValue()) {
     				return BBoolean(false);
     			}
@@ -1078,7 +1078,7 @@ class BRelation : public BObject {
     	}
 
     	BBoolean isFunction() const {
-    	    for(S element : this->domain()) {
+    	    for(const S& element : this->domain()) {
     	        immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = this->map[element];
     	        if(range.size() > 1) {
     	            return BBoolean(false);
@@ -1113,9 +1113,9 @@ class BRelation : public BObject {
 
     	BBoolean isInjection() const {
     	    immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> visited;
-    	    for(S element : this->domain()) {
+    	    for(const S& element : this->domain()) {
     	        immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = this->map[element];
-    	        for(T rangeElement : range) {
+    	        for(const T& rangeElement : range) {
     	            if(visited.count(rangeElement) > 0) {
     	                return BBoolean(false);
     	            }
@@ -1214,7 +1214,7 @@ class BRelation : public BObject {
 		    int i = 0;
 
 		    S domainElement;
-		    for(S obj : domain) {
+		    for(const S& obj : domain) {
 		        if(i == index) {
 		            domainElement = obj;
 		            break;
@@ -1225,7 +1225,7 @@ class BRelation : public BObject {
 		    immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = thisMap[domainElement];
 		    index = rand() % range.size();
 		    i = 0;
-		    for(T obj : range) {
+		    for(const T& obj : range) {
 		        if(i == index) {
 		            return BTuple<S,T>(domainElement, obj);
 		        }
@@ -1273,10 +1273,10 @@ class BRelation : public BObject {
             int i = 0;
 
             strm << "{";
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
-                for(T rangeElement : range) {
+                for(const T& rangeElement : range) {
                     strm << "(";
                     strm << domainElement;
                     strm << " |-> ";
@@ -1300,10 +1300,10 @@ class BRelation : public BObject {
             int size = this->size();
             int i = 0;
             int result = 1;
-            for(std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>> pair : thisMap) {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
                 S domainElement = pair.first;
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
-                for(T rangeElement : range) {
+                for(const T& rangeElement : range) {
                     result = result ^ ((domainElement.hashCode() ^ (rangeElement.hashCode() << 1)) << 1);
                     ++i;
                 }

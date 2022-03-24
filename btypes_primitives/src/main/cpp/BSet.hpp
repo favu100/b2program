@@ -307,7 +307,7 @@ class BSet : public BObject {
         }
 
         BBoolean subsetOfInteger() {
-            for(T e : this->set) {
+            for(const T& e : this->set) {
                 if(typeid(e) == typeid(BInteger)) {
                     return BBoolean(true);
                 } else {
@@ -370,7 +370,7 @@ class BSet : public BObject {
         }
 
         BBoolean subsetOfNatural() {
-            for(T e : this->set) {
+            for(const T& e : this->set) {
                 BInteger element = (BInteger) e;
                 if(!element.isNatural().booleanValue()) {
                     return BBoolean(false);
@@ -392,7 +392,7 @@ class BSet : public BObject {
         }
 
         BBoolean subsetOfNatural1() {
-            for(T e : this->set) {
+            for(const T& e : this->set) {
                 BInteger element = (BInteger) e;
                 if(!element.isNatural1().booleanValue()) {
                     return BBoolean(false);
@@ -414,7 +414,7 @@ class BSet : public BObject {
         }
 
         BBoolean subsetOfString() {
-            for(T e : this->set) {
+            for(const T& e : this->set) {
                 BString element = (BString) e;
                 if(!element.isString().booleanValue()) {
                     return BBoolean(false);
@@ -436,7 +436,7 @@ class BSet : public BObject {
         }
 
         BBoolean subsetOfStruct() {
-            for(T e : this->set) {
+            for(const T& e : this->set) {
                 BStruct element = (BStruct) e;
                 if(!element.isRecord().booleanValue()) {
                     return BBoolean(false);

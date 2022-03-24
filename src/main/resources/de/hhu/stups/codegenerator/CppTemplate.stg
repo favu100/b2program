@@ -1113,11 +1113,16 @@ void addCachedInfos(const std::string& operation, const <machine>& state, const 
         if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
             stateAccessedVia.insert({copiedState, operation});
         }
+        if(parents.find(copiedState) == parents.end()) {
+            parents.insert({copiedState, state});
+        }
     } else {
         std::unique_lock\<std::mutex> lock(guardMutex);
-        if(stateAccessedVia.find(copiedState) == stateAccessedVia
-        .end()) {
+        if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
             stateAccessedVia.insert({copiedState, operation});
+        }
+        if(parents.find(copiedState) == parents.end()) {
+            parents.insert({copiedState, state});
         }
     }
 }
@@ -1129,7 +1134,6 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-parents[copiedState] = state;
 addCachedInfos(std::string("<operation>"), state, copiedState);
 result.insert(copiedState);
 >>
@@ -1215,7 +1219,7 @@ void modelCheck() {
     if (threads \<= 1) {
         modelCheckSingleThreaded();
     } else {
-        boost::asio::thread_pool workers(threads-1);
+        boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
         modelCheckMultiThreaded(workers);
     }
 }

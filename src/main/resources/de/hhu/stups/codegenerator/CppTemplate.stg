@@ -312,14 +312,14 @@ set_declaration(identifier, type, enums) ::= <<
 
 iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<type> <identifier> : <set>) {
+for(const <type>& <identifier> : <set>) {
     <body>
 }
 >>
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<type> <identifier> : {<set>}) {
+for(const <type>& <identifier> : {<set>}) {
     <body>
 }
 
@@ -327,14 +327,14 @@ for(<type> <identifier> : {<set>}) {
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<type> <identifier> : <set>.pow()) {
+for(const <type>& <identifier> : <set>.pow()) {
     <body>
 }
 >>
 
 iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(<type> <identifier> : <set>.pow().difference(<set>)) {
+for(const <type>& <identifier> : <set>.pow().difference(<set>)) {
     <body>
 }
 >>
@@ -1239,7 +1239,7 @@ void modelCheckSingleThreaded() {
         std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state);
         transitions += nextStates.size();
 
-        for(auto nextState : nextStates) {
+        for(auto& nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 states.insert(nextState);
                 unvisitedStates.push_back(nextState);
@@ -1291,7 +1291,7 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
             std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state);
             transitions += nextStates.size();
 
-            for(auto nextState : nextStates) {
+            for(auto& nextState : nextStates) {
                 {
                     std::unique_lock\<std::mutex> lock(mutex);
                     if(states.find(nextState) == states.end()) {

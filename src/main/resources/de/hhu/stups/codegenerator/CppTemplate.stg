@@ -945,13 +945,13 @@ class ModelChecker {
         std::atomic\<bool> deadlockDetected;
         <machine> counterExampleState;
 
-        std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency;
-        std::unordered_map\<string, std::unordered_set\<string>\> guardDependency;
-        std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant;
-        std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
-        std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
+        std::unordered_map\<int, std::unordered_set\<int>\> invariantDependency;
+        std::unordered_map\<int, std::unordered_set\<int>\> guardDependency;
+        std::unordered_map\<<machine>, std::unordered_set\<int>, <machine>::Hash, <machine>::HashEqual> dependentInvariant;
+        std::unordered_map\<<machine>, std::unordered_set\<int>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
+        std::unordered_map\<<machine>, immer::map\<int, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
         std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
-        std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
+        std::unordered_map\<<machine>, int, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
 
     public:
         ModelChecker() {}
@@ -1024,10 +1024,10 @@ model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCachi
 std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
     if(isCaching) {
-        immer::map\<string, boost::any> parentsGuard;
-        immer::map\<string, boost::any> newCache;
+        immer::map\<int, boost::any> parentsGuard;
+        immer::map\<int, boost::any> newCache;
         bool parentsExist = (parents.find(state) != parents.end());
-        std::unordered_set\<string> dependentGuardsOfState;
+        std::unordered_set\<int> dependentGuardsOfState;
         bool dependentGuardsExist = false;
         {
             std::unique_lock\<std::mutex> lock(guardMutex);
@@ -1053,20 +1053,20 @@ std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNe
 }
 >>
 
-model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
+model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, evalTransitionsID, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
 <if(isCaching)>
 BSet\<<tupleType>\> <transitionIdentifier>;
 if(dependentGuardsExist) {
-    cachedValue = parentsGuard["<evalTransitions>"];
-    dependentGuardsBoolean = (dependentGuardsOfState.find("<evalTransitions>") != dependentGuardsOfState.end());
+    cachedValue = parentsGuard[<evalTransitionsID>];
+    dependentGuardsBoolean = (dependentGuardsOfState.find(<evalTransitionsID>) != dependentGuardsOfState.end());
 }
 if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
     <transitionIdentifier> = state.<evalTransitions>();
 } else {
     <transitionIdentifier> = boost::any_cast\<BSet\<<tupleType>\>>(cachedValue);
 }
-newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
+newCache = newCache.set(<evalTransitionsID>, <transitionIdentifier>);
 for(const <tupleType>& param : <transitionIdentifier>) {
     <execTransitions>
 }
@@ -1080,15 +1080,15 @@ for(const <tupleType>& param : <transitionIdentifier>) {
 <if(isCaching)>
 bool <transitionIdentifier>;
 if(dependentGuardsExist) {
-    cachedValue = parentsGuard["<evalTransitions>"];
-    dependentGuardsBoolean = (dependentGuardsOfState.find("<evalTransitions>") != dependentGuardsOfState.end());
+    cachedValue = parentsGuard[<evalTransitionsID>];
+    dependentGuardsBoolean = (dependentGuardsOfState.find(<evalTransitionsID>) != dependentGuardsOfState.end());
 }
 if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
     <transitionIdentifier> = state.<evalTransitions>();
 } else {
     <transitionIdentifier> = boost::any_cast\<bool>(cachedValue);
 }
-newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
+newCache = newCache.set(<evalTransitionsID>, <transitionIdentifier>);
 if(<transitionIdentifier>) {
     <execTransitions>
 }
@@ -1101,7 +1101,7 @@ if(state.<evalTransitions>()) {
 >>
 
 model_check_add_cached_infos(machine) ::= <<
-void addCachedInfos(const std::string& operation, const <machine>& state, const <machine>& copiedState) {
+void addCachedInfos(int operation, const <machine>& state, const <machine>& copiedState) {
     if(isCaching) {
         std::unique_lock\<std::mutex> lock(guardMutex);
         if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
@@ -1128,13 +1128,13 @@ void addCachedInfos(const std::string& operation, const <machine>& state, const 
 }
 >>
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
+model_check_transition_body(machine, operation, operationID, hasParameters, readParameters, parameters, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
-addCachedInfos(std::string("<operation>"), state, copiedState);
+addCachedInfos(<operationID>, state, copiedState);
 result.insert(copiedState);
 >>
 
@@ -1153,7 +1153,7 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 model_check_invariants(machine, invariantViolated, invariants) ::= <<
 bool invariantViolated(const <machine>& state) {
     if(isCaching) {
-        std::unordered_set\<string> dependentInvariantsOfState = dependentInvariant[state];
+        std::unordered_set\<int> dependentInvariantsOfState = dependentInvariant[state];
         <invariantViolated; separator="\n">
         return false;
     }
@@ -1161,8 +1161,8 @@ bool invariantViolated(const <machine>& state) {
 }
 >>
 
-model_check_invariant(invariant) ::= <<
-if(dependentInvariantsOfState.find("<invariant>") == dependentInvariantsOfState.end()) {
+model_check_invariant(invariant, invariantID) ::= <<
+if(dependentInvariantsOfState.find(<invariantID>) == dependentInvariantsOfState.end()) {
     if(!state.<invariant>()) {
         return false;
     }
@@ -1187,7 +1187,7 @@ void printResult() {
         cout \<\< "COUNTER EXAMPLE TRACE: " \<\< "\n";
 
         std::string trace = "";
-        while(parents.find(counterExampleState) != parents.end()) {
+        /*while(parents.find(counterExampleState) != parents.end()) {
             std::stringstream stringStream;
             stringStream \<\< counterExampleState;
             trace.insert(0, stringStream.str());
@@ -1195,7 +1195,7 @@ void printResult() {
             trace.insert(0, stateAccessedVia[counterExampleState]);
             trace.insert(0, "\n\n");
             counterExampleState = parents[counterExampleState];
-        }
+        }*/
         cout \<\< trace;
     } else {
         cout \<\< "MODEL CHECKING SUCCESSFUL" \<\< "\n";
@@ -1207,7 +1207,7 @@ void printResult() {
 >>
 
 model_check_init_static(map, keyy, entries) ::= <<
-<map>.insert({"<keyy>", {<entries:{entry | "<entry>"}; separator=", ">}});
+<map>.insert({<keyy>, {<entries:{entry | <entry>}; separator=", ">}});
 >>
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
@@ -1352,7 +1352,7 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 void initCache(<machine>& machine) {
     <invariantDependency; separator="\n">
     <guardDependency; separator="\n">
-    dependentInvariant.insert({machine, std::unordered_set\<string>()});
+    dependentInvariant.insert({machine, std::unordered_set\<int>()});
 }
 >>
 

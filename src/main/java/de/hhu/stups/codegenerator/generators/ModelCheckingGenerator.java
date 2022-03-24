@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
+import de.hhu.stups.codegenerator.json.modelchecker.OperationFunctionInfo;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
@@ -13,8 +14,10 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ModelCheckingGenerator {
 
@@ -26,11 +29,37 @@ public class ModelCheckingGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private Map<String, Integer> invariantIDs;
+
+    private Map<String, Integer> operationIDs;
+
+    private Map<String, Integer> evalTransitionsIDs;
+
     public ModelCheckingGenerator(final STGroup currentGroup, final NameHandler nameHandler,
                                   final TypeGenerator typeGenerator) {
         this.currentGroup = currentGroup;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
+    }
+
+    private void initIDMaps() {
+        int invariantID = 1;
+        for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
+            invariantIDs.put(invariant, invariantID);
+            invariantID++;
+        }
+
+        int operationID = 1;
+        for(OperationFunctionInfo operationFunctionInfo : modelCheckingInfo.getOperationFunctions()) {
+            operationIDs.put(operationFunctionInfo.getOpName(), operationID);
+            operationID++;
+        }
+
+        int transitionID = 1;
+        for(Map.Entry<String, String> entry : modelCheckingInfo.getTransitionEvaluationFunctions().entrySet()) {
+            evalTransitionsIDs.put(entry.getValue(), transitionID);
+            transitionID++;
+        }
     }
 
     public String generate(MachineNode machineNode, boolean forModelChecking, boolean isIncludedMachine, boolean forVisualisation) {
@@ -92,6 +121,7 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "transitionIdentifier", "_trid_" + index);
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
+        TemplateHandler.add(template, "evalTransitionsID", evalTransitionsIDs.get(modelCheckingInfo.getTransitionEvaluationFunctions().get(opName)));
         TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType, isCaching));
         TemplateHandler.add(template, "isCaching", isCaching);
         return template.render();
@@ -108,6 +138,7 @@ public class ModelCheckingGenerator {
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "operation", nameHandler.handle(opNode.getName()));
+        TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
@@ -212,8 +243,20 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("model_check_main");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
-        TemplateHandler.add(template, "invariantDependency", generateStaticInformation("invariantDependency", modelCheckingInfo.getInvariantDependency()));
-        TemplateHandler.add(template, "guardDependency", generateStaticInformation("guardDependency", modelCheckingInfo.getGuardDependency()));
+
+        Map<Integer, List<Integer>> invariantDependencyIDs = new HashMap<>();
+        Map<Integer, List<Integer>> guardDependencyIDs = new HashMap<>();
+
+        for(String key : modelCheckingInfo.getInvariantDependency().keySet()) {
+            invariantDependencyIDs.put(operationIDs.get(key), modelCheckingInfo.getInvariantDependency().get(key).stream().map(id -> invariantIDs.get(id)).collect(Collectors.toList()));
+        }
+
+        for(String key : modelCheckingInfo.getInvariantDependency().keySet()) {
+            guardDependencyIDs.put(operationIDs.get(key), modelCheckingInfo.getGuardDependency().get(key).stream().map(id -> evalTransitionsIDs.get(id)).collect(Collectors.toList()));
+        }
+
+        TemplateHandler.add(template, "invariantDependency", generateStaticInformation("invariantDependency", invariantDependencyIDs));
+        TemplateHandler.add(template, "guardDependency", generateStaticInformation("guardDependency", guardDependencyIDs));
         return template.render();
     }
 
@@ -223,15 +266,15 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
-    public List<String> generateStaticInformation(String mapName, Map<String, List<String>> map) {
+    private List<String> generateStaticInformation(String mapName, Map<Integer, List<Integer>> map) {
         List<String> information = new ArrayList<>();
-        for(String key : map.keySet()) {
+        for(int key : map.keySet()) {
             information.add(generateStaticEntry(mapName, key, map.get(key)));
         }
         return information;
     }
 
-    public String generateStaticEntry(String map, String key, List<String> entries) {
+    private String generateStaticEntry(String map, int key, List<Integer> entries) {
         ST template = currentGroup.getInstanceOf("model_check_init_static");
         TemplateHandler.add(template, "map", map);
         TemplateHandler.add(template, "keyy", key);
@@ -252,6 +295,7 @@ public class ModelCheckingGenerator {
         for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
             ST template = currentGroup.getInstanceOf("model_check_invariant");
             TemplateHandler.add(template, "invariant", invariant);
+            TemplateHandler.add(template, "invariantID", invariantIDs.get(invariant));
             invariants.add(template.render());
         }
         return invariants;
@@ -336,5 +380,9 @@ public class ModelCheckingGenerator {
 
     public void setModelCheckingInfo(ModelCheckingInfo modelCheckingInfo) {
         this.modelCheckingInfo = modelCheckingInfo;
+        this.invariantIDs = new HashMap<>();
+        this.operationIDs = new HashMap<>();
+        this.evalTransitionsIDs = new HashMap<>();
+        initIDMaps();
     }
 }

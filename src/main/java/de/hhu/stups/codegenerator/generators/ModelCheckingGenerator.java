@@ -42,6 +42,7 @@ public class ModelCheckingGenerator {
         this.typeGenerator = typeGenerator;
     }
 
+    // If we use IDs to implement caching, then this code will be helpful
     private void initIDMaps() {
         int invariantID = 1;
         for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
@@ -121,7 +122,7 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "transitionIdentifier", "_trid_" + index);
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
-        TemplateHandler.add(template, "evalTransitionsID", evalTransitionsIDs.get(modelCheckingInfo.getTransitionEvaluationFunctions().get(opName)));
+        //TemplateHandler.add(template, "evalTransitionsID", evalTransitionsIDs.get(modelCheckingInfo.getTransitionEvaluationFunctions().get(opName)));
         TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType, isCaching));
         TemplateHandler.add(template, "isCaching", isCaching);
         return template.render();
@@ -138,7 +139,7 @@ public class ModelCheckingGenerator {
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "operation", nameHandler.handle(opNode.getName()));
-        TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
+        //TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
@@ -255,8 +256,8 @@ public class ModelCheckingGenerator {
             guardDependencyIDs.put(operationIDs.get(key), modelCheckingInfo.getGuardDependency().get(key).stream().map(id -> evalTransitionsIDs.get(id)).collect(Collectors.toList()));
         }
 
-        TemplateHandler.add(template, "invariantDependency", generateStaticInformation("invariantDependency", invariantDependencyIDs));
-        TemplateHandler.add(template, "guardDependency", generateStaticInformation("guardDependency", guardDependencyIDs));
+        TemplateHandler.add(template, "invariantDependency", generateStaticInformation("invariantDependency", modelCheckingInfo.getInvariantDependency()));
+        TemplateHandler.add(template, "guardDependency", generateStaticInformation("guardDependency", modelCheckingInfo.getGuardDependency()));
         return template.render();
     }
 
@@ -266,15 +267,15 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
-    private List<String> generateStaticInformation(String mapName, Map<Integer, List<Integer>> map) {
+    private List<String> generateStaticInformation(String mapName, Map<String, List<String>> map) {
         List<String> information = new ArrayList<>();
-        for(int key : map.keySet()) {
+        for(String key : map.keySet()) {
             information.add(generateStaticEntry(mapName, key, map.get(key)));
         }
         return information;
     }
 
-    private String generateStaticEntry(String map, int key, List<Integer> entries) {
+    private String generateStaticEntry(String map, String key, List<String> entries) {
         ST template = currentGroup.getInstanceOf("model_check_init_static");
         TemplateHandler.add(template, "map", map);
         TemplateHandler.add(template, "keyy", key);
@@ -295,7 +296,7 @@ public class ModelCheckingGenerator {
         for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
             ST template = currentGroup.getInstanceOf("model_check_invariant");
             TemplateHandler.add(template, "invariant", invariant);
-            TemplateHandler.add(template, "invariantID", invariantIDs.get(invariant));
+            //TemplateHandler.add(template, "invariantID", invariantIDs.get(invariant));
             invariants.add(template.render());
         }
         return invariants;

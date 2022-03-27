@@ -202,7 +202,12 @@ function importTrace() {
         let data = await response.text();
         let trace = JSON.parse(data);
 
-        displayTrace(trace);
+        try {
+            displayTrace(trace);
+        } catch (error) {
+            alert("Trace could not be completely imported.");
+            console.error(error);
+        }
     };
 
     _file_input.click();

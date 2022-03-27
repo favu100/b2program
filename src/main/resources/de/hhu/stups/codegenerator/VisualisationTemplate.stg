@@ -3,7 +3,7 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, variableUpdates, includedMachines) ::= <<
+visulisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js";
 import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">
@@ -29,18 +29,44 @@ var _var_div;
 <variables; separator="\n">
 <constants; separator="\n">
 <sets; separator="\n">
-<invariant>
+<invariant; separator="\n">
 
 function updateVisuals () {
   <if(svgName)><visualUpdates; separator="\n"><endif>
   <variableUpdates; separator="\n">
-  _machine_vars["_invariant"].innerHTML = _machine._check_inv();
+  for (let i = 0; i \< <invariantCount>; i++) {
+    _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
+  }
   checkTransitions();
 }
 
 var _history_view_buttons = document.getElementById("_history_view_buttons");
 var _buttonLeft = document.createElement("button");
 var _buttonRight = document.createElement("button");
+var _buttonUpload = document.createElement("button");
+var _inputUpload = document.createElement("input");
+
+function flattenTuple(tuple) {
+    if(!(tuple instanceof BTuple)) {
+        return [tuple];
+    }
+    return [tuple.projection1(), ...flattenTuple(tuple.projection2())];
+}
+
+function createOptionList(event, transition ) {
+    let collator = new Intl.Collator([], {numeric: true});
+    for(let index in _machine_events[event].parameterNames) {
+        let parameter = _machine_events[event].parameterNames[index];
+        var datalist = document.querySelector("#" + event + "_" + parameter + "_datalist");
+        datalist.replaceChildren();
+        for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
+            let option = document.createElement("option");
+            value = flattenTuple(value);
+            option.text = value[index].toString();
+            datalist.appendChild(option);
+        }
+    }
+}
 
 function checkTransitions () {
     let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
@@ -58,16 +84,23 @@ function checkTransitions () {
         _machine_events[event].disabled = true;
       } else {
         let collator = new Intl.Collator([], {numeric: true});
-        for(let parameter of _machine_events[event].parameterNames) {
-            var datalist = document.querySelector("#" + event + "_" + parameter + "_datalist");
-            datalist.replaceChildren();
-
-            for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
-                let option = document.createElement("option");
-                option.text = value.toString();
-                datalist.appendChild(option);
+        for(let current_transition of transition) {
+            try {
+                var current_machine = <initialMachineVar()>._copy();
+                current_machine[event](...flattenTuple(current_transition));
+            } catch (error) {
+                  if(! error instanceof SelectError) {
+                      throw error;
+                  }
+                  transition = transition.difference(new BSet(current_transition));
             }
         }
+        if(transition.size().intValue() == 0) {
+            _machine_events[event].disabled = true;
+        } else {
+            _machine_events[event].disabled = false;
+        }
+        createOptionList(event, transition);
       }
     }
     _buttonLeft.disabled = document.querySelector(".active").index \<= 0;
@@ -109,8 +142,10 @@ function selectHistoryElement(offset) {
   }
   currentHistoryElement.classList.remove("active");
   <initialMachineVar()> = _state_list[index]._copy();
-  _history_view.querySelectorAll("span").forEach(el => el.classList.remove("active"));
-  _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")").classList.add("active");
+  _history_view.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
+  currentHistoryElement = _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")");
+  currentHistoryElement.classList.add("active");
+  currentHistoryElement.scrollIntoView({block: "end", behavior: "smooth"});
   updateVisuals();
 }
 
@@ -120,6 +155,9 @@ _buttonRight.innerHTML="&#9654;";
 _buttonRight.onclick = function(){selectHistoryElement(1)};
 _history_view_buttons.appendChild(_buttonLeft);
 _history_view_buttons.appendChild(_buttonRight);
+_buttonUpload.textContent = "Import trace";
+_buttonUpload.onclick = importTrace;
+_history_view_buttons.appendChild(_buttonUpload);
 
 createHistoryElement("Initialisation", 0);
 
@@ -133,6 +171,41 @@ var _machine_events = {};
 updateVisuals();
 if(_operations_view.querySelectorAll("label").length == 0) {
     document.documentElement.style.setProperty('--noneOrGrid', 'none');
+}
+
+function displayTrace(trace) {
+    selectHistoryElement(-_history_view.querySelector(".active").index);
+    let transitions = trace.transitionList
+    for(let transition of transitions) {
+      if(transition.name.startsWith("$")) {
+        continue;
+      }
+      if(transition.params == null) {
+        transition.params = {};
+      }
+      let parameters = Object.keys(transition.params).map(param => _machine_events[transition.name][param].parseValue(transition.params[param]))
+      let returnValue = _machine[transition.name](...parameters);
+      createHistoryElement(transition.name + "(" + parameters.join(", ") + ")" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+    }
+    updateVisuals();
+    selectHistoryElement(_history_view.querySelector("span:last-of-type").index-_history_view.querySelector(".active").index);
+}
+
+function importTrace() {
+    var _file_input = document.querySelector("#_upload_trace_input");
+    _file_input.accept = ".prob2trace";
+
+    _file_input.onchange = async _ => {
+        let files = Array.from(_file_input.files);
+        let file = files[0];
+        let response = await fetch(file.name);
+        let data = await response.text();
+        let trace = JSON.parse(data);
+
+        displayTrace(trace);
+    };
+
+    _file_input.click();
 }
 >>
 
@@ -199,8 +272,9 @@ function() {
     }
   }
   try {
-    var returnValue = <initialMachineVar()>.<machineEvent>(<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>);
-    createHistoryElement("<machineEvent>" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+    var parameters = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>];
+    var returnValue = <initialMachineVar()>.<machineEvent>(...parameters);
+    createHistoryElement("<machineEvent>(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
     updateVisuals();
   } catch (error) {
     if(! error instanceof SelectError) {
@@ -213,17 +287,7 @@ function() {
         if(transition.size().intValue() == 0) {
             _machine_events["<machineEvent>"].disabled = true;
         }
-
-        let collator = new Intl.Collator([], {numeric: true});
-        for(let parameter of _machine_events["<machineEvent>"].parameterNames) {
-            var datalist = document.querySelector("#<machineEvent>_" + parameter + "_datalist");
-            datalist.replaceChildren();
-            for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
-                let option = document.createElement("option");
-                option.text = value.toString();
-                datalist.appendChild(option);
-            }
-        }
+        createOptionList("<machineEvent>", transition);
     }
     alert(error.message);
   }
@@ -249,14 +313,17 @@ _machine_events["<eventName>"]["<name>"] = <name>;
 
 boolValue(name) ::= <<
 <name>.getValue = function() {return new BBoolean(this.value == "true")}
+<name>.parseValue = function(value) {return new BBoolean(value == "true")}
 >>
 
 intValue(name) ::= <<
 <name>.getValue = function() {return new BInteger(parseInt(this.value))}
+<name>.parseValue = function(value) {return new BInteger(parseInt(value))}
 >>
 
 enumValue(name, enum) ::= <<
 <name>.getValue = function() {return <enum>["get_" + this.value]()}
+<name>.parseValue = function(value) {return <enum>["get_" + value]()}
 >>
 
 variable(var, machineName) ::= <<
@@ -295,13 +362,13 @@ _state_view_sets.appendChild(_var_label);
 _state_view_sets.appendChild(_var_div);
 >>
 
-invariant(invariantFormula, machineName) ::= <<
+invariant(invariantFormula, machineName, invariantFunction) ::= <<
 _var_div = document.createElement("div");
-_var_div.innerHTML = _included_machines["<machineName>"]()._check_inv();
-_var_div.id = "_invariant";
-_machine_vars["_invariant"] = _var_div;
+_var_div.innerHTML = _included_machines["<machineName>"]().<invariantFunction>();
+_var_div.id = "<invariantFunction>";
+_machine_vars["<invariantFunction>"] = _var_div;
 _var_label = document.createElement("label");
-_var_label.htmlFor = "_invariant";
+_var_label.htmlFor = "<invariantFunction>";
 _var_label.innerHTML = "<invariantFormula>";
 _state_view_invariant.appendChild(_var_label);
 _state_view_invariant.appendChild(_var_div);

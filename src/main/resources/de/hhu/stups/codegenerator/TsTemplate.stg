@@ -166,7 +166,7 @@ record(struct, parameters) ::= <<
 new <struct>(<parameters; separator=", ">)
 >>
 
-initialization(machine, properties, values, body) ::= <<
+initialization(properties, values, body) ::= <<
 constructor() {
     <properties; separator="\n">
     <values>
@@ -346,8 +346,8 @@ _tr_<operationName>(): <if(noParameters)>boolean<else>BSet\<<subType>\><endif> {
 }
 >>
 
-invariant(iterationConstruct, predicate) ::= <<
-_check_inv() {
+invariant(invariantFunction, iterationConstruct, predicate) ::= <<
+<invariantFunction>() {
     <iterationConstruct; separator="\n">
     return <predicate>.booleanValue();
 }
@@ -808,6 +808,28 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 <endif>
 >>
 
+model_check_invariants(machine, checkInvariants, invariants) ::= <<
+public static boolean checkInvariants(Object guardLock, <machine> state, boolean isCaching, Map\<<machine>, Set\<String>\> dependentInvariant) {
+    if(isCaching) {
+        Set\<String> dependentInvariantsOfState;
+        synchronized(guardLock) {
+            dependentInvariantsOfState = dependentInvariant.get(state);
+        }
+        <checkInvariants; separator="\n">
+        return true;
+    }
+    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+}
+>>
+
+model_check_invariant(invariant) ::= <<
+if(dependentInvariantsOfState.contains("<invariant>")) {
+    if(!state.<invariant>()) {
+        return false;
+    }
+}
+>>
+
 model_check_evaluate_state(machine, variables) ::= <<
 private static Map\<String, Object> evaluateState(<machine> machine) {
     Map\<String, Object> state = new HashMap\<>();
@@ -834,6 +856,10 @@ private static void printResult(int states, int transitions, boolean deadlockDet
     System.out.println("Number of States: " + states);
     System.out.println("Number of Transitions: " + transitions);
 }
+>>
+
+model_check_init_static(map, keyy, entries) ::= <<
+<map>.put("<keyy>", new HashSet\<>(Arrays.asList(<entries:{entry | "<entry>"}; separator=", ">)));
 >>
 
 
@@ -886,4 +912,17 @@ public static void main(String[] args) {
     }
     printResult(numberStates.get(), transitions.get(), deadlockDetected, invariantViolated.get());
 }
+>>
+
+machine_string(variables) ::= <<
+/* TODO
+@Override
+public String toString() {
+    <if(variables)>
+    return String.join("\n", <variables:{var | "<var>: " + (this.<var>()).toString()}; separator=", ">);
+    <else>
+    return "";
+    <endif>
+}
+*/
 >>

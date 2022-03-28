@@ -37,6 +37,10 @@ pub struct BSet<T: BObject> {
     transformation: Option<Box<dyn SetOp<Item = T>>>,
 }
 
+impl<T: BObject> BSet<T> {
+    const OP_NAME: &'static str = "set";
+}
+
 impl<T: BObject> SetOp for BSet<T> {
     type Item = T;
 
@@ -49,6 +53,14 @@ impl<T: BObject> SetOp for BSet<T> {
 
     fn clone_box(&self) -> Box<dyn SetOp<Item=Self::Item>> {
         todo!()
+    }
+
+    fn get_op_name(&self) -> &str {
+        return BSet::<T>::OP_NAME;
+    }
+
+    fn get_rhs(&self) -> Option<&Box<dyn SetOp<Item=Self::Item>>> {
+        return self.transformation.as_ref();
     }
 }
 

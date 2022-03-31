@@ -4,11 +4,7 @@ from btypes.BObject import BObject
 from Train_1_beebook_deterministic import *
 
 
-
 class Train_1_beebook_deterministic_exec:
-
-
-
 
     def __init__(self):
         self._Train_1_beebook_deterministic = Train_1_beebook_deterministic()
@@ -16,7 +12,7 @@ class Train_1_beebook_deterministic_exec:
         self.counter = BInteger(0)
 
     def simulate(self):
-        while((self.counter.less(BInteger(10000))).booleanValue()):
+        while (self.counter.less(BInteger(10000))).booleanValue():
             self._Train_1_beebook_deterministic.route_reservation(ROUTES.R1)
             self._Train_1_beebook_deterministic.route_reservation(ROUTES.R4)
             self._Train_1_beebook_deterministic.point_positionning(ROUTES.R1)
@@ -115,5 +111,5 @@ class Train_1_beebook_deterministic_exec:
 
 
 if __name__ == '__main__':
-    exec = Train_1_beebook_deterministic_exec()
-    exec.simulate()
+    Train = Train_1_beebook_deterministic_exec()
+    Train.simulate()

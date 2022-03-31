@@ -710,4 +710,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public boolean isUseBigInteger() {
 		return useBigInteger;
 	}
+
+	public InvariantGenerator getInvariantGenerator() {
+		return invariantGenerator;
+	}
 }

@@ -238,7 +238,7 @@ public class CodeGenerator {
 	}
 
 	private void generateVisualisation(VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
-		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(generator.getImportGenerator(), generator.getExpressionGenerator());
+		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(generator.getImportGenerator(), generator.getExpressionGenerator(), generator.getInvariantGenerator());
 		String htmlCode = visualisationGenerator.generateHTML(visBProject);
 		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode);
 		//Has to be saved as <machineName>-visualisation.js

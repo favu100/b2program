@@ -24,17 +24,18 @@ import org.stringtemplate.v4.STGroupFile;
 
 public class VisualisationGenerator{
   private final ImportGenerator importGenerator;
-
   private final ExpressionGenerator expressionGenerator;
+  private final InvariantGenerator invariantGenerator;
 
   private final STGroup htmlGroup;
   private final STGroup visualisationGroup;
 
-  public VisualisationGenerator(ImportGenerator importGenerator, ExpressionGenerator expressionGenerator) {
+  public VisualisationGenerator(ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator) {
     this.htmlGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLTemplate.stg");
     this.visualisationGroup = new STGroupFile("de/hhu/stups/codegenerator/VisualisationTemplate.stg");
     this.importGenerator = importGenerator;
     this.expressionGenerator = expressionGenerator;
+    this.invariantGenerator = invariantGenerator;
   }
 
   /*
@@ -54,7 +55,9 @@ public class VisualisationGenerator{
     TemplateHandler.add(visualisation, "variables", generateVariables(visBProject.getProject().getMainMachine()));
     TemplateHandler.add(visualisation, "constants", generateConstants(visBProject.getProject().getMainMachine()));
     TemplateHandler.add(visualisation, "sets", generateSets(visBProject.getProject().getMainMachine()));
-    TemplateHandler.add(visualisation, "invariant", generateInvariant(visBProject.getProject().getMainMachine()));
+    List<String> invariantList = generateInvariant(visBProject.getProject().getMainMachine());
+    TemplateHandler.add(visualisation, "invariant", invariantList);
+    TemplateHandler.add(visualisation, "invariantCount", invariantList.size());
     TemplateHandler.add(visualisation, "variableUpdates", generateVariableUpdates(visBProject.getProject().getMainMachine()));
     //Adding imports last to ensure all needed types are imported.
     TemplateHandler.add(visualisation, "imports", importGenerator.getImportedTypes().stream().map(this::generateVisualisationImport).collect(Collectors.toSet()));
@@ -62,11 +65,22 @@ public class VisualisationGenerator{
     return visualisation.render();
   }
 
-  private String generateInvariant(MachineNode mainMachine) {
-    ST invariantTemplate = visualisationGroup.getInstanceOf("invariant");
-    TemplateHandler.add(invariantTemplate, "machineName", mainMachine.getName());
-    TemplateHandler.add(invariantTemplate, "invariantFormula", mainMachine.getInvariant().getSourceCodePosition().getText());
-    return invariantTemplate.render();
+  private List<String> generateInvariant(MachineNode mainMachine) {
+    List<PredicateNode> invariants = invariantGenerator.splitInvariant(mainMachine.getInvariant());
+    List<String> invariantList = new ArrayList<>();
+    int invariantCounter = 0;
+
+    for (PredicateNode invariant: invariants) {
+      String functionName = "_check_inv_" + invariantCounter;
+      ST invariantTemplate = visualisationGroup.getInstanceOf("invariant");
+      TemplateHandler.add(invariantTemplate, "invariantFunction", functionName);
+      TemplateHandler.add(invariantTemplate, "machineName", mainMachine.getName());
+      TemplateHandler.add(invariantTemplate, "invariantFormula", invariant.getSourceCodePosition().getText());
+      invariantList.add(invariantTemplate.render());
+      invariantCounter++;
+    }
+
+    return invariantList;
   }
 
   private List<String> generateIncludedMachines(MachineNode mainMachine) {

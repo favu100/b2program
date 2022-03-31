@@ -14,7 +14,7 @@ class colors(BObject, Enum):
     def equal(self, o):
         return BBoolean(self == o)
 
-    def unequal(o):
+    def unequal(self, o):
         return BBoolean(self != o)
 
     def __str__(self):

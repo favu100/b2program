@@ -863,27 +863,65 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-becomes_such_that(loads, body) ::= <<
+becomes_such_that(loads, body, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
+<if(forModelChecking)>
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
 <loads; separator="\n">
 <body>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    return;
+}
+<else>
+<loads; separator="\n">
+<body>
+<endif>
 >>
 
 becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, forModelChecking, choicePoint, operation) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<stores>
 <if(forModelChecking)>
-_cp_<operation>_<choicePoint>++;
-<endif>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <stores>
+    _cp_<operation>_<choicePoint>++;
+    break;
+}
+<else>
+<stores>
 break;
+<endif>
+<else>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    _cp_<operation>_<choicePoint>++;
+    if((<predicate>).booleanValue()) {
+        <stores>
+        break;
+    }
+}
 <else>
 if((<predicate>).booleanValue()) {
     <stores>
-    <if(forModelChecking)>
-    _cp_<operation>_<choicePoint>++;
-    <endif>
     break;
 }
+<endif>
 <endif>
 >>
 

@@ -8,6 +8,7 @@ import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -37,6 +38,7 @@ import org.stringtemplate.v4.STGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,8 @@ public class SubstitutionGenerator {
 
     private final LambdaFunctionGenerator lambdaFunctionGenerator;
 
+    private final BacktrackingGenerator backtrackingGenerator;
+
     private final InfiniteSetGenerator infiniteSetGenerator;
 
     private int currentLocalScope;
@@ -85,7 +89,7 @@ public class SubstitutionGenerator {
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
                                  final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator,
-                                 final InfiniteSetGenerator infiniteSetGenerator, final boolean forVisualisation) {
+                                 final InfiniteSetGenerator infiniteSetGenerator, final BacktrackingGenerator backtrackingGenerator, final boolean forVisualisation) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -99,6 +103,7 @@ public class SubstitutionGenerator {
         this.recordStructGenerator = recordStructGenerator;
         this.declarationGenerator = declarationGenerator;
         this.lambdaFunctionGenerator = lambdaFunctionGenerator;
+        this.backtrackingGenerator = backtrackingGenerator;
         this.infiniteSetGenerator = infiniteSetGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
@@ -278,26 +283,56 @@ public class SubstitutionGenerator {
         ST choice = currentGroup.getInstanceOf("choice");
         int length = node.getSubstitutions().size();
         List<SubstitutionNode> substitutions = node.getSubstitutions();
+
+        int counter = 0;
+        String operation = null;
+        for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
+            BacktrackingVisitor visitor = entry.getValue();
+            Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
+
+            if(choicePointMap.containsKey(node)) {
+                counter = choicePointMap.get(node);
+                operation = entry.getKey();
+            }
+        }
+
         TemplateHandler.add(choice, "len", length);
         TemplateHandler.add(choice, "then", machineGenerator.visitSubstitutionNode(substitutions.get(0), null));
-        TemplateHandler.add(choice, "choice1", generateOtherChoices(node));
+        TemplateHandler.add(choice, "choice1", generateOtherChoices(node, counter, operation));
+
         if(substitutions.size() > 1) {
             ST choice2 = currentGroup.getInstanceOf("choice2");
             TemplateHandler.add(choice2, "then", machineGenerator.visitSubstitutionNode(substitutions.get(length - 1), expected));
+            TemplateHandler.add(choice2, "counter", substitutions.size() - 1);
+            TemplateHandler.add(choice2, "forModelChecking", machineGenerator.isForModelChecking());
+            TemplateHandler.add(choice2, "choicePoint", counter);
+            TemplateHandler.add(choice2, "operation", operation);
             TemplateHandler.add(choice, "choice1", choice2.render());
         }
+
+        TemplateHandler.add(choice, "forModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(choice, "operation", operation);
+        TemplateHandler.add(choice, "usePreviousChoicePoint", counter > 1);
+        if(counter > 1) {
+            TemplateHandler.add(choice, "previousChoicePoint", counter - 1);
+        }
+        TemplateHandler.add(choice, "choicePoint", counter);
+
         return choice.render();
     }
 
     /*
     * This function generates code for the other choices in the choice substitution
     */
-    private List<String> generateOtherChoices(ChoiceSubstitutionNode node) {
+    private List<String> generateOtherChoices(ChoiceSubstitutionNode node, int choicePoint, String operation) {
         List<String> otherChoices = new ArrayList<>();
         for (int i = 1; i < node.getSubstitutions().size() - 1; i++) {
             ST choice = currentGroup.getInstanceOf("choice1");
             TemplateHandler.add(choice, "counter", i);
             TemplateHandler.add(choice, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(i), null));
+            TemplateHandler.add(choice, "forModelChecking", machineGenerator.isForModelChecking());
+            TemplateHandler.add(choice, "choicePoint", choicePoint);
+            TemplateHandler.add(choice, "operation", operation);
             otherChoices.add(choice.render());
         }
         return otherChoices;

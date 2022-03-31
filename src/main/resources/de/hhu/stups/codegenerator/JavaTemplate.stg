@@ -774,33 +774,60 @@ else {
 }
 >>
 
-choice(len, then, choice1, forModelChecking, choicePoint, operation) ::= <<
+choice(len, then, choice1, forModelChecking, choicePoint, operation, usePreviousChoicePoint, previousChoicePoint) ::= <<
+<if(forModelChecking)>
+int index = _cp_<operation>_<choicePoint>;
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
+<else>
 int index = (int) Math.floor(Math.random() * <len>);
+<endif>
+
 if(index == 0) {
-    <then>
     <if(forModelChecking)>
     _cp_<operation>_<choicePoint>++;
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <then>
+    <else>
+    <then>
     <endif>
 } <choice1; separator=" ">
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    return;
+}
 >>
 
 
-choice1(counter, then, forModelChecking) ::= <<
+choice1(counter, then, forModelChecking, choicePoint, operation) ::= <<
 else if(index == <counter>) {
-    <then>
     <if(forModelChecking)>
     _cp_<operation>_<choicePoint>++;
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <then>
+    <else>
+    <then>
     <endif>
 }
 >>
 
-choice2(then, forModelChecking, choicePoint, operation) ::= <<
+choice2(then, counter, forModelChecking, choicePoint, operation) ::= <<
+<if(forModelChecking)>
+else if(index == <counter>) {
+    _cp_<operation>_<choicePoint>++;
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <then>
+}
+<else>
 else {
     <then>
-    <if(forModelChecking)>
-    _cp_<operation>_<choicePoint>++;
-    <endif>
 }
+<endif>
 >>
 
 any(body, forModelChecking, usePreviousChoicePoint, previousChoicePoint, choicePoint, operation) ::= <<

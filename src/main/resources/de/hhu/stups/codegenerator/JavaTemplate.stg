@@ -1126,7 +1126,7 @@ while(!currentState._get_calculate_flag_cp()) {
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
-    addCachedInfos("<operation>", state, copiedState, stateAccessedVia);
+    addCachedInfos("<operation>", state, copiedState);
     result.add(copiedState);
     transitions.getAndIncrement();
     currentState._apply_<operation>_cp(copiedState);

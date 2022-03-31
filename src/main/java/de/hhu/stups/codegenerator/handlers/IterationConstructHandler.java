@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.handlers;
 
+import de.hhu.stups.codegenerator.generators.BacktrackingGenerator;
 import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
 import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.PredicateGenerator;
@@ -33,19 +34,24 @@ public class IterationConstructHandler {
 
     private final STGroup group;
 
+    private final BacktrackingGenerator backtrackingGenerator;
+
     private final boolean useConstraintSolving;
 
     private ExpressionGenerator expressionGenerator;
+
     private PredicateGenerator predicateGenerator;
 
     public IterationConstructHandler(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
-                                     final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final boolean useConstraintSolving) {
+                                     final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final BacktrackingGenerator backtrackingGenerator,
+                                     final boolean useConstraintSolving) {
         this.currentIterationConstructGenerator = null;
         this.iterationConstructCounter = 0;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
         this.importGenerator = importGenerator;
+        this.backtrackingGenerator = backtrackingGenerator;
         this.group = group;
         this.useConstraintSolving = useConstraintSolving;
     }
@@ -69,7 +75,7 @@ public class IterationConstructHandler {
     * This function returns a new IterationConstructGenerator
     */
     public IterationConstructGenerator getNewIterationConstructGenerator() {
-        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, useConstraintSolving);
+        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, backtrackingGenerator, useConstraintSolving);
     }
 
     /*

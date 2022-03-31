@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationApplies) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -52,6 +52,10 @@ public class <machine> {
 
     public <machine> parent;
 
+    <choicePoints; separator="\n\n">
+
+    <choicePointOperationFlags; separator="\n\n">
+
     <endif>
 
     <structs; separator= "\n\n">
@@ -69,9 +73,9 @@ public class <machine> {
     <initialization>
 
     <if(forModelChecking)>
+
     <copyConstructor>
 
-    <mainMethod>
     <endif>
 
     <operations; separator="\n\n">
@@ -86,9 +90,19 @@ public class <machine> {
 
     <copy>
 
+    <choicePointsGetters; separator="\n\n">
+
+    <choicePointOperationFlagGetters; separator="\n\n">
+
+    <choicePointOperationFlagResets; separator="\n\n">
+
+    <choicePointOperationApplies; separator="\n\n">
+
     <hash_equal; separator="\n\n">
 
     <modelcheck>
+
+    <mainMethod>
 
     <endif>
 
@@ -527,6 +541,54 @@ local_declaration(type, identifier) ::= <<
 <declaration(type, identifier)> = null;
 >>
 
+choice_point_declaration(choicePoint, operation) ::= <<
+private int _cp_<operation>_<choicePoint> = 0;
+
+private boolean _flag_cp_<operation>_<choicePoint> = false;
+>>
+
+choice_point_getter(choicePoint, operation) ::= <<
+public int _get_<operation>_<choicePoint>() {
+    return _cp_<operation>_<choicePoint>;
+}
+
+public boolean _get_flag_<operation>_<choicePoint>() {
+    return _flag_cp_<operation>_<choicePoint>;
+}
+>>
+
+
+choice_point_operation_flag_declaration(operation) ::= <<
+private boolean _<operation>_flag_cp = false;
+>>
+
+choice_point_operation_flag_getter(operation) ::= <<
+public boolean _get_<operation>_flag_cp() {
+    return _<operation>_flag_cp;
+}
+>>
+
+choice_point_operation_flag_reset(operation) ::= <<
+public void _reset_<operation>_flag_cp() {
+    this._<operation>_flag_cp = false;
+}
+>>
+
+choice_point_operation_apply(machine, operation, applyChoicePoints, applyChoicePointFlag) ::= <<
+public void _apply_<operation>_cp(<machine> machine) {
+    <applyChoicePoints; separator="\n">
+    <applyChoicePointFlag>
+}
+>>
+
+choice_point_operation_apply_choice_point(operation, choicePoint) ::=<<
+this._cp_<operation>_<choicePoint> = machine._cp_<operation>_<choicePoint>;
+>>
+
+choice_point_operation_apply_choice_point_flag(operation) ::= <<
+this._<operation>_flag_cp = machine._<operation>_flag_cp;
+>>
+
 constant_declaration(type, identifier) ::= <<
 private static <type> <identifier>;
 >>
@@ -574,9 +636,12 @@ assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType, forModelChecking, choicePoint, operation) ::= <<
 <iterationConstruct; separator="\n">
 <if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
+<if(forModelChecking)>
+_cp_<operation>_<choicePoint>++;
+<endif>
 >>
 
 void() ::= <<
@@ -705,40 +770,92 @@ else {
 }
 >>
 
-choice(len, then, choice1) ::= <<
+choice(len, then, choice1, forModelChecking, choicePoint, operation) ::= <<
 int index = (int) Math.floor(Math.random() * <len>);
 if(index == 0) {
     <then>
+    <if(forModelChecking)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
 } <choice1; separator=" ">
 >>
 
 
-choice1(counter, then) ::= <<
+choice1(counter, then, forModelChecking) ::= <<
 else if(index == <counter>) {
     <then>
+    <if(forModelChecking)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
 }
 >>
 
-choice2(then) ::= <<
+choice2(then, forModelChecking, choicePoint, operation) ::= <<
 else {
     <then>
+    <if(forModelChecking)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
 }
 >>
 
-any(body) ::= <<
+any(body, forModelChecking, usePreviousChoicePoint, previousChoicePoint, choicePoint, operation) ::= <<
+<if(forModelChecking)>
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
 <body>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    return;
+}
+<else>
+<body>
+<endif>
 >>
 
-any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
+any_body(otherIterationConstructs, emptyPredicate, predicate, body, forModelChecking, choicePoint, operation) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <body>
+    _cp_<operation>_<choicePoint>++;
+    break;
+}
+<else>
 <body>
 break;
+<endif>
+<else>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    _cp_<operation>_<choicePoint>++;
+    if((<predicate>).booleanValue()) {
+        <body>
+        break;
+    }
+}
 <else>
 if((<predicate>).booleanValue()) {
     <body>
     break;
 }
+<endif>
 <endif>
 >>
 
@@ -747,14 +864,20 @@ becomes_such_that(loads, body) ::= <<
 <body>
 >>
 
-becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, forModelChecking, choicePoint, operation) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <stores>
+<if(forModelChecking)>
+_cp_<operation>_<choicePoint>++;
+<endif>
 break;
 <else>
 if((<predicate>).booleanValue()) {
     <stores>
+    <if(forModelChecking)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
     break;
 }
 <endif>
@@ -1004,15 +1127,31 @@ private void addCachedInfos(final String operation, final <machine> state, final
 }
 >>
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, caching) ::= <<
+model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters, caching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
+<if(isNondeterministic)>
+<machine> currentState = state._copy();
+while(!currentState._get_calculate_flag_cp()) {
+    <machine> copiedState = state._copy();
+    copiedState._apply_<operation>_cp(currentState);
+    copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
+    addCachedInfos("<operation>", state, copiedState, stateAccessedVia);
+    result.add(copiedState);
+    transitions.getAndIncrement();
+    currentState._apply_<operation>_cp(copiedState);
+    copiedState._reset_<operation>_flag_cp();
+}
+<else>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 copiedState.parent = state;
 addCachedInfos("<operation>", state, copiedState, stateAccessedVia);
 result.add(copiedState);
+transitions.getAndIncrement();
+<endif>
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -1116,7 +1255,6 @@ private void modelCheckSingleThreaded() {
         <machine> state = next();
 
         Set\<<machine>\> nextStates = generateNextStates(state, stateAccessedVia);
-        transitions.addAndGet(nextStates.size());
 
         nextStates.forEach(nextState -> {
             if(!states.contains(nextState)) {
@@ -1165,7 +1303,6 @@ private void modelCheckMultiThreaded() {
         <machine> state = next();
         Runnable task = () -> {
             Set\<<machine>\> nextStates = generateNextStates(state, stateAccessedVia);
-            transitions.addAndGet(nextStates.size());
 
             nextStates.forEach(nextState -> {
                 synchronized (states) {
@@ -1294,3 +1431,5 @@ public static void main(String[] args) {
 
 record_private_variable_prefix() ::= <<
 >>
+
+

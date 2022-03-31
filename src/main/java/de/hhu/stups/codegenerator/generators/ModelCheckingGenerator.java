@@ -29,6 +29,8 @@ public class ModelCheckingGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final BacktrackingGenerator backtrackingGenerator;
+
     private Map<String, Integer> invariantIDs;
 
     private Map<String, Integer> operationIDs;
@@ -36,10 +38,11 @@ public class ModelCheckingGenerator {
     private Map<String, Integer> evalTransitionsIDs;
 
     public ModelCheckingGenerator(final STGroup currentGroup, final NameHandler nameHandler,
-                                  final TypeGenerator typeGenerator) {
+                                  final TypeGenerator typeGenerator, final BacktrackingGenerator backtrackingGenerator) {
         this.currentGroup = currentGroup;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
+        this.backtrackingGenerator = backtrackingGenerator;
     }
 
     // If we use IDs to implement caching, then this code will be helpful
@@ -139,6 +142,7 @@ public class ModelCheckingGenerator {
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "operation", nameHandler.handle(opNode.getName()));
+        TemplateHandler.add(template, "isNondeterministic", backtrackingGenerator.isNondeterministic(opNode.getName()));
         //TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         List<String> readParameters = new ArrayList<>();

@@ -116,6 +116,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final TransitionGenerator transitionGenerator;
 
+	private final BacktrackingGenerator backtrackingGenerator;
+
 	private final boolean forModelChecking;
 
 	private final boolean forVisualisation;
@@ -155,7 +157,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
-		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, useConstraintSolving);
+		this.backtrackingGenerator = new BacktrackingGenerator(currentGroup);
+		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, backtrackingGenerator, useConstraintSolving);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
 		this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, this, nameHandler);
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
@@ -173,7 +176,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
-		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator);
+		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator, backtrackingGenerator);
 		this.invariantGenerator = new InvariantGenerator(currentGroup, this, iterationConstructHandler);
 		this.transitionGenerator = new TransitionGenerator(this, iterationConstructHandler);
 		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, transitionGenerator, typeGenerator);
@@ -191,6 +194,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public String generateMachine(MachineNode node) {
 		recordStructAnalyzer.visitMachineNode(node);
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
+		backtrackingGenerator.calculateChoicePoints(node);
 		initialize(node);
 		ST machine = currentGroup.getInstanceOf("machine");
 		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation));
@@ -249,7 +253,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));
 		TemplateHandler.add(machine, "mainMethod", modelCheckingGenerator.generateMainMethod(node));
 		TemplateHandler.add(machine, "copyConstructor", this.generateCopyConstructor(node));
-		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream().map(DeclarationNode::getName).collect(Collectors.toList())));
+		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream()
+				.map(DeclarationNode::getName)
+				.collect(Collectors.toList())));
 		List<DeclarationNode> gettableNodes = new ArrayList<>();
 		gettableNodes.addAll(node.getConstants());
 		gettableNodes.addAll(node.getVariables());
@@ -262,6 +268,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqualToString());
 		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine, forVisualisation));
+		TemplateHandler.add(machine, "choicePoints", backtrackingGenerator.getChoicePointDeclarations());
+		TemplateHandler.add(machine, "choicePointsGetters", backtrackingGenerator.getChoicePointGetters());
+		TemplateHandler.add(machine, "choicePointOperationFlags", backtrackingGenerator.getChoicePointOperationFlagDeclarations());
+		TemplateHandler.add(machine, "choicePointOperationFlagGetters", backtrackingGenerator.getChoicePointOperationFlagGetters());
+		TemplateHandler.add(machine, "choicePointOperationFlagResets", backtrackingGenerator.getChoicePointOperationFlagResets());
+		TemplateHandler.add(machine, "choicePointOperationApplies", backtrackingGenerator.getChoicePointOperationApplies());
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}

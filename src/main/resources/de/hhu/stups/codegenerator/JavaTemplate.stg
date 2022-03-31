@@ -1121,14 +1121,18 @@ model_check_transition_body(machine, operation, hasParameters, isNondeterministi
 <endif>
 <if(isNondeterministic)>
 <machine> currentState = state._copy();
+Set\<<machine>\> newStatesForNondeterministic = new HashSet\<>();
 while(!currentState._get_calculate_flag_cp()) {
     <machine> copiedState = state._copy();
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
     addCachedInfos("<operation>", state, copiedState);
+    if(!newStatesForNondeterministic.contains(copiedState) && !copiedState._get_<operation>_flag_cp()) {
+        transitions.getAndIncrement();
+    }
     result.add(copiedState);
-    transitions.getAndIncrement();
+    newStatesForNondeterministic.add(copiedState);
     currentState._apply_<operation>_cp(copiedState);
     copiedState._reset_<operation>_flag_cp();
 }

@@ -360,15 +360,47 @@ public class ParallelConstructAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node, Void expected) {
+        this.onLeftHandSide = true;
         node.getIdentifiers().forEach(id -> visitExprNode(id, expected));
+        this.onLeftHandSide = false;
+        this.onRightHandSide = true;
         visitExprNode(node.getExpression(), expected);
+        this.onRightHandSide = false;
+        definedLoadsInParallel.addAll(identifierOnLhsInParallel.stream()
+                .filter(lhs -> identifierOnRhsInParallel.stream()
+                        .map(IdentifierExprNode::getName)
+                        .collect(Collectors.toList())
+                        .contains(lhs.getName()))
+                .filter(lhs -> !identifierGenerator.getInputParams()
+                        .stream()
+                        .map(DeclarationNode::getName)
+                        .collect(Collectors.toList())
+                        .contains(lhs.getName()))
+                .collect(Collectors.toList()));
+        definedIdentifiersInParallel.addAll(definedLoadsInParallel);
         return null;
     }
 
     @Override
     public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
+        this.onLeftHandSide = true;
         node.getIdentifiers().forEach(id -> visitExprNode(id, expected));
+        this.onLeftHandSide = false;
+        this.onRightHandSide = true;
         visitPredicateNode(node.getPredicate(), expected);
+        this.onRightHandSide = false;
+        definedLoadsInParallel.addAll(identifierOnLhsInParallel.stream()
+                .filter(lhs -> identifierOnRhsInParallel.stream()
+                        .map(IdentifierExprNode::getName)
+                        .collect(Collectors.toList())
+                        .contains(lhs.getName()))
+                .filter(lhs -> !identifierGenerator.getInputParams()
+                        .stream()
+                        .map(DeclarationNode::getName)
+                        .collect(Collectors.toList())
+                        .contains(lhs.getName()))
+                .collect(Collectors.toList()));
+        definedIdentifiersInParallel.addAll(definedLoadsInParallel);
         return null;
     }
 

@@ -362,7 +362,7 @@ public class SubstitutionGenerator {
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("assignment");
-        generateAssignmentBody(substitution, lhs, rhs);
+        generateAssignmentBody(substitution, lhs, rhs, 0, "");
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "val", getNestedFunctionCall(lhs, rhs));
         } else if(lhs instanceof RecordFieldAccessNode) {
@@ -504,7 +504,7 @@ public class SubstitutionGenerator {
     /*
      * This function generates code for the body of an assignment
      */
-    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs) {
+    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs, int counter, String operation) {
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         parallelConstructHandler.setLhsInParallel(true);
@@ -519,6 +519,14 @@ public class SubstitutionGenerator {
         TemplateHandler.add(substitution, "isPrivate", nameHandler.getGlobals().contains(nameHandler.handle(identifier.getName())));
         parallelConstructHandler.setLhsInParallel(false);
         TemplateHandler.add(substitution, "modified_identifier", machineGenerator.visitExprNode(identifier, null));
+        TemplateHandler.add(substitution, "forModelChecking", machineGenerator.isForModelChecking());
+
+        TemplateHandler.add(substitution, "choicePoint", counter);
+        TemplateHandler.add(substitution, "operation", operation);
+        TemplateHandler.add(substitution, "usePreviousChoicePoint", counter > 1);
+        if(counter > 1) {
+            TemplateHandler.add(substitution, "previousChoicePoint", counter - 1);
+        }
     }
 
     /*
@@ -634,9 +642,23 @@ public class SubstitutionGenerator {
     */
     public String visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node) {
         ST substitutions = currentGroup.getInstanceOf("assignments");
+
+        int counter = 0;
+        String operation = null;
+        for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
+            BacktrackingVisitor visitor = entry.getValue();
+            Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
+
+            if(choicePointMap.containsKey(node)) {
+                counter = choicePointMap.get(node);
+                operation = entry.getKey();
+            }
+        }
+
+
         List<String> assignments = new ArrayList<>();
         for (int i = 0; i < node.getIdentifiers().size(); i++) {
-            assignments.add(generateNondeterminism(node.getIdentifiers().get(i), node.getExpression()));
+            assignments.add(generateNondeterminism(node.getIdentifiers().get(i), node.getExpression(), counter, operation));
         }
         TemplateHandler.add(substitutions, "assignments", assignments);
         return substitutions.render();
@@ -645,9 +667,9 @@ public class SubstitutionGenerator {
     /*
     * This function generates code for a nondeterministic assignment
     */
-    private String generateNondeterminism(ExprNode lhs, ExprNode rhs) {
+    private String generateNondeterminism(ExprNode lhs, ExprNode rhs, int counter, String operation) {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
-        generateAssignmentBody(substitution, lhs, rhs);
+        generateAssignmentBody(substitution, lhs, rhs, counter, operation);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "set", getNestedFunctionCall(lhs, rhs));
         } else if(lhs instanceof RecordFieldAccessNode) {

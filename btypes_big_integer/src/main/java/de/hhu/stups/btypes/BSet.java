@@ -263,6 +263,13 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public T nondeterminism() {
 		int index = (int) Math.floor(Math.random() * set.size());
+		return nondeterminism(index);
+	}
+
+	public T nondeterminism(int index) {
+		if(index >= this.size()) {
+			return null;
+		}
 		return toArray()[index];
 	}
 

@@ -640,11 +640,27 @@ assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType, forModelChecking, choicePoint, operation) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType, forModelChecking, choicePoint, operation, usePreviousChoicePoint, previousChoicePoint) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
 <if(forModelChecking)>
+int _ctr_cp_<operation>_<choicePoint> = _cp_<operation>_<choicePoint>;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>);<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>));<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>)));<endif>
 _cp_<operation>_<choicePoint>++;
+if(<identifier> != null) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+}
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    return;
+}
+<else>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
 <endif>
 >>
 
@@ -1192,12 +1208,14 @@ while(!currentState._get_calculate_flag_cp()) {
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
-    addCachedInfos("<operation>", state, copiedState);
-    if(!newStatesForNondeterministic.contains(copiedState) && !copiedState._get_<operation>_flag_cp()) {
-        transitions.getAndIncrement();
+    if(!copiedState._get_<operation>_flag_cp()) {
+        addCachedInfos("<operation>", state, copiedState);
+        if(!newStatesForNondeterministic.contains(copiedState)) {
+            transitions.getAndIncrement();
+        }
+        result.add(copiedState);
+        newStatesForNondeterministic.add(copiedState);
     }
-    result.add(copiedState);
-    newStatesForNondeterministic.add(copiedState);
     currentState._apply_<operation>_cp(copiedState);
     copiedState._reset_<operation>_flag_cp();
 }

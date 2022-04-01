@@ -286,6 +286,7 @@ public class SubstitutionGenerator {
 
         int counter = 0;
         String operation = null;
+        boolean isLastChoicePoint = false;
         for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
             BacktrackingVisitor visitor = entry.getValue();
             Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
@@ -293,12 +294,13 @@ public class SubstitutionGenerator {
             if(choicePointMap.containsKey(node)) {
                 counter = choicePointMap.get(node);
                 operation = entry.getKey();
+                isLastChoicePoint = counter == choicePointMap.size();
             }
         }
 
         TemplateHandler.add(choice, "len", length);
         TemplateHandler.add(choice, "then", machineGenerator.visitSubstitutionNode(substitutions.get(0), null));
-        TemplateHandler.add(choice, "choice1", generateOtherChoices(node, counter, operation));
+        TemplateHandler.add(choice, "choice1", generateOtherChoices(node, counter, operation, isLastChoicePoint));
 
         if(substitutions.size() > 1) {
             ST choice2 = currentGroup.getInstanceOf("choice2");
@@ -306,6 +308,7 @@ public class SubstitutionGenerator {
             TemplateHandler.add(choice2, "counter", substitutions.size() - 1);
             TemplateHandler.add(choice2, "forModelChecking", machineGenerator.isForModelChecking());
             TemplateHandler.add(choice2, "choicePoint", counter);
+            TemplateHandler.add(choice2, "isLastChoicePoint", isLastChoicePoint);
             TemplateHandler.add(choice2, "operation", operation);
             TemplateHandler.add(choice, "choice1", choice2.render());
         }
@@ -317,6 +320,7 @@ public class SubstitutionGenerator {
             TemplateHandler.add(choice, "previousChoicePoint", counter - 1);
         }
         TemplateHandler.add(choice, "choicePoint", counter);
+        TemplateHandler.add(choice, "isLastChoicePoint", isLastChoicePoint);
 
         return choice.render();
     }
@@ -324,7 +328,7 @@ public class SubstitutionGenerator {
     /*
     * This function generates code for the other choices in the choice substitution
     */
-    private List<String> generateOtherChoices(ChoiceSubstitutionNode node, int choicePoint, String operation) {
+    private List<String> generateOtherChoices(ChoiceSubstitutionNode node, int choicePoint, String operation, boolean isLastChoicePoint) {
         List<String> otherChoices = new ArrayList<>();
         for (int i = 1; i < node.getSubstitutions().size() - 1; i++) {
             ST choice = currentGroup.getInstanceOf("choice1");
@@ -333,6 +337,7 @@ public class SubstitutionGenerator {
             TemplateHandler.add(choice, "forModelChecking", machineGenerator.isForModelChecking());
             TemplateHandler.add(choice, "choicePoint", choicePoint);
             TemplateHandler.add(choice, "operation", operation);
+            TemplateHandler.add(choice, "isLastChoicePoint", isLastChoicePoint);
             otherChoices.add(choice.render());
         }
         return otherChoices;
@@ -362,7 +367,7 @@ public class SubstitutionGenerator {
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("assignment");
-        generateAssignmentBody(substitution, lhs, rhs, 0, "");
+        generateAssignmentBody(substitution, lhs, rhs, 0, "", false);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "val", getNestedFunctionCall(lhs, rhs));
         } else if(lhs instanceof RecordFieldAccessNode) {
@@ -504,7 +509,7 @@ public class SubstitutionGenerator {
     /*
      * This function generates code for the body of an assignment
      */
-    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs, int counter, String operation) {
+    private void generateAssignmentBody(ST substitution, ExprNode lhs, ExprNode rhs, int counter, String operation, boolean isLastChoicePoint) {
         TemplateHandler.add(substitution, "iterationConstruct", iterationConstructHandler.inspectExpression(rhs).getIterationsMapCode().values());
         TemplateHandler.add(substitution, "machine", machineGenerator.getMachineName());
         parallelConstructHandler.setLhsInParallel(true);
@@ -527,6 +532,7 @@ public class SubstitutionGenerator {
         if(counter > 1) {
             TemplateHandler.add(substitution, "previousChoicePoint", counter - 1);
         }
+        TemplateHandler.add(substitution, "isLastChoicePoint", isLastChoicePoint);
     }
 
     /*
@@ -645,6 +651,7 @@ public class SubstitutionGenerator {
 
         int counter = 0;
         String operation = null;
+        boolean isLastChoicePoint = false;
         for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
             BacktrackingVisitor visitor = entry.getValue();
             Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
@@ -652,13 +659,14 @@ public class SubstitutionGenerator {
             if(choicePointMap.containsKey(node)) {
                 counter = choicePointMap.get(node);
                 operation = entry.getKey();
+                isLastChoicePoint = choicePointMap.size() == counter;
             }
         }
 
 
         List<String> assignments = new ArrayList<>();
         for (int i = 0; i < node.getIdentifiers().size(); i++) {
-            assignments.add(generateNondeterminism(node.getIdentifiers().get(i), node.getExpression(), counter, operation));
+            assignments.add(generateNondeterminism(node.getIdentifiers().get(i), node.getExpression(), counter, operation, isLastChoicePoint));
         }
         TemplateHandler.add(substitutions, "assignments", assignments);
         return substitutions.render();
@@ -667,9 +675,9 @@ public class SubstitutionGenerator {
     /*
     * This function generates code for a nondeterministic assignment
     */
-    private String generateNondeterminism(ExprNode lhs, ExprNode rhs, int counter, String operation) {
+    private String generateNondeterminism(ExprNode lhs, ExprNode rhs, int counter, String operation, boolean isLastChoicePoint) {
         ST substitution = currentGroup.getInstanceOf("nondeterminism");
-        generateAssignmentBody(substitution, lhs, rhs, counter, operation);
+        generateAssignmentBody(substitution, lhs, rhs, counter, operation, isLastChoicePoint);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "set", getNestedFunctionCall(lhs, rhs));
         } else if(lhs instanceof RecordFieldAccessNode) {

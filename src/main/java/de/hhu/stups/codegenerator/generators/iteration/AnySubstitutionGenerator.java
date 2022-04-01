@@ -71,6 +71,7 @@ public class AnySubstitutionGenerator {
 
         int counter = 0;
         String operation = null;
+        boolean isLastChoicePoint = false;
         for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
             BacktrackingVisitor visitor = entry.getValue();
             Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
@@ -78,6 +79,7 @@ public class AnySubstitutionGenerator {
             if(choicePointMap.containsKey(node)) {
                 counter = choicePointMap.get(node);
                 operation = entry.getKey();
+                isLastChoicePoint = counter == choicePointMap.size();
             }
         }
         TemplateHandler.add(template, "operation", operation);
@@ -87,7 +89,7 @@ public class AnySubstitutionGenerator {
         }
         TemplateHandler.add(template, "choicePoint", counter);
 
-        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations.size(), counter, operation);
+        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations.size(), counter, operation, isLastChoicePoint);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -99,7 +101,7 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the inner body of the ANY substitution
     */
-    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, int numberDeclarations, int counter, String operation) {
+    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, false);
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
@@ -109,6 +111,7 @@ public class AnySubstitutionGenerator {
         TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
         TemplateHandler.add(template, "choicePoint", counter);
         TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "isLastChoicePoint", isLastChoicePoint);
         return template.render();
     }
 
@@ -131,9 +134,9 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the body of the ANY substitution
     */
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations, int counter, String operation) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateAnyBody(otherConstructs, predicate, substitution, numberDeclarations, counter, operation);
+        String innerBody = generateAnyBody(otherConstructs, predicate, substitution, numberDeclarations, counter, operation, isLastChoicePoint);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

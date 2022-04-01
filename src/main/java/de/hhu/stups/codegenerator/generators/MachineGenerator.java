@@ -274,6 +274,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "choicePointOperationFlagGetters", backtrackingGenerator.getChoicePointOperationFlagGetters());
 		TemplateHandler.add(machine, "choicePointOperationFlagResets", backtrackingGenerator.getChoicePointOperationFlagResets());
 		TemplateHandler.add(machine, "choicePointOperationApplies", backtrackingGenerator.getChoicePointOperationApplies());
+		TemplateHandler.add(machine, "choicePointOperationTriggeredFlags", backtrackingGenerator.getChoicePointOperationTriggeredFlags());
+		TemplateHandler.add(machine, "choicePointOperationTriggered", backtrackingGenerator.getChoicePointOperationTriggered());
+		TemplateHandler.add(machine, "choicePointOperationTriggeredResets", backtrackingGenerator.getChoicePointOperationTriggeredResets());
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}

@@ -31,6 +31,12 @@ public class BacktrackingGenerator {
 
     private final List<String> choicePointOperationApplies;
 
+    private final List<String> choicePointOperationTriggeredFlags;
+
+    private final List<String> choicePointOperationTriggered;
+
+    private final List<String> choicePointOperationTriggeredResets;
+
     private final Map<String, BacktrackingVisitor> backtrackingVisitorMap;
 
     public BacktrackingGenerator(final STGroup currentGroup) {
@@ -43,6 +49,9 @@ public class BacktrackingGenerator {
         this.choicePointOperationFlagGetters = new ArrayList<>();
         this.choicePointOperationFlagResets = new ArrayList<>();
         this.choicePointOperationApplies = new ArrayList<>();
+        this.choicePointOperationTriggeredFlags = new ArrayList<>();
+        this.choicePointOperationTriggered = new ArrayList<>();
+        this.choicePointOperationTriggeredResets = new ArrayList<>();
     }
 
     public void calculateChoicePoints(MachineNode machineNode) {
@@ -63,6 +72,9 @@ public class BacktrackingGenerator {
                 choicePointOperationFlagGetters.add(this.generateChoicePointOperationGetter(opName));
                 choicePointOperationFlagResets.add(this.generateChoicePointOperationReset(opName));
                 choicePointOperationApplies.add(this.generateChoicePointOperationApply(machineNode.getName(), opName));
+                choicePointOperationTriggeredFlags.add(this.generateChoicePointOperationTriggeredDeclaration(opName));
+                choicePointOperationTriggered.add(this.generateChoicePointOperationTriggered(opName));
+                choicePointOperationTriggeredResets.add(this.generateChoiceOperationTriggeredReset(opName));
             }
         }
     }
@@ -126,6 +138,24 @@ public class BacktrackingGenerator {
         return template.render();
     }
 
+    public String generateChoicePointOperationTriggeredDeclaration(String operation) {
+        ST template = currentGroup.getInstanceOf("choice_point_operation_triggered_declaration");
+        TemplateHandler.add(template, "operation", operation);
+        return template.render();
+    }
+
+    public String generateChoicePointOperationTriggered(String operation) {
+        ST template = currentGroup.getInstanceOf("choice_point_operation_triggered");
+        TemplateHandler.add(template, "operation", operation);
+        return template.render();
+    }
+
+    public String generateChoiceOperationTriggeredReset(String operation) {
+        ST template = currentGroup.getInstanceOf("choice_point_operation_triggered_reset");
+        TemplateHandler.add(template, "operation", operation);
+        return template.render();
+    }
+
     public List<String> getChoicePointDeclarations() {
         return choicePointDeclarations;
     }
@@ -148,6 +178,18 @@ public class BacktrackingGenerator {
 
     public List<String> getChoicePointOperationApplies() {
         return choicePointOperationApplies;
+    }
+
+    public List<String> getChoicePointOperationTriggeredFlags() {
+        return choicePointOperationTriggeredFlags;
+    }
+
+    public List<String> getChoicePointOperationTriggered() {
+        return choicePointOperationTriggered;
+    }
+
+    public List<String> getChoicePointOperationTriggeredResets() {
+        return choicePointOperationTriggeredResets;
     }
 
     public Set<String> getNondeterministicOperations() {

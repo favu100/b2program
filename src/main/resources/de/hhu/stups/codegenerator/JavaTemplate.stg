@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationApplies) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -58,6 +58,8 @@ public class <machine> {
 
     <choicePoints; separator="\n\n">
 
+    <choicePointOperationTriggeredFlags; separator="\n\n">
+
     <choicePointOperationFlags; separator="\n\n">
 
     <endif>
@@ -99,6 +101,10 @@ public class <machine> {
     <choicePointOperationFlagGetters; separator="\n\n">
 
     <choicePointOperationFlagResets; separator="\n\n">
+
+    <choicePointOperationTriggered; separator="\n\n">
+
+    <choicePointOperationTriggeredResets; separator="\n\n">
 
     <choicePointOperationApplies; separator="\n\n">
 
@@ -566,6 +572,10 @@ choice_point_operation_flag_declaration(operation) ::= <<
 private boolean _<operation>_flag_cp = false;
 >>
 
+choice_point_operation_triggered_declaration(operation) ::= <<
+private boolean _<operation>_triggered = false;
+>>
+
 choice_point_operation_flag_getter(operation) ::= <<
 public boolean _get_<operation>_flag_cp() {
     return _<operation>_flag_cp;
@@ -575,6 +585,18 @@ public boolean _get_<operation>_flag_cp() {
 choice_point_operation_flag_reset(operation) ::= <<
 public void _reset_<operation>_flag_cp() {
     this._<operation>_flag_cp = false;
+}
+>>
+
+choice_point_operation_triggered(operation) ::= <<
+public boolean _get_<operation>_triggered() {
+    return _<operation>_triggered;
+}
+>>
+
+choice_point_operation_triggered_reset(operation) ::= <<
+public void _reset_<operation>_triggered() {
+    this._<operation>_triggered = false;
 }
 >>
 
@@ -640,13 +662,15 @@ assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType, forModelChecking, choicePoint, operation, usePreviousChoicePoint, previousChoicePoint) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType, forModelChecking, choicePoint, operation, isLastChoicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
 <iterationConstruct; separator="\n">
 <if(forModelChecking)>
 int _ctr_cp_<operation>_<choicePoint> = _cp_<operation>_<choicePoint>;
 boolean _triggered_cp_<operation>_<choicePoint> = false;
 <if(isIdentifierLhs)><identifier> = <set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>);<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>));<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>)));<endif>
+<if(isLastChoicePoint)>
 _cp_<operation>_<choicePoint>++;
+<endif>
 if(<identifier> != null) {
     _triggered_cp_<operation>_<choicePoint> = true;
 }
@@ -657,7 +681,10 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
     <else>
     _<operation>_flag_cp = true;
     <endif>
+    _<operation>_triggered = false;
     return;
+} else {
+    _<operation>_triggered = true;
 }
 <else>
 <if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
@@ -790,7 +817,7 @@ else {
 }
 >>
 
-choice(len, then, choice1, forModelChecking, choicePoint, operation, usePreviousChoicePoint, previousChoicePoint) ::= <<
+choice(len, then, choice1, forModelChecking, choicePoint, operation, isLastChoicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
 <if(forModelChecking)>
 int index = _cp_<operation>_<choicePoint>;
 int _ctr_cp_<operation>_<choicePoint> = -1;
@@ -798,10 +825,11 @@ boolean _triggered_cp_<operation>_<choicePoint> = false;
 <else>
 int index = (int) Math.floor(Math.random() * <len>);
 <endif>
-
 if(index == 0) {
     <if(forModelChecking)>
+    <if(isLastChoicePoint)>
     _cp_<operation>_<choicePoint>++;
+    <endif>
     _triggered_cp_<operation>_<choicePoint> = true;
     <then>
     <else>
@@ -815,15 +843,20 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
     <else>
     _<operation>_flag_cp = true;
     <endif>
+    _<operation>_triggered = false;
     return;
+} else {
+    _<operation>_triggered = true;
 }
 >>
 
 
-choice1(counter, then, forModelChecking, choicePoint, operation) ::= <<
+choice1(counter, then, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 else if(index == <counter>) {
     <if(forModelChecking)>
+    <if(isLastChoicePoint)>
     _cp_<operation>_<choicePoint>++;
+    <endif>
     _triggered_cp_<operation>_<choicePoint> = true;
     <then>
     <else>
@@ -832,10 +865,12 @@ else if(index == <counter>) {
 }
 >>
 
-choice2(then, counter, forModelChecking, choicePoint, operation) ::= <<
+choice2(then, counter, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 <if(forModelChecking)>
 else if(index == <counter>) {
+    <if(isLastChoicePoint)>
     _cp_<operation>_<choicePoint>++;
+    <endif>
     _triggered_cp_<operation>_<choicePoint> = true;
     <then>
 }
@@ -858,14 +893,17 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
     <else>
     _<operation>_flag_cp = true;
     <endif>
+    _<operation>_triggered = false;
     return;
+} else {
+    _<operation>_triggered = true;
 }
 <else>
 <body>
 <endif>
 >>
 
-any_body(otherIterationConstructs, emptyPredicate, predicate, body, forModelChecking, choicePoint, operation) ::= <<
+any_body(otherIterationConstructs, emptyPredicate, predicate, body, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <if(forModelChecking)>
@@ -876,7 +914,9 @@ _ctr_cp_<operation>_<choicePoint>++;
 if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
     _triggered_cp_<operation>_<choicePoint> = true;
     <body>
-    _cp_<operation>_<choicePoint>++;
+   <if(isLastChoicePoint)>
+   _cp_<operation>_<choicePoint>++;
+   <endif>
     break;
 }
 <else>
@@ -891,7 +931,9 @@ if(_triggered_cp_<operation>_<choicePoint>) {
 _ctr_cp_<operation>_<choicePoint>++;
 if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
     _triggered_cp_<operation>_<choicePoint> = true;
+    <if(isLastChoicePoint)>
     _cp_<operation>_<choicePoint>++;
+    <endif>
     if((<predicate>).booleanValue()) {
         <body>
         break;
@@ -919,7 +961,10 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
     <else>
     _<operation>_flag_cp = true;
     <endif>
+    _<operation>_triggered = false;
     return;
+} else {
+    _<operation>_triggered = true;
 }
 <else>
 <loads; separator="\n">
@@ -927,7 +972,7 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
 <endif>
 >>
 
-becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, forModelChecking, choicePoint, operation) ::= <<
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <if(forModelChecking)>
@@ -938,7 +983,9 @@ _ctr_cp_<operation>_<choicePoint>++;
 if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
     _triggered_cp_<operation>_<choicePoint> = true;
     <stores>
+    <if(isLastChoicePoint)>
     _cp_<operation>_<choicePoint>++;
+    <endif>
     break;
 }
 <else>
@@ -953,7 +1000,9 @@ if(_triggered_cp_<operation>_<choicePoint>) {
 _ctr_cp_<operation>_<choicePoint>++;
 if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
     _triggered_cp_<operation>_<choicePoint> = true;
+    <if(isLastChoicePoint)>
     _cp_<operation>_<choicePoint>++;
+    <endif>
     if((<predicate>).booleanValue()) {
         <stores>
         break;
@@ -1208,7 +1257,7 @@ while(!currentState._get_calculate_flag_cp()) {
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
-    if(!copiedState._get_<operation>_flag_cp()) {
+    if(copiedState._get_<operation>_triggered()) {
         addCachedInfos("<operation>", state, copiedState);
         if(!newStatesForNondeterministic.contains(copiedState)) {
             transitions.getAndIncrement();
@@ -1217,6 +1266,7 @@ while(!currentState._get_calculate_flag_cp()) {
         newStatesForNondeterministic.add(copiedState);
     }
     currentState._apply_<operation>_cp(copiedState);
+    copiedState._reset_<operation>_triggered();
     copiedState._reset_<operation>_flag_cp();
 }
 <else>

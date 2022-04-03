@@ -253,6 +253,7 @@ public class BacktrackingVisitor implements AbstractVisitor<Void, Void> {
     public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
         choicePointCounter++;
         choicePointMap.put(node, choicePointCounter);
+        node.getSubstitutions().forEach(substitution -> visitSubstitutionNode(substitution, null));
         return null;
     }
 
@@ -262,5 +263,9 @@ public class BacktrackingVisitor implements AbstractVisitor<Void, Void> {
 
     public Map<Node, Integer> getChoicePointMap() {
         return choicePointMap;
+    }
+
+    public boolean isNondeterministic() {
+        return choicePointMap.size() > 0;
     }
 }

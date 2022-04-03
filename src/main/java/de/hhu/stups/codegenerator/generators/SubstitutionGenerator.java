@@ -286,7 +286,6 @@ public class SubstitutionGenerator {
 
         int counter = 0;
         String operation = null;
-        boolean isLastChoicePoint = false;
         for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
             BacktrackingVisitor visitor = entry.getValue();
             Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
@@ -294,13 +293,12 @@ public class SubstitutionGenerator {
             if(choicePointMap.containsKey(node)) {
                 counter = choicePointMap.get(node);
                 operation = entry.getKey();
-                isLastChoicePoint = counter == choicePointMap.size();
             }
         }
 
         TemplateHandler.add(choice, "len", length);
         TemplateHandler.add(choice, "then", machineGenerator.visitSubstitutionNode(substitutions.get(0), null));
-        TemplateHandler.add(choice, "choice1", generateOtherChoices(node, counter, operation, isLastChoicePoint));
+        TemplateHandler.add(choice, "choice1", generateOtherChoices(node, counter, operation));
 
         if(substitutions.size() > 1) {
             ST choice2 = currentGroup.getInstanceOf("choice2");
@@ -308,7 +306,9 @@ public class SubstitutionGenerator {
             TemplateHandler.add(choice2, "counter", substitutions.size() - 1);
             TemplateHandler.add(choice2, "forModelChecking", machineGenerator.isForModelChecking());
             TemplateHandler.add(choice2, "choicePoint", counter);
-            TemplateHandler.add(choice2, "isLastChoicePoint", isLastChoicePoint);
+            BacktrackingVisitor visitor = new BacktrackingVisitor(operation);
+            visitor.visitSubstitutionNode(substitutions.get(substitutions.size() - 1), null);
+            TemplateHandler.add(choice2, "isLastChoicePoint", !visitor.isNondeterministic());
             TemplateHandler.add(choice2, "operation", operation);
             TemplateHandler.add(choice, "choice1", choice2.render());
         }
@@ -320,7 +320,9 @@ public class SubstitutionGenerator {
             TemplateHandler.add(choice, "previousChoicePoint", counter - 1);
         }
         TemplateHandler.add(choice, "choicePoint", counter);
-        TemplateHandler.add(choice, "isLastChoicePoint", isLastChoicePoint);
+        BacktrackingVisitor visitor = new BacktrackingVisitor(operation);
+        visitor.visitSubstitutionNode(substitutions.get(0), null);
+        TemplateHandler.add(choice, "isLastChoicePoint", !visitor.isNondeterministic());
 
         return choice.render();
     }
@@ -328,16 +330,19 @@ public class SubstitutionGenerator {
     /*
     * This function generates code for the other choices in the choice substitution
     */
-    private List<String> generateOtherChoices(ChoiceSubstitutionNode node, int choicePoint, String operation, boolean isLastChoicePoint) {
+    private List<String> generateOtherChoices(ChoiceSubstitutionNode node, int choicePoint, String operation) {
         List<String> otherChoices = new ArrayList<>();
         for (int i = 1; i < node.getSubstitutions().size() - 1; i++) {
+            SubstitutionNode substitutionNode = node.getSubstitutions().get(i);
             ST choice = currentGroup.getInstanceOf("choice1");
             TemplateHandler.add(choice, "counter", i);
-            TemplateHandler.add(choice, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(i), null));
+            TemplateHandler.add(choice, "then", machineGenerator.visitSubstitutionNode(substitutionNode, null));
             TemplateHandler.add(choice, "forModelChecking", machineGenerator.isForModelChecking());
             TemplateHandler.add(choice, "choicePoint", choicePoint);
             TemplateHandler.add(choice, "operation", operation);
-            TemplateHandler.add(choice, "isLastChoicePoint", isLastChoicePoint);
+            BacktrackingVisitor visitor = new BacktrackingVisitor(operation);
+            visitor.visitSubstitutionNode(substitutionNode, null);
+            TemplateHandler.add(choice, "isLastChoicePoint", !visitor.isNondeterministic());
             otherChoices.add(choice.render());
         }
         return otherChoices;

@@ -6,6 +6,8 @@ use crate::bstring::BString;
 use crate::bobject::BObject;
 use crate::btuple::BTuple;
 use crate::orderedhashset::OrderedHashSet as OrdSet;
+use crate::lazy_ops::set_ops::setops::{SetOp, SetOpTraits};
+use crate::lazy_ops::set_ops::union::Union;
 
 use std::any::TypeId;
 use std::borrow::Borrow;
@@ -16,7 +18,6 @@ use std::collections::LinkedList;
 use std::fmt;
 use std::fmt::Debug;
 use rand::Rng;
-use crate::lazy_ops::set_ops::setops::{SetOp, SetOpTraits};
 
 pub trait TBSet: BObject {
     type Item: BObject;
@@ -41,9 +42,7 @@ impl<T: BObject> BSet<T> {
     const OP_NAME: &'static str = "set";
 }
 
-impl<T: BObject> SetOp for BSet<T> {
-    type Item = T;
-
+impl<T: 'static + BObject> SetOp for BSet<T> {
     fn compute(&self, _: &BSet<Self::Item>) -> BSet<Self::Item> {
         match self.transformation.borrow() {
             Some(trans) => trans.compute(&self) , //todo save computation?
@@ -52,36 +51,18 @@ impl<T: BObject> SetOp for BSet<T> {
     }
 
     fn clone_box(&self) -> Box<dyn SetOp<Item=Self::Item>> {
-        todo!()
+        Box::new(self.clone())
     }
 
     fn get_op_name(&self) -> &str {
         return BSet::<T>::OP_NAME;
     }
 
-    fn get_rhs(&self) -> Option<&Box<dyn SetOp<Item=Self::Item>>> {
-        return self.transformation.as_ref();
+    fn get_rhs(&self) -> Option<Box<dyn SetOp<Item=Self::Item>>> {
+        return self.transformation.clone();
     }
-}
 
-impl<T: BObject> SetOpTraits for BSet<T> {
-
-}
-
-impl<I: BObject> Hash for BSet<I> {
-    fn hash<H: Hasher>(self: &BSet<I>, state: &mut H) { self.set.hash(state); }
-}
-
-impl<T: BObject> BObject for BSet<T> {}
-
-impl<T: BObject> TBSet for BSet<T> {
-    type Item = T;
-    fn as_ord_set(&self) -> OrdSet<Self::Item> { self.set.clone() }
-    fn as_bset(&self) -> &BSet<Self::Item> { self }
-}
-
-impl<T: BObject> fmt::Display for BSet<T> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn to_string(&self, _lhs: Option<&str>) -> String {
         let mut result = "{".to_owned();
         let mut first = true;
         for e in self.set.iter() {
@@ -90,7 +71,60 @@ impl<T: BObject> fmt::Display for BSet<T> {
             result = result + &format!("{}", e).to_string();
         }
         result = result + "}";
-        return write!(f, "{}", result);
+        match &self.transformation {
+            Some(op) => return op.to_string(Option::Some(result.as_str())),
+            None => return result,
+        }
+    }
+}
+
+impl<T: 'static + BObject> SetOpTraits for BSet<T> {
+    type Item = T;
+
+    fn iter_lazy(&self, _lhs: &BSet<Self::Item>) -> Iter<'_, T> {
+        match &self.transformation {
+            Some(op) => op.iter_lazy(self),
+            None => self.iter_directly(),
+        }
+    }
+
+    fn contains_lazy(&self, _lhs: &BSet<Self::Item>, o: &Self::Item) -> bool {
+        match &self.transformation {
+            Some(op) => op.contains_lazy(self, o),
+            None => self.contains_directly(o),
+        }
+    }
+
+    fn is_empty_lazy(&self, _lhs: &BSet<Self::Item>) -> bool {
+        match &self.transformation {
+            Some(op) => op.is_empty_lazy(self),
+            None => self.is_empty_directly(),
+        }
+    }
+
+    fn size_lazy(&self, _lhs: &BSet<Self::Item>) -> usize {
+        match &self.transformation {
+            Some(op) => op.size_lazy(self),
+            None => self.size_directly(),
+        }
+    }
+}
+
+impl<I: BObject> Hash for BSet<I> {
+    fn hash<H: Hasher>(self: &BSet<I>, state: &mut H) { self.set.hash(state); }
+}
+
+impl<T: 'static + BObject> BObject for BSet<T> {}
+
+impl<T: 'static + BObject> TBSet for BSet<T> {
+    type Item = T;
+    fn as_ord_set(&self) -> OrdSet<Self::Item> { self.set.clone() }
+    fn as_bset(&self) -> &BSet<Self::Item> { self }
+}
+
+impl<T: 'static + BObject> fmt::Display for BSet<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "{}", <BSet<T> as SetOp>::to_string(self, Option::None));
     }
 }
 
@@ -126,20 +160,20 @@ impl<T: 'static + BObject> BSet<T> {
         return BSet { set: set, transformation: Option::None };
     }
 
+    pub fn iter(&self) -> Iter<'_, T> { self.iter_lazy(self) }
 
-    pub fn iter(&self) -> Iter<'_, T> {
-        return self.set.iter();
-    }
+    pub fn iter_directly(&self) -> Iter<'_, T> { self.set.iter() }
 
-    pub fn size(&self) -> usize {
+    pub fn size(&self) -> usize { self.size_lazy(self) }
+    pub fn size_directly(&self) -> usize {
         return self.set.len();
     }
 
-    pub fn isEmpty(&self) -> bool {
-        return self.set.is_empty();
-    }
+    pub fn isEmpty(&self) -> bool { return self.is_empty_lazy(self); }
+    pub fn is_empty_directly(&self) -> bool { return self.set.is_empty() }
 
-    pub fn contains(&self, o: &T) -> bool {
+    pub fn contains(&self, o: &T) -> bool { self.contains_lazy(self, o) }
+    pub fn contains_directly(&self, o: &T) -> bool {
         return self.set.contains(o);
     }
 
@@ -148,10 +182,15 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
     pub fn difference(&self, set: &BSet<T>) -> BSet<T> {
-        return BSet{ set: self.set.clone().relative_complement(set.set.clone()), transformation: Option::None };
+        let result: OrdSet<T> = self.iter().fold(OrdSet::new(), |r_set, element| if set.contains(element) { r_set } else { r_set.update(element.clone()) });
+        return BSet::fromOrdSet(result);
     }
 
     pub fn _union(&self, set: &BSet<T>) -> BSet<T> {
+        return BSet { set: self.set.clone(), transformation: Option::Some(Box::new(Union::new(set.clone())))}
+    }
+
+    pub fn real_union(&self, set: &BSet<T>) -> BSet<T> {
         return BSet{ set: self.set.clone().union(set.set.clone()), transformation: Option::None };
     }
 
@@ -168,7 +207,7 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
     pub fn _size(&self) -> BInteger {
-        return BInteger::new(self.set.len().try_into().unwrap());
+        return BInteger::new(self.size().try_into().unwrap());
     }
 
     pub fn elementOf(&self, object: &T) -> BBoolean {
@@ -184,15 +223,15 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
     pub fn notSubset(&self, set: &BSet<T>) -> BBoolean {
-        return BBoolean::new(!self.set.is_subset(&set.set));
+        return self.subset(set).not();
     }
 
     pub fn strictSubset(&self, set: &BSet<T>) -> BBoolean {
-        return BBoolean::new(self.set.len() < set.set.len() && self.set.is_subset(&set.set));
+        return BBoolean::new(self.size() < set.size() && self.subset(set));
     }
 
     pub fn strictNotSubset(&self, set: &BSet<T>) -> BBoolean {
-        return BBoolean::new(self.set.len() == set.set.len() || !self.set.is_subset(&set.set));
+        return BBoolean::new(self.size() >= set.size() || !self.subset(set));
     }
 
     pub fn fin(&self) -> BSet<BSet<T>> {
@@ -235,7 +274,7 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn nondeterminism(&self) -> T {
         let mut rng = rand::thread_rng();
-        return self.set.iter().nth(rng.gen_range(0..self.set.len())).unwrap().clone();
+        return self.iter().nth(rng.gen_range(0..self.set.len())).unwrap().clone();
     }
 
     pub fn equal(&self, other: &BSet<T>) -> BBoolean {

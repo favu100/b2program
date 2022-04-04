@@ -1,18 +1,37 @@
 use std::cmp::Ordering;
-use std::fmt;
-use std::fmt::{Debug, Formatter};
-use std::marker::PhantomData;
+use std::fmt::{Debug};
+use std::iter::Chain;
+use im::ordset::Iter;
+
 use crate::bobject::BObject;
 use crate::bset::BSet;
 
 pub trait SetOp: SetOpTraits + Debug {
-    type Item: BObject;
 
     fn compute(&self, lhs: &BSet<Self::Item>) -> BSet<Self::Item>;
     fn clone_box(&self) -> Box<dyn SetOp<Item = Self::Item>>;
 
     fn get_op_name(&self) -> &str;
-    fn get_rhs(&self) -> Option<&Box<dyn SetOp<Item = Self::Item>>>;
+    fn get_rhs(&self) -> Option<Box<dyn SetOp<Item = Self::Item>>>;
+
+    fn to_string(&self, lhs: Option<&str>) -> String {
+        let mut result = format!("{}(", self.get_op_name());
+        let mut has_lhs = false;
+        if lhs.is_some() {
+            result.push_str(lhs.unwrap());
+            has_lhs = true;
+        }
+        match self.get_rhs() {
+            Some(v) => {
+                if has_lhs { result.push_str(", "); }
+                result.push_str(format!("{}", v.to_string(Option::None)).as_str())
+            },
+            None => {},
+        }
+        result.push_str(")");
+
+        return result;
+    }
 
     //PartialEq
     fn eq_box(&self, other: &Box<dyn SetOp<Item = Self::Item>>) -> bool {
@@ -71,11 +90,24 @@ pub trait SetOp: SetOpTraits + Debug {
 }
 
 pub trait SetOpTraits {
-    //type Bla: BObject;
+    type Item: BObject;
 
-    //fn clone_box(&self) -> Box<dyn SetOp<Item = Self::Bla>>;
-    //fn default_box() -> Box<dyn SetOp>;
+    fn iter_lazy(&self, lhs: &BSet<Self::Item>) -> Box<dyn Iterator<Item=Self::Item> + '_>;
+    fn contains_lazy(&self, lhs: &BSet<Self::Item>, o:&Self::Item) -> bool;
+    fn is_empty_lazy(&self, lhs: &BSet<Self::Item>) -> bool;
+    fn size_lazy(&self, lhs: &BSet<Self::Item>) -> usize;
 }
+/*
+struct IterWrapper<T: BObject> {
+    chain_iter: Option<Chain<Iter<T>, Iter<T>>>,
+}
+
+impl<T: BObject> IterWrapper<T> {
+    pub fn from_chain_iter(iter: Chain<Iter<T>, Iter<T>>) {
+        IterWrapper { chain_iter: Option::Some(iter) }
+    }
+}
+*/
 /*
 impl<T> SetOpTraits for T
 where T: 'static + SetOp + Clone,
@@ -117,44 +149,3 @@ impl<T: 'static +  BObject> Default for Box<dyn SetOp<Item = T>> {
     }
 }
 */
-
-
-
-
-
-#[derive(Clone)]
-pub struct Identity<T: BObject> {
-    phantom: PhantomData<T>,
-}
-
-impl<T: BObject> Identity<T> {
-    const OP_NAME: &'static str = "Identity";
-}
-
-impl<T: BObject> Debug for Identity<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "Identity()")
-    }
-}
-
-impl<T: 'static +  BObject> SetOp for Identity<T> {
-    type Item = T;
-
-    fn compute(&self, lhs: &BSet<T>) -> BSet<T> {
-        lhs.clone()
-    }
-
-    fn clone_box(&self) -> Box<dyn SetOp<Item=Self::Item>> {
-        Box::new(Identity{phantom: PhantomData})
-    }
-
-    fn get_op_name(&self) -> &str {
-        return Identity::<T>::OP_NAME;
-    }
-
-    fn get_rhs(&self) -> Option<&Box<dyn SetOp<Item=Self::Item>>> {
-        return Option::None;
-    }
-}
-
-impl<T: 'static +  BObject> SetOpTraits for Identity<T>{}

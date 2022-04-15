@@ -68,7 +68,7 @@ public class VisualisationGenerator{
   private List<String> generateInvariant(MachineNode mainMachine) {
     List<PredicateNode> invariants = invariantGenerator.splitInvariant(mainMachine.getInvariant());
     List<String> invariantList = new ArrayList<>();
-    int invariantCounter = 0;
+    int invariantCounter = 1;
 
     for (PredicateNode invariant: invariants) {
       String functionName = "_check_inv_" + invariantCounter;

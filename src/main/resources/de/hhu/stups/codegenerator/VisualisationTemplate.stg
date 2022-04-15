@@ -34,7 +34,7 @@ var _var_div;
 function updateVisuals () {
   <if(svgName)><visualUpdates; separator="\n"><endif>
   <variableUpdates; separator="\n">
-  for (let i = 0; i \< <invariantCount>; i++) {
+  for (let i = 1; i \<= <invariantCount>; i++) {
     _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
   }
   checkTransitions();

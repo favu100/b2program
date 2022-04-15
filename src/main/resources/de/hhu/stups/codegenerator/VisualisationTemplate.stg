@@ -3,7 +3,7 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
+visualisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js";
 import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">

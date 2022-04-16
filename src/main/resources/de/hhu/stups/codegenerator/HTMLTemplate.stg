@@ -12,19 +12,32 @@ html(machineName, svgName, btypeImports) ::= <<
 \<head>
 
 \<body>
-  <if(svgName)>\<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml">\</object><endif>
-  \<div id="_operations_view">
-    \<div class="param" style="grid-column: span 2;">Parameter\</div>
-    \<div style="text-align: center; grid-column: -1;">Event\</div>
+  \<div>
+    \<h1>Visualization \<br>\</h1>
+    <if(svgName)>\<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml">\</object><endif>
   \</div>
   \<div>
+      \<h1>Operations View \<br>\</h1>
+      \<div id="_operations_view">
+        \<div class="param" style="grid-column: span 2;">Parameter\</div>
+        \<div style="text-align: center; grid-column: -1;">Event\</div>
+      \</div>
+  \</div>
+  \<div>
+    \<h1>History View \<br>\</h1>
     \<div id="_history_view_buttons">
         \<input id="_upload_trace_input" type="file" style="display:none;">\</input>
     \</div>
     \<div id="_history_view">
     \</div>
+    \<br>
+    \<br>
+    \<h1>Scenario View \<br>\</h1>
+    \<div id="_scenario_view">
+    \</div>
   \</div>
   \<div id="_state_view">
+    \<h1>State View \<br>\</h1>
     \<div id="_state_view_variables" class="state_view_section">
         \<div class="state_view_header collapsed" onclick="collapse(this)">Variables\</div>
     \</div>
@@ -80,6 +93,22 @@ function collapse(element) {
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
+
+#_scenario_view{
+    margin-bottom: auto;
+    margin-right: 1rem;
+    overflow-y  : auto;
+    padding-right: 18px;
+    max-height: 90vh;
+}
+#_scenario_view > span.active {
+    background: lightblue;
+}
+#_scenario_view_buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 .state_view_section {
     display: grid;
     grid-template-columns: auto auto;

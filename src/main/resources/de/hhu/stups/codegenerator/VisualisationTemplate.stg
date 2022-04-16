@@ -109,6 +109,7 @@ function checkTransitions () {
 
 _operations_view = document.getElementById("_operations_view");
 _history_view = document.getElementById("_history_view");
+_scenario_view = document.getElementById("_scenario_view");
 
 var _history_onclick_function = function () {
   <initialMachineVar()> = _state_list[this.index]._copy();
@@ -148,6 +149,14 @@ function selectHistoryElement(offset) {
   currentHistoryElement.scrollIntoView({block: "end", behavior: "smooth"});
   updateVisuals();
 }
+
+function createScenarioElement(text, index) {
+  var scenario_element = document.createElement("span");
+  scenario_element.innerHTML = text + "\</br>";
+  //scenario_element.index = index;
+  _scenario_view.appendChild(scenario_element);
+}
+
 
 _buttonLeft.innerHTML="&#9664;";
 _buttonLeft.onclick = function(){selectHistoryElement(-1)};
@@ -201,6 +210,7 @@ function importTrace() {
         let response = await fetch(file.name);
         let data = await response.text();
         let trace = JSON.parse(data);
+        createScenarioElement(file.name, 0);
 
         try {
             displayTrace(trace);

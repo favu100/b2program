@@ -95,11 +95,9 @@ function collapse(element) {
 }
 
 #_scenario_view{
-    margin-bottom: auto;
     margin-right: 1rem;
     overflow-y  : auto;
     padding-right: 18px;
-    max-height: 90vh;
     gap: 5%;
     display: grid;
 }

@@ -152,12 +152,18 @@ function selectHistoryElement(offset) {
 
 function createScenarioElement(text, trace) {
   var scenario_element = document.createElement("button");
+  var remove_element = document.createElement("button");
   scenario_element.innerHTML = text + "\</br>";
+  remove_element.innerHTML = "X";
   var div_element = document.createElement("div");
   div_element.appendChild(scenario_element);
+  div_element.appendChild(remove_element);
   _scenario_view.appendChild(div_element);
   scenario_element.onclick = function() {
     displayTrace(trace);
+  };
+  remove_element.onclick = function() {
+    _scenario_view.removeChild(div_element);
   };
 }
 

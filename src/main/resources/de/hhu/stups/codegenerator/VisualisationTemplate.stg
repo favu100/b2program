@@ -45,6 +45,8 @@ var _buttonLeft = document.createElement("button");
 var _buttonRight = document.createElement("button");
 var _buttonUpload = document.createElement("button");
 var _inputUpload = document.createElement("input");
+var _buttonRun10 = document.createElement("button");
+var _buttonRun500 = document.createElement("button");
 
 function flattenTuple(tuple) {
     if(!(tuple instanceof BTuple)) {
@@ -53,7 +55,7 @@ function flattenTuple(tuple) {
     return [tuple.projection1(), ...flattenTuple(tuple.projection2())];
 }
 
-function createOptionList(event, transition ) {
+function createOptionList(event, transition) {
     let collator = new Intl.Collator([], {numeric: true});
     for(let index in _machine_events[event].parameterNames) {
         let parameter = _machine_events[event].parameterNames[index];
@@ -146,7 +148,6 @@ function selectHistoryElement(offset) {
   _history_view.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
   currentHistoryElement = _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")");
   currentHistoryElement.classList.add("active");
-  currentHistoryElement.scrollIntoView({block: "end", behavior: "smooth"});
   updateVisuals();
 }
 
@@ -174,9 +175,18 @@ _buttonRight.innerHTML="&#9654;";
 _buttonRight.onclick = function(){selectHistoryElement(1)};
 _history_view_buttons.appendChild(_buttonLeft);
 _history_view_buttons.appendChild(_buttonRight);
+
 _buttonUpload.textContent = "Import trace";
 _buttonUpload.onclick = importTrace;
 _history_view_buttons.appendChild(_buttonUpload);
+
+_buttonRun10.textContent = "Run trace(10ms)";
+_buttonRun10.onclick = function(){runTrace(10);};
+_history_view_buttons.appendChild(_buttonRun10);
+
+_buttonRun500.textContent = "Run trace(500ms)";
+_buttonRun500.onclick = function(){runTrace(500);};
+_history_view_buttons.appendChild(_buttonRun500);
 
 createHistoryElement("Initialisation", 0);
 
@@ -231,6 +241,23 @@ function importTrace() {
     };
 
     _file_input.click();
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runTrace(ms) {
+    let firstElement = _history_view.querySelector("span");
+    firstElement.click();
+    let currentHistoryElement = _history_view.querySelector(".active");
+    let index = currentHistoryElement.index + 1;
+    while (index >= 0 && index \< _state_list.length) {
+      selectHistoryElement(1);
+      await sleep(ms);
+      currentHistoryElement = _history_view.querySelector(".active");
+      index = currentHistoryElement.index + 1;
+    }
 }
 >>
 

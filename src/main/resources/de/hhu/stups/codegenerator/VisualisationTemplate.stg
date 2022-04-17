@@ -150,11 +150,15 @@ function selectHistoryElement(offset) {
   updateVisuals();
 }
 
-function createScenarioElement(text, index) {
-  var scenario_element = document.createElement("span");
+function createScenarioElement(text, trace) {
+  var scenario_element = document.createElement("button");
   scenario_element.innerHTML = text + "\</br>";
-  //scenario_element.index = index;
-  _scenario_view.appendChild(scenario_element);
+  var div_element = document.createElement("div");
+  div_element.appendChild(scenario_element);
+  _scenario_view.appendChild(div_element);
+  scenario_element.onclick = function() {
+    displayTrace(trace);
+  };
 }
 
 
@@ -210,7 +214,7 @@ function importTrace() {
         let response = await fetch(file.name);
         let data = await response.text();
         let trace = JSON.parse(data);
-        createScenarioElement(file.name, 0);
+        createScenarioElement(file.name, trace);
 
         try {
             displayTrace(trace);

@@ -1,4 +1,4 @@
-MACHINE QueensWithEvents
+MACHINE QueensWithEvents_8
 // rewritten for B2Program by inlining DEFINITIONS
 // v2: rewrote perm(1..n) for B2Program
 CONSTANTS n, interval, allFields

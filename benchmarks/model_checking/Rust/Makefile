@@ -2,7 +2,7 @@
 
 .PHONY: all clean
 
-all: CAN_BUS_tlc Cruise_finite1_deterministic_MC LandingGear_R6 Lift_MC_Large sort_m2_data1000_MC QueensWithEvents_4 Train1_Lukas_POR_v3 Train_1_beebook_deterministic_MC_POR_v2 nota_v2 QueensWithEvents_8
+all: CAN_BUS_tlc Cruise_finite1_deterministic_MC LandingGear_R6 Lift_MC_Large sort_m2_data1000_MC QueensWithEvents_4 Train1_Lukas_POR_v3 Train_1_beebook_deterministic_MC_POR_v2 nota_v2 #QueensWithEvents_8
 
 OUTPUT ?= runtimes.txt
 

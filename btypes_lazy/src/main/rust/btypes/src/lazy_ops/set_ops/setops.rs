@@ -1,6 +1,6 @@
+use std::hash::{Hasher};
 use std::cmp::Ordering;
 use std::fmt::{Debug};
-use std::iter::Chain;
 use im::ordset::Iter;
 
 use crate::bobject::BObject;
@@ -92,31 +92,64 @@ pub trait SetOp: SetOpTraits + Debug {
 pub trait SetOpTraits {
     type Item: BObject;
 
-    fn iter_lazy(&self, lhs: &BSet<Self::Item>) -> Box<dyn Iterator<Item=Self::Item> + '_>;
+    fn iter_lazy<'a>(&'a self, lhs: &'a BSet<Self::Item>) -> IterWrapper<'a, Self::Item>;
     fn contains_lazy(&self, lhs: &BSet<Self::Item>, o:&Self::Item) -> bool;
     fn is_empty_lazy(&self, lhs: &BSet<Self::Item>) -> bool;
     fn size_lazy(&self, lhs: &BSet<Self::Item>) -> usize;
-}
-/*
-struct IterWrapper<T: BObject> {
-    chain_iter: Option<Chain<Iter<T>, Iter<T>>>,
+    //fn hash_val(&self) -> u64;
 }
 
-impl<T: BObject> IterWrapper<T> {
-    pub fn from_chain_iter(iter: Chain<Iter<T>, Iter<T>>) {
-        IterWrapper { chain_iter: Option::Some(iter) }
+pub enum IterWrapperE<'a, T: BObject> {
+    Empty,
+    Single(Iter<'a, T>),
+    Chain(Box<IterWrapper<'a, T>>, Box<IterWrapper<'a, T>>),
+    Filtered(Box<IterWrapper<'a, T>>, BSet<T>),
+}
+
+pub struct IterWrapper<'a, T: BObject> {
+    iter: IterWrapperE<'a, T>,
+}
+
+impl<'a, T: BObject> IterWrapper<'a, T> {
+    pub fn empty() -> IterWrapper<'a, T> { IterWrapper { iter: IterWrapperE::Empty }}
+    pub fn single(iter: Iter<'a, T>) -> IterWrapper<'a, T> { IterWrapper { iter: IterWrapperE::Single(iter)} }
+    pub fn chain(iter_a: IterWrapper<'a, T>, iter_b: IterWrapper<'a, T>) -> IterWrapper<'a, T> {
+        IterWrapper { iter: IterWrapperE::Chain(Box::new(iter_a),
+                                                Box::new(iter_b))}
+    }
+    pub fn filtered(iter: IterWrapper<'a, T>, filter: BSet<T>) -> IterWrapper<'a, T> {
+        IterWrapper { iter: IterWrapperE::Filtered(Box::new(iter), filter)}
     }
 }
-*/
-/*
-impl<T> SetOpTraits for T
-where T: 'static + SetOp + Clone,
-{
-    fn clone_box<S: BObject>(&self) -> Box<dyn SetOp<Item = S>> {
-        Box::new(self.clone())
+
+impl<'a, T: BObject> Iterator for IterWrapper<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.iter {
+            IterWrapperE::Empty => Option::None,
+            IterWrapperE::Single(ref mut s) => s.next(),
+            IterWrapperE::Chain(ref mut a, ref mut b) => {
+                let option_a = a.next();
+                match option_a {
+                    Some(result) => Some(result),
+                    None => b.next(),
+                }
+            },
+            IterWrapperE::Filtered(ref mut i, ref filter) => {
+                let mut option = i.next();
+                while option.is_some() {
+                    let val = option.unwrap();
+                    if !filter.contains(val) { return Option::Some(val); }
+                    option = i.next();
+                }
+                return option;
+            }
+        }
     }
 }
-*/
+
+
 impl<T: BObject> Clone for Box<dyn SetOp<Item = T>> {
     fn clone(&self) -> Self {
         self.clone_box()

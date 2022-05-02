@@ -1,19 +1,16 @@
 use std::cell::RefCell;
-use std::convert::TryInto;
 use crate::bobject::BObject;
 use crate::bset::BSet;
-use crate::lazy_ops::set_ops::setops::{SetOp, SetOpTraits};
+use crate::lazy_ops::set_ops::setops::{IterWrapper, SetOp, SetOpTraits};
 
 use std::fmt;
 use std::fmt::{Debug, Formatter};
-use std::iter::Chain;
 use std::ops::Not;
-use im::ordset::Iter;
 
 #[derive(Clone)]
 pub struct Union<T: BObject> {
-    rhs: RefCell<BSet<T>>,
-    rhs_is_reduced: RefCell<bool>,
+    rhs: BSet<T>,
+    rhs_is_reduced: bool,
 }
 
 impl<T: BObject> Union<T> {
@@ -22,49 +19,63 @@ impl<T: BObject> Union<T> {
 
 impl<T: 'static + BObject> Debug for Union<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "Union({})", self.rhs.borrow())
+        write!(f, "Union({})", self.rhs)
     }
 }
 
 impl<T: BObject> Union<T> {
     pub fn new(rhs: BSet<T>) -> Union<T> {
-        Union {rhs: RefCell::new(rhs), rhs_is_reduced: RefCell::new(false)}
+        Union {rhs: rhs, rhs_is_reduced: false}
+    }
+}
+
+impl<T: 'static +  BObject> Union<T> {
+    fn check_reduced(&mut self, lhs: &BSet<T>) {
+        if !self.rhs_is_reduced {
+            let new_rhs = self.rhs.difference(&lhs.get_direct_set());
+            self.rhs = new_rhs;
+            self.rhs_is_reduced = true;
+        }
     }
 }
 
 impl<T: 'static +  BObject> SetOpTraits for Union<T>{
     type Item = T;
 
-    fn iter_lazy(&self, lhs: &BSet<Self::Item>) -> Chain<Iter<T>, Iter<T>> {
-        return lhs.iter_directly().chain(self.rhs.borrow().iter());
+    fn iter_lazy<'a>(&'a self, lhs: &'a BSet<Self::Item>) -> IterWrapper<'a, T> {
+        //self.check_reduced(lhs); <-- would need me to make this function take &mut self, which would propagate to BSet::iter, which would break everything...
+        let iter_a = IterWrapper::single(lhs.iter_directly());
+        let iter_b = self.rhs.iter_complete();
+        if self.rhs_is_reduced {
+            return IterWrapper::chain(iter_a, iter_b);
+        }
+        return IterWrapper::chain(iter_a, IterWrapper::filtered(iter_b, lhs.get_direct_set()));
     }
 
     fn contains_lazy(&self, lhs: &BSet<Self::Item>, o: &Self::Item) -> bool {
-        lhs.contains_directly(o) || self.rhs.borrow().contains_directly(o)
+        lhs.contains_directly(o) || self.rhs.contains(o)
     }
 
     fn is_empty_lazy(&self, lhs: &BSet<Self::Item>) -> bool {
-        lhs.is_empty_directly() && self.rhs.borrow().is_empty_directly()
+        lhs.is_empty_directly() && self.rhs.isEmpty()
     }
 
     fn size_lazy(&self, lhs: &BSet<Self::Item>) -> usize {
-        if (*self.rhs_is_reduced.borrow()).not() {
-            let new_rhs = self.rhs.borrow().difference(lhs);
-            self.rhs.replace(new_rhs);
-            self.rhs_is_reduced.replace(true);
+        if self.rhs_is_reduced {
+            return lhs.size_directly() + self.rhs.size();
         }
-        return lhs.size_directly() + self.rhs.borrow().size_directly();
+        return lhs.size_directly() + self.rhs.difference(&lhs.get_direct_set()).size();
     }
 }
 
 impl<T: 'static +  BObject> SetOp for Union<T> {
     fn compute(&self, lhs: &BSet<T>) -> BSet<T> {
-        lhs.real_union(&self.rhs.borrow())
+        lhs.real_union(&self.rhs)
     }
 
     fn clone_box(&self) -> Box<dyn SetOp<Item=Self::Item>> {
-        Box::new(Union{rhs: RefCell::new(self.rhs.borrow().clone()),
-                          rhs_is_reduced: RefCell::new(*self.rhs_is_reduced.borrow())})
+        Box::new(Union{rhs: self.rhs.clone(),
+                          rhs_is_reduced: self.rhs_is_reduced})
     }
 
     fn get_op_name(&self) -> &str {
@@ -72,6 +83,6 @@ impl<T: 'static +  BObject> SetOp for Union<T> {
     }
 
     fn get_rhs(&self) -> Option<Box<dyn SetOp<Item=Self::Item>>> {
-        return Option::Some(self.rhs.borrow().clone_box());
+        return Option::Some(self.rhs.clone_box());
     }
 }

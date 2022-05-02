@@ -6,7 +6,7 @@ use crate::bstring::BString;
 use crate::bobject::BObject;
 use crate::btuple::BTuple;
 use crate::orderedhashset::OrderedHashSet as OrdSet;
-use crate::lazy_ops::set_ops::setops::{SetOp, SetOpTraits};
+use crate::lazy_ops::set_ops::setops::{IterWrapper, SetOp, SetOpTraits};
 use crate::lazy_ops::set_ops::union::Union;
 
 use std::any::TypeId;
@@ -32,7 +32,7 @@ pub trait SetLike: BObject {
     fn intersect(&self, other: &Self) -> Self;
 }
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+#[derive(Default, Debug, Eq, PartialOrd, Ord, Clone)]
 pub struct BSet<T: BObject> {
     set: OrdSet<T>,
     transformation: Option<Box<dyn SetOp<Item = T>>>,
@@ -78,13 +78,13 @@ impl<T: 'static + BObject> SetOp for BSet<T> {
     }
 }
 
-impl<T: 'static + BObject> SetOpTraits for BSet<T> {
+impl<T: BObject> SetOpTraits for BSet<T> {
     type Item = T;
 
-    fn iter_lazy(&self, _lhs: &BSet<Self::Item>) -> Iter<'_, T> {
+    fn iter_lazy<'a>(&'a self, _lhs: &BSet<Self::Item>) -> IterWrapper<T> {
         match &self.transformation {
             Some(op) => op.iter_lazy(self),
-            None => self.iter_directly(),
+            None => IterWrapper::single(self.iter_directly()),
         }
     }
 
@@ -103,8 +103,9 @@ impl<T: 'static + BObject> SetOpTraits for BSet<T> {
     }
 
     fn size_lazy(&self, _lhs: &BSet<Self::Item>) -> usize {
-        match &self.transformation {
-            Some(op) => op.size_lazy(self),
+        let self_clone = self.clone();
+        match self.transformation {
+            Some(ref op) => op.size_lazy(&self_clone),
             None => self.size_directly(),
         }
     }
@@ -112,6 +113,16 @@ impl<T: 'static + BObject> SetOpTraits for BSet<T> {
 
 impl<I: BObject> Hash for BSet<I> {
     fn hash<H: Hasher>(self: &BSet<I>, state: &mut H) { self.set.hash(state); }
+}
+
+impl<I: BObject> PartialEq for BSet<I> {
+    fn eq(&self, other: &BSet<I>) -> bool {
+        if self.size() != other.size() { return false; }
+        for i in self.iter() {
+            if !other.contains(i) { return false; }
+        }
+        return true;
+    }
 }
 
 impl<T: 'static + BObject> BObject for BSet<T> {}
@@ -127,7 +138,7 @@ impl<T: 'static + BObject> fmt::Display for BSet<T> {
         return write!(f, "{}", <BSet<T> as SetOp>::to_string(self, Option::None));
     }
 }
-
+/*
 impl<'a, T: 'static + BObject> IntoIterator for &'a BSet<T>
 where
     T: 'a + Ord,
@@ -139,9 +150,19 @@ where
         self.iter()
     }
 }
-
+*/
 //TODO: check if replacing cache with mutex works and does not impact permormance too much
 unsafe impl<T: BObject> Sync for BSet<T> {}
+
+impl<T: BObject> BSet<T> {
+    pub fn size(&self) -> usize { self.size_lazy(self) }
+    pub fn iter(&self) -> impl Iterator<Item = &T> + '_ { self.iter_lazy(self) }
+    pub fn iter_directly(&self) -> Iter<T> { self.set.iter() }
+    pub fn contains(&self, o: &T) -> bool { self.contains_lazy(self, o) }
+    pub fn contains_directly(&self, o: &T) -> bool { return self.set.contains(o); }
+    pub fn size_directly(&self) -> usize { return self.set.len(); }
+    pub fn is_empty_directly(&self) -> bool { return self.set.is_empty() }
+}
 
 impl<T: 'static + BObject> BSet<T> {
 
@@ -160,22 +181,13 @@ impl<T: 'static + BObject> BSet<T> {
         return BSet { set: set, transformation: Option::None };
     }
 
-    pub fn iter(&self) -> Iter<'_, T> { self.iter_lazy(self) }
-
-    pub fn iter_directly(&self) -> Iter<'_, T> { self.set.iter() }
-
-    pub fn size(&self) -> usize { self.size_lazy(self) }
-    pub fn size_directly(&self) -> usize {
-        return self.set.len();
+    pub fn get_direct_set(&self) -> Self {
+        return BSet { set: self.set.clone(), transformation: Option::None }
     }
+
+    pub fn iter_complete<'a>(&'a self) -> IterWrapper<T> { self.iter_lazy(self) }
 
     pub fn isEmpty(&self) -> bool { return self.is_empty_lazy(self); }
-    pub fn is_empty_directly(&self) -> bool { return self.set.is_empty() }
-
-    pub fn contains(&self, o: &T) -> bool { self.contains_lazy(self, o) }
-    pub fn contains_directly(&self, o: &T) -> bool {
-        return self.set.contains(o);
-    }
 
     pub fn intersect(&self, set: &BSet<T>) -> BSet<T> {
         return BSet{ set: self.set.clone().intersection(set.set.clone()), transformation: Option::None };
@@ -202,11 +214,11 @@ impl<T: 'static + BObject> BSet<T> {
         return result;
     }
 
-    pub fn card(&self) -> BInteger {
+    pub fn card(&mut self) -> BInteger {
         return self._size();
     }
 
-    pub fn _size(&self) -> BInteger {
+    pub fn _size(&mut self) -> BInteger {
         return BInteger::new(self.size().try_into().unwrap());
     }
 
@@ -226,11 +238,11 @@ impl<T: 'static + BObject> BSet<T> {
         return self.subset(set).not();
     }
 
-    pub fn strictSubset(&self, set: &BSet<T>) -> BBoolean {
+    pub fn strictSubset(&mut self, set: &mut BSet<T>) -> BBoolean {
         return BBoolean::new(self.size() < set.size() && self.subset(set));
     }
 
-    pub fn strictNotSubset(&self, set: &BSet<T>) -> BBoolean {
+    pub fn strictNotSubset(&mut self, set: &mut BSet<T>) -> BBoolean {
         return BBoolean::new(self.size() >= set.size() || !self.subset(set));
     }
 
@@ -278,11 +290,11 @@ impl<T: 'static + BObject> BSet<T> {
     }
 
     pub fn equal(&self, other: &BSet<T>) -> BBoolean {
-        return BBoolean::new(self.set.eq(&other.set));
+        return BBoolean::new(self.eq(other));
     }
 
     pub fn unequal(&self, other: &BSet<T>) -> BBoolean {
-        return BBoolean::new(!self.set.eq(&other.set));
+        return BBoolean::new(!self.eq(other));
     }
 
     pub fn subsetOfInteger(&self) -> BBoolean {

@@ -105,7 +105,7 @@ impl<I: BObject> OrderedHashSet<I> {
         a.into_iter().fold(Self::new(), Self::union)
     }
 
-    pub fn iter(&self) -> Iter<'_, I> { self.set.iter() }
+    pub fn iter<'a>(&'a self) -> Iter<'a, I> { self.set.iter() }
 
     pub fn len(&self) -> usize { self.set.len() }
     pub fn is_empty(&self) -> bool { self.set.is_empty() }

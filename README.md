@@ -38,8 +38,9 @@ Note:
 
 ## Performance
 
-Performance Evaluation for Execution described in [benchmarks/README.md](benchmarks/execution/README.md).
-Performance Evaluation for Model Checking described in [benchmarks/README.md](benchmarks/model_checking/README.md).
+Performance Evaluation for Execution described in [benchmarks/execution/README.md](benchmarks/execution/README.md).
+
+Performance Evaluation for Model Checking described in [benchmarks/model_checking/README.md](benchmarks/model_checking/README.md).
 
 ## Build Java B Types
 

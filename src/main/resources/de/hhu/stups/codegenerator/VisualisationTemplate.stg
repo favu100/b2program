@@ -3,7 +3,7 @@ document, false, for, function, import, true, var
 >>
 
 
-visulisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
+visualisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js";
 import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">
@@ -34,7 +34,7 @@ var _var_div;
 function updateVisuals () {
   <if(svgName)><visualUpdates; separator="\n"><endif>
   <variableUpdates; separator="\n">
-  for (let i = 0; i \< <invariantCount>; i++) {
+  for (let i = 1; i \<= <invariantCount>; i++) {
     _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
   }
   checkTransitions();
@@ -45,6 +45,8 @@ var _buttonLeft = document.createElement("button");
 var _buttonRight = document.createElement("button");
 var _buttonUpload = document.createElement("button");
 var _inputUpload = document.createElement("input");
+var _buttonRun10 = document.createElement("button");
+var _buttonRun500 = document.createElement("button");
 
 function flattenTuple(tuple) {
     if(!(tuple instanceof BTuple)) {
@@ -53,7 +55,7 @@ function flattenTuple(tuple) {
     return [tuple.projection1(), ...flattenTuple(tuple.projection2())];
 }
 
-function createOptionList(event, transition ) {
+function createOptionList(event, transition) {
     let collator = new Intl.Collator([], {numeric: true});
     for(let index in _machine_events[event].parameterNames) {
         let parameter = _machine_events[event].parameterNames[index];
@@ -109,6 +111,7 @@ function checkTransitions () {
 
 _operations_view = document.getElementById("_operations_view");
 _history_view = document.getElementById("_history_view");
+_scenario_view = document.getElementById("_scenario_view");
 
 var _history_onclick_function = function () {
   <initialMachineVar()> = _state_list[this.index]._copy();
@@ -145,9 +148,26 @@ function selectHistoryElement(offset) {
   _history_view.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
   currentHistoryElement = _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")");
   currentHistoryElement.classList.add("active");
-  currentHistoryElement.scrollIntoView({block: "end", behavior: "smooth"});
   updateVisuals();
 }
+
+function createScenarioElement(text, trace) {
+  var scenario_element = document.createElement("button");
+  var remove_element = document.createElement("button");
+  scenario_element.innerHTML = text + "\</br>";
+  remove_element.innerHTML = "X";
+  var div_element = document.createElement("div");
+  div_element.appendChild(scenario_element);
+  div_element.appendChild(remove_element);
+  _scenario_view.appendChild(div_element);
+  scenario_element.onclick = function() {
+    displayTrace(trace);
+  };
+  remove_element.onclick = function() {
+    _scenario_view.removeChild(div_element);
+  };
+}
+
 
 _buttonLeft.innerHTML="&#9664;";
 _buttonLeft.onclick = function(){selectHistoryElement(-1)};
@@ -155,9 +175,18 @@ _buttonRight.innerHTML="&#9654;";
 _buttonRight.onclick = function(){selectHistoryElement(1)};
 _history_view_buttons.appendChild(_buttonLeft);
 _history_view_buttons.appendChild(_buttonRight);
+
 _buttonUpload.textContent = "Import trace";
 _buttonUpload.onclick = importTrace;
 _history_view_buttons.appendChild(_buttonUpload);
+
+_buttonRun10.textContent = "Run trace(10ms)";
+_buttonRun10.onclick = function(){runTrace(10);};
+_history_view_buttons.appendChild(_buttonRun10);
+
+_buttonRun500.textContent = "Run trace(500ms)";
+_buttonRun500.onclick = function(){runTrace(500);};
+_history_view_buttons.appendChild(_buttonRun500);
 
 createHistoryElement("Initialisation", 0);
 
@@ -201,6 +230,7 @@ function importTrace() {
         let response = await fetch(file.name);
         let data = await response.text();
         let trace = JSON.parse(data);
+        createScenarioElement(file.name, trace);
 
         try {
             displayTrace(trace);
@@ -211,6 +241,23 @@ function importTrace() {
     };
 
     _file_input.click();
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runTrace(ms) {
+    let firstElement = _history_view.querySelector("span");
+    firstElement.click();
+    let currentHistoryElement = _history_view.querySelector(".active");
+    let index = currentHistoryElement.index + 1;
+    while (index >= 0 && index \< _state_list.length) {
+      selectHistoryElement(1);
+      await sleep(ms);
+      currentHistoryElement = _history_view.querySelector(".active");
+      index = currentHistoryElement.index + 1;
+    }
 }
 >>
 

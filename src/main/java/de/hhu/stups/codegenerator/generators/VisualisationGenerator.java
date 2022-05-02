@@ -42,7 +42,7 @@ public class VisualisationGenerator{
    * This function generates code for the whole machine with the given AST node.
    */
   public String generateVisualisation(VisBProject visBProject) {
-    ST visualisation = visualisationGroup.getInstanceOf("visulisation");
+    ST visualisation = visualisationGroup.getInstanceOf("visualisation");
     boolean withoutSvg = visBProject.getVisualisation().getSvgPath() == null;
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(visualisation, "svgName", withoutSvg? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
@@ -68,7 +68,7 @@ public class VisualisationGenerator{
   private List<String> generateInvariant(MachineNode mainMachine) {
     List<PredicateNode> invariants = invariantGenerator.splitInvariant(mainMachine.getInvariant());
     List<String> invariantList = new ArrayList<>();
-    int invariantCounter = 0;
+    int invariantCounter = 1;
 
     for (PredicateNode invariant: invariants) {
       String functionName = "_check_inv_" + invariantCounter;

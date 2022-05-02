@@ -194,8 +194,11 @@ public class BacktrackingVisitor implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitIfOrSelectSubstitutionsNode(IfOrSelectSubstitutionsNode node, Void expected) {
-        for(SubstitutionNode substitutionNode : node.getSubstitutions()) {
-            visitSubstitutionNode(substitutionNode, null);
+        choicePointCounter++;
+        choicePointMap.put(node, choicePointCounter);
+        node.getSubstitutions().forEach(substitution -> visitSubstitutionNode(substitution, null));
+        if(node.getElseSubstitution() != null) {
+            visitSubstitutionNode(node.getElseSubstitution(), null);
         }
         return null;
     }

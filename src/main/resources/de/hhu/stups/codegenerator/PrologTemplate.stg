@@ -1,0 +1,36 @@
+keywords() ::= <<
+>>
+
+machine(transitions_init, transitions, props, guards) ::= <<
+start(st).
+
+<transitions_init>
+<transitions; separator="\n">
+
+<props>
+
+<guards; separator="\n\n">
+>>
+
+
+transitions_init(stateRepresentation) ::= <<
+trans(init, st, <stateRepresentation>).
+>>
+
+transitions(operationName, stateRepresentation) ::= <<
+trans(<operationName>, State, NewState) :-
+    tr_<operationName>(State),
+    State = <stateRepresentation),
+    <operation>,
+    NewState = ?.
+>>
+
+guards(operationName, stateRepresentation, predicate) ::= <<
+tr_<operationName>(<stateRepresentation>) :- <predicate>.
+>>
+
+props(stateRepresentation, statePrettyRepresentation, invariants) ::= <<
+    prop(<stateRepresentation>, <statePrettyRepresentation>).
+    prop(State, unsafe) :-
+        <invariants:{\+ <it>(State)}; separator=";\n">.
+>>

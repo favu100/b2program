@@ -56,11 +56,17 @@ public class <machine> {
     public Set\<String> dependentInvariant = new HashSet\<>();
     public String stateAccessedVia;
 
+    <if(false)>
+
+    // there was no condition, should be fixed in the future
+
     <choicePoints; separator="\n\n">
 
     <choicePointOperationTriggeredFlags; separator="\n\n">
 
     <choicePointOperationFlags; separator="\n\n">
+
+    <endif>
 
     <endif>
 
@@ -96,6 +102,10 @@ public class <machine> {
 
     <copy>
 
+    <if(false)>
+
+    // there was no condition, should be fixed in the future
+
     <choicePointsGetters; separator="\n\n">
 
     <choicePointOperationFlagGetters; separator="\n\n">
@@ -107,6 +117,8 @@ public class <machine> {
     <choicePointOperationTriggeredResets; separator="\n\n">
 
     <choicePointOperationApplies; separator="\n\n">
+
+    <endif>
 
     <hash_equal; separator="\n\n">
 
@@ -798,11 +810,33 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-if(iterationConstruct, predicate, then, else1) ::= <<
+if(iterationConstruct, predicate, then, else1, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
 <iterationConstruct; separator="\n">
+<if(false)>
+// condition was: \<if(false)>
+int index = _cp_<operation>_<choicePoint>;
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
+<endif>
+
 if((<predicate>).booleanValue()) {
     <then>
 } <else1; separator=" ">
+<if(false)>
+// condition was: \<if(false)>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    _<operation>_triggered = false;
+    return;
+} else {
+    _<operation>_triggered = true;
+}
+<endif>
 >>
 
 elseif(predicate, then) ::= <<
@@ -836,6 +870,7 @@ if(index == 0) {
     <then>
     <endif>
 } <choice1; separator=" ">
+<if(forModelChecking)>
 if(!_triggered_cp_<operation>_<choicePoint>) {
     _cp_<operation>_<choicePoint> = 0;
     <if(usePreviousChoicePoint)>
@@ -848,6 +883,7 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
 } else {
     _<operation>_triggered = true;
 }
+<endif>
 >>
 
 
@@ -1126,7 +1162,6 @@ private static class ModelChecker {
     private AtomicInteger transitions = new AtomicInteger(0);
     private ThreadPoolExecutor threadPool;
     private Object waitLock = new Object();
-    private Object guardLock = new Object();
 
     private AtomicBoolean invariantViolated = new AtomicBoolean(false);
     private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
@@ -1235,13 +1270,11 @@ if(state.<evalTransitions>()) {
 
 model_check_add_cached_infos(machine) ::= <<
 private void addCachedInfos(final String operation, final <machine> state, final <machine> copiedState) {
-    synchronized(guardLock) {
-        if(isCaching) {
-            copiedState.dependentInvariant = invariantDependency.get(operation);
-            copiedState.dependentGuard = guardDependency.get(operation);
-        }
-        copiedState.stateAccessedVia = operation;
+    if(isCaching) {
+        copiedState.dependentInvariant = invariantDependency.get(operation);
+        copiedState.dependentGuard = guardDependency.get(operation);
     }
+    copiedState.stateAccessedVia = operation;
 }
 >>
 

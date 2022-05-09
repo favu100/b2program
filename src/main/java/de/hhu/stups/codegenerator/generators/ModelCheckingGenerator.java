@@ -142,7 +142,8 @@ public class ModelCheckingGenerator {
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "operation", nameHandler.handle(opNode.getName()));
-        TemplateHandler.add(template, "isNondeterministic", backtrackingGenerator.isNondeterministic(opNode.getName()));
+        //TemplateHandler.add(template, "isNondeterministic", backtrackingGenerator.isNondeterministic(opNode.getName())); // TODO: Fix
+        TemplateHandler.add(template, "isNondeterministic", false);
         //TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         List<String> readParameters = new ArrayList<>();

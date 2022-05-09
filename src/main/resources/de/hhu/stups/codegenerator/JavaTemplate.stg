@@ -1451,64 +1451,65 @@ private void modelCheckMultiThreaded() {
         initCache(machine);
     }
 
-    while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
-        possibleQueueChanges.incrementAndGet();
-        <machine> state = next();
-        Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(state);
+    for (int i = 0; i < threads; i++) {
+        Runnable task= = () -> {
+            while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
+                possibleQueueChanges.incrementAndGet();
+                <machine> state = next();
+                Set\<<machine>\> nextStates = generateNextStates(state);
 
-            nextStates.forEach(nextState -> {
-                synchronized (states) {
-                    if(!states.contains(nextState)) {
-                        states.add(nextState);
-                        synchronized (unvisitedStates) {
-                            unvisitedStates.add(nextState);
+                nextStates.forEach(nextState -> {
+                    synchronized (states) {
+                        if(!states.contains(nextState)) {
+                            states.add(nextState);
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
+                            }
                         }
-                        if(states.size() % 50000 == 0 && isDebug) {
-                            System.out.println("VISITED STATES: " + states.size());
-                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                            System.out.println("-------------------");
+                    }
+                });
+
+                synchronized (unvisitedStates) {
+                    int running = possibleQueueChanges.decrementAndGet();
+                    if (!unvisitedStates.isEmpty() || running == 0) {
+                        synchronized (waitLock) {
+                            waitLock.notify();
                         }
                     }
                 }
-            });
 
-            synchronized (unvisitedStates) {
-                int running = possibleQueueChanges.decrementAndGet();
-                if (!unvisitedStates.isEmpty() || running == 0) {
-                    synchronized (waitLock) {
-                        waitLock.notify();
+                if(invariantViolated(state)) {
+                    invariantViolated.set(true);
+                    counterExampleState = state;
+                    stopThreads.set(true);
+                }
+
+                if(nextStates.isEmpty()) {
+                    deadlockDetected.set(true);
+                    counterExampleState = state;
+                    stopThreads.set(true);
+                }
+
+                synchronized(waitLock) {
+                    if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
+                        try {
+                            waitLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
-            if(invariantViolated(state)) {
-                invariantViolated.set(true);
-                counterExampleState = state;
-                stopThreads.set(true);
-            }
-
-            if(nextStates.isEmpty()) {
-                deadlockDetected.set(true);
-                counterExampleState = state;
-                stopThreads.set(true);
-            }
-
-        };
-
-        threadPool.submit(task);
-        synchronized(waitLock) {
-            if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
-                try {
-                    waitLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
-
+        threadPool.submit(task);
     }
-    threadPool.shutdown();
+    threadPool.shutdown(); // when?
     try {
         threadPool.awaitTermination(5, TimeUnit.SECONDS);
     } catch (InterruptedException e) {

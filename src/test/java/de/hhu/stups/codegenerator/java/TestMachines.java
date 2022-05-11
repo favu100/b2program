@@ -336,5 +336,60 @@ public class TestMachines extends TestJava {
         testJavaMC("Lift_MC_Large");
     }
 
+    @Test
+    public void testNondeterministic_MC() throws Exception {
+        testJavaMC("Nondeterminism_MC");
+    }
+
+    @Test
+    public void testNondeterministic2_MC() throws Exception {
+        testJavaMC("Nondeterminism2_MC");
+    }
+
+    @Test
+    public void testNondeterministic3_MC() throws Exception {
+        testJavaMC("Nondeterminism3_MC");
+    }
+
+    @Test
+    public void testNondeterministic4_MC() throws Exception {
+        testJavaMC("Nondeterminism4_MC");
+    }
+
+    @Test
+    public void testNondeterministic5_MC() throws Exception {
+        testJavaMC("Nondeterminism5_MC");
+    }
+
+    @Test
+    public void testNondeterministic6_MC() throws Exception {
+        testJavaMC("Nondeterminism6_MC");
+    }
+
+    @Test
+    public void testNondeterministic7_MC() throws Exception {
+        testJavaMC("Nondeterminism7_MC");
+    }
+
+    @Test
+    public void testNondeterministic8_MC() throws Exception {
+        testJavaMC("Nondeterminism8_MC");
+    }
+
+    @Test
+    public void testNondeterministic9_MC() throws Exception {
+        testJavaMC("Nondeterminism9_MC");
+    }
+
+    @Test
+    public void testNondeterministic10_MC() throws Exception {
+        testJavaMC("Nondeterminism10_MC");
+    }
+
+    @Test
+    public void testChoice_MC() throws Exception {
+        testJavaMC("Choice_MC");
+    }
+
 
 }

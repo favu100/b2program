@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -51,6 +51,22 @@ public class <machine> {
     }
 
     public <machine> parent;
+    public Set\<String> dependentGuard = new HashSet\<>();
+    public PersistentHashMap guardCache = PersistentHashMap.EMPTY;
+    public Set\<String> dependentInvariant = new HashSet\<>();
+    public String stateAccessedVia;
+
+    <if(false)>
+
+    // there was no condition, should be fixed in the future
+
+    <choicePoints; separator="\n\n">
+
+    <choicePointOperationTriggeredFlags; separator="\n\n">
+
+    <choicePointOperationFlags; separator="\n\n">
+
+    <endif>
 
     <endif>
 
@@ -69,9 +85,9 @@ public class <machine> {
     <initialization>
 
     <if(forModelChecking)>
+
     <copyConstructor>
 
-    <mainMethod>
     <endif>
 
     <operations; separator="\n\n">
@@ -86,9 +102,29 @@ public class <machine> {
 
     <copy>
 
+    <if(false)>
+
+    // there was no condition, should be fixed in the future
+
+    <choicePointsGetters; separator="\n\n">
+
+    <choicePointOperationFlagGetters; separator="\n\n">
+
+    <choicePointOperationFlagResets; separator="\n\n">
+
+    <choicePointOperationTriggered; separator="\n\n">
+
+    <choicePointOperationTriggeredResets; separator="\n\n">
+
+    <choicePointOperationApplies; separator="\n\n">
+
+    <endif>
+
     <hash_equal; separator="\n\n">
 
     <modelcheck>
+
+    <mainMethod>
 
     <endif>
 
@@ -527,6 +563,70 @@ local_declaration(type, identifier) ::= <<
 <declaration(type, identifier)> = null;
 >>
 
+choice_point_declaration(choicePoint, operation) ::= <<
+private int _cp_<operation>_<choicePoint> = 0;
+
+private boolean _flag_cp_<operation>_<choicePoint> = false;
+>>
+
+choice_point_getter(choicePoint, operation) ::= <<
+public int _get_<operation>_<choicePoint>() {
+    return _cp_<operation>_<choicePoint>;
+}
+
+public boolean _get_flag_<operation>_<choicePoint>() {
+    return _flag_cp_<operation>_<choicePoint>;
+}
+>>
+
+
+choice_point_operation_flag_declaration(operation) ::= <<
+private boolean _<operation>_flag_cp = false;
+>>
+
+choice_point_operation_triggered_declaration(operation) ::= <<
+private boolean _<operation>_triggered = false;
+>>
+
+choice_point_operation_flag_getter(operation) ::= <<
+public boolean _get_<operation>_flag_cp() {
+    return _<operation>_flag_cp;
+}
+>>
+
+choice_point_operation_flag_reset(operation) ::= <<
+public void _reset_<operation>_flag_cp() {
+    this._<operation>_flag_cp = false;
+}
+>>
+
+choice_point_operation_triggered(operation) ::= <<
+public boolean _get_<operation>_triggered() {
+    return _<operation>_triggered;
+}
+>>
+
+choice_point_operation_triggered_reset(operation) ::= <<
+public void _reset_<operation>_triggered() {
+    this._<operation>_triggered = false;
+}
+>>
+
+choice_point_operation_apply(machine, operation, applyChoicePoints, applyChoicePointFlag) ::= <<
+public void _apply_<operation>_cp(<machine> machine) {
+    <applyChoicePoints; separator="\n">
+    <applyChoicePointFlag>
+}
+>>
+
+choice_point_operation_apply_choice_point(operation, choicePoint) ::=<<
+this._cp_<operation>_<choicePoint> = machine._cp_<operation>_<choicePoint>;
+>>
+
+choice_point_operation_apply_choice_point_flag(operation) ::= <<
+this._<operation>_flag_cp = machine._<operation>_flag_cp;
+>>
+
 constant_declaration(type, identifier) ::= <<
 private static <type> <identifier>;
 >>
@@ -574,9 +674,33 @@ assignments(assignments) ::= <<
 <assignments; separator="\n">
 >>
 
-nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType) ::= <<
+nondeterminism(iterationConstruct, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg, leftType, rightType, forModelChecking, choicePoint, operation, isLastChoicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
 <iterationConstruct; separator="\n">
+<if(forModelChecking)>
+int _ctr_cp_<operation>_<choicePoint> = _cp_<operation>_<choicePoint>;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>);<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>));<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism(_ctr_cp_<operation>_<choicePoint>)));<endif>
+<if(isLastChoicePoint)>
+_cp_<operation>_<choicePoint>++;
+<endif>
+if(<identifier> != null) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+}
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    _<operation>_triggered = false;
+    return;
+} else {
+    _<operation>_triggered = true;
+}
+<else>
 <if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
+<endif>
 >>
 
 void() ::= <<
@@ -686,11 +810,33 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-if(iterationConstruct, predicate, then, else1) ::= <<
+if(iterationConstruct, predicate, then, else1, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
 <iterationConstruct; separator="\n">
+<if(false)>
+// condition was: \<if(false)>
+int index = _cp_<operation>_<choicePoint>;
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
+<endif>
+
 if((<predicate>).booleanValue()) {
     <then>
 } <else1; separator=" ">
+<if(false)>
+// condition was: \<if(false)>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    _<operation>_triggered = false;
+    return;
+} else {
+    _<operation>_triggered = true;
+}
+<endif>
 >>
 
 elseif(predicate, then) ::= <<
@@ -705,58 +851,205 @@ else {
 }
 >>
 
-choice(len, then, choice1) ::= <<
+choice(len, then, choice1, forModelChecking, choicePoint, operation, isLastChoicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
+<if(forModelChecking)>
+int index = _cp_<operation>_<choicePoint>;
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
+<else>
 int index = (int) Math.floor(Math.random() * <len>);
+<endif>
 if(index == 0) {
+    <if(forModelChecking)>
+    <if(isLastChoicePoint)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
+    _triggered_cp_<operation>_<choicePoint> = true;
     <then>
+    <else>
+    <then>
+    <endif>
 } <choice1; separator=" ">
+<if(forModelChecking)>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    _<operation>_triggered = false;
+    return;
+} else {
+    _<operation>_triggered = true;
+}
+<endif>
 >>
 
 
-choice1(counter, then) ::= <<
+choice1(counter, then, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 else if(index == <counter>) {
+    <if(forModelChecking)>
+    <if(isLastChoicePoint)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
+    _triggered_cp_<operation>_<choicePoint> = true;
     <then>
+    <else>
+    <then>
+    <endif>
 }
 >>
 
-choice2(then) ::= <<
+choice2(then, counter, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
+<if(forModelChecking)>
+else if(index == <counter>) {
+    <if(isLastChoicePoint)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <then>
+}
+<else>
 else {
     <then>
 }
+<endif>
 >>
 
-any(body) ::= <<
+any(body, forModelChecking, usePreviousChoicePoint, previousChoicePoint, choicePoint, operation) ::= <<
+<if(forModelChecking)>
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
 <body>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    _<operation>_triggered = false;
+    return;
+} else {
+    _<operation>_triggered = true;
+}
+<else>
+<body>
+<endif>
 >>
 
-any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
+any_body(otherIterationConstructs, emptyPredicate, predicate, body, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <body>
+   <if(isLastChoicePoint)>
+   _cp_<operation>_<choicePoint>++;
+   <endif>
+    break;
+}
+<else>
 <body>
 break;
+<endif>
+<else>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <if(isLastChoicePoint)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
+    if((<predicate>).booleanValue()) {
+        <body>
+        break;
+    }
+}
 <else>
 if((<predicate>).booleanValue()) {
     <body>
     break;
 }
 <endif>
+<endif>
 >>
 
-becomes_such_that(loads, body) ::= <<
+becomes_such_that(loads, body, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
+<if(forModelChecking)>
+int _ctr_cp_<operation>_<choicePoint> = -1;
+boolean _triggered_cp_<operation>_<choicePoint> = false;
 <loads; separator="\n">
 <body>
+if(!_triggered_cp_<operation>_<choicePoint>) {
+    _cp_<operation>_<choicePoint> = 0;
+    <if(usePreviousChoicePoint)>
+    _cp_<operation>_<previousChoicePoint>++;
+    <else>
+    _<operation>_flag_cp = true;
+    <endif>
+    _<operation>_triggered = false;
+    return;
+} else {
+    _<operation>_triggered = true;
+}
+<else>
+<loads; separator="\n">
+<body>
+<endif>
 >>
 
-becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores, forModelChecking, choicePoint, operation, isLastChoicePoint) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <stores>
+    <if(isLastChoicePoint)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
+    break;
+}
+<else>
 <stores>
 break;
+<endif>
+<else>
+<if(forModelChecking)>
+if(_triggered_cp_<operation>_<choicePoint>) {
+    continue;
+}
+_ctr_cp_<operation>_<choicePoint>++;
+if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
+    _triggered_cp_<operation>_<choicePoint> = true;
+    <if(isLastChoicePoint)>
+    _cp_<operation>_<choicePoint>++;
+    <endif>
+    if((<predicate>).booleanValue()) {
+        <stores>
+        break;
+    }
+}
 <else>
 if((<predicate>).booleanValue()) {
     <stores>
     break;
 }
+<endif>
 <endif>
 >>
 
@@ -869,7 +1162,6 @@ private static class ModelChecker {
     private AtomicInteger transitions = new AtomicInteger(0);
     private ThreadPoolExecutor threadPool;
     private Object waitLock = new Object();
-    private Object guardLock = new Object();
 
     private AtomicBoolean invariantViolated = new AtomicBoolean(false);
     private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
@@ -877,9 +1169,6 @@ private static class ModelChecker {
 
     private final Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
     private final Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
-    private final Map\<<machine>, Set\<String>\> dependentInvariant = new HashMap\<>();
-    private final Map\<<machine>, Set\<String>\> dependentGuard = new HashMap\<>();
-    private final Map\<<machine>, PersistentHashMap> guardCache = new HashMap\<>();
 
     public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
         this.type = type;
@@ -913,18 +1202,15 @@ private static class ModelChecker {
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 @SuppressWarnings("unchecked")
-private Set\<<machine>\> generateNextStates(final <machine> state, final Map\<<machine>, String> stateAccessedVia) {
+private Set\<<machine>\> generateNextStates(final <machine> state) {
     Set\<<machine>\> result = new HashSet\<>();
     if(isCaching) {
-        PersistentHashMap parentsGuard = guardCache.get(state.parent);
+        PersistentHashMap parentsGuard = state.guardCache;
         PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-        Set\<String> dependentGuardsOfState = dependentGuard.get(state);
         Object cachedValue = null;
         boolean dependentGuardsBoolean = true;
         <transitionsWithCaching>
-        synchronized(guardCache) { // TODO: ?
-            guardCache.put(state, newCache);
-        }
+        state.guardCache = newCache;
     } else {
         <transitionsWithoutCaching>
     }
@@ -936,12 +1222,12 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 <if(hasParameters)>
 <if(isCaching)>
 BSet\<<tupleType>\> <transitionIdentifier>;
-if(dependentGuardsOfState != null) {
+if(!state.dependentGuard.isEmpty()) {
     cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
-    dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
+    dependentGuardsBoolean = state.dependentGuard.contains("<evalTransitions>");
 }
 
-if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
     <transitionIdentifier> = state.<evalTransitions>();
 } else {
     <transitionIdentifier> = (BSet\<<tupleType>\>) cachedValue;
@@ -959,12 +1245,12 @@ for(<tupleType> param : <transitionIdentifier>) {
 <else>
 <if(isCaching)>
 boolean <transitionIdentifier>;
-if(dependentGuardsOfState != null) {
+if(!state.dependentGuard.isEmpty()) {
     cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
-    dependentGuardsBoolean = dependentGuardsOfState.contains("<evalTransitions>");
+    dependentGuardsBoolean = state.dependentGuard.contains("<evalTransitions>");
 }
 
-if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
     <transitionIdentifier> = state.<evalTransitions>();
 } else {
     <transitionIdentifier> = (boolean) cachedValue;
@@ -983,36 +1269,47 @@ if(state.<evalTransitions>()) {
 >>
 
 model_check_add_cached_infos(machine) ::= <<
-private void addCachedInfos(final String operation, final <machine> state, final <machine> copiedState, final Map\<<machine>, String> stateAccessedVia) {
-    synchronized(guardLock) {
-        if(isCaching) {
-            if(!dependentInvariant.containsKey(copiedState)) {
-                dependentInvariant.put(copiedState, invariantDependency.get(operation));
-            }
-            if(!dependentGuard.containsKey(copiedState)) {
-                dependentGuard.put(copiedState, guardDependency.get(operation));
-            }
-            if(!stateAccessedVia.containsKey(copiedState)) {
-                stateAccessedVia.put(copiedState, operation);
-            }
-        } else {
-            if(!stateAccessedVia.containsKey(copiedState)) {
-                stateAccessedVia.put(copiedState, operation);
-            }
-        }
+private void addCachedInfos(final String operation, final <machine> state, final <machine> copiedState) {
+    if(isCaching) {
+        copiedState.dependentInvariant = invariantDependency.get(operation);
+        copiedState.dependentGuard = guardDependency.get(operation);
     }
+    copiedState.stateAccessedVia = operation;
 }
 >>
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, caching) ::= <<
+model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters, caching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
+<if(isNondeterministic)>
+<machine> currentState = state._copy();
+Set\<<machine>\> newStatesForNondeterministic = new HashSet\<>();
+while(!currentState._get_calculate_flag_cp()) {
+    <machine> copiedState = state._copy();
+    copiedState._apply_<operation>_cp(currentState);
+    copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
+    if(copiedState._get_<operation>_triggered()) {
+        addCachedInfos("<operation>", state, copiedState);
+        if(!newStatesForNondeterministic.contains(copiedState)) {
+            transitions.getAndIncrement();
+        }
+        result.add(copiedState);
+        newStatesForNondeterministic.add(copiedState);
+    }
+    currentState._apply_<operation>_cp(copiedState);
+    copiedState._reset_<operation>_triggered();
+    copiedState._reset_<operation>_flag_cp();
+}
+<else>
 <machine> copiedState = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 copiedState.parent = state;
-addCachedInfos("<operation>", state, copiedState, stateAccessedVia);
+addCachedInfos("<operation>", state, copiedState);
 result.add(copiedState);
+transitions.getAndIncrement();
+<endif>
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -1030,7 +1327,6 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 model_check_invariants(machine, invariantViolated, invariants) ::= <<
 private boolean invariantViolated(final <machine> state) {
     if(isCaching) {
-        Set\<String> dependentInvariantsOfState = dependentInvariant.get(state);
         <invariantViolated; separator="\n">
         return false;
     }
@@ -1039,7 +1335,7 @@ private boolean invariantViolated(final <machine> state) {
 >>
 
 model_check_invariant(invariant) ::= <<
-if(dependentInvariantsOfState.contains("<invariant>")) {
+if(state.dependentInvariant.contains("<invariant>")) {
     if(!state.<invariant>()) {
         return true;
     }
@@ -1054,7 +1350,7 @@ state.put("<getter>", machine.<getter>());
 >>
 
 model_check_print(machine) ::= <<
-private void printResult(final int states, final int transitions, final Map\<<machine>, String> stateAccessedVia) {
+private void printResult(final int states, final int transitions) {
     if(invariantViolated.get() || deadlockDetected.get()) {
         if(deadlockDetected.get()) {
             System.out.println("DEADLOCK DETECTED");
@@ -1067,8 +1363,8 @@ private void printResult(final int states, final int transitions, final Map\<<ma
         while(counterExampleState != null) {
             sb.insert(0, counterExampleState);
             sb.insert(0, "\n");
-            if(stateAccessedVia.containsKey(counterExampleState)) {
-                sb.insert(0, stateAccessedVia.get(counterExampleState));
+            if(counterExampleState.stateAccessedVia != null) {
+                sb.insert(0, counterExampleState.stateAccessedVia);
             }
             sb.insert(0, "\n\n");
             counterExampleState = counterExampleState.parent;
@@ -1110,13 +1406,10 @@ private void modelCheckSingleThreaded() {
         initCache(machine);
     }
 
-    Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
-
     while(!unvisitedStates.isEmpty()) {
         <machine> state = next();
 
-        Set\<<machine>\> nextStates = generateNextStates(state, stateAccessedVia);
-        transitions.addAndGet(nextStates.size());
+        Set\<<machine>\> nextStates = generateNextStates(state);
 
         nextStates.forEach(nextState -> {
             if(!states.contains(nextState)) {
@@ -1143,7 +1436,7 @@ private void modelCheckSingleThreaded() {
         }
 
     }
-    printResult(states.size(), transitions.get(), stateAccessedVia);
+    printResult(states.size(), transitions.get());
 }
 
 private void modelCheckMultiThreaded() {
@@ -1154,83 +1447,80 @@ private void modelCheckMultiThreaded() {
     AtomicBoolean stopThreads = new AtomicBoolean(false);
     AtomicInteger possibleQueueChanges = new AtomicInteger(0);
 
-    Map\<<machine>, String> stateAccessedVia = new HashMap\<>();
     if(isCaching) {
         initCache(machine);
     }
-    stateAccessedVia.put(machine, null);
 
-    while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
-        possibleQueueChanges.incrementAndGet();
-        <machine> state = next();
-        Runnable task = () -> {
-            Set\<<machine>\> nextStates = generateNextStates(state, stateAccessedVia);
-            transitions.addAndGet(nextStates.size());
+    for (int i = 0; i \< threads; i++) {
+        Runnable task= = () -> {
+            while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
+                possibleQueueChanges.incrementAndGet();
+                <machine> state = next();
+                Set\<<machine>\> nextStates = generateNextStates(state);
 
-            nextStates.forEach(nextState -> {
-                synchronized (states) {
-                    if(!states.contains(nextState)) {
-                        states.add(nextState);
-                        synchronized (unvisitedStates) {
-                            unvisitedStates.add(nextState);
+                nextStates.forEach(nextState -> {
+                    synchronized (states) {
+                        if(!states.contains(nextState)) {
+                            states.add(nextState);
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
+                            }
                         }
-                        if(states.size() % 50000 == 0 && isDebug) {
-                            System.out.println("VISITED STATES: " + states.size());
-                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                            System.out.println("-------------------");
+                    }
+                });
+
+                synchronized (unvisitedStates) {
+                    int running = possibleQueueChanges.decrementAndGet();
+                    if (!unvisitedStates.isEmpty() || running == 0) {
+                        synchronized (waitLock) {
+                            waitLock.notify();
                         }
                     }
                 }
-            });
 
-            synchronized (unvisitedStates) {
-                int running = possibleQueueChanges.decrementAndGet();
-                if (!unvisitedStates.isEmpty() || running == 0) {
-                    synchronized (waitLock) {
-                        waitLock.notify();
+                if(invariantViolated(state)) {
+                    invariantViolated.set(true);
+                    counterExampleState = state;
+                    stopThreads.set(true);
+                }
+
+                if(nextStates.isEmpty()) {
+                    deadlockDetected.set(true);
+                    counterExampleState = state;
+                    stopThreads.set(true);
+                }
+
+                synchronized(waitLock) {
+                    if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
+                        try {
+                            waitLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
-            if(invariantViolated(state)) {
-                invariantViolated.set(true);
-                counterExampleState = state;
-                stopThreads.set(true);
-            }
-
-            if(nextStates.isEmpty()) {
-                deadlockDetected.set(true);
-                counterExampleState = state;
-                stopThreads.set(true);
-            }
-
-        };
-
-        threadPool.submit(task);
-        synchronized(waitLock) {
-            if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
-                try {
-                    waitLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
-
+        threadPool.submit(task);
     }
-    threadPool.shutdown();
+    threadPool.shutdown(); // when?
     try {
         threadPool.awaitTermination(5, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
         e.printStackTrace();
     }
-    printResult(states.size(), transitions.get(), stateAccessedVia);
+    printResult(states.size(), transitions.get());
 }
 
 private void initCache(final <machine> machine) {
     <invariantDependency; separator="\n">
     <guardDependency; separator="\n">
-    dependentInvariant.put(machine, new HashSet\<>());
 }
 >>
 
@@ -1294,3 +1584,5 @@ public static void main(String[] args) {
 
 record_private_variable_prefix() ::= <<
 >>
+
+

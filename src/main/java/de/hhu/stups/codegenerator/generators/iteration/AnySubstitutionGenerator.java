@@ -1,9 +1,14 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.generators.BacktrackingGenerator;
+import de.hhu.stups.codegenerator.generators.BacktrackingVisitor;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.hhu.stups.codegenerator.json.modelchecker.OperationFunctionInfo;
 import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.Node;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
@@ -13,6 +18,7 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by fabian on 28.04.19.
@@ -29,14 +35,18 @@ public class AnySubstitutionGenerator {
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
+    private final BacktrackingGenerator backtrackingGenerator;
+
 
     public AnySubstitutionGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
-                                     final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
+                                    final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator,
+                                    final BacktrackingGenerator backtrackingGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
+        this.backtrackingGenerator = backtrackingGenerator;
     }
 
     /*
@@ -53,12 +63,33 @@ public class AnySubstitutionGenerator {
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
+        TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
-        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations.size());
+        int counter = 0;
+        String operation = null;
+        boolean isLastChoicePoint = false;
+        for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
+            BacktrackingVisitor visitor = entry.getValue();
+            Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
+
+            if(choicePointMap.containsKey(node)) {
+                counter = choicePointMap.get(node);
+                operation = entry.getKey();
+                isLastChoicePoint = counter == choicePointMap.size();
+            }
+        }
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "usePreviousChoicePoint", counter > 1);
+        if(counter > 1) {
+            TemplateHandler.add(template, "previousChoicePoint", counter - 1);
+        }
+        TemplateHandler.add(template, "choicePoint", counter);
+
+        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations.size(), counter, operation, isLastChoicePoint);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -70,13 +101,17 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the inner body of the ANY substitution
     */
-    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, int numberDeclarations) {
+    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, false);
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "body", machineGenerator.visitSubstitutionNode(substitutionNode, null));
+        TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(template, "choicePoint", counter);
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "isLastChoicePoint", isLastChoicePoint);
         return template.render();
     }
 
@@ -99,9 +134,9 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the body of the ANY substitution
     */
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateAnyBody(otherConstructs, predicate, substitution, numberDeclarations);
+        String innerBody = generateAnyBody(otherConstructs, predicate, substitution, numberDeclarations, counter, operation, isLastChoicePoint);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

@@ -147,7 +147,7 @@ public class TestCpp {
 				null);
 
 		Process process = Runtime.getRuntime()
-				.exec("g++ -std=c++14 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+				.exec("g++ -std=c++14 -O2 -g -ferror-limit=100 -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();

@@ -1,11 +1,14 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.analyzers.PrimedIdentifierAnalyzer;
+import de.hhu.stups.codegenerator.generators.BacktrackingGenerator;
+import de.hhu.stups.codegenerator.generators.BacktrackingVisitor;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
@@ -15,6 +18,7 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -34,16 +38,19 @@ public class BecomesSuchThatGenerator {
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
+    private final BacktrackingGenerator backtrackingGenerator;
 
     public BecomesSuchThatGenerator(final STGroup group, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
                                     final IterationConstructGenerator iterationConstructGenerator,
-                                    final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator) {
+                                    final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator,
+                                    final BacktrackingGenerator backtrackingGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
+        this.backtrackingGenerator = backtrackingGenerator;
     }
 
     /*
@@ -63,6 +70,7 @@ public class BecomesSuchThatGenerator {
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
+        TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
 
         generateLoads(template, predicate);
 
@@ -70,7 +78,27 @@ public class BecomesSuchThatGenerator {
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
-        generateBody(template, otherConstructs, enumerationTemplates, predicate, node.getIdentifiers());
+        int counter = 0;
+        String operation = null;
+        boolean isLastChoicePoint = false;
+        for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
+            BacktrackingVisitor visitor = entry.getValue();
+            Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
+
+            if(choicePointMap.containsKey(node)) {
+                counter = choicePointMap.get(node);
+                operation = entry.getKey();
+                isLastChoicePoint = counter == choicePointMap.size();
+            }
+        }
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "usePreviousChoicePoint", counter > 1);
+        if(counter > 1) {
+            TemplateHandler.add(template, "previousChoicePoint", counter - 1);
+        }
+        TemplateHandler.add(template, "choicePoint", counter);
+
+        generateBody(template, otherConstructs, enumerationTemplates, predicate, node.getIdentifiers(), counter, operation, isLastChoicePoint);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -82,8 +110,9 @@ public class BecomesSuchThatGenerator {
     /*
     * This function generates code for the inner body of the becomes such that substitution
     */
-    private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode predicateNode) {
+    private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode predicateNode, int counter, String operation, boolean isLastChoicePoint) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size(), false);
+
         ST template = group.getInstanceOf("becomes_such_that_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
 
@@ -92,6 +121,10 @@ public class BecomesSuchThatGenerator {
 
         List<String> stores = identifiers.stream().map(this::generateStore).collect(Collectors.toList());
         TemplateHandler.add(template, "stores", stores);
+        TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(template, "choicePoint", counter);
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "isLastChoicePoint", isLastChoicePoint);
 
         return template.render();
     }
@@ -115,9 +148,9 @@ public class BecomesSuchThatGenerator {
     /*
     * This function generates code for the body of the becomes such that substitution
     */
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, List<IdentifierExprNode> identifiers) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, List<IdentifierExprNode> identifiers, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateBecomesSuchThatBody(otherConstructs, identifiers, predicate);
+        String innerBody = generateBecomesSuchThatBody(otherConstructs, identifiers, predicate, counter, operation, isLastChoicePoint);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

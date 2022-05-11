@@ -777,6 +777,28 @@ public class BRelation<S,T> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public BTuple<S,T> nondeterminism(int index) {
+		int size = this.size();
+		if(index >= size) {
+			return null;
+		}
+		PersistentHashMap thisMap = this.map;
+		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+
+		int i = 0;
+		for(Object domObj : domain) {
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, (S) domObj);
+			for(Object rangeObj : range) {
+				if(i == index) {
+					return new BTuple<S,T>((S) domObj, (T) rangeObj);
+				}
+				i++;
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
 	public BTuple<S,T> nondeterminism() {
 		PersistentHashMap thisMap = this.map;
 		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));

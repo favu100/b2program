@@ -84,19 +84,9 @@ impl<L: BObject, R: BObject> Hash for BRelation<L, R> {
         if cache.is_none() {
             let mut hasher = DefaultHasher::new();
             self.map.hash(&mut hasher);
-            /*
-            let mut kvs = self.map.iter().collect::<Vec<(&L, &OrdSet<R>)>>();
-            kvs.sort_by(|(k1, _v1), (k2, _v2)| k1.cmp(k2));
-            for (key, value) in kvs {
-                key.hash(&mut hasher);
-                value.iter().for_each(|v| v.hash(&mut hasher));
-            }
-            */
             hash = hasher.finish();
-            //println!("BRelation: cache miss");
             self.hash_cache.replace(Option::Some(hash));
         } else {
-            //println!("BRelation: cache hit");
             hash = cache.unwrap();
         }
         hash.hash(state);

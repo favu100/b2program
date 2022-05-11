@@ -442,10 +442,6 @@ impl sort_m2_data1000_MC {
             let tx = tx.clone();
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
-                if !Self::checkInvariants(&state, last_op, is_caching) {
-                    let _ = tx.send(Err("INVARIANT VIOLATED"));
-                }
-
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
                 if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
@@ -454,6 +450,9 @@ impl sort_m2_data1000_MC {
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
+                if !Self::checkInvariants(&state, last_op, is_caching) {
+                    let _ = tx.send(Err("INVARIANT VIOLATED"));
+                }
                 //println!("Thread {:?} done", thread::current().id());
                 let _ = tx.send(Ok(1));
             });
@@ -467,7 +466,7 @@ impl sort_m2_data1000_MC {
 
             while states_to_process_mutex.lock().unwrap().is_empty() && spawned_tasks - finished_tasks > 0 {
                 //println!("Thread {:?} (main) waiting for a thread to finish", thread::current().id());
-                match rx.recv_timeout(Duration::from_secs(1)) {
+                match rx.try_recv() {
                     Ok(val)  => match val {
                             Ok(_) => finished_tasks += 1,
                             Err(msg) => { println!("{}", msg); stop_threads = true; },

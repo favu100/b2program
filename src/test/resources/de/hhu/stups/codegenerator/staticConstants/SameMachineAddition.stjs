@@ -1,0 +1,2 @@
+let sameMachine: SameMachine = new SameMachine();
+console.log(sameMachine.res().toString());

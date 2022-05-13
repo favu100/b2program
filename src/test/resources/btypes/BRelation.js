@@ -29,7 +29,7 @@ export class BRelation {
     }
     static fromSet(set) {
         let resultMap = immutable.Map();
-        set.getSet().forEach(e => {
+        set.getSet().forEach((e) => {
             let key = e.projection1();
             let value = e.projection2();
             let range = resultMap.get(key);
@@ -148,12 +148,7 @@ export class BRelation {
         return new BSet(resultSet);
     }
     functionCall(arg) {
-        let range = undefined;
-        for (let elem of this.map.keys()) {
-            if (elem.equals(arg)) {
-                range = this.map.get(elem);
-            }
-        }
+        let range = this.map.get(arg);
         if (range == null) {
             throw new Error("Argument is not in the domain of this relation");
         }
@@ -174,7 +169,7 @@ export class BRelation {
             let currentSet = queue.pop();
             for (let domainElement of thisDomain) {
                 let range = thisMap.get(domainElement);
-                range.forEach(rangeElement => {
+                range.forEach((rangeElement) => {
                     let nextRelation = currentSet.union(BRelation.fromSet(new BSet(new BTuple(domainElement, rangeElement))));
                     let previousSize = result.size().intValue();
                     result = result.union(new BSet(nextRelation));
@@ -319,7 +314,7 @@ export class BRelation {
             return new BRelation(this.map);
         }
         let resultMap = this.map;
-        //Remove immutable.Sets with index greater than n
+        //Remove sets with index greater than n
         for (let i = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
             for (let index of resultMap.keys()) {
                 if (index.equals(i)) {
@@ -384,8 +379,8 @@ export class BRelation {
                 continue;
             }
             let resultRange = immutable.Set();
-            thisRange.forEach(lhs => {
-                otherRange.forEach(rhs => {
+            thisRange.forEach((lhs) => {
+                otherRange.forEach((rhs) => {
                     resultRange = immutable.Set.union([resultRange, immutable.Set([new BTuple(lhs, rhs)])]);
                 });
             });
@@ -404,8 +399,8 @@ export class BRelation {
                 let thisRange = thisMap.get(domainElementThis);
                 let otherRange = otherMap.get(domainElementOther);
                 let resultRange = immutable.Set();
-                thisRange.forEach(lhs => {
-                    otherRange.forEach(rhs => {
+                thisRange.forEach((lhs) => {
+                    otherRange.forEach((rhs) => {
                         resultRange = resultRange.union(immutable.Set([new BTuple(lhs, rhs)]));
                     });
                 });
@@ -416,7 +411,6 @@ export class BRelation {
         return new BRelation(resultMap);
     }
     composition(arg) {
-        let thisMap = this.map;
         let otherMap = arg.map;
         let resultMap = immutable.Map();
         for (let domainElement of this.map.keys()) {
@@ -435,15 +429,15 @@ export class BRelation {
     }
     iterate(n) {
         let thisRelation = this;
-        let result = BRelation.identity(this.domain());
+        let result = BRelation.identity(this.domain().union(this.range()));
         for (let i = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
-            result = result.union(result.composition(thisRelation));
+            result = result.composition(thisRelation);
         }
         return result;
     }
     closure() {
         let thisRelation = this;
-        let result = BRelation.identity(this.domain());
+        let result = BRelation.identity(this.domain().union(this.range()));
         let nextResult = result.composition(thisRelation);
         let lastResult = result;
         do {
@@ -469,8 +463,8 @@ export class BRelation {
         let argSet1 = arg1.getSet();
         let argSet2 = arg2.getSet();
         let resultMap = immutable.Map();
-        argSet1.forEach(e1 => {
-            argSet2.forEach(e2 => {
+        argSet1.forEach((e1) => {
+            argSet2.forEach((e2) => {
                 let tuple = new BTuple(e1, e2);
                 resultMap = resultMap.set(tuple, immutable.Set([e1]));
             });
@@ -481,8 +475,8 @@ export class BRelation {
         let argSet1 = arg1.getSet();
         let argSet2 = arg2.getSet();
         let resultMap = immutable.Map();
-        argSet1.forEach(e1 => {
-            argSet2.forEach(e2 => {
+        argSet1.forEach((e1) => {
+            argSet2.forEach((e2) => {
                 let tuple = new BTuple(e1, e2);
                 resultMap = resultMap.set(tuple, immutable.Set([e2]));
             });
@@ -493,7 +487,7 @@ export class BRelation {
         let thisMap = this.map;
         let domain = this.domain().getSet();
         let resultMap = immutable.Map();
-        domain.forEach(domainElement => {
+        domain.forEach((domainElement) => {
             let range = thisMap.get(domainElement);
             let rangeSet = new BSet([range]);
             resultMap = resultMap.set(domainElement, immutable.Set([rangeSet]));
@@ -503,7 +497,7 @@ export class BRelation {
     rel() {
         let domain = this.domain().getSet();
         let resultMap = immutable.Map();
-        domain.forEach(domainElement => {
+        domain.forEach((domainElement) => {
             let range = this.functionCall(domainElement);
             let rangeSet = range.getSet();
             resultMap = resultMap.set(domainElement, rangeSet);
@@ -512,14 +506,14 @@ export class BRelation {
     }
     static identity(arg) {
         let resultMap = immutable.Map();
-        arg.getSet().forEach(e => {
+        arg.getSet().forEach((e) => {
             resultMap = resultMap.set(e, immutable.Set([e]));
         });
         return new BRelation(resultMap);
     }
     static cartesianProduct(arg1, arg2) {
         let resultMap = immutable.Map();
-        arg1.getSet().forEach(e1 => {
+        arg1.getSet().forEach((e1) => {
             resultMap = resultMap.set(e1, arg2.getSet());
         });
         return new BRelation(resultMap);
@@ -574,7 +568,7 @@ export class BRelation {
         return this.domain().strictSubset(domain);
     }
     isPartialInteger() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BInteger) {
                 return new BBoolean(true);
             }
@@ -585,7 +579,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     isPartialNatural() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BInteger && !e.isNatural().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -593,7 +587,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     isPartialNatural1() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BInteger && !e.isNatural1().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -601,7 +595,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     isPartialString() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BString && !e.isString().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -609,7 +603,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     isPartialStruct() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BStruct && !e.isRecord().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -620,7 +614,7 @@ export class BRelation {
         return this.domain().subset(domain);
     }
     checkDomainInteger() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BInteger) {
                 return new BBoolean(true);
             }
@@ -631,7 +625,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkDomainNatural() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BInteger && !e.isNatural().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -639,7 +633,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkDomainNatural1() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BInteger && !e.isNatural1().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -647,7 +641,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkDomainString() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BString && !e.isString().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -655,7 +649,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkDomainStruct() {
-        this.domain().getSet().forEach(e => {
+        this.domain().getSet().forEach((e) => {
             if (e instanceof BStruct && !e.isRecord().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -666,7 +660,7 @@ export class BRelation {
         return this.range().subset(range);
     }
     checkRangeInteger() {
-        this.range().getSet().forEach(e => {
+        this.range().getSet().forEach((e) => {
             if (e instanceof BInteger) {
                 return new BBoolean(true);
             }
@@ -677,7 +671,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkRangeNatural() {
-        this.range().getSet().forEach(e => {
+        this.range().getSet().forEach((e) => {
             if (e instanceof BInteger && !e.isNatural().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -685,7 +679,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkRangeNatural1() {
-        this.range().getSet().forEach(e => {
+        this.range().getSet().forEach((e) => {
             if (e instanceof BInteger && !e.isNatural1().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -693,7 +687,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkRangeString() {
-        this.range().getSet().forEach(e => {
+        this.range().getSet().forEach((e) => {
             if (e instanceof BString && !e.isString().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -701,7 +695,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     checkRangeStruct() {
-        this.range().getSet().forEach(e => {
+        this.range().getSet().forEach((e) => {
             if (e instanceof BStruct && !e.isRecord().booleanValue()) {
                 return new BBoolean(false);
             }
@@ -712,7 +706,7 @@ export class BRelation {
         return new BBoolean(true);
     }
     isFunction() {
-        this.domain().getSet().forEach(element => {
+        this.domain().getSet().forEach((element) => {
             let range = this.map.get(element);
             if (range.size > 1) {
                 return new BBoolean(false);
@@ -740,9 +734,9 @@ export class BRelation {
     }
     isInjection() {
         let visited = immutable.Set();
-        this.domain().getSet().forEach(element => {
+        this.domain().getSet().forEach((element) => {
             let range = this.map.get(element);
-            range.forEach(rangeElement => {
+            range.forEach((rangeElement) => {
                 if (visited.contains(rangeElement)) {
                     return new BBoolean(false);
                 }
@@ -776,7 +770,7 @@ export class BRelation {
         sb = sb + "{";
         for (let domainElement of this.map.keys()) {
             let range = this.map.get(domainElement);
-            range.forEach(rangeElement => {
+            range.forEach((rangeElement) => {
                 sb += "(";
                 sb += domainElement.toString();
                 sb += " |-> ";

@@ -5,12 +5,6 @@ import org.junit.Test;
 public class TestMachines extends TestProlog {
     @Test
     public void testLift() throws Exception {
-        testProlog("Lift", "Lift", "LiftAddition.stjava", true);
+        testProlog("Lift");
     }
-
-    @Test
-    public void testLift_MC() throws Exception {
-        testPrologMC("Lift_MC");
-    }
-
 }

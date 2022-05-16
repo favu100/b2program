@@ -1,36 +1,184 @@
-keywords() ::= <<
->>
-
-machine(transitions_init, transitions, props, guards) ::= <<
+machine(transitions, props, guards, initialization) ::= <<
 start(st).
 
-<transitions_init>
+<initialization>
 <transitions; separator="\n">
 
 <props>
 
 <guards; separator="\n\n">
+
+less(X, Y) :-
+    X \< Y.
+greater(X, Y) :-
+    X > Y.
+
 >>
 
-
-transitions_init(stateRepresentation) ::= <<
-trans(init, st, <stateRepresentation>).
->>
-
-transitions(operationName, stateRepresentation) ::= <<
+transition(operationName, stateRepresentation, predicate) ::= <<
 trans(<operationName>, State, NewState) :-
-    tr_<operationName>(State),
-    State = <stateRepresentation),
-    <operation>,
+    State = <stateRepresentation>,
+    <predicate>,
     NewState = ?.
 >>
 
-guards(operationName, stateRepresentation, predicate) ::= <<
-tr_<operationName>(<stateRepresentation>) :- <predicate>.
+operation() ::= <<
 >>
 
 props(stateRepresentation, statePrettyRepresentation, invariants) ::= <<
-    prop(<stateRepresentation>, <statePrettyRepresentation>).
-    prop(State, unsafe) :-
-        <invariants:{\+ <it>(State)}; separator=";\n">.
+prop(<stateRepresentation>, <statePrettyRepresentation>).
+prop(State, unsafe) :-
+    <invariants:{it | \+ <it>(State)}; separator=";\n">.
+>>
+
+
+assignment(isMath, isRepresentation, identifier, val) ::= <<
+<if(isMath)>
+<identifier> is <val>
+<endif>
+<if(isRepresentation)>
+<identifier>/<val>
+<endif>
+<identifier>/<val>
+>>
+
+binary(arg1, operator, arg2) ::= <<
+<operator>(<arg1>, <arg2>)
+>>
+
+or(arg1, arg2) ::= <<
+(<arg1>; <arg2>)
+>>
+
+and(arg1, arg2) ::= <<
+(<arg1>, <arg2>)
+>>
+
+implies(arg1, arg2) ::= <<
+(\+ <arg1> ; <arg2>)
+>>
+
+equivalent(arg1, arg2) ::= <<
+new BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue() || <arg1>.booleanValue()))
+>>
+
+copy() ::= <<
+>>
+
+copy_assignment() ::= <<
+>>
+
+copy_constructor() ::= <<
+>>
+
+getter() ::= <<
+>>
+
+global_declaration() ::= <<
+>>
+
+identifier(identifier) ::= <<
+<identifier>
+>>
+
+import_type() ::= <<
+>>
+
+initialization(machine, properties, values, body) ::= <<
+trans(init, st, (<body>)).
+>>
+
+interval() ::= <<
+>>
+
+invariant() ::= <<
+>>
+
+keywords() ::= <<
+>>
+
+local_declaration() ::= <<
+>>
+
+machine_equal() ::= <<
+>>
+
+machine_equal_predicate() ::= <<
+>>
+
+machine_hash() ::= <<
+>>
+
+machine_hash_assignment() ::= <<
+>>
+
+machine_unequal() ::= <<
+>>
+
+machine_unequal_predicate() ::= <<
+>>
+
+machine_string() ::= <<
+>>
+
+method() ::= <<
+>>
+
+modelchecker() ::= <<
+>>
+
+model_check_add_cached_infos() ::= <<
+>>
+
+model_check_init_static() ::= <<
+>>
+
+model_check_invariant() ::= <<
+>>
+
+model_check_invariants() ::= <<
+>>
+
+model_check_main() ::= <<
+>>
+
+model_check_main_method() ::= <<
+>>
+
+model_check_next_states() ::= <<
+>>
+
+model_check_print() ::= <<
+>>
+
+model_check_transition() ::= <<
+>>
+
+model_check_transition_body() ::= <<
+>>
+
+no_return() ::= <<
+>>
+
+number(number) ::= <<
+<number>
+>>
+
+parameter() ::= <<
+>>
+
+pre_assert() ::= <<
+>>
+
+return() ::= <<
+>>
+
+type() ::= <<
+>>
+
+values(assignments) ::= <<
+<assignments; separator="\n">
+>>
+
+void() ::= <<
 >>

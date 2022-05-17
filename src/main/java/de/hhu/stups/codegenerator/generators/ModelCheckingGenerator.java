@@ -12,11 +12,7 @@ import de.prob.parser.ast.types.CoupleType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ModelCheckingGenerator {
@@ -305,6 +301,29 @@ public class ModelCheckingGenerator {
             invariants.add(template.render());
         }
         return invariants;
+    }
+
+    public String generateModelCheckingProBProp(MachineNode machineNode) {
+        ST template = currentGroup.getInstanceOf("props");
+        TemplateHandler.add(template, "stateRepresentation", generateProBStateRepresentation(machineNode));
+        TemplateHandler.add(template, "statePrettyRepresentation", generateProBStateRepresentation(machineNode, " = "));
+        TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
+        System.out.println(template.render());
+        return template.render();
+    }
+
+    public String generateProBStateRepresentation(MachineNode machineNode) {
+        return generateProBStateRepresentation(machineNode, "/");
+    }
+
+    public String generateProBStateRepresentation(MachineNode machineNode, String separator) {
+        StringJoiner stateRep = new StringJoiner(", ", "(", ")");
+
+        List<DeclarationNode> variables = machineNode.getVariables();
+        for (int i = 0; i < variables.size(); i++) {
+            stateRep.add(variables.get(i).getName() + separator + "V" + i);
+        }
+        return stateRep.toString();
     }
 
 

@@ -1452,7 +1452,7 @@ private void modelCheckMultiThreaded() {
     }
 
     for (int i = 0; i \< threads; i++) {
-        Runnable task= = () -> {
+        Runnable task = () -> {
             while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
                 possibleQueueChanges.incrementAndGet();
                 <machine> state = next();
@@ -1506,12 +1506,12 @@ private void modelCheckMultiThreaded() {
                 }
 
             }
-        }
+        };
         threadPool.submit(task);
     }
     threadPool.shutdown(); // when?
     try {
-        threadPool.awaitTermination(5, TimeUnit.SECONDS);
+        threadPool.awaitTermination(24, TimeUnit.HOURS);
     } catch (InterruptedException e) {
         e.printStackTrace();
     }

@@ -45,7 +45,7 @@ public class TestProlog {
                 String.valueOf(Integer.MIN_VALUE),
                 String.valueOf(Integer.MAX_VALUE),
                 "10",
-                false,
+                true,
                 false,
                 true,
                 null,
@@ -84,43 +84,43 @@ public class TestProlog {
                 false,
                 false,
                 null);
-        Runtime runtime = Runtime.getRuntime();
-        Process compileProcess = runtime.exec("javac -cp btypes_persistent.jar " +
-                String.join(" ", javaFilePaths.stream()
-                        .map(path -> path.toFile().getAbsoluteFile().toString())
-                        .collect(Collectors.toSet())));
-        compileProcess.waitFor();
-
-        String error = streamToString(compileProcess.getErrorStream());
-        if(!error.isEmpty()) {
-            throw new RuntimeException(error);
-        }
-        Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
-
-        if(!execute) {
-            return;
-        }
-
-        String generatedMachinePath = Paths.get("out", "test", "resources", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
-
-        Process executeProcess = runtime.exec("java -cp btypes_persistent.jar:" + generatedMachinePath);
-        executeProcess.waitFor();
-
-        error = streamToString(executeProcess.getErrorStream());
-        if(!error.isEmpty()) {
-            throw new RuntimeException(error);
-        }
-
-        String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
-        String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out"))).replaceAll("\n", "");
-
-        System.out.println("Assert: " + result + " = " + expectedOutput);
-
-        assertEquals(expectedOutput, result);
-
-        Set<File> classFiles = javaFilePaths.stream()
-                .map(path -> new File(path.getParent().toFile(), machinePath + ".class"))
-                .collect(Collectors.toSet());
+//        Runtime runtime = Runtime.getRuntime();
+//        Process compileProcess = runtime.exec("javac -cp btypes_persistent.jar " +
+//                String.join(" ", javaFilePaths.stream()
+//                        .map(path -> path.toFile().getAbsoluteFile().toString())
+//                        .collect(Collectors.toSet())));
+//        compileProcess.waitFor();
+//
+//        String error = streamToString(compileProcess.getErrorStream());
+//        if(!error.isEmpty()) {
+//            throw new RuntimeException(error);
+//        }
+//        Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
+//
+//        if(!execute) {
+//            return;
+//        }
+//
+//        String generatedMachinePath = Paths.get("out", "test", "resources", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
+//
+//        Process executeProcess = runtime.exec("java -cp btypes_persistent.jar:" + generatedMachinePath);
+//        executeProcess.waitFor();
+//
+//        error = streamToString(executeProcess.getErrorStream());
+//        if(!error.isEmpty()) {
+//            throw new RuntimeException(error);
+//        }
+//
+//        String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
+//        String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out"))).replaceAll("\n", "");
+//
+//        System.out.println("Assert: " + result + " = " + expectedOutput);
+//
+//        assertEquals(expectedOutput, result);
+//
+//        Set<File> classFiles = javaFilePaths.stream()
+//                .map(path -> new File(path.getParent().toFile(), machinePath + ".class"))
+//                .collect(Collectors.toSet());
 
         //javaFilePaths.forEach(path -> cleanUp(path.toString()));
         //classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));

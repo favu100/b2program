@@ -4,13 +4,11 @@ import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
-import de.hhu.stups.codegenerator.generators.iteration.IterationConstructGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
-import de.hhu.stups.codegenerator.json.modelchecker.OperationFunctionInfo;
 import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
@@ -33,7 +31,6 @@ import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
 import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
-import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -48,13 +45,9 @@ import de.prob.parser.ast.nodes.substitution.LetSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
-import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
-import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
-import de.prob.parser.ast.types.DeferredSetElementType;
-import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.UntypedType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.ST;
@@ -65,8 +58,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
 
 /*
 * The code generator is implemented by using the visitor pattern
@@ -191,7 +182,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	/*
 	* This function generates code for the whole machine with the given AST node.
 	*/
-	public String generateMachine(MachineNode node) {
+	public String generateMachine(MachineNode node, GeneratorMode mode) {
 		recordStructAnalyzer.visitMachineNode(node);
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		backtrackingGenerator.calculateChoicePoints(node);
@@ -205,6 +196,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "methods", generateMethods(node));
 		TemplateHandler.add(machine, "includedMachines", importGenerator.generateMachineImports(node));
 		TemplateHandler.add(machine, "machine", nameHandler.handle(node.getName()));
+		if (mode == GeneratorMode.PL) {
+			TemplateHandler.add(machine, "props", modelCheckingGenerator.generateModelCheckingProBProp(node));
+			TemplateHandler.add(machine, "initialState", modelCheckingGenerator.generateProBStateRepresentation(node));
+		}
 		generateBody(node, machine);
 		return machine.render();
 	}

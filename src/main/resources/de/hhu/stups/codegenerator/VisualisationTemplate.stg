@@ -44,6 +44,7 @@ var _history_view_buttons = document.getElementById("_history_view_buttons");
 var _buttonLeft = document.createElement("button");
 var _buttonRight = document.createElement("button");
 var _buttonUpload = document.createElement("button");
+var _buttonExport = document.createElement("button");
 var _inputUpload = document.createElement("input");
 var _buttonRun10 = document.createElement("button");
 var _buttonRun500 = document.createElement("button");
@@ -180,6 +181,10 @@ _buttonUpload.textContent = "Import trace";
 _buttonUpload.onclick = importTrace;
 _history_view_buttons.appendChild(_buttonUpload);
 
+_buttonExport.textContent = "Export trace";
+_buttonExport.onclick = exportTrace;
+_history_view_buttons.appendChild(_buttonExport);
+
 _buttonRun10.textContent = "Run trace(10ms)";
 _buttonRun10.onclick = function(){runTrace(10);};
 _history_view_buttons.appendChild(_buttonRun10);
@@ -189,6 +194,7 @@ _buttonRun500.onclick = function(){runTrace(500);};
 _history_view_buttons.appendChild(_buttonRun500);
 
 createHistoryElement("Initialisation", 0);
+var _current_trace = [{name: "$initialise_machine", params: {}}];
 
 var _param_div;
 var _param_datalist;
@@ -215,6 +221,10 @@ function displayTrace(trace) {
       let parameters = Object.keys(transition.params).map(param => _machine_events[transition.name][param].parseValue(transition.params[param]))
       let returnValue = _machine[transition.name](...parameters);
       createHistoryElement(transition.name + "(" + parameters.join(", ") + ")" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+      let parametersJSON = {};
+      <parameterNames: {param | parametersJSON["<param>"] = _machine_events["<machineEvent>"]["<param>"].getValue().toString();};separator="\n">
+
+      _current_trace.push({name: transition.name, params: parametersJSON});
     }
     updateVisuals();
     selectHistoryElement(_history_view.querySelector("span:last-of-type").index-_history_view.querySelector(".active").index);
@@ -241,6 +251,25 @@ function importTrace() {
     };
 
     _file_input.click();
+}
+
+function exportTrace() {
+  var transitions = _current_trace;
+  var object = {
+    description: "Created from B2Program JS Export",
+    transitionList: transitions,
+    metadata: {
+      fileType: "Trace",
+      formatVersion: 1,
+      creator: "B2Program JS",
+      modelName: "<machineName>"
+    }
+  };
+  const blob = new Blob([JSON.stringify(object, null, '\t')]);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Scenario.prob2trace';
+  a.click();
 }
 
 function sleep(ms) {
@@ -327,6 +356,10 @@ function() {
     var parameters = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>];
     var returnValue = <initialMachineVar()>.<machineEvent>(...parameters);
     createHistoryElement("<machineEvent>(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+    let parametersJSON = {};
+    <parameterNames: {param | parametersJSON["<param>"] = _machine_events["<machineEvent>"]["<param>"].getValue().toString();};separator="\n">
+
+    _current_trace.push({name: "<machineEvent>", params: parametersJSON});
     updateVisuals();
   } catch (error) {
     if(! error instanceof SelectError) {

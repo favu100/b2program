@@ -221,9 +221,7 @@ function displayTrace(trace) {
       let parameters = Object.keys(transition.params).map(param => _machine_events[transition.name][param].parseValue(transition.params[param]))
       let returnValue = _machine[transition.name](...parameters);
       createHistoryElement(transition.name + "(" + parameters.join(", ") + ")" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-      let parametersJSON = {};
-      <parameterNames: {param | parametersJSON["<param>"] = _machine_events["<machineEvent>"]["<param>"].getValue().toString();};separator="\n">
-
+      let parametersJSON = transition.params;
       _current_trace.push({name: transition.name, params: parametersJSON});
     }
     updateVisuals();

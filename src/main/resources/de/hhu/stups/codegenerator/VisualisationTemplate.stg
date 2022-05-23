@@ -356,7 +356,7 @@ function() {
     createHistoryElement("<machineEvent>(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
     let parametersJSON = {};
     <parameterNames: {param | parametersJSON["<param>"] = _machine_events["<machineEvent>"]["<param>"].getValue().toString();};separator="\n">
-
+    _current_trace = _current_trace.slice(0, index + 1)
     _current_trace.push({name: "<machineEvent>", params: parametersJSON});
     updateVisuals();
   } catch (error) {

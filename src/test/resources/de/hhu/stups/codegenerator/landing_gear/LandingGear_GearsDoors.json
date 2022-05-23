@@ -1,0 +1,18 @@
+{
+  "svg":"physical.svg",
+  "items":[
+    {
+		  "repeat": ["fr", "lt", "rt"],
+		  "id":"door_%0",
+		  "attr":"xlink:href",
+		  "value":"{open |-> \"img/door_open.png\", closed |-> \"img/door_closed.png\", door_moving |-> \"img/door_door_moving.png\"}(doors(%0))"
+	  },
+    {
+		  "repeat": ["fr", "lt", "rt"],
+		  "id":"gear_%0",
+		  "attr":"xlink:href",
+		  "value": "{extended |-> \"img/gear_extended.png\", retracted |-> \"img/gear_retracted.png\", gear_moving |-> \"img/gear_gear_moving.png\"}(gears(%0))"
+	  }
+  ],
+  "events": []
+}

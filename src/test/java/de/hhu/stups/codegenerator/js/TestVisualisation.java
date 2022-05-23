@@ -30,6 +30,11 @@ public class TestVisualisation extends TestJs {
     }
 
     @Test
+    public void testLandingGear2() throws Exception {
+        testJs("landing_gear/LandingGear_R6", "LandingGear_R6", null, "LandingGear_GearsDoors.json", false, true);
+    }
+
+    @Test
     public void testAnd() throws Exception {
         testJs("visualisation/And", "And", null, null, false, true);
     }

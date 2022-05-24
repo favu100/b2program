@@ -424,12 +424,12 @@ Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`
 
 #### Java
 
-1.`java -cp :btypes_primitives-all.jar <main file> <strategy> <threads> <caching>`
+1. `java -cp :btypes_primitives-all.jar <main file> <strategy> <threads> <caching>`
 2. Example: `java -cp :btypes_primitives-all.jar TrafficLight mixed 6 true`
 
 #### C++
 
-1`./<main file> <strategy> <threads> <caching>`
+1. `./<main file> <strategy> <threads> <caching>`
 2. Example: `./TrafficLight.exec mixed 6 true`
 
 

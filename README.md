@@ -448,14 +448,16 @@ Remark:
 
 
 
-## Steps from B Model to Output of the Generated Code (with primitive types, and manual simulation)
+## Steps from B Model to Execution of the Generated Code (with primitive types)
 
 ### Example 1: Lift
 
 The file for `Lift.mch` is in https://github.com/favu100/b2program/tree/master/src/test/resources/de/hhu/stups/codegenerator.
-Lift consists of operation to lift up and lift down and getting the floor. 
+Lift consists of operation to lift up and lift down and getting the floor.
 
-#### Java
+#### Execution with manual simulation
+
+##### Java
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
@@ -477,7 +479,7 @@ public static void main(String[] args) {
 * Execute the compiled file for `Lift.java` with `java -cp :btypes_primitives-all.jar Lift`
 * Output: `3`
 
-#### C++
+##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
 * Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Lift.mch ```
@@ -503,6 +505,33 @@ make install
 * Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
 * Execute `Lift.exec` with `./Lift`
 
+#### Model Checking
+
+##### Java
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false true Lift.mch```
+* Build B types in btypes_primitives `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primitives and move it to this folder
+* Move `btypes_primitives-all.jar` to the same folder as `Lift.java`
+* Compile `Lift.java` with `javac -cp btypes_primitives-all.jar Lift.java`
+* Execute the compiled file for `Lift.java` with `java -cp :btypes_primitives-all.jar Lift mixed 1 false`
+
+
+##### C++
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false true Lift.mch ```
+* Install C++ B types with
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+* Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
+* Execute `Lift.exec` with `./Lift 1 false`
+
 
 ### Example 2: Cruise_finite1_deterministic_exec
 The file for `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic` are in https://github.com/favu100/b2program/tree/master/src/test/resources/de/hhu/stups/codegenerator.
@@ -510,7 +539,9 @@ The machine Cruise_finite1_deterministic_exec includes the machine Cruise_finite
 Cruise_finite1_deterministic_exec contains an operation for executing a cycle in the state space of Cruise_finite1_deterministic 100.000 times.
 Furthermore it has getter operations for all variables.
 
-#### Java
+#### Execution with manual simulation
+
+##### Java
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
@@ -559,7 +590,7 @@ false
 false
 ```
 
-#### C++
+##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
 * Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
@@ -594,7 +625,7 @@ make install
 ```
 
 * Compile `Cruise_finite1_deterministic_exec.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic_exec.exec Cruise_finite1_deterministic_exec.cpp`
-* Execute `Cruise_finite1_deterministic_exec.exec` with `./Cruise_finite1_deterministic_exec`
+* Execute `Cruise_finite1_deterministic_exec.exec` with `./Cruise_finite1_deterministic_exec.exec`
 * Output:
 ```bash
 false
@@ -613,3 +644,30 @@ false
 false
 ```
 
+
+#### Model Checking
+
+##### Java
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false true Cruise_finite1_deterministic.mch ```
+* Build B types in btypes_primitives with `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primtives and move it to this folder
+* Move `btypes_primitives-all.jar` to the same folder as the generated classes
+* Compile `Cruise_finite1_deterministic.java` with `javac -cp btypes_primitives-all.jar Cruise_finite1_deterministic.java`
+* Execute the compiled file for `Cruise_finite1_deterministic.java` with `java -cp :btypes_primitives-all.jar Cruise_finite1_deterministic mixed 6 true`
+
+
+##### C++
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false true Cruise_finite1_deterministic.mch ```
+* Install C++ B types with
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+* Compile `Cruise_finite1_deterministic.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic.exec Cruise_finite1_deterministic.cpp`
+* Execute `Cruise_finite1_deterministic.exec` with `./Cruise_finite1_deterministic.exec mixed 6 true`

@@ -1,9 +1,9 @@
 # B2Program
 
 This is the code generator **B2Program** for generating code from B to other
-programming languages.
-
-A subset of B is supported for Java, C++, and Python now. The work for code generation for Clojure and C has begun but not continued.
+programming languages (Java, C++, Python, JavaScript/TypeScript).
+Currently, code generation for Prolog and Rust are in progress.
+The work for Clojure and C has begun but not continued.
 
 
 Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Generator_for_High-Level_B
@@ -23,6 +23,13 @@ doi = {10.1007/978-3-030-34968-4_25}
 }
 ```
 
+The main features of B2Program are:
+- Code generation from a formal model
+- Code generation for model checking including parallelization, and caching (only supported in Java and C++)
+- Code generation of interactive domain-specific visualizations (from VisB) in HTML and JavaScript/TypeScript
+
+
+
 Note:
 
 * The implementation of the B types in C++ uses persistent set from:
@@ -35,6 +42,7 @@ Note:
   The only types that are implemented for C are BInteger and BBoolean.
   An example where code generation for C works is the machine Lift.
 * Executing all tests requires building Java B Types and installing C++ B Types
+
 
 ## Performance
 

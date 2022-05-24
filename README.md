@@ -389,7 +389,9 @@ java -jar B2Program-all-0.1.0-SNAPSHOT.jar c <isBigInteger> <minint> <maxint> <d
 
 Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`  are not optional when using JAR-File.
 
-### Compile the generated code in Java
+### Compile generated Code
+
+#### Java
 
 1. Build JAR for Java B Types (`make btypes_primitives` or `make btypes_big_integer`)
 2. Move `btypes_persistent.jar` to same folder as the generated classes
@@ -397,38 +399,48 @@ Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`
 4. Example: `javac -cp btypes_primitives-all.jar TrafficLightExec.java TrafficLight.java`
   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
   
-### Compile the generated code in C++
+#### C++
   
 1. Install C++ B Types or move them (see btypes_primitives or btypes_big_integer folder) to same folder as the generated classes
 2. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
 3. Example: `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
 
-### Compile the generated code in C
+### Execute generated code (manual simulation)
 
-1. Move BInteger and BBoolean to same folder as generated code (see btypes/src/main/c)
-2. `gcc <input file> -o <output file>`
-3. Example: `gcc Lift.c -o Lift`
-
-### Execute the generated code in Java
+#### Java
 
 1. Write a main function in the generated main class
 2. `java -cp :btypes_primitives-all.jar <main file>`
 3. Example: `java -cp :btypes_primitives-all.jar TrafficLightExec`
 
-### Execute the generated code in C++
+#### C++
 
 1. Write a main function in the generated main class
 2. `./<main file>`
 3. Example: `./TrafficLightExec.exec`
 
-### Execute the generated code in C
+### Execute generated model checking code
 
-1. Write a main function in the generated main file
-2. `./main.c`
-3. Example: `./Lift`
+#### Java
 
-## Steps from B Model to Output of the Generated Code (with primitive types)
+1.`java -cp :btypes_primitives-all.jar <main file> <strategy> <threads> <caching>`
+2. Example: `java -cp :btypes_primitives-all.jar TrafficLight mixed 6 true`
+
+#### C++
+
+1`./<main file> <strategy> <threads> <caching>`
+2. Example: `./TrafficLight.exec mixed 6 true`
+
+
+Remark: 
+* strategy : {mixed, bf, df}
+* threads : NATURAL
+* caching : {TRUE, FALSE}
+
+
+
+## Steps from B Model to Output of the Generated Code (with primitive types, and manual simulation)
 
 ### Example 1: Lift
 

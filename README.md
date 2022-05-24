@@ -340,7 +340,9 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 Comments are ignored during code generation. Furthermore trees and pragmas are not supported by B2Program.
 
 
-Remark: SELECT with ELSE Branches are not supported yet
+Remarks: 
+* SELECT with ELSE Branches are not supported yet
+* Non-determinism for model checking is only supported for top-level SELECT and PRE
 
 
 ## Usage

@@ -686,6 +686,53 @@ false
 false
 ```
 
+##### JavaScript/TypeScript
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Cruise_finite1_deterministic_exec.mch`
+* Generate code for `Cruise_finite1_deterministic_exec.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar ts false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
+* Write additional code executing generated functions in `Cruise_finite1_deterministic_exec.ts`
+
+```typescript
+let cruise: Cruise_finite1_deterministic_exec = new Cruise_finite1_deterministic_exec();
+cruise.simulate();
+console.log(cruise.getCruiseAllowed().toString());
+console.log(cruise.getCruiseActive().toString());
+console.log(cruise.getVehicleAtCruiseSpeed().toString());
+console.log(cruise.getVehicleCanKeepSpeed().toString());
+console.log(cruise.getVehicleTryKeepSpeed().toString());
+console.log(cruise.getSpeedAboveMax().toString());
+console.log(cruise.getVehicleTryKeepTimeGap().toString());
+console.log(cruise.getCruiseSpeedAtMax().toString());
+console.log(cruise.getObstaclePresent().toString());
+console.log(cruise.getObstacleDistance().toString());
+console.log(cruise.getObstacleRelativeSpeed().toString());
+console.log(cruise.getObstacleStatusJustChanged().toString());
+console.log(cruise.getCCInitialisationInProgress().toString());
+console.log(cruise.getCruiseSpeedChangeInProgress().toString());
+```
+
+* Move `btypes_primitives` for `js` to the same directory as `Cruise_finite1_deterministic_exec.ts`
+* Transpile `Cruise_finite1_deterministic_exec.ts` and `Cruise_finite1_deterministic.ts` to `Cruise_finite1_deterministic_exec.js` and `Cruise_finite1_deterministic.js` with `tsc --target ES6 --moduleResolution node Cruise_finite1_deterministic_exec.ts Cruise_finite1_deterministic.ts`
+* Execute the transpiled file with `node --experimental-specifier-resolution=node Cruise_finite1_deterministic_exec.js`
+* Output:
+
+```bash
+false
+false
+false
+false
+false
+false
+false
+false
+false
+ODnone
+RSnone`
+false
+false
+false
+```
 
 #### Model Checking
 

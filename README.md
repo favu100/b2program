@@ -396,7 +396,7 @@ java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp <isBigInteger> <minint> <maxint> 
 # Python
 java -jar B2Program-all-0.1.0-SNAPSHOT.jar python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
-# TypeScript
+# JavaScript/TypeScript
 java -jar B2Program-all-0.1.0-SNAPSHOT.jar typescript <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
 # C

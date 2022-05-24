@@ -422,7 +422,7 @@ Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`
 3. Example: `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
 
-### JavaScript/TypeScript
+#### JavaScript/TypeScript
 1. Move B types to same folder (see btypes_primitives or btypes_big_integer directory) as generated code
 2. `tsc --target ES6 --moduleResolution node <files...>`
 3. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`

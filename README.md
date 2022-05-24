@@ -361,6 +361,9 @@ Remarks:
 # Python
 ./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
+# JavaScript/TypeScript
+./gradlew run -Planguage="ts" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+
 # C
 ./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
@@ -392,6 +395,9 @@ java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp <isBigInteger> <minint> <maxint> 
 
 # Python
 java -jar B2Program-all-0.1.0-SNAPSHOT.jar python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
+
+# TypeScript
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar typescript <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
 # C
 java -jar B2Program-all-0.1.0-SNAPSHOT.jar c <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>

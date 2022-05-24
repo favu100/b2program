@@ -1,0 +1,136 @@
+{
+  "svg":"LichtUebersicht_v2.svg",
+  "items":[
+    {
+    "id":"A-right",
+    "attr":"fill",
+    "value":"IF right_blink:active_blinkers THEN IF blinkRight=lamp_off THEN \"#ffe6cc\" ELSE \"orange\" END ELSE \"white\" END"
+    },
+    {
+    "id":"A-right",
+    "attr":"stroke-opacity",
+    "value":"IF right_blink:active_blinkers THEN \"0.5\" ELSE \"1\" END"
+    },
+    
+    {
+    "id":"B-right",
+    "attr":"stroke-opacity",
+    "value":"IF right_blink:active_blinkers THEN \"0.5\" ELSE \"1\" END"
+    },
+    {
+    "id":"B-right",
+    "attr":"fill",
+    "value":"IF right_blink:active_blinkers THEN IF blinkRight=lamp_off THEN \"#ffe6cc\" ELSE \"orange\" END ELSE \"white\" END"
+    },
+    
+    {
+    "id":"C-right",
+    "attr":"fill",
+    "value":"IF right_blink:active_blinkers THEN IF blinkRight=lamp_off THEN \"#ffe6cc\" ELSE \"orange\" END ELSE \"white\" END"
+    },
+    {
+    "id":"C-right",
+    "attr":"stroke-opacity",
+    "value":"IF right_blink:active_blinkers THEN \"0.5\" ELSE \"1\" END"
+    },
+    
+    {
+    "id":"A-left",
+    "attr":"fill",
+    "value":"IF left_blink:active_blinkers THEN IF blinkLeft=lamp_off THEN \"#ffe6cc\" ELSE \"orange\" END ELSE \"white\" END"
+    },
+    {
+    "id":"A-left",
+    "attr":"stroke-opacity",
+    "value":"IF left_blink:active_blinkers THEN \"0.5\" ELSE \"1\" END"
+    },
+    
+    {
+    "id":"B-left",
+    "attr":"stroke-opacity",
+    "value":"IF left_blink:active_blinkers THEN \"0.5\" ELSE \"1\" END"
+    },
+    {
+    "id":"B-left",
+    "attr":"fill",
+    "value":"IF left_blink:active_blinkers THEN IF blinkLeft=lamp_off THEN \"#ffe6cc\" ELSE \"orange\" END ELSE \"white\" END"
+    },
+    
+    {
+    "id":"C-left",
+    "attr":"fill",
+    "value":"IF left_blink:active_blinkers THEN IF blinkLeft=lamp_off THEN \"#ffe6cc\" ELSE \"orange\" END ELSE \"white\" END"
+    },
+    {
+    "id":"C-left",
+    "attr":"stroke-opacity",
+    "value":"IF left_blink:active_blinkers THEN \"0.5\" ELSE \"1\" END"
+    },
+    
+    {
+    "id":"front-window",
+    "attr":"fill",
+    "value":"IF engineOn=TRUE THEN \"#f2f2f2\" ELSE \"white\" END"
+    },
+    {
+    "id":"back-window",
+    "attr":"fill",
+    "value":"IF engineOn=TRUE THEN \"#f2f2f2\" ELSE \"white\" END"
+    },
+    {
+    "id":"warningLight",
+    "attr":"fill-opacity",
+    "value":"IF hazardWarningSwitchOn=switch_on THEN \"0.6\" ELSE \"0.1\" END"
+    },
+    
+    {
+    "id":"PitmanNeutral",
+    "attr":"fill-opacity",
+    "value":"IF pitmanArmUpDown=Neutral THEN \"1\" ELSE \"0.2\" END"
+    },
+    {
+    "id":"PitmanUpward",
+    "attr":"fill-opacity",
+    "value":"IF pitmanArmUpDown=Upward7 THEN \"1\" ELSIF pitmanArmUpDown=Upward5 THEN \"0.7\" ELSE \"0.2\" END"
+    },
+    {
+    "id":"PitmanDownward",
+    "attr":"fill-opacity",
+    "value":"IF pitmanArmUpDown=Downward7 THEN \"1\" ELSIF pitmanArmUpDown=Downward5 THEN \"0.7\" ELSE \"0.2\" END"
+    },
+    
+    {
+    "id":"car_outline",
+    "attr":"stroke-opacity",
+    "value":"IF engineOn=TRUE THEN \"1.0\" ELSE \"0.5\" END"
+    }
+],
+  "events":[
+    {
+      "id":"warningLight",
+      "event":"ENV_Hazard_blinking"
+    },
+    {
+      "id":"front-window",
+      "event":"ENV_Turn_EngineOn"
+    },
+    {
+      "id":"PitmanNeutral",
+      "event":"ENV_Pitman_Reset_to_Neutral"
+    },
+    {
+      "id":"PitmanUpward",
+      "event":"ENV_Pitman_DirectionBlinking",
+      "predicates":[
+        "newPos=Upward7"
+      ]
+    },
+    {
+      "id":"PitmanDownward",
+      "event":"ENV_Pitman_DirectionBlinking",
+      "predicates":[
+        "newPos=Downward7"
+      ]
+    }
+    ]
+}

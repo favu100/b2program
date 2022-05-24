@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1896"
+   version="1.1"
+   width="98.866058"
+   height="96.676758"
+   sodipodi:docname="Key.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview6329"
+     showgrid="false"
+     inkscape:zoom="2.8433735"
+     inkscape:cx="-20.78519"
+     inkscape:cy="41.480327"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="ignition" />
+  <metadata
+     id="metadata1902">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1900" />
+  <g
+     transform="matrix(1.1911573,0,0,1.1647802,-10.124837,-9.9006317)"
+     id="ignition-layer">
+    <g
+       id="ignition">
+      <circle
+         style="fill:#808080;stroke:#808080;stroke-width:3"
+         id="circle1890"
+         r="40"
+         cy="50"
+         cx="50" />
+      <ellipse
+         style="fill:#494949;stroke:#494949;stroke-width:2.40303135"
+         id="circle1892"
+         cy="50"
+         cx="50"
+         rx="23.803005"
+         ry="24.259792" />
+      <rect
+         style="fill:#000000;fill-opacity:1"
+         id="rect6208"
+         width="13.559322"
+         height="30.084745"
+         x="43.220341"
+         y="34.322033" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.33333349px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none"
+         x="19.913101"
+         y="-100.88259"
+         id="text6917"
+         transform="matrix(-0.38445029,0.94405083,-0.90270348,-0.3844503,0,0)"><tspan
+           sodipodi:role="line"
+           id="tspan6915"
+           x="19.913101"
+           y="-100.88259">START</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.33333349px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1"
+         x="63.698452"
+         y="-63.434811"
+         id="text6917-7"
+         transform="matrix(0.38879411,0.94218856,-0.90092278,0.38879412,0,0)"><tspan
+           style="stroke-width:1"
+           sodipodi:role="line"
+           id="tspan6915-3"
+           x="63.698452"
+           y="-63.434811">ON</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.33333349px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1"
+         x="69.099663"
+         y="-14.083524"
+         id="text6917-5"
+         transform="matrix(0.88720363,0.47182619,-0.45116124,0.88720367,0,0)"><tspan
+           style="stroke-width:1"
+           sodipodi:role="line"
+           id="tspan6915-30"
+           x="69.099663"
+           y="-14.083524">ACC</tspan></text>
+    </g>
+  </g>
+  <g
+     transform="matrix(1.2199409,0.0064397,-0.00604819,1.1457667,-11.070343,-10.130296)"
+     id="key-inserted-layer"
+     style="fill:#000000">
+    <g
+       visibility="hidden"
+       transform="matrix(1.1281738,0,0,1.2266666,14.93372,-16.073443)"
+       id="key-inserted"
+       style="fill:#000000">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke-width:0.83614457"
+         id="rect6890"
+         width="22.676216"
+         height="55.067017"
+         x="19.678703"
+         y="26.21656"
+         rx="20"
+         ry="5" />
+      <rect
+         style="fill:#1a1a1a;fill-opacity:1;stroke-width:1.10055423"
+         id="rect6893"
+         width="5.7390733"
+         height="54.845291"
+         x="28.167255"
+         y="26.373297"
+         rx="33.472603"
+         ry="5.0076761" />
+    </g>
+  </g>
+  <g
+     transform="matrix(0.55545704,1.0861698,-1.0201291,0.5216844,72.66677,-32.920254)"
+     id="key-on-position-layer"
+     style="fill:#000000">
+    <g
+       transform="matrix(1.1281738,0,0,1.2266666,14.93372,-16.073443)"
+       id="key-on-position"
+       visibility="hidden"
+       style="fill:#000000">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke-width:0.83614457"
+         id="rect6890-0"
+         width="22.676216"
+         height="55.067017"
+         x="19.678703"
+         y="26.21656"
+         rx="20"
+         ry="5" />
+      <rect
+         style="fill:#1a1a1a;fill-opacity:1;stroke-width:1.10055423"
+         id="rect6893-3"
+         width="5.7390733"
+         height="54.845291"
+         x="28.167255"
+         y="26.373297"
+         rx="33.472603"
+         ry="5.0076761" />
+    </g>
+  </g>
+  <g
+     transform="matrix(0.01972985,1.2197984,-1.1456328,0.0185302,105.67114,-14.504551)"
+     id="engine-started-layer"
+     style="fill:#000000">
+    <g
+       visibility="hidden"
+       transform="matrix(1.0996363,0.26846651,-0.25748706,1.1956376,29.658811,-22.732608)"
+       id="engine-start"
+       style="fill:#000000">
+      <rect
+         style="fill:#000000;fill-opacity:1;stroke-width:0.83614457"
+         id="rect6890-0-7"
+         width="22.676216"
+         height="55.067017"
+         x="19.678703"
+         y="26.21656"
+         rx="20"
+         ry="5" />
+      <rect
+         style="fill:#1a1a1a;fill-opacity:1;stroke-width:1.10055423"
+         id="rect6893-3-2"
+         width="5.7390733"
+         height="54.845291"
+         x="28.167255"
+         y="26.373297"
+         rx="33.472603"
+         ry="5.0076761" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,35 @@
+{
+  "svg":"LichtUebersicht.svg",
+  "items":[
+    {
+    "id":"A-right",
+    "attr":"fill",
+    "value":"IF right_blink:active_blinkers THEN IF blink_lamps_status=lamp_on THEN \"yellow\" ELSE \"#ffffcc\" END ELSE \"#f4eed7\" END"
+    },
+    {
+    "id":"B-right",
+    "attr":"fill",
+    "value":"IF right_blink:active_blinkers THEN IF blink_lamps_status=lamp_on THEN \"yellow\" ELSE \"#ffffcc\" END ELSE \"white\" END"
+    },
+    {
+    "id":"C-right",
+    "attr":"fill",
+    "value":"IF right_blink:active_blinkers THEN IF blink_lamps_status=lamp_on THEN \"orange\" ELSE \"#ffe6cc\" END ELSE \"#d40000\" END"
+    },
+    {
+    "id":"A-left",
+    "attr":"fill",
+    "value":"IF left_blink:active_blinkers THEN IF blink_lamps_status=lamp_on THEN \"yellow\" ELSE \"#ffffcc\" END ELSE \"#f4eed7\" END"
+    },
+    {
+    "id":"B-left",
+    "attr":"fill",
+    "value":"IF left_blink:active_blinkers THEN IF blink_lamps_status=lamp_on THEN \"yellow\" ELSE \"#ffffcc\" END ELSE \"white\" END"
+    },
+    {
+    "id":"C-left",
+    "attr":"fill",
+    "value":"IF left_blink:active_blinkers THEN IF blink_lamps_status=lamp_on THEN \"orange\" ELSE \"#ffe6cc\" END ELSE \"#d40000\" END"
+    }
+]
+}

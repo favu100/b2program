@@ -1,0 +1,71 @@
+{
+  "svg":"traffic_light.svg",
+  "items":[
+    {
+      "id":"cars_red",
+      "attr":"fill",
+      "value":"IF tl_cars = red or tl_cars = redyellow THEN \"red\" ELSE \"black\" END"
+    },
+    {
+      "id":"cars_yellow_1",
+      "attr":"fill",
+      "value":"IF tl_cars = yellow or tl_cars = redyellow THEN \"yellow\" ELSE \"black\" END"
+    },
+    {
+      "id":"cars_yellow_1",
+      "attr":"visibility",
+      "value":"IF tl_cars /= green THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"cars_yellow_2",
+      "attr":"fill",
+      "value":"IF tl_cars = yellow or tl_cars = redyellow THEN \"yellow\" ELSE \"black\" END"
+    },
+    {
+      "id":"cars_yellow_2",
+      "attr":"visibility",
+      "value":"IF tl_cars /= red THEN \"visible\" ELSE \"hidden\" END"
+    },
+    {
+      "id":"cars_green",
+      "attr":"fill",
+      "value":"IF tl_cars = green THEN \"green\" ELSE \"black\" END"
+    },
+    {
+      "id":"peds_red",
+      "attr":"fill",
+      "value":"IF tl_peds = red THEN \"red\" ELSE \"black\" END"
+    },
+    {
+      "id":"peds_green",
+      "attr":"fill",
+      "value":"IF tl_peds = green THEN \"green\" ELSE \"black\" END"
+    }
+  ],
+  "events": [
+      {
+        "id":"cars_red",
+        "event":"cars_r"
+      },
+      {
+        "id":"cars_yellow_1",
+        "event":"cars_ry"
+      },
+      {
+        "id":"cars_yellow_2",
+        "event":"cars_y"
+      },
+      {
+        "id":"cars_green",
+        "event":"cars_g"
+      },
+      {
+        "id":"peds_red",
+        "event":"peds_r"
+      },
+      {
+        "id":"peds_green",
+        "event":"peds_g"
+      }
+  ]
+}

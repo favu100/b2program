@@ -1,0 +1,114 @@
+{
+  "machineName": "PitmanController_TIME_MC_v4",
+  "variables": [],
+  "operationFunctions": [
+    {
+      "opName": "ENV_Pitman_Tip_blinking_start",
+      "parameterTypes": [
+        "PitmanController_TIME_MC_v4$Sensors.PITMAN_POSITION"
+      ]
+    },
+    {
+      "opName": "RTIME_Tip_blinking_Timeout",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "RTIME_BlinkerOn",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "RTIME_BlinkerOff",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "RTIME_Nothing",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger",
+        "de.hhu.stups.btypes.BBoolean"
+      ]
+    },
+    {
+      "opName": "RTIME_Passes",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "ENV_Turn_EngineOn",
+      "parameterTypes": []
+    },
+    {
+      "opName": "ENV_Turn_EngineOff",
+      "parameterTypes": []
+    },
+    {
+      "opName": "ENV_Pitman_DirectionBlinking",
+      "parameterTypes": [
+        "PitmanController_TIME_MC_v4$Sensors.PITMAN_POSITION"
+      ]
+    },
+    {
+      "opName": "ENV_Pitman_Reset_to_Neutral",
+      "parameterTypes": []
+    },
+    {
+      "opName": "ENV_Hazard_blinking",
+      "parameterTypes": [
+        "PitmanController_TIME_MC_v4$Sensors.SWITCH_STATUS"
+      ]
+    }
+  ],
+  "transitionEvaluationFunctions": {
+    "RTIME_BlinkerOn": "_tr_RTIME_BlinkerOn",
+    "ENV_Turn_EngineOff": "_tr_ENV_Turn_EngineOff",
+    "ENV_Pitman_Tip_blinking_start": "_tr_ENV_Pitman_Tip_blinking_start",
+    "ENV_Turn_EngineOn": "_tr_ENV_Turn_EngineOn",
+    "RTIME_BlinkerOff": "_tr_RTIME_BlinkerOff",
+    "RTIME_Passes": "_tr_RTIME_Passes",
+    "RTIME_Nothing": "_tr_RTIME_Nothing",
+    "ENV_Pitman_DirectionBlinking": "_tr_ENV_Pitman_DirectionBlinking",
+    "ENV_Pitman_Reset_to_Neutral": "_tr_ENV_Pitman_Reset_to_Neutral",
+    "RTIME_Tip_blinking_Timeout": "_tr_RTIME_Tip_blinking_Timeout",
+    "ENV_Hazard_blinking": "_tr_ENV_Hazard_blinking"
+  },
+  "invariants": [
+    "_check_inv_1",
+    "_check_inv_2",
+    "_check_inv_3",
+    "_check_inv_4",
+    "_check_inv_5",
+    "_check_inv_6"
+  ],
+  "invariantDependency": {
+    "RTIME_BlinkerOn": [],
+    "ENV_Turn_EngineOff": [],
+    "ENV_Pitman_Tip_blinking_start": [],
+    "ENV_Turn_EngineOn": [],
+    "RTIME_BlinkerOff": [],
+    "RTIME_Passes": [],
+    "RTIME_Nothing": [],
+    "ENV_Pitman_DirectionBlinking": [],
+    "ENV_Pitman_Reset_to_Neutral": [],
+    "RTIME_Tip_blinking_Timeout": [],
+    "ENV_Hazard_blinking": []
+  },
+  "guardDependency": {
+    "RTIME_BlinkerOn": [],
+    "ENV_Turn_EngineOff": [],
+    "ENV_Pitman_Tip_blinking_start": [],
+    "ENV_Turn_EngineOn": [],
+    "RTIME_BlinkerOff": [],
+    "RTIME_Passes": [],
+    "RTIME_Nothing": [],
+    "ENV_Pitman_DirectionBlinking": [],
+    "ENV_Pitman_Reset_to_Neutral": [],
+    "RTIME_Tip_blinking_Timeout": [],
+    "ENV_Hazard_blinking": []
+  }
+}

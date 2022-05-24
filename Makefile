@@ -1,4 +1,7 @@
-.PHONY: install btypes_primitives btypes_big_integer
+.PHONY: install b2program btypes_primitives btypes_big_integer
+
+b2program:
+	./gradlew fatJar
 
 btypes_primitives:
 	cd btypes_primitives && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../btypes.jar && cd ..

@@ -495,15 +495,15 @@ public static void main(String[] args) {
 }
 ```
 
-* Build B types in btypes_primitives `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primitives and move it to this folder
-* Move `btypes_primitives-all.jar` to the same folder as `Lift.java`
+* Build B types in btypes_primitives `./gradlew fatJar` in the belonging directory or execute `make` which builds btypes_primitives and move it to this folder
+* Move `btypes_primitives-all.jar` to the same directory as `Lift.java`
 * Compile `Lift.java` with `javac -cp btypes_primitives-all.jar Lift.java`
 * Execute the compiled file for `Lift.java` with `java -cp :btypes_primitives-all.jar Lift`
 * Output: `3`
 
 ##### C++
 * Run `./gradlew fatJar` to build the JAR-file
-* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
 * Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Lift.mch ```
 * Write a main method in `Lift.cpp` 
 ```cpp
@@ -526,6 +526,26 @@ make install
 
 * Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
 * Execute `Lift.exec` with `./Lift`
+
+##### JavaScript/TypeScript
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar ts false -2147483648 2147483647 10 false false Lift.mch ```
+* Write additional code executing generated functions in `Lift.ts`
+
+```typescript
+let lift: Lift = new Lift();
+lift.inc();
+lift.inc();
+lift.inc();
+console.log(lift.getFloor().toString());
+```
+
+* Move `btypes_primitives` for `js` to the same directory as `Lift.ts`
+* Transpile `Lift.ts` to `Lift.js` with `tsc --target ES6 --moduleResolution node Lift.ts`
+* Execute the transpiled file with `node --experimental-specifier-resolution=node Lift.js`
+* Output: `3`
 
 #### Model Checking
 

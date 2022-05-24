@@ -410,17 +410,25 @@ Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`
 #### Java
 
 1. Build JAR for Java B Types (`make btypes_primitives` or `make btypes_big_integer`)
-2. Move `btypes_persistent.jar` to same folder as the generated classes
+2. Move `btypes_persistent.jar` to same directory as the generated classes
 3. `javac -cp btypes_primitives-all.jar <files....>`
 4. Example: `javac -cp btypes_primitives-all.jar TrafficLightExec.java TrafficLight.java`
   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
   
 #### C++
   
-1. Install C++ B Types or move them (see btypes_primitives or btypes_big_integer folder) to same folder as the generated classes
+1. Install C++ B Types or move them (see btypes_primitives or btypes_big_integer directory) to same directory as the generated classes
 2. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
 3. Example: `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
+
+### JavaScript/TypeScript
+1. Move B types to same folder (see btypes_primitives or btypes_big_integer directory) as generated code
+2. `tsc --target ES6 --moduleResolution node <files...>`
+3. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`
+   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
+
+
 
 ### Execute generated code (manual simulation)
 
@@ -435,6 +443,12 @@ Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`
 1. Write a main function in the generated main class
 2. `./<main file>`
 3. Example: `./TrafficLightExec.exec`
+
+#### JavaScript/TypeScript
+1. Write a main function in the generated main class
+2. `node --experimental-specifier-resolution=node <main file>`
+3. Example: `node --experimental-specifier-resolution=node TrafficLightExec.js`
+
 
 ### Execute generated model checking code
 

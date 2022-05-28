@@ -1,0 +1,228 @@
+{
+  "svg":"architecture.svg",
+  "items":[
+	  {
+		  "repeat": ["1", "2", "3"],
+		  "id":"eo_general_%0",
+		  "attr":"stroke",
+		  "value":"IF general_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"eo_open_doors_%0",
+		  "attr":"stroke",
+		  "value":"IF open_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"eo_close_doors_%0",
+		  "attr":"stroke",
+		  "value":"IF close_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"eo_retract_gears_%0",
+		  "attr":"stroke",
+		  "value":"IF retract_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"eo_extend_gears_%0",
+		  "attr":"stroke",
+		  "value":"IF extend_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "for": {"from": "1", "to": "6"},
+		  "id":"hydraulic_circuit_%0",
+		  "attr":"stroke-width",
+		  "value":"IF general_valve = valve_open THEN 2 ELSE 1 END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4", "5", "6"],
+		  "id":"hydraulic_circuit_%0",
+		  "attr":"stroke",
+		  "value":"IF general_valve = valve_open THEN \"#88d2f7\" ELSE \"#cccccc\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"extension_circuit_doors_%0",
+		  "attr":"stroke-width",
+		  "value":"IF valve_open_door = valve_open THEN 2 ELSE 1 END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"extension_circuit_doors_%0",
+		  "attr":"stroke",
+		  "value":"IF valve_open_door = valve_open THEN \"#88d2f7\" ELSE \"#cccccc\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"retraction_circuit_doors_%0",
+		  "attr":"stroke-width",
+		  "value":"IF valve_close_door = valve_open THEN 2 ELSE 1 END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"retraction_circuit_doors_%0",
+		  "attr":"stroke",
+		  "value":"IF valve_close_door = valve_open THEN \"#88d2f7\" ELSE \"#cccccc\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"extension_circuit_gears_%0",
+		  "attr":"stroke-width",
+		  "value":"IF valve_extend_gear = valve_open THEN 2 ELSE 1 END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"extension_circuit_gears_%0",
+		  "attr":"stroke",
+		  "value":"IF valve_extend_gear = valve_open THEN \"#88d2f7\" ELSE \"#cccccc\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"retraction_circuit_gears_%0",
+		  "attr":"stroke-width",
+		  "value":"IF valve_retract_gear = valve_open THEN 2 ELSE 1 END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3", "4"],
+		  "id":"retraction_circuit_gears_%0",
+		  "attr":"stroke",
+		  "value":"IF valve_retract_gear = valve_open THEN \"#88d2f7\" ELSE \"#cccccc\" END"
+	  },
+	  
+	  {
+		  "id":"door_cylinder_forcer",
+		  "attr":"transform",
+		  "value":"{closed |-> \"translate(0,0)\", open |-> \"translate(90,0)\", door_moving |-> \"translate(45,0)\"}(door)"
+	  },
+	  {
+		  "id":"gear_cylinder_forcer",
+		  "attr":"transform",
+		  "value":"{extended |-> \"translate(0,0)\", retracted |-> \"translate(90,0)\", gear_moving |-> \"translate(45,0)\"}(gear)"
+	  },
+	  {
+		  "repeat": ["fr","lt", "rt"],
+		  "id":"%0_door_cylinder_forcer",
+		  "attr":"transform",
+		  "value":"{closed |-> \"translate(0,0)\", open |-> \"translate(90,0)\", door_moving |-> \"translate(45,0)\"}(doors(%0))"
+	  },
+	  {
+		  "repeat": ["fr","lt", "rt"],
+		  "id":"%0_gear_cylinder_forcer",
+		  "attr":"transform",
+		  "value":"{extended |-> \"translate(0,0)\", retracted |-> \"translate(90,0)\", gear_moving |-> \"translate(45,0)\"}(gears(%0))"
+	  },
+	  {
+		  "repeat": ["fr", "lt", "rt"],
+		  "id":"%0_door_cylinder_l",
+		  "attr":"fill",
+		  "value":"{closed |-> \"#cccccc\", open |-> \"#88d2f7\", door_moving |-> \"#88d2f7\"}(doors(%0))"
+	  },
+	  {
+		  "repeat": ["fr", "lt", "rt"],
+		  "id":"%0_door_cylinder_r",
+		  "attr":"fill",
+		  "value":"{closed |-> \"#cccccc\", open |-> \"#88d2f7\", door_moving |-> \"#cccccc\"}(doors(%0))"
+	  },
+	  {
+		  "repeat": ["fr","lt", "rt"],
+		  "id":"%0_gear_cylinder_l",
+		  "attr":"fill",
+		  "value":"{extended |-> \"#cccccc\", retracted |-> \"#88d2f7\", gear_moving |-> \"#88d2f7\"}(gears(%0))"
+	  },
+	  {
+		  "repeat": ["fr","lt", "rt"],
+		  "id":"%0_gear_cylinder_r",
+		  "attr":"fill",
+		  "value":"{extended |-> \"#cccccc\", retracted |-> \"#88d2f7\", gear_moving |-> \"#cccccc\"}(gears(%0))"
+	  },
+	  {
+		  "id":"ev_handle",
+		  "attr":"xlink:href",
+		  "value":"IF handle = up THEN \"img/handle_up.png\" ELSE \"img/handle_down.png\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"ev_general_%0",
+		  "attr":"fill",
+		  "value":"IF general_valve = valve_open THEN \"blue\" ELSE \"gray\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"ev_open_doors_%0",
+		  "attr":"fill",
+		  "value":"IF valve_open_door = valve_open THEN \"blue\" ELSE \"gray\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"ev_close_doors_%0",
+		  "attr":"fill",
+		  "value":"IF valve_close_door = valve_open THEN \"blue\" ELSE \"gray\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"ev_extended_gears_%0",
+		  "attr":"fill",
+		  "value":"IF valve_extend_gear = valve_open THEN \"blue\" ELSE \"gray\" END"
+	  },
+	  {
+		  "repeat": ["1", "2"],
+		  "id":"ev_retraction_gears_%0",
+		  "attr":"fill",
+		  "value":"IF valve_retract_gear = valve_open THEN \"blue\" ELSE \"gray\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3"],
+		  "id":"analogical_switch_%0",
+		  "attr":"fill",
+		  "value":"IF general_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3"],
+		  "id":"analogical_switch_%0",
+		  "attr":"stroke",
+		  "value":"IF general_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3"],
+		  "id":"close_switch_%0",
+		  "attr":"fill",
+		  "value":"IF general_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "repeat": ["1", "2", "3"],
+		  "id":"close_switch_%0",
+		  "attr":"stroke",
+		  "value":"IF general_EV = TRUE THEN \"green\" ELSE \"red\" END"
+	  },
+	  {
+		  "id":"analogical_switch_open",
+		  "attr":"visibility",
+		  "value":"IF analogical_switch = switch_open THEN \"visible\" ELSE \"hidden\" END"
+	  },
+	  {
+		  "id":"analogical_switch_closed",
+		  "attr":"visibility",
+		  "value":"IF analogical_switch = switch_closed THEN \"visible\" ELSE \"hidden\" END"
+	  }
+  ],
+  "events": [
+	  {
+		"id":"con_stimulate_general_valve",
+		"event":"con_stimulate_general_valve",
+		"predicates":[]
+	  },
+	  {
+		"id":"close_switch_1",
+		"event":"env_open_analogical_switch",
+		"predicates":[]
+	  },
+	  {
+		"id":"open_switch",
+		"event":"env_close_analogical_switch",
+		"predicates":[]
+	  }
+  ]
+}

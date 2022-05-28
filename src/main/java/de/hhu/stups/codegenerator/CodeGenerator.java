@@ -117,6 +117,8 @@ public class CodeGenerator {
 			mode = GeneratorMode.CLJ;
 		} else if("ts".equals(languageOption)) {
 			mode = GeneratorMode.TS;
+		} else if("prolog".equals(languageOption)) {
+			mode = GeneratorMode.PL;
 		} else {
 			throw new RuntimeException("Wrong argument for language (must be java, python, c, cpp, clojure, ts)");
 		}
@@ -218,7 +220,7 @@ public class CodeGenerator {
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
 
-		String code = generator.generateMachine(node);
+		String code = generator.generateMachine(node, mode);
 		Path codePath = writeToFile(path, mode, forModelChecking, node, isIncludedMachine, generator, code);
 
 		if(forVisualisation && !isIncludedMachine) {

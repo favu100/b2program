@@ -179,12 +179,8 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 
 
 	functionCall(arg: S): T {
-		let range = undefined;
-		for (let elem of this.map.keys()) {
-			if(elem.equals(arg)) {
-				range = this.map.get(elem);
-			}
-		}
+		let range = this.map.get(arg);
+
 		if(range == null) {
 			throw new Error("Argument is not in the domain of this relation");
 		}
@@ -192,6 +188,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject {
 		for (let element of range) {
 			return element;
 		}
+
 		throw new Error("Argument is not in the domain of this relation");
 	}
 

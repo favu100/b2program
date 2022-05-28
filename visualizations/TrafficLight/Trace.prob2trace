@@ -1,0 +1,23 @@
+{
+	"description": "Created from B2Program JS Export",
+	"transitionList": [
+		{
+			"name": "$initialise_machine",
+			"params": {}
+		},
+		{
+			"name": "peds_g",
+			"params": {}
+		},
+		{
+			"name": "peds_r",
+			"params": {}
+		}
+	],
+	"metadata": {
+		"fileType": "Trace",
+		"formatVersion": 1,
+		"creator": "B2Program JS",
+		"modelName": "TrafficLight"
+	}
+}

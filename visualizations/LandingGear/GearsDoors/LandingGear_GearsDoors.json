@@ -1,0 +1,18 @@
+{
+  "svg":"physical.svg",
+  "items":[
+    {
+		  "repeat": ["fr", "lt", "rt"],
+		  "id":"door_%0",
+		  "attr":"xlink:href",
+		  "value":"IF doors(%0) = open THEN \"img/door_open.png\" ELSIF doors(%0) = closed \"img/door_closed.png\" ELSE \"img/door_door_moving.png\" END"
+	  },
+    {
+		  "repeat": ["fr", "lt", "rt"],
+		  "id":"gear_%0",
+		  "attr":"xlink:href",
+		  "value":"IF gears(%0) = extended THEN \"img/gear_extended.png\" ELSIF gears(%0) = retracted \"img/gear_retracted.png\" ELSE \"img/gear_gear_moving.png\" END"
+	  }
+  ],
+  "events": []
+}

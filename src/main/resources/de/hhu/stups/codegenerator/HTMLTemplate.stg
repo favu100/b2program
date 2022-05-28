@@ -27,6 +27,7 @@ html(machineName, svgName, btypeImports) ::= <<
     \<h1>History View \<br>\</h1>
     \<div id="_history_view_buttons">
         \<input id="_upload_trace_input" type="file" style="display:none;">\</input>
+        \<input id="_export_trace" type="file" style="display:none;">\</input>
     \</div>
     \<div id="_history_view">
     \</div>

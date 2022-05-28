@@ -347,6 +347,42 @@ local_declaration(type, identifier) ::= <<
 <declaration(type, identifier)> = None
 >>
 
+
+choice_point_declaration(choicePoint, operation) ::= <<
+>>
+
+choice_point_getter(choicePoint, operation) ::= <<
+>>
+
+
+choice_point_operation_flag_declaration(operation) ::= <<
+>>
+
+choice_point_operation_triggered_declaration(operation) ::= <<
+>>
+
+choice_point_operation_flag_getter(operation) ::= <<
+>>
+
+choice_point_operation_flag_reset(operation) ::= <<
+>>
+
+choice_point_operation_triggered(operation) ::= <<
+>>
+
+choice_point_operation_triggered_reset(operation) ::= <<
+>>
+
+choice_point_operation_apply(machine, operation, applyChoicePoints, applyChoicePointFlag) ::= <<
+>>
+
+choice_point_operation_apply_choice_point(operation, choicePoint) ::=<<
+>>
+
+choice_point_operation_apply_choice_point_flag(operation) ::= <<
+>>
+
+
 constant_declaration(type, identifier) ::= <<
 self.<identifier>
 >>

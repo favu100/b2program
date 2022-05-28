@@ -1,0 +1,145 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>TrafficLight</title>
+<head>
+
+<body>
+  <div>
+    <h1>Visualization <br></h1>
+    <object id="traffic_light" data="traffic_light.svg" type="image/svg+xml"></object>
+  </div>
+  <div>
+      <h1>Operations View <br></h1>
+      <div id="_operations_view">
+        <div class="param" style="grid-column: span 2;">Parameter</div>
+        <div style="text-align: center; grid-column: -1;">Event</div>
+      </div>
+  </div>
+  <div>
+    <h1>History View <br></h1>
+    <div id="_history_view_buttons">
+        <input id="_upload_trace_input" type="file" style="display:none;"></input>
+        <input id="_export_trace" type="file" style="display:none;"></input>
+    </div>
+    <div id="_history_view">
+    </div>
+    <br>
+    <br>
+    <h1>Scenario View <br></h1>
+    <div id="_scenario_view">
+    </div>
+  </div>
+  <div id="_state_view">
+    <h1>State View <br></h1>
+    <div id="_state_view_variables" class="state_view_section">
+        <div class="state_view_header collapsed" onclick="collapse(this)">Variables</div>
+    </div>
+    <div id="_state_view_constants" class="state_view_section">
+        <div class="state_view_header collapsed" onclick="collapse(this)">Constants</div>
+    </div>
+    <div id="_state_view_sets" class="state_view_section">
+            <div class="state_view_header collapsed" onclick="collapse(this)">Sets</div>
+        </div>
+    <div id="_state_view_invariant" class="state_view_section">
+            <div class="state_view_header collapsed" onclick="collapse(this)">Invariant</div>
+        </div>
+  </div>
+  <script type="module" src="./immutable/dist/immutable.es.js"></script>
+  <script type="module" src="./btypes/BTuple.js"></script>
+  <script type="module" src="./btypes/BBoolean.js"></script>
+  <script type="module" src="./btypes/BSet.js"></script>
+  <script type="module" src="./btypes/BObject.js"></script>
+  <script type="module" src="./TrafficLight.js"></script>
+  <script type="module" src="./TrafficLight-visualisation.js" defer></script>
+</body>
+
+<script>
+function collapse(element) {
+    element.classList.toggle("collapsed");
+}
+</script>
+<style>
+#_operations_view{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 0.5%;
+    margin-bottom: auto;
+    margin-right: 1rem;
+}
+:root {
+    --noneOrGrid: grid;
+}
+.param{
+    display: var(--noneOrGrid);
+    grid-column: span 2;
+    grid-template-columns: subgrid;
+    gap: 5px;
+}
+#_history_view{
+    margin-bottom: auto;
+    margin-right: 1rem;
+    overflow-y  : auto;
+    padding-right: 18px;
+    max-height: 90vh;
+}
+#_history_view > span.active {
+    background: lightblue;
+}
+#_history_view_buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#_scenario_view{
+    margin-right: 1rem;
+    overflow-y  : auto;
+    padding-right: 18px;
+    gap: 5%;
+    display: grid;
+}
+#_scenario_view > span.active {
+    background: lightblue;
+}
+#_scenario_view_buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.state_view_section {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0px 20px;
+}
+.state_view_header {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid black;
+}
+
+.state_view_header:only-child {
+    display: none;
+}
+
+.state_view_header::after {
+    content: "\25B2";
+    margin-left: 5px;
+    float: right;
+}
+.collapsed ~ * {
+    display: none;
+}
+.collapsed::after {
+    content: "\25BC";
+}
+body {
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+gap: 20px;
+align-items: start;
+}
+</style>
+
+</html>

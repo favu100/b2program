@@ -233,6 +233,7 @@ public class SubstitutionGenerator {
     * This function generates code for if substitutions with and without else-branches from the belonging AST node and the belonging template.
     */
     private String visitIfSubstitution(IfOrSelectSubstitutionsNode node) {
+
         ST ifST = currentGroup.getInstanceOf("if");
         TemplateHandler.add(ifST, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
         TemplateHandler.add(ifST, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
@@ -241,6 +242,25 @@ public class SubstitutionGenerator {
         if (node.getElseSubstitution() != null) {
             TemplateHandler.add(ifST, "else1", generateElse(node));
         }
+
+
+        int counter = 0;
+        String operation = null;
+        for(Map.Entry<String, BacktrackingVisitor> entry : backtrackingGenerator.getBacktrackingVisitorMap().entrySet()) {
+            BacktrackingVisitor visitor = entry.getValue();
+            Map<Node, Integer> choicePointMap = visitor.getChoicePointMap();
+
+            if(choicePointMap.containsKey(node)) {
+                counter = choicePointMap.get(node);
+                operation = entry.getKey();
+            }
+        }
+
+        TemplateHandler.add(ifST, "forModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(ifST, "operation", operation);
+        TemplateHandler.add(ifST, "choicePoint", counter);
+        TemplateHandler.add(ifST, "usePreviousChoicePoint", counter > 1);
+        TemplateHandler.add(ifST, "previousChoicePoint", counter - 1);
         return ifST.render();
     }
 

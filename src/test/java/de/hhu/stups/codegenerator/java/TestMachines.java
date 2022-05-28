@@ -372,6 +372,21 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testNondeterministic8_MC() throws Exception {
+        testJavaMC("Nondeterminism8_MC");
+    }
+
+    @Test
+    public void testNondeterministic9_MC() throws Exception {
+        testJavaMC("Nondeterminism9_MC");
+    }
+
+    @Test
+    public void testNondeterministic10_MC() throws Exception {
+        testJavaMC("Nondeterminism10_MC");
+    }
+
+    @Test
     public void testChoice_MC() throws Exception {
         testJavaMC("Choice_MC");
     }

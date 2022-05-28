@@ -1,9 +1,9 @@
 # B2Program
 
 This is the code generator **B2Program** for generating code from B to other
-programming languages.
-
-A subset of B is supported for Java, C++, and Python now. The work for code generation for Clojure and C has begun but not continued.
+programming languages (Java, C++, Python, JavaScript/TypeScript).
+Currently, code generation for Prolog and Rust are in progress.
+The work for Clojure and C has begun but not continued.
 
 
 Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Generator_for_High-Level_B
@@ -23,6 +23,13 @@ doi = {10.1007/978-3-030-34968-4_25}
 }
 ```
 
+The main features of B2Program are:
+- Code generation from a formal model
+- Code generation for model checking including parallelization, and caching (only supported in Java and C++)
+- Code generation of interactive domain-specific visualizations (from VisB) in HTML and JavaScript/TypeScript
+
+
+
 Note:
 
 * The implementation of the B types in C++ uses persistent set from:
@@ -35,6 +42,7 @@ Note:
   The only types that are implemented for C are BInteger and BBoolean.
   An example where code generation for C works is the machine Lift.
 * Executing all tests requires building Java B Types and installing C++ B Types
+
 
 ## Performance
 
@@ -332,7 +340,9 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 Comments are ignored during code generation. Furthermore trees and pragmas are not supported by B2Program.
 
 
-Remark: SELECT with ELSE Branches are not supported yet
+Remarks: 
+* SELECT with ELSE Branches are not supported yet
+* Non-determinism for model checking is only supported for top-level SELECT and PRE
 
 
 ## Usage
@@ -350,6 +360,9 @@ Remark: SELECT with ELSE Branches are not supported yet
 
 # Python
 ./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+
+# JavaScript/TypeScript
+./gradlew run -Planguage="ts" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # C
 ./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
@@ -383,59 +396,90 @@ java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp <isBigInteger> <minint> <maxint> 
 # Python
 java -jar B2Program-all-0.1.0-SNAPSHOT.jar python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 
+# JavaScript/TypeScript
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar typescript <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
+
 # C
 java -jar B2Program-all-0.1.0-SNAPSHOT.jar c <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
 ```
 
 Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`  are not optional when using JAR-File.
 
-### Compile the generated code in Java
+### Compile generated Code
+
+#### Java
 
 1. Build JAR for Java B Types (`make btypes_primitives` or `make btypes_big_integer`)
-2. Move `btypes_persistent.jar` to same folder as the generated classes
+2. Move `btypes_persistent.jar` to same directory as the generated classes
 3. `javac -cp btypes_primitives-all.jar <files....>`
 4. Example: `javac -cp btypes_primitives-all.jar TrafficLightExec.java TrafficLight.java`
   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
   
-### Compile the generated code in C++
+#### C++
   
-1. Install C++ B Types or move them (see btypes_primitives or btypes_big_integer folder) to same folder as the generated classes
+1. Install C++ B Types or move them (see btypes_primitives or btypes_big_integer directory) to same directory as the generated classes
 2. `g++ -std=c++14 -O2 -march=native -g -DIMMER_NO_THREAD_SAFETY -o <executable> <main class>`
 3. Example: `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o TrafficLightExec.exec TrafficLightExec.cpp`
    (TrafficLightExec.mch includes TrafficLight.mch, this command automatically compiles TrafficLight.cpp)
 
-### Compile the generated code in C
+#### JavaScript/TypeScript
+1. Move B types to same folder (see btypes_primitives or btypes_big_integer directory) as generated code
+2. `tsc --target ES6 --moduleResolution node <files...>`
+3. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`
+   (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
 
-1. Move BInteger and BBoolean to same folder as generated code (see btypes/src/main/c)
-2. `gcc <input file> -o <output file>`
-3. Example: `gcc Lift.c -o Lift`
 
-### Execute the generated code in Java
+
+### Execute generated code (manual simulation)
+
+#### Java
 
 1. Write a main function in the generated main class
 2. `java -cp :btypes_primitives-all.jar <main file>`
 3. Example: `java -cp :btypes_primitives-all.jar TrafficLightExec`
 
-### Execute the generated code in C++
+#### C++
 
 1. Write a main function in the generated main class
 2. `./<main file>`
 3. Example: `./TrafficLightExec.exec`
 
-### Execute the generated code in C
+#### JavaScript/TypeScript
+1. Write a main function in the generated main class
+2. `node --experimental-specifier-resolution=node <main file>`
+3. Example: `node --experimental-specifier-resolution=node TrafficLightExec.js`
 
-1. Write a main function in the generated main file
-2. `./main.c`
-3. Example: `./Lift`
 
-## Steps from B Model to Output of the Generated Code (with primitive types)
+### Execute generated model checking code
+
+#### Java
+
+1. `java -cp :btypes_primitives-all.jar <main file> <strategy> <threads> <caching>`
+2. Example: `java -cp :btypes_primitives-all.jar TrafficLight mixed 6 true`
+
+#### C++
+
+1. `./<main file> <strategy> <threads> <caching>`
+2. Example: `./TrafficLight.exec mixed 6 true`
+
+
+Remark: 
+* strategy : {mixed, bf, df}
+* threads : NATURAL
+* caching : {TRUE, FALSE}
+
+
+
+## Steps from B Model to Execution of the Generated Code (with primitive types)
 
 ### Example 1: Lift
 
 The file for `Lift.mch` is in https://github.com/favu100/b2program/tree/master/src/test/resources/de/hhu/stups/codegenerator.
-Lift consists of operation to lift up and lift down and getting the floor. 
+Lift consists of operation to lift up and lift down and getting the floor.
 
-#### Java
+#### Execution with manual simulation
+
+##### Java
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
@@ -451,15 +495,15 @@ public static void main(String[] args) {
 }
 ```
 
-* Build B types in btypes_primitives `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primitives and move it to this folder
-* Move `btypes_primitives-all.jar` to the same folder as `Lift.java`
+* Build B types in btypes_primitives `./gradlew fatJar` in the belonging directory or execute `make` which builds btypes_primitives and move it to this folder
+* Move `btypes_primitives-all.jar` to the same directory as `Lift.java`
 * Compile `Lift.java` with `javac -cp btypes_primitives-all.jar Lift.java`
 * Execute the compiled file for `Lift.java` with `java -cp :btypes_primitives-all.jar Lift`
 * Output: `3`
 
-#### C++
+##### C++
 * Run `./gradlew fatJar` to build the JAR-file
-* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
 * Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Lift.mch ```
 * Write a main method in `Lift.cpp` 
 ```cpp
@@ -483,6 +527,53 @@ make install
 * Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
 * Execute `Lift.exec` with `./Lift`
 
+##### JavaScript/TypeScript
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar ts false -2147483648 2147483647 10 false false Lift.mch ```
+* Write additional code executing generated functions in `Lift.ts`
+
+```typescript
+let lift: Lift = new Lift();
+lift.inc();
+lift.inc();
+lift.inc();
+console.log(lift.getFloor().toString());
+```
+
+* Move `btypes_primitives` for `js` to the same directory as `Lift.ts`
+* Transpile `Lift.ts` to `Lift.js` with `tsc --target ES6 --moduleResolution node Lift.ts`
+* Execute the transpiled file with `node --experimental-specifier-resolution=node Lift.js`
+* Output: `3`
+
+#### Model Checking
+
+##### Java
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false true Lift.mch```
+* Build B types in btypes_primitives `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primitives and move it to this folder
+* Move `btypes_primitives-all.jar` to the same folder as `Lift.java`
+* Compile `Lift.java` with `javac -cp btypes_primitives-all.jar Lift.java`
+* Execute the compiled file for `Lift.java` with `java -cp :btypes_primitives-all.jar Lift mixed 1 false`
+
+
+##### C++
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false true Lift.mch ```
+* Install C++ B types with
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+* Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
+* Execute `Lift.exec` with `./Lift 1 false`
+
 
 ### Example 2: Cruise_finite1_deterministic_exec
 The file for `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic` are in https://github.com/favu100/b2program/tree/master/src/test/resources/de/hhu/stups/codegenerator.
@@ -490,7 +581,9 @@ The machine Cruise_finite1_deterministic_exec includes the machine Cruise_finite
 Cruise_finite1_deterministic_exec contains an operation for executing a cycle in the state space of Cruise_finite1_deterministic 100.000 times.
 Furthermore it has getter operations for all variables.
 
-#### Java
+#### Execution with manual simulation
+
+##### Java
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
@@ -539,7 +632,7 @@ false
 false
 ```
 
-#### C++
+##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
 * Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
@@ -574,7 +667,7 @@ make install
 ```
 
 * Compile `Cruise_finite1_deterministic_exec.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic_exec.exec Cruise_finite1_deterministic_exec.cpp`
-* Execute `Cruise_finite1_deterministic_exec.exec` with `./Cruise_finite1_deterministic_exec`
+* Execute `Cruise_finite1_deterministic_exec.exec` with `./Cruise_finite1_deterministic_exec.exec`
 * Output:
 ```bash
 false
@@ -593,3 +686,77 @@ false
 false
 ```
 
+##### JavaScript/TypeScript
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Cruise_finite1_deterministic_exec.mch`
+* Generate code for `Cruise_finite1_deterministic_exec.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar ts false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
+* Write additional code executing generated functions in `Cruise_finite1_deterministic_exec.ts`
+
+```typescript
+let cruise: Cruise_finite1_deterministic_exec = new Cruise_finite1_deterministic_exec();
+cruise.simulate();
+console.log(cruise.getCruiseAllowed().toString());
+console.log(cruise.getCruiseActive().toString());
+console.log(cruise.getVehicleAtCruiseSpeed().toString());
+console.log(cruise.getVehicleCanKeepSpeed().toString());
+console.log(cruise.getVehicleTryKeepSpeed().toString());
+console.log(cruise.getSpeedAboveMax().toString());
+console.log(cruise.getVehicleTryKeepTimeGap().toString());
+console.log(cruise.getCruiseSpeedAtMax().toString());
+console.log(cruise.getObstaclePresent().toString());
+console.log(cruise.getObstacleDistance().toString());
+console.log(cruise.getObstacleRelativeSpeed().toString());
+console.log(cruise.getObstacleStatusJustChanged().toString());
+console.log(cruise.getCCInitialisationInProgress().toString());
+console.log(cruise.getCruiseSpeedChangeInProgress().toString());
+```
+
+* Move `btypes_primitives` for `js` to the same directory as `Cruise_finite1_deterministic_exec.ts`
+* Transpile `Cruise_finite1_deterministic_exec.ts` and `Cruise_finite1_deterministic.ts` to `Cruise_finite1_deterministic_exec.js` and `Cruise_finite1_deterministic.js` with `tsc --target ES6 --moduleResolution node Cruise_finite1_deterministic_exec.ts Cruise_finite1_deterministic.ts`
+* Execute the transpiled file with `node --experimental-specifier-resolution=node Cruise_finite1_deterministic_exec.js`
+* Output:
+
+```bash
+false
+false
+false
+false
+false
+false
+false
+false
+false
+ODnone
+RSnone`
+false
+false
+false
+```
+
+#### Model Checking
+
+##### Java
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false true Cruise_finite1_deterministic.mch ```
+* Build B types in btypes_primitives with `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primtives and move it to this folder
+* Move `btypes_primitives-all.jar` to the same folder as the generated classes
+* Compile `Cruise_finite1_deterministic.java` with `javac -cp btypes_primitives-all.jar Cruise_finite1_deterministic.java`
+* Execute the compiled file for `Cruise_finite1_deterministic.java` with `java -cp :btypes_primitives-all.jar Cruise_finite1_deterministic mixed 6 true`
+
+
+##### C++
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false true Cruise_finite1_deterministic.mch ```
+* Install C++ B types with
+```bash
+mkdir build & cd build
+cmake ..
+make install
+```
+
+* Compile `Cruise_finite1_deterministic.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic.exec Cruise_finite1_deterministic.cpp`
+* Execute `Cruise_finite1_deterministic.exec` with `./Cruise_finite1_deterministic.exec mixed 6 true`

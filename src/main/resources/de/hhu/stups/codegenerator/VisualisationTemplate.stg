@@ -225,6 +225,10 @@ function initialize() {
     var _machine_events = {};
     <if(svgName)>var _svg_events = {};<endif>
     <events: {event| <event><\n>}>
+    updateVisuals();
+    if(_operations_view.querySelectorAll("label").length == 0) {
+        document.documentElement.style.setProperty('--noneOrGrid', 'none');
+    }
 
     function displayTrace(trace) {
         selectHistoryElement(-_history_view.querySelector(".active").index);
@@ -241,10 +245,6 @@ function initialize() {
           createHistoryElement(transition.name + "(" + parameters.join(", ") + ")" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
           let parametersJSON = transition.params;
           _current_trace.push({name: transition.name, params: parametersJSON});
-        }
-        updateVisuals();
-        if(_operations_view.querySelectorAll("label").length == 0) {
-            document.documentElement.style.setProperty('--noneOrGrid', 'none');
         }
     }
 

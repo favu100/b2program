@@ -12,19 +12,19 @@ import {SelectError} from "./btypes/BUtils.js";
 <imports; separator="\n">
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  checkIframeLoaded();
+  checkLoaded();
 });
 
 function checkLoaded() {
     const iframe = document.getElementById("<svgName>");
     if (iframe == null) {
-        window.setTimeout(checkIframeLoaded, 100);
+        window.setTimeout(checkLoaded, 100);
     } else {
         var iframeDoc = iframe.contentDocument;
         if (iframeDoc != null && iframeDoc.readyState == 'complete') {
             initialize();
         } else {
-            window.setTimeout(checkIframeLoaded, 100);
+            window.setTimeout(checkLoaded, 100);
         }
     }
 }

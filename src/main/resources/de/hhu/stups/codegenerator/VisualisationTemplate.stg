@@ -57,6 +57,7 @@ function initialize() {
         _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
       }
       checkTransitions();
+    }
 
     var _history_view_buttons = document.getElementById("_history_view_buttons");
     var _buttonLeft = document.createElement("button");
@@ -246,6 +247,8 @@ function initialize() {
           let parametersJSON = transition.params;
           _current_trace.push({name: transition.name, params: parametersJSON});
         }
+        updateVisuals();
+        selectHistoryElement(_history_view.querySelector("span:last-of-type").index-_history_view.querySelector(".active").index);
     }
 
     function importTrace() {

@@ -11,279 +11,303 @@ import {SelectError} from "./btypes/BUtils.js";
 <machineEnums : {enum | import {enum_<enum>\} from "./<machineName>.js"<\n>}>
 <imports; separator="\n">
 
-var <initialMachineVar()> = new <machineName>();
-var _state_list = [];
-var _transition_list = [];
-var _included_machines = {};
-_included_machines["<machineName>"] = function(){return <initialMachineVar()>};
-<includedMachines; separator="\n">
-var _state_view_vars = document.getElementById("_state_view_variables");
-var _state_view_consts = document.getElementById("_state_view_constants");
-var _state_view_sets = document.getElementById("_state_view_sets");
-var _state_view_invariant = document.getElementById("_state_view_invariant");
-<if(svgName)>var _svg_vars = {}
-<svgElements: {svgElement | _svg_vars["<svgElement>"] = document.getElementById("<svgName>").contentDocument.getElementById("<svgElement>")<\n>}><endif>
-var _machine_vars = {}
-var _var_label;
-var _var_div;
-<variables; separator="\n">
-<constants; separator="\n">
-<sets; separator="\n">
-<invariant; separator="\n">
+document.addEventListener('DOMContentLoaded', (event) => {
+  checkLoaded();
+});
 
-function updateVisuals () {
-  <if(svgName)><visualUpdates; separator="\n"><endif>
-  <variableUpdates; separator="\n">
-  for (let i = 1; i \<= <invariantCount>; i++) {
-    _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
-  }
-  checkTransitions();
-}
-
-var _history_view_buttons = document.getElementById("_history_view_buttons");
-var _buttonLeft = document.createElement("button");
-var _buttonRight = document.createElement("button");
-var _buttonUpload = document.createElement("button");
-var _buttonExport = document.createElement("button");
-var _inputUpload = document.createElement("input");
-var _buttonRun10 = document.createElement("button");
-var _buttonRun500 = document.createElement("button");
-
-function flattenTuple(tuple) {
-    if(!(tuple instanceof BTuple)) {
-        return [tuple];
-    }
-    return [tuple.projection1(), ...flattenTuple(tuple.projection2())];
-}
-
-function createOptionList(event, transition) {
-    let collator = new Intl.Collator([], {numeric: true});
-    for(let index in _machine_events[event].parameterNames) {
-        let parameter = _machine_events[event].parameterNames[index];
-        var datalist = document.querySelector("#" + event + "_" + parameter + "_datalist");
-        datalist.replaceChildren();
-        for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
-            let option = document.createElement("option");
-            value = flattenTuple(value);
-            option.text = value[index].toString();
-            datalist.appendChild(option);
+function checkLoaded() {
+    const iframe = document.getElementById("<svgName>");
+    if (iframe == null) {
+        window.setTimeout(checkLoaded, 100);
+    } else {
+        var iframeDoc = iframe.contentDocument;
+        if (iframeDoc != null && iframeDoc.readyState == 'complete') {
+            initialize();
+        } else {
+            window.setTimeout(checkLoaded, 100);
         }
     }
 }
 
-function checkTransitions () {
-    let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-    for(event in _machine_events) {
-      var transition;
-      if(_transition_list[index]?.[event] == null ?? true) {
-         transition = <initialMachineVar()>["_tr_" + event]();
-         _transition_list[index][event] = transition;
-      } else {
-         transition = _transition_list[index][event];
+function initialize() {
+    var <initialMachineVar()> = new <machineName>();
+    var _state_list = [];
+    var _transition_list = [];
+    var _included_machines = {};
+    _included_machines["<machineName>"] = function(){return <initialMachineVar()>};
+    <includedMachines; separator="\n">
+    var _state_view_vars = document.getElementById("_state_view_variables");
+    var _state_view_consts = document.getElementById("_state_view_constants");
+    var _state_view_sets = document.getElementById("_state_view_sets");
+    var _state_view_invariant = document.getElementById("_state_view_invariant");
+    <if(svgName)>var _svg_vars = {}
+    <svgElements: {svgElement | _svg_vars["<svgElement>"] = document.getElementById("<svgName>").contentDocument.getElementById("<svgElement>")<\n>}><endif>
+    var _machine_vars = {}
+    var _var_label;
+    var _var_div;
+    <variables; separator="\n">
+    <constants; separator="\n">
+    <sets; separator="\n">
+    <invariant; separator="\n">
+
+    function updateVisuals () {
+      <if(svgName)><visualUpdates; separator="\n"><endif>
+      <variableUpdates; separator="\n">
+      for (let i = 1; i \<= <invariantCount>; i++) {
+        _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
       }
-      if(!(transition instanceof BSet)) {
-        _machine_events[event].disabled = !transition;
-      } else if (transition.size().intValue() == 0) {
-        _machine_events[event].disabled = true;
-      } else {
+      checkTransitions();
+    }
+
+    var _history_view_buttons = document.getElementById("_history_view_buttons");
+    var _buttonLeft = document.createElement("button");
+    var _buttonRight = document.createElement("button");
+    var _buttonUpload = document.createElement("button");
+    var _buttonExport = document.createElement("button");
+    var _inputUpload = document.createElement("input");
+    var _buttonRun10 = document.createElement("button");
+    var _buttonRun500 = document.createElement("button");
+
+
+    function flattenTuple(tuple) {
+        if(!(tuple instanceof BTuple)) {
+            return [tuple];
+        }
+        return [tuple.projection1(), ...flattenTuple(tuple.projection2())];
+    }
+
+    function createOptionList(event, transition) {
         let collator = new Intl.Collator([], {numeric: true});
-        for(let current_transition of transition) {
-            try {
-                var current_machine = <initialMachineVar()>._copy();
-                current_machine[event](...flattenTuple(current_transition));
-            } catch (error) {
-                  if(! error instanceof SelectError) {
-                      throw error;
-                  }
-                  transition = transition.difference(new BSet(current_transition));
+        for(let index in _machine_events[event].parameterNames) {
+            let parameter = _machine_events[event].parameterNames[index];
+            var datalist = document.querySelector("#" + event + "_" + parameter + "_datalist");
+            datalist.replaceChildren();
+            for(let value of Array.of(...transition).sort((a, b) => collator.compare(a, b))) {
+                let option = document.createElement("option");
+                value = flattenTuple(value);
+                option.text = value[index].toString();
+                datalist.appendChild(option);
             }
         }
-        if(transition.size().intValue() == 0) {
+    }
+
+    function checkTransitions () {
+        let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+        for(event in _machine_events) {
+          var transition;
+          if(_transition_list[index]?.[event] == null ?? true) {
+             transition = <initialMachineVar()>["_tr_" + event]();
+             _transition_list[index][event] = transition;
+          } else {
+             transition = _transition_list[index][event];
+          }
+          if(!(transition instanceof BSet)) {
+            _machine_events[event].disabled = !transition;
+          } else if (transition.size().intValue() == 0) {
             _machine_events[event].disabled = true;
-        } else {
-            _machine_events[event].disabled = false;
+          } else {
+            let collator = new Intl.Collator([], {numeric: true});
+            for(let current_transition of transition) {
+                try {
+                    var current_machine = <initialMachineVar()>._copy();
+                    current_machine[event](...flattenTuple(current_transition));
+                } catch (error) {
+                      if(! error instanceof SelectError) {
+                          throw error;
+                      }
+                      transition = transition.difference(new BSet(current_transition));
+                }
+            }
+            if(transition.size().intValue() == 0) {
+                _machine_events[event].disabled = true;
+            } else {
+                _machine_events[event].disabled = false;
+            }
+            createOptionList(event, transition);
+          }
         }
-        createOptionList(event, transition);
-      }
+        _buttonLeft.disabled = document.querySelector(".active").index \<= 0;
+        _buttonRight.disabled = document.querySelector(".active").index >= document.querySelector("span:last-of-type").index;
     }
-    _buttonLeft.disabled = document.querySelector(".active").index \<= 0;
-    _buttonRight.disabled = document.querySelector(".active").index >= document.querySelector("span:last-of-type").index;
-}
 
-_operations_view = document.getElementById("_operations_view");
-_history_view = document.getElementById("_history_view");
-_scenario_view = document.getElementById("_scenario_view");
+    _operations_view = document.getElementById("_operations_view");
+    _history_view = document.getElementById("_history_view");
+    _scenario_view = document.getElementById("_scenario_view");
 
-var _history_onclick_function = function () {
-  <initialMachineVar()> = _state_list[this.index]._copy();
-  document.querySelectorAll("span").forEach(el => el.classList.remove("active"));
-  this.classList.add("active");
-  updateVisuals();
-}
-
-function createHistoryElement(text, index) {
-  var history_element = document.createElement("span");
-  history_element.innerHTML = text + "\</br>";
-  history_element.index = index;
-  document.querySelectorAll("span.active").forEach(element => element.classList.remove("active"));
-  history_element.classList.add("active");
-  history_element.onclick = _history_onclick_function;
-  _state_list = _state_list.slice(0, index);
-  _state_list.push(<initialMachineVar()>._copy());
-  _transition_list = _transition_list.slice(0, index);
-  _transition_list.push({});
-  while(_history_view.querySelectorAll("span").length > index && _history_view.lastChild !== null) {
-    _history_view.removeChild(_history_view.lastChild);
-  }
-  _history_view.appendChild(history_element);
-}
-
-function selectHistoryElement(offset) {
-  let currentHistoryElement = _history_view.querySelector(".active");
-  let index = currentHistoryElement.index + offset;
-  if (index \< 0 || index >= _state_list.length) {
-    return;
-  }
-  currentHistoryElement.classList.remove("active");
-  <initialMachineVar()> = _state_list[index]._copy();
-  _history_view.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
-  currentHistoryElement = _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")");
-  currentHistoryElement.classList.add("active");
-  updateVisuals();
-}
-
-function createScenarioElement(text, trace) {
-  var scenario_element = document.createElement("button");
-  var remove_element = document.createElement("button");
-  scenario_element.innerHTML = text + "\</br>";
-  remove_element.innerHTML = "X";
-  var div_element = document.createElement("div");
-  div_element.appendChild(scenario_element);
-  div_element.appendChild(remove_element);
-  _scenario_view.appendChild(div_element);
-  scenario_element.onclick = function() {
-    displayTrace(trace);
-  };
-  remove_element.onclick = function() {
-    _scenario_view.removeChild(div_element);
-  };
-}
-
-
-_buttonLeft.innerHTML="&#9664;";
-_buttonLeft.onclick = function(){selectHistoryElement(-1)};
-_buttonRight.innerHTML="&#9654;";
-_buttonRight.onclick = function(){selectHistoryElement(1)};
-_history_view_buttons.appendChild(_buttonLeft);
-_history_view_buttons.appendChild(_buttonRight);
-
-_buttonUpload.textContent = "Import trace";
-_buttonUpload.onclick = importTrace;
-_history_view_buttons.appendChild(_buttonUpload);
-
-_buttonExport.textContent = "Export trace";
-_buttonExport.onclick = exportTrace;
-_history_view_buttons.appendChild(_buttonExport);
-
-_buttonRun10.textContent = "Run trace(10ms)";
-_buttonRun10.onclick = function(){runTrace(10);};
-_history_view_buttons.appendChild(_buttonRun10);
-
-_buttonRun500.textContent = "Run trace(500ms)";
-_buttonRun500.onclick = function(){runTrace(500);};
-_history_view_buttons.appendChild(_buttonRun500);
-
-createHistoryElement("Initialisation", 0);
-var _current_trace = [{name: "$initialise_machine", params: {}}];
-
-var _param_div;
-var _param_datalist;
-var _onclick_function;
-var _machine_events = {};
-<if(svgName)>var _svg_events = {};<endif>
-<events: {event| <event><\n>}>
-
-updateVisuals();
-if(_operations_view.querySelectorAll("label").length == 0) {
-    document.documentElement.style.setProperty('--noneOrGrid', 'none');
-}
-
-function displayTrace(trace) {
-    selectHistoryElement(-_history_view.querySelector(".active").index);
-    let transitions = trace.transitionList
-    for(let transition of transitions) {
-      if(transition.name.startsWith("$")) {
-        continue;
-      }
-      if(transition.params == null) {
-        transition.params = {};
-      }
-      let parameters = Object.keys(transition.params).map(param => _machine_events[transition.name][param].parseValue(transition.params[param]))
-      let returnValue = _machine[transition.name](...parameters);
-      createHistoryElement(transition.name + "(" + parameters.join(", ") + ")" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-      let parametersJSON = transition.params;
-      _current_trace.push({name: transition.name, params: parametersJSON});
+    var _history_onclick_function = function () {
+      <initialMachineVar()> = _state_list[this.index]._copy();
+      document.querySelectorAll("span").forEach(el => el.classList.remove("active"));
+      this.classList.add("active");
+      updateVisuals();
     }
+
+    function createHistoryElement(text, index) {
+      var history_element = document.createElement("span");
+      history_element.innerHTML = text + "\</br>";
+      history_element.index = index;
+      document.querySelectorAll("span.active").forEach(element => element.classList.remove("active"));
+      history_element.classList.add("active");
+      history_element.onclick = _history_onclick_function;
+      _state_list = _state_list.slice(0, index);
+      _state_list.push(<initialMachineVar()>._copy());
+      _transition_list = _transition_list.slice(0, index);
+      _transition_list.push({});
+      while(_history_view.querySelectorAll("span").length > index && _history_view.lastChild !== null) {
+        _history_view.removeChild(_history_view.lastChild);
+      }
+      _history_view.appendChild(history_element);
+    }
+
+    function selectHistoryElement(offset) {
+      let currentHistoryElement = _history_view.querySelector(".active");
+      let index = currentHistoryElement.index + offset;
+      if (index \< 0 || index >= _state_list.length) {
+        return;
+      }
+      currentHistoryElement.classList.remove("active");
+      <initialMachineVar()> = _state_list[index]._copy();
+      _history_view.querySelectorAll(".active").forEach(el => el.classList.remove("active"));
+      currentHistoryElement = _history_view.querySelector("span:nth-of-type(" + (index + 1) + ")");
+      currentHistoryElement.classList.add("active");
+      updateVisuals();
+    }
+
+    function createScenarioElement(text, trace) {
+      var scenario_element = document.createElement("button");
+      var remove_element = document.createElement("button");
+      scenario_element.innerHTML = text + "\</br>";
+      remove_element.innerHTML = "X";
+      var div_element = document.createElement("div");
+      div_element.appendChild(scenario_element);
+      div_element.appendChild(remove_element);
+      _scenario_view.appendChild(div_element);
+      scenario_element.onclick = function() {
+        displayTrace(trace);
+      };
+      remove_element.onclick = function() {
+        _scenario_view.removeChild(div_element);
+      };
+    }
+
+
+    _buttonLeft.innerHTML="&#9664;";
+    _buttonLeft.onclick = function(){selectHistoryElement(-1)};
+    _buttonRight.innerHTML="&#9654;";
+    _buttonRight.onclick = function(){selectHistoryElement(1)};
+    _history_view_buttons.appendChild(_buttonLeft);
+    _history_view_buttons.appendChild(_buttonRight);
+
+
+    _buttonUpload.textContent = "Import trace";
+    _buttonUpload.onclick = importTrace;
+    _history_view_buttons.appendChild(_buttonUpload);
+
+    _buttonExport.textContent = "Export trace";
+    _buttonExport.onclick = exportTrace;
+    _history_view_buttons.appendChild(_buttonExport);
+
+    _buttonRun10.textContent = "Run trace(10ms)";
+    _buttonRun10.onclick = function(){runTrace(10);};
+    _history_view_buttons.appendChild(_buttonRun10);
+
+    _buttonRun500.textContent = "Run trace(500ms)";
+    _buttonRun500.onclick = function(){runTrace(500);};
+    _history_view_buttons.appendChild(_buttonRun500);
+
+    createHistoryElement("Initialisation", 0);
+    var _current_trace = [{name: "$initialise_machine", params: {}}];
+
+
+    createHistoryElement("Initialisation", 0);
+
+    var _param_div;
+    var _param_datalist;
+    var _onclick_function;
+    var _machine_events = {};
+    <if(svgName)>var _svg_events = {};<endif>
+    <events: {event| <event><\n>}>
     updateVisuals();
-    selectHistoryElement(_history_view.querySelector("span:last-of-type").index-_history_view.querySelector(".active").index);
-}
-
-function importTrace() {
-    var _file_input = document.querySelector("#_upload_trace_input");
-    _file_input.accept = ".prob2trace";
-
-    _file_input.onchange = async _ => {
-        let files = Array.from(_file_input.files);
-        let file = files[0];
-        let response = await fetch(file.name);
-        let data = await response.text();
-        let trace = JSON.parse(data);
-        createScenarioElement(file.name, trace);
-
-        try {
-            displayTrace(trace);
-        } catch (error) {
-            alert("Trace could not be completely imported.");
-            console.error(error);
-        }
-    };
-
-    _file_input.click();
-}
-
-function exportTrace() {
-  var transitions = _current_trace;
-  var object = {
-    description: "Created from B2Program JS Export",
-    transitionList: transitions,
-    metadata: {
-      fileType: "Trace",
-      formatVersion: 1,
-      creator: "B2Program JS",
-      modelName: "<machineName>"
+    if(_operations_view.querySelectorAll("label").length == 0) {
+        document.documentElement.style.setProperty('--noneOrGrid', 'none');
     }
-  };
-  const blob = new Blob([JSON.stringify(object, null, '\t')]);
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'Scenario.prob2trace';
-  a.click();
-}
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+    function displayTrace(trace) {
+        selectHistoryElement(-_history_view.querySelector(".active").index);
+        let transitions = trace.transitionList
+        for(let transition of transitions) {
+          if(transition.name.startsWith("$")) {
+            continue;
+          }
+          if(transition.params == null) {
+            transition.params = {};
+          }
+          let parameters = Object.keys(transition.params).map(param => _machine_events[transition.name][param].parseValue(transition.params[param]))
+          let returnValue = _machine[transition.name](...parameters);
+          createHistoryElement(transition.name + "(" + parameters.join(", ") + ")" + (returnValue? " (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+          let parametersJSON = transition.params;
+          _current_trace.push({name: transition.name, params: parametersJSON});
+        }
+        updateVisuals();
+        selectHistoryElement(_history_view.querySelector("span:last-of-type").index-_history_view.querySelector(".active").index);
+    }
 
-async function runTrace(ms) {
-    let firstElement = _history_view.querySelector("span");
-    firstElement.click();
-    let currentHistoryElement = _history_view.querySelector(".active");
-    let index = currentHistoryElement.index + 1;
-    while (index >= 0 && index \< _state_list.length) {
-      selectHistoryElement(1);
-      await sleep(ms);
-      currentHistoryElement = _history_view.querySelector(".active");
-      index = currentHistoryElement.index + 1;
+    function importTrace() {
+        var _file_input = document.querySelector("#_upload_trace_input");
+        _file_input.accept = ".prob2trace";
+        _file_input.onchange = async _ => {
+            let files = Array.from(_file_input.files);
+            let file = files[0];
+            let response = await fetch(file.name);
+            let data = await response.text();
+            let trace = JSON.parse(data);
+            createScenarioElement(file.name, trace);
+
+            try {
+                displayTrace(trace);
+            } catch (error) {
+                alert("Trace could not be completely imported.");
+                console.error(error);
+            }
+        };
+
+        _file_input.click();
+    }
+
+    function exportTrace() {
+      var transitions = _current_trace;
+      var object = {
+        description: "Created from B2Program JS Export",
+        transitionList: transitions,
+        metadata: {
+          fileType: "Trace",
+          formatVersion: 1,
+          creator: "B2Program JS",
+          modelName: "<machineName>"
+        }
+      };
+      const blob = new Blob([JSON.stringify(object, null, '\t')]);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Scenario.prob2trace';
+      a.click();
+    }
+
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function runTrace(ms) {
+        let firstElement = _history_view.querySelector("span");
+        firstElement.click();
+        let currentHistoryElement = _history_view.querySelector(".active");
+        let index = currentHistoryElement.index + 1;
+        while (index >= 0 && index \< _state_list.length) {
+          selectHistoryElement(1);
+          await sleep(ms);
+          currentHistoryElement = _history_view.querySelector(".active");
+          index = currentHistoryElement.index + 1;
+        }
     }
 }
 >>

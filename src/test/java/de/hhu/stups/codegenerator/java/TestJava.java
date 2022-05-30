@@ -62,7 +62,7 @@ public class TestJava {
 				false,
 				null);
 		Process process = Runtime.getRuntime()
-				.exec("javac -classpath btypes_persistent.jar " + String.join(" ", javaFilePaths.stream()
+				.exec("javac -classpath btypes.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
 
@@ -101,7 +101,7 @@ public class TestJava {
 				false,
 				null);
 		Runtime runtime = Runtime.getRuntime();
-		Process compileProcess = runtime.exec("javac -cp btypes_persistent.jar " +
+		Process compileProcess = runtime.exec("javac -cp btypes.jar " +
 				String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
@@ -117,9 +117,9 @@ public class TestJava {
 			return;
 		}
 
-		String generatedMachinePath = Paths.get("out", "test", "resources", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
+		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
 
-		Process executeProcess = runtime.exec("java -cp btypes_persistent.jar:" + generatedMachinePath);
+		Process executeProcess = runtime.exec("java -cp btypes.jar:" + generatedMachinePath);
 		executeProcess.waitFor();
 
 		error = streamToString(executeProcess.getErrorStream());
@@ -160,7 +160,7 @@ public class TestJava {
 				false,
 				null);
 		Process process = Runtime.getRuntime()
-				.exec("javac -classpath btypes.jar " + String.join(" ", javaFilePaths.stream()
+				.exec("javac -cp btypes.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));
 

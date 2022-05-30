@@ -353,31 +353,28 @@ Remarks:
 
 ```bash
 # Java
-./gradlew run -Planguage="java" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="java" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # C++
-./gradlew run -Planguage="cpp" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="cpp" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # Python
-./gradlew run -Planguage="python" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="python" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # JavaScript/TypeScript
-./gradlew run -Planguage="ts" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="ts" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # C
-./gradlew run -Planguage="c" -Pbig_integer="true/false" [-Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="c" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 Default Values:
+big_integer: false
 minint: -2147483648
 maxint: 2147483647
 deferred_set_size: 10
 useConstraintSolving: false
 forModelchecking: false
 ```
-
-`-Pminint` and `-Pmaxint` are optional. The default values cover 32-Bit Integers.
-
-`-PuseConstraintSolving` and `-PforModelchecking` are also optional. They default to `false`.
 
 `-PuseConstraintSolving` is in an experimental stage.
 
@@ -387,23 +384,10 @@ forModelchecking: false
 2. Generate code from the machine
 
 ```bash
-# Java
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar java <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking> <file_path_relative_to_jar_file>
-
-# C++
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
-
-# Python
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar python <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
-
-# JavaScript/TypeScript
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar typescript <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
-
-# C
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar c <isBigInteger> <minint> <maxint> <deferred_set_size> <use_constraint_solving> <for_model_checking>  <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l {java|cpp|python|typescript|c} [-bi <isBigInteger>] [-min <minint>] [-max <maxint>] [-dss <deferred_set_size>] [-cs <use_constraint_solving>] [-mc <for_model_checking>] [-v <visualisation] -f <file_path_relative_to_jar_file>
 ```
 
-Note that `minint`, `maxint`, `use_constraint_solving`, and `for_model_checking`  are not optional when using JAR-File.
+Remark: Visualisation is the path to a VisB file. It is only available for TypeScript/JavaScript
 
 ### Compile generated Code
 
@@ -483,7 +467,7 @@ Lift consists of operation to lift up and lift down and getting the floor.
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
-* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false false Lift.mch ```
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l java -f Lift.mch ```
 * Write a main method in `Lift.java` 
 ```java
 public static void main(String[] args) {
@@ -504,7 +488,7 @@ public static void main(String[] args) {
 ##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
-* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Lift.mch ```
+* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l -cpp -f Lift.mch ```
 * Write a main method in `Lift.cpp` 
 ```cpp
 int main() {
@@ -531,7 +515,7 @@ make install
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
-* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar ts false -2147483648 2147483647 10 false false Lift.mch ```
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l ts -f Lift.mch ```
 * Write additional code executing generated functions in `Lift.ts`
 
 ```typescript
@@ -553,7 +537,7 @@ console.log(lift.getFloor().toString());
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
-* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false true Lift.mch```
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l java -f Lift.mch -mc true```
 * Build B types in btypes_primitives `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primitives and move it to this folder
 * Move `btypes_primitives-all.jar` to the same folder as `Lift.java`
 * Compile `Lift.java` with `javac -cp btypes_primitives-all.jar Lift.java`
@@ -563,7 +547,7 @@ console.log(lift.getFloor().toString());
 ##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
-* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false true Lift.mch ```
+* Generate code for `Lift.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l cpp -f Lift.mch -mc true```
 * Install C++ B types with
 ```bash
 mkdir build & cd build
@@ -587,7 +571,7 @@ Furthermore it has getter operations for all variables.
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
-* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false false Cruise_finite1_deterministic.mch ```
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l java -f Cruise_finite1_deterministic.mch```
 * Write a main method in `Cruise_finite1_deterministic_exec.java`
 ```java
 public static void main(String[] args) {
@@ -635,7 +619,7 @@ false
 ##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
-* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l cpp -f Cruise_finite1_deterministic_exec.mch ```
 * Write a main method in `Cruise_finite1_deterministic_exec.cpp` 
 ```cpp
 int main() {
@@ -690,7 +674,7 @@ false
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Cruise_finite1_deterministic_exec.mch`
-* Generate code for `Cruise_finite1_deterministic_exec.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar ts false -2147483648 2147483647 10 false false Cruise_finite1_deterministic_exec.mch ```
+* Generate code for `Cruise_finite1_deterministic_exec.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l ts -f Cruise_finite1_deterministic_exec.mch ```
 * Write additional code executing generated functions in `Cruise_finite1_deterministic_exec.ts`
 
 ```typescript
@@ -740,7 +724,7 @@ false
 
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
-* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar java false -2147483648 2147483647 10 false true Cruise_finite1_deterministic.mch ```
+* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l java -f Cruise_finite1_deterministic.mch -mc true```
 * Build B types in btypes_primitives with `./gradlew fatJar` in the belonging folder or execute `make`which builds btypes_primtives and move it to this folder
 * Move `btypes_primitives-all.jar` to the same folder as the generated classes
 * Compile `Cruise_finite1_deterministic.java` with `javac -cp btypes_primitives-all.jar Cruise_finite1_deterministic.java`
@@ -750,7 +734,7 @@ false
 ##### C++
 * Run `./gradlew fatJar` to build the JAR-file
 * Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
-* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar cpp false -2147483648 2147483647 10 false true Cruise_finite1_deterministic.mch ```
+* Generate code for `Cruise_finite1_deterministic.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l cpp -f Cruise_finite1_deterministic.mch -mc true```
 * Install C++ B types with
 ```bash
 mkdir build & cd build

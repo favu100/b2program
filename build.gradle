@@ -81,52 +81,63 @@ sourceSets.test.runtimeClasspath += files(sourceSets.main.java.srcDirs)
 
 tasks.withType(JavaExec) {
     if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('file')) {
-        def arguments = [language, big_integer]
+        def arguments = ['l', language]
 
+        arguments.add('bi')
+        if(project.hasProperty('big_integer')) {
+            arguments.add(big_integer)
+        } else {
+            arguments.add(false)
+        }
+
+        arguments.add('min')
         if(project.hasProperty('minint')) {
             arguments.add(minint)
         } else {
             arguments.add(-2147483648)
         }
 
+        arguments.add('max')
         if(project.hasProperty('maxint')) {
             arguments.add(maxint)
         } else {
             arguments.add(2147483647)
         }
 
+        arguments.add('dss')
         if(project.hasProperty('deferred_set_size')) {
             arguments.add(deferred_set_size)
         } else {
             arguments.add(10)
         }
 
+        arguments.add('cs')
         if(project.hasProperty('useConstraintSolving')) {
             arguments.add(useConstraintSolving)
         } else {
             arguments.add(false)
         }
 
+        arguments.add('mc')
         if(project.hasProperty('forModelchecking')) {
             arguments.add(forModelchecking)
         } else {
             arguments.add(false)
         }
 
+        arguments.add('file')
         arguments.add(file)
 
+        arguments.add('v')
+        if(project.hasProperty('visualisation')) {
+            arguments.add(visualisation)
+        }
+
+        arguments.add('a')
         if(project.hasProperty('addition')) {
             arguments.add(addition)
         } else {
             arguments.add("")
-        }
-
-        if(project.hasProperty('forVisualisation')) {
-            arguments.add(forVisualisation)
-        }
-
-        if(project.hasProperty('visualisation')) {
-            arguments.add(visualisation)
         }
 
         args(arguments)

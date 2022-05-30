@@ -6,7 +6,6 @@ project.archivesBaseName = "${rootProject.name}-btypes"
 
 repositories {
     mavenLocal()
-    jcenter()
     mavenCentral()
     maven {
         name "snapshots"
@@ -26,6 +25,13 @@ dependencies {
 task fatJar(type: Jar) {
     baseName = project.name + '-all'
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+        exclude "META-INF/*.md"
+        exclude "module-info.class"
+    }
     from('src/main/python'){include 'btypes/*.py'}
     with jar
 }
@@ -51,4 +57,6 @@ tasks.withType(JavaExec) {
     systemProperty "java.library.path", "./"
 }
 
-
+wrapper {
+    gradleVersion = "7.4.2"
+}

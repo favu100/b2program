@@ -32,8 +32,15 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 import com.fatboyindustrial.gsonjavatime.Converters;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class CodeGenerator {
+
+	private static Options options;
 
 	private List<Path> paths = new ArrayList<>();
 
@@ -50,45 +57,68 @@ public class CodeGenerator {
 	* Example: gradle run -Planguage = "java" -Pbig_integer="false" -Pminint=-2047 -Pmaxint=2048 -Pdeferred_set_size="10" -Pfile = "Lift.mch"
 	*/
 	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
-		if(args.length < 8 ) {
-			System.err.println("Too few arguments");
-			printUsageHelp();
-			return;
-		}
-		if(args.length > 11) {
-			System.err.println("Too many arguments");
-			printUsageHelp();
-			return;
-		}
-		GeneratorMode mode = getMode(args[0]);
-		boolean useBigInteger = useBigInteger(args[1]);
-		String minint = args[2];
-		String maxint = args[3];
-		String deferredSetSize = args[4];
-		boolean useConstraintSolving = useConstraintSolving(args[5]);
-		boolean forModelChecking = forModelChecking(args[6]);
-		CodeGenerator codeGenerator = new CodeGenerator();
-		Path path = Paths.get(args[7]).toAbsolutePath();
+
+		CommandLine cmd = processArgs(args);
+
+		options.addOption("l", "language", true, "Target Language");
+		options.addOption("bi", "big_integer", true, "Use Big Integer");
+		options.addOption("min", "minint", true, "MININT");
+		options.addOption("max", "maxint", true, "MAXINT");
+		options.addOption("dss", "deferred_set_size", true, "Deferred Set Size");
+		options.addOption("cs", "useConstraintSolving", true, "Use Constraint Solving");
+		options.addOption("mc", "forModelChecking", true, "For Model Checking");
+		options.addOption("f", "file", true, "File");
+		options.addOption("v", "visualisation", true, "VisB File");
+		options.addOption("a", "addition", true, "Additional Main Function");
+
+		assert cmd != null;
+
+		GeneratorMode mode = getMode(cmd.getOptionValue("l"));
+		boolean useBigInteger = useBigInteger(cmd.getOptionValue("bi"));
+		String minint = cmd.getOptionValue("min") == null ? "-2147483648" : cmd.getOptionValue("min");
+		String maxint = cmd.getOptionValue("max") == null ? "2147483647" : cmd.getOptionValue("max");
+		String deferredSetSize = cmd.getOptionValue("dss") == null ? "10" : cmd.getOptionValue("dss");
+		boolean useConstraintSolving = useConstraintSolving(cmd.getOptionValue("cs"));
+		boolean forModelChecking = forModelChecking(cmd.getOptionValue("mc"));
+		Path path = Paths.get(cmd.getOptionValue("f")).toAbsolutePath();
+		String visualisationFile = cmd.getOptionValue("v") == null ? "" : cmd.getOptionValue("v");
+		String addition = cmd.getOptionValue("a");
+
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
-		String addition = null;
-		if(args.length >= 9 && args[8].length() > 0) {
-			addition = args[8];
-		}
-		boolean forVisualisation = false;
-		if(args.length >= 10) {
-			forVisualisation = Boolean.parseBoolean(args[9]);
-		}
+
+		CodeGenerator codeGenerator = new CodeGenerator();
+
+		boolean forVisualisation = !visualisationFile.isEmpty();
 		if(forVisualisation && mode != GeneratorMode.TS) {
 			throw new CodeGenerationException("Generating a visualisation is only supported for TypeScript");
 		}
-		String visualisationFile = null;
-		if(args.length == 11 && args[10].length() > 0) {
-			visualisationFile = args[10];
-		}
 		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
 	}
-	
+
+	private static CommandLine processArgs(String[] args) {
+		options = new Options();
+		options.addOption("l", "language", true, "Target Language");
+		options.addOption("bi", "big_integer", true, "Use Big Integer");
+		options.addOption("min", "minint", true, "MININT");
+		options.addOption("max", "maxint", true, "MAXINT");
+		options.addOption("dss", "deferred_set_size", true, "Deferred Set Size");
+		options.addOption("cs", "useConstraintSolving", true, "Use Constraint Solving");
+		options.addOption("mc", "forModelChecking", true, "For Model Checking");
+		options.addOption("f", "file", true, "File");
+		options.addOption("v", "visualisation", true, "VisB File");
+		options.addOption("a", "addition", true, "Additional Main Function");
+
+		try {
+			DefaultParser parser = new DefaultParser();
+			return parser.parse(options, args);
+		} catch (ParseException e) {
+			new HelpFormatter().printHelp("-l <language> -bi <use_big_integer> -min <minint> -max <maxint> -dss <deferred_set_size> -cs <use_constraint_solving> -mc <forModelChecking> -f <filename> -v <visualisation> -a <additionalMain>", options);
+		}
+		return null;
+	}
+
+
 	private static void printUsageHelp () {
 	  System.out.println("Usage: java -jar B2Program.jar LANG BIGINT MININT MAXINT DSET CONS MC File.mch [VS VisFile]");
 	  System.out.println("       LANG: java, python, c, cpp, clojure, ts");
@@ -136,7 +166,7 @@ public class CodeGenerator {
 		} else if("false".equals(integerOption)) {
 			useBigInteger = false;
 		} else {
-			throw new RuntimeException("Wrong argument for choice of integers (must be true or false)");
+			useBigInteger = false; // default value
 		}
 		return useBigInteger;
 	}
@@ -151,7 +181,7 @@ public class CodeGenerator {
 		} else if("false".equals(constraintOption)) {
 			useConstraintSolving = false;
 		} else {
-			throw new RuntimeException("Wrong argument for choice of constraints (must be true or false)");
+			useConstraintSolving = false; // default value
 		}
 		return useConstraintSolving;
 	}
@@ -163,7 +193,7 @@ public class CodeGenerator {
 		} else if("false".equals(modelCheckingOption)) {
 			forModelChecking = false;
 		} else {
-			throw new RuntimeException("Wrong argument for choice of model checking (must be true or false)");
+			forModelChecking = false; // default value
 		}
 		return forModelChecking;
 	}

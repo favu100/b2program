@@ -453,6 +453,15 @@ Remark:
 * caching : {TRUE, FALSE}
 
 
+### Execute generated interactive validation document
+
+By specifying a visualization, B2Program also supports generating an interactive (HTML) validation document, i.e.,
+an interactive domain-specific visualization from VisB.
+Here, the specified language must be JavaScript/TypeScript.
+An example of such an interactive validation document is shown in [vis].
+
+![vis](WebGUI.png "Interactive Domain-specific Validation Document")
+
 
 ## Steps from B Model to Execution of the Generated Code (with primitive types)
 

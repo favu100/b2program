@@ -458,7 +458,7 @@ Remark:
 By specifying a visualization, B2Program also supports generating an interactive (HTML) validation document, i.e.,
 an interactive domain-specific visualization from VisB.
 Here, the specified language must be JavaScript/TypeScript.
-An example of such an interactive validation document is shown in [vis].
+An example of such an interactive validation document is shown below.
 
 ![vis](WebGUI.png "Interactive Domain-specific Validation Document")
 

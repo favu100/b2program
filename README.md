@@ -408,8 +408,9 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 
 #### JavaScript/TypeScript
 1. Move B types to same folder (see btypes_primitives or btypes_big_integer directory) as generated code
-2. `tsc --target ES6 --moduleResolution node <files...>`
-3. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`
+2. Move immutable library to same folder as generated code
+3. `tsc --target ES6 --moduleResolution node <files...>`
+4. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`
    (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
 
 
@@ -461,6 +462,16 @@ Here, the specified language must be JavaScript/TypeScript.
 An example of such an interactive validation document is shown below.
 
 ![vis](WebGUI.png "Interactive Domain-specific Validation Document")
+
+#### Steps to Interactive Validation Document (Example: Traffic Light)
+
+1. Run `./gradlew fatJar` to build the JAR-file
+2. Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `TrafficLight.mch` and VisB files (`TrafficLight.json` as VisB Glue File, and `TrafficLight.svg` as SVG image)
+3. Generate code for `TrafficLight.mch` and `TrafficLight.json` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l ts -f TrafficLight.mch -v TrafficLight.json```
+4. Move B types to same folder (see btypes_primitives or btypes_big_integer directory) as generated code
+5. Move immutable library to same folder as generated code
+6. Compile generated TypeScript files `tsc --target ES6 --moduleResolution node TrafficLight.ts`
+7. Open Interactive Validation Document for TrafficLight (`TrafficLight.html`)
 
 
 ## Steps from B Model to Execution of the Generated Code (with primitive types)

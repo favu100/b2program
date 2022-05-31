@@ -463,6 +463,18 @@ An example of such an interactive validation document is shown below.
 
 ![vis](WebGUI.png "Interactive Domain-specific Validation Document")
 
+The interactive domain-specific validation document consists of the VisB View, the Operations View, the History View, the Scenario View, and the State View.
+The VisB View contains the domain-specific visualization as an SVG image.
+Here, it is possible for a domain expert to execute events (by clicking on the graphical elements), and to inspect the model's state.
+The Operations View shows operations that are enabled in the model's current state.
+It makes it possible for a domain expert to animate the model.
+Furthermore, it shows enabled events, and parameters for which an event is enabled.
+Within the history view, a domain expert can inspect the currently animated trace, or run the trace with delay (10ms and 500ms).
+Here, it is also possible to step within the trace, and to import/export the trace, targeting other validation documents or ProB2-UI.
+Imported trace will be shown in the Scenario View.
+The right-hand side shows the State View consisting of the variables', constants', sets', and invariants' values in mathematical B notation.
+
+
 #### Steps to Interactive Validation Document (Example: Traffic Light)
 
 1. Run `./gradlew fatJar` to build the JAR-file

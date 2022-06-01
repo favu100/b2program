@@ -454,6 +454,23 @@ Remark:
 * caching : {TRUE, FALSE}
 
 
+Currently, there is also a Makefile which automizes these steps.
+Therefore, the B model must be in the top-level directory of this project, and execute these steps:
+```
+make b2program
+make btypes_primitives (or make btypes_big_integer)
+make <file> LANGUAGE = <language>
+```
+
+Example:
+```
+make b2program
+make btypes_primitives
+make CAN_BUS_tlc LANGUAGE = java
+```
+
+
+
 ### Execute generated interactive validation document
 
 By specifying a visualization, B2Program also supports generating an interactive (HTML) validation document, i.e.,

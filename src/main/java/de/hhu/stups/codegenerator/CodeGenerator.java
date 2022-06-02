@@ -59,18 +59,7 @@ public class CodeGenerator {
 	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
 
 		CommandLine cmd = processArgs(args);
-
-		options.addOption("l", "language", true, "Target Language");
-		options.addOption("bi", "big_integer", true, "Use Big Integer");
-		options.addOption("min", "minint", true, "MININT");
-		options.addOption("max", "maxint", true, "MAXINT");
-		options.addOption("dss", "deferred_set_size", true, "Deferred Set Size");
-		options.addOption("cs", "useConstraintSolving", true, "Use Constraint Solving");
-		options.addOption("mc", "forModelChecking", true, "For Model Checking");
-		options.addOption("f", "file", true, "File");
-		options.addOption("v", "visualisation", true, "VisB File");
-		options.addOption("a", "addition", true, "Additional Main Function");
-
+		
 		assert cmd != null;
 
 		GeneratorMode mode = getMode(cmd.getOptionValue("l"));

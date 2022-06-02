@@ -36,6 +36,12 @@ html(machineName, svgName, btypeImports) ::= <<
     \<h1>Scenario View \<br>\</h1>
     \<div id="_scenario_view">
     \</div>
+    \<h1>Simulation View \<br>\</h1>
+    \<div id="_simulation_view_buttons">
+        \<input id="_load_simulation" type="file" style="display:none;">\</input>
+    \</div>
+    \<div id="_simulation_view">
+    \</div>
   \</div>
   \<div id="_state_view">
     \<h1>State View \<br>\</h1>

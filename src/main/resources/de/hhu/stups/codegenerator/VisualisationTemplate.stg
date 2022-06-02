@@ -68,6 +68,9 @@ function initialize() {
     var _buttonRun10 = document.createElement("button");
     var _buttonRun500 = document.createElement("button");
 
+    var _simulation_view_buttons = document.getElementById("_simulation_view_buttons");
+    var _buttonLoadSimulation = document.createElement("button");
+
 
     function flattenTuple(tuple) {
         if(!(tuple instanceof BTuple)) {
@@ -133,6 +136,7 @@ function initialize() {
     _operations_view = document.getElementById("_operations_view");
     _history_view = document.getElementById("_history_view");
     _scenario_view = document.getElementById("_scenario_view");
+    _simulation_view = document.getElementById("_simulation_view");
 
     var _history_onclick_function = function () {
       <initialMachineVar()> = _state_list[this.index]._copy();
@@ -189,6 +193,22 @@ function initialize() {
       };
     }
 
+    function createSimulationElement(text) {
+      var simulation_element = document.createElement("button");
+      var remove_element = document.createElement("button");
+      simulation_element.innerHTML = text + "\</br>";
+      remove_element.innerHTML = "X";
+      var div_element = document.createElement("div");
+      div_element.appendChild(simulation_element);
+      div_element.appendChild(remove_element);
+      _simulation_view.appendChild(div_element);
+      simulation_element.onclick = function() {
+        // TODO
+      };
+      remove_element.onclick = function() {
+        _simulation_view.removeChild(div_element);
+      };
+    }
 
     _buttonLeft.innerHTML="&#9664;";
     _buttonLeft.onclick = function(){selectHistoryElement(-1)};
@@ -219,6 +239,13 @@ function initialize() {
 
 
     createHistoryElement("Initialisation", 0);
+
+
+    _buttonLoadSimulation.textContent = "Load Simulation";
+    _buttonLoadSimulation.onclick = loadSimulation;
+    _simulation_view_buttons.appendChild(_buttonLoadSimulation);
+
+    var _current_simulation = null;
 
     var _param_div;
     var _param_datalist;
@@ -290,6 +317,22 @@ function initialize() {
       a.href = URL.createObjectURL(blob);
       a.download = 'Scenario.prob2trace';
       a.click();
+    }
+
+    function loadSimulation() {
+        var _file_input = document.querySelector("#_load_simulation");
+        _file_input.accept = ".json";
+        _file_input.onchange = async _ => {
+            let files = Array.from(_file_input.files);
+            let file = files[0];
+            let response = await fetch(file.name);
+            let data = await response.text();
+            let simulation = JSON.parse(data);
+            _current_simulation = simulation;
+            createSimulationElement(file.name);
+        };
+
+        _file_input.click();
     }
 
 

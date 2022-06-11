@@ -1451,65 +1451,61 @@ private void modelCheckMultiThreaded() {
         initCache(machine);
     }
 
-    for (int i = 0; i \< threads; i++) {
+    while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
+        possibleQueueChanges.incrementAndGet();
+        <machine> state = next();
         Runnable task = () -> {
-            while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
-                possibleQueueChanges.incrementAndGet();
-                <machine> state = next();
-                Set\<<machine>\> nextStates = generateNextStates(state);
+            Set\<<machine>\> nextStates = generateNextStates(state);
 
-                nextStates.forEach(nextState -> {
-                    synchronized (states) {
-                        if(!states.contains(nextState)) {
-                            states.add(nextState);
-                            synchronized (unvisitedStates) {
-                                unvisitedStates.add(nextState);
-                            }
-                            if(states.size() % 50000 == 0 && isDebug) {
-                                System.out.println("VISITED STATES: " + states.size());
-                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                System.out.println("-------------------");
-                            }
+            nextStates.forEach(nextState -> {
+                synchronized (states) {
+                    if(!states.contains(nextState)) {
+                        states.add(nextState);
+                        synchronized (unvisitedStates) {
+                            unvisitedStates.add(nextState);
                         }
-                    }
-                });
-
-                synchronized (unvisitedStates) {
-                    int running = possibleQueueChanges.decrementAndGet();
-                    if (!unvisitedStates.isEmpty() || running == 0) {
-                        synchronized (waitLock) {
-                            waitLock.notify();
+                        if(states.size() % 50000 == 0 && isDebug) {
+                            System.out.println("VISITED STATES: " + states.size());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
                         }
                     }
                 }
+            });
 
-                if(invariantViolated(state)) {
-                    invariantViolated.set(true);
-                    counterExampleState = state;
-                    stopThreads.set(true);
-                }
-
-                if(nextStates.isEmpty()) {
-                    deadlockDetected.set(true);
-                    counterExampleState = state;
-                    stopThreads.set(true);
-                }
-
-                synchronized(waitLock) {
-                    if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
-                        try {
-                            waitLock.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+            synchronized (unvisitedStates) {
+                int running = possibleQueueChanges.decrementAndGet();
+                if (!unvisitedStates.isEmpty() || running == 0) {
+                    synchronized (waitLock) {
+                        waitLock.notify();
                     }
                 }
-
             }
-        };
+
+            if(invariantViolated(state)) {
+                invariantViolated.set(true);
+                counterExampleState = state;
+                stopThreads.set(true);
+            }
+
+            if(nextStates.isEmpty()) {
+                deadlockDetected.set(true);
+                counterExampleState = state;
+                stopThreads.set(true);
+            }
+        }
         threadPool.submit(task);
+        synchronized(waitLock) {
+            if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
+                try {
+                    waitLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
-    threadPool.shutdown(); // when?
+    threadPool.shutdown();
     try {
         threadPool.awaitTermination(24, TimeUnit.HOURS);
     } catch (InterruptedException e) {

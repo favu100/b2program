@@ -1,28 +1,69 @@
-machine(transitions, props, guards, initialization) ::= <<
+machine(forModelChecking, props, imports, machine, structs, constants_declarations, includes, enums, sets, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal) ::= <<
+:- use_module(environment).
+:- use_module(evaluator).
+
+<imports>
+<structs>
+<constants_declarations>
+<includes>
+<enums>
+<addition>
 start(st).
 
 <initialization>
-<transitions; separator="\n">
 
 <props>
 
-<guards; separator="\n\n">
+<invariant; separator="\n\n">
 
-less(X, Y) :-
-    X \< Y.
-greater(X, Y) :-
-    X > Y.
+<operations; separator="\n">
 
+elementOf(Value, (A, B)) :-
+    greater_equal(Value, A),
+    less_equal(Value, B),
+    !.
+elementOf(Value, List) :-
+    member(Value, List),
+    !.
+
+cartesianProduct(A, B, Res) :-
+    % implement
+
+range(State, Key, Range) :-
+    lookup(State, Key/bRel(Value)),
+    range(Value, Range), !.
+
+range([], []) :- !.
+range([(R/_) | Tail], [R | Range]) :-
+    range(Tail, Range),
+    !.
 >>
 
-transition(operationName, stateRepresentation, predicate) ::= <<
-trans(<operationName>, State, NewState) :-
-    State = <stateRepresentation>,
-    <predicate>,
-    NewState = ?.
+transition() ::= <<
 >>
 
-operation() ::= <<
+operation(operationName, parameters, body, lastStateCount) ::= <<
+
+trans(t_<operationName>, State_0, State_<lastStateCount>) :-
+    State_0 \= st,
+
+    <body>.
+>>
+
+operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
+% operation_call_with_assignment_many_parameters
+>>
+
+operation_call_assignment(var, record, field) ::= <<
+% operation_call_assignment
+>>
+
+operation_call_with_assignment_one_parameter(var, machineInstance, function, args, this) ::= <<
+% operation_call_with_assignment_one_parameter
+>>
+
+operation_call_without_assignment(machineInstance, function, args, this) ::= <<
+% operation_call_without_assignment
 >>
 
 props(stateRepresentation, statePrettyRepresentation, invariants) ::= <<
@@ -32,75 +73,198 @@ prop(State, unsafe) :-
 >>
 
 
-assignment(isMath, isRepresentation, identifier, val) ::= <<
-<if(isMath)>
-<identifier> is <val>
-<endif>
-<if(isRepresentation)>
-<identifier>/<val>
-<endif>
-<identifier>/<val>
+assignment(identifier, val, stateCount, nextStateCount, lastExprCount, isFinalExpr) ::= <<
+<if(isFinalExpr)>
+update(<identifier>, <val>, State_<stateCount>, State_<nextStateCount>)<else>
+<val>
+update(<identifier>, Expr_<lastExprCount>, State_<stateCount>, State_<nextStateCount>)<endif>
 >>
 
-binary(arg1, operator, arg2) ::= <<
-<operator>(<arg1>, <arg2>)
+binary(arg1, operator, arg2, exprCount, stateCount, returnsBool) ::= <<
+<if(returnsBool)>
+<operator>(State_<stateCount>, <arg1>, <arg2>)<else>
+<operator>(State_<stateCount>, <arg1>, <arg2>, Expr_<exprCount>)<endif>
+>>
+
+bool() ::= <<
+[true, false]
+>>
+
+boolean_val(val) ::= <<
+<val>
 >>
 
 or(arg1, arg2) ::= <<
-(<arg1>; <arg2>)
+<arg1>;
+<arg2>
 >>
 
 and(arg1, arg2) ::= <<
-(<arg1>, <arg2>)
+<arg1>,
+<arg2>
 >>
 
 implies(arg1, arg2) ::= <<
-(\+ <arg1> ; <arg2>)
+\+ <arg1>; <arg2>
 >>
 
 equivalent(arg1, arg2) ::= <<
-new BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue() || <arg1>.booleanValue()))
+((<arg1>, <arg2>);
+(\+ <arg1>, \+ <arg2>)),
+!
+>>
+
+cartesian_product(arg1, arg2) ::= <<
+cartesianProduct(<arg1>, <arg2>, CartesianProduct)
+>>
+
+choice_point_declaration(choicePoint, operation) ::= <<
+    % choice_point_declaration
+>>
+
+choice_point_getter(choicePoint, operation) ::= <<
+    % choice_point_getter
+>>
+
+choice_point_operation_flag_declaration(operation) ::= <<
+    % choice_point_operation_flag_declaration
+>>
+
+choice_point_operation_triggered_declaration(operation) ::= <<
+    % choice_point_operation_triggered_declaration
+>>
+
+choice_point_operation_flag_getter(operation) ::= <<
+    % choice_point_operation_flag_getter
+>>
+
+choice_point_operation_flag_reset(operation) ::= <<
+    % choice_point_operation_flag_reset
+>>
+
+choice_point_operation_triggered(operation) ::= <<
+    % choice_point_operation_triggered
+>>
+
+choice_point_operation_triggered_reset(operation) ::= <<
+    % choice_point_operation_triggered_reset
+>>
+
+choice_point_operation_apply(machine, operation, applyChoicePoints, applyChoicePointFlag) ::= <<
+    % choice_point_operation_apply
+>>
+
+choice_point_operation_apply_choice_point(operation, choicePoint) ::= <<
+    % choice_point_operation_apply_choice_point
+>>
+
+choice_point_operation_apply_choice_point_flag(operation) ::= <<
+    % choice_point_operation_apply_choice_point_flag
+>>
+
+constant_declaration(type, identifier) ::= <<
+% constant_declaration
+<type> <identifier>
+
+>>
+
+constant_initialization(iterationConstruct, identifier, val) ::= <<
+% constant_initialization
+<identifier>(Value) :- Value = <val>.
 >>
 
 copy() ::= <<
+    % copy
 >>
 
 copy_assignment() ::= <<
+    % copy_assignment
 >>
 
 copy_constructor() ::= <<
+    % copy_constructor
+>>
+
+else(then) ::= <<
+    % else
+>>
+
+elseif(predicate, then) ::= <<
+    % elseif
+>>
+
+enum_call(machine, class, identifier, isCurrentMachine) ::= <<
+<if(isCurrentMachine)>
+enum_<class>_<identifier><else>
+% enum_call of other machine not implemented
+<endif>
 >>
 
 getter() ::= <<
+    % getter
 >>
 
-global_declaration() ::= <<
+global_declaration(type, identifier) ::= <<
 >>
 
 identifier(identifier) ::= <<
-<identifier>
+v_<identifier>
+>>
+
+if(iterationConstruct, predicate, then, else1, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
+% TODO: Expr/State Counter
+(<predicate> -> <then> ; <else1>)
 >>
 
 import_type() ::= <<
 >>
 
-initialization(machine, properties, values, body) ::= <<
-trans(init, st, (<body>)).
+infinite_predicate(arg, operator) ::= <<
+<operator>(<arg>)
 >>
 
-interval() ::= <<
+initialization(machine, properties, values, body, stateCount) ::= <<
+trans(initialize, st, State_<stateCount>) :-
+    empty(State_0),
+    <values>
+    <body>.
 >>
 
-invariant() ::= <<
+interval(arg1, arg2) ::= <<
+interval(<arg1>, <arg2>)
+>>
+
+invariant(invariantFunction, iterationConstruct, predicate) ::= <<
+<invariantFunction>(State_0) :-
+    <iterationConstruct>
+    <predicate>.
+>>
+
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+    % iteration_construct_enumeration
+>>
+
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+    % iteration_construct_assignment
+>>
+
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+    % iteration_construct_subset
+>>
+
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+    % iteration_construct_subsetneq
 >>
 
 keywords() ::= <<
 >>
 
 local_declaration() ::= <<
+    % local_declaration
 >>
 
 machine_equal() ::= <<
+    % machine_equal
 >>
 
 machine_equal_predicate() ::= <<
@@ -119,9 +283,15 @@ machine_unequal_predicate() ::= <<
 >>
 
 machine_string() ::= <<
+    % machine_string
+>>
+
+mc_info_type(isSet, machine, type) ::= <<
+    % mc_info_type
 >>
 
 method() ::= <<
+    % method
 >>
 
 modelchecker() ::= <<
@@ -157,6 +327,9 @@ model_check_transition() ::= <<
 model_check_transition_body() ::= <<
 >>
 
+model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
+>>
+
 no_return() ::= <<
 >>
 
@@ -164,21 +337,159 @@ number(number) ::= <<
 <number>
 >>
 
-parameter() ::= <<
+parallel(loads, others) ::=<<
+<others; separator=", \n">
 >>
 
-pre_assert() ::= <<
+parallel_load(type, identifier) ::= <<
+<type>
+
+<identifier>
+>>
+
+parameter() ::= <<
+    % parameter
+>>
+
+parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
+    % parameter_combination_predicate
+>>
+
+pre_assert(predicate, then) ::= <<
+<predicate>,
+
+<then>
+>>
+
+quantified_predicate(identifier, forall, hasCondition, conditionalPredicate, predicate) ::= <<
+    % quantified_predicate
+>>
+
+quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
+    % quantified_predicate_evaluation
+>>
+
+quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
+    % quantified_expression
+>>
+
+quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
+    % quantified_expression_evaluation
+>>
+
+relation_bijection(arg, range) ::=<<
+    % relation_bijection
+>>
+
+relation_check_domain(arg, domain) ::= <<
+    % relation_check_domain
+>>
+
+relation_check_range(arg, range) ::= <<
+    % relation_check_range
+>>
+
+relation_function(arg, operator) ::= <<
+    % relation_function
+>>
+
+relation_injection(arg) ::= <<
+    % relation_injection
+>>
+
+relation_predicate(predicates, checkElementOf) ::= <<
+    % relation_predicate:predicates
+    <predicates>
+
+    % relation_predicate:checkElementOf
+    <checkElementOf>
+>>
+
+relation_surjection(arg, range) ::= <<
+    % relation_surjection
+>>
+
+relation_total_partial(arg, operator, domain) ::= <<
+    % relation_total_partial
+>>
+
+relation_type(leftType, rightType) ::= <<
+    % relation_type
 >>
 
 return() ::= <<
+    % return
 >>
 
-type() ::= <<
+select(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<predicate>,
+
+<then>
+>>
+
+seq_enumeration(type, elements) ::= <<
+    % seq_enumeration
+>>
+
+set_declaration(identifier, type, enums) ::= <<
+    % set_declaration:identifier
+    <identifier>
+
+    % set_declaration:type
+    <type>
+
+    % set_declaration:enums
+    <enums>
+>>
+
+set_enumeration(leftType, type, rightType, enums, isRelation, exprCount) ::= <<
+<if(isRelation)>
+Expr_<exprCount> = bRel([<enums; separator=", ">]),
+<else>
+Expr_<exprCount> = bSet([<enums; separator=", ">]),
+<endif>
+>>
+
+set_enum_declaration(name, enumsCounted, exprCount) ::= <<
+enum_<name>(Enum) :-
+    Enum = {<enumsCounted.keys:{k | enum_<name>_<enumsCounted.(k)>}; separator=", ">}.
+
+>>
+
+set_type(type) ::= <<
+    % set_type
+>>
+
+tuple_create(arg1, arg2) ::= <<
+(<arg1>/<arg2>)
+>>
+
+tuple_type(leftType, rightType) ::= <<
+    % tuple_type:leftType
+    <leftType>
+
+    % tuple_type:rightType
+    <rightType>
+
+>>
+
+type(type, fromOtherMachine, otherMachine) ::= <<
+    <type>
+>>
+
+unary(operator, obj, args, exprCount, stateCount) ::= <<
+<if(args)>
+<operator>(State_<stateCount>, <obj>, <args>, Expr_<exprCount>),
+<else>
+<operator>(State_<stateCount>, <obj>, Expr_<exprCount>),
+<endif>
 >>
 
 values(assignments) ::= <<
-<assignments; separator="\n">
+    % values
+    <assignments; separator="\n">
 >>
 
 void() ::= <<
+    % void
 >>

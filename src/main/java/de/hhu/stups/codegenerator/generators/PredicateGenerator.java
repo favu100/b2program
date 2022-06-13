@@ -99,7 +99,7 @@ public class PredicateGenerator {
         List<String> expressionList = node.getExpressionNodes().stream()
                 .map(expr -> machineGenerator.visitExprNode(expr, null))
                 .collect(Collectors.toList());
-        return operatorGenerator.generateBinary(node::getOperator, expressionList);
+        return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);
     }
 
     /*
@@ -134,7 +134,7 @@ public class PredicateGenerator {
     public String generatePredicate(PredicateOperatorNode node, List<String> expressionList) {
         PredicateOperatorNode.PredicateOperator operator = node.getOperator();
         if(BINARY_PREDICATE_OPERATORS.contains(operator)) {
-            return operatorGenerator.generateBinary(() -> operator, expressionList);
+            return operatorGenerator.generateBinary(() -> operator, expressionList, machineGenerator);
         } else if(UNARY_PREDICATE_OPERATORS.contains(operator)) {
             return generateUnaryPredicate(operator, expressionList);
         } else if (PREDICATE_BOOLEANS.contains(operator)) {

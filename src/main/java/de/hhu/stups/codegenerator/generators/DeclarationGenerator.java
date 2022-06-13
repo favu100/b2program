@@ -17,7 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DeclarationGenerator {
 
@@ -229,6 +231,10 @@ public class DeclarationGenerator {
                 .map(element -> nameHandler.handleEnum(element.getName(), node.getElements().stream().map(DeclarationNode::getName).collect(Collectors.toList())))
                 .collect(Collectors.toList());
         TemplateHandler.add(enumDeclaration, "enums", enums);
+
+        Map<Integer, String> enumsCounted = enums.stream().collect(Collectors.toMap(enums::indexOf, Function.identity()));
+        TemplateHandler.add(enumDeclaration, "enumsCounted", enumsCounted);
+        TemplateHandler.add(enumDeclaration, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return enumDeclaration.render();
     }
 

@@ -47,7 +47,6 @@ public class OperationGenerator {
 
     private final Map<String, String> machineFromOperation;
 
-
     public OperationGenerator(final STGroup group, final MachineGenerator machineGenerator, final SubstitutionGenerator substitutionGenerator,
                               final DeclarationGenerator declarationGenerator, final IdentifierGenerator identifierGenerator,
                               final NameHandler nameHandler, final TypeGenerator typeGenerator, final RecordStructGenerator recordStructGenerator) {
@@ -90,12 +89,12 @@ public class OperationGenerator {
     */
     private String visitOperation(OperationNode node, List<String> globals) {
         identifierGenerator.setParams(node.getParams(), node.getOutputParams());
+        machineGenerator.resetCurrentExpressionCount();
+        machineGenerator.resetCurrentStateCount();
         ST operation = generate(node, globals);
-        TemplateHandler.add(operation,  "machine", nameHandler.handle(machineGenerator.getMachineName()));
+        TemplateHandler.add(operation, "machine", nameHandler.handle(machineGenerator.getMachineName()));
         TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
-        //System.out.println(machineGenerator.getMachineName());
-        //System.out.println(node.getSubstitution());
-        //System.out.println("-----------");
+        TemplateHandler.add(operation, "lastStateCount", machineGenerator.getCurrentStateCount());
         return operation.render();
     }
 

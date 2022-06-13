@@ -6,15 +6,8 @@ import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
-import de.prob.parser.ast.nodes.DeclarationNode;
-import de.prob.parser.ast.nodes.MachineNode;
-import de.prob.parser.ast.nodes.Node;
-import de.prob.parser.ast.nodes.OperationNode;
-import de.prob.parser.ast.nodes.expression.ExprNode;
-import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
-import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
-import de.prob.parser.ast.nodes.expression.LambdaNode;
-import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
+import de.prob.parser.ast.nodes.*;
+import de.prob.parser.ast.nodes.expression.*;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
@@ -128,6 +121,7 @@ public class SubstitutionGenerator {
         if(node.getInitialisation() != null) {
             TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
         }
+        TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());
         return initialization.render();
     }
 
@@ -202,6 +196,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(node.getCondition()).getIterationsMapCode().values());
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), null));
         TemplateHandler.add(template, "then", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+        TemplateHandler.add(template, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return template.render();
     }
 
@@ -226,6 +221,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(select, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         TemplateHandler.add(select, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
         TemplateHandler.add(select, "forVisualisation", forVisualisation);
+        TemplateHandler.add(select, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return select.render();
     }
 
@@ -261,6 +257,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(ifST, "choicePoint", counter);
         TemplateHandler.add(ifST, "usePreviousChoicePoint", counter > 1);
         TemplateHandler.add(ifST, "previousChoicePoint", counter - 1);
+        TemplateHandler.add(ifST, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return ifST.render();
     }
 
@@ -399,8 +396,21 @@ public class SubstitutionGenerator {
             TemplateHandler.add(substitution, "val", getNestedRecordAccess(lhs, rhs));
         } else {
             TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
+            TemplateHandler.add(substitution, "isFinalExpr", isFinalExpr(rhs));
         }
+        TemplateHandler.add(substitution, "stateCount", machineGenerator.getAndIncCurrentStateCount());
+        TemplateHandler.add(substitution, "nextStateCount", machineGenerator.getCurrentStateCount());
+        TemplateHandler.add(substitution, "lastExprCount", machineGenerator.getCurrentExpressionCount()-1);
         return substitution.render();
+    }
+
+    private boolean isFinalExpr(ExprNode node) {
+        if (node instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) node).getOperator();
+            return operator.equals(ExpressionOperatorNode.ExpressionOperator.TRUE) ||
+                    operator.equals(ExpressionOperatorNode.ExpressionOperator.FALSE);
+        }
+        return node instanceof NumberNode || node instanceof IdentifierExprNode;
     }
 
     /*
@@ -694,6 +704,7 @@ public class SubstitutionGenerator {
             assignments.add(generateNondeterminism(node.getIdentifiers().get(i), node.getExpression(), counter, operation, isLastChoicePoint));
         }
         TemplateHandler.add(substitutions, "assignments", assignments);
+        TemplateHandler.add(substitutions, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return substitutions.render();
     }
 

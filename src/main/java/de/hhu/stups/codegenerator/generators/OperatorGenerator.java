@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
@@ -32,11 +33,17 @@ public class OperatorGenerator {
                     ExpressionOperatorNode.ExpressionOperator.DOMAIN_RESTRICTION,
                     ExpressionOperatorNode.ExpressionOperator.INSERT_FRONT);
 
+    private static final List<Object> BINARY_RETURNS_BOOL =
+            Arrays.asList((Object[]) PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.class.getEnumConstants());
+
     private final PredicateGenerator predicateGenerator;
 
     private final ExpressionGenerator expressionGenerator;
 
-    public OperatorGenerator(final PredicateGenerator predicateGenerator, final ExpressionGenerator expressionGenerator) {
+    private final GeneratorMode mode;
+
+    public OperatorGenerator(final GeneratorMode mode, final PredicateGenerator predicateGenerator, final ExpressionGenerator expressionGenerator) {
+        this.mode = mode;
         this.predicateGenerator = predicateGenerator;
         this.predicateGenerator.setOperatorGenerator(this);
         this.expressionGenerator = expressionGenerator;
@@ -46,7 +53,7 @@ public class OperatorGenerator {
     /*
     * This function generates code for binary predicates and expressions
     */
-    public String generateBinary(IOperator operator, List<String> expressionList) {
+    public String generateBinary(IOperator operator, List<String> expressionList, MachineGenerator machineGenerator) {
         Optional<String> result = expressionList.stream()
             .reduce((a, e) -> {
                 Object op = operator.getOperator();
@@ -54,16 +61,30 @@ public class OperatorGenerator {
                 if(template == null) {
                     throw new RuntimeException("Given operator was not implemented: " + op);
                 }
-                if(BINARY_SWAP.contains(op)) {
+                if(BINARY_SWAP.contains(op) && mode != GeneratorMode.PL) {
                     TemplateHandler.add(template, "arg1", e);
                     TemplateHandler.add(template, "arg2", a);
                 } else {
                     TemplateHandler.add(template, "arg1", a);
                     TemplateHandler.add(template, "arg2", e);
+                    if (BINARY_RETURNS_BOOL.contains(op)) {
+                        TemplateHandler.add(template, "returnsBool", true);
+                    } else {
+                        TemplateHandler.add(template, "returnsBool", false);
+                        TemplateHandler.add(template, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
+                    }
+                    TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
                 }
                 return template.render();
             });
-        return result.isPresent() ? result.get() : "";
+        if (mode == GeneratorMode.PL) {
+            if (operator.getOperator() instanceof PredicateOperatorNode.PredicateOperator &&
+                    operator.getOperator() != PredicateOperatorNode.PredicateOperator.TRUE &&
+                    operator.getOperator() != PredicateOperatorNode.PredicateOperator.FALSE) {
+                return result.map(s -> "(" + s + ")").orElse("");
+            }
+        }
+        return result.orElse("");
     }
 
     /*

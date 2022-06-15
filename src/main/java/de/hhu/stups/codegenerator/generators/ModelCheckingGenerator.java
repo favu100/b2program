@@ -308,7 +308,6 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "stateRepresentation", generateProBStateRepresentation(machineNode));
         TemplateHandler.add(template, "statePrettyRepresentation", generateProBStateRepresentation(machineNode, " = "));
         TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
-        System.out.println(template.render());
         return template.render();
     }
 

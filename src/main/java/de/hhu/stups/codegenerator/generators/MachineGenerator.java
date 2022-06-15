@@ -131,6 +131,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final Set<String> infiniteSets;
 
+	private int currentExpressionCount;
+
+	private int currentStateCount;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine, boolean forVisualisation) {
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.forModelChecking = forModelChecking;
@@ -164,7 +168,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 																expressionGenerator, predicateGenerator, identifierGenerator, iterationConstructHandler,
 																parallelConstructHandler, recordStructGenerator, declarationGenerator, lambdaFunctionGenerator,
 																infiniteSetGenerator, backtrackingGenerator, forVisualisation);
-		this.operatorGenerator = new OperatorGenerator(predicateGenerator, expressionGenerator);
+		this.operatorGenerator = new OperatorGenerator(mode, predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
 		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator, backtrackingGenerator);
@@ -175,10 +179,33 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.isIncludedMachine = isIncludedMachine;
 		this.lambdaFunctions = new HashSet<>();
 		this.infiniteSets = new HashSet<>();
+		this.currentExpressionCount = 0;
+		this.currentStateCount = 0;
 	}
 
+	int getAndIncCurrentExpressionCount() {
+		return currentExpressionCount++;
+	}
 
+	int getCurrentExpressionCount() {
+		return currentExpressionCount;
+	}
 
+	void resetCurrentExpressionCount() {
+		this.currentExpressionCount = 0;
+	}
+
+	int getAndIncCurrentStateCount() {
+		return currentStateCount++;
+	}
+
+	int getCurrentStateCount() {
+		return currentStateCount;
+	}
+
+	void resetCurrentStateCount() {
+		this.currentStateCount = 0;
+	}
 	/*
 	* This function generates code for the whole machine with the given AST node.
 	*/
@@ -198,7 +225,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "machine", nameHandler.handle(node.getName()));
 		if (mode == GeneratorMode.PL) {
 			TemplateHandler.add(machine, "props", modelCheckingGenerator.generateModelCheckingProBProp(node));
-			TemplateHandler.add(machine, "initialState", modelCheckingGenerator.generateProBStateRepresentation(node));
 		}
 		generateBody(node, machine);
 		return machine.render();

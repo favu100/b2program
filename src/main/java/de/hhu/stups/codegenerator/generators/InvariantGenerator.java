@@ -58,6 +58,8 @@ public class InvariantGenerator {
         // TODO: Discard typing predicates
         invariantCounter++;
         String functionName = "_check_inv_" + invariantCounter;
+        machineGenerator.resetCurrentExpressionCount();
+        machineGenerator.resetCurrentStateCount();
         ST template = currentGroup.getInstanceOf("invariant");
         TemplateHandler.add(template, "invariantFunction", functionName);
         TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());

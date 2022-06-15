@@ -327,6 +327,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testRange() throws Exception {
+        testJavaMC("Range");
+    }
+
+    @Test
     public void testLibrary3_3() throws Exception {
         testJavaMC("Library_3_3");
     }

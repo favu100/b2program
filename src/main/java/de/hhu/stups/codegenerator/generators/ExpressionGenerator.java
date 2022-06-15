@@ -309,7 +309,7 @@ public class ExpressionGenerator {
         ExpressionOperatorNode.ExpressionOperator operator = node.getOperator();
         if(BINARY_EXPRESSION_OPERATORS.contains(operator)) {
             List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
-            return operatorGenerator.generateBinary(() -> operator, expressionList);
+            return operatorGenerator.generateBinary(() -> operator, expressionList, machineGenerator);
         } else if(UNARY_EXPRESSION_OPERATORS.contains(operator)) {
             List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateUnaryExpression(operator, expressionList);
@@ -362,6 +362,8 @@ public class ExpressionGenerator {
         ST expression = generateUnary(operator);
         TemplateHandler.add(expression, "obj", expressionList.get(0));
         TemplateHandler.add(expression, "args", expressionList.subList(1, expressionList.size()));
+        TemplateHandler.add(expression, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
+        TemplateHandler.add(expression, "stateCount", machineGenerator.getCurrentStateCount());
         return expression.render();
     }
 
@@ -724,6 +726,7 @@ public class ExpressionGenerator {
             TemplateHandler.add(enumeration, "type", typeGenerator.generate(subType));
         }
         TemplateHandler.add(enumeration, "isRelation", subType instanceof CoupleType);
+        TemplateHandler.add(enumeration, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return enumeration.render();
     }
 

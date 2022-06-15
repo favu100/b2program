@@ -131,6 +131,15 @@ tasks.withType(JavaExec) {
         arguments.add('v')
         if(project.hasProperty('visualisation')) {
             arguments.add(visualisation)
+        } else {
+            arguments.add('')
+        }
+
+        arguments.add('sim')
+        if(project.hasProperty('simulation')) {
+            arguments.add(simulation)
+        } else {
+            arguments.add('')
         }
 
         arguments.add('a')

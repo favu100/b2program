@@ -7,7 +7,9 @@ import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
 import de.hhu.stups.codegenerator.generators.VisualisationGenerator;
+import de.hhu.stups.codegenerator.json.JSONASTBuilder;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
+import de.hhu.stups.codegenerator.json.simb.SimulationRewriter;
 import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
 import de.hhu.stups.codegenerator.json.visb.VisBProjectParser;
@@ -18,6 +20,7 @@ import de.prob.parser.antlr.ScopeException;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.visitors.TypeErrorException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigInteger;
@@ -59,7 +62,7 @@ public class CodeGenerator {
 	public static void main(String[] args) throws URISyntaxException, IOException, CodeGenerationException {
 
 		CommandLine cmd = processArgs(args);
-		
+
 		assert cmd != null;
 
 		GeneratorMode mode = getMode(cmd.getOptionValue("l"));
@@ -71,6 +74,7 @@ public class CodeGenerator {
 		boolean forModelChecking = forModelChecking(cmd.getOptionValue("mc"));
 		Path path = Paths.get(cmd.getOptionValue("f")).toAbsolutePath();
 		String visualisationFile = cmd.getOptionValue("v") == null ? "" : cmd.getOptionValue("v");
+		String simulationFile = cmd.getOptionValue("sim") == null ? "" : cmd.getOptionValue("sim");
 		String addition = cmd.getOptionValue("a");
 
 		checkPath(path);
@@ -83,6 +87,10 @@ public class CodeGenerator {
 			throw new CodeGenerationException("Generating a visualisation is only supported for TypeScript");
 		}
 		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
+
+		if(!simulationFile.isEmpty()) {
+			SimulationRewriter.rewriteConfigurationFromJSON(new File(simulationFile), new File(simulationFile));
+		}
 	}
 
 	private static CommandLine processArgs(String[] args) {
@@ -97,27 +105,17 @@ public class CodeGenerator {
 		options.addOption("f", "file", true, "File");
 		options.addOption("v", "visualisation", true, "VisB File");
 		options.addOption("a", "addition", true, "Additional Main Function");
+		options.addOption("sim", "simulation", true, "SimB Simulation File");
 
 		try {
 			DefaultParser parser = new DefaultParser();
 			return parser.parse(options, args);
 		} catch (ParseException e) {
-			new HelpFormatter().printHelp("-l <language> -bi <use_big_integer> -min <minint> -max <maxint> -dss <deferred_set_size> -cs <use_constraint_solving> -mc <forModelChecking> -f <filename> -v <visualisation> -a <additionalMain>", options);
+			new HelpFormatter().printHelp("{-l <language> -bi <use_big_integer> -min <minint> -max <maxint> -dss <deferred_set_size> -cs <use_constraint_solving> -mc <forModelChecking> -f <filename> -v <visualisation> -a <additionalMain>} | -sim <simb_file>", options);
 		}
 		return null;
 	}
 
-
-	private static void printUsageHelp () {
-	  System.out.println("Usage: java -jar B2Program.jar LANG BIGINT MININT MAXINT DSET CONS MC File.mch [VS VisFile]");
-	  System.out.println("       LANG: java, python, c, cpp, clojure, ts");
-	  System.out.println("       BIGINT: true for using big integer, false otherwise");
-	  System.out.println("       MAXINT: integer value");
-	  System.out.println("       MININT: integer value");
-	  System.out.println("       DSET: integer value");
-	  System.out.println("       CONS: true for using constraint solving, false otherwise");
-	  System.out.println("       MC: true to enable model checking, false otherwise");
-	}
 
 	/*
 	* This function extracts the generator mode representing the language code should be generated from the given string

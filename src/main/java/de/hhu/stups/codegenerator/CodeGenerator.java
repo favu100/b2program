@@ -89,7 +89,7 @@ public class CodeGenerator {
 		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
 
 		if(!simulationFile.isEmpty()) {
-			SimulationRewriter.rewriteConfigurationFromJSON(new File(simulationFile), new File(simulationFile));
+			SimulationRewriter.rewriteConfigurationFromJSON(new File(simulationFile), new File(simulationFile.replaceAll(".json", "_new.json")));
 		}
 	}
 

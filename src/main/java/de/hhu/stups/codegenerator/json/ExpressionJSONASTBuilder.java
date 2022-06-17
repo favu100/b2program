@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
+import de.prob.parser.ast.nodes.expression.RealNumberNode;
 import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
 import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -40,6 +41,8 @@ public class ExpressionJSONASTBuilder implements ParametrisedExpressionVisitor<M
             return visitCastPredicateExpressionNode((CastPredicateExpressionNode) exprNode, null);
         } else if(exprNode instanceof NumberNode) {
             return visitNumberNode((NumberNode) exprNode, null);
+        } else if(exprNode instanceof RealNumberNode) {
+            return visitRealNumberNode((RealNumberNode) exprNode, null);
         } else if(exprNode instanceof QuantifiedExpressionNode) {
             return visitQuantifiedExpressionNode((QuantifiedExpressionNode) exprNode, null);
         } else if(exprNode instanceof SetComprehensionNode) {
@@ -88,6 +91,14 @@ public class ExpressionJSONASTBuilder implements ParametrisedExpressionVisitor<M
     public Map<String, Object> visitNumberNode(NumberNode node, Void expected) {
         Map<String, Object> result = new HashMap<>();
         result.put("type", "number");
+        result.put("val", node.getValue().toString());
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> visitRealNumberNode(RealNumberNode node, Void expected) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("type", "real");
         result.put("val", node.getValue().toString());
         return result;
     }

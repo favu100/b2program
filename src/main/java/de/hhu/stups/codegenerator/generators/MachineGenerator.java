@@ -18,6 +18,7 @@ import de.prob.parser.ast.nodes.expression.LambdaNode;
 import de.prob.parser.ast.nodes.expression.LetExpressionNode;
 import de.prob.parser.ast.nodes.expression.NumberNode;
 import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
+import de.prob.parser.ast.nodes.expression.RealNumberNode;
 import de.prob.parser.ast.nodes.expression.RecordFieldAccessNode;
 import de.prob.parser.ast.nodes.expression.RecordNode;
 import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
@@ -419,6 +420,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	@Override
 	public String visitNumberNode(NumberNode node, Void expected) {
 		return expressionGenerator.visitNumberNode(node);
+	}
+
+	@Override
+	public String visitRealNumberNode(RealNumberNode node, Void expected) {
+		// TODO
+		return null;
 	}
 
 	@Override

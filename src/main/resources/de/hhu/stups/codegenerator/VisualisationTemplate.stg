@@ -203,7 +203,12 @@ function initialize() {
       div_element.appendChild(remove_element);
       _simulation_view.appendChild(div_element);
       simulation_element.onclick = function() {
-        // TODO
+        try {
+            playSimulation(simulation);
+        } catch (error) {
+            alert("Simulation could not be played.");
+            console.error(error);
+        }
       };
       remove_element.onclick = function() {
         _simulation_view.removeChild(div_element);
@@ -351,6 +356,38 @@ function initialize() {
           currentHistoryElement = _history_view.querySelector(".active");
           index = currentHistoryElement.index + 1;
         }
+    }
+
+    async function playSimulation(simulation) {
+        // initialize
+        var simTime = 0;
+        var delay = 0;
+        var schedulingTable = {};
+        var newDelay = 0;
+
+
+        while(true) { // Finish at ending condition
+            simTime = simTime + delay; // Update time
+            // Update scheduling table
+            newDelay = Number.MAX_VALUE;
+            Object.keys(schedulingTable).forEach((key, index) => {
+                schedulingTable(key).forEach(activation => {
+                    activation.decreaseTime(delay);
+                    // Update new delay
+                    if(activation.time \< newDelay) {
+                        newDelay = activation.time;
+                    }
+                });
+            });
+            delay = newDelay;
+            executeActivatedEvents(); // Execute activated events
+            await sleep(delay);
+            console.log(simTime);
+        }
+    }
+
+    function executeActivatedEvents() {
+
     }
 }
 >>

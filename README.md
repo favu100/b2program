@@ -59,7 +59,7 @@ Big Integer: `make btypes_big_integer`
 
 ## Install C++ B Types
 ```bash
-mkdir build & cd build
+mkdir build && cd build
 cmake ..
 make install
 ```

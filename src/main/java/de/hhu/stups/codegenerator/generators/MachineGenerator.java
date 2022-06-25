@@ -173,7 +173,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
 		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator, backtrackingGenerator);
-		this.invariantGenerator = new InvariantGenerator(currentGroup, this, iterationConstructHandler);
+		this.invariantGenerator = new InvariantGenerator(mode, currentGroup, this, iterationConstructHandler);
 		this.transitionGenerator = new TransitionGenerator(this, iterationConstructHandler);
 		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, transitionGenerator, typeGenerator);
 		this.iterationConstructDepth = 0;

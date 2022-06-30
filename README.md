@@ -136,31 +136,31 @@ P is a conjunction of n conjuncts where the i-th conjunct must constraint xi for
 
 ### Sets:
 
-| Set expression or predicate  | Meaining                                   |
-|------------------------------|--------------------------------------------|
-| {}                           | Empty Set                                  |
-| {E}                          | Singleton Set                              |
-| {E,F,...}                    | Set Enumeration                            |
-| {x1,...,xn\|P}               | Set Comprehension                          |
-| POW(S)                       | Power Set                                  |
-| POW1(S)                      | Set of Non-Empty Subsets                   |
-| FIN(S)                       | Set of All Finite Subsets                  |
-| FIN1(S)                      | Set of All Non-Empty Finite Subsets        |
-| card(S)                      | Cardinality                                |
-| S * T                        | Cartesian Product                          |
-| S \/ T                       | Set Union                                  |
-| S /\ T                       | Set Intersection                           |
-| S - T                        | Set Difference                             |
-| E : S                        | Element of                                 |
-| E /: S                       | Not Element of                             |
-| S <: T                       | Subset of                                  |
-| S /<: T                      | Not Subset of                              |
-| S <<: T                      | Strict Subset of                           |
-| S /<<: T                     | Not Strict Subset of                       |
-| union(S)                     | Generalized Union over Sets of Sets        |
-| inter(S)                     | Generalized Intersection over Sets of Sets |
-| UNION(z1,...,zn).(P\|E)      | Generalized Union with Predicate           |
-| INTER(z1,...,zn).(P\|E)      | Generalized Intersection with Predicate    |
+| Set expression or predicate   | Meaining                                   |
+|-------------------------------|--------------------------------------------|
+| {}                            | Empty Set                                  |
+| {E}                           | Singleton Set                              |
+| {E,F,...}                     | Set Enumeration                            |
+| {x1,...,xn\                   |P}               | Set Comprehension                          |
+| POW(S)                        | Power Set                                  |
+| POW1(S)                       | Set of Non-Empty Subsets                   |
+| FIN(S)                        | Set of All Finite Subsets                  |
+| FIN1(S)                       | Set of All Non-Empty Finite Subsets        |
+| card(S)                       | Cardinality                                |
+| S * T                         | Cartesian Product                          |
+| S \/ T                        | Set Union                                  |
+| S /\ T                        | Set Intersection                           |
+| S - T                         | Set Difference                             |
+| E : S                         | Element of                                 |
+| E /: S                        | Not Element of                             |
+| S <: T                        | Subset of                                  |
+| S /<: T                       | Not Subset of                              |
+| S <<: T                       | Strict Subset of                           |
+| S /<<: T                      | Not Strict Subset of                       |
+| union(S)                      | Generalized Union over Sets of Sets        |
+| inter(S)                      | Generalized Intersection over Sets of Sets |
+| UNION(z1,...,zn).(P &#124; E) | Generalized Union with Predicate           |
+| INTER(z1,...,zn).(P &#124; E) | Generalized Intersection with Predicate    |
 
 Restriction: Set comprehesions, generalized unions and generalized intersections are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
 The i-th conjunct must constraint xi for each i in {1,...,n}.
@@ -191,8 +191,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | m / n                          | Division                                      |
 | m ** n                         | Power                                         |
 | m mod n                        | Remainder of Division                         |
-| PI(z1,...,zn).(P\|E)           | Set product                                   |
-| SIGMA(z1,...,zn).(P\|E)        | Set summation                                 |
+| PI(z1,...,zn).(P &#124; E)     | Set product                                   |
+| SIGMA(z1,...,zn).(P &#124; E)  | Set summation                                 |
 | succ(n)                        | Successor                                     |
 | pred(n)                        | Predecessor                                   |
 
@@ -205,30 +205,30 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 
 ### Relations:
 
-| Relation expression | Meaining                                              |
-|---------------------|-------------------------------------------------------|
-| S <-> T             | Set of relation                                       |
-| E \|-> F            | Couple                                                |
-| dom(r)              | Domain of Relation                                    |
-| range(r)            | Range of Relation                                     |
-| id(S)               | Identity Relation                                     |
-| S <\| r             | Domain Restriction                                    |
-| S <<\| r            | Domain Substraction                                   |
-| r \|> S             | Range Restriction                                     |
-| r \|>> S            | Range Substraction                                    |
-| r~                  | Inverse of Relation                                   |
-| r[S]                | Relational Image                                      |
-| r1 <+ r2            | Relational Overriding                                 |
-| r1 >< r2            | Direct Product                                        |
-| (r1 ; r2)           | Relational Composition                                |
-| (r1 \|\| r2)        | Parallel Product                                      |
-| prj1(S,T)           | Projection Function                                   |
-| prj2(S,T)           | Projection Function                                   |
-| closure1(r)         | Transitive Closure                                    |
-| closure(r)          | Transitive Reflxibe Closure                           |
-| iterate(r,n)        | Iteration of r with n                                 |
-| fnc(r)              | Translate Relation A <-> B into function A +-> POW(B) |
-| rel(r)              | Translate Relation A <-> POW(B) into relation A <-> B |
+| Relation expression  | Meaining                                              |
+|----------------------|-------------------------------------------------------|
+| S <-> T              | Set of relation                                       |
+| E &#124;-> F         | Couple                                                |
+| dom(r)               | Domain of Relation                                    |
+| range(r)             | Range of Relation                                     |
+| id(S)                | Identity Relation                                     |
+| S <&#124; r          | Domain Restriction                                    |
+| S <<&#124; r         | Domain Substraction                                   |
+| r &#124;> S          | Range Restriction                                     |
+| r &#124;>> S         | Range Substraction                                    |
+| r~                   | Inverse of Relation                                   |
+| r[S]                 | Relational Image                                      |
+| r1 <+ r2             | Relational Overriding                                 |
+| r1 >< r2             | Direct Product                                        |
+| (r1 ; r2)            | Relational Composition                                |
+| (r1 &#124;&#124; r2) | Parallel Product                                      |
+| prj1(S,T)            | Projection Function                                   |
+| prj2(S,T)            | Projection Function                                   |
+| closure1(r)          | Transitive Closure                                    |
+| closure(r)           | Transitive Reflxibe Closure                           |
+| iterate(r,n)         | Iteration of r with n                                 |
+| fnc(r)               | Translate Relation A <-> B into function A +-> POW(B) |
+| rel(r)               | Translate Relation A <-> POW(B) into relation A <-> B |
 
 Restriction: Set of Relation mostly grows up very fast. They are only supported on the right-hand side of a set predicate.
 
@@ -267,8 +267,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | front(S)            | Front of Sequence                      |
 | tail(S)             | Tail of Sequence                       |
 | conc(S)             | Concatenation of Sequence of Sequences |
-| s /\|\ n            | Take first n elements of sequence      |
-| s \\|/ n            | Drop first n elements of sequence      |
+| s /&#124;\ n        | Take first n elements of sequence      |
+| s \\&#124;/ n       | Drop first n elements of sequence      |
 
 The following constructs are not supported for code generation: seq(S), seq1(S), iseq(S), iseq1(S) and perm(S).
 They are only allowed in the predicate of constructs for verification such as invariant or precondition.
@@ -313,7 +313,7 @@ Restriction: STRING is a infinite set. It is only supported on the right-hand si
 | x :: S                                            | Choice from Set                                          |
 | x : (P)                                           | Choice by Predicate                                      |
 | x <-- OP(X)                                       | Operation Call and Assignment of Return Value            |
-| G \|\| H                                          | Parallel Substitution                                    |
+| G &#124;&#124; H                                  | Parallel Substitution                                    |
 | G ; H                                             | Sequential Substitution                                  |
 | ANY x1,...,xn WHERE P THEN G END                  | Non Deterministic Choice                                 |
 | LET x1,...,xn BE x1=E1 & ... & xn = En IN G END   | Let Substitution                                         |

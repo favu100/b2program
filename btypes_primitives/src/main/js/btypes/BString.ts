@@ -20,6 +20,14 @@ export class BString implements BObject {
 		return this.value === o.value;
 	}
 
+    equal(o: BString): BBoolean {
+        return new BBoolean(this.equals(o));
+    }
+
+    unequal(o: BString): BBoolean {
+        return new BBoolean(!this.equals(o));
+    }
+
 	length(): number {
 		return this.value.length;
 	}

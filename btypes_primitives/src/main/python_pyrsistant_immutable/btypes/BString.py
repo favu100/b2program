@@ -23,7 +23,11 @@ class BString:
 	def hashCode(self):
 		hash(self.__value)
 
+    def equal(self, other: 'BString') -> 'BBoolean':
+        return BBoolean(self.__value == other.__value)
 
+    def unequal(self, other: 'BString') -> 'BBoolean':
+        return BBoolean(self.__value != other.__value)
 
 	def toString(self) -> 'str':
 		return '"' + self.__value + '"'

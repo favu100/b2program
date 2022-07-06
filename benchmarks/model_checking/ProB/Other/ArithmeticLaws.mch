@@ -413,4 +413,8 @@ OPERATIONS
     THEN
       z := z + 1
     END
+ ; Reset = 
+    BEGIN
+      x,y,z := -3,-3,-3
+    END
 END

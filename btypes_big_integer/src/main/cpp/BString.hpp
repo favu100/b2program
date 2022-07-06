@@ -62,11 +62,11 @@ class BString : public BObject {
           return strm << str.value;
         }
 
-        BBoolean isString() {
+        BBoolean isString() const {
             return BBoolean(true);
         }
 
-        BBoolean isNotString() {
+        BBoolean isNotString() const {
             return BBoolean(false);
         }
 };

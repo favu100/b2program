@@ -47,4 +47,4 @@ endif
 # Usage:
 # make b2program
 # make btypes_primitives or make btypes_big_integer
-# make CAN_BUS_tlc LANGUAGE = java 
+# make CAN_BUS_tlc LANGUAGE=java

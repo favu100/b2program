@@ -54,4 +54,12 @@ public class BString implements BObject {
 	public BBoolean isNotString() {
 		return new BBoolean(false);
 	}
+
+	public BBoolean equal(BString o) {
+		return new BBoolean(equals(o));
+	}
+
+	public BBoolean unequal(BString o) {
+		return new BBoolean(!equals(o));
+	}
 }

@@ -31,12 +31,14 @@ else
 ifeq ($(LANGUAGE), java)
 %:
 	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(JAVA_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
-	javac -cp .$(JAVA_DEPENDENCIES) $(DIRECTORY)/$@.java
+	mv $(DIRECTORY)/$@.java .
+	javac -cp .$(JAVA_DEPENDENCIES) $@.java
 	java -cp .$(JAVA_DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
 endif
 ifeq ($(LANGUAGE), cpp)
 %:
 	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(CPP_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
+	mv $(DIRECTORY)/$@.cpp .
 	$(CPPC) $(CPPFLAGS) -o $@.exec $@.cpp
 	./$@.exec $(STRATEGY) $(THREADS) $(CACHING)
 endif

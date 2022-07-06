@@ -1171,6 +1171,7 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 copiedState.<operation>(<parameters; separator=", ">);
 addCachedInfos(std::string("<operation>"), state, copiedState);
 result.insert(copiedState);
+transitions += 1;
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -1272,7 +1273,6 @@ void modelCheckSingleThreaded() {
         <machine> state = next();
 
         std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state);
-        transitions += nextStates.size();
 
         for(auto& nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
@@ -1324,7 +1324,6 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
         <machine> state = next();
         std::packaged_task\<void()> task([&, state] {
             std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state);
-            transitions += nextStates.size();
 
             for(auto& nextState : nextStates) {
                 {

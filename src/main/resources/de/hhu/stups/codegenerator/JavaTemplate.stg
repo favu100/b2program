@@ -1493,7 +1493,7 @@ private void modelCheckMultiThreaded() {
                 counterExampleState = state;
                 stopThreads.set(true);
             }
-        }
+        };
         threadPool.submit(task);
         synchronized(waitLock) {
             if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {

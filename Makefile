@@ -10,6 +10,7 @@ CPPFLAGS ?= -std=c++14 -O1 -flto
 STRATEGY=mixed
 THREADS=1
 CACHING=false
+DIRECTORY=.
 
 b2program:
 	./gradlew fatJar && mv build/libs/B2Program-all-0.1.0-SNAPSHOT.jar .
@@ -29,13 +30,13 @@ ifndef LANGUAGE
 else
 ifeq ($(LANGUAGE), java)
 %:
-	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(JAVA_CODE_GEN_FLAGS) -f $@.mch
-	javac -cp .$(JAVA_DEPENDENCIES) $@.java
+	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(JAVA_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
+	javac -cp .$(JAVA_DEPENDENCIES) $(DIRECTORY)/$@.java
 	java -cp .$(JAVA_DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
 endif
 ifeq ($(LANGUAGE), cpp)
 %:
-	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(CPP_CODE_GEN_FLAGS) -f $@.mch
+	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(CPP_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
 	$(CPPC) $(CPPFLAGS) -o $@.exec $@.cpp
 	./$@.exec $(STRATEGY) $(THREADS) $(CACHING)
 endif

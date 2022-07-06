@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators;
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
@@ -13,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class InvariantGenerator {
 
+    private final GeneratorMode mode;
+
     private final STGroup currentGroup;
 
     private final MachineGenerator machineGenerator;
@@ -23,7 +26,8 @@ public class InvariantGenerator {
 
     private int invariantCounter;
 
-    public InvariantGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final IterationConstructHandler iterationConstructHandler) {
+    public InvariantGenerator(final GeneratorMode mode, final STGroup currentGroup, final MachineGenerator machineGenerator, final IterationConstructHandler iterationConstructHandler) {
+        this.mode = mode;
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
@@ -57,7 +61,7 @@ public class InvariantGenerator {
     public String generateInvariant(PredicateNode predicate) {
         // TODO: Discard typing predicates
         invariantCounter++;
-        String functionName = "_check_inv_" + invariantCounter;
+        String functionName = mode == GeneratorMode.PL ? "check_inv_" + invariantCounter : "_check_inv_" + invariantCounter;
         machineGenerator.resetCurrentExpressionCount();
         machineGenerator.resetCurrentStateCount();
         ST template = currentGroup.getInstanceOf("invariant");

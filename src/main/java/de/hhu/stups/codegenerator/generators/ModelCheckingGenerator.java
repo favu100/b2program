@@ -304,25 +304,14 @@ public class ModelCheckingGenerator {
     }
 
     public String generateModelCheckingProBProp(MachineNode machineNode) {
+
+        List<String> invariantFunctions = modelCheckingInfo.getInvariantFunctions().stream()
+                .map(inv -> inv = inv.startsWith("_") ? inv.replaceFirst("_", "") : inv)
+                .collect(Collectors.toList());
+
         ST template = currentGroup.getInstanceOf("props");
-        TemplateHandler.add(template, "stateRepresentation", generateProBStateRepresentation(machineNode));
-        TemplateHandler.add(template, "statePrettyRepresentation", generateProBStateRepresentation(machineNode, " = "));
-        TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
+        TemplateHandler.add(template, "invariants", invariantFunctions);
         return template.render();
-    }
-
-    public String generateProBStateRepresentation(MachineNode machineNode) {
-        return generateProBStateRepresentation(machineNode, "/");
-    }
-
-    public String generateProBStateRepresentation(MachineNode machineNode, String separator) {
-        StringJoiner stateRep = new StringJoiner(", ", "(", ")");
-
-        List<DeclarationNode> variables = machineNode.getVariables();
-        for (int i = 0; i < variables.size(); i++) {
-            stateRep.add(variables.get(i).getName() + separator + "V" + i);
-        }
-        return stateRep.toString();
     }
 
 

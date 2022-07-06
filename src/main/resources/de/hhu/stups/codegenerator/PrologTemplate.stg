@@ -1,5 +1,5 @@
 machine(forModelChecking, props, imports, machine, structs, constants_declarations, includes, enums, sets, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal) ::= <<
-:- use_module(environment).
+% :- use_module(environment).
 :- use_module(evaluator).
 
 <imports>
@@ -10,33 +10,13 @@ machine(forModelChecking, props, imports, machine, structs, constants_declaratio
 <addition>
 start(st).
 
-<initialization>
-
 <props>
 
 <invariant; separator="\n\n">
 
+<initialization>
+
 <operations; separator="\n">
-
-elementOf(Value, (A, B)) :-
-    greater_equal(Value, A),
-    less_equal(Value, B),
-    !.
-elementOf(Value, List) :-
-    member(Value, List),
-    !.
-
-cartesianProduct(A, B, Res) :-
-    % implement
-
-range(State, Key, Range) :-
-    lookup(State, Key/bRel(Value)),
-    range(Value, Range), !.
-
-range([], []) :- !.
-range([(R/_) | Tail], [R | Range]) :-
-    range(Tail, Range),
-    !.
 >>
 
 transition() ::= <<
@@ -44,7 +24,7 @@ transition() ::= <<
 
 operation(operationName, parameters, body, lastStateCount) ::= <<
 
-trans(t_<operationName>, State_0, State_<lastStateCount>) :-
+trans('<operationName>', State_0, State_<lastStateCount>) :-
     State_0 \= st,
 
     <body>.
@@ -66,17 +46,17 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 % operation_call_without_assignment
 >>
 
-props(stateRepresentation, statePrettyRepresentation, invariants) ::= <<
-prop(<stateRepresentation>, <statePrettyRepresentation>).
+props(invariants) ::= <<
+prop(State, List) :-
+    avl2List(State, List).
 prop(State, unsafe) :-
     <invariants:{it | \+ <it>(State)}; separator=";\n">.
 >>
 
-
 assignment(identifier, val, stateCount, nextStateCount, lastExprCount, isFinalExpr) ::= <<
 <if(isFinalExpr)>
 update(<identifier>, <val>, State_<stateCount>, State_<nextStateCount>)<else>
-<val>
+<val>,
 update(<identifier>, Expr_<lastExprCount>, State_<stateCount>, State_<nextStateCount>)<endif>
 >>
 
@@ -195,7 +175,7 @@ elseif(predicate, then) ::= <<
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
 <if(isCurrentMachine)>
-enum_<class>_<identifier><else>
+'<identifier>'<else>
 % enum_call of other machine not implemented
 <endif>
 >>
@@ -208,7 +188,7 @@ global_declaration(type, identifier) ::= <<
 >>
 
 identifier(identifier) ::= <<
-v_<identifier>
+'<identifier>'
 >>
 
 if(iterationConstruct, predicate, then, else1, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
@@ -451,8 +431,7 @@ Expr_<exprCount> = bSet([<enums; separator=", ">]),
 >>
 
 set_enum_declaration(name, enumsCounted, exprCount) ::= <<
-enum_<name>(Enum) :-
-    Enum = {<enumsCounted.keys:{k | enum_<name>_<enumsCounted.(k)>}; separator=", ">}.
+enum_<name>([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">]).
 
 >>
 

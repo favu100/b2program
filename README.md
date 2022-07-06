@@ -59,7 +59,7 @@ Big Integer: `make btypes_big_integer`
 
 ## Install C++ B Types
 ```bash
-mkdir build & cd build
+mkdir build && cd build
 cmake ..
 make install
 ```
@@ -459,14 +459,14 @@ Therefore, the B model must be in the top-level directory of this project, and e
 ```
 make b2program
 make btypes_primitives (or make btypes_big_integer)
-make <file> LANGUAGE = <language>
+make <file> LANGUAGE=<language>
 ```
 
 Example:
 ```
 make b2program
 make btypes_primitives
-make CAN_BUS_tlc LANGUAGE = java
+make CAN_BUS_tlc LANGUAGE=java
 ```
 
 

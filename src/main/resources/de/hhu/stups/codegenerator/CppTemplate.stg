@@ -498,8 +498,9 @@ transition(noParameters, noPredicate, identifier, subType, operationName, predic
         <if(noPredicate)>
         return true;
         <else>
-        this->_tr_cache_<operationName> = (<predicate>).booleanValue();
-        return this->_tr_cache_<operationName>.get();
+        bool __tmp_result = (<predicate>).booleanValue();
+        if (isCaching) this->_tr_cache_<operationName> = __tmp_result;
+        else return __tmp_result;
         <endif>
         <else>
         BSet\<<subType>\> <identifier> = BSet\<<subType>\>();

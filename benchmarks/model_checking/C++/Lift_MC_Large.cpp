@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -55,8 +56,12 @@ class Lift_MC_Large {
 
         BInteger level;
 
+        mutable boost::optional<bool> _tr_cache_inc;
+        mutable boost::optional<bool> _tr_cache_dec;
 
     public:
+
+        std::string stateAccessedVia;
 
         Lift_MC_Large() {
             level = (BInteger(0));
@@ -81,12 +86,22 @@ class Lift_MC_Large {
         }
 
 
-        bool _tr_inc() const {
-            return (level.less((BInteger(1000000)))).booleanValue();
+        bool _tr_inc(bool isCaching) const {
+            if (this->_tr_cache_inc == boost::none){
+                bool __tmp_result = (level.less((BInteger(1000000)))).booleanValue();
+                if (isCaching) this->_tr_cache_inc = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_inc.get();
         }
 
-        bool _tr_dec() const {
-            return (level.greater((BInteger(0)))).booleanValue();
+        bool _tr_dec(bool isCaching) const {
+            if (this->_tr_cache_dec == boost::none){
+                bool __tmp_result = (level.greater((BInteger(0)))).booleanValue();
+                if (isCaching) this->_tr_cache_dec = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_dec.get();
         }
 
         bool _check_inv_1() const {
@@ -97,8 +112,25 @@ class Lift_MC_Large {
             return (level.lessEqual((BInteger(1000000)))).booleanValue();
         }
 
-        Lift_MC_Large _copy() const {
-            return Lift_MC_Large(level);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        Lift_MC_Large _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_inc", "_tr_dec"};
+
+            Lift_MC_Large result = Lift_MC_Large(level);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_inc"): result._tr_cache_inc = this->_tr_cache_inc; break;
+                        case strHash("_tr_dec"): result._tr_cache_dec = this->_tr_cache_dec; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const Lift_MC_Large& o1, const Lift_MC_Large& o2) {
@@ -134,401 +166,285 @@ class Lift_MC_Large {
 };
 
 
-static std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> generateNextStates(std::mutex& guardMutex, const Lift_MC_Large& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& dependentGuard, std::unordered_map<Lift_MC_Large, immer::map<string, boost::any>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& guardCache, std::unordered_map<Lift_MC_Large, Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& parents, std::unordered_map<Lift_MC_Large, string, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> result = std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        bool _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_inc"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_inc") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_1 = state._tr_inc();
-        } else {
-            _trid_1 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_inc", _trid_1);
-        if(_trid_1) {
-            Lift_MC_Large copiedState = state._copy();
-            copiedState.inc();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["inc"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["inc"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "inc"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_dec"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_dec") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_2 = state._tr_dec();
-        } else {
-            _trid_2 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_dec", _trid_2);
-        if(_trid_2) {
-            Lift_MC_Large copiedState = state._copy();
-            copiedState.dec();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["dec"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["dec"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "dec"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+class ModelChecker {
+    private:
+        Lift_MC_Large::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
+
+        std::list<Lift_MC_Large> unvisitedStates;
+        std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
+
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        Lift_MC_Large counterExampleState;
+
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<Lift_MC_Large, Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> parents;
+
+    public:
+        ModelChecker() {}
+
+        ModelChecker(Lift_MC_Large::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        if(state._tr_inc()) {
-            Lift_MC_Large copiedState = state._copy();
-            copiedState.inc();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "inc"});
-                }
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
             }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_dec()) {
-            Lift_MC_Large copiedState = state._copy();
-            copiedState.dec();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "dec"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
 
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, Lift_MC_Large& counterExampleState, std::unordered_map<Lift_MC_Large, Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& parents, std::unordered_map<Lift_MC_Large, string, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        Lift_MC_Large currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const Lift_MC_Large& state, bool isCaching, std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2());
-}
-
-static Lift_MC_Large next(std::list<Lift_MC_Large>& collection, std::mutex& mutex, Lift_MC_Large::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case Lift_MC_Large::BFS: {
-            Lift_MC_Large state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case Lift_MC_Large::DFS: {
-            Lift_MC_Large state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case Lift_MC_Large::MIXED: {
-            if(collection.size() % 2 == 0) {
-                Lift_MC_Large state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                Lift_MC_Large state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(Lift_MC_Large::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    Lift_MC_Large machine = Lift_MC_Large();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> states = std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<Lift_MC_Large> collection = std::list<Lift_MC_Large>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> dependentInvariant;
-    std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> dependentGuard;
-    std::unordered_map<Lift_MC_Large, immer::map<string, boost::any>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> guardCache;
-    std::unordered_map<Lift_MC_Large, Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> parents;
-    std::unordered_map<Lift_MC_Large, string, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"dec", {"_check_inv_2", "_check_inv_1"}});
-        invariantDependency.insert({"inc", {"_check_inv_2", "_check_inv_1"}});
-        guardDependency.insert({"dec", {"_tr_dec", "_tr_inc"}});
-        guardDependency.insert({"inc", {"_tr_dec", "_tr_inc"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    Lift_MC_Large counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        Lift_MC_Large state = next(collection, mutex, type);
-
-        std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            Lift_MC_Large machine = Lift_MC_Large();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                Lift_MC_Large state = next();
 
-static void modelCheckMultiThreaded(Lift_MC_Large::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    Lift_MC_Large machine = Lift_MC_Large();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> states = std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<Lift_MC_Large> collection = std::list<Lift_MC_Large>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> dependentInvariant;
-    std::unordered_map<Lift_MC_Large, std::unordered_set<string>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> dependentGuard;
-    std::unordered_map<Lift_MC_Large, immer::map<string, boost::any>, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> guardCache;
-    std::unordered_map<Lift_MC_Large, Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> parents;
-    std::unordered_map<Lift_MC_Large, string, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"dec", {"_check_inv_2", "_check_inv_1"}});
-        invariantDependency.insert({"inc", {"_check_inv_2", "_check_inv_1"}});
-        guardDependency.insert({"dec", {"_tr_dec", "_tr_inc"}});
-        guardDependency.insert({"inc", {"_tr_dec", "_tr_inc"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    Lift_MC_Large counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        Lift_MC_Large state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            Lift_MC_Large machine = Lift_MC_Large();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                Lift_MC_Large state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
-
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(Lift_MC_Large& machine) {
+            invariantDependency.insert({"dec", {"_check_inv_2", "_check_inv_1"}});
+            invariantDependency.insert({"inc", {"_check_inv_2", "_check_inv_1"}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"dec", {"_tr_dec", "_tr_inc"}});
+            guardDependency.insert({"inc", {"_tr_dec", "_tr_inc"}});
+        }
 
 
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        Lift_MC_Large next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case Lift_MC_Large::BFS: {
+                    Lift_MC_Large state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case Lift_MC_Large::DFS: {
+                    Lift_MC_Large state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case Lift_MC_Large::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        Lift_MC_Large state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        Lift_MC_Large state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> generateNextStates(const Lift_MC_Large& state) {
+            std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> result = std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual>();
+            if(state._tr_inc(isCaching)) {
+                Lift_MC_Large copiedState = state._copy(guardDependency["inc"]);
+                copiedState.inc();
+                copiedState.stateAccessedVia = "inc";
+                result.insert(copiedState);
+            }
+            if(state._tr_dec(isCaching)) {
+                Lift_MC_Large copiedState = state._copy(guardDependency["dec"]);
+                copiedState.dec();
+                copiedState.stateAccessedVia = "dec";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const Lift_MC_Large& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -577,11 +493,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

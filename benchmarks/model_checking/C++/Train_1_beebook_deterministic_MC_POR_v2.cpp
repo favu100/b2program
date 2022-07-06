@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -30,7 +31,6 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
     public:
 
         enum Type { BFS, DFS, MIXED };
-
 
         class BLOCKS : public BObject {
             public:
@@ -178,6 +178,7 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
                 }
         };
 
+
         struct Hash {
             public:
                 size_t operator()(const Train_1_beebook_deterministic_MC_POR_v2& obj) const {
@@ -214,16 +215,26 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
         BSet<ROUTES > resrt;
         BRelation<BLOCKS, ROUTES > rsrtbl;
 
+        mutable boost::optional<BSet<ROUTES>> _tr_cache_route_reservation;
+        mutable boost::optional<BSet<ROUTES>> _tr_cache_route_freeing;
+        mutable boost::optional<BSet<ROUTES>> _tr_cache_FRONT_MOVE_1;
+        mutable boost::optional<BSet<BLOCKS>> _tr_cache_FRONT_MOVE_2;
+        mutable boost::optional<BSet<BLOCKS>> _tr_cache_BACK_MOVE_1;
+        mutable boost::optional<BSet<BLOCKS>> _tr_cache_BACK_MOVE_2;
+        mutable boost::optional<BSet<ROUTES>> _tr_cache_point_positionning;
+        mutable boost::optional<BSet<ROUTES>> _tr_cache_route_formation;
 
     public:
 
+        std::string stateAccessedVia;
+
         Train_1_beebook_deterministic_MC_POR_v2() {
+            nxt = (BRelation<ROUTES, BRelation<BLOCKS, BLOCKS > >((BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R1)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::L)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::C)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R2)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::L)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::E)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::E)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::G)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R3)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::L)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::N)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R4)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::M)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::G)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R5)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::M)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::N)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R6)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::C)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::L)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R7)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::G)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::E)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::E)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::L)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R8)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::N)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::L)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R9)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::G)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::M)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R10)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::N)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::M))))))))));
             fst = (BRelation<ROUTES, BLOCKS >((BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R1)), (BLOCKS(BLOCKS::L)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R2)), (BLOCKS(BLOCKS::L)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R3)), (BLOCKS(BLOCKS::L)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R4)), (BLOCKS(BLOCKS::M)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R5)), (BLOCKS(BLOCKS::M)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R6)), (BLOCKS(BLOCKS::C)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R7)), (BLOCKS(BLOCKS::G)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R8)), (BLOCKS(BLOCKS::N)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R9)), (BLOCKS(BLOCKS::G)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R10)), (BLOCKS(BLOCKS::N))))));
             lst = (BRelation<ROUTES, BLOCKS >((BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R1)), (BLOCKS(BLOCKS::C)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R2)), (BLOCKS(BLOCKS::G)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R3)), (BLOCKS(BLOCKS::N)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R4)), (BLOCKS(BLOCKS::G)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R5)), (BLOCKS(BLOCKS::N)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R6)), (BLOCKS(BLOCKS::L)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R7)), (BLOCKS(BLOCKS::L)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R8)), (BLOCKS(BLOCKS::L)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R9)), (BLOCKS(BLOCKS::M)))), (BTuple<ROUTES, BLOCKS >((ROUTES(ROUTES::R10)), (BLOCKS(BLOCKS::M))))));
-            nxt = (BRelation<ROUTES, BRelation<BLOCKS, BLOCKS > >((BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R1)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::L)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::C)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R2)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::L)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::E)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::E)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::G)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R3)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::L)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::N)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R4)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::M)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::G)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R5)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::M)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::N)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R6)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::C)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::L)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R7)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::G)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::E)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::E)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::L)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R8)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::N)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::D)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::D)), (BLOCKS(BLOCKS::B)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::B)), (BLOCKS(BLOCKS::A)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::A)), (BLOCKS(BLOCKS::L)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R9)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::G)), (BLOCKS(BLOCKS::F)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::F)), (BLOCKS(BLOCKS::K)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::K)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::M)))))))), (BTuple<ROUTES, BRelation<BLOCKS, BLOCKS > >((ROUTES(ROUTES::R10)), (BRelation<BLOCKS, BLOCKS >((BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::N)), (BLOCKS(BLOCKS::J)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::J)), (BLOCKS(BLOCKS::I)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::I)), (BLOCKS(BLOCKS::H)))), (BTuple<BLOCKS, BLOCKS >((BLOCKS(BLOCKS::H)), (BLOCKS(BLOCKS::M))))))))));
             BRelation<BLOCKS, ROUTES > _ic_set_0 = BRelation<BLOCKS, ROUTES >();
-            for(BLOCKS _ic_b_1 : _BLOCKS) {
-                for(ROUTES _ic_r_1 : _ROUTES) {
+            for(const BLOCKS& _ic_b_1 : _BLOCKS) {
+                for(const ROUTES& _ic_r_1 : _ROUTES) {
                     if(((BBoolean(nxt.domain().elementOf(_ic_r_1).booleanValue() && (BBoolean(nxt.functionCall(_ic_r_1).domain().elementOf(_ic_b_1).booleanValue() || nxt.functionCall(_ic_r_1).range().elementOf(_ic_b_1).booleanValue())).booleanValue()))).booleanValue()) {
                         _ic_set_0 = _ic_set_0._union(BRelation<BLOCKS, ROUTES >((BTuple<BLOCKS, ROUTES >(_ic_b_1, _ic_r_1))));
                     }
@@ -373,90 +384,122 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
         }
 
 
-        BSet<ROUTES> _tr_route_reservation() const {
-            BSet<ROUTES> _ic_set_1 = BSet<ROUTES>();
-            for(ROUTES _ic_r_1 : _ROUTES.difference(resrt)) {
-                if(((BBoolean(rtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1))).intersect(resbl).equal((BSet<BLOCKS >())).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
-                    _ic_set_1 = _ic_set_1._union(BSet<ROUTES>(_ic_r_1));
-                }
+        BSet<ROUTES> _tr_route_reservation(bool isCaching) const {
+            if (this->_tr_cache_route_reservation == boost::none){
+                BSet<ROUTES> _ic_set_1 = BSet<ROUTES>();
+                for(const ROUTES& _ic_r_1 : _ROUTES.difference(resrt)) {
+                    if(((BBoolean(rtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1))).intersect(resbl).equal((BSet<BLOCKS >())).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
+                        _ic_set_1 = _ic_set_1._union(BSet<ROUTES>(_ic_r_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_route_reservation = _ic_set_1;
+                else return _ic_set_1;
             }
-            return _ic_set_1;
+            return this->_tr_cache_route_reservation.get();
         }
 
-        BSet<ROUTES> _tr_route_freeing() const {
-            BSet<ROUTES> _ic_set_2 = BSet<ROUTES>();
-            for(ROUTES _ic_r_1 : resrt.difference(rsrtbl.range())) {
-                _ic_set_2 = _ic_set_2._union(BSet<ROUTES>(_ic_r_1));
+        BSet<ROUTES> _tr_route_freeing(bool isCaching) const {
+            if (this->_tr_cache_route_freeing == boost::none){
+                BSet<ROUTES> _ic_set_2 = BSet<ROUTES>();
+                for(const ROUTES& _ic_r_1 : resrt.difference(rsrtbl.range())) {
+                    _ic_set_2 = _ic_set_2._union(BSet<ROUTES>(_ic_r_1));
 
+                }
+                if (isCaching) this->_tr_cache_route_freeing = _ic_set_2;
+                else return _ic_set_2;
             }
-            return _ic_set_2;
+            return this->_tr_cache_route_freeing.get();
         }
 
-        BSet<ROUTES> _tr_FRONT_MOVE_1() const {
-            BSet<ROUTES> _ic_set_3 = BSet<ROUTES>();
-            for(ROUTES _ic_r_1 : frm) {
-                if(((BBoolean((BBoolean(resbl.difference(OCC).elementOf(fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(rsrtbl.functionCall(fst.functionCall(_ic_r_1))).booleanValue())).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
-                    _ic_set_3 = _ic_set_3._union(BSet<ROUTES>(_ic_r_1));
-                }
+        BSet<ROUTES> _tr_FRONT_MOVE_1(bool isCaching) const {
+            if (this->_tr_cache_FRONT_MOVE_1 == boost::none){
+                BSet<ROUTES> _ic_set_3 = BSet<ROUTES>();
+                for(const ROUTES& _ic_r_1 : frm) {
+                    if(((BBoolean((BBoolean(resbl.difference(OCC).elementOf(fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(rsrtbl.functionCall(fst.functionCall(_ic_r_1))).booleanValue())).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
+                        _ic_set_3 = _ic_set_3._union(BSet<ROUTES>(_ic_r_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_FRONT_MOVE_1 = _ic_set_3;
+                else return _ic_set_3;
             }
-            return _ic_set_3;
+            return this->_tr_cache_FRONT_MOVE_1.get();
         }
 
-        BSet<BLOCKS> _tr_FRONT_MOVE_2() const {
-            BSet<BLOCKS> _ic_set_4 = BSet<BLOCKS>();
-            for(BLOCKS _ic_b_1 : OCC.intersect(TRK.domain())) {
-                if((OCC.notElementOf(TRK.functionCall(_ic_b_1))).booleanValue()) {
-                    _ic_set_4 = _ic_set_4._union(BSet<BLOCKS>(_ic_b_1));
-                }
+        BSet<BLOCKS> _tr_FRONT_MOVE_2(bool isCaching) const {
+            if (this->_tr_cache_FRONT_MOVE_2 == boost::none){
+                BSet<BLOCKS> _ic_set_4 = BSet<BLOCKS>();
+                for(const BLOCKS& _ic_b_1 : OCC.intersect(TRK.domain())) {
+                    if((OCC.notElementOf(TRK.functionCall(_ic_b_1))).booleanValue()) {
+                        _ic_set_4 = _ic_set_4._union(BSet<BLOCKS>(_ic_b_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_FRONT_MOVE_2 = _ic_set_4;
+                else return _ic_set_4;
             }
-            return _ic_set_4;
+            return this->_tr_cache_FRONT_MOVE_2.get();
         }
 
-        BSet<BLOCKS> _tr_BACK_MOVE_1() const {
-            BSet<BLOCKS> _ic_set_5 = BSet<BLOCKS>();
-            for(BLOCKS _ic_b_1 : LBT.difference(TRK.domain())) {
-                if(((BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range()))).booleanValue()) {
-                    _ic_set_5 = _ic_set_5._union(BSet<BLOCKS>(_ic_b_1));
-                }
+        BSet<BLOCKS> _tr_BACK_MOVE_1(bool isCaching) const {
+            if (this->_tr_cache_BACK_MOVE_1 == boost::none){
+                BSet<BLOCKS> _ic_set_5 = BSet<BLOCKS>();
+                for(const BLOCKS& _ic_b_1 : LBT.difference(TRK.domain())) {
+                    if(((BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range()))).booleanValue()) {
+                        _ic_set_5 = _ic_set_5._union(BSet<BLOCKS>(_ic_b_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_BACK_MOVE_1 = _ic_set_5;
+                else return _ic_set_5;
             }
-            return _ic_set_5;
+            return this->_tr_cache_BACK_MOVE_1.get();
         }
 
-        BSet<BLOCKS> _tr_BACK_MOVE_2() const {
-            BSet<BLOCKS> _ic_set_6 = BSet<BLOCKS>();
-            for(BLOCKS _ic_b_1 : LBT.intersect(TRK.domain())) {
-                if(((BBoolean(OCC.elementOf(TRK.functionCall(_ic_b_1)).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
-                    _ic_set_6 = _ic_set_6._union(BSet<BLOCKS>(_ic_b_1));
-                }
+        BSet<BLOCKS> _tr_BACK_MOVE_2(bool isCaching) const {
+            if (this->_tr_cache_BACK_MOVE_2 == boost::none){
+                BSet<BLOCKS> _ic_set_6 = BSet<BLOCKS>();
+                for(const BLOCKS& _ic_b_1 : LBT.intersect(TRK.domain())) {
+                    if(((BBoolean(OCC.elementOf(TRK.functionCall(_ic_b_1)).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
+                        _ic_set_6 = _ic_set_6._union(BSet<BLOCKS>(_ic_b_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_BACK_MOVE_2 = _ic_set_6;
+                else return _ic_set_6;
             }
-            return _ic_set_6;
+            return this->_tr_cache_BACK_MOVE_2.get();
         }
 
-        BSet<ROUTES> _tr_point_positionning() const {
-            BSet<ROUTES> _ic_set_7 = BSet<ROUTES>();
-            for(ROUTES _ic_r_1 : resrt.difference(frm)) {
-                if(((BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range()))).booleanValue()) {
-                    _ic_set_7 = _ic_set_7._union(BSet<ROUTES>(_ic_r_1));
-                }
+        BSet<ROUTES> _tr_point_positionning(bool isCaching) const {
+            if (this->_tr_cache_point_positionning == boost::none){
+                BSet<ROUTES> _ic_set_7 = BSet<ROUTES>();
+                for(const ROUTES& _ic_r_1 : resrt.difference(frm)) {
+                    if(((BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range()))).booleanValue()) {
+                        _ic_set_7 = _ic_set_7._union(BSet<ROUTES>(_ic_r_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_point_positionning = _ic_set_7;
+                else return _ic_set_7;
             }
-            return _ic_set_7;
+            return this->_tr_cache_point_positionning.get();
         }
 
-        BSet<ROUTES> _tr_route_formation() const {
-            BSet<ROUTES> _ic_set_8 = BSet<ROUTES>();
-            for(ROUTES _ic_r_1 : resrt.difference(frm)) {
-                if(((BBoolean(nxt.functionCall(_ic_r_1).domainRestriction(rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1)))).equal(TRK.domainRestriction(rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1))))).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
-                    _ic_set_8 = _ic_set_8._union(BSet<ROUTES>(_ic_r_1));
-                }
+        BSet<ROUTES> _tr_route_formation(bool isCaching) const {
+            if (this->_tr_cache_route_formation == boost::none){
+                BSet<ROUTES> _ic_set_8 = BSet<ROUTES>();
+                for(const ROUTES& _ic_r_1 : resrt.difference(frm)) {
+                    if(((BBoolean(nxt.functionCall(_ic_r_1).domainRestriction(rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1)))).equal(TRK.domainRestriction(rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1))))).booleanValue() && (BSet<ROUTES >()).equal(resrt.difference(rsrtbl.range())).booleanValue()))).booleanValue()) {
+                        _ic_set_8 = _ic_set_8._union(BSet<ROUTES>(_ic_r_1));
+                    }
 
+                }
+                if (isCaching) this->_tr_cache_route_formation = _ic_set_8;
+                else return _ic_set_8;
             }
-            return _ic_set_8;
+            return this->_tr_cache_route_formation.get();
         }
 
         bool _check_inv_1() const {
@@ -465,8 +508,8 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 
         bool _check_inv_2() const {
             BBoolean _ic_boolean_9 = BBoolean(true);
-            for(ROUTES _ic_r_1 : resrt.difference(frm)) {
-                for(BSet<ROUTES > _ic_a_1 : {(BSet<ROUTES >(_ic_r_1))}) {
+            for(const ROUTES& _ic_r_1 : resrt.difference(frm)) {
+                for(const BSet<ROUTES >& _ic_a_1 : {(BSet<ROUTES >(_ic_r_1))}) {
                     if(!(rtbl.rangeRestriction(_ic_a_1).equal(rsrtbl.rangeRestriction(_ic_a_1))).booleanValue()) {
                         _ic_boolean_9 = BBoolean(false);
                         break;
@@ -481,10 +524,10 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 
         bool _check_inv_3() const {
             BBoolean _ic_boolean_11 = BBoolean(true);
-            for(BLOCKS _ic_x_1 : TRK.domain()) {
-                for(BLOCKS _ic_y_1 : TRK.relationImage((BSet<BLOCKS >(_ic_x_1)))) {
+            for(const BLOCKS& _ic_x_1 : TRK.domain()) {
+                for(const BLOCKS& _ic_y_1 : TRK.relationImage((BSet<BLOCKS >(_ic_x_1)))) {
                     BBoolean _ic_boolean_10 = BBoolean(false);
-                    for(ROUTES _ic_r_1 : _ROUTES) {
+                    for(const ROUTES& _ic_r_1 : _ROUTES) {
                         if((nxt.functionCall(_ic_r_1).elementOf((BTuple<BLOCKS, BLOCKS >(_ic_x_1, _ic_y_1)))).booleanValue()) {
                             _ic_boolean_10 = BBoolean(true);
                             break;
@@ -505,8 +548,8 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 
         bool _check_inv_4() const {
             BBoolean _ic_boolean_12 = BBoolean(true);
-            for(ROUTES _ic_r_1 : frm) {
-                for(BSet<BLOCKS > _ic_a_1 : {rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1)))}) {
+            for(const ROUTES& _ic_r_1 : frm) {
+                for(const BSet<BLOCKS >& _ic_a_1 : {rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1)))}) {
                     if(!(nxt.functionCall(_ic_r_1).domainRestriction(_ic_a_1).equal(TRK.domainRestriction(_ic_a_1))).booleanValue()) {
                         _ic_boolean_12 = BBoolean(false);
                         break;
@@ -525,10 +568,10 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 
         bool _check_inv_6() const {
             BBoolean _ic_boolean_13 = BBoolean(true);
-            for(BLOCKS _ic_a_1 : rsrtbl.domain()) {
-                for(BLOCKS _ic_b_1 : LBT) {
-                    for(ROUTES _ic_c_1 : {rsrtbl.functionCall(_ic_b_1)}) {
-                        for(BRelation<BLOCKS, BLOCKS > _ic_d_1 : {nxt.functionCall(_ic_c_1)}) {
+            for(const BLOCKS& _ic_a_1 : rsrtbl.domain()) {
+                for(const BLOCKS& _ic_b_1 : LBT) {
+                    for(const ROUTES& _ic_c_1 : {rsrtbl.functionCall(_ic_b_1)}) {
+                        for(const BRelation<BLOCKS, BLOCKS >& _ic_d_1 : {nxt.functionCall(_ic_c_1)}) {
                             if(!((BBoolean(!(BBoolean(_ic_d_1.range().elementOf(_ic_b_1).booleanValue() && _ic_a_1.equal(_ic_d_1.inverse().functionCall(_ic_b_1)).booleanValue())).booleanValue() || rsrtbl.functionCall(_ic_a_1).unequal(_ic_c_1).booleanValue()))).booleanValue()) {
                                 _ic_boolean_13 = BBoolean(false);
                                 break;
@@ -558,10 +601,10 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 
         bool _check_inv_10() const {
             BBoolean _ic_boolean_14 = BBoolean(true);
-            for(ROUTES _ic_r_1 : _ROUTES) {
-                for(BRelation<BLOCKS, BLOCKS > _ic_a_1 : {nxt.functionCall(_ic_r_1)}) {
-                    for(BSet<BLOCKS > _ic_b_1 : {rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1)))}) {
-                        for(BSet<BLOCKS > _ic_c_1 : {_ic_b_1.difference(OCC)}) {
+            for(const ROUTES& _ic_r_1 : _ROUTES) {
+                for(const BRelation<BLOCKS, BLOCKS >& _ic_a_1 : {nxt.functionCall(_ic_r_1)}) {
+                    for(const BSet<BLOCKS >& _ic_b_1 : {rsrtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1)))}) {
+                        for(const BSet<BLOCKS >& _ic_c_1 : {_ic_b_1.difference(OCC)}) {
                             if(!((BBoolean((BBoolean(_ic_a_1.relationImage(rtbl.inverse().relationImage((BSet<ROUTES >(_ic_r_1))).difference(_ic_b_1)).intersect(_ic_c_1).equal((BSet<BLOCKS >())).booleanValue() && _ic_a_1.relationImage(_ic_b_1).subset(_ic_b_1).booleanValue())).booleanValue() && _ic_a_1.relationImage(_ic_c_1).subset(_ic_c_1).booleanValue()))).booleanValue()) {
                                 _ic_boolean_14 = BBoolean(false);
                                 break;
@@ -586,8 +629,31 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
             return (rsrtbl.relationImage(OCC).subset(frm)).booleanValue();
         }
 
-        Train_1_beebook_deterministic_MC_POR_v2 _copy() const {
-            return Train_1_beebook_deterministic_MC_POR_v2(fst, lst, nxt, rtbl, LBT, TRK, frm, OCC, resbl, resrt, rsrtbl);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        Train_1_beebook_deterministic_MC_POR_v2 _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_route_reservation", "_tr_route_freeing", "_tr_FRONT_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_1", "_tr_BACK_MOVE_2", "_tr_point_positionning", "_tr_route_formation"};
+
+            Train_1_beebook_deterministic_MC_POR_v2 result = Train_1_beebook_deterministic_MC_POR_v2(fst, lst, nxt, rtbl, LBT, TRK, frm, OCC, resbl, resrt, rsrtbl);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_route_reservation"): result._tr_cache_route_reservation = this->_tr_cache_route_reservation; break;
+                        case strHash("_tr_route_freeing"): result._tr_cache_route_freeing = this->_tr_cache_route_freeing; break;
+                        case strHash("_tr_FRONT_MOVE_1"): result._tr_cache_FRONT_MOVE_1 = this->_tr_cache_FRONT_MOVE_1; break;
+                        case strHash("_tr_FRONT_MOVE_2"): result._tr_cache_FRONT_MOVE_2 = this->_tr_cache_FRONT_MOVE_2; break;
+                        case strHash("_tr_BACK_MOVE_1"): result._tr_cache_BACK_MOVE_1 = this->_tr_cache_BACK_MOVE_1; break;
+                        case strHash("_tr_BACK_MOVE_2"): result._tr_cache_BACK_MOVE_2 = this->_tr_cache_BACK_MOVE_2; break;
+                        case strHash("_tr_point_positionning"): result._tr_cache_point_positionning = this->_tr_cache_point_positionning; break;
+                        case strHash("_tr_route_formation"): result._tr_cache_route_formation = this->_tr_cache_route_formation; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const Train_1_beebook_deterministic_MC_POR_v2& o1, const Train_1_beebook_deterministic_MC_POR_v2& o2) {
@@ -641,797 +707,407 @@ class Train_1_beebook_deterministic_MC_POR_v2 {
 };
 
 
-static std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> generateNextStates(std::mutex& guardMutex, const Train_1_beebook_deterministic_MC_POR_v2& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentGuard, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& guardCache, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& parents, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> result = std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_route_reservation"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_route_reservation") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_1 = state._tr_route_reservation();
-        } else {
-            _trid_1 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_route_reservation", _trid_1);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_1) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+class ModelChecker {
+    private:
+        Train_1_beebook_deterministic_MC_POR_v2::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
 
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.route_reservation(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["route_reservation"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["route_reservation"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "route_reservation"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_route_freeing"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_route_freeing") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_2 = state._tr_route_freeing();
-        } else {
-            _trid_2 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_route_freeing", _trid_2);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_2) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+        std::list<Train_1_beebook_deterministic_MC_POR_v2> unvisitedStates;
+        std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
 
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.route_freeing(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["route_freeing"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["route_freeing"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "route_freeing"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_3;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_FRONT_MOVE_1"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_FRONT_MOVE_1") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_3 = state._tr_FRONT_MOVE_1();
-        } else {
-            _trid_3 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_FRONT_MOVE_1", _trid_3);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_3) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        Train_1_beebook_deterministic_MC_POR_v2 counterExampleState;
 
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.FRONT_MOVE_1(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["FRONT_MOVE_1"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["FRONT_MOVE_1"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_1"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_4;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_FRONT_MOVE_2"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_FRONT_MOVE_2") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_4 = state._tr_FRONT_MOVE_2();
-        } else {
-            _trid_4 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_FRONT_MOVE_2", _trid_4);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_4) {
-            Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> parents;
 
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.FRONT_MOVE_2(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["FRONT_MOVE_2"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["FRONT_MOVE_2"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_2"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_5;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_BACK_MOVE_1"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_BACK_MOVE_1") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_5 = state._tr_BACK_MOVE_1();
-        } else {
-            _trid_5 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_BACK_MOVE_1", _trid_5);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_5) {
-            Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
+    public:
+        ModelChecker() {}
 
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.BACK_MOVE_1(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["BACK_MOVE_1"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["BACK_MOVE_1"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "BACK_MOVE_1"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_6;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_BACK_MOVE_2"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_BACK_MOVE_2") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_6 = state._tr_BACK_MOVE_2();
-        } else {
-            _trid_6 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_BACK_MOVE_2", _trid_6);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_6) {
-            Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.BACK_MOVE_2(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["BACK_MOVE_2"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["BACK_MOVE_2"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "BACK_MOVE_2"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_7;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_point_positionning"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_point_positionning") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_7 = state._tr_point_positionning();
-        } else {
-            _trid_7 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_point_positionning", _trid_7);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_7) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.point_positionning(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["point_positionning"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["point_positionning"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "point_positionning"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_8;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_route_formation"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_route_formation") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_8 = state._tr_route_formation();
-        } else {
-            _trid_8 = boost::any_cast<BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_route_formation", _trid_8);
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_8) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.route_formation(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["route_formation"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["route_formation"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "route_formation"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+        ModelChecker(Train_1_beebook_deterministic_MC_POR_v2::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_1 = state._tr_route_reservation();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_1) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
+            }
 
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.route_reservation(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "route_reservation"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_2 = state._tr_route_freeing();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_2) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.route_freeing(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "route_freeing"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_3 = state._tr_FRONT_MOVE_1();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_3) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.FRONT_MOVE_1(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_1"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_4 = state._tr_FRONT_MOVE_2();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_4) {
-            Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.FRONT_MOVE_2(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "FRONT_MOVE_2"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_5 = state._tr_BACK_MOVE_1();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_5) {
-            Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.BACK_MOVE_1(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "BACK_MOVE_1"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_6 = state._tr_BACK_MOVE_2();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_6) {
-            Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.BACK_MOVE_2(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "BACK_MOVE_2"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_7 = state._tr_point_positionning();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_7) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.point_positionning(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "point_positionning"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_8 = state._tr_route_formation();
-        for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_8) {
-            Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
-
-            Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy();
-            copiedState.route_formation(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "route_formation"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, Train_1_beebook_deterministic_MC_POR_v2& counterExampleState, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& parents, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        Train_1_beebook_deterministic_MC_POR_v2 currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const Train_1_beebook_deterministic_MC_POR_v2& state, bool isCaching, std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_3()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_4()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_5()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_6()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_7()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_8()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_9()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_10()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_11()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_12()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12());
-}
-
-static Train_1_beebook_deterministic_MC_POR_v2 next(std::list<Train_1_beebook_deterministic_MC_POR_v2>& collection, std::mutex& mutex, Train_1_beebook_deterministic_MC_POR_v2::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case Train_1_beebook_deterministic_MC_POR_v2::BFS: {
-            Train_1_beebook_deterministic_MC_POR_v2 state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case Train_1_beebook_deterministic_MC_POR_v2::DFS: {
-            Train_1_beebook_deterministic_MC_POR_v2 state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case Train_1_beebook_deterministic_MC_POR_v2::MIXED: {
-            if(collection.size() % 2 == 0) {
-                Train_1_beebook_deterministic_MC_POR_v2 state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                Train_1_beebook_deterministic_MC_POR_v2 state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(Train_1_beebook_deterministic_MC_POR_v2::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    Train_1_beebook_deterministic_MC_POR_v2 machine = Train_1_beebook_deterministic_MC_POR_v2();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> states = std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<Train_1_beebook_deterministic_MC_POR_v2> collection = std::list<Train_1_beebook_deterministic_MC_POR_v2>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> dependentInvariant;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> dependentGuard;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> guardCache;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> parents;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"point_positionning", {"_check_inv_3", "_check_inv_1", "_check_inv_4"}});
-        invariantDependency.insert({"route_reservation", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11"}});
-        invariantDependency.insert({"FRONT_MOVE_1", {"_check_inv_6", "_check_inv_10", "_check_inv_5", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"BACK_MOVE_1", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_5", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"FRONT_MOVE_2", {"_check_inv_10", "_check_inv_5", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"route_formation", {"_check_inv_2", "_check_inv_4", "_check_inv_12", "_check_inv_11"}});
-        invariantDependency.insert({"route_freeing", {"_check_inv_2", "_check_inv_7", "_check_inv_4", "_check_inv_12", "_check_inv_11"}});
-        invariantDependency.insert({"BACK_MOVE_2", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_5", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
-        guardDependency.insert({"point_positionning", {"_tr_route_formation", "_tr_BACK_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"route_reservation", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"FRONT_MOVE_1", {"_tr_FRONT_MOVE_1", "_tr_BACK_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"BACK_MOVE_1", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"FRONT_MOVE_2", {"_tr_FRONT_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"route_formation", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_point_positionning"}});
-        guardDependency.insert({"route_freeing", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"BACK_MOVE_2", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    Train_1_beebook_deterministic_MC_POR_v2 counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        Train_1_beebook_deterministic_MC_POR_v2 state = next(collection, mutex, type);
-
-        std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            Train_1_beebook_deterministic_MC_POR_v2 machine = Train_1_beebook_deterministic_MC_POR_v2();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                Train_1_beebook_deterministic_MC_POR_v2 state = next();
 
-static void modelCheckMultiThreaded(Train_1_beebook_deterministic_MC_POR_v2::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    Train_1_beebook_deterministic_MC_POR_v2 machine = Train_1_beebook_deterministic_MC_POR_v2();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> states = std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<Train_1_beebook_deterministic_MC_POR_v2> collection = std::list<Train_1_beebook_deterministic_MC_POR_v2>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> dependentInvariant;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, std::unordered_set<string>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> dependentGuard;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, immer::map<string, boost::any>, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> guardCache;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> parents;
-    std::unordered_map<Train_1_beebook_deterministic_MC_POR_v2, string, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"point_positionning", {"_check_inv_3", "_check_inv_1", "_check_inv_4"}});
-        invariantDependency.insert({"route_reservation", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11"}});
-        invariantDependency.insert({"FRONT_MOVE_1", {"_check_inv_6", "_check_inv_10", "_check_inv_5", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"BACK_MOVE_1", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_5", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"FRONT_MOVE_2", {"_check_inv_10", "_check_inv_5", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"route_formation", {"_check_inv_2", "_check_inv_4", "_check_inv_12", "_check_inv_11"}});
-        invariantDependency.insert({"route_freeing", {"_check_inv_2", "_check_inv_7", "_check_inv_4", "_check_inv_12", "_check_inv_11"}});
-        invariantDependency.insert({"BACK_MOVE_2", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_5", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
-        guardDependency.insert({"point_positionning", {"_tr_route_formation", "_tr_BACK_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"route_reservation", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"FRONT_MOVE_1", {"_tr_FRONT_MOVE_1", "_tr_BACK_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"BACK_MOVE_1", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"FRONT_MOVE_2", {"_tr_FRONT_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"route_formation", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_point_positionning"}});
-        guardDependency.insert({"route_freeing", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_BACK_MOVE_2"}});
-        guardDependency.insert({"BACK_MOVE_2", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    Train_1_beebook_deterministic_MC_POR_v2 counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        Train_1_beebook_deterministic_MC_POR_v2 state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            Train_1_beebook_deterministic_MC_POR_v2 machine = Train_1_beebook_deterministic_MC_POR_v2();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                Train_1_beebook_deterministic_MC_POR_v2 state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(Train_1_beebook_deterministic_MC_POR_v2& machine) {
+            invariantDependency.insert({"point_positionning", {"_check_inv_3", "_check_inv_1", "_check_inv_4"}});
+            invariantDependency.insert({"route_reservation", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_8", "_check_inv_12", "_check_inv_9", "_check_inv_11"}});
+            invariantDependency.insert({"FRONT_MOVE_1", {"_check_inv_6", "_check_inv_10", "_check_inv_5", "_check_inv_12", "_check_inv_9"}});
+            invariantDependency.insert({"BACK_MOVE_1", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_5", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
+            invariantDependency.insert({"FRONT_MOVE_2", {"_check_inv_10", "_check_inv_5", "_check_inv_12", "_check_inv_9"}});
+            invariantDependency.insert({"route_formation", {"_check_inv_2", "_check_inv_4", "_check_inv_12", "_check_inv_11"}});
+            invariantDependency.insert({"route_freeing", {"_check_inv_2", "_check_inv_7", "_check_inv_4", "_check_inv_12", "_check_inv_11"}});
+            invariantDependency.insert({"BACK_MOVE_2", {"_check_inv_2", "_check_inv_6", "_check_inv_10", "_check_inv_7", "_check_inv_4", "_check_inv_5", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"point_positionning", {"_tr_route_formation", "_tr_BACK_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
+            guardDependency.insert({"route_reservation", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_BACK_MOVE_2"}});
+            guardDependency.insert({"FRONT_MOVE_1", {"_tr_FRONT_MOVE_1", "_tr_BACK_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
+            guardDependency.insert({"BACK_MOVE_1", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
+            guardDependency.insert({"FRONT_MOVE_2", {"_tr_FRONT_MOVE_1", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
+            guardDependency.insert({"route_formation", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_point_positionning"}});
+            guardDependency.insert({"route_freeing", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_BACK_MOVE_2"}});
+            guardDependency.insert({"BACK_MOVE_2", {"_tr_route_formation", "_tr_FRONT_MOVE_1", "_tr_route_reservation", "_tr_route_freeing", "_tr_BACK_MOVE_1", "_tr_point_positionning", "_tr_FRONT_MOVE_2", "_tr_BACK_MOVE_2"}});
+        }
 
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
 
-
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        Train_1_beebook_deterministic_MC_POR_v2 next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case Train_1_beebook_deterministic_MC_POR_v2::BFS: {
+                    Train_1_beebook_deterministic_MC_POR_v2 state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case Train_1_beebook_deterministic_MC_POR_v2::DFS: {
+                    Train_1_beebook_deterministic_MC_POR_v2 state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case Train_1_beebook_deterministic_MC_POR_v2::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        Train_1_beebook_deterministic_MC_POR_v2 state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        Train_1_beebook_deterministic_MC_POR_v2 state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> generateNextStates(const Train_1_beebook_deterministic_MC_POR_v2& state) {
+            std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual> result = std::unordered_set<Train_1_beebook_deterministic_MC_POR_v2, Train_1_beebook_deterministic_MC_POR_v2::Hash, Train_1_beebook_deterministic_MC_POR_v2::HashEqual>();
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_1 = state._tr_route_reservation(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_1) {
+                Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["route_reservation"]);
+                copiedState.route_reservation(_tmp_1);
+                copiedState.stateAccessedVia = "route_reservation";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_2 = state._tr_route_freeing(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_2) {
+                Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["route_freeing"]);
+                copiedState.route_freeing(_tmp_1);
+                copiedState.stateAccessedVia = "route_freeing";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_3 = state._tr_FRONT_MOVE_1(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_3) {
+                Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["FRONT_MOVE_1"]);
+                copiedState.FRONT_MOVE_1(_tmp_1);
+                copiedState.stateAccessedVia = "FRONT_MOVE_1";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_4 = state._tr_FRONT_MOVE_2(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_4) {
+                Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["FRONT_MOVE_2"]);
+                copiedState.FRONT_MOVE_2(_tmp_1);
+                copiedState.stateAccessedVia = "FRONT_MOVE_2";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_5 = state._tr_BACK_MOVE_1(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_5) {
+                Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["BACK_MOVE_1"]);
+                copiedState.BACK_MOVE_1(_tmp_1);
+                copiedState.stateAccessedVia = "BACK_MOVE_1";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::BLOCKS> _trid_6 = state._tr_BACK_MOVE_2(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::BLOCKS& param : _trid_6) {
+                Train_1_beebook_deterministic_MC_POR_v2::BLOCKS _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["BACK_MOVE_2"]);
+                copiedState.BACK_MOVE_2(_tmp_1);
+                copiedState.stateAccessedVia = "BACK_MOVE_2";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_7 = state._tr_point_positionning(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_7) {
+                Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["point_positionning"]);
+                copiedState.point_positionning(_tmp_1);
+                copiedState.stateAccessedVia = "point_positionning";
+                result.insert(copiedState);
+            }
+            BSet<Train_1_beebook_deterministic_MC_POR_v2::ROUTES> _trid_8 = state._tr_route_formation(isCaching);
+            for(const Train_1_beebook_deterministic_MC_POR_v2::ROUTES& param : _trid_8) {
+                Train_1_beebook_deterministic_MC_POR_v2::ROUTES _tmp_1 = param;
+
+                Train_1_beebook_deterministic_MC_POR_v2 copiedState = state._copy(guardDependency["route_formation"]);
+                copiedState.route_formation(_tmp_1);
+                copiedState.stateAccessedVia = "route_formation";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const Train_1_beebook_deterministic_MC_POR_v2& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_7()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_8()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_9()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_10()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_11()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_12()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -1480,11 +1156,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

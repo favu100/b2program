@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -420,80 +421,6 @@ class nota_v2 {
                 }
         };
 
-        class _Struct3 : public BStruct {
-            private:
-                BSet<SID > sid;
-                IN_ERROR_CODES err;
-
-            public:
-                typedef _Struct3 current_type;
-                typedef void value_type;
-                typedef void left_type;
-                typedef void right_type;
-
-                _Struct3(const BSet<SID >& sid, const IN_ERROR_CODES& err) {
-                    this->sid = sid;
-                    this->err = err;
-                }
-
-                BSet<SID > get_sid() {
-                    return this->sid;
-                }
-
-                IN_ERROR_CODES get_err() {
-                    return this->err;
-                }
-
-                _Struct3 override_sid(const BSet<SID >& sid) {
-                    return _Struct3(sid, err);
-                }
-
-                _Struct3 override_err(const IN_ERROR_CODES& err) {
-                    return _Struct3(sid, err);
-                }
-
-                _Struct3() {
-                }
-
-                void operator =(const _Struct3& other) {
-                    this->sid = other.sid;
-                    this->err = other.err;
-                }
-
-                BBoolean equal(const _Struct3& o) const {
-                    return this->sid == o.sid && this->err == o.err;
-                }
-
-                BBoolean unequal(const _Struct3& o) const {
-                    return this->sid != o.sid || this->err != o.err;
-                }
-
-                friend bool operator ==(const _Struct3& p1, const _Struct3& p2) {
-                    return (p1.equal(p2)).booleanValue();
-                }
-
-                friend bool operator !=(const _Struct3& p1, const _Struct3& p2) {
-                    return (p1.unequal(p2)).booleanValue();
-                }
-
-                friend std::ostream& operator<<(std::ostream &strm, const _Struct3& e) {
-                    strm << "(";
-                    strm << "sid : ";
-                    strm << e.sid;
-                    strm << "err : ";
-                    strm << e.err;
-                    strm << ")";
-                    return strm;
-                }
-
-                int hashCode() const {
-                    int result = 1;
-                    result = 31 * result + (sid.hashCode() << 1);
-                    result = 31 * result + (err.hashCode() << 1);
-                    return result;
-                }
-        };
-
         class _Struct1 : public BStruct {
             private:
                 BSet<SID > sid;
@@ -642,6 +569,80 @@ class nota_v2 {
                 }
         };
 
+        class _Struct3 : public BStruct {
+            private:
+                BSet<SID > sid;
+                IN_ERROR_CODES err;
+
+            public:
+                typedef _Struct3 current_type;
+                typedef void value_type;
+                typedef void left_type;
+                typedef void right_type;
+
+                _Struct3(const BSet<SID >& sid, const IN_ERROR_CODES& err) {
+                    this->sid = sid;
+                    this->err = err;
+                }
+
+                BSet<SID > get_sid() {
+                    return this->sid;
+                }
+
+                IN_ERROR_CODES get_err() {
+                    return this->err;
+                }
+
+                _Struct3 override_sid(const BSet<SID >& sid) {
+                    return _Struct3(sid, err);
+                }
+
+                _Struct3 override_err(const IN_ERROR_CODES& err) {
+                    return _Struct3(sid, err);
+                }
+
+                _Struct3() {
+                }
+
+                void operator =(const _Struct3& other) {
+                    this->sid = other.sid;
+                    this->err = other.err;
+                }
+
+                BBoolean equal(const _Struct3& o) const {
+                    return this->sid == o.sid && this->err == o.err;
+                }
+
+                BBoolean unequal(const _Struct3& o) const {
+                    return this->sid != o.sid || this->err != o.err;
+                }
+
+                friend bool operator ==(const _Struct3& p1, const _Struct3& p2) {
+                    return (p1.equal(p2)).booleanValue();
+                }
+
+                friend bool operator !=(const _Struct3& p1, const _Struct3& p2) {
+                    return (p1.unequal(p2)).booleanValue();
+                }
+
+                friend std::ostream& operator<<(std::ostream &strm, const _Struct3& e) {
+                    strm << "(";
+                    strm << "sid : ";
+                    strm << e.sid;
+                    strm << "err : ";
+                    strm << e.err;
+                    strm << ")";
+                    return strm;
+                }
+
+                int hashCode() const {
+                    int result = 1;
+                    result = 31 * result + (sid.hashCode() << 1);
+                    result = 31 * result + (err.hashCode() << 1);
+                    return result;
+                }
+        };
+
         struct Hash {
             public:
                 size_t operator()(const nota_v2& obj) const {
@@ -688,8 +689,24 @@ class nota_v2 {
         BRelation<SERVICE, INTERCONNECTNODE > svc_ICNode;
         BRelation<SERVICE, BBoolean > svc_registered;
 
+        mutable boost::optional<BSet<INTERCONNECTNODE>> _tr_cache_constructor_interconnectNode;
+        mutable boost::optional<BSet<RESOURCEMANAGER>> _tr_cache_constructor_resourceManager;
+        mutable boost::optional<BSet<BTuple<INTERCONNECTNODE, SERVICE >>> _tr_cache_constructor_service;
+        mutable boost::optional<BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >>> _tr_cache_constructor_socket;
+        mutable boost::optional<BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>> _tr_cache_rm_register;
+        mutable boost::optional<BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>> _tr_cache_rm_deregister;
+        mutable boost::optional<BSet<BTuple<RESOURCEMANAGER, SERVICE >>> _tr_cache_rm_getSid;
+        mutable boost::optional<BSet<BTuple<RESOURCEMANAGER, SERVICE >>> _tr_cache_rm_getSid_Not_Found;
+        mutable boost::optional<BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >>> _tr_cache_in_announceResourceManager;
+        mutable boost::optional<BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >>> _tr_cache_in_register_success;
+        mutable boost::optional<BSet<BTuple<INTERCONNECTNODE, SERVICE >>> _tr_cache_in_register_failed;
+        mutable boost::optional<BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>> _tr_cache_in_requestTargetSocket_Granted;
+        mutable boost::optional<BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>> _tr_cache_in_requestTargetSocket_NotGranted;
+        mutable boost::optional<BSet<SERVICE>> _tr_cache_svc_register;
 
     public:
+
+        std::string stateAccessedVia;
 
         nota_v2() {
             interconnectNodes = (BSet<INTERCONNECTNODE >());
@@ -947,151 +964,220 @@ class nota_v2 {
         }
 
 
-        BSet<INTERCONNECTNODE> _tr_constructor_interconnectNode() const {
-            BSet<INTERCONNECTNODE> _ic_set_0 = BSet<INTERCONNECTNODE>();
-            for(INTERCONNECTNODE _ic_newic_1 : _INTERCONNECTNODE.difference(interconnectNodes)) {
-                _ic_set_0 = _ic_set_0._union(BSet<INTERCONNECTNODE>(_ic_newic_1));
-
-            }
-            return _ic_set_0;
-        }
-
-        BSet<RESOURCEMANAGER> _tr_constructor_resourceManager() const {
-            BSet<RESOURCEMANAGER> _ic_set_1 = BSet<RESOURCEMANAGER>();
-            for(RESOURCEMANAGER _ic_newrm_1 : _RESOURCEMANAGER.difference(resourceManagers)) {
-                if(((BBoolean(rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && resourceManagers.equal((BSet<RESOURCEMANAGER >())).booleanValue()))).booleanValue()) {
-                    _ic_set_1 = _ic_set_1._union(BSet<RESOURCEMANAGER>(_ic_newrm_1));
-                }
-
-            }
-            return _ic_set_1;
-        }
-
-        BSet<BTuple<INTERCONNECTNODE, SERVICE >> _tr_constructor_service() const {
-            BSet<BTuple<INTERCONNECTNODE, SERVICE >> _ic_set_2 = BSet<BTuple<INTERCONNECTNODE, SERVICE >>();
-            for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                for(SERVICE _ic_newsvc_1 : _SERVICE.difference(services)) {
-                    _ic_set_2 = _ic_set_2._union(BSet<BTuple<INTERCONNECTNODE, SERVICE >>((BTuple<INTERCONNECTNODE, SERVICE >(_ic_ii_1, _ic_newsvc_1))));
+        BSet<INTERCONNECTNODE> _tr_constructor_interconnectNode(bool isCaching) const {
+            if (this->_tr_cache_constructor_interconnectNode == boost::none){
+                BSet<INTERCONNECTNODE> _ic_set_0 = BSet<INTERCONNECTNODE>();
+                for(const INTERCONNECTNODE& _ic_newic_1 : _INTERCONNECTNODE.difference(interconnectNodes)) {
+                    _ic_set_0 = _ic_set_0._union(BSet<INTERCONNECTNODE>(_ic_newic_1));
 
                 }
+                if (isCaching) this->_tr_cache_constructor_interconnectNode = _ic_set_0;
+                else return _ic_set_0;
             }
-            return _ic_set_2;
+            return this->_tr_cache_constructor_interconnectNode.get();
         }
 
-        BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >> _tr_constructor_socket() const {
-            BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >> _ic_set_3 = BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >>();
-            for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                for(SID _ic_srcsid_1 : sids) {
-                    for(SID _ic_targsid_1 : sids) {
-                        for(SOCKET _ic_newsoc_1 : _SOCKET.difference(sockets)) {
-                            _ic_set_3 = _ic_set_3._union(BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >((BTuple<BTuple<INTERCONNECTNODE, SID >, SID >((BTuple<INTERCONNECTNODE, SID >(_ic_ii_1, _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
+        BSet<RESOURCEMANAGER> _tr_constructor_resourceManager(bool isCaching) const {
+            if (this->_tr_cache_constructor_resourceManager == boost::none){
+                BSet<RESOURCEMANAGER> _ic_set_1 = BSet<RESOURCEMANAGER>();
+                for(const RESOURCEMANAGER& _ic_newrm_1 : _RESOURCEMANAGER.difference(resourceManagers)) {
+                    if(((BBoolean(rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && resourceManagers.equal((BSet<RESOURCEMANAGER >())).booleanValue()))).booleanValue()) {
+                        _ic_set_1 = _ic_set_1._union(BSet<RESOURCEMANAGER>(_ic_newrm_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_constructor_resourceManager = _ic_set_1;
+                else return _ic_set_1;
+            }
+            return this->_tr_cache_constructor_resourceManager.get();
+        }
+
+        BSet<BTuple<INTERCONNECTNODE, SERVICE >> _tr_constructor_service(bool isCaching) const {
+            if (this->_tr_cache_constructor_service == boost::none){
+                BSet<BTuple<INTERCONNECTNODE, SERVICE >> _ic_set_2 = BSet<BTuple<INTERCONNECTNODE, SERVICE >>();
+                for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
+                    for(const SERVICE& _ic_newsvc_1 : _SERVICE.difference(services)) {
+                        _ic_set_2 = _ic_set_2._union(BSet<BTuple<INTERCONNECTNODE, SERVICE >>((BTuple<INTERCONNECTNODE, SERVICE >(_ic_ii_1, _ic_newsvc_1))));
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_constructor_service = _ic_set_2;
+                else return _ic_set_2;
+            }
+            return this->_tr_cache_constructor_service.get();
+        }
+
+        BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >> _tr_constructor_socket(bool isCaching) const {
+            if (this->_tr_cache_constructor_socket == boost::none){
+                BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >> _ic_set_3 = BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >>();
+                for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
+                    for(const SID& _ic_srcsid_1 : sids) {
+                        for(const SID& _ic_targsid_1 : sids) {
+                            for(const SOCKET& _ic_newsoc_1 : _SOCKET.difference(sockets)) {
+                                _ic_set_3 = _ic_set_3._union(BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >((BTuple<BTuple<INTERCONNECTNODE, SID >, SID >((BTuple<INTERCONNECTNODE, SID >(_ic_ii_1, _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
+
+                            }
+                        }
+                    }
+                }
+                if (isCaching) this->_tr_cache_constructor_socket = _ic_set_3;
+                else return _ic_set_3;
+            }
+            return this->_tr_cache_constructor_socket.get();
+        }
+
+        BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _tr_rm_register(bool isCaching) const {
+            if (this->_tr_cache_rm_register == boost::none){
+                BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _ic_set_4 = BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>();
+                for(const RESOURCEMANAGER& _ic_self_1 : resourceManagers) {
+                    for(const SERVICE& _ic_ss_1 : services) {
+                        for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
+                            _ic_set_4 = _ic_set_4._union(BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>((BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_ii_1))));
 
                         }
                     }
                 }
+                if (isCaching) this->_tr_cache_rm_register = _ic_set_4;
+                else return _ic_set_4;
             }
-            return _ic_set_3;
+            return this->_tr_cache_rm_register.get();
         }
 
-        BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _tr_rm_register() const {
-            BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _ic_set_4 = BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>();
-            for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
-                for(SERVICE _ic_ss_1 : services) {
-                    for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                        _ic_set_4 = _ic_set_4._union(BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>((BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_ii_1))));
+        BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _tr_rm_deregister(bool isCaching) const {
+            if (this->_tr_cache_rm_deregister == boost::none){
+                BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _ic_set_5 = BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>();
+                for(const RESOURCEMANAGER& _ic_self_1 : resourceManagers) {
+                    for(const SERVICE& _ic_ss_1 : services) {
+                        for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
+                            _ic_set_5 = _ic_set_5._union(BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>((BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_ii_1))));
 
+                        }
                     }
                 }
+                if (isCaching) this->_tr_cache_rm_deregister = _ic_set_5;
+                else return _ic_set_5;
             }
-            return _ic_set_4;
+            return this->_tr_cache_rm_deregister.get();
         }
 
-        BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _tr_rm_deregister() const {
-            BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >> _ic_set_5 = BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>();
-            for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
-                for(SERVICE _ic_ss_1 : services) {
-                    for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                        _ic_set_5 = _ic_set_5._union(BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>((BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_ii_1))));
-
-                    }
-                }
-            }
-            return _ic_set_5;
-        }
-
-        BSet<BTuple<RESOURCEMANAGER, SERVICE >> _tr_rm_getSid() const {
-            BSet<BTuple<RESOURCEMANAGER, SERVICE >> _ic_set_6 = BSet<BTuple<RESOURCEMANAGER, SERVICE >>();
-            for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
-                for(SERVICE _ic_ss_1 : services) {
-                    if((rm_sids.domain().elementOf(_ic_ss_1)).booleanValue()) {
-                        _ic_set_6 = _ic_set_6._union(BSet<BTuple<RESOURCEMANAGER, SERVICE >>((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1))));
-                    }
-
-                }
-            }
-            return _ic_set_6;
-        }
-
-        BSet<BTuple<RESOURCEMANAGER, SERVICE >> _tr_rm_getSid_Not_Found() const {
-            BSet<BTuple<RESOURCEMANAGER, SERVICE >> _ic_set_7 = BSet<BTuple<RESOURCEMANAGER, SERVICE >>();
-            for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
-                for(SERVICE _ic_ss_1 : services) {
-                    _ic_set_7 = _ic_set_7._union(BSet<BTuple<RESOURCEMANAGER, SERVICE >>((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1))));
-
-                }
-            }
-            return _ic_set_7;
-        }
-
-        BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >> _tr_in_announceResourceManager() const {
-            BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >> _ic_set_8 = BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >>();
-            for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
-                for(RESOURCEMANAGER _ic_rm_1 : resourceManagers) {
-                    if((in_resourceManager.functionCall(_ic_self_1).equal((BSet<RESOURCEMANAGER >()))).booleanValue()) {
-                        _ic_set_8 = _ic_set_8._union(BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >>((BTuple<INTERCONNECTNODE, RESOURCEMANAGER >(_ic_self_1, _ic_rm_1))));
-                    }
-
-                }
-            }
-            return _ic_set_8;
-        }
-
-        BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >> _tr_in_register_success() const {
-            BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >> _ic_set_9 = BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >>();
-            for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
-                for(SERVICE _ic_ss_1 : services) {
-                    for(SID _ic_si_1 : _SID.difference(sids)) {
-                        if((in_localServices.domain().elementOf(_ic_si_1)._not()).booleanValue()) {
-                            _ic_set_9 = _ic_set_9._union(BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >>((BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >((BTuple<INTERCONNECTNODE, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_si_1))));
+        BSet<BTuple<RESOURCEMANAGER, SERVICE >> _tr_rm_getSid(bool isCaching) const {
+            if (this->_tr_cache_rm_getSid == boost::none){
+                BSet<BTuple<RESOURCEMANAGER, SERVICE >> _ic_set_6 = BSet<BTuple<RESOURCEMANAGER, SERVICE >>();
+                for(const RESOURCEMANAGER& _ic_self_1 : resourceManagers) {
+                    for(const SERVICE& _ic_ss_1 : services) {
+                        if((rm_sids.domain().elementOf(_ic_ss_1)).booleanValue()) {
+                            _ic_set_6 = _ic_set_6._union(BSet<BTuple<RESOURCEMANAGER, SERVICE >>((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1))));
                         }
 
                     }
                 }
+                if (isCaching) this->_tr_cache_rm_getSid = _ic_set_6;
+                else return _ic_set_6;
             }
-            return _ic_set_9;
+            return this->_tr_cache_rm_getSid.get();
         }
 
-        BSet<BTuple<INTERCONNECTNODE, SERVICE >> _tr_in_register_failed() const {
-            BSet<BTuple<INTERCONNECTNODE, SERVICE >> _ic_set_10 = BSet<BTuple<INTERCONNECTNODE, SERVICE >>();
-            for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
-                for(SERVICE _ic_ss_1 : services) {
-                    _ic_set_10 = _ic_set_10._union(BSet<BTuple<INTERCONNECTNODE, SERVICE >>((BTuple<INTERCONNECTNODE, SERVICE >(_ic_self_1, _ic_ss_1))));
+        BSet<BTuple<RESOURCEMANAGER, SERVICE >> _tr_rm_getSid_Not_Found(bool isCaching) const {
+            if (this->_tr_cache_rm_getSid_Not_Found == boost::none){
+                BSet<BTuple<RESOURCEMANAGER, SERVICE >> _ic_set_7 = BSet<BTuple<RESOURCEMANAGER, SERVICE >>();
+                for(const RESOURCEMANAGER& _ic_self_1 : resourceManagers) {
+                    for(const SERVICE& _ic_ss_1 : services) {
+                        _ic_set_7 = _ic_set_7._union(BSet<BTuple<RESOURCEMANAGER, SERVICE >>((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1))));
 
+                    }
                 }
+                if (isCaching) this->_tr_cache_rm_getSid_Not_Found = _ic_set_7;
+                else return _ic_set_7;
             }
-            return _ic_set_10;
+            return this->_tr_cache_rm_getSid_Not_Found.get();
         }
 
-        BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >> _tr_in_requestTargetSocket_Granted() const {
-            BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >> _ic_set_11 = BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>();
-            for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
-                for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                    for(SOCKET _ic_srcsoc_1 : sockets) {
-                        for(SID _ic_srcsid_1 : sids) {
-                            for(SID _ic_targsid_1 : sids) {
-                                for(SOCKET _ic_newsoc_1 : _SOCKET.difference(sockets)) {
+        BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >> _tr_in_announceResourceManager(bool isCaching) const {
+            if (this->_tr_cache_in_announceResourceManager == boost::none){
+                BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >> _ic_set_8 = BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >>();
+                for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
+                    for(const RESOURCEMANAGER& _ic_rm_1 : resourceManagers) {
+                        if((in_resourceManager.functionCall(_ic_self_1).equal((BSet<RESOURCEMANAGER >()))).booleanValue()) {
+                            _ic_set_8 = _ic_set_8._union(BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER >>((BTuple<INTERCONNECTNODE, RESOURCEMANAGER >(_ic_self_1, _ic_rm_1))));
+                        }
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_in_announceResourceManager = _ic_set_8;
+                else return _ic_set_8;
+            }
+            return this->_tr_cache_in_announceResourceManager.get();
+        }
+
+        BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >> _tr_in_register_success(bool isCaching) const {
+            if (this->_tr_cache_in_register_success == boost::none){
+                BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >> _ic_set_9 = BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >>();
+                for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
+                    for(const SERVICE& _ic_ss_1 : services) {
+                        for(const SID& _ic_si_1 : _SID.difference(sids)) {
+                            if((in_localServices.domain().elementOf(_ic_si_1)._not()).booleanValue()) {
+                                _ic_set_9 = _ic_set_9._union(BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >>((BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >((BTuple<INTERCONNECTNODE, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_si_1))));
+                            }
+
+                        }
+                    }
+                }
+                if (isCaching) this->_tr_cache_in_register_success = _ic_set_9;
+                else return _ic_set_9;
+            }
+            return this->_tr_cache_in_register_success.get();
+        }
+
+        BSet<BTuple<INTERCONNECTNODE, SERVICE >> _tr_in_register_failed(bool isCaching) const {
+            if (this->_tr_cache_in_register_failed == boost::none){
+                BSet<BTuple<INTERCONNECTNODE, SERVICE >> _ic_set_10 = BSet<BTuple<INTERCONNECTNODE, SERVICE >>();
+                for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
+                    for(const SERVICE& _ic_ss_1 : services) {
+                        _ic_set_10 = _ic_set_10._union(BSet<BTuple<INTERCONNECTNODE, SERVICE >>((BTuple<INTERCONNECTNODE, SERVICE >(_ic_self_1, _ic_ss_1))));
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_in_register_failed = _ic_set_10;
+                else return _ic_set_10;
+            }
+            return this->_tr_cache_in_register_failed.get();
+        }
+
+        BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >> _tr_in_requestTargetSocket_Granted(bool isCaching) const {
+            if (this->_tr_cache_in_requestTargetSocket_Granted == boost::none){
+                BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >> _ic_set_11 = BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>();
+                for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
+                    for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
+                        for(const SOCKET& _ic_srcsoc_1 : sockets) {
+                            for(const SID& _ic_srcsid_1 : sids) {
+                                for(const SID& _ic_targsid_1 : sids) {
+                                    for(const SOCKET& _ic_newsoc_1 : _SOCKET.difference(sockets)) {
+                                        if(((BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()))).booleanValue()) {
+                                            _ic_set_11 = _ic_set_11._union(BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isCaching) this->_tr_cache_in_requestTargetSocket_Granted = _ic_set_11;
+                else return _ic_set_11;
+            }
+            return this->_tr_cache_in_requestTargetSocket_Granted.get();
+        }
+
+        BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >> _tr_in_requestTargetSocket_NotGranted(bool isCaching) const {
+            if (this->_tr_cache_in_requestTargetSocket_NotGranted == boost::none){
+                BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >> _ic_set_12 = BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>();
+                for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
+                    for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
+                        for(const SOCKET& _ic_srcsoc_1 : sockets) {
+                            for(const SID& _ic_srcsid_1 : sids) {
+                                for(const SID& _ic_targsid_1 : sids) {
                                     if(((BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()))).booleanValue()) {
-                                        _ic_set_11 = _ic_set_11._union(BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
+                                        _ic_set_12 = _ic_set_12._union(BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1))));
                                     }
 
                                 }
@@ -1099,38 +1185,25 @@ class nota_v2 {
                         }
                     }
                 }
+                if (isCaching) this->_tr_cache_in_requestTargetSocket_NotGranted = _ic_set_12;
+                else return _ic_set_12;
             }
-            return _ic_set_11;
+            return this->_tr_cache_in_requestTargetSocket_NotGranted.get();
         }
 
-        BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >> _tr_in_requestTargetSocket_NotGranted() const {
-            BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >> _ic_set_12 = BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>();
-            for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
-                for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                    for(SOCKET _ic_srcsoc_1 : sockets) {
-                        for(SID _ic_srcsid_1 : sids) {
-                            for(SID _ic_targsid_1 : sids) {
-                                if(((BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()))).booleanValue()) {
-                                    _ic_set_12 = _ic_set_12._union(BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1))));
-                                }
-
-                            }
-                        }
+        BSet<SERVICE> _tr_svc_register(bool isCaching) const {
+            if (this->_tr_cache_svc_register == boost::none){
+                BSet<SERVICE> _ic_set_13 = BSet<SERVICE>();
+                for(const SERVICE& _ic_self_1 : services) {
+                    if((svc_registered.functionCall(_ic_self_1).equal((BBoolean(false)))).booleanValue()) {
+                        _ic_set_13 = _ic_set_13._union(BSet<SERVICE>(_ic_self_1));
                     }
-                }
-            }
-            return _ic_set_12;
-        }
 
-        BSet<SERVICE> _tr_svc_register() const {
-            BSet<SERVICE> _ic_set_13 = BSet<SERVICE>();
-            for(SERVICE _ic_self_1 : services) {
-                if((svc_registered.functionCall(_ic_self_1).equal((BBoolean(false)))).booleanValue()) {
-                    _ic_set_13 = _ic_set_13._union(BSet<SERVICE>(_ic_self_1));
                 }
-
+                if (isCaching) this->_tr_cache_svc_register = _ic_set_13;
+                else return _ic_set_13;
             }
-            return _ic_set_13;
+            return this->_tr_cache_svc_register.get();
         }
 
         bool _check_inv_1() const {
@@ -1159,8 +1232,8 @@ class nota_v2 {
 
         bool _check_inv_7() const {
             BBoolean _ic_boolean_14 = BBoolean(true);
-            for(RESOURCEMANAGER _ic_a1_1 : rm_services.domain()) {
-                for(RESOURCEMANAGER _ic_a2_1 : rm_services.domain()) {
+            for(const RESOURCEMANAGER& _ic_a1_1 : rm_services.domain()) {
+                for(const RESOURCEMANAGER& _ic_a2_1 : rm_services.domain()) {
                     if(!((BBoolean(!_ic_a1_1.unequal(_ic_a2_1).booleanValue() || rm_services.functionCall(_ic_a1_1).intersect(rm_services.functionCall(_ic_a2_1)).equal((BSet<SERVICE >())).booleanValue()))).booleanValue()) {
                         _ic_boolean_14 = BBoolean(false);
                         break;
@@ -1216,8 +1289,37 @@ class nota_v2 {
             return ((BBoolean(!resourceManagers.equal((BSet<RESOURCEMANAGER >()))._not().booleanValue() || resourceManagers.card().equal((BInteger(1))).booleanValue()))).booleanValue();
         }
 
-        nota_v2 _copy() const {
-            return nota_v2(interconnectNodes, sockets, services, resourceManagers, sids, rm_services, rm_sids, in_localServices, in_sockets, in_resourceManager, soc_to, soc_from, svc_serviceID, svc_sockets, svc_ICNode, svc_registered);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        nota_v2 _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_constructor_interconnectNode", "_tr_constructor_resourceManager", "_tr_constructor_service", "_tr_constructor_socket", "_tr_rm_register", "_tr_rm_deregister", "_tr_rm_getSid", "_tr_rm_getSid_Not_Found", "_tr_in_announceResourceManager", "_tr_in_register_success", "_tr_in_register_failed", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_svc_register"};
+
+            nota_v2 result = nota_v2(interconnectNodes, sockets, services, resourceManagers, sids, rm_services, rm_sids, in_localServices, in_sockets, in_resourceManager, soc_to, soc_from, svc_serviceID, svc_sockets, svc_ICNode, svc_registered);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_constructor_interconnectNode"): result._tr_cache_constructor_interconnectNode = this->_tr_cache_constructor_interconnectNode; break;
+                        case strHash("_tr_constructor_resourceManager"): result._tr_cache_constructor_resourceManager = this->_tr_cache_constructor_resourceManager; break;
+                        case strHash("_tr_constructor_service"): result._tr_cache_constructor_service = this->_tr_cache_constructor_service; break;
+                        case strHash("_tr_constructor_socket"): result._tr_cache_constructor_socket = this->_tr_cache_constructor_socket; break;
+                        case strHash("_tr_rm_register"): result._tr_cache_rm_register = this->_tr_cache_rm_register; break;
+                        case strHash("_tr_rm_deregister"): result._tr_cache_rm_deregister = this->_tr_cache_rm_deregister; break;
+                        case strHash("_tr_rm_getSid"): result._tr_cache_rm_getSid = this->_tr_cache_rm_getSid; break;
+                        case strHash("_tr_rm_getSid_Not_Found"): result._tr_cache_rm_getSid_Not_Found = this->_tr_cache_rm_getSid_Not_Found; break;
+                        case strHash("_tr_in_announceResourceManager"): result._tr_cache_in_announceResourceManager = this->_tr_cache_in_announceResourceManager; break;
+                        case strHash("_tr_in_register_success"): result._tr_cache_in_register_success = this->_tr_cache_in_register_success; break;
+                        case strHash("_tr_in_register_failed"): result._tr_cache_in_register_failed = this->_tr_cache_in_register_failed; break;
+                        case strHash("_tr_in_requestTargetSocket_Granted"): result._tr_cache_in_requestTargetSocket_Granted = this->_tr_cache_in_requestTargetSocket_Granted; break;
+                        case strHash("_tr_in_requestTargetSocket_NotGranted"): result._tr_cache_in_requestTargetSocket_NotGranted = this->_tr_cache_in_requestTargetSocket_NotGranted; break;
+                        case strHash("_tr_svc_register"): result._tr_cache_svc_register = this->_tr_cache_svc_register; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const nota_v2& o1, const nota_v2& o2) {
@@ -1298,1233 +1400,538 @@ class nota_v2 {
 };
 
 
-static std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> generateNextStates(std::mutex& guardMutex, const nota_v2& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual>& dependentGuard, std::unordered_map<nota_v2, immer::map<string, boost::any>, nota_v2::Hash, nota_v2::HashEqual>& guardCache, std::unordered_map<nota_v2, nota_v2, nota_v2::Hash, nota_v2::HashEqual>& parents, std::unordered_map<nota_v2, string, nota_v2::Hash, nota_v2::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> result = std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        BSet<nota_v2::INTERCONNECTNODE> _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_constructor_interconnectNode"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_constructor_interconnectNode") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_1 = state._tr_constructor_interconnectNode();
-        } else {
-            _trid_1 = boost::any_cast<BSet<nota_v2::INTERCONNECTNODE>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_constructor_interconnectNode", _trid_1);
-        for(const nota_v2::INTERCONNECTNODE& param : _trid_1) {
-            nota_v2::INTERCONNECTNODE _tmp_1 = param;
+class ModelChecker {
+    private:
+        nota_v2::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
 
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_interconnectNode(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["constructor_interconnectNode"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["constructor_interconnectNode"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_interconnectNode"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<nota_v2::RESOURCEMANAGER> _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_constructor_resourceManager"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_constructor_resourceManager") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_2 = state._tr_constructor_resourceManager();
-        } else {
-            _trid_2 = boost::any_cast<BSet<nota_v2::RESOURCEMANAGER>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_constructor_resourceManager", _trid_2);
-        for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
-            nota_v2::RESOURCEMANAGER _tmp_1 = param;
+        std::list<nota_v2> unvisitedStates;
+        std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
 
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_resourceManager(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["constructor_resourceManager"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["constructor_resourceManager"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_resourceManager"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_constructor_service"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_constructor_service") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_3 = state._tr_constructor_service();
-        } else {
-            _trid_3 = boost::any_cast<BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_constructor_service", _trid_3);
-        for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        nota_v2 counterExampleState;
 
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_service(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["constructor_service"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["constructor_service"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_service"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_constructor_socket"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_constructor_socket") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_4 = state._tr_constructor_socket();
-        } else {
-            _trid_4 = boost::any_cast<BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_constructor_socket", _trid_4);
-        for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
-            nota_v2::SOCKET _tmp_1 = param.projection2();
-            BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-            nota_v2::SID _tmp_3 = _tmp_2.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-            nota_v2::SID _tmp_5 = _tmp_4.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<nota_v2, nota_v2, nota_v2::Hash, nota_v2::HashEqual> parents;
 
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["constructor_socket"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["constructor_socket"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_socket"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_rm_register"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_rm_register") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_5 = state._tr_rm_register();
-        } else {
-            _trid_5 = boost::any_cast<BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_rm_register", _trid_5);
-        for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
-            nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-            BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-            nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+    public:
+        ModelChecker() {}
 
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["rm_register"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["rm_register"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_register"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_rm_deregister"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_rm_deregister") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_6 = state._tr_rm_deregister();
-        } else {
-            _trid_6 = boost::any_cast<BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_rm_deregister", _trid_6);
-        for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
-            nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-            BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-            nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["rm_deregister"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["rm_deregister"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_deregister"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_rm_getSid"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_rm_getSid") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_7 = state._tr_rm_getSid();
-        } else {
-            _trid_7 = boost::any_cast<BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_rm_getSid", _trid_7);
-        for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_getSid(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["rm_getSid"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["rm_getSid"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_getSid"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_rm_getSid_Not_Found"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_rm_getSid_Not_Found") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_8 = state._tr_rm_getSid_Not_Found();
-        } else {
-            _trid_8 = boost::any_cast<BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_rm_getSid_Not_Found", _trid_8);
-        for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["rm_getSid_Not_Found"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["rm_getSid_Not_Found"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_getSid_Not_Found"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_in_announceResourceManager"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_in_announceResourceManager") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_9 = state._tr_in_announceResourceManager();
-        } else {
-            _trid_9 = boost::any_cast<BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_in_announceResourceManager", _trid_9);
-        for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
-            nota_v2::RESOURCEMANAGER _tmp_1 = param.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["in_announceResourceManager"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["in_announceResourceManager"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_announceResourceManager"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_in_register_success"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_in_register_success") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_10 = state._tr_in_register_success();
-        } else {
-            _trid_10 = boost::any_cast<BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_in_register_success", _trid_10);
-        for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
-            nota_v2::SID _tmp_1 = param.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE > _tmp_2 = param.projection1();
-            nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["in_register_success"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["in_register_success"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_register_success"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_in_register_failed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_in_register_failed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_11 = state._tr_in_register_failed();
-        } else {
-            _trid_11 = boost::any_cast<BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_in_register_failed", _trid_11);
-        for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_register_failed(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["in_register_failed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["in_register_failed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_register_failed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_in_requestTargetSocket_Granted"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_in_requestTargetSocket_Granted") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_12 = state._tr_in_requestTargetSocket_Granted();
-        } else {
-            _trid_12 = boost::any_cast<BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_in_requestTargetSocket_Granted", _trid_12);
-        for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
-            nota_v2::SOCKET _tmp_1 = param.projection2();
-            BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-            nota_v2::SID _tmp_3 = _tmp_2.projection2();
-            BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-            nota_v2::SID _tmp_5 = _tmp_4.projection2();
-            BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_6 = _tmp_4.projection1();
-            nota_v2::SOCKET _tmp_7 = _tmp_6.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_8 = _tmp_6.projection1();
-            nota_v2::INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["in_requestTargetSocket_Granted"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["in_requestTargetSocket_Granted"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_requestTargetSocket_Granted"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_in_requestTargetSocket_NotGranted"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_in_requestTargetSocket_NotGranted") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
-        } else {
-            _trid_13 = boost::any_cast<BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_in_requestTargetSocket_NotGranted", _trid_13);
-        for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
-            nota_v2::SID _tmp_1 = param.projection2();
-            BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_2 = param.projection1();
-            nota_v2::SID _tmp_3 = _tmp_2.projection2();
-            BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_4 = _tmp_2.projection1();
-            nota_v2::SOCKET _tmp_5 = _tmp_4.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_6 = _tmp_4.projection1();
-            nota_v2::INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["in_requestTargetSocket_NotGranted"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["in_requestTargetSocket_NotGranted"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_requestTargetSocket_NotGranted"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<nota_v2::SERVICE> _trid_14;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_svc_register"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_svc_register") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_14 = state._tr_svc_register();
-        } else {
-            _trid_14 = boost::any_cast<BSet<nota_v2::SERVICE>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_svc_register", _trid_14);
-        for(const nota_v2::SERVICE& param : _trid_14) {
-            nota_v2::SERVICE _tmp_1 = param;
-
-            nota_v2 copiedState = state._copy();
-            copiedState.svc_register(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["svc_register"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["svc_register"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "svc_register"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+        ModelChecker(nota_v2::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        BSet<nota_v2::INTERCONNECTNODE> _trid_1 = state._tr_constructor_interconnectNode();
-        for(const nota_v2::INTERCONNECTNODE& param : _trid_1) {
-            nota_v2::INTERCONNECTNODE _tmp_1 = param;
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
+            }
 
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_interconnectNode(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_interconnectNode"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<nota_v2::RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager();
-        for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
-            nota_v2::RESOURCEMANAGER _tmp_1 = param;
-
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_resourceManager(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_resourceManager"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3 = state._tr_constructor_service();
-        for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_service(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_service"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4 = state._tr_constructor_socket();
-        for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
-            nota_v2::SOCKET _tmp_1 = param.projection2();
-            BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-            nota_v2::SID _tmp_3 = _tmp_2.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-            nota_v2::SID _tmp_5 = _tmp_4.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "constructor_socket"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5 = state._tr_rm_register();
-        for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
-            nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-            BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-            nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_register"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6 = state._tr_rm_deregister();
-        for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
-            nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-            BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-            nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_deregister"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7 = state._tr_rm_getSid();
-        for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_getSid(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_getSid"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8 = state._tr_rm_getSid_Not_Found();
-        for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "rm_getSid_Not_Found"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9 = state._tr_in_announceResourceManager();
-        for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
-            nota_v2::RESOURCEMANAGER _tmp_1 = param.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_announceResourceManager"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10 = state._tr_in_register_success();
-        for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
-            nota_v2::SID _tmp_1 = param.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE > _tmp_2 = param.projection1();
-            nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_register_success"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11 = state._tr_in_register_failed();
-        for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
-            nota_v2::SERVICE _tmp_1 = param.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_register_failed(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_register_failed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12 = state._tr_in_requestTargetSocket_Granted();
-        for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
-            nota_v2::SOCKET _tmp_1 = param.projection2();
-            BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-            nota_v2::SID _tmp_3 = _tmp_2.projection2();
-            BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-            nota_v2::SID _tmp_5 = _tmp_4.projection2();
-            BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_6 = _tmp_4.projection1();
-            nota_v2::SOCKET _tmp_7 = _tmp_6.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_8 = _tmp_6.projection1();
-            nota_v2::INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_requestTargetSocket_Granted"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
-        for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
-            nota_v2::SID _tmp_1 = param.projection2();
-            BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_2 = param.projection1();
-            nota_v2::SID _tmp_3 = _tmp_2.projection2();
-            BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_4 = _tmp_2.projection1();
-            nota_v2::SOCKET _tmp_5 = _tmp_4.projection2();
-            BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_6 = _tmp_4.projection1();
-            nota_v2::INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
-            nota_v2::INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
-
-            nota_v2 copiedState = state._copy();
-            copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "in_requestTargetSocket_NotGranted"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<nota_v2::SERVICE> _trid_14 = state._tr_svc_register();
-        for(const nota_v2::SERVICE& param : _trid_14) {
-            nota_v2::SERVICE _tmp_1 = param;
-
-            nota_v2 copiedState = state._copy();
-            copiedState.svc_register(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "svc_register"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, nota_v2& counterExampleState, std::unordered_map<nota_v2, nota_v2, nota_v2::Hash, nota_v2::HashEqual>& parents, std::unordered_map<nota_v2, string, nota_v2::Hash, nota_v2::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        nota_v2 currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const nota_v2& state, bool isCaching, std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_3()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_4()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_5()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_6()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_7()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_8()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_9()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_10()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_11()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_12()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_13()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_14()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_15()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_16()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_17()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_18()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18());
-}
-
-static nota_v2 next(std::list<nota_v2>& collection, std::mutex& mutex, nota_v2::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case nota_v2::BFS: {
-            nota_v2 state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case nota_v2::DFS: {
-            nota_v2 state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case nota_v2::MIXED: {
-            if(collection.size() % 2 == 0) {
-                nota_v2 state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                nota_v2 state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(nota_v2::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    nota_v2 machine = nota_v2();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> states = std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<nota_v2> collection = std::list<nota_v2>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual> dependentInvariant;
-    std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual> dependentGuard;
-    std::unordered_map<nota_v2, immer::map<string, boost::any>, nota_v2::Hash, nota_v2::HashEqual> guardCache;
-    std::unordered_map<nota_v2, nota_v2, nota_v2::Hash, nota_v2::HashEqual> parents;
-    std::unordered_map<nota_v2, string, nota_v2::Hash, nota_v2::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"in_register_success", {"_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"in_announceResourceManager", {"_check_inv_11"}});
-        invariantDependency.insert({"in_requestTargetSocket_Granted", {"_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"}});
-        invariantDependency.insert({"constructor_service", {"_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8"}});
-        invariantDependency.insert({"constructor_socket", {"_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"}});
-        invariantDependency.insert({"in_requestTargetSocket_NotGranted", {}});
-        invariantDependency.insert({"constructor_interconnectNode", {"_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11"}});
-        invariantDependency.insert({"rm_getSid", {}});
-        invariantDependency.insert({"rm_deregister", {}});
-        invariantDependency.insert({"constructor_resourceManager", {"_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11"}});
-        invariantDependency.insert({"in_register_failed", {}});
-        invariantDependency.insert({"rm_register", {}});
-        invariantDependency.insert({"rm_getSid_Not_Found", {}});
-        invariantDependency.insert({"svc_register", {"_check_inv_17"}});
-        guardDependency.insert({"in_register_success", {"_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
-        guardDependency.insert({"in_announceResourceManager", {"_tr_in_announceResourceManager"}});
-        guardDependency.insert({"in_requestTargetSocket_Granted", {"_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
-        guardDependency.insert({"constructor_service", {"_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister"}});
-        guardDependency.insert({"constructor_socket", {"_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
-        guardDependency.insert({"in_requestTargetSocket_NotGranted", {}});
-        guardDependency.insert({"constructor_interconnectNode", {"_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager"}});
-        guardDependency.insert({"rm_getSid", {}});
-        guardDependency.insert({"rm_deregister", {}});
-        guardDependency.insert({"constructor_resourceManager", {"_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager"}});
-        guardDependency.insert({"in_register_failed", {}});
-        guardDependency.insert({"rm_register", {}});
-        guardDependency.insert({"rm_getSid_Not_Found", {}});
-        guardDependency.insert({"svc_register", {"_tr_svc_register"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    nota_v2 counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        nota_v2 state = next(collection, mutex, type);
-
-        std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            nota_v2 machine = nota_v2();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                nota_v2 state = next();
 
-static void modelCheckMultiThreaded(nota_v2::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    nota_v2 machine = nota_v2();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> states = std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<nota_v2> collection = std::list<nota_v2>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual> dependentInvariant;
-    std::unordered_map<nota_v2, std::unordered_set<string>, nota_v2::Hash, nota_v2::HashEqual> dependentGuard;
-    std::unordered_map<nota_v2, immer::map<string, boost::any>, nota_v2::Hash, nota_v2::HashEqual> guardCache;
-    std::unordered_map<nota_v2, nota_v2, nota_v2::Hash, nota_v2::HashEqual> parents;
-    std::unordered_map<nota_v2, string, nota_v2::Hash, nota_v2::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"in_register_success", {"_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
-        invariantDependency.insert({"in_announceResourceManager", {"_check_inv_11"}});
-        invariantDependency.insert({"in_requestTargetSocket_Granted", {"_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"}});
-        invariantDependency.insert({"constructor_service", {"_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8"}});
-        invariantDependency.insert({"constructor_socket", {"_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"}});
-        invariantDependency.insert({"in_requestTargetSocket_NotGranted", {}});
-        invariantDependency.insert({"constructor_interconnectNode", {"_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11"}});
-        invariantDependency.insert({"rm_getSid", {}});
-        invariantDependency.insert({"rm_deregister", {}});
-        invariantDependency.insert({"constructor_resourceManager", {"_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11"}});
-        invariantDependency.insert({"in_register_failed", {}});
-        invariantDependency.insert({"rm_register", {}});
-        invariantDependency.insert({"rm_getSid_Not_Found", {}});
-        invariantDependency.insert({"svc_register", {"_check_inv_17"}});
-        guardDependency.insert({"in_register_success", {"_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
-        guardDependency.insert({"in_announceResourceManager", {"_tr_in_announceResourceManager"}});
-        guardDependency.insert({"in_requestTargetSocket_Granted", {"_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
-        guardDependency.insert({"constructor_service", {"_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister"}});
-        guardDependency.insert({"constructor_socket", {"_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
-        guardDependency.insert({"in_requestTargetSocket_NotGranted", {}});
-        guardDependency.insert({"constructor_interconnectNode", {"_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager"}});
-        guardDependency.insert({"rm_getSid", {}});
-        guardDependency.insert({"rm_deregister", {}});
-        guardDependency.insert({"constructor_resourceManager", {"_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager"}});
-        guardDependency.insert({"in_register_failed", {}});
-        guardDependency.insert({"rm_register", {}});
-        guardDependency.insert({"rm_getSid_Not_Found", {}});
-        guardDependency.insert({"svc_register", {"_tr_svc_register"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    nota_v2 counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        nota_v2 state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            nota_v2 machine = nota_v2();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                nota_v2 state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(nota_v2& machine) {
+            invariantDependency.insert({"in_register_success", {"_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9"}});
+            invariantDependency.insert({"in_announceResourceManager", {"_check_inv_11"}});
+            invariantDependency.insert({"in_requestTargetSocket_Granted", {"_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"}});
+            invariantDependency.insert({"constructor_service", {"_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8"}});
+            invariantDependency.insert({"constructor_socket", {"_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12"}});
+            invariantDependency.insert({"in_requestTargetSocket_NotGranted", {}});
+            invariantDependency.insert({"constructor_interconnectNode", {"_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11"}});
+            invariantDependency.insert({"rm_getSid", {}});
+            invariantDependency.insert({"rm_deregister", {}});
+            invariantDependency.insert({"constructor_resourceManager", {"_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11"}});
+            invariantDependency.insert({"in_register_failed", {}});
+            invariantDependency.insert({"rm_register", {}});
+            invariantDependency.insert({"rm_getSid_Not_Found", {}});
+            invariantDependency.insert({"svc_register", {"_check_inv_17"}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"in_register_success", {"_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
+            guardDependency.insert({"in_announceResourceManager", {"_tr_in_announceResourceManager"}});
+            guardDependency.insert({"in_requestTargetSocket_Granted", {"_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
+            guardDependency.insert({"constructor_service", {"_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister"}});
+            guardDependency.insert({"constructor_socket", {"_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket"}});
+            guardDependency.insert({"in_requestTargetSocket_NotGranted", {}});
+            guardDependency.insert({"constructor_interconnectNode", {"_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager"}});
+            guardDependency.insert({"rm_getSid", {}});
+            guardDependency.insert({"rm_deregister", {}});
+            guardDependency.insert({"constructor_resourceManager", {"_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager"}});
+            guardDependency.insert({"in_register_failed", {}});
+            guardDependency.insert({"rm_register", {}});
+            guardDependency.insert({"rm_getSid_Not_Found", {}});
+            guardDependency.insert({"svc_register", {"_tr_svc_register"}});
+        }
 
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
 
-
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        nota_v2 next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case nota_v2::BFS: {
+                    nota_v2 state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case nota_v2::DFS: {
+                    nota_v2 state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case nota_v2::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        nota_v2 state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        nota_v2 state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> generateNextStates(const nota_v2& state) {
+            std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> result = std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual>();
+            BSet<nota_v2::INTERCONNECTNODE> _trid_1 = state._tr_constructor_interconnectNode(isCaching);
+            for(const nota_v2::INTERCONNECTNODE& param : _trid_1) {
+                nota_v2::INTERCONNECTNODE _tmp_1 = param;
+
+                nota_v2 copiedState = state._copy(guardDependency["constructor_interconnectNode"]);
+                copiedState.constructor_interconnectNode(_tmp_1);
+                copiedState.stateAccessedVia = "constructor_interconnectNode";
+                result.insert(copiedState);
+            }
+            BSet<nota_v2::RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager(isCaching);
+            for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
+                nota_v2::RESOURCEMANAGER _tmp_1 = param;
+
+                nota_v2 copiedState = state._copy(guardDependency["constructor_resourceManager"]);
+                copiedState.constructor_resourceManager(_tmp_1);
+                copiedState.stateAccessedVia = "constructor_resourceManager";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3 = state._tr_constructor_service(isCaching);
+            for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
+                nota_v2::SERVICE _tmp_1 = param.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["constructor_service"]);
+                copiedState.constructor_service(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "constructor_service";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4 = state._tr_constructor_socket(isCaching);
+            for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
+                nota_v2::SOCKET _tmp_1 = param.projection2();
+                BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
+                nota_v2::SID _tmp_3 = _tmp_2.projection2();
+                BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
+                nota_v2::SID _tmp_5 = _tmp_4.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["constructor_socket"]);
+                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
+                copiedState.stateAccessedVia = "constructor_socket";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5 = state._tr_rm_register(isCaching);
+            for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
+                nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
+                BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
+                nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
+                nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["rm_register"]);
+                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
+                copiedState.stateAccessedVia = "rm_register";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6 = state._tr_rm_deregister(isCaching);
+            for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
+                nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
+                BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
+                nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
+                nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["rm_deregister"]);
+                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
+                copiedState.stateAccessedVia = "rm_deregister";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7 = state._tr_rm_getSid(isCaching);
+            for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
+                nota_v2::SERVICE _tmp_1 = param.projection2();
+                nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["rm_getSid"]);
+                copiedState.rm_getSid(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "rm_getSid";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8 = state._tr_rm_getSid_Not_Found(isCaching);
+            for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
+                nota_v2::SERVICE _tmp_1 = param.projection2();
+                nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["rm_getSid_Not_Found"]);
+                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "rm_getSid_Not_Found";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9 = state._tr_in_announceResourceManager(isCaching);
+            for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
+                nota_v2::RESOURCEMANAGER _tmp_1 = param.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["in_announceResourceManager"]);
+                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "in_announceResourceManager";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10 = state._tr_in_register_success(isCaching);
+            for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
+                nota_v2::SID _tmp_1 = param.projection2();
+                BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE > _tmp_2 = param.projection1();
+                nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["in_register_success"]);
+                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
+                copiedState.stateAccessedVia = "in_register_success";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11 = state._tr_in_register_failed(isCaching);
+            for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
+                nota_v2::SERVICE _tmp_1 = param.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["in_register_failed"]);
+                copiedState.in_register_failed(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "in_register_failed";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12 = state._tr_in_requestTargetSocket_Granted(isCaching);
+            for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
+                nota_v2::SOCKET _tmp_1 = param.projection2();
+                BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
+                nota_v2::SID _tmp_3 = _tmp_2.projection2();
+                BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
+                nota_v2::SID _tmp_5 = _tmp_4.projection2();
+                BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_6 = _tmp_4.projection1();
+                nota_v2::SOCKET _tmp_7 = _tmp_6.projection2();
+                BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_8 = _tmp_6.projection1();
+                nota_v2::INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["in_requestTargetSocket_Granted"]);
+                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                copiedState.stateAccessedVia = "in_requestTargetSocket_Granted";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13 = state._tr_in_requestTargetSocket_NotGranted(isCaching);
+            for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
+                nota_v2::SID _tmp_1 = param.projection2();
+                BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_2 = param.projection1();
+                nota_v2::SID _tmp_3 = _tmp_2.projection2();
+                BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_4 = _tmp_2.projection1();
+                nota_v2::SOCKET _tmp_5 = _tmp_4.projection2();
+                BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_6 = _tmp_4.projection1();
+                nota_v2::INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
+                nota_v2::INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
+
+                nota_v2 copiedState = state._copy(guardDependency["in_requestTargetSocket_NotGranted"]);
+                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                copiedState.stateAccessedVia = "in_requestTargetSocket_NotGranted";
+                result.insert(copiedState);
+            }
+            BSet<nota_v2::SERVICE> _trid_14 = state._tr_svc_register(isCaching);
+            for(const nota_v2::SERVICE& param : _trid_14) {
+                nota_v2::SERVICE _tmp_1 = param;
+
+                nota_v2 copiedState = state._copy(guardDependency["svc_register"]);
+                copiedState.svc_register(_tmp_1);
+                copiedState.stateAccessedVia = "svc_register";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const nota_v2& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_7()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_8()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_9()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_10()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_11()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_12()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_13()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_14()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_15()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_16()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_17()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_18()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -2573,11 +1980,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

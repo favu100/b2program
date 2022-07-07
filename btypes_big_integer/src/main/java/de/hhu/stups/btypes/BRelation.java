@@ -860,6 +860,23 @@ public class BRelation<S,T> {
 		return this.domain().subset(domain);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <A1,A2> BBoolean isPartial(BRelation<A1, A2> domain) {
+		PersistentHashMap thisMap = this.map;
+		for(A1 e1 : domain.domain()) {
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, e1);
+			if(range == null) {
+				continue;
+			}
+			for(Object e2 : range) {
+				if(!this.domain().set.contains(new BTuple<A1, A2>(e1, (A2) e2))) {
+					return new BBoolean(false);
+				}
+			}
+		}
+		return new BBoolean(true);
+	}
+
 	public BBoolean isPartialInteger() {
 		for(S e : this.domain()) {
 			if(e instanceof BInteger) {
@@ -911,6 +928,23 @@ public class BRelation<S,T> {
 		return this.domain().subset(domain);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <A1,A2> BBoolean checkDomain(BRelation<A1, A2> domain) {
+		PersistentHashMap thisMap = this.map;
+		for(A1 e1 : domain.domain()) {
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, e1);
+			if(range == null) {
+				continue;
+			}
+			for(Object e2 : range) {
+				if(!this.domain().set.contains(new BTuple<A1, A2>(e1, (A2) e2))) {
+					return new BBoolean(false);
+				}
+			}
+		}
+		return new BBoolean(true);
+	}
+
 	public BBoolean checkDomainInteger() {
 		for(S e : this.domain()) {
 			if(e instanceof BInteger) {
@@ -960,6 +994,20 @@ public class BRelation<S,T> {
 
 	public BBoolean checkRange(BSet<T> range) {
 		return this.range().subset(range);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <A1,A2> BBoolean checkRange(BRelation<A1, A2> range) {
+		PersistentHashMap thisMap = this.map;
+		for(A1 e1 : range.domain()) {
+			PersistentHashSet rangeRange = (PersistentHashSet) GET.invoke(thisMap, e1);
+			for(Object e2 : rangeRange) {
+				if(!this.range().set.contains(new BTuple<A1, A2>(e1, (A2) e2))) {
+					return new BBoolean(false);
+				}
+			}
+		}
+		return new BBoolean(false);
 	}
 
 	public BBoolean checkRangeInteger() {

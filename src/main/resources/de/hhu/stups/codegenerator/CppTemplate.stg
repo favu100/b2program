@@ -334,7 +334,7 @@ for(const <type>& <identifier> : <set>.pow()) {
 
 iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for(const <type>& <identifier> : <set>.pow().difference(<set>)) {
+for(const <type>& <identifier> : <set>.pow().difference(BSet\<<type>\>(<set>))) {
     <body>
 }
 >>

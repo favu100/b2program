@@ -58,7 +58,7 @@ INVARIANT
   & {xx|xx : setX & (xx : SS or xx : TT)} = SS \/ TT
   & {xx|xx : SS & (xx : TT or xx : VV)} = SS /\ (VV \/ TT)
   & {xx|xx : SS & not(xx : TT)} = SS - TT
-  & 
+  &
     !xx.(
      (
       xx : SS
@@ -68,7 +68,7 @@ INVARIANT
      =>
      xx : SS /\ TT
     )
-  & 
+  &
     !xx.(
      (
       xx : SS
@@ -88,7 +88,7 @@ INVARIANT
      not(SS /\ TT /\ VV = {})
     )
   & (
-     
+
      #xx.(
       xx : SS
       &
@@ -174,7 +174,7 @@ INVARIANT
   & (
      SS <<: VV
      =>
-     
+
      #xx.(
       xx : VV
       &
@@ -184,7 +184,7 @@ INVARIANT
   & (
      SS <: VV
      <=>
-     
+
      !x.(
       x : SS
       =>
@@ -326,7 +326,7 @@ INVARIANT
   & (
      SS /<: TT
      <=>
-     
+
      #ee.(
       ee : SS
       &
@@ -339,7 +339,7 @@ INVARIANT
      (
       SS <: TT
       &
-      
+
       #ee.(
        ee : TT
        &
@@ -354,41 +354,41 @@ INITIALISATION
       SS,TT,VV := {},{},{}
     END
 OPERATIONS
-  add_SS(el) = 
-    PRE 
+  add_SS(el) =
+    PRE
         el : setX
       & el /: SS
     THEN
       SS := SS \/ {el}
     END;
-  
-  add_TT(el) = 
-    PRE 
+
+  add_TT(el) =
+    PRE
         el : setX
       & el /: TT
     THEN
       TT := TT \/ {el}
     END;
-  
-  add_VV(el) = 
-    PRE 
+
+  add_VV(el) =
+    PRE
         el : setX
       & el /: VV
     THEN
       VV := VV \/ {el}
     END;
-  
-  set_SS_setX = 
+
+  set_SS_setX =
     BEGIN
       SS := setX
     END;
-  
-  set_TT_setX = 
+
+  set_TT_setX =
     BEGIN
       TT := setX
     END;
-  
-  set_VV_setX = 
+
+  set_VV_setX =
     BEGIN
       VV := setX
     END

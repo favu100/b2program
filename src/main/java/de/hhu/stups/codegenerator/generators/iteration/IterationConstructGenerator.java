@@ -232,7 +232,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
             if(i >= parentDeclarations.size()) {
                 if (operator == PredicateOperatorNode.PredicateOperator.OR) {
                     previousPredicates.add(new PredicateOperatorNode(node.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.NOT, Collections.singletonList(pred)));
-                } else {
+                } else if(operator != PredicateOperatorNode.PredicateOperator.EQUIVALENCE) {
                     previousPredicates.add(pred);
                 }
             }

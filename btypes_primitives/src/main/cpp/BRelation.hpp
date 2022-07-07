@@ -1312,7 +1312,7 @@ class BRelation : public BObject {
             return result;
         }
 
-    protected:
+    public:
         immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                            typename BSet<S>::Hash,
                                                            typename BSet<S>::HashEqual> map;

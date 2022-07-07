@@ -287,11 +287,17 @@ iteration_construct_assignment(otherIterationConstructs, type, identifier, set, 
 >>
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
-iteration_construct_subset(<otherIterationConstructs>, <type>, <identifier>, <set>, <body>)
+<otherIterationConstructs>
+for <identifier> in <set>.pow().iter().cloned() {
+    <body>
+}
 >>
 
 iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
-iteration_construct_subsetneq(<otherIterationConstructs>, <type>, <identifier>, <set>, <body>)
+<otherIterationConstructs>
+for <identifier> in <set>.pow().difference(<set>).iter().cloned() {
+    <body>
+}
 >>
 
 let_expression_predicate(type, isBool, identifier, body) ::= <<
@@ -1101,3 +1107,14 @@ modelchecker(main, invariantViolated, printResult, nextStates) ::= <<
 <main>
 >>
 model_check_add_cached_infos() ::= <<>>
+choice_point_declaration() ::= <<>>
+choice_point_getter() ::= <<>>
+choice_point_operation_flag_declaration() ::= <<>>
+choice_point_operation_flag_getter() ::= <<>>
+choice_point_operation_flag_reset() ::= <<>>
+choice_point_operation_apply() ::= <<>>
+choice_point_operation_apply_choice_point() ::= <<>>
+choice_point_operation_apply_choice_point_flag() ::= <<>>
+choice_point_operation_triggered_declaration() ::= <<>>
+choice_point_operation_triggered() ::= <<>>
+choice_point_operation_triggered_reset() ::= <<>>

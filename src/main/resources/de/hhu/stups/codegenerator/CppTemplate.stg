@@ -516,7 +516,7 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-<if(isRelation)>(BRelation\<<leftType>, <rightType> >(<enums; separator=", ">))<else>(BSet\<<type> >(<enums; separator=", ">))<endif>
+<if(isRelation)>(BRelation\<<leftType>, <rightType> >(<enums; separator=", ">))<else>(BSet<if(type)>\<<type> \><else>\<BObject\><endif>(<enums; separator=", ">))<endif>
 >>
 
 seq_enumeration(type, elements) ::= <<
@@ -696,7 +696,7 @@ BTuple\<<leftType>, <rightType> >
 >>
 
 set_type(type) ::=<<
-BSet\<<type> >
+BSet<if(type)>\<<type> \><else>\<BObject\><endif>
 >>
 
 relation_type(leftType, rightType) ::=<<

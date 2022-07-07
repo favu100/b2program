@@ -722,7 +722,7 @@ public class ExpressionGenerator {
         if(subType instanceof CoupleType) {
             TemplateHandler.add(enumeration, "leftType", typeGenerator.generate(((CoupleType) subType).getLeft()));
             TemplateHandler.add(enumeration, "rightType", typeGenerator.generate(((CoupleType) subType).getRight()));
-        } else {
+        } else if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
             TemplateHandler.add(enumeration, "type", typeGenerator.generate(subType));
         }
         TemplateHandler.add(enumeration, "isRelation", subType instanceof CoupleType);

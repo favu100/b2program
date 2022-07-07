@@ -120,10 +120,14 @@ public class TypeGenerator {
         if(subType instanceof CoupleType) {
             return generateBRelation((CoupleType) subType);
         } else {
+
             ST template = group.getInstanceOf("set_type");
             TemplateHandler.add(template, "fromOtherMachine", false);
-            TemplateHandler.add(template, "type", generate(subType));
+            if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
+                TemplateHandler.add(template, "type", generate(subType));
+            }
             return template.render();
+
         }
     }
 

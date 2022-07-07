@@ -651,6 +651,9 @@ public class BRelation<S,T> {
 				T rangeElement = (T) e2;
 				set = (PersistentHashSet) UNION.invoke(set, (PersistentHashSet) GET.invoke(otherMap, rangeElement));
 			}
+			if(set.isEmpty()) {
+				continue;
+			}
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, set);
 		}
 		return new BRelation<S, R>(resultMap);

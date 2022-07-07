@@ -25,7 +25,7 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Integer.hashCode(value);
     }
 
     public BInteger(int value) {

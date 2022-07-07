@@ -120,10 +120,7 @@ public class BSet<T> implements BObject, Set<T> {
 
 		BSet<T> bObjects = (BSet<T>) o;
 
-		if (!set.equals(bObjects.set))
-			return false;
-
-		return true;
+		return set.equals(bObjects.set);
 	}
 
 	public int hashCode() {

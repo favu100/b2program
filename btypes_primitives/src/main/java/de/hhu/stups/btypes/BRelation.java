@@ -116,7 +116,7 @@ public class BRelation<S,T> {
 	}
 
 	public int hashCode() {
-		return Objects.hash(map);
+		return map.hashCode();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -650,6 +650,9 @@ public class BRelation<S,T> {
 			for(Object e2: range) {
 				T rangeElement = (T) e2;
 				set = (PersistentHashSet) UNION.invoke(set, (PersistentHashSet) GET.invoke(otherMap, rangeElement));
+			}
+			if(set.isEmpty()) {
+				continue;
 			}
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, set);
 		}

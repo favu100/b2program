@@ -125,14 +125,11 @@ public class BSet<T> implements Set<T>, BObject {
 
 		BSet<T> bObjects = (BSet<T>) o;
 
-		if (!set.equals(bObjects.set))
-			return false;
-
-		return true;
+		return set.equals(bObjects.set);
 	}
 
 	public int hashCode() {
-		return Objects.hash(set);
+		return set.hashCode();
 	}
 
 	public boolean removeAll(Collection<?> c) {

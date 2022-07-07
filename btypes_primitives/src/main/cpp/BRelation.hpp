@@ -765,7 +765,9 @@ class BRelation : public BObject {
                         set = set.insert(otherRangeElement);
                     }
                 }
-
+                if(set.size() == 0) {
+                    continue;
+                }
                 resultMap = resultMap.set(domainElement, set);
             }
             return BRelation<S,R>(resultMap);

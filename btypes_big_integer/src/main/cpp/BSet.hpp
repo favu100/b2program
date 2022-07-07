@@ -211,7 +211,7 @@ class BSet : public BObject {
                 }
                 return BBoolean(false);
             }
-            return BBoolean(false);
+            return BBoolean(true);
         }
 
         template<typename K = current_type>

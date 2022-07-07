@@ -788,12 +788,12 @@ if state.<evalTransitions>(isCaching) {
 <endif>
 >>
 
-model_check_invariants(machine, checkInvariants, invariants) ::= <<
+model_check_invariants(machine, invariantViolated, invariants) ::= <<
 //model_check_invariants
 pub fn checkInvariants(state: &<machine>, last_op: &'static str, isCaching: bool) -> bool {
     if isCaching {
         let dependent_invariants_of_state = Self::get_invariant_dependencies(last_op);
-        <checkInvariants; separator="\n">
+        <invariantViolated; separator="\n">
         return true;
     }
     return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
@@ -1089,3 +1089,15 @@ if (<predicate>).booleanValue() {
 }
 <endif>
 >>
+
+model_check_main_method() ::= <<>>
+modelchecker(main, invariantViolated, printResult, nextStates) ::= <<
+<nextStates>
+
+<invariantViolated>
+
+<printResult>
+
+<main>
+>>
+model_check_add_cached_infos() ::= <<>>

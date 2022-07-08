@@ -104,10 +104,10 @@ public class LambdaGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String lhsExpr;
         if(coupleType.getLeft() instanceof CoupleType) {
-            lhsExpr = machineGenerator.getExpressionGenerator().generateTuple(declarations.subList(0, declarations.size())
+            lhsExpr = machineGenerator.getExpressionGenerator().generateTuple(declarations
                     .stream()
                     .map(dec -> "_ic_" + dec.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(dec.getName()))
-                    .collect(Collectors.toList()), coupleType.getLeft(), coupleType.getRight());
+                    .collect(Collectors.toList()), ((CoupleType) coupleType.getLeft()).getLeft(), ((CoupleType) coupleType.getLeft()).getRight());
         } else {
             String name = declarations.get(declarations.size() - 1).getName();
             lhsExpr = "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name);

@@ -1324,19 +1324,17 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 <endif>
 >>
 
-model_check_invariants(machine, invariantViolated, invariants) ::= <<
+model_check_invariants(machine, invariantViolated) ::= <<
 private boolean invariantViolated(final <machine> state) {
-    if(isCaching) {
-        <invariantViolated; separator="\n">
-        return false;
-    }
-    return !(<invariants:{inv | state.<inv>()}; separator=" && ">);
+    <invariantViolated; separator="\n">
+    return false;
 }
 >>
 
 model_check_invariant(invariant) ::= <<
-if(state.dependentInvariant.contains("<invariant>")) {
+if(!isCaching || state.dependentInvariant.contains("<invariant>")) {
     if(!state.<invariant>()) {
+        System.out.println("INVARIANT CONJUNCT VIOLATED: <invariant>");
         return true;
     }
 }

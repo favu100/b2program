@@ -1186,23 +1186,29 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 <endif>
 >>
 
-model_check_invariants(machine, invariantViolated, invariants) ::= <<
+model_check_invariants(machine, invariantViolated) ::= <<
 bool invariantViolated(const <machine>& state) {
-    if(isCaching) {
-        std::unordered_set\<string> dependentInvariantsOfState = dependentInvariant[state];
-        <invariantViolated; separator="\n">
-        return false;
-    }
-    return !(<invariants:{inv | state.<inv>()}; separator=" && ">);
+    <invariantViolated; separator="\n">
+    return false;
 }
 >>
 
 model_check_invariant(invariant) ::= <<
-if(dependentInvariantsOfState.find("<invariant>") == dependentInvariantsOfState.end()) {
+if(isCaching) {
+    std::unordered_set\<string> dependentInvariantsOfState = dependentInvariant[state];
+    if(dependentInvariantsOfState.find("<invariant>") == dependentInvariantsOfState.end()) {
+        if(!state.<invariant>()) {
+            cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
+            return true;
+        }
+    }
+} else {
     if(!state.<invariant>()) {
-        return false;
+      cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
+      return true;
     }
 }
+
 >>
 
 model_check_evaluate_state() ::= <<

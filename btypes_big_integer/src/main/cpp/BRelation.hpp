@@ -926,6 +926,22 @@ class BRelation : public BObject {
     		return this->domain().subset(domain);
     	}
 
+        template<typename A1 = typename S::left_type, typename A2 = typename S::right_type>
+        BBoolean isPartial(const BRelation<A1, A2>& domain) const {
+            for(S element : this->domain()) {
+                BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
+                const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual>* rangePtr = domain.map.find(elementAsTuple.projection1());
+                if(rangePtr == nullptr) {
+                    return BBoolean(false);
+                }
+                const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual> range = *rangePtr;
+                if(range.find(elementAsTuple.projection2()) == nullptr) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
 
     	BBoolean isPartialInteger() const {
     		for(const S& element : this->domain()) {
@@ -978,6 +994,22 @@ class BRelation : public BObject {
     		return this->domain().subset(domain);
     	}
 
+        template<typename A1 = typename S::left_type, typename A2 = typename S::right_type>
+        BBoolean checkDomain(const BRelation<A1, A2>& domain) const {
+            for(S element : this->domain()) {
+                BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
+                const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual>* rangePtr = domain.map.find(elementAsTuple.projection1());
+                if(rangePtr == nullptr) {
+                    return BBoolean(false);
+                }
+                const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual> range = *rangePtr;
+                if(range.find(elementAsTuple.projection2()) == nullptr) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
     	BBoolean checkDomainInteger() const {
     		for(const S& element : this->domain()) {
     			if(typeid(element) == typeid(BInteger)) {
@@ -1028,6 +1060,22 @@ class BRelation : public BObject {
     	BBoolean checkRange(const BSet<T>& range) const {
     		return this->range().subset(range);
     	}
+
+        template<typename A1 = typename T::left_type, typename A2 = typename T::right_type>
+        BBoolean checkRange(const BRelation<A1, A2>& range) const {
+            for(S element : this->range()) {
+                BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
+                const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual>* rangeRangePtr = range.map.find(elementAsTuple.projection1());
+                if(rangeRangePtr == nullptr) {
+                    return BBoolean(false);
+                }
+                const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual> rangeRange = *rangeRangePtr;
+                if(rangeRange.find(elementAsTuple.projection2()) == nullptr) {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
 
     	BBoolean checkRangeInteger() const {
     		for(const T& element : this->range()) {
@@ -1245,7 +1293,7 @@ class BRelation : public BObject {
             return BBoolean(this->map != other.map);
         }
 
-        BBoolean elementOf(const BTuple<S,T>& object) {
+        BBoolean elementOf(const BTuple<S,T>& object) const {
             S prj1 = object.projection1();
             T prj2 = object.projection2();
 
@@ -1256,7 +1304,7 @@ class BRelation : public BObject {
             return BBoolean(range.count(prj2) > 0);
         }
 
-        BBoolean notElementOf(const BTuple<S,T>& object) {
+        BBoolean notElementOf(const BTuple<S,T>& object) const {
             S prj1 = object.projection1();
             T prj2 = object.projection2();
 

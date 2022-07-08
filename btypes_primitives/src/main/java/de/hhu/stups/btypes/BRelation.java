@@ -862,16 +862,14 @@ public class BRelation<S,T> {
 
 	@SuppressWarnings("unchecked")
 	public <A1,A2> BBoolean isPartial(BRelation<A1, A2> domain) {
-		PersistentHashMap thisMap = this.map;
-		for(A1 e1 : domain.domain()) {
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, e1);
+		for(S element : this.domain()) {
+			BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(domain.map, elementAsTuple.projection1());
 			if(range == null) {
-				continue;
+				return new BBoolean(false);
 			}
-			for(Object e2 : range) {
-				if(!this.domain().set.contains(new BTuple<A1, A2>(e1, (A2) e2))) {
-					return new BBoolean(false);
-				}
+			if(!range.contains(elementAsTuple.projection2())) {
+				return new BBoolean(false);
 			}
 		}
 		return new BBoolean(true);
@@ -930,16 +928,14 @@ public class BRelation<S,T> {
 
 	@SuppressWarnings("unchecked")
 	public <A1,A2> BBoolean checkDomain(BRelation<A1, A2> domain) {
-		PersistentHashMap thisMap = this.map;
-		for(A1 e1 : domain.domain()) {
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, e1);
+		for(S element : this.domain()) {
+			BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(domain.map, elementAsTuple.projection1());
 			if(range == null) {
-				continue;
+				return new BBoolean(false);
 			}
-			for(Object e2 : range) {
-				if(!this.domain().set.contains(new BTuple<A1, A2>(e1, (A2) e2))) {
-					return new BBoolean(false);
-				}
+			if(!range.contains(elementAsTuple.projection2())) {
+				return new BBoolean(false);
 			}
 		}
 		return new BBoolean(true);
@@ -998,16 +994,17 @@ public class BRelation<S,T> {
 
 	@SuppressWarnings("unchecked")
 	public <A1,A2> BBoolean checkRange(BRelation<A1, A2> range) {
-		PersistentHashMap thisMap = this.map;
-		for(A1 e1 : range.domain()) {
-			PersistentHashSet rangeRange = (PersistentHashSet) GET.invoke(thisMap, e1);
-			for(Object e2 : rangeRange) {
-				if(!this.range().set.contains(new BTuple<A1, A2>(e1, (A2) e2))) {
-					return new BBoolean(false);
-				}
+		for(T element : this.range()) {
+			BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
+			PersistentHashSet rangeRange = (PersistentHashSet) GET.invoke(range.map, elementAsTuple.projection1());
+			if(rangeRange == null) {
+				return new BBoolean(false);
+			}
+			if(!rangeRange.contains(elementAsTuple.projection2())) {
+				return new BBoolean(false);
 			}
 		}
-		return new BBoolean(false);
+		return new BBoolean(true);
 	}
 
 	public BBoolean checkRangeInteger() {

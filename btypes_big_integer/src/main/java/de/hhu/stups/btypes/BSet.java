@@ -213,8 +213,11 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public static BSet<BInteger> interval(BInteger a, BInteger b) {
-		return new BSet<BInteger>((PersistentHashSet) SET.invoke(
-				MAP.invoke(CREATE_INTEGER, RANGE.invoke(a.getValue(), INC.invoke(b.getValue())))));
+		PersistentHashSet persistentSet = PersistentHashSet.create();
+		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = i.plus(new BInteger("1"))) {
+			persistentSet = (PersistentHashSet) persistentSet.cons(i);
+		}
+		return new BSet<BInteger>(persistentSet);
 	}
 
 

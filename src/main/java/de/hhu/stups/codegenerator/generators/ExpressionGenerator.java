@@ -703,7 +703,7 @@ public class ExpressionGenerator {
     /*
     * This function generates code for a tuple with the given arguments.
     */
-    private String generateTuple(List<String> arguments, BType leftType, BType rightType) {
+    public String generateTuple(List<String> arguments, BType leftType, BType rightType) {
         ST tuple = currentGroup.getInstanceOf("tuple_create");
         TemplateHandler.add(tuple, "leftType", typeGenerator.generate(leftType));
         TemplateHandler.add(tuple, "rightType", typeGenerator.generate(rightType));

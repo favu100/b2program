@@ -17,6 +17,7 @@ import org.stringtemplate.v4.STGroup;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by fabian on 04.03.19.
@@ -71,10 +72,8 @@ public class LambdaGenerator {
         String identifier = "_ic_set_" + iterationConstructCounter;
 
         CoupleType coupleType = (CoupleType) ((SetType) node.getType()).getSubType();
-        String leftType = typeGenerator.generate(coupleType.getLeft());
-        String rightType = typeGenerator.generate(coupleType.getRight());
 
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, predicate, leftType, rightType, declarations, expression, type);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, predicate, coupleType, declarations, expression, type);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -101,15 +100,28 @@ public class LambdaGenerator {
     /*
     * This function generates code for the inner body of the lambda expression
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode predicate, String leftType, String rightType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode predicate, CoupleType coupleType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String name = declarations.get(declarations.size() - 1).getName();
-        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name), declarations);
+        String lhsExpr;
+        if(coupleType.getLeft() instanceof CoupleType) {
+            lhsExpr = machineGenerator.getExpressionGenerator().generateTuple(declarations.subList(0, declarations.size())
+                    .stream()
+                    .map(dec -> "_ic_" + dec.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(dec.getName()))
+                    .collect(Collectors.toList()), coupleType.getLeft(), coupleType.getRight());
+        } else {
+            String name = declarations.get(declarations.size() - 1).getName();
+            lhsExpr = "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name);
+        }
+        String leftType = typeGenerator.generate(coupleType.getLeft());
+        String rightType = typeGenerator.generate(coupleType.getRight());
+
+
+        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, lhsExpr, declarations);
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);
-        TemplateHandler.add(template, "leftType", typeGenerator.generate(declarations.get(0).getType()));
-        TemplateHandler.add(template, "rightType", typeGenerator.generate(expression.getType()));
+        TemplateHandler.add(template, "leftType", leftType);
+        TemplateHandler.add(template, "rightType", rightType);
         TemplateHandler.add(template, "lambda", lambda);
     }
 

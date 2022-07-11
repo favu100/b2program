@@ -65,13 +65,6 @@ public class ModelCheckingGenerator {
     public String generate(MachineNode machineNode, boolean forModelChecking, boolean isIncludedMachine, boolean forVisualisation) {
         if((forModelChecking || forVisualisation) && !isIncludedMachine) {
             typeGenerator.setFromOutside(true);
-//            ST template = currentGroup.getInstanceOf("model_check");
-//            TemplateHandler.add(template, "addCachedInfos", generateAddCachedInfos(machineNode));
-//            TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
-//            TemplateHandler.add(template, "evalState", generateEvalState(machineNode));
-//            TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariantsFunction(machineNode));
-//            TemplateHandler.add(template, "printResult", generatePrintResult(machineNode));
-//            TemplateHandler.add(template, "main", generateMain(machineNode));
 
             ST template = currentGroup.getInstanceOf("modelchecker");
             TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
@@ -337,6 +330,11 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("machine_equal");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
         List<String> predicates = new ArrayList<>();
+        for(String var : modelCheckingInfo.getConstants()) {
+            ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
+            TemplateHandler.add(predicateTemplate, "var", var);
+            predicates.add(predicateTemplate.render());
+        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
             TemplateHandler.add(predicateTemplate, "var", var);
@@ -350,6 +348,11 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("machine_unequal");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
         List<String> predicates = new ArrayList<>();
+        for(String var : modelCheckingInfo.getConstants()) {
+            ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
+            TemplateHandler.add(predicateTemplate, "var", var);
+            predicates.add(predicateTemplate.render());
+        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
             TemplateHandler.add(predicateTemplate, "var", var);

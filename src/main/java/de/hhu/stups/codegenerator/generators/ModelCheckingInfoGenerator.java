@@ -53,6 +53,12 @@ public class ModelCheckingInfoGenerator {
                 .collect(Collectors.toList());
     }
 
+    private List<String> generateConstants(MachineNode node) {
+        return node.getConstants().stream()
+                .map(variable -> "_get_" + nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                .collect(Collectors.toList());
+    }
+
     private Map<String, String> generateTransitionEvaluationFunctions(MachineNode node) {
         Map<String, String> transitionEvaluationFunctions = new HashMap<>();
         for(OperationNode operation : node.getOperations()) {
@@ -93,6 +99,7 @@ public class ModelCheckingInfoGenerator {
     public ModelCheckingInfo generateModelCheckingInfo(MachineNode node) {
         String machineName = nameHandler.handle(node.getName());
         List<String> variables = generateVariables(node);
+        List<String> constants = generateConstants(node);
         Map<String, String> transitionEvaluationFunctions = generateTransitionEvaluationFunctions(node);
         List<OperationFunctionInfo> operationFunctions = generateOperationFunctions(machineName, node);
         List<String> invariantFunctions = generateInvariantFunctions(node);
@@ -138,7 +145,7 @@ public class ModelCheckingInfoGenerator {
         }
 
         // TODO: Split guards conjuncts
-        return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
+        return new ModelCheckingInfo(machineName, variables, constants, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
                 invariantDependency, guardDependency);
     }
 

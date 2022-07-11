@@ -23,12 +23,18 @@ public class ModelCheckingInfoFileHandler {
 
         String machineName = modelCheckingInfoObject.get("machineName").getAsString();
         List<String> variables = new ArrayList<>();
+        List<String> constants = new ArrayList<>();
         Map<String, String> transitionEvaluationFunctions = new HashMap<>();
         List<OperationFunctionInfo> operationFunctions = new ArrayList<>();
 
         JsonArray variablesArray = modelCheckingInfoObject.getAsJsonArray("variables");
         for(int i = 0; i < variablesArray.size(); i++) {
             variables.add(variablesArray.get(i).getAsString());
+        }
+
+        JsonArray constantsArray = modelCheckingInfoObject.getAsJsonArray("constants");
+        for(int i = 0; i < constantsArray.size(); i++) {
+            constants.add(constantsArray.get(i).getAsString());
         }
 
         JsonObject transitionEvaluationFunctionsObject = modelCheckingInfoObject.getAsJsonObject("transitionEvaluationFunctions");
@@ -81,7 +87,7 @@ public class ModelCheckingInfoFileHandler {
         }
 
 
-        return new ModelCheckingInfo(machineName, variables, transitionEvaluationFunctions,  operationFunctions, invariants,
+        return new ModelCheckingInfo(machineName, variables, constants, transitionEvaluationFunctions,  operationFunctions, invariants,
                                     invariantDependency, guardDependency);
     }
 

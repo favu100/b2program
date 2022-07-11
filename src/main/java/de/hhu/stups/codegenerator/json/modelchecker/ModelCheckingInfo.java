@@ -12,6 +12,8 @@ public class ModelCheckingInfo {
 
     private final List<String> variables;
 
+    private final List<String> constants;
+
     private final List<OperationFunctionInfo> operationFunctions;
 
     private final Map<String, String> transitionEvaluationFunctions;
@@ -22,11 +24,12 @@ public class ModelCheckingInfo {
 
     private final Map<String, List<String>> guardDependency;
 
-    public ModelCheckingInfo(final String machineName, final List<String> variables, final Map<String, String> transitionEvaluationFunctions,
+    public ModelCheckingInfo(final String machineName, final List<String> variables, final List<String> constants, final Map<String, String> transitionEvaluationFunctions,
                              final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions,
                              final Map<String, List<String>> invariantDependency, final Map<String, List<String>> guardDependency) {
         this.machineName = machineName;
         this.variables = variables;
+        this.constants = constants;
         this.transitionEvaluationFunctions = transitionEvaluationFunctions;
         this.operationFunctions = operationFunctions;
         this.invariantFunctions = invariantFunctions;
@@ -40,6 +43,10 @@ public class ModelCheckingInfo {
 
     public List<String> getVariables() {
         return variables;
+    }
+
+    public List<String> getConstants() {
+        return constants;
     }
 
     public Map<String, String> getTransitionEvaluationFunctions() {

@@ -1419,3 +1419,5 @@ include_initialization() ::= <<
 transition_cache_declaration(type, identifier, operationHasParams) ::= <<
 mutable boost::optional\<<if(operationHasParams)>BSet\<<type>\><else>bool<endif>\> _tr_cache_<identifier>;
 >>
+
+set_initialization(identifier, type, enums) ::= <<>>

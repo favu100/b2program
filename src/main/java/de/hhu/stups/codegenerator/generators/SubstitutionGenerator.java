@@ -129,11 +129,8 @@ public class SubstitutionGenerator {
         String body = "";
         if (node.getInitialisation() != null) body = machineGenerator.visitSubstitutionNode(node.getInitialisation(), null);
         //TODO: add empty templates in other languages instead of checking for existence
-        if (currentGroup.getInstanceOf("set_initialization") != null) {
-            //Rust needs the Set declaration and initialization separat
-            List<String> setInitializations = declarationGenerator.generateSetDeclarations(node, "set_initialization");
-            if (setInitializations.size() > 0) TemplateHandler.add(initialization, "set_initializations", String.join("\n", setInitializations));
-        }
+        List<String> setInitializations = declarationGenerator.generateSetDeclarations(node, "set_initialization");
+        if (setInitializations.size() > 0) TemplateHandler.add(initialization, "set_initializations", String.join("\n", setInitializations));
         TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());
         if (body.trim().length() > 0) TemplateHandler.add(initialization, "body", body);
 

@@ -529,3 +529,5 @@ while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
 % do
 <then>
 >>
+
+set_initialization(identifier, type, enums) ::= <<>>

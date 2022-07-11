@@ -731,3 +731,5 @@ include_initialization() ::= <<
 
 transition_cache_declaration(type, identifier, operationHasParams) ::= <<
 >>
+
+set_initialization(identifier, type, enums) ::= <<>>

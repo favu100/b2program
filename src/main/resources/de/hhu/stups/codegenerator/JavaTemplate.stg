@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
@@ -1187,7 +1188,7 @@ private static class ModelChecker {
     private final boolean isDebug;
 
     private final LinkedList\<<machine>\> unvisitedStates = new LinkedList\<>();
-    private final Set\<<machine>\> states = new HashSet\<>();
+    private final Set\<<machine>\> states = ConcurrentHashMap.newKeySet();
     private AtomicInteger transitions = new AtomicInteger(0);
     private ThreadPoolExecutor threadPool;
     private Object waitLock = new Object();
@@ -1485,17 +1486,14 @@ private void modelCheckMultiThreaded() {
             Set\<<machine>\> nextStates = generateNextStates(state);
 
             nextStates.forEach(nextState -> {
-                synchronized (states) {
-                    if(!states.contains(nextState)) {
-                        states.add(nextState);
-                        synchronized (unvisitedStates) {
-                            unvisitedStates.add(nextState);
-                        }
-                        if(states.size() % 50000 == 0 && isDebug) {
-                            System.out.println("VISITED STATES: " + states.size());
-                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                            System.out.println("-------------------");
-                        }
+                if(states.add(nextState)) {
+                    synchronized (unvisitedStates) {
+                        unvisitedStates.add(nextState);
+                    }
+                    if(states.size() % 50000 == 0 && isDebug) {
+                        System.out.println("VISITED STATES: " + states.size());
+                        System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                        System.out.println("-------------------");
                     }
                 }
             });

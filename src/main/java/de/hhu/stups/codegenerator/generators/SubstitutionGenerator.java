@@ -144,15 +144,16 @@ public class SubstitutionGenerator {
     * This function generates code for initiailizing all constants from the given AST node of a machine
     */
     public List<String> generateConstantsInitializations(MachineNode node) {
-        // TODO: Check that constants must be declared in the order they appear in the PROPERTIES Furthermore, also check that used constants in other constants has to be declared before.
+        // TODO: Check that constants must be declared in the order they appear in the PROPERTIES. Furthermore, also check that used constants in other constants has to be declared before.
         Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
-        List<String> constantsInitializations = node.getConstants().stream()
-                .filter(constant -> !lambdaFunctions.contains(constant.getName()))
-                .map(constant -> generateConstantInitialization(node, constant))
-                .collect(Collectors.toList());
+        List<String> constantsInitializations = new ArrayList<>();
         constantsInitializations.addAll(node.getConstants().stream()
                 .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
                 .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
+                .collect(Collectors.toList()));
+        constantsInitializations.addAll(node.getConstants().stream()
+                .filter(constant -> !lambdaFunctions.contains(constant.getName()))
+                .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList()));
         return constantsInitializations;
     }

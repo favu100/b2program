@@ -205,7 +205,7 @@ public class ExpressionGenerator {
             //This is the case where the name of an enumerated set element is returned as an IdentifierExprNode
             String nodeName = ((IdentifierExprNode) node).getName();
             String[] nodeNameAsList = nodeName.split("\\.");
-            if((enumTypes.keySet().contains(node.getType().toString()) &&
+            if((enumTypes.containsKey(node.getType().toString()) &&
                     enumTypes.get(node.getType().toString()).contains(nodeNameAsList[nodeNameAsList.length - 1]))) {
                 return declarationGenerator.callEnum(node.getType().toString(), ((IdentifierExprNode) node).getDeclarationNode());
             }

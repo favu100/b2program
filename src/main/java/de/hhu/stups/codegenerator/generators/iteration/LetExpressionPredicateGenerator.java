@@ -67,7 +67,7 @@ public class LetExpressionPredicateGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_let_"+ iterationConstructCounter;
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, type, expression);
+        generateBody(template, enumerationTemplates, otherConstructs, conditionalPredicate, identifier, type, expression);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -87,10 +87,6 @@ public class LetExpressionPredicateGenerator {
         List<DeclarationNode> declarations = node.getLocalIdentifiers();
 
         ST template = group.getInstanceOf("let_expression_predicate");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
 
         iterationConstructGenerator.prepareGeneration(letPredicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, letPredicate, false);
@@ -99,7 +95,7 @@ public class LetExpressionPredicateGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_let_"+ iterationConstructCounter;
 
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, type, thenPredicate);
+        generateBody(template, enumerationTemplates, otherConstructs, conditionalPredicate, identifier, type, thenPredicate);
 
         String result = template.render();
 
@@ -128,9 +124,13 @@ public class LetExpressionPredicateGenerator {
     /*
     * This function generates code for the inner body of a let expression
     */
-    private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, ExprNode exprNode) {
+    private String generateLetBody(Collection<String> otherConstructs, PredicateNode conditionalPredicate, String identifier, BType type, ExprNode exprNode) {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "val", machineGenerator.visitExprNode(exprNode, null));
         return template.render();
@@ -139,9 +139,13 @@ public class LetExpressionPredicateGenerator {
     /*
     * This function generates code for the inner body of a let predicate
     */
-    private String generateLetBody(Collection<String> otherConstructs, String identifier, BType type, PredicateNode thenPredicateNode) {
+    private String generateLetBody(Collection<String> otherConstructs, PredicateNode conditionalPredicate, String identifier, BType type, PredicateNode thenPredicateNode) {
         ST template = group.getInstanceOf("let_expression_predicate_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "val", machineGenerator.visitPredicateNode(thenPredicateNode, null));
         return template.render();
@@ -150,9 +154,9 @@ public class LetExpressionPredicateGenerator {
     /*
     * This function generates code for the body of a let predicate
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, PredicateNode thenPredicate) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, PredicateNode conditionalPredicate, String identifier, BType type, PredicateNode thenPredicate) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateLetBody(otherConstructs, identifier, type, thenPredicate);
+        String innerBody = generateLetBody(otherConstructs, conditionalPredicate, identifier, type, thenPredicate);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);
@@ -162,9 +166,9 @@ public class LetExpressionPredicateGenerator {
     /*
     * This function generates code for the body of a let expression
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, BType type, ExprNode expression) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, PredicateNode conditionalPredicate, String identifier, BType type, ExprNode expression) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateLetBody(otherConstructs, identifier, type, expression);
+        String innerBody = generateLetBody(otherConstructs, conditionalPredicate, identifier, type, expression);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);

@@ -58,10 +58,6 @@ public class LambdaGenerator {
         BType type = node.getType();
 
         ST template = group.getInstanceOf("lambda");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
 
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
         Collection<String> otherConstructs = generateOtherIterationConstructs(predicate, expression);
@@ -73,7 +69,7 @@ public class LambdaGenerator {
 
         CoupleType coupleType = (CoupleType) ((SetType) node.getType()).getSubType();
 
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, predicate, coupleType, declarations, expression, type);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, conditionalPredicate, predicate, coupleType, declarations, expression, type);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -100,7 +96,7 @@ public class LambdaGenerator {
     /*
     * This function generates code for the inner body of the lambda expression
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode predicate, CoupleType coupleType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, PredicateNode conditionalPredicate, PredicateNode predicate, CoupleType coupleType, List<DeclarationNode> declarations, ExprNode expression, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String lhsExpr;
         if(coupleType.getLeft() instanceof CoupleType) {
@@ -116,7 +112,7 @@ public class LambdaGenerator {
         String rightType = typeGenerator.generate(coupleType.getRight());
 
 
-        String innerBody = generateLambdaExpression(otherConstructs, predicate, leftType, rightType, expression, identifier, lhsExpr, declarations);
+        String innerBody = generateLambdaExpression(otherConstructs, conditionalPredicate, predicate, leftType, rightType, expression, identifier, lhsExpr, declarations);
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);
@@ -128,11 +124,15 @@ public class LambdaGenerator {
     /*
     * This function generates code for the expression representing the values the variables are mapped to within the lambda expression
     */
-    public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
+    public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "leftType", leftType);
         TemplateHandler.add(template, "rightType", rightType);

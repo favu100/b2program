@@ -59,10 +59,6 @@ public class AnySubstitutionGenerator {
         List<DeclarationNode> declarations = node.getParameters();
 
         ST template = group.getInstanceOf("any");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
         TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
@@ -89,7 +85,7 @@ public class AnySubstitutionGenerator {
         }
         TemplateHandler.add(template, "choicePoint", counter);
 
-        generateBody(template, otherConstructs, enumerationTemplates, predicate, substitution, declarations.size(), counter, operation, isLastChoicePoint);
+        generateBody(template, otherConstructs, enumerationTemplates, conditionalPredicate, predicate, substitution, declarations.size(), counter, operation, isLastChoicePoint);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -101,11 +97,15 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the inner body of the ANY substitution
     */
-    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode predicateNode, SubstitutionNode substitutionNode, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
+    private String generateAnyBody(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, SubstitutionNode substitutionNode, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, false);
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "body", machineGenerator.visitSubstitutionNode(substitutionNode, null));
         TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
@@ -134,9 +134,9 @@ public class AnySubstitutionGenerator {
     /*
     * This function generates code for the body of the ANY substitution
     */
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode conditionalPredicate, PredicateNode predicate, SubstitutionNode substitution, int numberDeclarations, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateAnyBody(otherConstructs, predicate, substitution, numberDeclarations, counter, operation, isLastChoicePoint);
+        String innerBody = generateAnyBody(otherConstructs, conditionalPredicate, predicate, substitution, numberDeclarations, counter, operation, isLastChoicePoint);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

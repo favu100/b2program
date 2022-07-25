@@ -184,37 +184,39 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.currentStateCount = 0;
 	}
 
-	int getAndIncCurrentExpressionCount() {
+	public int getAndIncCurrentExpressionCount() {
 		return currentExpressionCount++;
 	}
 
-	int getCurrentExpressionCount() {
+	public int getCurrentExpressionCount() {
 		return currentExpressionCount;
 	}
 
-	void resetCurrentExpressionCount() {
+	public void resetCurrentExpressionCount() {
 		this.currentExpressionCount = 0;
 	}
 
-	int getAndIncCurrentStateCount() {
+	public int getAndIncCurrentStateCount() {
 		return currentStateCount++;
 	}
 
-	int getCurrentStateCount() {
+	public int getCurrentStateCount() {
 		return currentStateCount;
 	}
 
-	void resetCurrentStateCount() {
+	public void resetCurrentStateCount() {
 		this.currentStateCount = 0;
 	}
+
 	/*
 	* This function generates code for the whole machine with the given AST node.
 	*/
 	public String generateMachine(MachineNode node, GeneratorMode mode) {
+		initialize(node);
 		recordStructAnalyzer.visitMachineNode(node);
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());
 		backtrackingGenerator.calculateChoicePoints(node);
-		initialize(node);
+
 		ST machine = currentGroup.getInstanceOf("machine");
 		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation));
 		TemplateHandler.add(machine, "forVisualisation", forVisualisation);

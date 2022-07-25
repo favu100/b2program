@@ -47,10 +47,6 @@ public class QuantifiedPredicateGenerator {
         List<DeclarationNode> declarations = node.getDeclarationList();
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_predicate");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
 
         boolean forAll = node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION;
 
@@ -62,7 +58,7 @@ public class QuantifiedPredicateGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_boolean_"+ iterationConstructCounter;
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, forAll, predicate, declarations);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, forAll, conditionalPredicate, predicate, declarations);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -89,10 +85,10 @@ public class QuantifiedPredicateGenerator {
     /*
     * This function generates code for the body of a quantified predicate
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean forAll, PredicateNode predicate, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean forAll, PredicateNode conditionalPredicate, PredicateNode predicate, List<DeclarationNode> declarations) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        String innerBody = generateQuantifiedPredicateEvaluation(otherConstructs, predicate, identifier, forAll, declarations.size());
+        String innerBody = generateQuantifiedPredicateEvaluation(otherConstructs, conditionalPredicate, predicate, identifier, forAll, declarations.size());
         String predicateString = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "identifier", identifier);
@@ -103,11 +99,15 @@ public class QuantifiedPredicateGenerator {
     /*
     * This function generates code for the evaluation of a quantified predicate
     */
-    private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, boolean forAll, int numberDeclarations) {
+    private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String identifier, boolean forAll, int numberDeclarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, forAll);
         ST template = group.getInstanceOf("quantified_predicate_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", subpredicate instanceof PredicateOperatorNode && ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);

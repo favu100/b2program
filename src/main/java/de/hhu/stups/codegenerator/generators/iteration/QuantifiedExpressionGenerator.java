@@ -62,10 +62,6 @@ public class QuantifiedExpressionGenerator {
         ExprNode expression = node.getExpressionNode();
         BType type = node.getType();
         ST template = group.getInstanceOf("quantified_expression");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
 
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
@@ -76,7 +72,7 @@ public class QuantifiedExpressionGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = isInteger ? "_ic_integer_" + iterationConstructCounter : "_ic_set_"+ iterationConstructCounter;
 
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, node, predicate, expression, declarations);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, node, conditionalPredicate, predicate, expression, declarations);
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
         machineGenerator.leaveIterationConstruct(node.getDeclarationList());
@@ -137,13 +133,13 @@ public class QuantifiedExpressionGenerator {
     /*
     * This function generates code for the body of the quantified expression
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, QuantifiedExpressionNode node, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, QuantifiedExpressionNode node, PredicateNode conditionalPredicate, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
 
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
-        String innerBody = generateQuantifiedExpressionEvaluation(otherConstructs, predicate, identifier, getOperation(operator), expression, declarations.size());
+        String innerBody = generateQuantifiedExpressionEvaluation(otherConstructs, conditionalPredicate, predicate, identifier, getOperation(operator), expression, declarations.size());
         String evaluation = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
         TemplateHandler.add(template, "identifier", identifier);
@@ -159,11 +155,15 @@ public class QuantifiedExpressionGenerator {
     /*
     * This function generates code for the evaluation of the quantified expression
     */
-    private String generateQuantifiedExpressionEvaluation(Collection<String> otherConstructs, PredicateNode predicateNode, String identifier, String operation, ExprNode expression, int numberDeclarations) {
+    private String generateQuantifiedExpressionEvaluation(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String identifier, String operation, ExprNode expression, int numberDeclarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, numberDeclarations, false);
         ST template = group.getInstanceOf("quantified_expression_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "operation", operation);

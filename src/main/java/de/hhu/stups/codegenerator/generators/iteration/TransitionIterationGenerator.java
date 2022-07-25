@@ -54,10 +54,6 @@ public class TransitionIterationGenerator {
     */
     public String generateTransition(PredicateNode conditionalPredicate, OperationNode node, List<DeclarationNode> declarations, PredicateNode predicate) {
         ST template = group.getInstanceOf("transition");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
         boolean noParameters = declarations.size() == 0;
         TemplateHandler.add(template, "noParameters", noParameters);
         TemplateHandler.add(template, "operationName", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES));
@@ -80,7 +76,7 @@ public class TransitionIterationGenerator {
             List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
             Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
 
-            generateBody(template, otherConstructs, enumerationTemplates, predicate, node.getName(), identifier, declarations);
+            generateBody(template, otherConstructs, enumerationTemplates, conditionalPredicate, predicate, node.getName(), identifier, declarations);
 
             String result = template.render();
             iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -92,7 +88,7 @@ public class TransitionIterationGenerator {
     /*
     * This function generates code for the inner body of evaluating transitions
     */
-    private String generateTransitionBody(Collection<String> otherConstructs, PredicateNode predicateNode, String setName, String elementName, List<DeclarationNode> declarations) {
+    private String generateTransitionBody(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String setName, String elementName, List<DeclarationNode> declarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
         ST template = group.getInstanceOf("parameter_combination_predicate");
         BType type = extractTypeFromDeclarations(declarations);
@@ -101,6 +97,10 @@ public class TransitionIterationGenerator {
         TemplateHandler.add(template, "element", elementName);
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         return template.render();
     }
@@ -124,10 +124,10 @@ public class TransitionIterationGenerator {
     /*
     * This function generates code for the body of evaluating transitions
     */
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, String operationName, String setName, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode conditionalPredicate, PredicateNode predicate, String operationName, String setName, List<DeclarationNode> declarations) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String elementName = getElementFromBoundedVariables(declarations);
-        String innerBody = generateTransitionBody(otherConstructs, predicate, setName, elementName, declarations);
+        String innerBody = generateTransitionBody(otherConstructs, conditionalPredicate, predicate, setName, elementName, declarations);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         generateSubType(template, declarations);
         TemplateHandler.add(template, "identifier", setName);

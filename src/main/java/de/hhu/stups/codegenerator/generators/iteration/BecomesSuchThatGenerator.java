@@ -66,10 +66,6 @@ public class BecomesSuchThatGenerator {
                 .collect(Collectors.toList());
 
         ST template = group.getInstanceOf("becomes_such_that");
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
         TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
 
         generateLoads(template, predicate);
@@ -98,7 +94,7 @@ public class BecomesSuchThatGenerator {
         }
         TemplateHandler.add(template, "choicePoint", counter);
 
-        generateBody(template, otherConstructs, enumerationTemplates, predicate, node.getIdentifiers(), counter, operation, isLastChoicePoint);
+        generateBody(template, otherConstructs, enumerationTemplates, conditionalPredicate, predicate, node.getIdentifiers(), counter, operation, isLastChoicePoint);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), declarations, result);
@@ -110,13 +106,17 @@ public class BecomesSuchThatGenerator {
     /*
     * This function generates code for the inner body of the becomes such that substitution
     */
-    private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode predicateNode, int counter, String operation, boolean isLastChoicePoint) {
+    private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode conditionalPredicate, PredicateNode predicateNode, int counter, String operation, boolean isLastChoicePoint) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size(), false);
 
         ST template = group.getInstanceOf("becomes_such_that_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
 
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
 
         List<String> stores = identifiers.stream().map(this::generateStore).collect(Collectors.toList());
@@ -148,9 +148,9 @@ public class BecomesSuchThatGenerator {
     /*
     * This function generates code for the body of the becomes such that substitution
     */
-    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode predicate, List<IdentifierExprNode> identifiers, int counter, String operation, boolean isLastChoicePoint) {
+    private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode conditionalPredicate, PredicateNode predicate, List<IdentifierExprNode> identifiers, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
-        String innerBody = generateBecomesSuchThatBody(otherConstructs, identifiers, predicate, counter, operation, isLastChoicePoint);
+        String innerBody = generateBecomesSuchThatBody(otherConstructs, identifiers, conditionalPredicate, predicate, counter, operation, isLastChoicePoint);
         String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "body", body);
     }

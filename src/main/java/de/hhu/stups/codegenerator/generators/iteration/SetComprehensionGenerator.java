@@ -66,11 +66,6 @@ public class SetComprehensionGenerator {
 
         ST template = group.getInstanceOf("set_comprehension");
 
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
-
         iterationConstructGenerator.prepareGeneration(predicate, declarations, type, false);
 
         List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
@@ -79,7 +74,7 @@ public class SetComprehensionGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
         boolean isRelation = node.getDeclarationList().size() > 1;
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, predicate, declarations, type);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, conditionalPredicate, predicate, declarations, type);
 
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
@@ -164,11 +159,15 @@ public class SetComprehensionGenerator {
     /*
     * This function generates code for the predicate of a set comprehension
     */
-    private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
+    private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
         ST template = group.getInstanceOf("set_comprehension_predicate");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);
@@ -197,14 +196,14 @@ public class SetComprehensionGenerator {
     /*
     * This function generates code for the body of a set comprehension
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean isRelation, PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean isRelation, PredicateNode conditionalPredicate, PredicateNode predicate, List<DeclarationNode> declarations, BType type) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
         String elementName = getElementFromBoundedVariables(declarations);
 
         String generatedType = typeGenerator.generate(type);
 
-        String innerBody = generateSetComprehensionPredicate(otherConstructs, predicate, generatedType, identifier, elementName, declarations);
+        String innerBody = generateSetComprehensionPredicate(otherConstructs, conditionalPredicate, predicate, generatedType, identifier, elementName, declarations);
         String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         generateSubType(template, declarations);
         TemplateHandler.add(template, "type", generatedType);

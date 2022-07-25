@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
@@ -47,56 +48,12 @@ public class nota_v2 {
         MIXED
     }
 
+    public nota_v2 parent;
+    public Set<String> dependentGuard = new HashSet<>();
+    public PersistentHashMap guardCache = PersistentHashMap.EMPTY;
+    public Set<String> dependentInvariant = new HashSet<>();
+    public String stateAccessedVia;
 
-    public static class _Struct1 extends BStruct {
-        private BSet<SID> sid;
-        private RM_ERROR_CODES err;
-
-        public _Struct1(BSet<SID> sid, RM_ERROR_CODES err) {
-            this.sid = sid;
-            this.err = err;
-        }
-
-        public BSet<SID> get_sid() {
-            return this.sid;
-        }
-
-        public RM_ERROR_CODES get_err() {
-            return this.err;
-        }
-
-        public _Struct1 override_sid(BSet<SID> sid) {
-            return new _Struct1(sid, err);
-        }
-
-        public _Struct1 override_err(RM_ERROR_CODES err) {
-            return new _Struct1(sid, err);
-        }
-
-        public BBoolean equal(_Struct1 o) {
-            return new BBoolean(this.sid == o.sid && this.err == o.err);
-        }
-
-        public BBoolean unequal(_Struct1 o) {
-            return new BBoolean(this.sid != o.sid || this.err != o.err);
-        }
-
-        public String toString() {
-            return "(" + "sid : " + this.sid + "," + "err : " + this.err + ")";
-        }
-
-        public boolean equals(Object other) {
-            if(!(other instanceof _Struct1)) {
-                return false;
-            }
-            _Struct1 o = (_Struct1) other;
-            return this.sid == o.sid && this.err == o.err;
-        }
-
-        public int hashCode() {
-            return Objects.hash(sid, err);
-        }
-    }
 
     public static class _Struct5 extends BStruct {
         private BSet<SOCKET> soc;
@@ -145,6 +102,56 @@ public class nota_v2 {
 
         public int hashCode() {
             return Objects.hash(soc, err);
+        }
+    }
+
+    public static class _Struct1 extends BStruct {
+        private BSet<SID> sid;
+        private RM_ERROR_CODES err;
+
+        public _Struct1(BSet<SID> sid, RM_ERROR_CODES err) {
+            this.sid = sid;
+            this.err = err;
+        }
+
+        public BSet<SID> get_sid() {
+            return this.sid;
+        }
+
+        public RM_ERROR_CODES get_err() {
+            return this.err;
+        }
+
+        public _Struct1 override_sid(BSet<SID> sid) {
+            return new _Struct1(sid, err);
+        }
+
+        public _Struct1 override_err(RM_ERROR_CODES err) {
+            return new _Struct1(sid, err);
+        }
+
+        public BBoolean equal(_Struct1 o) {
+            return new BBoolean(this.sid == o.sid && this.err == o.err);
+        }
+
+        public BBoolean unequal(_Struct1 o) {
+            return new BBoolean(this.sid != o.sid || this.err != o.err);
+        }
+
+        public String toString() {
+            return "(" + "sid : " + this.sid + "," + "err : " + this.err + ")";
+        }
+
+        public boolean equals(Object other) {
+            if(!(other instanceof _Struct1)) {
+                return false;
+            }
+            _Struct1 o = (_Struct1) other;
+            return this.sid == o.sid && this.err == o.err;
+        }
+
+        public int hashCode() {
+            return Objects.hash(sid, err);
         }
     }
 
@@ -343,6 +350,7 @@ public class nota_v2 {
         svc_registered = new BRelation<SERVICE, BBoolean>();
     }
 
+
     public nota_v2(BSet<INTERCONNECTNODE> interconnectNodes, BSet<SOCKET> sockets, BSet<SERVICE> services, BSet<RESOURCEMANAGER> resourceManagers, BSet<SID> sids, BRelation<RESOURCEMANAGER, BSet<SERVICE>> rm_services, BRelation<SERVICE, SID> rm_sids, BRelation<SID, INTERCONNECTNODE> in_localServices, BRelation<SOCKET, INTERCONNECTNODE> in_sockets, BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>> in_resourceManager, BRelation<SOCKET, SID> soc_to, BRelation<SOCKET, SID> soc_from, BRelation<SERVICE, SID> svc_serviceID, BRelation<SERVICE, BSet<SOCKET>> svc_sockets, BRelation<SERVICE, INTERCONNECTNODE> svc_ICNode, BRelation<SERVICE, BBoolean> svc_registered) {
         this.interconnectNodes = interconnectNodes;
         this.sockets = sockets;
@@ -361,6 +369,7 @@ public class nota_v2 {
         this.svc_ICNode = svc_ICNode;
         this.svc_registered = svc_registered;
     }
+
 
     public INTERCONNECTNODE constructor_interconnectNode(INTERCONNECTNODE newic) {
         INTERCONNECTNODE oid = null;
@@ -914,1183 +923,911 @@ public class nota_v2 {
         return String.join("\n", "_get_interconnectNodes: " + (this._get_interconnectNodes()).toString(), "_get_sockets: " + (this._get_sockets()).toString(), "_get_services: " + (this._get_services()).toString(), "_get_resourceManagers: " + (this._get_resourceManagers()).toString(), "_get_sids: " + (this._get_sids()).toString(), "_get_rm_services: " + (this._get_rm_services()).toString(), "_get_rm_sids: " + (this._get_rm_sids()).toString(), "_get_in_localServices: " + (this._get_in_localServices()).toString(), "_get_in_sockets: " + (this._get_in_sockets()).toString(), "_get_in_resourceManager: " + (this._get_in_resourceManager()).toString(), "_get_soc_to: " + (this._get_soc_to()).toString(), "_get_soc_from: " + (this._get_soc_from()).toString(), "_get_svc_serviceID: " + (this._get_svc_serviceID()).toString(), "_get_svc_sockets: " + (this._get_svc_sockets()).toString(), "_get_svc_ICNode: " + (this._get_svc_ICNode()).toString(), "_get_svc_registered: " + (this._get_svc_registered()).toString());
     }
 
-    @SuppressWarnings("unchecked")
-    private static Set<nota_v2> generateNextStates(Object guardLock, nota_v2 state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<nota_v2, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<nota_v2, Set<String>> dependentGuard, Map<nota_v2, PersistentHashMap> guardCache, Map<nota_v2, nota_v2> parents, Map<nota_v2, String> stateAccessedVia, AtomicInteger transitions) {
-        Set<nota_v2> result = new HashSet<>();
-        if(isCaching) {
-            PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
-            PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = dependentGuard.get(state);
-            Object cachedValue = null;
-            boolean dependentGuardsBoolean = true;
-            BSet<INTERCONNECTNODE> _trid_1;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_constructor_interconnectNode");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_constructor_interconnectNode");
-            }
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_1 = state._tr_constructor_interconnectNode();
-            } else {
-                _trid_1 = (BSet<INTERCONNECTNODE>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_interconnectNode", _trid_1);
-            for(INTERCONNECTNODE param : _trid_1) {
-                INTERCONNECTNODE _tmp_1 = param;
+    private static class ModelChecker {
+        private final Type type;
+        private final int threads;
+        private final boolean isCaching;
+        private final boolean isDebug;
 
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_interconnectNode(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("constructor_interconnectNode"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("constructor_interconnectNode"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_interconnectNode");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<RESOURCEMANAGER> _trid_2;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_constructor_resourceManager");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_constructor_resourceManager");
-            }
+        private final LinkedList<nota_v2> unvisitedStates = new LinkedList<>();
+        private final Set<nota_v2> states = ConcurrentHashMap.newKeySet();
+        private AtomicInteger transitions = new AtomicInteger(0);
+        private ThreadPoolExecutor threadPool;
+        private Object waitLock = new Object();
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_2 = state._tr_constructor_resourceManager();
-            } else {
-                _trid_2 = (BSet<RESOURCEMANAGER>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_resourceManager", _trid_2);
-            for(RESOURCEMANAGER param : _trid_2) {
-                RESOURCEMANAGER _tmp_1 = param;
+        private AtomicBoolean invariantViolated = new AtomicBoolean(false);
+        private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+        private nota_v2 counterExampleState = null;
 
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_resourceManager(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("constructor_resourceManager"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("constructor_resourceManager"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_resourceManager");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_3;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_constructor_service");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_constructor_service");
-            }
+        private final Map<String, Set<String>> invariantDependency = new HashMap<>();
+        private final Map<String, Set<String>> guardDependency = new HashMap<>();
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_3 = state._tr_constructor_service();
-            } else {
-                _trid_3 = (BSet<BTuple<INTERCONNECTNODE, SERVICE>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_service", _trid_3);
-            for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_3) {
-                SERVICE _tmp_1 = param.projection2();
-                INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_service(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("constructor_service"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("constructor_service"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_service");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>> _trid_4;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_constructor_socket");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_constructor_socket");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_4 = state._tr_constructor_socket();
-            } else {
-                _trid_4 = (BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_socket", _trid_4);
-            for(BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET> param : _trid_4) {
-                SOCKET _tmp_1 = param.projection2();
-                BTuple<BTuple<INTERCONNECTNODE, SID>, SID> _tmp_2 = param.projection1();
-                SID _tmp_3 = _tmp_2.projection2();
-                BTuple<INTERCONNECTNODE, SID> _tmp_4 = _tmp_2.projection1();
-                SID _tmp_5 = _tmp_4.projection2();
-                INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("constructor_socket"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("constructor_socket"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_socket");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_5;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_rm_register");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_rm_register");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_5 = state._tr_rm_register();
-            } else {
-                _trid_5 = (BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_register", _trid_5);
-            for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_5) {
-                INTERCONNECTNODE _tmp_1 = param.projection2();
-                BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
-                SERVICE _tmp_3 = _tmp_2.projection2();
-                RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("rm_register"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("rm_register"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_register");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_6;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_rm_deregister");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_rm_deregister");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_6 = state._tr_rm_deregister();
-            } else {
-                _trid_6 = (BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_deregister", _trid_6);
-            for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_6) {
-                INTERCONNECTNODE _tmp_1 = param.projection2();
-                BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
-                SERVICE _tmp_3 = _tmp_2.projection2();
-                RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("rm_deregister"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("rm_deregister"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_deregister");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_7;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_rm_getSid");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_rm_getSid");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_7 = state._tr_rm_getSid();
-            } else {
-                _trid_7 = (BSet<BTuple<RESOURCEMANAGER, SERVICE>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_getSid", _trid_7);
-            for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_7) {
-                SERVICE _tmp_1 = param.projection2();
-                RESOURCEMANAGER _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_getSid(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("rm_getSid"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("rm_getSid"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_getSid");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_8;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_rm_getSid_Not_Found");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_rm_getSid_Not_Found");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_8 = state._tr_rm_getSid_Not_Found();
-            } else {
-                _trid_8 = (BSet<BTuple<RESOURCEMANAGER, SERVICE>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_getSid_Not_Found", _trid_8);
-            for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_8) {
-                SERVICE _tmp_1 = param.projection2();
-                RESOURCEMANAGER _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("rm_getSid_Not_Found"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("rm_getSid_Not_Found"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_getSid_Not_Found");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>> _trid_9;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_in_announceResourceManager");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_in_announceResourceManager");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_9 = state._tr_in_announceResourceManager();
-            } else {
-                _trid_9 = (BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_announceResourceManager", _trid_9);
-            for(BTuple<INTERCONNECTNODE, RESOURCEMANAGER> param : _trid_9) {
-                RESOURCEMANAGER _tmp_1 = param.projection2();
-                INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("in_announceResourceManager"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("in_announceResourceManager"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_announceResourceManager");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>> _trid_10;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_in_register_success");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_in_register_success");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_10 = state._tr_in_register_success();
-            } else {
-                _trid_10 = (BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_register_success", _trid_10);
-            for(BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID> param : _trid_10) {
-                SID _tmp_1 = param.projection2();
-                BTuple<INTERCONNECTNODE, SERVICE> _tmp_2 = param.projection1();
-                SERVICE _tmp_3 = _tmp_2.projection2();
-                INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("in_register_success"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("in_register_success"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_register_success");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_11;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_in_register_failed");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_in_register_failed");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_11 = state._tr_in_register_failed();
-            } else {
-                _trid_11 = (BSet<BTuple<INTERCONNECTNODE, SERVICE>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_register_failed", _trid_11);
-            for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_11) {
-                SERVICE _tmp_1 = param.projection2();
-                INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_register_failed(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("in_register_failed"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("in_register_failed"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_register_failed");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> _trid_12;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_in_requestTargetSocket_Granted");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_in_requestTargetSocket_Granted");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_12 = state._tr_in_requestTargetSocket_Granted();
-            } else {
-                _trid_12 = (BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_requestTargetSocket_Granted", _trid_12);
-            for(BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET> param : _trid_12) {
-                SOCKET _tmp_1 = param.projection2();
-                BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> _tmp_2 = param.projection1();
-                SID _tmp_3 = _tmp_2.projection2();
-                BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_4 = _tmp_2.projection1();
-                SID _tmp_5 = _tmp_4.projection2();
-                BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_6 = _tmp_4.projection1();
-                SOCKET _tmp_7 = _tmp_6.projection2();
-                BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_8 = _tmp_6.projection1();
-                INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
-                INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("in_requestTargetSocket_Granted"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("in_requestTargetSocket_Granted"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_requestTargetSocket_Granted");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> _trid_13;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_in_requestTargetSocket_NotGranted");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_in_requestTargetSocket_NotGranted");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
-            } else {
-                _trid_13 = (BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_requestTargetSocket_NotGranted", _trid_13);
-            for(BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> param : _trid_13) {
-                SID _tmp_1 = param.projection2();
-                BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_2 = param.projection1();
-                SID _tmp_3 = _tmp_2.projection2();
-                BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_4 = _tmp_2.projection1();
-                SOCKET _tmp_5 = _tmp_4.projection2();
-                BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_6 = _tmp_4.projection1();
-                INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
-                INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("in_requestTargetSocket_NotGranted"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("in_requestTargetSocket_NotGranted"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_requestTargetSocket_NotGranted");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<SERVICE> _trid_14;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_svc_register");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_svc_register");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_14 = state._tr_svc_register();
-            } else {
-                _trid_14 = (BSet<SERVICE>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_svc_register", _trid_14);
-            for(SERVICE param : _trid_14) {
-                SERVICE _tmp_1 = param;
-
-                nota_v2 copiedState = state._copy();
-                copiedState.svc_register(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("svc_register"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("svc_register"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "svc_register");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-
-            synchronized(guardLock) {
-                guardCache.put(state, newCache);
-            }
-        } else {
-            BSet<INTERCONNECTNODE> _trid_1 = state._tr_constructor_interconnectNode();
-            for(INTERCONNECTNODE param : _trid_1) {
-                INTERCONNECTNODE _tmp_1 = param;
-
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_interconnectNode(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_interconnectNode");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager();
-            for(RESOURCEMANAGER param : _trid_2) {
-                RESOURCEMANAGER _tmp_1 = param;
-
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_resourceManager(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_resourceManager");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_3 = state._tr_constructor_service();
-            for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_3) {
-                SERVICE _tmp_1 = param.projection2();
-                INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_service(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_service");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>> _trid_4 = state._tr_constructor_socket();
-            for(BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET> param : _trid_4) {
-                SOCKET _tmp_1 = param.projection2();
-                BTuple<BTuple<INTERCONNECTNODE, SID>, SID> _tmp_2 = param.projection1();
-                SID _tmp_3 = _tmp_2.projection2();
-                BTuple<INTERCONNECTNODE, SID> _tmp_4 = _tmp_2.projection1();
-                SID _tmp_5 = _tmp_4.projection2();
-                INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "constructor_socket");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_5 = state._tr_rm_register();
-            for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_5) {
-                INTERCONNECTNODE _tmp_1 = param.projection2();
-                BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
-                SERVICE _tmp_3 = _tmp_2.projection2();
-                RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_register");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_6 = state._tr_rm_deregister();
-            for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_6) {
-                INTERCONNECTNODE _tmp_1 = param.projection2();
-                BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
-                SERVICE _tmp_3 = _tmp_2.projection2();
-                RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_deregister");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_7 = state._tr_rm_getSid();
-            for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_7) {
-                SERVICE _tmp_1 = param.projection2();
-                RESOURCEMANAGER _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_getSid(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_getSid");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_8 = state._tr_rm_getSid_Not_Found();
-            for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_8) {
-                SERVICE _tmp_1 = param.projection2();
-                RESOURCEMANAGER _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "rm_getSid_Not_Found");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>> _trid_9 = state._tr_in_announceResourceManager();
-            for(BTuple<INTERCONNECTNODE, RESOURCEMANAGER> param : _trid_9) {
-                RESOURCEMANAGER _tmp_1 = param.projection2();
-                INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_announceResourceManager");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>> _trid_10 = state._tr_in_register_success();
-            for(BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID> param : _trid_10) {
-                SID _tmp_1 = param.projection2();
-                BTuple<INTERCONNECTNODE, SERVICE> _tmp_2 = param.projection1();
-                SERVICE _tmp_3 = _tmp_2.projection2();
-                INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_register_success");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_11 = state._tr_in_register_failed();
-            for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_11) {
-                SERVICE _tmp_1 = param.projection2();
-                INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_register_failed(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_register_failed");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> _trid_12 = state._tr_in_requestTargetSocket_Granted();
-            for(BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET> param : _trid_12) {
-                SOCKET _tmp_1 = param.projection2();
-                BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> _tmp_2 = param.projection1();
-                SID _tmp_3 = _tmp_2.projection2();
-                BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_4 = _tmp_2.projection1();
-                SID _tmp_5 = _tmp_4.projection2();
-                BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_6 = _tmp_4.projection1();
-                SOCKET _tmp_7 = _tmp_6.projection2();
-                BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_8 = _tmp_6.projection1();
-                INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
-                INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_requestTargetSocket_Granted");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
-            for(BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> param : _trid_13) {
-                SID _tmp_1 = param.projection2();
-                BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_2 = param.projection1();
-                SID _tmp_3 = _tmp_2.projection2();
-                BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_4 = _tmp_2.projection1();
-                SOCKET _tmp_5 = _tmp_4.projection2();
-                BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_6 = _tmp_4.projection1();
-                INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
-                INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
-
-                nota_v2 copiedState = state._copy();
-                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "in_requestTargetSocket_NotGranted");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<SERVICE> _trid_14 = state._tr_svc_register();
-            for(SERVICE param : _trid_14) {
-                SERVICE _tmp_1 = param;
-
-                nota_v2 copiedState = state._copy();
-                copiedState.svc_register(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "svc_register");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-
+        public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
+            this.type = type;
+            this.threads = threads;
+            this.isCaching = isCaching;
+            this.isDebug = isDebug;
         }
-        return result;
-    }
 
+        public void modelCheck() {
+            if (isDebug) {
+                System.out.println("Starting Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
+            }
 
-    public static boolean checkInvariants(Object guardLock, nota_v2 state, boolean isCaching, Map<nota_v2, Set<String>> dependentInvariant) {
-        if(isCaching) {
-            Set<String> dependentInvariantsOfState;
-            synchronized(guardLock) {
-                dependentInvariantsOfState = dependentInvariant.get(state);
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
+            } else {
+                this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);
+                modelCheckMultiThreaded();
             }
-            if(dependentInvariantsOfState.contains("_check_inv_1")) {
-                if(!state._check_inv_1()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_2")) {
-                if(!state._check_inv_2()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_3")) {
-                if(!state._check_inv_3()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_4")) {
-                if(!state._check_inv_4()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_5")) {
-                if(!state._check_inv_5()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_6")) {
-                if(!state._check_inv_6()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_7")) {
-                if(!state._check_inv_7()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_8")) {
-                if(!state._check_inv_8()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_9")) {
-                if(!state._check_inv_9()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_10")) {
-                if(!state._check_inv_10()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_11")) {
-                if(!state._check_inv_11()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_12")) {
-                if(!state._check_inv_12()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_13")) {
-                if(!state._check_inv_13()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_14")) {
-                if(!state._check_inv_14()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_15")) {
-                if(!state._check_inv_15()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_16")) {
-                if(!state._check_inv_16()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_17")) {
-                if(!state._check_inv_17()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_18")) {
-                if(!state._check_inv_18()) {
-                    return false;
-                }
-            }
-            return true;
         }
-        return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18());
-    }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<nota_v2> counterExampleState, Map<nota_v2, nota_v2> parents, Map<nota_v2, String> stateAccessedVia) {
+        private void modelCheckSingleThreaded() {
+            nota_v2 machine = new nota_v2();
+            states.add(machine); // TODO: store hashes instead of machine?
+            unvisitedStates.add(machine);
 
-        if(invariantViolated || deadlockDetected) {
-            if(deadlockDetected) {
-                System.out.println("DEADLOCK DETECTED");
-            }
-            if(invariantViolated) {
-                System.out.println("INVARIANT VIOLATED");
-            }
-            System.out.println("COUNTER EXAMPLE TRACE: ");
-            StringBuilder sb = new StringBuilder();
-            if(counterExampleState.size() >= 1) {
-                nota_v2 currentState = counterExampleState.get(0);
-                while(currentState != null) {
-                    sb.insert(0, currentState.toString());
-                    sb.insert(0, "\n");
-                    sb.insert(0, stateAccessedVia.get(currentState));
-                    sb.insert(0, "\n\n");
-                    currentState = parents.get(currentState);
-                }
-            }
-            System.out.println(sb.toString());
-
-        }
-        if(!deadlockDetected && !invariantViolated) {
-            System.out.println("MODEL CHECKING SUCCESSFUL");
-        }
-        System.out.println("Number of States: " + states);
-        System.out.println("Number of Transitions: " + transitions);
-    }
-
-    private static nota_v2 next(LinkedList<nota_v2> collection, Object lock, Type type) {
-        synchronized(lock) {
-            return switch(type) {
-                case BFS -> collection.removeFirst();
-                case DFS -> collection.removeLast();
-                case MIXED -> collection.size() % 2 == 0 ? collection.removeFirst() : collection.removeLast();
-            };
-        }
-    }
-
-    private static void modelCheckSingleThreaded(Type type, boolean isCaching, boolean isDebug) {
-        Object lock = new Object();
-        Object guardLock = new Object();
-
-        nota_v2 machine = new nota_v2();
-
-
-        AtomicBoolean invariantViolated = new AtomicBoolean(false);
-        AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-        AtomicBoolean stopThreads = new AtomicBoolean(false);
-
-        Set<nota_v2> states = new HashSet<>();
-        states.add(machine);
-        AtomicInteger numberStates = new AtomicInteger(1);
-
-        LinkedList<nota_v2> collection = new LinkedList<>();
-        collection.add(machine);
-
-        Map<String, Set<String>> invariantDependency = new HashMap<>();
-        Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<nota_v2, Set<String>> dependentInvariant = new HashMap<>();
-        Map<nota_v2, Set<String>> dependentGuard = new HashMap<>();
-        Map<nota_v2, PersistentHashMap> guardCache = new HashMap<>();
-        Map<nota_v2, nota_v2> parents = new HashMap<>();
-        Map<nota_v2, String> stateAccessedVia = new HashMap<>();
-        if(isCaching) {
-            invariantDependency.put("in_register_success", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9")));
-            invariantDependency.put("in_announceResourceManager", new HashSet<>(Arrays.asList("_check_inv_11")));
-            invariantDependency.put("in_requestTargetSocket_Granted", new HashSet<>(Arrays.asList("_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12")));
-            invariantDependency.put("constructor_service", new HashSet<>(Arrays.asList("_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8")));
-            invariantDependency.put("constructor_socket", new HashSet<>(Arrays.asList("_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12")));
-            invariantDependency.put("in_requestTargetSocket_NotGranted", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("constructor_interconnectNode", new HashSet<>(Arrays.asList("_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11")));
-            invariantDependency.put("rm_getSid", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("rm_deregister", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("constructor_resourceManager", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11")));
-            invariantDependency.put("in_register_failed", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("rm_register", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("rm_getSid_Not_Found", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("svc_register", new HashSet<>(Arrays.asList("_check_inv_17")));
-            guardDependency.put("in_register_success", new HashSet<>(Arrays.asList("_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
-            guardDependency.put("in_announceResourceManager", new HashSet<>(Arrays.asList("_tr_in_announceResourceManager")));
-            guardDependency.put("in_requestTargetSocket_Granted", new HashSet<>(Arrays.asList("_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
-            guardDependency.put("constructor_service", new HashSet<>(Arrays.asList("_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister")));
-            guardDependency.put("constructor_socket", new HashSet<>(Arrays.asList("_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
-            guardDependency.put("in_requestTargetSocket_NotGranted", new HashSet<>(Arrays.asList()));
-            guardDependency.put("constructor_interconnectNode", new HashSet<>(Arrays.asList("_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager")));
-            guardDependency.put("rm_getSid", new HashSet<>(Arrays.asList()));
-            guardDependency.put("rm_deregister", new HashSet<>(Arrays.asList()));
-            guardDependency.put("constructor_resourceManager", new HashSet<>(Arrays.asList("_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager")));
-            guardDependency.put("in_register_failed", new HashSet<>(Arrays.asList()));
-            guardDependency.put("rm_register", new HashSet<>(Arrays.asList()));
-            guardDependency.put("rm_getSid_Not_Found", new HashSet<>(Arrays.asList()));
-            guardDependency.put("svc_register", new HashSet<>(Arrays.asList("_tr_svc_register")));
-            dependentInvariant.put(machine, new HashSet<>());
-        }
-        List<nota_v2> counterExampleState = new ArrayList<>();
-        parents.put(machine, null);
-
-        AtomicInteger transitions = new AtomicInteger(0);
-
-        while(!collection.isEmpty() && !stopThreads.get()) {
-            nota_v2 state = next(collection, lock, type);
-
-            Set<nota_v2> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-            nextStates.forEach(nextState -> {
-                if(!states.contains(nextState)) {
-                    numberStates.getAndIncrement();
-                    states.add(nextState);
-                    collection.add(nextState);
-                    if(numberStates.get() % 5000 == 0) {
-                        System.out.println("VISITED STATES: " + numberStates.get());
-                        System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                        System.out.println("-------------------");
-                    }
-                }
-            });
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                counterExampleState.add(state);
+            if(isCaching) {
+                initCache(machine);
             }
 
-            if(nextStates.isEmpty()) {
-                deadlockDetected.set(true);
-                stopThreads.set(true);
-            }
+            while(!unvisitedStates.isEmpty()) {
+                nota_v2 state = next();
 
-        }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
-    }
-
-
-    private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching, boolean isDebug) {
-        Object lock = new Object();
-        Object guardLock = new Object();
-        Object waitLock = new Object();
-        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
-
-        nota_v2 machine = new nota_v2();
-
-
-        AtomicBoolean invariantViolated = new AtomicBoolean(false);
-        AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-        AtomicBoolean stopThreads = new AtomicBoolean(false);
-        AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        Set<nota_v2> states = new HashSet<>();
-        states.add(machine);
-        AtomicInteger numberStates = new AtomicInteger(1);
-
-        LinkedList<nota_v2> collection = new LinkedList<>();
-        collection.add(machine);
-
-        Map<String, Set<String>> invariantDependency = new HashMap<>();
-        Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<nota_v2, Set<String>> dependentInvariant = new HashMap<>();
-        Map<nota_v2, Set<String>> dependentGuard = new HashMap<>();
-        Map<nota_v2, PersistentHashMap> guardCache = new HashMap<>();
-        Map<nota_v2, nota_v2> parents = new HashMap<>();
-        Map<nota_v2, String> stateAccessedVia = new HashMap<>();
-        if(isCaching) {
-            invariantDependency.put("in_register_success", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9")));
-            invariantDependency.put("in_announceResourceManager", new HashSet<>(Arrays.asList("_check_inv_11")));
-            invariantDependency.put("in_requestTargetSocket_Granted", new HashSet<>(Arrays.asList("_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12")));
-            invariantDependency.put("constructor_service", new HashSet<>(Arrays.asList("_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8")));
-            invariantDependency.put("constructor_socket", new HashSet<>(Arrays.asList("_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12")));
-            invariantDependency.put("in_requestTargetSocket_NotGranted", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("constructor_interconnectNode", new HashSet<>(Arrays.asList("_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11")));
-            invariantDependency.put("rm_getSid", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("rm_deregister", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("constructor_resourceManager", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11")));
-            invariantDependency.put("in_register_failed", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("rm_register", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("rm_getSid_Not_Found", new HashSet<>(Arrays.asList()));
-            invariantDependency.put("svc_register", new HashSet<>(Arrays.asList("_check_inv_17")));
-            guardDependency.put("in_register_success", new HashSet<>(Arrays.asList("_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
-            guardDependency.put("in_announceResourceManager", new HashSet<>(Arrays.asList("_tr_in_announceResourceManager")));
-            guardDependency.put("in_requestTargetSocket_Granted", new HashSet<>(Arrays.asList("_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
-            guardDependency.put("constructor_service", new HashSet<>(Arrays.asList("_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister")));
-            guardDependency.put("constructor_socket", new HashSet<>(Arrays.asList("_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
-            guardDependency.put("in_requestTargetSocket_NotGranted", new HashSet<>(Arrays.asList()));
-            guardDependency.put("constructor_interconnectNode", new HashSet<>(Arrays.asList("_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager")));
-            guardDependency.put("rm_getSid", new HashSet<>(Arrays.asList()));
-            guardDependency.put("rm_deregister", new HashSet<>(Arrays.asList()));
-            guardDependency.put("constructor_resourceManager", new HashSet<>(Arrays.asList("_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager")));
-            guardDependency.put("in_register_failed", new HashSet<>(Arrays.asList()));
-            guardDependency.put("rm_register", new HashSet<>(Arrays.asList()));
-            guardDependency.put("rm_getSid_Not_Found", new HashSet<>(Arrays.asList()));
-            guardDependency.put("svc_register", new HashSet<>(Arrays.asList("_tr_svc_register")));
-            dependentInvariant.put(machine, new HashSet<>());
-        }
-        List<nota_v2> counterExampleState = new ArrayList<>();
-        parents.put(machine, null);
-        stateAccessedVia.put(machine, null);
-
-        AtomicInteger transitions = new AtomicInteger(0);
-
-        while(!collection.isEmpty() && !stopThreads.get()) {
-            possibleQueueChanges.incrementAndGet();
-            nota_v2 state = next(collection, lock, type);
-            Runnable task = () -> {
-                Set<nota_v2> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+                Set<nota_v2> nextStates = generateNextStates(state);
 
                 nextStates.forEach(nextState -> {
-                    synchronized(lock) {
-                        if(!states.contains(nextState)) {
-                            numberStates.getAndIncrement();
-                            states.add(nextState);
-                            collection.add(nextState);
-                            if(numberStates.get() % 5000 == 0) {
-                                if( isDebug || numberStates.get() % 50000 == 0) {
-                                    System.out.println("VISITED STATES: " + numberStates.get());
-                                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                    System.out.println("-------------------");
-                                }
-                            }
+                    if(!states.contains(nextState)) {
+                        states.add(nextState);
+                        unvisitedStates.add(nextState);
+                        if(states.size() % 50000 == 0 && isDebug) {
+                            System.out.println("VISITED STATES: " + states.size());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
                         }
                     }
                 });
 
-                synchronized (lock) {
-                    int running = possibleQueueChanges.decrementAndGet();
-                    if (!collection.isEmpty() || running == 0) {
-                        synchronized (waitLock) {
-                            waitLock.notify();
-                        }
-                    }
+                if(invariantViolated(state)) {
+                    invariantViolated.set(true);
+                    counterExampleState = state;
+                    break;
                 }
 
                 if(nextStates.isEmpty()) {
                     deadlockDetected.set(true);
-                    stopThreads.set(true);
+                    counterExampleState = state;
+                    break;
                 }
 
-                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                    invariantViolated.set(true);
-                    stopThreads.set(true);
-                    counterExampleState.add(state);
-                }
+            }
+            printResult(states.size(), transitions.get());
+        }
 
+        private void modelCheckMultiThreaded() {
+            nota_v2 machine = new nota_v2();
+            states.add(machine);
+            unvisitedStates.add(machine);
 
-            };
-            threadPool.submit(task);
-            synchronized(waitLock) {
-                if (collection.isEmpty() && possibleQueueChanges.get() > 0) {
-                    try {
-                        waitLock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            AtomicBoolean stopThreads = new AtomicBoolean(false);
+            AtomicInteger possibleQueueChanges = new AtomicInteger(0);
+
+            if(isCaching) {
+                initCache(machine);
+            }
+
+            while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
+                possibleQueueChanges.incrementAndGet();
+                nota_v2 state = next();
+                Runnable task = () -> {
+                    Set<nota_v2> nextStates = generateNextStates(state);
+
+                    nextStates.forEach(nextState -> {
+                        if(states.add(nextState)) {
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
+                            }
+                        }
+                    });
+
+                    synchronized (unvisitedStates) {
+                        int running = possibleQueueChanges.decrementAndGet();
+                        if (!unvisitedStates.isEmpty() || running == 0) {
+                            synchronized (waitLock) {
+                                waitLock.notify();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolated.set(true);
+                        counterExampleState = state;
+                        stopThreads.set(true);
+                    }
+
+                    if(nextStates.isEmpty()) {
+                        deadlockDetected.set(true);
+                        counterExampleState = state;
+                        stopThreads.set(true);
+                    }
+                };
+                threadPool.submit(task);
+                synchronized(waitLock) {
+                    if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
+                        try {
+                            waitLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
+            threadPool.shutdown();
+            try {
+                threadPool.awaitTermination(24, TimeUnit.HOURS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            printResult(states.size(), transitions.get());
+        }
 
+        private void initCache(final nota_v2 machine) {
+            invariantDependency.put("in_register_success", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_14", "_check_inv_13", "_check_inv_8", "_check_inv_12", "_check_inv_9")));
+            invariantDependency.put("in_announceResourceManager", new HashSet<>(Arrays.asList("_check_inv_11")));
+            invariantDependency.put("in_requestTargetSocket_Granted", new HashSet<>(Arrays.asList("_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12")));
+            invariantDependency.put("constructor_service", new HashSet<>(Arrays.asList("_check_inv_17", "_check_inv_16", "_check_inv_15", "_check_inv_3", "_check_inv_6", "_check_inv_14", "_check_inv_8")));
+            invariantDependency.put("constructor_socket", new HashSet<>(Arrays.asList("_check_inv_15", "_check_inv_2", "_check_inv_10", "_check_inv_13", "_check_inv_12")));
+            invariantDependency.put("in_requestTargetSocket_NotGranted", new HashSet<>(Arrays.asList()));
+            invariantDependency.put("constructor_interconnectNode", new HashSet<>(Arrays.asList("_check_inv_16", "_check_inv_1", "_check_inv_10", "_check_inv_9", "_check_inv_11")));
+            invariantDependency.put("rm_getSid", new HashSet<>(Arrays.asList()));
+            invariantDependency.put("rm_deregister", new HashSet<>(Arrays.asList()));
+            invariantDependency.put("constructor_resourceManager", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_6", "_check_inv_7", "_check_inv_4", "_check_inv_11")));
+            invariantDependency.put("in_register_failed", new HashSet<>(Arrays.asList()));
+            invariantDependency.put("rm_register", new HashSet<>(Arrays.asList()));
+            invariantDependency.put("rm_getSid_Not_Found", new HashSet<>(Arrays.asList()));
+            invariantDependency.put("svc_register", new HashSet<>(Arrays.asList("_check_inv_17")));
+            guardDependency.put("in_register_success", new HashSet<>(Arrays.asList("_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
+            guardDependency.put("in_announceResourceManager", new HashSet<>(Arrays.asList("_tr_in_announceResourceManager")));
+            guardDependency.put("in_requestTargetSocket_Granted", new HashSet<>(Arrays.asList("_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
+            guardDependency.put("constructor_service", new HashSet<>(Arrays.asList("_tr_constructor_service", "_tr_rm_getSid", "_tr_in_register_success", "_tr_svc_register", "_tr_in_register_failed", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister")));
+            guardDependency.put("constructor_socket", new HashSet<>(Arrays.asList("_tr_in_requestTargetSocket_Granted", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket")));
+            guardDependency.put("in_requestTargetSocket_NotGranted", new HashSet<>(Arrays.asList()));
+            guardDependency.put("constructor_interconnectNode", new HashSet<>(Arrays.asList("_tr_constructor_service", "_tr_in_register_success", "_tr_in_requestTargetSocket_Granted", "_tr_in_register_failed", "_tr_rm_register", "_tr_in_requestTargetSocket_NotGranted", "_tr_constructor_socket", "_tr_rm_deregister", "_tr_constructor_interconnectNode", "_tr_in_announceResourceManager")));
+            guardDependency.put("rm_getSid", new HashSet<>(Arrays.asList()));
+            guardDependency.put("rm_deregister", new HashSet<>(Arrays.asList()));
+            guardDependency.put("constructor_resourceManager", new HashSet<>(Arrays.asList("_tr_rm_getSid", "_tr_constructor_resourceManager", "_tr_rm_register", "_tr_rm_getSid_Not_Found", "_tr_rm_deregister", "_tr_in_announceResourceManager")));
+            guardDependency.put("in_register_failed", new HashSet<>(Arrays.asList()));
+            guardDependency.put("rm_register", new HashSet<>(Arrays.asList()));
+            guardDependency.put("rm_getSid_Not_Found", new HashSet<>(Arrays.asList()));
+            guardDependency.put("svc_register", new HashSet<>(Arrays.asList("_tr_svc_register")));
         }
-        threadPool.shutdown();
-        try {
-            threadPool.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        private nota_v2 next() {
+            synchronized(this.unvisitedStates) {
+                return switch(type) {
+                    case BFS -> this.unvisitedStates.removeFirst();
+                    case DFS -> this.unvisitedStates.removeLast();
+                    case MIXED -> this.unvisitedStates.size() % 2 == 0 ? this.unvisitedStates.removeFirst() : this.unvisitedStates.removeLast();
+                };
+            }
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
+
+        @SuppressWarnings("unchecked")
+        private Set<nota_v2> generateNextStates(final nota_v2 state) {
+            Set<nota_v2> result = new HashSet<>();
+            if(isCaching) {
+                PersistentHashMap parentsGuard = state.guardCache;
+                PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
+                Object cachedValue = null;
+                boolean dependentGuardsBoolean = true;
+                BSet<INTERCONNECTNODE> _trid_1;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_constructor_interconnectNode");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_constructor_interconnectNode");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_1 = state._tr_constructor_interconnectNode();
+                } else {
+                    _trid_1 = (BSet<INTERCONNECTNODE>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_interconnectNode", _trid_1);
+                for(INTERCONNECTNODE param : _trid_1) {
+                    INTERCONNECTNODE _tmp_1 = param;
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_interconnectNode(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_interconnectNode", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<RESOURCEMANAGER> _trid_2;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_constructor_resourceManager");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_constructor_resourceManager");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_2 = state._tr_constructor_resourceManager();
+                } else {
+                    _trid_2 = (BSet<RESOURCEMANAGER>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_resourceManager", _trid_2);
+                for(RESOURCEMANAGER param : _trid_2) {
+                    RESOURCEMANAGER _tmp_1 = param;
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_resourceManager(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_resourceManager", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_3;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_constructor_service");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_constructor_service");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_3 = state._tr_constructor_service();
+                } else {
+                    _trid_3 = (BSet<BTuple<INTERCONNECTNODE, SERVICE>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_service", _trid_3);
+                for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_3) {
+                    SERVICE _tmp_1 = param.projection2();
+                    INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_service(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_service", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>> _trid_4;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_constructor_socket");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_constructor_socket");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_4 = state._tr_constructor_socket();
+                } else {
+                    _trid_4 = (BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_constructor_socket", _trid_4);
+                for(BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET> param : _trid_4) {
+                    SOCKET _tmp_1 = param.projection2();
+                    BTuple<BTuple<INTERCONNECTNODE, SID>, SID> _tmp_2 = param.projection1();
+                    SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<INTERCONNECTNODE, SID> _tmp_4 = _tmp_2.projection1();
+                    SID _tmp_5 = _tmp_4.projection2();
+                    INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_socket", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_5;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_rm_register");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_rm_register");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_5 = state._tr_rm_register();
+                } else {
+                    _trid_5 = (BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_register", _trid_5);
+                for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_5) {
+                    INTERCONNECTNODE _tmp_1 = param.projection2();
+                    BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
+                    SERVICE _tmp_3 = _tmp_2.projection2();
+                    RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_register", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_6;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_rm_deregister");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_rm_deregister");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_6 = state._tr_rm_deregister();
+                } else {
+                    _trid_6 = (BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_deregister", _trid_6);
+                for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_6) {
+                    INTERCONNECTNODE _tmp_1 = param.projection2();
+                    BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
+                    SERVICE _tmp_3 = _tmp_2.projection2();
+                    RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_deregister", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_7;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_rm_getSid");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_rm_getSid");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_7 = state._tr_rm_getSid();
+                } else {
+                    _trid_7 = (BSet<BTuple<RESOURCEMANAGER, SERVICE>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_getSid", _trid_7);
+                for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_7) {
+                    SERVICE _tmp_1 = param.projection2();
+                    RESOURCEMANAGER _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_getSid(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_getSid", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_8;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_rm_getSid_Not_Found");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_rm_getSid_Not_Found");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_8 = state._tr_rm_getSid_Not_Found();
+                } else {
+                    _trid_8 = (BSet<BTuple<RESOURCEMANAGER, SERVICE>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_rm_getSid_Not_Found", _trid_8);
+                for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_8) {
+                    SERVICE _tmp_1 = param.projection2();
+                    RESOURCEMANAGER _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_getSid_Not_Found", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>> _trid_9;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_in_announceResourceManager");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_in_announceResourceManager");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_9 = state._tr_in_announceResourceManager();
+                } else {
+                    _trid_9 = (BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_announceResourceManager", _trid_9);
+                for(BTuple<INTERCONNECTNODE, RESOURCEMANAGER> param : _trid_9) {
+                    RESOURCEMANAGER _tmp_1 = param.projection2();
+                    INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_announceResourceManager", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>> _trid_10;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_in_register_success");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_in_register_success");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_10 = state._tr_in_register_success();
+                } else {
+                    _trid_10 = (BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_register_success", _trid_10);
+                for(BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID> param : _trid_10) {
+                    SID _tmp_1 = param.projection2();
+                    BTuple<INTERCONNECTNODE, SERVICE> _tmp_2 = param.projection1();
+                    SERVICE _tmp_3 = _tmp_2.projection2();
+                    INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_register_success", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_11;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_in_register_failed");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_in_register_failed");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_11 = state._tr_in_register_failed();
+                } else {
+                    _trid_11 = (BSet<BTuple<INTERCONNECTNODE, SERVICE>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_register_failed", _trid_11);
+                for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_11) {
+                    SERVICE _tmp_1 = param.projection2();
+                    INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_register_failed(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_register_failed", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> _trid_12;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_in_requestTargetSocket_Granted");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_in_requestTargetSocket_Granted");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_12 = state._tr_in_requestTargetSocket_Granted();
+                } else {
+                    _trid_12 = (BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_requestTargetSocket_Granted", _trid_12);
+                for(BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET> param : _trid_12) {
+                    SOCKET _tmp_1 = param.projection2();
+                    BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> _tmp_2 = param.projection1();
+                    SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_4 = _tmp_2.projection1();
+                    SID _tmp_5 = _tmp_4.projection2();
+                    BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_6 = _tmp_4.projection1();
+                    SOCKET _tmp_7 = _tmp_6.projection2();
+                    BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_8 = _tmp_6.projection1();
+                    INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
+                    INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_requestTargetSocket_Granted", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> _trid_13;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_in_requestTargetSocket_NotGranted");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_in_requestTargetSocket_NotGranted");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
+                } else {
+                    _trid_13 = (BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_in_requestTargetSocket_NotGranted", _trid_13);
+                for(BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> param : _trid_13) {
+                    SID _tmp_1 = param.projection2();
+                    BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_2 = param.projection1();
+                    SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_4 = _tmp_2.projection1();
+                    SOCKET _tmp_5 = _tmp_4.projection2();
+                    BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_6 = _tmp_4.projection1();
+                    INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
+                    INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_requestTargetSocket_NotGranted", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<SERVICE> _trid_14;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_svc_register");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_svc_register");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_14 = state._tr_svc_register();
+                } else {
+                    _trid_14 = (BSet<SERVICE>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_svc_register", _trid_14);
+                for(SERVICE param : _trid_14) {
+                    SERVICE _tmp_1 = param;
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.svc_register(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("svc_register", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+
+                state.guardCache = newCache;
+            } else {
+                BSet<INTERCONNECTNODE> _trid_1 = state._tr_constructor_interconnectNode();
+                for(INTERCONNECTNODE param : _trid_1) {
+                    INTERCONNECTNODE _tmp_1 = param;
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_interconnectNode(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_interconnectNode", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager();
+                for(RESOURCEMANAGER param : _trid_2) {
+                    RESOURCEMANAGER _tmp_1 = param;
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_resourceManager(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_resourceManager", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_3 = state._tr_constructor_service();
+                for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_3) {
+                    SERVICE _tmp_1 = param.projection2();
+                    INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_service(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_service", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>> _trid_4 = state._tr_constructor_socket();
+                for(BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET> param : _trid_4) {
+                    SOCKET _tmp_1 = param.projection2();
+                    BTuple<BTuple<INTERCONNECTNODE, SID>, SID> _tmp_2 = param.projection1();
+                    SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<INTERCONNECTNODE, SID> _tmp_4 = _tmp_2.projection1();
+                    SID _tmp_5 = _tmp_4.projection2();
+                    INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("constructor_socket", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_5 = state._tr_rm_register();
+                for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_5) {
+                    INTERCONNECTNODE _tmp_1 = param.projection2();
+                    BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
+                    SERVICE _tmp_3 = _tmp_2.projection2();
+                    RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_register", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>> _trid_6 = state._tr_rm_deregister();
+                for(BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE> param : _trid_6) {
+                    INTERCONNECTNODE _tmp_1 = param.projection2();
+                    BTuple<RESOURCEMANAGER, SERVICE> _tmp_2 = param.projection1();
+                    SERVICE _tmp_3 = _tmp_2.projection2();
+                    RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_deregister", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_7 = state._tr_rm_getSid();
+                for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_7) {
+                    SERVICE _tmp_1 = param.projection2();
+                    RESOURCEMANAGER _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_getSid(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_getSid", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<RESOURCEMANAGER, SERVICE>> _trid_8 = state._tr_rm_getSid_Not_Found();
+                for(BTuple<RESOURCEMANAGER, SERVICE> param : _trid_8) {
+                    SERVICE _tmp_1 = param.projection2();
+                    RESOURCEMANAGER _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("rm_getSid_Not_Found", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>> _trid_9 = state._tr_in_announceResourceManager();
+                for(BTuple<INTERCONNECTNODE, RESOURCEMANAGER> param : _trid_9) {
+                    RESOURCEMANAGER _tmp_1 = param.projection2();
+                    INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_announceResourceManager", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>> _trid_10 = state._tr_in_register_success();
+                for(BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID> param : _trid_10) {
+                    SID _tmp_1 = param.projection2();
+                    BTuple<INTERCONNECTNODE, SERVICE> _tmp_2 = param.projection1();
+                    SERVICE _tmp_3 = _tmp_2.projection2();
+                    INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_register_success", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<INTERCONNECTNODE, SERVICE>> _trid_11 = state._tr_in_register_failed();
+                for(BTuple<INTERCONNECTNODE, SERVICE> param : _trid_11) {
+                    SERVICE _tmp_1 = param.projection2();
+                    INTERCONNECTNODE _tmp_2 = param.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_register_failed(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_register_failed", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> _trid_12 = state._tr_in_requestTargetSocket_Granted();
+                for(BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET> param : _trid_12) {
+                    SOCKET _tmp_1 = param.projection2();
+                    BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> _tmp_2 = param.projection1();
+                    SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_4 = _tmp_2.projection1();
+                    SID _tmp_5 = _tmp_4.projection2();
+                    BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_6 = _tmp_4.projection1();
+                    SOCKET _tmp_7 = _tmp_6.projection2();
+                    BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_8 = _tmp_6.projection1();
+                    INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
+                    INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_requestTargetSocket_Granted", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
+                for(BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID> param : _trid_13) {
+                    SID _tmp_1 = param.projection2();
+                    BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID> _tmp_2 = param.projection1();
+                    SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET> _tmp_4 = _tmp_2.projection1();
+                    SOCKET _tmp_5 = _tmp_4.projection2();
+                    BTuple<INTERCONNECTNODE, INTERCONNECTNODE> _tmp_6 = _tmp_4.projection1();
+                    INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
+                    INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("in_requestTargetSocket_NotGranted", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<SERVICE> _trid_14 = state._tr_svc_register();
+                for(SERVICE param : _trid_14) {
+                    SERVICE _tmp_1 = param;
+
+                    nota_v2 copiedState = state._copy();
+                    copiedState.svc_register(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("svc_register", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+
+            }
+            return result;
+        }
+
+        private boolean invariantViolated(final nota_v2 state) {
+            if(isCaching) {
+                if(state.dependentInvariant.contains("_check_inv_1")) {
+                    if(!state._check_inv_1()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_2")) {
+                    if(!state._check_inv_2()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_3")) {
+                    if(!state._check_inv_3()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_4")) {
+                    if(!state._check_inv_4()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_5")) {
+                    if(!state._check_inv_5()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_6")) {
+                    if(!state._check_inv_6()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_7")) {
+                    if(!state._check_inv_7()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_8")) {
+                    if(!state._check_inv_8()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_9")) {
+                    if(!state._check_inv_9()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_10")) {
+                    if(!state._check_inv_10()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_11")) {
+                    if(!state._check_inv_11()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_12")) {
+                    if(!state._check_inv_12()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_13")) {
+                    if(!state._check_inv_13()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_14")) {
+                    if(!state._check_inv_14()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_15")) {
+                    if(!state._check_inv_15()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_16")) {
+                    if(!state._check_inv_16()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_17")) {
+                    if(!state._check_inv_17()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_18")) {
+                    if(!state._check_inv_18()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18());
+        }
+
+        private void addCachedInfos(final String operation, final nota_v2 state, final nota_v2 copiedState) {
+            if(isCaching) {
+                copiedState.dependentInvariant = invariantDependency.get(operation);
+                copiedState.dependentGuard = guardDependency.get(operation);
+            }
+            copiedState.stateAccessedVia = operation;
+        }
+
+        private void printResult(final int states, final int transitions) {
+            if(invariantViolated.get() || deadlockDetected.get()) {
+                if(deadlockDetected.get()) {
+                    System.out.println("DEADLOCK DETECTED");
+                } else {
+                    System.out.println("INVARIANT VIOLATED");
+                }
+
+                System.out.println("COUNTER EXAMPLE TRACE: ");
+                StringBuilder sb = new StringBuilder();
+                while(counterExampleState != null) {
+                    sb.insert(0, counterExampleState);
+                    sb.insert(0, "\n");
+                    if(counterExampleState.stateAccessedVia != null) {
+                        sb.insert(0, counterExampleState.stateAccessedVia);
+                    }
+                    sb.insert(0, "\n\n");
+                    counterExampleState = counterExampleState.parent;
+                }
+                System.out.println(sb);
+            } else {
+                System.out.println("MODEL CHECKING SUCCESSFUL");
+            }
+
+            System.out.println("Number of States: " + states);
+            System.out.println("Number of Transitions: " + transitions);
+        }
     }
 
-    public static void debugPrint (String msg, Boolean isDebug) {
-       if (isDebug) {
-          System.out.println(msg);
-       }
-    }
 
     public static void main(String[] args) {
         if(args.length > 4) {
@@ -2144,12 +1881,8 @@ public class nota_v2 {
             }
         }
 
-        debugPrint("Starting Modelchecking, STRATEGY=" + type + "THREADS=" + threads + ", CACHING=" + isCaching, isDebug);
-        if(threads == 1) {
-            modelCheckSingleThreaded(type, isCaching, isDebug);
-        } else {
-            modelCheckMultiThreaded(type, threads, isCaching, isDebug);
-        }
+        ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
+        modelchecker.modelCheck();
     }
 
 

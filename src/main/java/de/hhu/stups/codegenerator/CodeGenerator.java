@@ -7,7 +7,6 @@ import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
 import de.hhu.stups.codegenerator.generators.VisualisationGenerator;
-import de.hhu.stups.codegenerator.json.JSONASTBuilder;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
 import de.hhu.stups.codegenerator.json.simb.SimulationRewriter;
 import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
@@ -114,6 +113,7 @@ public class CodeGenerator {
 			DefaultParser parser = new DefaultParser();
 			return parser.parse(options, args);
 		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 			new HelpFormatter().printHelp("{-l <language> -bi <use_big_integer> -min <minint> -max <maxint> -dss <deferred_set_size> -cs <use_constraint_solving> -mc <forModelChecking> -f <filename> -v <visualisation> -a <additionalMain>} | -sim <simb_file>", options);
 		}
 		return null;
@@ -142,7 +142,7 @@ public class CodeGenerator {
 		} else if("rs".equals(languageOption)) {
 			mode = GeneratorMode.RS;
 		} else {
-			throw new RuntimeException("Wrong argument for language (must be java, python, c, cpp, clojure, ts)");
+			throw new RuntimeException(String.format("Wrong argument '%s' for language (must be java, python, c, cpp, clojure, ts, rs)", languageOption));
 		}
 		return mode;
 	}

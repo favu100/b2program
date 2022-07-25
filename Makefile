@@ -7,6 +7,7 @@ JAVA_DEPENDENCIES= :btypes.jar
 CPP_CODE_GEN_FLAGS=-l cpp -mc true
 CPPC ?= clang++
 CPPFLAGS ?= -std=c++14 -O1 -flto
+RS_CODE_GEN_FLAGS=-l rs -mc true
 STRATEGY=mixed
 THREADS=1
 CACHING=false
@@ -41,6 +42,13 @@ ifeq ($(LANGUAGE), cpp)
 	cp $(DIRECTORY)/*.cpp .
 	$(CPPC) $(CPPFLAGS) -o $@.exec $@.cpp
 	./$@.exec $(STRATEGY) $(THREADS) $(CACHING)
+endif
+ifneq (,$(findstring $(LANGUAGE), rs|RS|rust|Rust))
+%:
+	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(RS_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
+	mv $(DIRECTORY)/$@.rs ./btypes_primitives/src/main/rust/bmachine/src/main.rs
+	mv $(DIRECTORY)/*.rs ./btypes_primitives/src/main/rust/bmachine/src/
+	cargo run --release --manifest-path ./btypes_primitives/src/main/rust/bmachine/Cargo.toml -- $(STRATEGY) $(THREADS) $(CACHING)
 endif
 endif
 

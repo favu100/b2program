@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
@@ -141,7 +142,7 @@ public class Lift_MC_Large {
         private final boolean isDebug;
 
         private final LinkedList<Lift_MC_Large> unvisitedStates = new LinkedList<>();
-        private final Set<Lift_MC_Large> states = new HashSet<>();
+        private final Set<Lift_MC_Large> states = ConcurrentHashMap.newKeySet();
         private AtomicInteger transitions = new AtomicInteger(0);
         private ThreadPoolExecutor threadPool;
         private Object waitLock = new Object();
@@ -234,17 +235,14 @@ public class Lift_MC_Large {
                     Set<Lift_MC_Large> nextStates = generateNextStates(state);
 
                     nextStates.forEach(nextState -> {
-                        synchronized (states) {
-                            if(!states.contains(nextState)) {
-                                states.add(nextState);
-                                synchronized (unvisitedStates) {
-                                    unvisitedStates.add(nextState);
-                                }
-                                if(states.size() % 50000 == 0 && isDebug) {
-                                    System.out.println("VISITED STATES: " + states.size());
-                                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                    System.out.println("-------------------");
-                                }
+                        if(states.add(nextState)) {
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
                             }
                         }
                     });

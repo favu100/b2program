@@ -122,7 +122,7 @@ P is a conjunction of n conjuncts where the i-th conjunct must constraint xi for
 | Predicate             | Meaning    |
 |-----------------------|------------|
 | E = F                 | equality   |
-| E \= F                | inequality |
+| E \\= F               | inequality |
 
 ### Booleans:
 
@@ -141,7 +141,7 @@ P is a conjunction of n conjuncts where the i-th conjunct must constraint xi for
 | {}                            | Empty Set                                  |
 | {E}                           | Singleton Set                              |
 | {E,F,...}                     | Set Enumeration                            |
-| {x1,...,xn\                   |P}               | Set Comprehension                          |
+| {x1,...,xn&#124;P}            | Set Comprehension                          |
 | POW(S)                        | Power Set                                  |
 | POW1(S)                       | Set of Non-Empty Subsets                   |
 | FIN(S)                        | Set of All Finite Subsets                  |
@@ -234,18 +234,18 @@ Restriction: Set of Relation mostly grows up very fast. They are only supported 
 
 ### Functions:
 
-| Function Expression | Meaning                           |
-|---------------------|-----------------------------------|
-| S +-> T             | Partial Function                  |
-| S --> T             | Total Function                    |
-| S +->> T            | Partial Surjection                |
-| S -->> T            | Total Surjection                  |
-| S >+> T             | Partial Injection                 |
-| S >+>> T            | Partial Bijection                 |
-| S >->> T            | Total Bijection                   |
-| %(x1,...,xn).(P\|E) | Lambda Abstraction                |
-| f(E)                | Function Application              |
-| f(E1,...,EN)        | Function Application with Couples |
+| Function Expression      | Meaning                           |
+|--------------------------|-----------------------------------|
+| S +-> T                  | Partial Function                  |
+| S --> T                  | Total Function                    |
+| S +->> T                 | Partial Surjection                |
+| S -->> T                 | Total Surjection                  |
+| S >+> T                  | Partial Injection                 |
+| S >+>> T                 | Partial Bijection                 |
+| S >->> T                 | Total Bijection                   |
+| %(x1,...,xn).(P&#124;E)  | Lambda Abstraction                |
+| f(E)                     | Function Application              |
+| f(E1,...,EN)             | Function Application with Couples |
 
 Restriction: Lambda expressions are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
 The i-th conjunct must constraint xi for each i in {1,...,n}.

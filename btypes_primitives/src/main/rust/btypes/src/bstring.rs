@@ -20,6 +20,8 @@ impl Display for BString {
 impl BObject for BString {}
 
 impl BString {
+    #![allow(non_snake_case, dead_code)]
+
     pub fn new(init: &str) -> BString {
         return BString { val: String::from(init) }
     }

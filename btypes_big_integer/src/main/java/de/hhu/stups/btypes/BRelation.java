@@ -780,6 +780,15 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <S,T,R> BRelation<BTuple<S,T>, R> cartesianProduct(BRelation<S,T> arg1, BSet<R> arg2) {
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(BTuple<S,T> e1 : arg1) {
+			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
+		}
+		return new BRelation<>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
 	public BTuple<S,T> nondeterminism(int index) {
 		int size = this.size();
 		if(index >= size) {

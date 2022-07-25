@@ -845,6 +845,15 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return this.domain().equal(domain);
 	}
 
+	@SuppressWarnings("unchecked")
+	public <R1, R2> BBoolean isTotal(BRelation<R1, R2> domain) {
+		BSet<BTuple<R1, R2>> domainAsSet = new BSet<BTuple<R1, R2>>();
+		for(BTuple<R1, R2> tuple: domain) {
+			domainAsSet.add(tuple);
+		}
+		return this.domain().equal((BSet<S>) domainAsSet);
+	}
+
 	public BBoolean isTotalInteger() {
 		return new BBoolean(false);
 	}

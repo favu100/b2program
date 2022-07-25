@@ -851,7 +851,7 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	public <R1, R2> BBoolean isTotal(BRelation<R1, R2> domain) {
 		BSet<BTuple<R1, R2>> domainAsSet = new BSet<BTuple<R1, R2>>();
 		for(BTuple<R1, R2> tuple: domain) {
-			domainAsSet.add(tuple);
+			domainAsSet.union(new BSet<>(tuple));
 		}
 		return this.domain().equal((BSet<S>) domainAsSet);
 	}
@@ -1186,10 +1186,10 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 				if(valueIterator == null || !valueIterator.hasNext()) {
 					currentLhs = keyIterator.next();
-					Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
+					valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
 				}
 
-				if(currentLhs == null || valueIterator == null || !valueIterator.hasNext()) {
+				if(currentLhs == null || !valueIterator.hasNext()) {
 					return null;
 				}
 

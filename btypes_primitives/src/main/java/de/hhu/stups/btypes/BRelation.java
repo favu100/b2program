@@ -6,7 +6,9 @@ import clojure.lang.PersistentHashMap;
 import clojure.lang.RT;
 import clojure.lang.Var;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -16,7 +18,7 @@ import java.util.Objects;
 /**
  * Created by fabian on 15.01.19.
  */
-public class BRelation<S,T> {
+public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 	protected static final Var ASSOC;
 
@@ -1135,26 +1137,48 @@ public class BRelation<S,T> {
 		return new BBoolean(false);
 	}
 
-	/*@Override
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public Iterator<BTuple<S,T>> iterator() {
 		PersistentHashMap thisMap = this.map;
-		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
 
-		int size = this.size();
-		int i = 0;
 
-		for(Object e1 : domain) {
-			S domainElement = (S) e1;
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-			if(range == null) {
-				break;
+		return new Iterator<BTuple<S, T>>() {
+
+			Iterator<S> keyIterator = thisMap.keyIterator();
+			S currentLhs = keyIterator.next();
+			Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
+
+			@Override
+			public boolean hasNext() {
+				if(keyIterator.hasNext()) {
+					return true;
+				}
+				return valueIterator.hasNext();
 			}
-			for(Object e2 : range) {
-				T rangeElement = (T) e2;
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public BTuple<S, T> next() {
+				// If there is no next key, then we have already iterated through the relation
+				if(currentLhs == null) {
+					return null;
+				}
+
+				if(valueIterator == null || !valueIterator.hasNext()) {
+					currentLhs = keyIterator.next();
+					Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
+				}
+
+				if(currentLhs == null || valueIterator == null || !valueIterator.hasNext()) {
+					return null;
+				}
+
+				return new BTuple<S,T>(currentLhs, valueIterator.next());
 			}
-		}
-		//TODO: Implement iterator
-	}*/
+		};
+	}
 
 	@SuppressWarnings("unchecked")
 	public java.lang.String toString() {

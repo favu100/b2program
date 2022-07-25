@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * Created by fabian on 15.01.19.
  */
-public class BRelation<S,T> {
+public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 	protected static final Var ASSOC;
 
@@ -1133,6 +1133,48 @@ public class BRelation<S,T> {
 
 	public BBoolean isBijectionStruct() {
 		return new BBoolean(false);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterator<BTuple<S,T>> iterator() {
+		PersistentHashMap thisMap = this.map;
+
+
+		return new Iterator<BTuple<S, T>>() {
+
+			Iterator<S> keyIterator = thisMap.keyIterator();
+			S currentLhs = keyIterator.next();
+			Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
+
+			@Override
+			public boolean hasNext() {
+				if(keyIterator.hasNext()) {
+					return true;
+				}
+				return valueIterator.hasNext();
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public BTuple<S, T> next() {
+				// If there is no next key, then we have already iterated through the relation
+				if(currentLhs == null) {
+					return null;
+				}
+
+				if(valueIterator == null || !valueIterator.hasNext()) {
+					currentLhs = keyIterator.next();
+					Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
+				}
+
+				if(currentLhs == null || valueIterator == null || !valueIterator.hasNext()) {
+					return null;
+				}
+
+				return new BTuple<S,T>(currentLhs, valueIterator.next());
+			}
+		};
 	}
 
 	@SuppressWarnings("unchecked")

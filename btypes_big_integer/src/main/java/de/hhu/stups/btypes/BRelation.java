@@ -152,25 +152,23 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		PersistentHashMap otherMap = relation.map;
 		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(otherMap));
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
-		PersistentHashSet differenceDomain = (PersistentHashSet) DIFFERENCE.invoke(thisDomain, otherDomain);
-		PersistentHashSet restDomain = (PersistentHashSet) DIFFERENCE.invoke(thisDomain, differenceDomain);
+		PersistentHashSet intersectionDomain = (PersistentHashSet) INTERSECTION.invoke(thisDomain, otherDomain);
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : differenceDomain) {
+		for(Object obj : intersectionDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
+			if(otherRangeSet == null) {
+				continue;
+			}
 			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherRangeSet);
+
 			if(newRangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 			} else {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
 			}
-		}
-
-		for(Object obj : restDomain) {
-			S domainElement = (S) obj;
-			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 		}
 		return new BRelation<S,T>(resultMap);
 	}

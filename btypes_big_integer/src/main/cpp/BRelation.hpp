@@ -296,9 +296,8 @@ class BRelation : public BObject {
         template<typename R,typename A,typename B>
         static BRelation<BTuple<R,A>,B> cartesianProduct(const BRelation<R,A> arg1, const BSet<B>& arg2) {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
-                                                               typename BSet<S>::Hash,
-                                                               typename BSet<S>::HashEqual> resultMap;
-            for(const B& e1 : arg1.getSet()) {
+                                                               typename BSet<S>::Hash,                                 typename BSet<S>::HashEqual> resultMap;
+            for(const BTuple<R,A>& e1 : arg1) {
                 resultMap = resultMap.set(e1, arg2.getSet());
             }
             return BRelation<BTuple<R,A>,B>(resultMap);

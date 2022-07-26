@@ -1159,7 +1159,7 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 		return new Iterator<BTuple<S, T>>() {
 
-			Iterator<S> keyIterator = thisMap.keyIterator();
+			final Iterator<S> keyIterator = thisMap.keyIterator();
 			S currentLhs = keyIterator.next();
 			Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
 

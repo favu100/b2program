@@ -912,6 +912,15 @@ class BRelation : public BObject {
     		return this->domain().equal(domain);
     	}
 
+        template<typename R1 = typename S::left_type, typename R2 = typename S::right_type>
+        BBoolean isTotal(const BRelation<R1, R2>& domain) const {
+            BSet<BTuple<R1, R2>> domainAsSet = BSet<BTuple<R1, R2>>();
+            for(const BTuple<R1, R2>& tuple : domain) {
+                domainAsSet = domainAsSet._union(BSet<BTuple<R1, R2>>(tuple));
+            }
+            return this->domain().equal(domainAsSet);
+        }
+
     	BBoolean isTotalInteger() const {
     		return BBoolean(false);
     	}

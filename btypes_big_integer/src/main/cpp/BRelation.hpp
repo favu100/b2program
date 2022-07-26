@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
 #include <cstdarg>
+#include <cstddef>
 #include <immer/set.hpp>
 #include <immer/map.hpp>
+
+
 #include "BTuple.hpp"
 #include "BSet.hpp"
 #include "BStruct.hpp"
@@ -17,6 +20,69 @@ template<typename S, typename T>
 class BRelation : public BObject {
 
     public:
+
+        struct BRelationIterator {
+
+            using iterator_category = std::forward_iterator_tag;
+            using difference_type = std::ptrdiff_t;
+            using value_type = BTuple<S,T>;
+
+            BRelationIterator(const BRelation<S,T>& rel):
+                relation(rel),
+                keyIterator(((this->relation).map).begin()),
+                valueIterator(keyIterator == ((this->relation).map).end() ? BSet<T>().getSet().end() : ((this->relation).map[(*keyIterator).first]).begin())
+            {}
+
+            BTuple<S,T> operator*() const {
+                return BTuple<S,T>((*keyIterator).first, *valueIterator);
+            }
+
+            BTuple<S,T>* operator->() const {
+                return new BTuple<S,T>((*keyIterator).first, *valueIterator);
+            }
+
+            // Prefix increment
+            BRelationIterator& operator++() {
+                valueIterator++;
+                if(keyIterator != ((this->relation).map).end() && valueIterator == ((this->relation).map[(*keyIterator).first]).end()) {
+                    keyIterator++;
+                    if(keyIterator != ((this->relation).map).end()) {
+                        valueIterator = ((this->relation).map[(*keyIterator).first]).begin();
+                    }
+                }
+                return *this;
+            }
+
+            // Postfix increment
+            BRelationIterator operator++(int) {
+                BRelationIterator tmp = *this;
+                valueIterator++;
+                if(keyIterator != ((this->relation).map).end() && valueIterator == ((this->relation).map[(*keyIterator).first]).end()) {
+                    keyIterator++;
+                    if(keyIterator != ((this->relation).map).end()) {
+                        valueIterator = ((this->relation).map[(*keyIterator).first]).begin();
+                    }
+                }
+                return tmp;
+            }
+
+            friend bool operator==(const BRelationIterator& a, const BRelationIterator& b) {
+                return (a.keyIterator == b.keyIterator && a.keyIterator == ((a.relation).map).end()) || (a.keyIterator == b.keyIterator && a.valueIterator == b.valueIterator);
+            };
+
+            friend bool operator!=(const BRelationIterator& a, const BRelationIterator& b) {
+                return !((a.keyIterator == b.keyIterator && a.keyIterator == ((a.relation).map).end()) || (a.keyIterator == b.keyIterator && a.valueIterator == b.valueIterator));
+            };
+
+            public:
+                BRelation<S,T> relation;
+                typename immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                                   typename BSet<S>::Hash,
+                                                                   typename BSet<S>::HashEqual>::const_iterator keyIterator;
+                typename immer::set<T,typename BSet<T>::Hash, typename BSet<T>::HashEqual>::const_iterator valueIterator;
+
+
+        };
 
         typedef BRelation<S,T> current_type;
         typedef BTuple<S,T> value_type;
@@ -47,7 +113,7 @@ class BRelation : public BObject {
         immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                 typename BSet<S>::Hash,
                                                 typename BSet<S>::HashEqual> var(const R& first, const Args&... args) {
-            const BTuple<S,T>& tuple = (BTuple<S,T>) first;
+            BTuple<S,T> tuple = (BTuple<S,T>) first;
             S lhs = tuple.projection1();
             T rhs = tuple.projection2();
 
@@ -120,7 +186,7 @@ class BRelation : public BObject {
             }
         }
 
-        BRelation<S,T> intersect(const BRelation<S,T>& relation) {
+        BRelation<S,T> intersect(const BRelation<S,T>& relation) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;
@@ -187,8 +253,6 @@ class BRelation : public BObject {
                     } else {
                         resultMap = resultMap.set(domainElement, resultSet);
                     }
-                } else {
-                    resultMap = resultMap.erase(domainElement);
                 }
             }
             return BRelation<S,T>(resultMap);
@@ -290,6 +354,7 @@ class BRelation : public BObject {
             for(const R& e1 : arg1.getSet()) {
                 resultMap = resultMap.set(e1, arg2.getSet());
             }
+
             return BRelation<R,A>(resultMap);
         }
 
@@ -918,7 +983,7 @@ class BRelation : public BObject {
             for(const BTuple<R1, R2>& tuple : domain) {
                 domainAsSet = domainAsSet._union(BSet<BTuple<R1, R2>>(tuple));
             }
-            return this->domain().equal(domainAsSet);
+            return this->domain().equal((BSet<S>) domainAsSet);
         }
 
     	BBoolean isTotalInteger() const {
@@ -1380,6 +1445,14 @@ class BRelation : public BObject {
 
             }
             return result;
+        }
+
+        BRelationIterator begin() const {
+            return BRelationIterator(*this);
+        }
+
+        BRelationIterator end() const {
+            return BRelationIterator(BRelation())++;
         }
 
     public:

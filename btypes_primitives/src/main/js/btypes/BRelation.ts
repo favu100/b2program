@@ -741,7 +741,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	}
 
 	isPartial(domain: BSet<S>): BBoolean {
-		return this.domain().strictSubset(domain);
+		return this.domain().subset(domain);
 	}
 
 	isPartialInteger(): BBoolean {

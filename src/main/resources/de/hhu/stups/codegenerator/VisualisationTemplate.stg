@@ -76,7 +76,7 @@ function initialize() {
         if(!(tuple instanceof BTuple)) {
             return [tuple];
         }
-        return [tuple.projection1(), ...flattenTuple(tuple.projection2())];
+        return [...flattenTuple(tuple.projection1()), tuple.projection2()];
     }
 
     function createOptionList(event, transition) {

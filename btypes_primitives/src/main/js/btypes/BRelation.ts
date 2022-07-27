@@ -89,20 +89,19 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let differenceDomain = thisDomain.subtract(otherDomain);
 
 		let resultMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		differenceDomain.forEach((domainElement: S) => {
+		for(let domainElement of differenceDomain) {
 			let thisRangeSet = <immutable.Set<T>> this.map.get(domainElement);
 			let otherRangeSet = <immutable.Set<T>> otherMap.get(domainElement);
+            if(otherRangeSet === null) {
+                continue;
+            }
 			let newRangeSet = <immutable.Set<T>> thisRangeSet.subtract(otherRangeSet);
             if(newRangeSet.size === 0) {
                 resultMap = resultMap.delete(domainElement);
             } else {
                 resultMap = resultMap.set(domainElement, newRangeSet);
             }
-		});
-
-		differenceDomain.forEach((domainElement: S) => {
-			resultMap = resultMap.delete(domainElement);
-		});
+		}
 		return new BRelation<S,T>(resultMap);
 	}
 

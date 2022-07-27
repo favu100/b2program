@@ -13,7 +13,9 @@ import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode.PredOperatorExprArgs;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
+import de.prob.parser.ast.types.SetElementType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -217,6 +219,9 @@ public class VisualisationGenerator{
     } else if (type instanceof de.prob.parser.ast.types.EnumeratedSetElementType) {
       valueTemplate = visualisationGroup.getInstanceOf("enumValue");
       TemplateHandler.add(valueTemplate, "enum", ((EnumeratedSetElementType) type).getSetName());
+    } else if (type instanceof DeferredSetElementType) {
+      valueTemplate = visualisationGroup.getInstanceOf("enumValue");
+      TemplateHandler.add(valueTemplate, "enum", ((DeferredSetElementType) type).getSetName());
     } else {
       throw new RuntimeException("Parameters of type " + type.toString() + " are not yet supported for visualisations.");
     }

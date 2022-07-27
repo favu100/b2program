@@ -739,9 +739,26 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BBoolean(false);
 	}
 
-	isPartial(domain: BSet<S>): BBoolean {
-		return this.domain().subset(domain);
-	}
+    isPartial(domain: BSet<S>): BBoolean;
+    isPartial <A1 extends BObject, A2 extends BObject>(domain: BRelation<A1, A2>): BBoolean;
+
+    isPartial <A1 extends BObject, A2 extends BObject>(domain: BSet<S> | BRelation<A1, A2>): BBoolean {
+        if(domain instanceof BSet) {
+            return this.domain().subset(domain);
+        } else {
+            for(let element of this.domain()) {
+                let elementAsTuple: BTuple<A1, A2> = <BTuple<A1, A2>> element;
+                let range = <immutable.Set<T>> domain.map.get(elementAsTuple.projection1());
+                if(range == null) {
+                    return new BBoolean(false);
+                }
+                if(!range.contains(elementAsTuple.projection2())) {
+                    return new BBoolean(false);
+                }
+            }
+            return new BBoolean(true);
+        }
+    }
 
 	isPartialInteger(): BBoolean {
 		this.domain().getSet().forEach((e: S) => {

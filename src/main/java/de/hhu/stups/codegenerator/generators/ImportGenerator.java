@@ -37,6 +37,8 @@ public class ImportGenerator {
 
     private final boolean useBigInteger;
 
+    private boolean forVisualization;
+
 
 
     public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
@@ -46,6 +48,7 @@ public class ImportGenerator {
         this.importedTypes = new HashSet<>();
         importedEnums = new HashSet<>();
         this.useBigInteger = useBigInteger;
+        this.forVisualization = false;
     }
 
     /*
@@ -67,6 +70,7 @@ public class ImportGenerator {
         } else if(type instanceof DeferredSetElementType) {
             importBObject();
             importBBoolean();
+            importEnum((DeferredSetElementType) type);
         } else if(type instanceof CoupleType) {
             importTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
@@ -77,13 +81,24 @@ public class ImportGenerator {
 
     private void importEnum(EnumeratedSetElementType enumType) {
         boolean fromOtherMachine = nameHandler.getEnumToMachine().get(enumType.getSetName()) != null && !nameHandler.getMachineName().equals(nameHandler.getEnumToMachine().get(enumType.getSetName()));
-        if (fromOtherMachine) {
+        if (fromOtherMachine || forVisualization) {
             ST enumImport = group.getInstanceOf("enum_import");
             TemplateHandler.add(enumImport, "name", enumType.getSetName());
             TemplateHandler.add(enumImport, "machineName", nameHandler.getEnumToMachine().get(enumType.getSetName()));
             importedEnums.add(enumImport.render());
         }
     }
+
+    private void importEnum(DeferredSetElementType enumType) {
+        boolean fromOtherMachine = nameHandler.getEnumToMachine().get(enumType.getSetName()) != null && !nameHandler.getMachineName().equals(nameHandler.getEnumToMachine().get(enumType.getSetName()));
+        if (fromOtherMachine || forVisualization) {
+            ST enumImport = group.getInstanceOf("enum_import");
+            TemplateHandler.add(enumImport, "name", enumType.getSetName());
+            TemplateHandler.add(enumImport, "machineName", nameHandler.getEnumToMachine().get(enumType.getSetName()));
+            importedEnums.add(enumImport.render());
+        }
+    }
+
 
     /*
     * This function generates an import for a type and its subtype
@@ -223,5 +238,13 @@ public class ImportGenerator {
 
     public Set<String> getImportedEnums() {
         return importedEnums;
+    }
+
+    public void activateForVisualization() {
+        this.forVisualization = true;
+    }
+
+    public void deactivateForVisualization() {
+        this.forVisualization = false;
     }
 }

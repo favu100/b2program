@@ -44,6 +44,7 @@ public class VisualisationGenerator{
    * This function generates code for the whole machine with the given AST node.
    */
   public String generateVisualisation(VisBProject visBProject) {
+    this.importGenerator.activateForVisualization();
     ST visualisation = visualisationGroup.getInstanceOf("visualisation");
     boolean withoutSvg = visBProject.getVisualisation().getSvgPath() == null;
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
@@ -63,7 +64,7 @@ public class VisualisationGenerator{
     TemplateHandler.add(visualisation, "variableUpdates", generateVariableUpdates(visBProject.getProject().getMainMachine()));
     //Adding imports last to ensure all needed types are imported.
     TemplateHandler.add(visualisation, "imports", importGenerator.getImportedTypes().stream().map(this::generateVisualisationImport).collect(Collectors.toSet()));
-
+    this.importGenerator.deactivateForVisualization();
     return visualisation.render();
   }
 

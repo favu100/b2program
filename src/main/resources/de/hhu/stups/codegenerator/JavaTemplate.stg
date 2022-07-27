@@ -355,13 +355,7 @@ for(<type> <identifier> : <set>.pow().difference(new BSet\<<type>\>(<set>))) {
 
 let_expression_predicate(type, identifier, body) ::= <<
 <type> <identifier> = null;
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    <body>
-}
-<else>
 <body>
-<endif>
 >>
 
 let_expression_predicate_body(otherIterationConstructs, hasCondition, conditionalPredicate, identifier, val) ::= <<

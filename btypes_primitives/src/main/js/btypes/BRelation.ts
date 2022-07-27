@@ -544,6 +544,9 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 				}
 				set = set.union(<immutable.Set<R>> union_element);
 			});
+            if(set.size === 0) {
+                continue;
+            }
 			resultMap = resultMap.set(domainElement, set);
 		}
 		return new BRelation<S, R>(resultMap);

@@ -7,10 +7,8 @@ import clojure.lang.RT;
 import clojure.lang.Var;
 
 import java.util.Iterator;
-import java.util.Set;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.stream.Collectors;
 import java.util.Objects;
 
 /**
@@ -429,10 +427,8 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 	@SuppressWarnings("unchecked")
 	public BBoolean subset(BRelation<S,T> arg) {
-		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(arg.map));
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
-		PersistentHashMap resultMap = this.map;
 		for(Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);

@@ -728,6 +728,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return expressionGenerator;
 	}
 
+	public IterationConstructHandler getIterationConstructHandler() {
+		return iterationConstructHandler;
+	}
+
 	public boolean isForModelChecking() {
 		return forModelChecking;
 	}

@@ -281,11 +281,17 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     @Override
     public Void visitIfExpressionNode(IfExpressionNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), null);
+        visitExprNode(node.getThenExpression(), null);
+        visitExprNode(node.getElseExpression(), null);
         return null;
     }
 
     @Override
     public Void visitIfPredicateNode(IfPredicateNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), null);
+        visitPredicateNode(node.getThenPredicate(), null);
+        visitPredicateNode(node.getElsePredicate(), null);
         return null;
     }
 

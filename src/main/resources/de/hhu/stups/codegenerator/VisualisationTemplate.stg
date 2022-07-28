@@ -396,7 +396,8 @@ btype_import(type) ::= <<
 import {<type>} from "./btypes/<type>.js";
 >>
 
-visualUpdate(machineVar, attribute, expression) ::= <<
+visualUpdate(iterationConstruct, machineVar, attribute, expression) ::= <<
+<iterationConstruct; separator="\n">
 _svg_vars["<machineVar>"].setAttribute("<attribute>", <expression>);
 >>
 

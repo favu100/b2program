@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
@@ -28,16 +29,18 @@ public class VisualisationGenerator{
   private final ImportGenerator importGenerator;
   private final ExpressionGenerator expressionGenerator;
   private final InvariantGenerator invariantGenerator;
+  private final IterationConstructHandler iterationConstructHandler;
 
   private final STGroup htmlGroup;
   private final STGroup visualisationGroup;
 
-  public VisualisationGenerator(ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator) {
+  public VisualisationGenerator(ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator, IterationConstructHandler iterationConstructHandler) {
     this.htmlGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLTemplate.stg");
     this.visualisationGroup = new STGroupFile("de/hhu/stups/codegenerator/VisualisationTemplate.stg");
     this.importGenerator = importGenerator;
     this.expressionGenerator = expressionGenerator;
     this.invariantGenerator = invariantGenerator;
+    this.iterationConstructHandler = iterationConstructHandler;
   }
 
   /*
@@ -181,6 +184,7 @@ public class VisualisationGenerator{
 
   public String generateVisualUpdate(VisBItem item, VisBProject visBProject) {
     ST visualUpdate = visualisationGroup.getInstanceOf("visualUpdate");
+    TemplateHandler.add(visualUpdate, "iterationConstruct", iterationConstructHandler.inspectExpression(item.getExprNode()).getIterationsMapCode().values());
     TemplateHandler.add(visualUpdate, "machineVar", item.getId());
     TemplateHandler.add(visualUpdate, "attribute", item.getAttribute());
     TemplateHandler.add(visualUpdate, "expression", expressionGenerator.visitExprNode(item.getExprNode()).replaceAll("BRelation<.*>", "BRelation").replaceAll("this.", "_machine.").replaceAll("_machine." + visBProject.getProject().getMainMachine().getName() + ".", "_machine.")+ ".getValue()");

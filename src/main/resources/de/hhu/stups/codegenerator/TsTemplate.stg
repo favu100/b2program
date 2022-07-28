@@ -38,7 +38,7 @@ export default class <machine> {
     <if(forModelChecking)>
     <transitions; separator="\n\n">
 
-    <invariant>
+    <invariant; separator="\n\n">
     <endif>
 
     <lambdaFunctions; separator="\n\n">

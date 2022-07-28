@@ -84,12 +84,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 
 	difference(relation: BRelation<S, T>): BRelation<S, T> {
 		let otherMap: immutable.Map<S, immutable.Set<T>> = relation.map;
-		let otherDomain = otherMap.keys();
+		let otherDomain = immutable.Set(otherMap.keys());
 		let thisDomain = immutable.Set(this.map.keys());
-		let differenceDomain = thisDomain.subtract(otherDomain);
+		let intersectionDomain = thisDomain.intersect(otherDomain);
 
 		let resultMap: immutable.Map<S, immutable.Set<T>> = this.map;
-		for(let domainElement of differenceDomain) {
+		for(let domainElement of intersectionDomain) {
 			let thisRangeSet = <immutable.Set<T>> this.map.get(domainElement);
 			let otherRangeSet = <immutable.Set<T>> otherMap.get(domainElement);
             if(otherRangeSet === null) {

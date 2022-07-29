@@ -136,7 +136,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private int currentStateCount;
 
+	private GeneratorMode mode;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine, boolean forVisualisation) {
+		this.mode = mode;
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.forModelChecking = forModelChecking;
 		this.forVisualisation = forVisualisation;
@@ -750,5 +753,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public InvariantGenerator getInvariantGenerator() {
 		return invariantGenerator;
+	}
+
+	public GeneratorMode getMode() {
+		return mode;
+	}
+
+	public void setMode(GeneratorMode mode) {
+		this.mode = mode;
 	}
 }

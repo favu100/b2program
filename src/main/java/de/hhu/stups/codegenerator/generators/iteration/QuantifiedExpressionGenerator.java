@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -142,6 +143,7 @@ public class QuantifiedExpressionGenerator {
         String innerBody = generateQuantifiedExpressionEvaluation(otherConstructs, conditionalPredicate, predicate, identifier, getOperation(operator), expression, declarations.size());
         String evaluation = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
 
+        TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "identity", getIdentity(operator));
         TemplateHandler.add(template, "useBigInteger", machineGenerator.isUseBigInteger());

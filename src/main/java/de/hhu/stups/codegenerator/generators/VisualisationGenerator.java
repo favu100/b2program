@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBEvent;
@@ -25,28 +26,34 @@ import org.stringtemplate.v4.STGroupFile;
  * The code generator is implemented by using the visitor pattern
  */
 
-public class VisualisationGenerator{
+public class VisualisationGenerator {
+  private final MachineGenerator machineGenerator;
   private final ImportGenerator importGenerator;
   private final ExpressionGenerator expressionGenerator;
   private final InvariantGenerator invariantGenerator;
   private final IterationConstructHandler iterationConstructHandler;
+  private final GeneratorMode controllerLanguage;
 
   private final STGroup htmlGroup;
   private final STGroup visualisationGroup;
 
-  public VisualisationGenerator(ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator, IterationConstructHandler iterationConstructHandler) {
+  public VisualisationGenerator(MachineGenerator machineGenerator, ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator, IterationConstructHandler iterationConstructHandler) {
+    this.machineGenerator = machineGenerator;
     this.htmlGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLTemplate.stg");
     this.visualisationGroup = new STGroupFile("de/hhu/stups/codegenerator/VisualisationTemplate.stg");
     this.importGenerator = importGenerator;
     this.expressionGenerator = expressionGenerator;
     this.invariantGenerator = invariantGenerator;
     this.iterationConstructHandler = iterationConstructHandler;
+    this.controllerLanguage = GeneratorMode.JS; // Currently, visualization is only supported for JS/HTML for VisB
   }
 
   /*
    * This function generates code for the whole machine with the given AST node.
    */
   public String generateVisualisation(VisBProject visBProject) {
+    GeneratorMode machineMode = machineGenerator.getMode();
+    this.machineGenerator.setMode(controllerLanguage);
     this.importGenerator.activateForVisualization();
     ST visualisation = visualisationGroup.getInstanceOf("visualisation");
     boolean withoutSvg = visBProject.getVisualisation().getSvgPath() == null;
@@ -68,6 +75,7 @@ public class VisualisationGenerator{
     //Adding imports last to ensure all needed types are imported.
     TemplateHandler.add(visualisation, "imports", importGenerator.getImportedTypes().stream().map(this::generateVisualisationImport).collect(Collectors.toSet()));
     this.importGenerator.deactivateForVisualization();
+    this.machineGenerator.setMode(machineMode);
     return visualisation.render();
   }
 

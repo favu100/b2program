@@ -233,8 +233,8 @@ for(let <identifier> of <set>.pow().difference(<set>)) {
 }
 >>
 
-let_expression_predicate(type, identifier, body) ::= <<
-let <identifier>: <type> = null;
+let_expression_predicate(type, identifier, body, isJavaScript) ::= <<
+let <identifier><if(!isJavaScript)>: <type><endif> = null;
 <body>
 >>
 
@@ -249,8 +249,8 @@ if(<conditionalPredicate>.booleanValue()) {
 <endif>
 >>
 
-set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
-let <identifier>: <type> = new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>();
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension, isJavaScript) ::= <<
+let <identifier><if(!isJavaScript)>: <type><endif> = new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>();
 <comprehension>
 >>
 
@@ -273,8 +273,8 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-lambda(type, identifier, lambda, leftType, rightType) ::= <<
-let <identifier>: <type> = new BRelation\<<leftType>, <rightType>\>();
+lambda(type, identifier, lambda, leftType, rightType, isJavaScript) ::= <<
+let <identifier><if(!isJavaScript)>: <type><endif> = new BRelation\<<leftType>, <rightType>\>();
 <lambda>
 >>
 
@@ -308,8 +308,8 @@ lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
 <if(fromOtherMachine)>this.<otherMachine>.<endif><arg1>(<arg2; separator=", ">)
 >>
 
-quantified_predicate(identifier, forall, predicate) ::= <<
-let <identifier>: BBoolean = new BBoolean(<if(forall)>true<else>false<endif>);
+quantified_predicate(identifier, forall, predicate, isJavaScript) ::= <<
+let <identifier><if(!isJavaScript)>: BBoolean<endif> = new BBoolean(<if(forall)>true<else>false<endif>);
 <predicate>
 >>
 
@@ -335,8 +335,8 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 <endif>
 >>
 
-quantified_expression(identifier, identity, setType, evaluation, isInteger) ::= <<
-<if(isInteger)>let <identifier>: BInteger = new BInteger(<identity>);<else>let <identifier>: BSet\<<setType>\> = new BSet\<<setType>\>();<endif>
+quantified_expression(identifier, identity, setType, evaluation, isInteger, isJavaScript) ::= <<
+<if(isInteger)>let <identifier><if(!isJavaScript)>: BInteger<endif> = new BInteger(<identity>);<else>let <identifier>: <if(!isJavaScript)>: BSet\<<setType>\><endif> = new BSet\<<setType>\>();<endif>
 <evaluation>
 >>
 
@@ -378,7 +378,7 @@ if((<predicate>).booleanValue()) {
 <endif>
 >>
 
-transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination, isJavaScript) ::= <<
 _tr_<operationName>(): <if(noParameters)>boolean<else>BSet\<<subType>\><endif> {
     <if(noParameters)>
     <if(noPredicate)>
@@ -387,7 +387,7 @@ _tr_<operationName>(): <if(noParameters)>boolean<else>BSet\<<subType>\><endif> {
     return <predicate>.booleanValue();
     <endif>
     <else>
-    let <identifier>: BSet\<<subType>\> = new BSet\<<subType>\>();
+    let <identifier><if(!isJavaScript)>: BSet\<<subType>\><endif> = new BSet\<<subType>\>();
     <combination>
     return <identifier>;
     <endif>

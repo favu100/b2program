@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -128,6 +129,7 @@ public class IdentifierGenerator {
             TemplateHandler.add(identifier, "otherMachine", "");
         }
         TemplateHandler.add(identifier, "fromOtherMachine", fromOtherMachine);
+        TemplateHandler.add(identifier, "forVisualization", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(identifier, "isConstant", node.getDeclarationNode() != null && (DeclarationNode.Kind.CONSTANT.equals(node.getDeclarationNode().getKind()) || DeclarationNode.Kind.ENUMERATED_SET.equals(node.getDeclarationNode().getKind()) || DeclarationNode.Kind.DEFERRED_SET.equals(node.getDeclarationNode().getKind())));
         return identifier.render();
     }

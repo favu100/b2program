@@ -780,8 +780,8 @@ boolean_val(val) ::= <<
 <if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
 >>
 
-identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant, isDefiningLdVariable, machine) ::= <<
-<if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(!isDefiningLdVariable)><if(isConstant)><machine>.<else><if(isPrivate)>this.<endif><endif><endif><identifier><endif><endif>
+identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine, isPrivate, isConstant, isDefiningLdVariable, forVisualization, machine) ::= <<
+<if(forVisualization)>_machine._get_<identifier>()<else><if(fromOtherMachine)>this.<otherMachine>._get_<identifier>()<else><if(rhsOnLhs)>_ld_<identifier><else><if(!isDefiningLdVariable)><if(isConstant)><machine>.<else><if(isPrivate)>this.<endif><endif><endif><identifier><endif><endif><endif>
 >>
 
 number(number, useBigInteger) ::= <<

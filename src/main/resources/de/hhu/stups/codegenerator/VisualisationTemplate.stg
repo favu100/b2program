@@ -475,6 +475,7 @@ function() {
     _current_trace = _current_trace.slice(0, index + 1)
     _current_trace.push({name: "<machineEvent>", params: parametersJSON});
     updateVisuals();
+    <parameterNames: {param | _machine_events["<machineEvent>"]["<param>"].setValue("")}; separator="; ">
   } catch (error) {
     if(! error instanceof SelectError) {
         throw error;

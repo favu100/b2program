@@ -448,14 +448,10 @@ function() {
         if(<parameterNames: {param | _machine_events["<machineEvent>"]["<param>"].getValue() == null}; separator=" && ">) {
             for(let tr of transition) {
                 var parameterTuple = tr;
-                <if(false)>
-                _machine_events["<machineEvent>"]["<param>"].setValue(parameterTuple);
-                <else>
                 [<parameterNames: {param | "<param>"}; separator=", ">].map(function(e, i) {
                   _machine_events["<machineEvent>"][e].setValue(flattenTuple(parameterTuple)[i]);
                   return null;
                 });
-                <endif>
                 break;
             }
         } else {

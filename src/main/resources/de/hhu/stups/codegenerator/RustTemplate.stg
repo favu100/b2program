@@ -332,12 +332,13 @@ let mut <identifier> = BRelation::\<<leftType>, <rightType>\>::new(vec![]);
 >>
 
 lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
+//lambda_expression
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>, <expression>)]));
+<relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
 <else>
 if (<predicate>).booleanValue() {
-    <relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>, <expression>)]));
+    <relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
 }
 <endif>
 >>
@@ -675,15 +676,19 @@ relation_predicate(predicates, checkElementOf) ::= <<
 >>
 
 relation_check_domain(arg, domain) ::= <<
-<arg>.checkDomain(&<domain>)
+<domain>.check_domain_of(&<arg>)
 >>
 
 relation_check_range(arg, range) ::= <<
-<arg>.checkRange(&<range>)
+<range>.check_range_of(&<arg>)
 >>
 
-relation_total_partial(arg, operator, domain) ::= <<
-<arg>.<operator>(&<domain>)
+relation_is_total(arg, domain) ::= <<
+<domain>.check_total_of(&<arg>)
+>>
+
+relation_is_partial(arg, domain) ::= <<
+<domain>.check_partial_of(&<arg>)
 >>
 
 relation_function(arg, operator) ::= <<

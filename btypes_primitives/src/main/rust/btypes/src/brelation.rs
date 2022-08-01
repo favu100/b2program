@@ -12,7 +12,7 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::convert::TryInto;
 use rand::prelude::IteratorRandom;
-use crate::orderedhashset::OrderedHashSet as OrdSet; //TODO try OrdMap instead
+use crate::orderedhashset::OrderedHashSet as OrdSet;
 use im::OrdMap as HashMap;
 use crate::bboolean::{BBoolean, BBooleanT};
 use crate::brelation::CombiningType::{DIFFERENCE, INTERSECTION, UNION};
@@ -67,7 +67,6 @@ impl<L: BObject, R: BObject> Ord for BRelation<L, R> {
     }
 }
 
-//TODO: check if replacing cache with mutex works and does not impact permormance too much
 unsafe impl<L: BObject, R: BObject> Sync for BRelation<L, R> {}
 
 impl<L: BObject, R: BObject> PartialEq for BRelation<L, R> {
@@ -443,6 +442,36 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     pub fn isTotalStruct(&self) -> BBoolean { return BBoolean::new(false); }
     pub fn isPartial(&self, domain: &BSet<L>) -> BBoolean { return self.domain().subset(domain); }
     pub fn checkDomain(&self, domain: &BSet<L>) -> BBoolean { return self.domain().subset(domain); }
+
+    //equals BRelation.checkDomain(BRelation)
+    pub fn check_domain_of<I: 'static + BObject>(&self, of: &BRelation<BTuple<L, R>, I>) -> BBoolean {
+        return self.is_superset(&of.domain());
+    }
+
+    //equals BRelation.checkRange(BRelation)
+    pub fn check_range_of<I: 'static + BObject>(&self, of: &BRelation<I, BTuple<L, R>>) -> BBoolean {
+        return self.is_superset(&of.range());
+    }
+
+    pub fn check_partial_of<I: 'static + BObject>(&self, of: &BRelation<BTuple<L, R>, I>) -> BBoolean {
+        return self.is_superset(&of.domain());
+    }
+
+    pub fn check_total_of<I: 'static + BObject>(&self, of: &BRelation<BTuple<L, R>, I>) -> BBoolean {
+        let of_domain = &of.domain();
+        return self.size().equal(&of_domain._size()) && self.is_superset(of_domain);
+    }
+
+    pub fn is_superset(&self, other: &BSet<BTuple<L, R>>) -> BBoolean {
+        for element in other.iter() {
+            match self.map.get(&element.projection1()) {
+                Some(range) => if !range.contains(&element.projection2()) { return false } ,
+                None => return false,
+            }
+        }
+        return true;
+    }
+
     pub fn checkRange(&self, range: &BSet<R>) -> BBoolean { return self.range().subset(range); }
 
     pub fn isRelation(&self) -> BBoolean { return BBoolean::new(true); }

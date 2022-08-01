@@ -437,8 +437,12 @@ relation_surjection(arg, range) ::= <<
     % relation_surjection
 >>
 
-relation_total_partial(arg, operator, domain) ::= <<
-    % relation_total_partial
+relation_is_total(arg, domain) ::= <<
+    % relation_is_total
+>>
+
+relation_is_partial(arg, domain) ::= <<
+    % relation_is_partial
 >>
 
 relation_type(leftType, rightType) ::= <<

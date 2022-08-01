@@ -46,8 +46,9 @@ endif
 ifneq (,$(findstring $(LANGUAGE), rs|RS|rust|Rust))
 %:
 	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(RS_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
+	mkdir -p ./btypes_primitives/src/main/rust/bmachine/src/
 	mv $(DIRECTORY)/$@.rs ./btypes_primitives/src/main/rust/bmachine/src/main.rs
-	mv $(DIRECTORY)/*.rs ./btypes_primitives/src/main/rust/bmachine/src/
+	find $(DIRECTORY) -maxdepth 1 -type f -name "*.rs" -exec mv -v '{}' ./btypes_primitives/src/main/rust/bmachine/src/ \;
 	cargo run --release --manifest-path ./btypes_primitives/src/main/rust/bmachine/Cargo.toml -- $(STRATEGY) $(THREADS) $(CACHING)
 endif
 endif

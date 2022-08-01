@@ -14,6 +14,7 @@ use std::hash::Hash;
 use std::collections::LinkedList;
 use std::fmt;
 use rand::Rng;
+use crate::brelation::BRelation;
 
 pub trait TBSet: BObject {
     type Item: BObject;
@@ -67,7 +68,6 @@ where
     }
 }
 
-//TODO: check if replacing cache with mutex works and does not impact permormance too much
 unsafe impl<T: BObject> Sync for BSet<T> {}
 
 impl<T: 'static + BObject> BSet<T> {
@@ -288,6 +288,28 @@ impl<T: 'static + BObject> BSet<T> {
 
     pub fn notStrictsubsetOfStruct(&self) -> BBoolean {
         return self.strictsubsetOfStruct().not();
+    }
+
+    //equals BRelation.checkDomain(BSet)
+    pub fn check_domain_of<I: 'static + BObject>(&self, of: &BRelation<T, I>) -> BBoolean {
+        return self.is_superset(&of.domain());
+    }
+
+    //equals BRelation.checkRange(BSet)
+    pub fn check_range_of<I: 'static + BObject>(&self, of: &BRelation<I, T>) -> BBoolean {
+        return self.is_superset(&of.range());
+    }
+
+    pub fn check_partial_of<I: 'static + BObject>(&self, of: &BRelation<T, I>) -> BBoolean {
+        return self.is_superset(&of.domain());
+    }
+
+    pub fn is_superset(&self, other: &BSet<T>) -> BBoolean {
+        return other.subset(self);
+    }
+
+    pub fn check_total_of<I: 'static + BObject>(&self, of: &BRelation<T, I>) -> BBoolean {
+        return self.equal(&of.domain());
     }
 
     //rust specific

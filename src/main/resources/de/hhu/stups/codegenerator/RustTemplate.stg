@@ -19,6 +19,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 <imports; separator="\n">
 <includedMachines; separator="\n">
@@ -406,7 +407,7 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-<if(isRelation)>BRelation::new<else>BSet::new<endif>(vec![<enums; separator=", ">])
+<if(isRelation)>BRelation<if(!type)>::\<bobject::Dummy, bobject::Dummy><endif><else>BSet<if(!type)>::\<bobject::Dummy><endif><endif>::new(vec![<enums; separator=", ">])
 >>
 
 seq_enumeration(type, elements) ::= <<

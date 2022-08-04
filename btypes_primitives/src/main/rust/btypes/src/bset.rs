@@ -24,9 +24,12 @@ pub trait TBSet: BObject {
 }
 
 pub trait SetLike: BObject {
+    type Item: BObject;
+
     fn get_empty() -> Self;
     fn _union(&self, other: &Self) -> Self;
     fn intersect(&self, other: &Self) -> Self;
+    fn as_bset(&self) -> BSet<Self::Item>;
 }
 
 #[derive(Default, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone)]
@@ -377,9 +380,14 @@ impl<T: 'static + BInt> BSet<T> {
 }
 
 impl<T: 'static + BObject> SetLike for BSet<T> {
+    type Item = T;
+
     fn get_empty() -> Self { BSet::<T>::new(vec![]) }
     fn _union(&self, other: &Self) -> Self { self._union(other) }
     fn intersect(&self, other: &Self) -> Self { self.intersect(other) }
+    fn as_bset(&self) -> BSet<T> {
+        return self.clone();
+    }
 }
 
 impl<T: 'static + SetLike> BSet<T> {

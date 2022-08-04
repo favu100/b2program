@@ -422,12 +422,6 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
             rel.update_unit(key.clone(), BSet::fromOrdSet(range.clone())))
     }
 
-    pub fn cartesianProduct(set_a: &BSet<L>, set_b: &BSet<R>) -> BRelation<L, R> {
-        // slightly inefficient due to double iteration
-        return BSet::<L>::cartesian::<L, R>(&set_a.as_ord_set(), &set_b.as_ord_set()).iter()
-            .fold(BRelation::new(vec![]), |mut rel, tuple| { rel.insert(tuple); return rel; });
-    }
-
     pub fn nondeterminism(&self) -> BTuple<L, R> {
         let mut rng = rand::thread_rng();
         let tuple = self.map.iter().choose(&mut rng).unwrap();
@@ -664,8 +658,28 @@ impl<L, R> BRelation<L, R>
     pub fn checkRangeStruct(&self) -> BBoolean { return BBoolean::new(true); }
 }
 
+impl<L, R> BRelation<L, R>
+    where L: 'static + SetLike,
+          R: 'static + SetLike {
+
+    pub fn cartesianProduct(set_a: &L, set_b: &R) -> BRelation<L::Item, R::Item> {
+        // slightly inefficient due to double iteration, more if BRelation parameter
+        return BSet::<L::Item>::cartesian::<L::Item, R::Item>(&set_a.as_bset().as_ord_set(), &set_b.as_bset().as_ord_set()).iter()
+            .fold(BRelation::new(vec![]), |mut rel, tuple| { rel.insert(tuple); return rel; });
+    }
+}
+
 impl<L: 'static + BObject, R: 'static + BObject> SetLike for BRelation<L, R> {
+    type Item = BTuple<L, R>;
+
     fn get_empty() -> Self { BRelation::<L, R>::new(vec![]) }
     fn _union(&self, other: &Self) -> Self { self._union(other) }
     fn intersect(&self, other: &Self) -> Self { self.intersect(other) }
+    fn as_bset(&self) -> BSet<BTuple<L, R>> {
+        BSet::fromOrdSet(
+        self.map.iter().fold(OrdSet::new(), |mut acc, (key, values)| {
+            values.iter().for_each(|v| { acc.insert(BTuple::from_refs(key, v)); });
+            return acc;
+        }))
+    }
 }

@@ -441,7 +441,7 @@ impl fmt::Display for <name> {
 >>
 
 bool() ::= <<
-butils::BOOL
+(*butils::BOOL)
 >>
 
 include_declaration(type, identifier) ::= <<

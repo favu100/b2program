@@ -661,13 +661,17 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		if(arg1 instanceof BSet) {
             let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map();
             (<BSet<S>> arg1).getSet().forEach((e1: S) => {
-                resultMap = resultMap.set(e1, arg2.getSet());
+                if(arg2.size() > 0) {
+                    resultMap = resultMap.set(e1, arg2.getSet());
+                }
             });
             return new BRelation<S, T>(resultMap);
 		} else {
             let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map();
             for(let e1 of arg1) {
-                resultMap = resultMap.set(e1, arg2.getSet());
+                if(arg2.size() > 0) {
+                    resultMap = resultMap.set(e1, arg2.getSet());
+                }
             }
             return new BRelation<BTuple<S,T>, R>(resultMap);
 		}

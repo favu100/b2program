@@ -352,7 +352,9 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap;
             for(const R& e1 : arg1.getSet()) {
-                resultMap = resultMap.set(e1, arg2.getSet());
+                if(arg2.size() > 0) {
+                    resultMap = resultMap.set(e1, arg2.getSet());
+                }
             }
 
             return BRelation<R,A>(resultMap);
@@ -363,7 +365,9 @@ class BRelation : public BObject {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,                                 typename BSet<S>::HashEqual> resultMap;
             for(const BTuple<R,A>& e1 : arg1) {
-                resultMap = resultMap.set(e1, arg2.getSet());
+                if(arg2.size() > 0) {
+                    resultMap = resultMap.set(e1, arg2.getSet());
+                }
             }
             return BRelation<BTuple<R,A>,B>(resultMap);
         }

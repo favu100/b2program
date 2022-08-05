@@ -768,7 +768,9 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	public static <S,T> BRelation<S,T> cartesianProduct(BSet<S> arg1, BSet<T> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 		for(S e1 : arg1) {
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
+			if(!arg2.getSet().isEmpty()) {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
+			}
 		}
 		return new BRelation<S, T>(resultMap);
 	}
@@ -777,7 +779,9 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	public static <S,T,R> BRelation<BTuple<S,T>, R> cartesianProduct(BRelation<S,T> arg1, BSet<R> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 		for(BTuple<S,T> e1 : arg1) {
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
+			if(!arg2.getSet().isEmpty()) {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
+			}
 		}
 		return new BRelation<>(resultMap);
 	}

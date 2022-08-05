@@ -79,6 +79,7 @@ import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.Express
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MOD;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.MULT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.NAT;
+import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.NAT1;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.OVERWRITE_RELATION;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARALLEL_PRODUCT;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION;
@@ -351,6 +352,8 @@ public class ExpressionGenerator {
             return generateInt();
         } else if(node.getOperator() == NAT) {
             return generateNat();
+        } else if(node.getOperator() == NAT1) {
+            return generateNat1();
         }
         throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
     }
@@ -821,11 +824,21 @@ public class ExpressionGenerator {
     }
 
     /*
-    * This function generates code for 0
-    */
+     * This function generates code for 0
+     */
     private String generateZero() {
         ST number = currentGroup.getInstanceOf("number");
         TemplateHandler.add(number, "number", 0);
+        TemplateHandler.add(number, "useBigInteger", useBigInteger);
+        return number.render();
+    }
+
+    /*
+     * This function generates code for 0
+     */
+    private String generateOne() {
+        ST number = currentGroup.getInstanceOf("number");
+        TemplateHandler.add(number, "number", 1);
         TemplateHandler.add(number, "useBigInteger", useBigInteger);
         return number.render();
     }
@@ -851,11 +864,21 @@ public class ExpressionGenerator {
     }
 
     /*
-    * This function generates code for NAT
-    */
+     * This function generates code for NAT
+     */
     private String generateNat() {
         ST interval = currentGroup.getInstanceOf("interval");
         TemplateHandler.add(interval, "arg1", generateZero());
+        TemplateHandler.add(interval, "arg2", generateMaxInt());
+        return interval.render();
+    }
+
+    /*
+     * This function generates code for NAT1
+     */
+    private String generateNat1() {
+        ST interval = currentGroup.getInstanceOf("interval");
+        TemplateHandler.add(interval, "arg1", generateOne());
         TemplateHandler.add(interval, "arg2", generateMaxInt());
         return interval.render();
     }

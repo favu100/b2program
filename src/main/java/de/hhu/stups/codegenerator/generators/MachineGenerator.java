@@ -138,6 +138,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private GeneratorMode mode;
 
+	private List<String> constants;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine, boolean forVisualisation) {
 		this.mode = mode;
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
@@ -163,7 +165,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
-		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
+		this.expressionGenerator = new ExpressionGenerator(mode, currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler, infiniteSetGenerator);
 		this.lambdaFunctionGenerator = new LambdaFunctionGenerator(currentGroup, expressionGenerator, predicateGenerator, typeGenerator, declarationGenerator);
@@ -195,6 +197,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return currentExpressionCount;
 	}
 
+	public void setCurrentExpressionCount(int c) {
+		currentExpressionCount = c;
+	}
+
 	public void resetCurrentExpressionCount() {
 		this.currentExpressionCount = 0;
 	}
@@ -207,8 +213,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return currentStateCount;
 	}
 
+	public void setCurrentStateCount(int c) {
+		currentStateCount = c;
+	}
+
 	public void resetCurrentStateCount() {
 		this.currentStateCount = 0;
+	}
+
+	List<String> getConstants() {
+		return constants;
 	}
 
 	/*
@@ -241,6 +255,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	private void initialize(MachineNode node) {
 		this.machineNode = node;
+		this.constants = node.getConstants()
+				.stream()
+				.map(DeclarationNode::getName)
+				.collect(Collectors.toList());
 		nameHandler.initialize(node);
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();

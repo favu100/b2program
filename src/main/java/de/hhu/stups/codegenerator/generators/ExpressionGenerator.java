@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -140,6 +141,8 @@ public class ExpressionGenerator {
     private static final Set<ExpressionOperatorNode.ExpressionOperator> EXPRESSION_BOOLEANS =
             new HashSet<>(Arrays.asList(TRUE,FALSE));
 
+    private final GeneratorMode mode;
+
     private final STGroup currentGroup;
 
     private final MachineGenerator machineGenerator;
@@ -168,10 +171,11 @@ public class ExpressionGenerator {
 
     private final IterationConstructHandler iterationConstructHandler;
 
-    public ExpressionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
+    public ExpressionGenerator(final GeneratorMode mode, final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
                                final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator) {
+        this.mode = mode;
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.useBigInteger = useBigInteger;
@@ -185,6 +189,20 @@ public class ExpressionGenerator {
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationConstructHandler.setExpressionGenerator(this);
         this.recordStructGenerator = recordStructGenerator;
+    }
+
+    /*
+     * This function generates code from an expression in B and tracks if the node is a parameter.
+     * This is important for expressions in Prolog.
+     */
+    public String visitExprNode(ExprNode node, boolean isParameter) {
+        if (!isParameter) return visitExprNode(node);
+        importGenerator.addImport(node.getType());
+
+        if (node instanceof ExpressionOperatorNode) {
+            return visitExprOperatorNode((ExpressionOperatorNode) node, true);
+        }
+        return visitExprNode(node);
     }
 
     /*
@@ -234,12 +252,24 @@ public class ExpressionGenerator {
     }
 
     /*
+     * This function generates code for an expression and tracks if the node is a method parameter.
+     */
+    public String visitExprOperatorNode(ExpressionOperatorNode node, boolean isParameter) {
+        if (!isParameter) return visitExprOperatorNode(node);
+        if(checkTupleProjections(node)) {
+            return generateTupleProjection(node);
+        }
+        return generateExpression(node, true);
+    }
+
+    /*
     * This function generates code for an expression.
     */
     public String visitExprOperatorNode(ExpressionOperatorNode node) {
         if(checkTupleProjections(node)) {
             return generateTupleProjection(node);
         }
+
         return generateExpression(node);
     }
 
@@ -265,10 +295,12 @@ public class ExpressionGenerator {
             throw new RuntimeException("Infinite Set Declarations are not supported");
         }
         if(node.isPrimed()) {
-            return "_primed_" + node.getName();
+            String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
+            return prefix + "_primed_" + node.getName();
         }
         if(machineGenerator.isInIterationConstruct() && iterationConstructHandler.getCurrentIterationConstructGenerator().getAllBoundedVariables().contains(node.getName())) {
-            return "_ic_" + node.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(node.getName());
+            String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
+            return prefix + "_ic_" + node.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(node.getName());
         }
         if(substitutionGenerator.getCurrentLocalScope() > 0 && identifierGenerator.getCurrentLocals().containsKey(node.getName())) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
@@ -304,13 +336,61 @@ public class ExpressionGenerator {
     }
 
     /*
+     * This function generates code for an expression with the given AST node and the list of expressions within the expression.
+     * It is also tracked whether the node is a method parameter.
+     */
+    public String generateExpression(ExpressionOperatorNode node, boolean isParameter) {
+        if (!isParameter) return generateExpression(node);
+
+        if(node.getOperator() == SET_ENUMERATION) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(n -> visitExprNode(n, true)).collect(Collectors.toList());
+            return generateSetEnumeration(node.getType(), expressionList, true);
+        } else if(node.getOperator() == SEQ_ENUMERATION) {
+            List<String> expressionList = node.getExpressionNodes().stream().map(n -> visitExprNode(n, true)).collect(Collectors.toList());
+            return generateSeqEnumeration(node.getType(), expressionList, true);
+        } else if(BINARY_EXPRESSION_OPERATORS.contains(node.getOperator())) {
+            if (mode == GeneratorMode.PL) {
+                List<String> exprOpNodes = new ArrayList<>();
+                List<String> expressionList = new ArrayList<>();
+                for (ExprNode n : node.getExpressionNodes()) {
+                    if (n instanceof ExpressionOperatorNode) {
+                        exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
+                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                    } else {
+                        expressionList.add(machineGenerator.visitExprNode(n, null));
+                    }
+                }
+                return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
+            } else {
+                List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
+                return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);
+            }
+        }
+        return generateExpression(node);
+    }
+
+    /*
     * This function generates code for an expression with the given AST node and the list of expressions within the expression.
     */
     public String generateExpression(ExpressionOperatorNode node) {
         ExpressionOperatorNode.ExpressionOperator operator = node.getOperator();
         if(BINARY_EXPRESSION_OPERATORS.contains(operator)) {
-            List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
-            return operatorGenerator.generateBinary(() -> operator, expressionList, machineGenerator);
+            if (mode == GeneratorMode.PL) {
+                List<String> exprOpNodes = new ArrayList<>();
+                List<String> expressionList = new ArrayList<>();
+                for (ExprNode n : node.getExpressionNodes()) {
+                    if (n instanceof ExpressionOperatorNode) {
+                        exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
+                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                    } else {
+                        expressionList.add(machineGenerator.visitExprNode(n, null));
+                    }
+                }
+                return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
+            } else {
+                List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
+                return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);
+            }
         } else if(UNARY_EXPRESSION_OPERATORS.contains(operator)) {
             List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
             return generateUnaryExpression(operator, expressionList);
@@ -716,6 +796,25 @@ public class ExpressionGenerator {
     }
 
     /*
+     * This function generates code for set enumerations with the given arguments and checks if the node is a method parameter.
+     */
+    private String generateSetEnumeration(BType type, List<String> expressions, boolean isParameter) {
+        ST enumeration = currentGroup.getInstanceOf("set_enumeration");
+        BType subType = ((SetType) type).getSubType();
+        TemplateHandler.add(enumeration,"enums", expressions);
+        if(subType instanceof CoupleType) {
+            TemplateHandler.add(enumeration, "leftType", typeGenerator.generate(((CoupleType) subType).getLeft()));
+            TemplateHandler.add(enumeration, "rightType", typeGenerator.generate(((CoupleType) subType).getRight()));
+        } else if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
+            TemplateHandler.add(enumeration, "type", typeGenerator.generate(subType));
+        }
+        TemplateHandler.add(enumeration, "isRelation", subType instanceof CoupleType);
+        TemplateHandler.add(enumeration, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
+        TemplateHandler.add(enumeration, "isParameter", isParameter);
+        return enumeration.render();
+    }
+
+    /*
     * This function generates code for set enumerations with the given arguments.
     */
     private String generateSetEnumeration(BType type, List<String> expressions) {
@@ -733,6 +832,30 @@ public class ExpressionGenerator {
         return enumeration.render();
     }
 
+    /*
+     * This function generates code for sequence enumeration from the given semantic information
+     */
+    private String generateSeqEnumeration(BType type, List<String> expressions, boolean isParameter) {
+        ST enumeration = currentGroup.getInstanceOf("seq_enumeration");
+        BType subType = ((SetType) type).getSubType();
+        BType rhsType = ((CoupleType) subType).getRight();
+        List<String> tuples = new ArrayList<>();
+        if(expressions.size() > 0) {
+            importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
+        }
+        importGenerator.addImport(IntegerType.getInstance());
+        for(int i = 1; i <= expressions.size(); i++) {
+            ST number = currentGroup.getInstanceOf("number");
+            TemplateHandler.add(number, "number", String.valueOf(i));
+            TemplateHandler.add(number, "useBigInteger", useBigInteger);
+            String lhs = number.render();
+            tuples.add(generateTuple(Arrays.asList(lhs, expressions.get(i-1)), IntegerType.getInstance(), rhsType));
+        }
+        TemplateHandler.add(enumeration,"elements", tuples);
+        TemplateHandler.add(enumeration, "type", typeGenerator.generate(rhsType));
+        TemplateHandler.add(enumeration, "isParameter", isParameter);
+        return enumeration.render();
+    }
 
     /*
     * This function generates code for sequence enumeration from the given semantic information

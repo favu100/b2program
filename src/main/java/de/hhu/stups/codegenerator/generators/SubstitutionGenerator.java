@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
@@ -234,8 +235,15 @@ public class SubstitutionGenerator {
         ST ifST = currentGroup.getInstanceOf("if");
         TemplateHandler.add(ifST, "iterationConstruct", iterationConstructHandler.inspectPredicates(node.getConditions()).getIterationsMapCode().values());
         TemplateHandler.add(ifST, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
+        int exprCount = machineGenerator.getCurrentExpressionCount();
+        int stateCount = machineGenerator.getCurrentStateCount();
         TemplateHandler.add(ifST, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
+        machineGenerator.setCurrentExpressionCount(exprCount);
+        machineGenerator.setCurrentStateCount(stateCount);
         TemplateHandler.add(ifST, "else1", generateElseIfs(node));
+        machineGenerator.setCurrentExpressionCount(exprCount);
+        machineGenerator.setCurrentStateCount(stateCount);
+
         if (node.getElseSubstitution() != null) {
             TemplateHandler.add(ifST, "else1", generateElse(node));
         }
@@ -676,6 +684,9 @@ public class SubstitutionGenerator {
         List<String> substitutionCodes = node.getSubstitutions().stream()
                 .map(substitutionNode -> machineGenerator.visitSubstitutionNode(substitutionNode, null))
                 .collect(Collectors.toList());
+        if (machineGenerator.getMode() == GeneratorMode.PL) {
+            return String.join(",\n", substitutionCodes);
+        }
         return String.join("\n", substitutionCodes);
     }
 

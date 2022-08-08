@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.handlers;
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
@@ -123,6 +124,7 @@ public class NameHandler {
     */
     public String handleIdentifier(String identifier, IdentifierHandlingEnum identifierHandling) {
         StringBuilder result = new StringBuilder(handle(identifier));
+        if (machineGenerator.getMode() == GeneratorMode.PL) return result.toString();
         while(getVariables(identifierHandling).contains(result.toString())) {
             result.insert(0, "_");
         }

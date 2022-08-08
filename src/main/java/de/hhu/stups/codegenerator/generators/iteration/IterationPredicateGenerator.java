@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
@@ -49,7 +50,8 @@ public class IterationPredicateGenerator {
     */
     public ST generateEnumeration(ST template, DeclarationNode declarationNode) {
         TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
-        TemplateHandler.add(template, "identifier", "_ic_" + declarationNode.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(declarationNode.getName()));
+        String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
+        TemplateHandler.add(template, "identifier", prefix + "_ic_" + declarationNode.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(declarationNode.getName()));
         return template;
     }
 

@@ -139,7 +139,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private int currentStateCount;
 
 	private GeneratorMode mode;
-
+	
 	private List<String> constants;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,

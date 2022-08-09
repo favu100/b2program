@@ -71,7 +71,8 @@ public class QuantifiedExpressionGenerator {
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        String identifier = isInteger ? "_ic_integer_" + iterationConstructCounter : "_ic_set_"+ iterationConstructCounter;
+        String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "" : "_";
+        String identifier = isInteger ? prefix + "ic_integer_" + iterationConstructCounter : prefix + "ic_set_"+ iterationConstructCounter;
 
         generateBody(template, enumerationTemplates, otherConstructs, identifier, node, conditionalPredicate, predicate, expression, declarations);
         String result = template.render();

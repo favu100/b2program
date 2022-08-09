@@ -22,12 +22,12 @@ start(st).
 transition() ::= <<
 >>
 
-operation(operationName, parameters, body, lastStateCount) ::= <<
-
+operation(operationName, parameters, body, lastStateCount, returnParameters) ::= <<
 trans('<operationName>', State_0, State_<lastStateCount>) :-
     State_0 \= st,
 
     <body>.
+
 >>
 
 operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
@@ -47,10 +47,13 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 >>
 
 props(invariants) ::= <<
-prop(State, List) :-
-    avl2List(State, List).
+prop(st, uninitialized).
 prop(State, unsafe) :-
+    State \= st,
     <invariants:{it | \+ <it>(State)}; separator=";\n">.
+prop(State, List) :-
+    State \= st,
+    avl2List(State, List).
 >>
 
 assignment(identifier, val, stateCount, nextStateCount, lastExprCount, isFinalExpr) ::= <<
@@ -60,7 +63,10 @@ update(<identifier>, <val>, State_<stateCount>, State_<nextStateCount>)<else>
 update(<identifier>, Expr_<lastExprCount>, State_<stateCount>, State_<nextStateCount>)<endif>
 >>
 
-binary(arg1, operator, arg2, exprCount, stateCount, returnsBool) ::= <<
+binary(arg1, operator, arg2, exprCount, stateCount, returnsBool, exprBefore) ::= <<
+<if(exprBefore)>
+<exprBefore; separator=",\n">,
+<endif>
 <if(returnsBool)>
 <operator>(State_<stateCount>, <arg1>, <arg2>)<else>
 <operator>(State_<stateCount>, <arg1>, <arg2>, Expr_<exprCount>)<endif>
@@ -143,14 +149,11 @@ choice_point_operation_apply_choice_point_flag(operation) ::= <<
 >>
 
 constant_declaration(type, identifier) ::= <<
-% constant_declaration
-<type> <identifier>
-
 >>
 
 constant_initialization(iterationConstruct, identifier, val) ::= <<
-% constant_initialization
-<identifier>(Value) :- Value = <val>.
+update(<identifier>, <val>),
+
 >>
 
 copy() ::= <<
@@ -166,7 +169,7 @@ copy_constructor() ::= <<
 >>
 
 else(then) ::= <<
-    % else
+<then>
 >>
 
 elseif(predicate, then) ::= <<
@@ -187,13 +190,15 @@ getter() ::= <<
 global_declaration(type, identifier) ::= <<
 >>
 
-identifier(identifier) ::= <<
-'<identifier>'
+identifier(identifier, isConstant) ::= <<
+<if(isConstant)>
+<identifier><else>
+'<identifier>'<endif>
 >>
 
 if(iterationConstruct, predicate, then, else1, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
-% TODO: Expr/State Counter
-(<predicate> -> <then> ; <else1>)
+% TODO: Expr-/StateCount darf sich in branches nicht ändern
+(<predicate> -> (<then>) ; (<else1>))
 >>
 
 import_type() ::= <<
@@ -221,11 +226,18 @@ invariant(invariantFunction, iterationConstruct, predicate) ::= <<
 >>
 
 iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
-    % iteration_construct_enumeration
+<otherIterationConstructs>
+b_member(<identifier>, <set>),
+<body>
 >>
 
 iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
     % iteration_construct_assignment
+        <otherIterationConstructs>
+        for(<type> <identifier> : Arrays.asList(<set>)) {
+            <body>
+        }
+
 >>
 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
@@ -327,12 +339,20 @@ parallel_load(type, identifier) ::= <<
 <identifier>
 >>
 
-parameter() ::= <<
-    % parameter
+parameter(type, identifier) ::= <<
+% parameter
+% <type> <identifier>
 >>
 
 parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
-    % parameter_combination_predicate
+        % parameter_combination_predicate
+        otherIterationConstruct: <otherIterationConstruct>
+        set: <set>
+        element: <element>
+        emptyPredicate: <emptyPredicate>
+        predicate: <predicate>
+        subType: <subType>
+
 >>
 
 pre_assert(predicate, then) ::= <<
@@ -342,11 +362,29 @@ pre_assert(predicate, then) ::= <<
 >>
 
 quantified_predicate(identifier, forall, hasCondition, conditionalPredicate, predicate) ::= <<
-    % quantified_predicate
+<if(hasCondition)>
+<conditionalPredicate>
+<endif>
+<if(forall)>
+findall(X, (<predicate>), All),
+length(All, 0),
+<else>
+<predicate>
+<endif>
 >>
 
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
-    % quantified_predicate_evaluation
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+break;
+<else>
+<if(forall)>
+\+ <predicate>
+<else>
+<predicate>,
+<endif>
+<endif>
 >>
 
 quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
@@ -355,6 +393,12 @@ quantified_expression(identifier, identity, useBigInteger, setType, hasCondition
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
     % quantified_expression_evaluation
+    otherIterationConstructs: <otherIterationConstructs>
+    emptyPredicate: <emptyPredicate>
+    predicate: <predicate>
+    identifier: <identifier>
+    operation: <operation>
+    expression: <expression>
 >>
 
 relation_bijection(arg, range) ::=<<
@@ -395,6 +439,8 @@ relation_total_partial(arg, operator, domain) ::= <<
 
 relation_type(leftType, rightType) ::= <<
     % relation_type
+    leftType: <leftType>
+    rightType: <rightType>
 >>
 
 return() ::= <<
@@ -403,7 +449,6 @@ return() ::= <<
 
 select(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
 <predicate>,
-
 <then>
 >>
 
@@ -422,16 +467,20 @@ set_declaration(identifier, type, enums) ::= <<
     <enums>
 >>
 
-set_enumeration(leftType, type, rightType, enums, isRelation, exprCount) ::= <<
+set_enumeration(leftType, type, rightType, enums, isRelation, exprCount, isParameter) ::= <<
+<if(isParameter)>
 <if(isRelation)>
-Expr_<exprCount> = bRel([<enums; separator=", ">]),
+bRel([<enums; separator=", ">])<else>
+bSet([<enums; separator=", ">])<endif>
 <else>
-Expr_<exprCount> = bSet([<enums; separator=", ">]),
+<if(isRelation)>
+Expr_<exprCount> = bRel([<enums; separator=", ">])<else>
+Expr_<exprCount> = bSet([<enums; separator=", ">])<endif>
 <endif>
 >>
 
 set_enum_declaration(name, enumsCounted, exprCount) ::= <<
-enum_<name>([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">]).
+<name>([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">]).
 
 >>
 
@@ -458,10 +507,8 @@ type(type, fromOtherMachine, otherMachine) ::= <<
 
 unary(operator, obj, args, exprCount, stateCount) ::= <<
 <if(args)>
-<operator>(State_<stateCount>, <obj>, <args>, Expr_<exprCount>),
-<else>
-<operator>(State_<stateCount>, <obj>, Expr_<exprCount>),
-<endif>
+<operator>(State_<stateCount>, <obj>, <args>, Expr_<exprCount>)<else>
+<operator>(State_<stateCount>, <obj>, Expr_<exprCount>)<endif>
 >>
 
 values(assignments) ::= <<
@@ -471,4 +518,13 @@ values(assignments) ::= <<
 
 void() ::= <<
     % void
+>>
+
+while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+% while
+<iterationConstruct1; separator="\n">
+<predicate>,
+
+% do
+<then>
 >>

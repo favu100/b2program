@@ -2146,6 +2146,7 @@ public class CAN_BUS_tlc {
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
+
             possibleQueueChanges.incrementAndGet();
             CAN_BUS_tlc state = next(collection, lock, type);
             Runnable task = () -> {
@@ -2157,11 +2158,11 @@ public class CAN_BUS_tlc {
                             numberStates.getAndIncrement();
                             states.add(nextState);
                             collection.add(nextState);
-                            if(numberStates.get() % 50000 == 0) {
-                                System.out.println("VISITED STATES: " + numberStates.get());
-                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                System.out.println("-------------------");
-                            }
+                            //if(numberStates.get() % 50000 == 0) {
+                            //    System.out.println("VISITED STATES: " + numberStates.get());
+                            //    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            //    System.out.println("-------------------");
+                            //}
                         }
                     }
                 });

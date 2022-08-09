@@ -74,6 +74,7 @@ public class CodeGenerator {
 		boolean forModelChecking = forModelChecking(cmd.getOptionValue("mc"));
 		Path path = Paths.get(cmd.getOptionValue("f")).toAbsolutePath();
 		String visualisationFile = cmd.getOptionValue("v") == null ? "" : cmd.getOptionValue("v");
+		String serverLink = cmd.getOptionValue("sl") == null ? "." : cmd.getOptionValue("sl");
 		String simulationFile = cmd.getOptionValue("sim") == null ? "" : cmd.getOptionValue("sim");
 		String addition = cmd.getOptionValue("a");
 
@@ -86,7 +87,7 @@ public class CodeGenerator {
 		if(forVisualisation && mode != GeneratorMode.TS) {
 			throw new CodeGenerationException("Generating a visualisation is only supported for TypeScript");
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile, serverLink);
 
 		if(!simulationFile.isEmpty()) {
 			SimulationRewriter.rewriteConfigurationFromJSON(new File(simulationFile), new File(simulationFile.replaceAll(".json", "_new.json")));
@@ -104,6 +105,7 @@ public class CodeGenerator {
 		options.addOption("mc", "forModelChecking", true, "For Model Checking");
 		options.addOption("f", "file", true, "File");
 		options.addOption("v", "visualisation", true, "VisB File");
+		options.addOption("sl", "serverLink", true, "Server Link");
 		options.addOption("a", "addition", true, "Additional Main Function");
 		options.addOption("sim", "simulation", true, "SimB Simulation File");
 
@@ -211,15 +213,16 @@ public class CodeGenerator {
 														 boolean forModelChecking, boolean useConstraintSolving,
 														 boolean isMain, String addition, boolean isIncludedMachine,
 														 boolean forVisualisation,
-														 String visualisationFile) throws CodeGenerationException, IOException {
+														 String visualisationFile,
+							   							 String serverLink) throws CodeGenerationException, IOException {
 		if(isMain) {
 			paths.clear();
 		}
 
 		BProject project = parseProject(path);
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
-		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, forVisualisation);
-		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile));
+		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, forVisualisation, serverLink);
+		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile, serverLink));
 		return paths;
 	}
 
@@ -229,10 +232,11 @@ public class CodeGenerator {
 	private Path generateCode(Path path, GeneratorMode mode, boolean useBigInteger,
 														String minint, String maxint, String deferredSetSize,
 														boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
-														Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile) throws IOException {
+														Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile,
+							  							String serverLink) throws IOException {
 		MachineGenerator generator =
 				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
-														 useConstraintSolving, addition, isIncludedMachine, forVisualisation);
+									useConstraintSolving, addition, isIncludedMachine, forVisualisation, serverLink);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);

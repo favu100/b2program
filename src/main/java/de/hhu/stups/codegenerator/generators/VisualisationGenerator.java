@@ -57,6 +57,7 @@ public class VisualisationGenerator {
     this.importGenerator.activateForVisualization();
     ST visualisation = visualisationGroup.getInstanceOf("visualisation");
     boolean withoutSvg = visBProject.getVisualisation().getSvgPath() == null;
+    TemplateHandler.add(visualisation, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(visualisation, "svgName", withoutSvg? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(visualisation, "svgElements", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
@@ -296,6 +297,7 @@ public class VisualisationGenerator {
 
   public String generateHTML(VisBProject visBProject) {
     ST html = htmlGroup.getInstanceOf("html");
+    TemplateHandler.add(html, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(html, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(html, "svgName", visBProject.getVisualisation().getSvgPath() == null? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(html, "btypeImports", importGenerator.getImportedTypes().stream().map(this::generateHTMLImport).collect(Collectors.toSet()));
@@ -304,12 +306,14 @@ public class VisualisationGenerator {
 
   public String generateVisualisationImport(String type) {
     ST visualisationImport = visualisationGroup.getInstanceOf("btype_import");
+    TemplateHandler.add(visualisationImport, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(visualisationImport, "type", type);
     return visualisationImport.render();
   }
 
   public String generateHTMLImport(String type) {
     ST htmlImport = htmlGroup.getInstanceOf("btypeImport");
+    TemplateHandler.add(htmlImport, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(htmlImport, "name", type);
     return htmlImport.render();
   }

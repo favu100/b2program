@@ -116,6 +116,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final boolean useBigInteger;
 
+	private final String serverLink;
+
 	private final Map<String, Integer> boundedVariablesDepth;
 
 	private final STGroup currentGroup;
@@ -138,12 +140,17 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private GeneratorMode mode;
 
-	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize, boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine, boolean forVisualisation) {
+	private List<String> constants;
+
+	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
+							boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine,
+							boolean forVisualisation, String serverLink) {
 		this.mode = mode;
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
 		this.forModelChecking = forModelChecking;
 		this.forVisualisation = forVisualisation;
 		this.useBigInteger = useBigInteger;
+		this.serverLink = serverLink;
 		this.boundedVariablesDepth = new HashMap<>();
 		if(addition != null) {
 			try {
@@ -155,7 +162,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
-		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
+		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger, serverLink);
 		this.backtrackingGenerator = new BacktrackingGenerator(currentGroup);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, backtrackingGenerator, useConstraintSolving);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
@@ -163,7 +170,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
-		this.expressionGenerator = new ExpressionGenerator(currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
+		this.expressionGenerator = new ExpressionGenerator(mode, currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler, infiniteSetGenerator);
 		this.lambdaFunctionGenerator = new LambdaFunctionGenerator(currentGroup, expressionGenerator, predicateGenerator, typeGenerator, declarationGenerator);
@@ -195,6 +202,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return currentExpressionCount;
 	}
 
+	public void setCurrentExpressionCount(int c) {
+		currentExpressionCount = c;
+	}
+
 	public void resetCurrentExpressionCount() {
 		this.currentExpressionCount = 0;
 	}
@@ -207,8 +218,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return currentStateCount;
 	}
 
+	public void setCurrentStateCount(int c) {
+		currentStateCount = c;
+	}
+
 	public void resetCurrentStateCount() {
 		this.currentStateCount = 0;
+	}
+
+	public List<String> getConstants() {
+		return constants;
 	}
 
 	/*
@@ -221,6 +240,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		backtrackingGenerator.calculateChoicePoints(node);
 
 		ST machine = currentGroup.getInstanceOf("machine");
+		TemplateHandler.add(machine, "serverLink", serverLink);
 		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation));
 		TemplateHandler.add(machine, "forVisualisation", forVisualisation);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
@@ -241,6 +261,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	private void initialize(MachineNode node) {
 		this.machineNode = node;
+		this.constants = node.getConstants()
+				.stream()
+				.map(DeclarationNode::getName)
+				.collect(Collectors.toList());
 		nameHandler.initialize(node);
 		operationGenerator.mapOperationsToMachine(node);
 		initializeLambdaFunctions();
@@ -762,4 +786,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public void setMode(GeneratorMode mode) {
 		this.mode = mode;
 	}
+
+	public String getServerLink() {
+		return serverLink;
+	}
+
 }

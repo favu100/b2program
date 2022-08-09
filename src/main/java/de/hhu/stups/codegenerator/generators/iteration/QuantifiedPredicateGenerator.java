@@ -58,7 +58,8 @@ public class QuantifiedPredicateGenerator {
 
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-        String identifier = "_ic_boolean_"+ iterationConstructCounter;
+        String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
+        String identifier = prefix + "_ic_boolean_"+ iterationConstructCounter;
         generateBody(template, enumerationTemplates, otherConstructs, identifier, forAll, conditionalPredicate, predicate, declarations);
 
         String result = template.render();

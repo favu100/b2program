@@ -50,8 +50,8 @@ public class LandingGear_R6 {
 
 
     public enum DOOR_STATE implements BObject {
-        open, 
-        closed, 
+        open,
+        closed,
         door_moving;
 
         public BBoolean equal(DOOR_STATE o) {
@@ -64,8 +64,8 @@ public class LandingGear_R6 {
     }
 
     public enum GEAR_STATE implements BObject {
-        retracted, 
-        extended, 
+        retracted,
+        extended,
         gear_moving;
 
         public BBoolean equal(GEAR_STATE o) {
@@ -78,7 +78,7 @@ public class LandingGear_R6 {
     }
 
     public enum HANDLE_STATE implements BObject {
-        up, 
+        up,
         down;
 
         public BBoolean equal(HANDLE_STATE o) {
@@ -91,8 +91,8 @@ public class LandingGear_R6 {
     }
 
     public enum POSITION implements BObject {
-        fr, 
-        lt, 
+        fr,
+        lt,
         rt;
 
         public BBoolean equal(POSITION o) {
@@ -105,7 +105,7 @@ public class LandingGear_R6 {
     }
 
     public enum SWITCH_STATE implements BObject {
-        switch_open, 
+        switch_open,
         switch_closed;
 
         public BBoolean equal(SWITCH_STATE o) {
@@ -118,7 +118,7 @@ public class LandingGear_R6 {
     }
 
     public enum PLANE_STATE implements BObject {
-        ground, 
+        ground,
         flight;
 
         public BBoolean equal(PLANE_STATE o) {
@@ -131,7 +131,7 @@ public class LandingGear_R6 {
     }
 
     public enum VALVE_STATE implements BObject {
-        valve_open, 
+        valve_open,
         valve_closed;
 
         public BBoolean equal(VALVE_STATE o) {

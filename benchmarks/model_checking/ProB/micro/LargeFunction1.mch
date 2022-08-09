@@ -1,6 +1,6 @@
 MACHINE LargeFunction1
 CONSTANTS n, fun
-PROPERTIES n=20000 &
+PROPERTIES n=5000 &
  fun = %(x).(x:0..n| (x+x) mod n)
 VARIABLES x
 INVARIANT

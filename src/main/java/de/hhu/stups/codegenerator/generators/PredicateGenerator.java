@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -19,10 +20,7 @@ import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PredicateGenerator {
@@ -96,10 +94,24 @@ public class PredicateGenerator {
         if(relationSetGenerator.checkRelation(node)) {
             return generateRelationOnRhs(node);
         }
-        List<String> expressionList = node.getExpressionNodes().stream()
-                .map(expr -> machineGenerator.visitExprNode(expr, null))
-                .collect(Collectors.toList());
-        return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);
+        if (machineGenerator.getMode() == GeneratorMode.PL) {
+            List<String> exprOpNodes = new ArrayList<>();
+            List<String> expressionList = new ArrayList<>();
+            for (ExprNode n : node.getExpressionNodes()) {
+                if (n instanceof ExpressionOperatorNode) {
+                    exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
+                    expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                } else {
+                    expressionList.add(machineGenerator.visitExprNode(n, null));
+                }
+            }
+            return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
+        } else {
+            List<String> expressionList = node.getExpressionNodes().stream()
+                    .map(expr -> machineGenerator.visitExprNode(expr, null))
+                    .collect(Collectors.toList());
+            return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);
+        }
     }
 
     /*

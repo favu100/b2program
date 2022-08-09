@@ -1243,11 +1243,13 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                     stopThreads.set(true);
                 }
 
-                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
+
+                if (!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
                     invariantViolated.set(true);
                     stopThreads.set(true);
                     counterExampleState.add(state);
                 }
+
 
 
             };

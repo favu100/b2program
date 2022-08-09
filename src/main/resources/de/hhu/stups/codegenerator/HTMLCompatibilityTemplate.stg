@@ -1,5 +1,18 @@
 html_compatibility(replacements) ::= <<
+const {readFile, writeFile, promises: fsPromises} = require('fs');
 <replacements; separator="\n">
+>>
+
+btypes_paths() ::= <<
+./btypes/BInteger.js
+./btypes/BBoolean.js
+./btypes/BObject.js
+./btypes/BRelation.js
+./btypes/BSet.js
+./btypes/BString.js
+./btypes/BStruct.js
+./btypes/BTuple.js
+./btypes/BUtils.js
 >>
 
 html_compatibility_single(file, replacements) ::= <<
@@ -18,6 +31,32 @@ readFile('<file>', 'utf-8', function (err, contents) {
 });
 >>
 
-replacement(serverLink, path, file) ::= <<
-replaced = replaced.replaceAll('<path>/<file>', '<serverLink>/<path>/<file>');
+replacements_btypes(inBType, serverLink) ::= <<
+<if(inBType)>
+replaced = replaced.replaceAll('./BInteger.js', '<serverLink>/btypes/BInteger.js');
+replaced = replaced.replaceAll('./BBoolean.js', '<serverLink>/btypes/BBoolean.js');
+replaced = replaced.replaceAll('./BObject.js', '<serverLink>/btypes/BObject.js');
+replaced = replaced.replaceAll('./BRelation.js', '<serverLink>/btypes/BRelation.js');
+replaced = replaced.replaceAll('./BSet.js', '<serverLink>/btypes/BSet.js');
+replaced = replaced.replaceAll('./BString.js', '<serverLink>/btypes/BString.js');
+replaced = replaced.replaceAll('./BStruct.js', '<serverLink>/btypes/BStruct.js');
+replaced = replaced.replaceAll('./BTuple.js', '<serverLink>/btypes/BTuple.js');
+replaced = replaced.replaceAll('./BUtils.js', '<serverLink>/btypes/BUtils.js');
+replaced = replaced.replaceAll('../immutable/dist/immutable.es.js', '<serverLink>/immutable/dist/immutable.es.js');
+<else>
+replaced = replaced.replaceAll('./btypes/BInteger.js', '<serverLink>/btypes/BInteger.js');
+replaced = replaced.replaceAll('./btypes/BBoolean.js', '<serverLink>/btypes/BBoolean.js');
+replaced = replaced.replaceAll('./btypes/BObject.js', '<serverLink>/btypes/BObject.js');
+replaced = replaced.replaceAll('./btypes/BRelation.js', '<serverLink>/btypes/BRelation.js');
+replaced = replaced.replaceAll('./btypes/BSet.js', '<serverLink>/btypes/BSet.js');
+replaced = replaced.replaceAll('./btypes/BString.js', '<serverLink>/btypes/BString.js');
+replaced = replaced.replaceAll('./btypes/BStruct.js', '<serverLink>/btypes/BStruct.js');
+replaced = replaced.replaceAll('./btypes/BTuple.js', '<serverLink>/btypes/BTuple.js');
+replaced = replaced.replaceAll('./btypes/BUtils.js', '<serverLink>/btypes/BUtils.js');
+replaced = replaced.replaceAll('./immutable/dist/immutable.es.js', '<serverLink>/immutable/dist/immutable.es.js');
+<endif>
+>>
+
+replacement(serverLink, file) ::= <<
+replaced = replaced.replaceAll('./<file>', '<serverLink>/<file>');
 >>

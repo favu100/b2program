@@ -319,4 +319,8 @@ public class VisualisationGenerator {
     return htmlImport.render();
   }
 
+  public String generateServerLink() {
+    return serverLinkCompatibility.generateFile();
+  }
+
 }

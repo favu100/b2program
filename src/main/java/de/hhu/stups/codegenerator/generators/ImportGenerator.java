@@ -35,6 +35,8 @@ public class ImportGenerator {
 
     private final Set<String> importedEnums;
 
+    private final Set<String> importedMachines;
+
     private final boolean useBigInteger;
 
     private boolean forVisualization;
@@ -45,7 +47,8 @@ public class ImportGenerator {
         this.nameHandler = nameHandler;
         this.imports = new HashSet<>();
         this.importedTypes = new HashSet<>();
-        importedEnums = new HashSet<>();
+        this.importedEnums = new HashSet<>();
+        this.importedMachines = new HashSet<>();
         this.useBigInteger = useBigInteger;
         this.forVisualization = false;
     }
@@ -125,6 +128,7 @@ public class ImportGenerator {
         ST imp = group.getInstanceOf("import_machine");
         String machine = reference.getMachineName();
         TemplateHandler.add(imp, "machine", nameHandler.handle(machine));
+        importedMachines.add(nameHandler.handle(machine));
         return imp.render();
     }
 
@@ -237,6 +241,10 @@ public class ImportGenerator {
 
     public Set<String> getImportedEnums() {
         return importedEnums;
+    }
+
+    public Set<String> getImportedMachines() {
+        return importedMachines;
     }
 
     public void activateForVisualization() {

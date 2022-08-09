@@ -6,33 +6,10 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ServerLinkCompatibility {
-
-    private static final List<String> bTypes;
-
-    private static final Map<String, String> bTypesReplacementMap;
-
-    static {
-        bTypes = Arrays.asList("./btypes/BInteger.js", "./btypes/BBoolean.js", "./btypes/BObject.js",
-                "./btypes/BRelation.js", "./btypes/BSet.js", "./btypes/BString.js", "./btypes/BStruct.js",
-                "./btypes/BTuple.js", "./btypes/BTuple.js");
-        bTypesReplacementMap = new HashMap<>();
-        bTypesReplacementMap.put("./BInteger.js", "/btypes/BInteger.js");
-        bTypesReplacementMap.put("./BBoolean.js", "/btypes/BBoolean.js");
-        bTypesReplacementMap.put("./BObject.js", "/btypes/BObject.js");
-        bTypesReplacementMap.put("./BRelation.js", "/btypes/BRelation.js");
-        bTypesReplacementMap.put("./BSet.js", "/btypes/BSet.js");
-        bTypesReplacementMap.put("./BString.js", "/btypes/BString.js");
-        bTypesReplacementMap.put("./BStruct.js", "/btypes/BStruct.js");
-        bTypesReplacementMap.put("./BTuple.js", "/btypes/BTuple.js");
-        bTypesReplacementMap.put("./BUtils.js", "/btypes/BUtils.js");
-        bTypesReplacementMap.put("../immutable/dist/immutable.es.js", "/immutable/dist/immutable.es.js");
-    }
 
     private final STGroup compatibilityGroup;
 
@@ -50,14 +27,31 @@ public class ServerLinkCompatibility {
         ST template = compatibilityGroup.getInstanceOf("html_compatibility");
 
         List<String> replacements = new ArrayList<>();
-        TemplateHandler.add(template, "replacements", null);
+        replacements.addAll(generateBTypeReplacements());
+        TemplateHandler.add(template, "replacements", replacements);
         return template.render();
     }
 
-    public String generateCompatibilitySingle() {
+    private List<String> generateBTypeReplacements() {
+        List<String> result = new ArrayList<>();
+        String[] bTypes = compatibilityGroup.getInstanceOf("btypes_paths").render().split("\n");
+        for(String bType : bTypes) {
+            result.add(generateCompatibilitySingle(bType, Collections.singletonList(generateBTypeReplacement(true))));
+        }
+        return result;
+    }
+
+    private String generateBTypeReplacement(boolean inBType) {
+        ST template = compatibilityGroup.getInstanceOf("replacements_btypes");
+        TemplateHandler.add(template, "inBType", inBType);
+        TemplateHandler.add(template, "serverLink", machineGenerator.getServerLink());
+        return template.render();
+    }
+
+    public String generateCompatibilitySingle(String file, List<String> replacements) {
         ST template = compatibilityGroup.getInstanceOf("html_compatibility_single");
-        TemplateHandler.add(template, "file", null);
-        TemplateHandler.add(template, "replacements", null);
+        TemplateHandler.add(template, "file", file);
+        TemplateHandler.add(template, "replacements", replacements);
         return template.render();
     }
 

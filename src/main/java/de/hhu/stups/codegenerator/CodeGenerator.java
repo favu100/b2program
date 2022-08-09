@@ -14,6 +14,7 @@ import de.hhu.stups.codegenerator.json.visb.VisBFileHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
 import de.hhu.stups.codegenerator.json.visb.VisBProjectParser;
 import de.hhu.stups.codegenerator.json.visb.VisBVisualisation;
+import de.hhu.stups.codegenerator.server.ServerLinkCompatibility;
 import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.BProject;
 import de.prob.parser.antlr.ScopeException;
@@ -268,6 +269,11 @@ public class CodeGenerator {
 		String jsVisualisationCode = visualisationGenerator.generateVisualisation(visBProject);
 		Path visualisationPath = Paths.get(mainMachinePath.toString().replace(".mch", "-visualisation.mch")).toAbsolutePath();
 		writeToFile(visualisationPath, GeneratorMode.JS, false, null, false, generator, jsVisualisationCode);
+		if(generator.getServerLink() != null && !generator.getServerLink().isEmpty()) {
+			String serverCompatibilityCode = visualisationGenerator.generateServerLink();
+			Path serverCompatibilityPath = Paths.get(mainMachinePath.toString().replace(".mch", "-compatibility.mch")).toAbsolutePath();
+			writeToFile(serverCompatibilityPath, GeneratorMode.JS, false, null, false, generator, serverCompatibilityCode);
+		}
 	}
 
 	/*

@@ -39,10 +39,8 @@ public class ImportGenerator {
 
     private boolean forVisualization;
 
-    private String serverLink;
 
-
-    public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger, final String serverLink) {
+    public ImportGenerator(final STGroup group, final NameHandler nameHandler, final boolean useBigInteger) {
         this.group = group;
         this.nameHandler = nameHandler;
         this.imports = new HashSet<>();
@@ -50,7 +48,6 @@ public class ImportGenerator {
         importedEnums = new HashSet<>();
         this.useBigInteger = useBigInteger;
         this.forVisualization = false;
-        this.serverLink = serverLink;
     }
 
     /*
@@ -85,7 +82,6 @@ public class ImportGenerator {
         boolean fromOtherMachine = nameHandler.getEnumToMachine().get(enumType.getSetName()) != null && !nameHandler.getMachineName().equals(nameHandler.getEnumToMachine().get(enumType.getSetName()));
         if (fromOtherMachine || forVisualization) {
             ST enumImport = group.getInstanceOf("enum_import");
-            TemplateHandler.add(enumImport, "serverLink", serverLink);
             TemplateHandler.add(enumImport, "name", enumType.getSetName());
             TemplateHandler.add(enumImport, "machineName", nameHandler.getEnumToMachine().get(enumType.getSetName()));
             importedEnums.add(enumImport.render());
@@ -96,7 +92,6 @@ public class ImportGenerator {
         boolean fromOtherMachine = nameHandler.getEnumToMachine().get(enumType.getSetName()) != null && !nameHandler.getMachineName().equals(nameHandler.getEnumToMachine().get(enumType.getSetName()));
         if (fromOtherMachine || forVisualization) {
             ST enumImport = group.getInstanceOf("enum_import");
-            TemplateHandler.add(enumImport, "serverLink", serverLink);
             TemplateHandler.add(enumImport, "name", enumType.getSetName());
             TemplateHandler.add(enumImport, "machineName", nameHandler.getEnumToMachine().get(enumType.getSetName()));
             importedEnums.add(enumImport.render());
@@ -129,7 +124,6 @@ public class ImportGenerator {
     private String generateMachineImport(MachineReferenceNode reference) {
         ST imp = group.getInstanceOf("import_machine");
         String machine = reference.getMachineName();
-        TemplateHandler.add(imp, "serverLink", serverLink);
         TemplateHandler.add(imp, "machine", nameHandler.handle(machine));
         return imp.render();
     }
@@ -139,7 +133,6 @@ public class ImportGenerator {
     */
     private void importBInteger() {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BInteger");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
@@ -151,7 +144,6 @@ public class ImportGenerator {
     */
     private void importBObject() {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BObject");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
@@ -163,7 +155,6 @@ public class ImportGenerator {
     */
     private void importBBoolean() {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BBoolean");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
@@ -175,7 +166,6 @@ public class ImportGenerator {
     */
     private void importBString() {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BString");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
@@ -187,7 +177,6 @@ public class ImportGenerator {
     */
     private void importTuple(CoupleType type) {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BTuple");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());
@@ -201,7 +190,6 @@ public class ImportGenerator {
     */
     private void importStruct(RecordType type) {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BStruct");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         type.getSubtypes().forEach(this::addImport);
@@ -217,7 +205,6 @@ public class ImportGenerator {
             importRelationType((CoupleType) type.getSubType());
         } else {
             ST template = group.getInstanceOf("import_type");
-            TemplateHandler.add(template, "serverLink", serverLink);
             TemplateHandler.add(template, "type", "BSet");
             TemplateHandler.add(template, "useBigInteger", useBigInteger);
             imports.add(template.render());
@@ -231,7 +218,6 @@ public class ImportGenerator {
     */
     private void importRelationType(CoupleType type) {
         ST template = group.getInstanceOf("import_type");
-        TemplateHandler.add(template, "serverLink", serverLink);
         TemplateHandler.add(template, "type", "BRelation");
         TemplateHandler.add(template, "useBigInteger", useBigInteger);
         imports.add(template.render());

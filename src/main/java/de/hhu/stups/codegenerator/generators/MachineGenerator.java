@@ -139,7 +139,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private int currentStateCount;
 
 	private GeneratorMode mode;
-	
+
 	private List<String> constants;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
@@ -162,7 +162,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
-		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger, serverLink);
+		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.backtrackingGenerator = new BacktrackingGenerator(currentGroup);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, backtrackingGenerator, useConstraintSolving);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
@@ -240,7 +240,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		backtrackingGenerator.calculateChoicePoints(node);
 
 		ST machine = currentGroup.getInstanceOf("machine");
-		TemplateHandler.add(machine, "serverLink", serverLink);
 		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation));
 		TemplateHandler.add(machine, "forVisualisation", forVisualisation);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);

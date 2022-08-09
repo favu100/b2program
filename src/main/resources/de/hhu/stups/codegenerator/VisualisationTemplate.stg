@@ -3,12 +3,12 @@ document, false, for, function, import, true, var
 >>
 
 
-visualisation(serverLink, imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
-import <machineName> from "<serverLink>/<machineName>.js";
-import {SelectError} from "<serverLink>/btypes/BUtils.js";
+visualisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
+import <machineName> from "./<machineName>.js";
+import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">
-<machineEnums : {enum | import {<enum>\} from "<serverLink>/<machineName>.js"<\n>}>
-<machineEnums : {enum | import {enum_<enum>\} from "<serverLink>/<machineName>.js"<\n>}>
+<machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
+<machineEnums : {enum | import {enum_<enum>\} from "./<machineName>.js"<\n>}>
 <imports; separator="\n">
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -392,8 +392,8 @@ function initialize() {
 }
 >>
 
-btype_import(serverLink, type) ::= <<
-import {<type>} from "<serverLink>/btypes/<type>.js";
+btype_import(type) ::= <<
+import {<type>} from "./btypes/<type>.js";
 >>
 
 visualUpdate(iterationConstruct, machineVar, attribute, expression) ::= <<

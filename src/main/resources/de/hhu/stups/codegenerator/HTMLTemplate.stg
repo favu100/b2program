@@ -2,7 +2,7 @@ keywords() ::= <<
 >>
 
 
-html(serverLink, machineName, svgName, btypeImports) ::= <<
+html(machineName, svgName, btypeImports) ::= <<
 \<!doctype html>
 
 \<html lang="en">
@@ -58,10 +58,10 @@ html(serverLink, machineName, svgName, btypeImports) ::= <<
             \<div class="state_view_header collapsed" onclick="collapse(this)">Invariant\</div>
         \</div>
   \</div>
-  \<script type="module" src="<serverLink>/immutable/dist/immutable.es.js">\</script>
+  \<script type="module" src="./immutable/dist/immutable.es.js">\</script>
   <btypeImports; separator="\n">
-  \<script type="module" src="<serverLink>/<machineName>.js">\</script>
-  \<script type="module" src="<serverLink>/<machineName>-visualisation.js" defer>\</script>
+  \<script type="module" src="./<machineName>.js">\</script>
+  \<script type="module" src="./<machineName>-visualisation.js" defer>\</script>
 \</body>
 
 \<script>
@@ -153,6 +153,6 @@ align-items: start;
 \</html>
 >>
 
-btypeImport(serverLink, name) ::= <<
-\<script type="module" src="<serverLink>/btypes/<name>.js">\</script>
+btypeImport(name) ::= <<
+\<script type="module" src="./btypes/<name>.js">\</script>
 >>

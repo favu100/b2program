@@ -3,12 +3,12 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(serverLink, forModelChecking, forVisualisation, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
+machine(forModelChecking, forVisualisation, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
 <imports; separator="\n">
 <enum_imports; separator="\n">
 <includedMachines; separator="\n">
-import {BUtils} from "<serverLink>/btypes/BUtils.js";
-<if(forVisualisation)>import {SelectError} from "<serverLink>/btypes/BUtils.js";<endif>
+import {BUtils} from "./btypes/BUtils.js";
+<if(forVisualisation)>import {SelectError} from "./btypes/BUtils.js";<endif>
 
 <enums; separator="\n\n">
 
@@ -589,12 +589,12 @@ relation_type(leftType, rightType) ::=<<
 BRelation\<<leftType>, <rightType>\>
 >>
 
-import_type(serverLink, type) ::= <<
-import {<type>} from '<serverLink>/btypes/<type>.js';
+import_type(type) ::= <<
+import {<type>} from './btypes/<type>.js';
 >>
 
-import_machine(serverLink, machine) ::= <<
-import <machine> from '<serverLink>/<machine>.js';
+import_machine(machine) ::= <<
+import <machine> from './<machine>.js';
 >>
 
 mc_info_type(isSet, machine, type) ::= <<
@@ -848,9 +848,9 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 skip() ::= <<
 >>
 
-enum_import(serverLink, name, machineName) ::= <<
-import {enum_<name>} from "<serverLink>/<machineName>.js"
-import {<name>} from "<serverLink>/<machineName>.js"
+enum_import(name, machineName) ::= <<
+import {enum_<name>} from "./<machineName>.js"
+import {<name>} from "./<machineName>.js"
 >>
 
 record_private_variable_prefix() ::= <<

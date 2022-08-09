@@ -1,0 +1,23 @@
+html_compatibility(replacements) ::= <<
+<replacements; separator="\n">
+>>
+
+html_compatibility_single(file, replacements) ::= <<
+readFile('<file>', 'utf-8', function (err, contents) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  var replaced = contents;
+  <replacements; separator="\n">
+
+  writeFile('<file>', replaced, 'utf-8', function (err) {
+    console.log(err);
+  });
+});
+>>
+
+replacement(serverLink, path, file) ::= <<
+replaced = replaced.replaceAll('<path>/<file>', '<serverLink>/<path>/<file>');
+>>

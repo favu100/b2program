@@ -9,6 +9,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
+import de.hhu.stups.codegenerator.server.ServerLinkCompatibility;
 import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
@@ -17,7 +18,6 @@ import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode.Pred
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
-import de.prob.parser.ast.types.SetElementType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -36,16 +36,21 @@ public class VisualisationGenerator {
 
   private final STGroup htmlGroup;
   private final STGroup visualisationGroup;
+  private final STGroup compatibilityGroup;
+
+  private final ServerLinkCompatibility serverLinkCompatibility;
 
   public VisualisationGenerator(MachineGenerator machineGenerator, ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator, IterationConstructHandler iterationConstructHandler) {
     this.machineGenerator = machineGenerator;
     this.htmlGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLTemplate.stg");
     this.visualisationGroup = new STGroupFile("de/hhu/stups/codegenerator/VisualisationTemplate.stg");
+    this.compatibilityGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLCompatibilityTemplate.stg");
     this.importGenerator = importGenerator;
     this.expressionGenerator = expressionGenerator;
     this.invariantGenerator = invariantGenerator;
     this.iterationConstructHandler = iterationConstructHandler;
     this.controllerLanguage = GeneratorMode.JS; // Currently, visualization is only supported for JS/HTML for VisB
+    this.serverLinkCompatibility = new ServerLinkCompatibility(compatibilityGroup, machineGenerator);
   }
 
   /*
@@ -57,7 +62,6 @@ public class VisualisationGenerator {
     this.importGenerator.activateForVisualization();
     ST visualisation = visualisationGroup.getInstanceOf("visualisation");
     boolean withoutSvg = visBProject.getVisualisation().getSvgPath() == null;
-    TemplateHandler.add(visualisation, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(visualisation, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(visualisation, "svgName", withoutSvg? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(visualisation, "svgElements", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
@@ -297,7 +301,6 @@ public class VisualisationGenerator {
 
   public String generateHTML(VisBProject visBProject) {
     ST html = htmlGroup.getInstanceOf("html");
-    TemplateHandler.add(html, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(html, "machineName", visBProject.getProject().getMainMachine().getName());
     TemplateHandler.add(html, "svgName", visBProject.getVisualisation().getSvgPath() == null? false: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0]);
     TemplateHandler.add(html, "btypeImports", importGenerator.getImportedTypes().stream().map(this::generateHTMLImport).collect(Collectors.toSet()));
@@ -306,14 +309,12 @@ public class VisualisationGenerator {
 
   public String generateVisualisationImport(String type) {
     ST visualisationImport = visualisationGroup.getInstanceOf("btype_import");
-    TemplateHandler.add(visualisationImport, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(visualisationImport, "type", type);
     return visualisationImport.render();
   }
 
   public String generateHTMLImport(String type) {
     ST htmlImport = htmlGroup.getInstanceOf("btypeImport");
-    TemplateHandler.add(htmlImport, "serverLink", machineGenerator.getServerLink());
     TemplateHandler.add(htmlImport, "name", type);
     return htmlImport.render();
   }

@@ -1,5 +1,5 @@
 import {BBoolean} from './BBoolean.js';
-import {BObject} from "./BObject";
+import {BObject} from "./BObject.js";
 
 export class BInteger implements BObject{
 

@@ -99,11 +99,17 @@ public class PredicateGenerator {
             List<String> expressionList = new ArrayList<>();
             for (ExprNode n : node.getExpressionNodes()) {
                 if (n instanceof ExpressionOperatorNode) {
-                    exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
-                    expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                    String s = machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null);
+                    if (machineGenerator.getCurrentExpressionCount() == 0 || !s.contains("=") || !s.contains("(")) { // is not assignment or method call
+                        expressionList.add(s);
+                    } else {
+                        exprOpNodes.add(s);
+                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                    }
                 } else {
                     expressionList.add(machineGenerator.visitExprNode(n, null));
                 }
+                System.out.println("PredicateGenerator:112: Before: " + exprOpNodes + " -- Expr: " + expressionList);
             }
             return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
         } else {

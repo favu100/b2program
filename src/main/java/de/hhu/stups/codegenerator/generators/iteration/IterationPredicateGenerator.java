@@ -6,6 +6,7 @@ import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.SourceCodePosition;
 import de.prob.parser.ast.nodes.Node;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
@@ -220,7 +221,12 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+                try {
+                    innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
+                            : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+                } catch (Exception e) {
+                    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
+                }
             }
             enumerationTemplate = getEnumerationTemplate(declarationNode, innerPredicate);
             generateOtherIterationConstructs(iterationConstructGenerator, enumerationTemplate, innerPredicate);

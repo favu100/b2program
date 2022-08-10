@@ -10,6 +10,7 @@ import de.hhu.stups.codegenerator.json.visb.VisBEvent;
 import de.hhu.stups.codegenerator.json.visb.VisBItem;
 import de.hhu.stups.codegenerator.json.visb.VisBProject;
 import de.hhu.stups.codegenerator.server.ServerLinkCompatibility;
+import de.prob.parser.antlr.BProject;
 import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
@@ -27,6 +28,7 @@ import org.stringtemplate.v4.STGroupFile;
  */
 
 public class VisualisationGenerator {
+  private final BProject project;
   private final MachineGenerator machineGenerator;
   private final ImportGenerator importGenerator;
   private final ExpressionGenerator expressionGenerator;
@@ -40,7 +42,8 @@ public class VisualisationGenerator {
 
   private final ServerLinkCompatibility serverLinkCompatibility;
 
-  public VisualisationGenerator(MachineGenerator machineGenerator, ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator, IterationConstructHandler iterationConstructHandler) {
+  public VisualisationGenerator(BProject project, MachineGenerator machineGenerator, ImportGenerator importGenerator, ExpressionGenerator expressionGenerator, InvariantGenerator invariantGenerator, IterationConstructHandler iterationConstructHandler) {
+    this.project = project;
     this.machineGenerator = machineGenerator;
     this.htmlGroup = new STGroupFile("de/hhu/stups/codegenerator/HTMLTemplate.stg");
     this.visualisationGroup = new STGroupFile("de/hhu/stups/codegenerator/VisualisationTemplate.stg");
@@ -50,7 +53,7 @@ public class VisualisationGenerator {
     this.invariantGenerator = invariantGenerator;
     this.iterationConstructHandler = iterationConstructHandler;
     this.controllerLanguage = GeneratorMode.JS; // Currently, visualization is only supported for JS/HTML for VisB
-    this.serverLinkCompatibility = new ServerLinkCompatibility(compatibilityGroup, machineGenerator);
+    this.serverLinkCompatibility = new ServerLinkCompatibility(project, compatibilityGroup, machineGenerator);
   }
 
   /*

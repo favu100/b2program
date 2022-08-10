@@ -2,6 +2,9 @@ package de.hhu.stups.codegenerator.server;
 
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.antlr.BProject;
+import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.MachineReferenceNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -11,11 +14,14 @@ import java.util.List;
 
 public class ServerLinkCompatibility {
 
+    private final BProject project;
+
     private final STGroup compatibilityGroup;
 
     private final MachineGenerator machineGenerator;
 
-    public ServerLinkCompatibility(final STGroup compatibilityGroup, final MachineGenerator machineGenerator) {
+    public ServerLinkCompatibility(final BProject project, final STGroup compatibilityGroup, final MachineGenerator machineGenerator) {
+        this.project = project;
         this.compatibilityGroup = compatibilityGroup;
         this.machineGenerator = machineGenerator;
     }
@@ -28,6 +34,7 @@ public class ServerLinkCompatibility {
 
         List<String> replacements = new ArrayList<>();
         replacements.addAll(generateBTypeReplacements());
+        replacements.addAll(generateMachineReplacements());
         TemplateHandler.add(template, "replacements", replacements);
         return template.render();
     }
@@ -37,6 +44,20 @@ public class ServerLinkCompatibility {
         String[] bTypes = compatibilityGroup.getInstanceOf("btypes_paths").render().split("\n");
         for(String bType : bTypes) {
             result.add(generateCompatibilitySingle(bType, Collections.singletonList(generateBTypeReplacement(true))));
+        }
+        return result;
+    }
+
+    private List<String> generateMachineReplacements() {
+        List<String> result = new ArrayList<>();
+        for(MachineNode machineNode : project.getMachines()) {
+            String machineFile = "./" + machineGenerator.getNameHandler().handle(machineNode.getName()) + ".js";
+            List<String> replacements = new ArrayList<>();
+            replacements.add(generateBTypeReplacement(false));
+            for(MachineReferenceNode reference : machineNode.getMachineReferences()) {
+                replacements.add(generateMachineReplacement(machineGenerator.getNameHandler().handle(reference.getMachineName()) + ".js"));
+            }
+            result.add(generateCompatibilitySingle(machineFile, replacements));
         }
         return result;
     }
@@ -55,13 +76,11 @@ public class ServerLinkCompatibility {
         return template.render();
     }
 
-    public List<String> generateReplacements() {
-        List<String> result = new ArrayList<>();
+    public String generateMachineReplacement(String file) {
         ST template = compatibilityGroup.getInstanceOf("replacement");
         TemplateHandler.add(template, "serverLink", machineGenerator.getServerLink());
-        TemplateHandler.add(template, "path", null);
-        TemplateHandler.add(template, "file", null);
-        return result;
+        TemplateHandler.add(template, "file", file);
+        return template.render();
     }
 
 }

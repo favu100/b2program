@@ -46,7 +46,7 @@ public class CodeGenerator {
 
 	private static Options options;
 
-	private List<Path> paths = new ArrayList<>();
+	private final List<Path> paths = new ArrayList<>();
 
 	private final MachineReferenceGenerator machineReferenceGenerator;
 
@@ -223,7 +223,7 @@ public class CodeGenerator {
 		BProject project = parseProject(path);
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
 		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, forVisualisation, serverLink);
-		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile, serverLink));
+		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile, project, serverLink));
 		return paths;
 	}
 
@@ -231,10 +231,10 @@ public class CodeGenerator {
 	 * This function generates code for a targeted programming language with creating the belonging file
 	 */
 	private Path generateCode(Path path, GeneratorMode mode, boolean useBigInteger,
-														String minint, String maxint, String deferredSetSize,
-														boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
-														Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile,
-							  							String serverLink) throws IOException {
+							  String minint, String maxint, String deferredSetSize,
+							  boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
+							  Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile,
+							  BProject project, String serverLink) throws IOException {
 		MachineGenerator generator =
 				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
 									useConstraintSolving, addition, isIncludedMachine, forVisualisation, serverLink);
@@ -255,14 +255,14 @@ public class CodeGenerator {
 				visBProject = parseVisBProject(path, new VisBVisualisation(new ArrayList<>(), new ArrayList<>(), null, null));
 			}
 
-			generateVisualisation(visBProject, generator, path);
+			generateVisualisation(project, visBProject, generator, path);
 		}
 
 		return codePath;
 	}
 
-	private void generateVisualisation(VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
-		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(generator, generator.getImportGenerator(), generator.getExpressionGenerator(), generator.getInvariantGenerator(), generator.getIterationConstructHandler());
+	private void generateVisualisation(BProject project, VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
+		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(project, generator, generator.getImportGenerator(), generator.getExpressionGenerator(), generator.getInvariantGenerator(), generator.getIterationConstructHandler());
 		String htmlCode = visualisationGenerator.generateHTML(visBProject);
 		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode);
 		//Has to be saved as <machineName>-visualisation.js

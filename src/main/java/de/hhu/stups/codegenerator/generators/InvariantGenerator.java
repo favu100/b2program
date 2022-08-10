@@ -65,13 +65,10 @@ public class InvariantGenerator {
         machineGenerator.resetCurrentExpressionCount();
         machineGenerator.resetCurrentStateCount();
         ST template = currentGroup.getInstanceOf("invariant");
-        System.out.println(">>>> Invariant " + invariantCounter);
         TemplateHandler.add(template, "invariantFunction", functionName);
         TemplateHandler.add(template, "iterationConstruct", iterationConstructHandler.inspectPredicate(predicate).getIterationsMapCode().values());
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicate, null));
         invariantFunctions.add(functionName);
-        System.out.println("<<<< Invariant " + invariantCounter);
-        System.out.println();
         return template.render();
     }
 

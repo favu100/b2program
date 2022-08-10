@@ -176,6 +176,10 @@ elseif(predicate, then) ::= <<
     % elseif
 >>
 
+enum_assignment(identifier, ExprCount) ::= <<
+<identifier>(Expr_<ExprCount>)
+>>
+
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
 <if(isCurrentMachine)>
 '<identifier>'<else>

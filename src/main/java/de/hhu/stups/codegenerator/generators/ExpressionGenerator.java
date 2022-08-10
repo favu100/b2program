@@ -7,6 +7,8 @@ import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
 import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.Node;
+import de.prob.parser.ast.nodes.OperatorNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -21,6 +23,7 @@ import de.prob.parser.ast.nodes.expression.SetComprehensionNode;
 import de.prob.parser.ast.nodes.expression.StringNode;
 import de.prob.parser.ast.nodes.expression.StructNode;
 import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.IntegerType;
@@ -335,6 +338,54 @@ public class ExpressionGenerator {
         return machineGenerator.visitPredicateNode(node.getPredicate(), null);
     }
 
+    public String visitEnumIdentifier(Node node) {
+        List<ExprNode> expressionNodes;
+        if (node instanceof PredicateOperatorWithExprArgsNode) {
+            expressionNodes = ((PredicateOperatorWithExprArgsNode) node).getExpressionNodes();
+        }
+        else if (node instanceof ExpressionOperatorNode) {
+            expressionNodes = ((ExpressionOperatorNode) node).getExpressionNodes();
+        }
+        else {
+            return "";
+        }
+
+        List<String> exprOpNodes = new ArrayList<>();
+        List<String> expressionList = new ArrayList<>();
+        for (ExprNode n : expressionNodes) {
+            if (n instanceof ExpressionOperatorNode) {
+                List<ExprNode> identifier = ((ExpressionOperatorNode) n).getExpressionNodes().stream().filter(exp -> machineGenerator.getEnumIdentifier().contains(exp.toString())).collect(Collectors.toList());
+                if (!identifier.isEmpty()) {
+                    for (ExprNode id : identifier) {
+                        ST assignment = currentGroup.getInstanceOf("enum_assignment");
+                        TemplateHandler.add(assignment, "identifier", id.toString());
+                        TemplateHandler.add(assignment, "ExprCount", machineGenerator.getAndIncCurrentExpressionCount());
+                        exprOpNodes.add(assignment.render());
+                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                    }
+                } else {
+                    String s = machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null);
+                    if (machineGenerator.getCurrentExpressionCount() == 0 || !s.contains("=") || !s.contains("(")) { // is not assignment or method call
+                        expressionList.add(s);
+                    } else {
+                        exprOpNodes.add(s);
+                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                    }
+                }
+
+            } else if (n instanceof IdentifierExprNode && machineGenerator.getEnumIdentifier().contains(n.toString())) {
+                ST assignment = currentGroup.getInstanceOf("enum_assignment");
+                TemplateHandler.add(assignment, "identifier", n.toString());
+                TemplateHandler.add(assignment, "ExprCount", machineGenerator.getAndIncCurrentExpressionCount());
+                exprOpNodes.add(assignment.render());
+                expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+            } else {
+                expressionList.add(machineGenerator.visitExprNode(n, null));
+            }
+        }
+        return operatorGenerator.generateBinary(((OperatorNode<?>) node)::getOperator, expressionList, machineGenerator, exprOpNodes);
+    }
+
     /*
      * This function generates code for an expression with the given AST node and the list of expressions within the expression.
      * It is also tracked whether the node is a method parameter.
@@ -350,17 +401,7 @@ public class ExpressionGenerator {
             return generateSeqEnumeration(node.getType(), expressionList, true);
         } else if(BINARY_EXPRESSION_OPERATORS.contains(node.getOperator())) {
             if (mode == GeneratorMode.PL) {
-                List<String> exprOpNodes = new ArrayList<>();
-                List<String> expressionList = new ArrayList<>();
-                for (ExprNode n : node.getExpressionNodes()) {
-                    if (n instanceof ExpressionOperatorNode) {
-                        exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
-                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
-                    } else {
-                        expressionList.add(machineGenerator.visitExprNode(n, null));
-                    }
-                }
-                return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
+                return machineGenerator.visitEnumIdentifier(node);
             } else {
                 List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
                 return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);
@@ -376,17 +417,7 @@ public class ExpressionGenerator {
         ExpressionOperatorNode.ExpressionOperator operator = node.getOperator();
         if(BINARY_EXPRESSION_OPERATORS.contains(operator)) {
             if (mode == GeneratorMode.PL) {
-                List<String> exprOpNodes = new ArrayList<>();
-                List<String> expressionList = new ArrayList<>();
-                for (ExprNode n : node.getExpressionNodes()) {
-                    if (n instanceof ExpressionOperatorNode) {
-                        exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
-                        expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
-                    } else {
-                        expressionList.add(machineGenerator.visitExprNode(n, null));
-                    }
-                }
-                return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
+                return machineGenerator.visitEnumIdentifier(node);
             } else {
                 List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
                 return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator);

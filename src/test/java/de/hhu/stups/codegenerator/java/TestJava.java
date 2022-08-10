@@ -60,6 +60,7 @@ public class TestJava {
 				null,
 				false,
 				false,
+				null,
 				null);
 		Process process = Runtime.getRuntime()
 				.exec("javac -classpath btypes.jar " + String.join(" ", javaFilePaths.stream()
@@ -99,6 +100,7 @@ public class TestJava {
 				addition,
 				false,
 				false,
+				null,
 				null);
 		Runtime runtime = Runtime.getRuntime();
 		Process compileProcess = runtime.exec("javac -cp btypes.jar " +
@@ -158,6 +160,7 @@ public class TestJava {
 				null,
 				false,
 				false,
+				null,
 				null);
 		Process process = Runtime.getRuntime()
 				.exec("javac -cp btypes.jar " + String.join(" ", javaFilePaths.stream()

@@ -309,6 +309,7 @@ public class InfiniteSetGenerator {
     public String generateInfinite(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         ST template = currentGroup.getInstanceOf("infinite_predicate");
+        TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
@@ -351,6 +352,7 @@ public class InfiniteSetGenerator {
     */
     public String generateInfiniteDomainChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode domain) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
+        TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(domain instanceof StructNode) {
@@ -392,6 +394,7 @@ public class InfiniteSetGenerator {
     */
     public String generateInfiniteRangeChecking(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
+        TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(range instanceof StructNode) {
@@ -481,6 +484,7 @@ public class InfiniteSetGenerator {
     */
     public String generateInfiniteTotalPartial(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode domain) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
+        TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(domain instanceof StructNode) {
@@ -567,6 +571,7 @@ public class InfiniteSetGenerator {
     */
     public String generateInfiniteSurjectionInjectionBijection(PredicateOperatorWithExprArgsNode node, ExpressionOperatorNode.ExpressionOperator operator, ExprNode range) {
         ST template = currentGroup.getInstanceOf("infinite_predicate");
+        TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
         ExprNode lhs = node.getExpressionNodes().get(0);
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         if(range instanceof StructNode) {

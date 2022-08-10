@@ -142,6 +142,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private List<String> constants;
 
+	private Set<String> enumIdentifier;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
 							boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine,
 							boolean forVisualisation, String serverLink) {
@@ -192,6 +194,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.infiniteSets = new HashSet<>();
 		this.currentExpressionCount = 0;
 		this.currentStateCount = 0;
+		this.enumIdentifier = new HashSet<>();
 	}
 
 	public int getAndIncCurrentExpressionCount() {
@@ -228,6 +231,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public List<String> getConstants() {
 		return constants;
+	}
+
+	public Set<String> getEnumIdentifier() {
+		return enumIdentifier;
 	}
 
 	/*
@@ -294,8 +301,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	* This function generates the whole body of a machine from the given AST node for the machine.
 	*/
 	private void generateBody(MachineNode node, ST machine) {
+		Set<String> identifier = new HashSet<>();
 		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
-		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node));
+		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node, identifier));
+		enumIdentifier.addAll(identifier);
 		TemplateHandler.add(machine, "enum_imports", importGenerator.getImportedEnums());
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));
@@ -647,6 +656,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	@Override
 	public String visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
 		return expressionGenerator.visitExprNode(node);
+	}
+
+	public String visitEnumIdentifier(Node node) {
+		return expressionGenerator.visitEnumIdentifier(node);
 	}
 
 	public NameHandler getNameHandler() {

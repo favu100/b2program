@@ -51,6 +51,7 @@ public class TestProlog {
                 null,
                 false,
                 false,
+                null,
                 null);
         Process process = Runtime.getRuntime()
                 .exec("javac -classpath btypes_persistent.jar " + String.join(" ", javaFilePaths.stream()
@@ -62,7 +63,7 @@ public class TestProlog {
         process.waitFor();
 
         String error = streamToString(process.getErrorStream());
-        if(!error.isEmpty()) {
+        if (!error.isEmpty()) {
             throw new RuntimeException(error);
         }
     }
@@ -83,6 +84,7 @@ public class TestProlog {
                 addition,
                 false,
                 false,
+                null,
                 null);
 //        Runtime runtime = Runtime.getRuntime();
 //        Process compileProcess = runtime.exec("javac -cp btypes_persistent.jar " +
@@ -142,6 +144,7 @@ public class TestProlog {
                 null,
                 false,
                 false,
+                null,
                 null);
         Process process = Runtime.getRuntime()
                 .exec("javac -classpath btypes.jar " + String.join(" ", javaFilePaths.stream()

@@ -176,6 +176,10 @@ elseif(predicate, then) ::= <<
     % elseif
 >>
 
+enum_assignment(identifier, ExprCount) ::= <<
+<identifier>(Expr_<ExprCount>)
+>>
+
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
 <if(isCurrentMachine)>
 '<identifier>'<else>
@@ -197,15 +201,14 @@ identifier(identifier, isConstant) ::= <<
 >>
 
 if(iterationConstruct, predicate, then, else1, forModelChecking, operation, choicePoint, usePreviousChoicePoint, previousChoicePoint) ::= <<
-% TODO: Expr-/StateCount darf sich in branches nicht ändern
 (<predicate> -> (<then>) ; (<else1>))
 >>
 
 import_type() ::= <<
 >>
 
-infinite_predicate(arg, operator) ::= <<
-<operator>(<arg>)
+infinite_predicate(arg, operator, stateCount) ::= <<
+<operator>(State_<stateCount>, <arg>)
 >>
 
 initialization(machine, properties, values, body, stateCount) ::= <<

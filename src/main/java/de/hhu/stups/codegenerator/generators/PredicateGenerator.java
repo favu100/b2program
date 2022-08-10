@@ -95,17 +95,7 @@ public class PredicateGenerator {
             return generateRelationOnRhs(node);
         }
         if (machineGenerator.getMode() == GeneratorMode.PL) {
-            List<String> exprOpNodes = new ArrayList<>();
-            List<String> expressionList = new ArrayList<>();
-            for (ExprNode n : node.getExpressionNodes()) {
-                if (n instanceof ExpressionOperatorNode) {
-                    exprOpNodes.add(machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null));
-                    expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
-                } else {
-                    expressionList.add(machineGenerator.visitExprNode(n, null));
-                }
-            }
-            return operatorGenerator.generateBinary(node::getOperator, expressionList, machineGenerator, exprOpNodes);
+            return machineGenerator.visitEnumIdentifier(node);
         } else {
             List<String> expressionList = node.getExpressionNodes().stream()
                     .map(expr -> machineGenerator.visitExprNode(expr, null))

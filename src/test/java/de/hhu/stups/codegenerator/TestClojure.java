@@ -38,6 +38,7 @@ public class TestClojure {
                         null,
                         false,
                         false,
+                        null,
                         null);
 
         //cljFilePaths.forEach(path -> cleanUp(path.toString()));

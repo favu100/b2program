@@ -12,11 +12,7 @@ import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -150,9 +146,9 @@ public class DeclarationGenerator {
     /*
     * This function generates code for sets within a machine.
     */
-    public List<String> generateEnumDeclarations(MachineNode node) {
-        List<String> enumeratedEnums = generateEnumeratedSetEnums(node);
-        List<String> deferredSetEnums = generateDeferredSetEnums(node);
+    public List<String> generateEnumDeclarations(MachineNode node, Set<String> identifier) {
+        List<String> enumeratedEnums = generateEnumeratedSetEnums(node, identifier);
+        List<String> deferredSetEnums = generateDeferredSetEnums(node, identifier);
         List<String> result = new ArrayList<>();
         result.addAll(enumeratedEnums);
         result.addAll(deferredSetEnums);
@@ -162,12 +158,13 @@ public class DeclarationGenerator {
     /*
     * This function generates code for declarations of all enumerated set elements
     */
-    private List<String> generateEnumeratedSetEnums(MachineNode node) {
+    private List<String> generateEnumeratedSetEnums(MachineNode node, Set<String> identifier) {
         node.getEnumeratedSets().forEach(set -> {
             setToEnum.put(set.getSetDeclarationNode().getName(), set.getElements().stream()
                     .map(DeclarationNode::getName)
                     .collect(Collectors.toList()));
             enumToMachine.put(set.getSetDeclarationNode().getName(), node.getName());
+            identifier.add(set.getSetDeclarationNode().getName());
         });
         return node.getEnumeratedSets().stream()
                 .map(this::declareEnums)
@@ -177,13 +174,13 @@ public class DeclarationGenerator {
     /*
     * This function generates code for declarations of all deferred set elements
     */
-    private List<String> generateDeferredSetEnums(MachineNode node) {
+    private List<String> generateDeferredSetEnums(MachineNode node, Set<String> identifier) {
         node.getDeferredSets().forEach(set -> {
             enumToMachine.put(set.getName(), node.getName());
             setToEnum.put(set.getName(), extractEnumsOfDeferredSet(set).stream()
                     .map(declaration -> callEnum(set.getName(), declaration))
                     .collect(Collectors.toList()));
-
+            identifier.add(set.getName());
         });
         return node.getDeferredSets().stream()
                 .map(this::declareEnums)

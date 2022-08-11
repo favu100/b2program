@@ -4,6 +4,7 @@ import de.hhu.stups.codegenerator.CodeGenerator;
 import de.hhu.stups.codegenerator.GeneratorMode;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -56,15 +57,25 @@ public class TestRS {
         Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
                 .getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
         CodeGenerator codeGenerator = new CodeGenerator();
-        List<Path> rsFilePaths = codeGenerator.generate(mchPath, GeneratorMode.RS,
-                false, String.valueOf(Integer.MIN_VALUE),
-                String.valueOf(Integer.MAX_VALUE), "10",
-                modelChecking, false,true,
-                addition, false, false, null);
+        List<Path> rsFilePaths = codeGenerator.generate(mchPath,
+                                                        GeneratorMode.RS,
+                                             false,
+                                                        String.valueOf(Integer.MIN_VALUE),
+                                                        String.valueOf(Integer.MAX_VALUE),
+                                            "10",
+                                                        modelChecking,
+                                        false,
+                                                  true,
+                                                        addition,
+                                          false,
+                                            false,
+                                            null,
+                                                null);
 
         Path typesPath = Paths.get(this.getClass().getClassLoader().getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust/bmachine/src"));
+        Files.createDirectories(typesPath);
         File[] oldFiles = typesPath.toFile().listFiles();
-        if (oldFiles != null && oldFiles.length > 0) Arrays.stream(oldFiles).forEach(file -> file.delete());
+        if (oldFiles != null && oldFiles.length > 0) Arrays.stream(oldFiles).forEach(this::cleanUp);
         rsFilePaths = rsFilePaths.stream().map(file -> {
             Path dest = typesPath.resolve(Paths.get(file.toFile().getName()));
             file.toFile().renameTo(dest.toFile());

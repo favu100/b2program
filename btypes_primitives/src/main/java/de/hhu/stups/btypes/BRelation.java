@@ -772,6 +772,15 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <S,T> BRelation<BTuple<S,T>,BTuple<S,T>> identity(BRelation<S,T> arg) {
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(BTuple<S,T> e : arg) {
+			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e, SET.invoke(SEQ.invoke(LIST.invoke(e))));
+		}
+		return new BRelation<BTuple<S,T>,BTuple<S,T>>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
 	public static <S,T> BRelation<S,T> cartesianProduct(BSet<S> arg1, BSet<T> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 		for(S e1 : arg1) {

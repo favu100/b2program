@@ -41,7 +41,7 @@ public class TestRS {
     }
 
     public void testRS(String machine, String machineName, String addition, boolean execute) throws Exception {
-        testRS(machine, machineName, addition, execute, false);
+        testRS(machine, machineName, addition, execute, false, false);
     }
 
     public void testRSMC(String machine) throws Exception {
@@ -49,13 +49,21 @@ public class TestRS {
     }
 
     public void testRSMC(String machine, boolean execute) throws Exception {
-        testRS(machine, machine, null, execute, true);
-        //TODO: validation of MC result
+        testRSMC(machine, null, execute);
     }
 
-    public void testRS(String machine, String machineName, String addition, boolean execute, boolean modelChecking) throws Exception {
-        Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
-                .getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
+    public void testRSMC(String machine, String machinePath, boolean execute) throws Exception {
+        testRSMC(machine, machinePath, execute, false);
+    }
+
+    public void testRSMC(String machine, String machinePath, boolean execute, boolean noDead) throws Exception {
+        testRS(machine, machinePath, null, execute, true, noDead);
+    }
+
+    public void testRS(String machine, String machinePath, String addition, boolean execute, boolean modelChecking, boolean noDead) throws Exception {
+        if (machinePath == null) { machinePath = "../../../resources/test/de/hhu/stups/codegenerator/"; }
+        if (!machinePath.endsWith("/")) { machinePath += "/"; }
+        Path mchPath = Paths.get(CodeGenerator.class.getClassLoader().getResource("").toURI()).resolve(machinePath + machine + ".mch").normalize();
         CodeGenerator codeGenerator = new CodeGenerator();
         List<Path> rsFilePaths = codeGenerator.generate(mchPath,
                                                         GeneratorMode.RS,
@@ -101,6 +109,7 @@ public class TestRS {
 
         String progArgs = "";
         if (modelChecking) { progArgs = " -- mixed 2 true"; }
+        if (noDead) { progArgs += " -nodead"; }
 
         Process executeProcess = runtime.exec("cargo run --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml" + progArgs);
         executeProcess.waitFor();

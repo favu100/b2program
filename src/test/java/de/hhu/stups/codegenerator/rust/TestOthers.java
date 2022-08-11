@@ -7,4 +7,9 @@ public class TestOthers extends TestRS{
     public void test_SetRelationConstructs() throws Exception {
         testRSMC("SetRelationConstructs", true);
     }
+
+    @Test
+    public void test_ArithmeticExpLaws() throws Exception {
+        testRSMC("ArithmeticExpLaws", "../../../../benchmarks/model_checking/ProB/Other", true, true);
+    }
 }

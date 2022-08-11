@@ -74,7 +74,7 @@ impl <machine> {
 <if(forModelChecking)>
 fn main() {
     let args: Vec\<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() \< 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::\<usize>().unwrap();
     if threads \<= 0 { panic!("Input for number of threads is wrong."); }
@@ -87,10 +87,21 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        <machine>::model_check_single_threaded(mc_type, is_caching);
+        <machine>::model_check_single_threaded(mc_type, is_caching, no_dead);
     } else {
-        <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead);
     }
 }
 <endif>
@@ -552,7 +563,7 @@ and(arg1, arg2) ::= <<
 >>
 
 implies(arg1, arg2) ::= <<
-<arg1>.implies(&<arg2>)
+<arg1>.implies(|| <arg2>.booleanValue())
 >>
 
 equivalent(arg1, arg2) ::= <<
@@ -895,7 +906,7 @@ fn get_invariant_dependencies(op: &'static str) -> Vec\<&str> {
     }
 }
 
-fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool) {
     let mut machine = <machine>::new();
 
     let mut all_states = HashSet::\<<machine>\>::new();
@@ -917,7 +928,7 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
             println!("INVARIANT VIOLATED");
             stop_threads = true;
         }
-        if next_states.is_empty() {
+        if !no_dead && next_states.is_empty() {
             print!("DEADLOCK DETECTED");
             stop_threads = true;
         }
@@ -935,7 +946,7 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
     Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
 }
 
-fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool) {
     let threadPool = ThreadPool::new(threads);
 
     let machine = <machine>::new();
@@ -964,7 +975,7 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
         //println!("Thread {:?} spawning a thread", thread::current().id());
         threadPool.execute(move|| {
             let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-            if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+            if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
             //println!("Thread {:?} executing", thread::current().id());
             next_states.into_iter()

@@ -13,7 +13,7 @@ pub trait BBooleanT: BObject + IntoBool + Copy {
     fn xor(&self, other: &Self) -> Self;
     fn and(&self, other: &Self) -> Self;
     fn not(&self) -> Self;
-    fn implies(&self, other: &Self) -> Self;
+    fn implies<F: FnOnce() -> bool>(&self, other: F) -> Self;
     fn equivalent(&self, other: &Self) -> Self;
     fn equal(&self, other: &Self) -> Self;
     fn unequal(&self, other: &Self) -> Self;
@@ -33,7 +33,7 @@ impl BBooleanT for bool {
     fn xor(&self, other: &Self) -> Self { *self ^ *other }
     fn and(&self, other: &Self) -> Self { *self && *other }
     fn not(&self) -> Self { !*self }
-    fn implies(&self, other: &Self) -> Self { !*self || *other }
+    fn implies<F: FnOnce() -> bool>(&self, other: F) -> Self { !*self || other() }
     fn equivalent(&self, other: &Self) -> Self { *self == *other }
     fn equal(&self, other: &Self) -> Self { *self == *other }
     fn unequal(&self, other: &Self) -> Self { *self != *other }

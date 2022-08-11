@@ -350,17 +350,17 @@ INVARIANT
   & union({}) = {x|x <: TT & #y.(y : {} & x : y)}
   & SS \/ TT = {x|x : POW(elements) & #y.(y : {SS,TT} & x : y)}
   & SS \/ (TT \/ VV) = {x|x : POW(elements) & #y.(y : {SS,TT,VV} & x : y)}
-  /*& (
+  & (
      SS /= {}
      =>
-     inter(SS) = inter({RANGE_LAMBDA__|#y.(y : SS & RANGE_LAMBDA__ = y)})
+     inter(SS) = inter({RANGE_LAMBDA__|RANGE_LAMBDA__ : POW(elements) & #y.(y : SS & RANGE_LAMBDA__ = y)})
     )
-  & union(SS) = union({RANGE_LAMBDA__|#y.(y : SS & RANGE_LAMBDA__ = y)})
+  & union(SS) = union({RANGE_LAMBDA__|RANGE_LAMBDA__ : POW(elements) & #y.(y : SS & RANGE_LAMBDA__ = y)})
   & (
      SS /= POW(elements)
      =>
-     inter({RANGE_LAMBDA__|#x.(x /: SS & RANGE_LAMBDA__ = x)}) = inter({RANGE_LAMBDA__|#x.(x /: SS & RANGE_LAMBDA__ = x)})
-    )*/
+     inter({RANGE_LAMBDA__|RANGE_LAMBDA__ : POW(elements) & #x.(x : POW(elements) & x /: SS & RANGE_LAMBDA__ = x)}) = inter({RANGE_LAMBDA__|RANGE_LAMBDA__ : POW(elements) & #x.(x : POW(elements) & x /: SS & RANGE_LAMBDA__ = x)})
+    )
   & (
      (
       SS /= {}

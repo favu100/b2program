@@ -271,6 +271,9 @@ public class SetComprehensionGenerator {
                 } else {
                     TemplateHandler.add(tuple, "arg1", result);
                 }
+                if(i+1 >= types.size()) {
+                    continue;
+                }
                 String name = declarations.get(i+1).getName();
                 TemplateHandler.add(tuple, "arg2", "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
                 result = tuple.render();

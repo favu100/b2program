@@ -43,7 +43,7 @@ pub struct <machine> {
     <if(constants_declarations)><constants_declarations; separator="\n"><endif>
     <sets; separator="\n">
     <if(forModelChecking)>
-    #[derivative(Hash="ignore", PartialEq="ignore")]
+    <if(transitionCachesDeclaration)>#[derivative(Hash="ignore", PartialEq="ignore")]<endif>
     <transitionCachesDeclaration; separator="\n#[derivative(Hash=\"ignore\", PartialEq=\"ignore\")]\n"><endif>
 }
 

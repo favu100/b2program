@@ -130,7 +130,8 @@ public class TestRS {
             assertEquals(expectedOutput, result);
         } else {
             System.out.println("Asserting Success: ");
-            System.out.println(result);
+            System.out.println("Expected: " + expectedOutput);
+            System.out.println("Gotten  : " + result);
             assertTrue(result.contains(expectedOutput));
         }
         cleanUp(newMainFile);

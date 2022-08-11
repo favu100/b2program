@@ -5,15 +5,25 @@
 Executing benchmarks is done by executing ``make`` in each of the directories.
 
 ## Technical Data
+### System A
 - Java: Java HotSpot(TM) 64-Bit Server VM (build 15+36-1562, mixed mode, sharing)
-- C++ Compiler: Apple clang version 13.0.0 (clang-1300.0.29.30) with -O1 and -O2 
+- C++ Compiler: Apple clang version 13.0.0 (clang-1300.0.29.30) with -O1 and -O2
 - ProB: 1.9.0-nightly (b6d1b600dbf06b7984dd2a1dd7403206cfd9d394)
 - B2Program Commit: 4ba7747dacda81e57d44830b45e768785a7be4d8
 - Device: MacBook Air with 8 GB of RAM and a 1.6 GHz Intel i5 processor with two cores
 
+### System B
+- Java: OpenJDK 64-Bit Server VM AdoptOpenJDK (build 15.0.2+7, mixed mode, sharing)
+- C++ Compiler: clang version 7.0.1-8+deb10u2 (tags/RELEASE_701/final) with -O1 and -O2
+- Rust: rustc 1.58.1 (db9d1b20b 2022-01-20), cargo 1.58.0 (f01b232bc 2022-01-19)
+- ProB: 1.12.0-nightly (693d2769ec052b92f3b9f3cfc8e50b53bd41a0a7)
+- B2Programm Commit: 7e0bb37cf1b556bd7f7e8f8a1d63a26ebe16ad18 (branch: rust-support, will probably change on rebase)
+- Device: Debian 10 (buster) under wsl 2 (Windows 10), with Ryzen 7 1700 (8C/16T) and 32GB RAM
+
 ## Results
 
 ### Single-threaded
+#### System A
 
 | Machines          |          | ProB OP | ProB ST | TLC     | Java              | C++ -O1           | C++ -O2           |
 |-------------------|----------|---------|---------|---------|-------------------|-------------------|-------------------|
@@ -48,9 +58,43 @@ Executing benchmarks is done by executing ``make`` in each of the directories.
 |                   | Speed-up | 1       | 0.83    | 0.002   | < 0.001 / < 0.001 | < 0.001 / < 0.001 | < 0.001 / < 0.001 |
 |                   | Memory   | 166907  | 166872  | 255230  | - / -             | - / -             | - / -             |
 
+#### System B
+
+| Machines          |          | ProB OP | ProB ST | Java                   | C++ -O1 | C++ -O2 | Rust                  |
+|-------------------|----------|---------|---------|------------------------|---------|---------|-----------------------|
+| Lift_MC_Large     | Runtime  |         |         | 2.23 / 2.7             |         |         | 00.42 / 00.50         |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 700.824 / 721.548      |         |         | 54.734 / 54.742       |
+| Cruise Controller | Runtime  |         |         | 1.73 / 2.28            |         |         | 00.07 / 00.18         |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 159.292 / 161.860      |         |         | 5011 / 5226           |
+| Landing Gear      | Runtime  |         |         | 11.16 / 13.52          |         |         | 09.84 / 19.23         |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 1.063.784 / 1.352.408  |         |         | 734.749 / 854.914     |
+| CAN BUS           | Runtime  |         |         | 3.79 / 4.47            |         |         | 02.3 / 02.45          |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 542.680 / 1.080.708    |         |         | 1.012.179 / 1.049.515 |
+| Train1_Lukas      | Runtime  |         |         | 13.0 / 12.25           |         |         | 07.08 / 07.14         |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 701.600 / 1.044.600    |         |         | 187.201 / 255.626     |
+| Train_1_beebook   | Runtime  |         |         | 626.39 / 545.66        |         |         | 445.79 / 416.89       |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 1.451.340 / 3.110.416  |         |         | 4.735.570 / 6.047.158 |
+| nota              | Runtime  |         |         | 10.75 / 9.58           |         |         | 20.12 / 20.77         |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 1.201.656 / 1.512.316  |         |         | 1.321.891 / 1.269.008 |
+| sort_1000         | Runtime  |         |         | 988.25 / 85.87         |         |         | 516 / 95.12           |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 1.202.264 / 1.361.680  |         |         | 269.996 / 269.939     |
+| N Queens (N=4)    | Runtime  |         |         | 34.41 / 35.73          |         |         | 22.34 / 22.74         |
+|                   | Speed-up |         |         |                        |         |         |                       |
+|                   | Memory   |         |         | 511.568 / 503.032      |         |         | 345.376 / 345.386     |
+
 
 ### Multi-threaded (6 Threads)
-
+Note: Threadcount only includes worker threads (the ones that actually do the model-checking).
+Current implementation requires an additional coordinator thread.
+#### System A
 | Machines          |                  | TLC     | Java              | C++ -O1           | C++ -O2           |
 |-------------------|------------------|---------|-------------------|-------------------|-------------------|
 | Counter           | Runtime          | 11.79   | 22.98 / 26.34     | 17.55 / 24.47     | 17.62 / 24.47     |
@@ -94,6 +138,38 @@ Executing benchmarks is done by executing ``make`` in each of the directories.
 |                   | Speed-up to 1 TH | 1.46    | - / -             | - / -             | - / -             |
 |                   | Memory           | 260730  | - / -             | - / -             | - / -             |
 
+#### System B
+
+| Machines          |          | ProB OP | ProB ST | Java                  | C++ -O1 | C++ -O2 | Rust                  |
+|-------------------|----------|---------|---------|-----------------------|---------|---------|-----------------------|
+| Lift_MC_Large     | Runtime  |         |         | 67.14 / 67.37         |         |         | 09.82 / 09.96         |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 548.128 / 522.388     |         |         | 38.637 / 38.590       |
+| Cruise Controller | Runtime  |         |         | 1.76 / 1.78           |         |         | 00.04 / 00.06         |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 171.916 / 180.132     |         |         | 6978 / 6959           |
+| Landing Gear      | Runtime  |         |         | 6.42 / 6.69           |         |         | 03.41 / 04.56         |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 1.405.280 / 2.043.336 |         |         | 727.461 / 847.765     |
+| CAN BUS           | Runtime  |         |         | 3.52 / 4.29           |         |         | 01.64 / 01.64         |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 550.004 / 1.159.472   |         |         | 1.047.918 / 1.050.520 |
+| Train1_Lukas      | Runtime  |         |         | 5.96 / 5.44           |         |         | 01.61 / 01.46         |
+|                   | Speed-up |         |         |                       |         |         |
+|                   | Memory   |         |         | 1.468.360 / 1.772.524 |         |         | 189.500 / 250.548     |
+| Train_1_beebook   | Runtime  |         |         | 174.56 / 147.29       |         |         | 89.65 / 76.61         |
+|                   | Speed-up |         |         | 2.555.344 / 3.094.376 |         |         |                       |
+|                   | Memory   |         |         |                       |         |         | 4.998.943 / 5.484.696 |
+| nota              | Runtime  |         |         | 5.12 / 4.74           |         |         | 05.02 / 05.24         |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 2.185.468 / 2.464.928 |         |         | 1.390.200 / 1.369.317 |
+| sort_1000         | Runtime  |         |         | 208.82 / 37.32        |         |         | 110.91 / 27.47        |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 2.359.820 / 2.420.428 |         |         | 243.784 / 243.330     |
+| N Queens (N=4)    | Runtime  |         |         | 32.87 / 32.2          |         |         | 21.34 / 22.46         |
+|                   | Speed-up |         |         |                       |         |         |                       |
+|                   | Memory   |         |         | 508.736 / 499.924     |         |         | 345.888 / 345.855     |
+
 
 
 Runtime in Seconds
@@ -135,5 +211,3 @@ Entries as v1/v2 for without/with caching
 |                   | Compiling           | -    | -    | 2.1  | 9.14 / 11.35  |
 
 Time in Seconds
-
-Entries as v1/v2 for -O1/-O2

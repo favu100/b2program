@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.List.of;
+
 public class SubstitutionGenerator {
 
     private final STGroup currentGroup;
@@ -237,17 +239,40 @@ public class SubstitutionGenerator {
         TemplateHandler.add(ifST, "predicate", machineGenerator.visitPredicateNode(node.getConditions().get(0), null));
         int exprCount = machineGenerator.getCurrentExpressionCount();
         int stateCount = machineGenerator.getCurrentStateCount();
-        TemplateHandler.add(ifST, "then", machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null));
+
+        String thenStr = machineGenerator.visitSubstitutionNode(node.getSubstitutions().get(0), null);
+        int exprCountThen = machineGenerator.getCurrentExpressionCount();
+        int stateCountThen = machineGenerator.getCurrentStateCount();
+
+        // reset counter for next branch
         machineGenerator.setCurrentExpressionCount(exprCount);
         machineGenerator.setCurrentStateCount(stateCount);
-        TemplateHandler.add(ifST, "else1", generateElseIfs(node));
-        machineGenerator.setCurrentExpressionCount(exprCount);
-        machineGenerator.setCurrentStateCount(stateCount);
+        List<String> elseStr = generateElseIfs(node);
+        int exprCountElse = machineGenerator.getCurrentExpressionCount();
+        int stateCountElse = machineGenerator.getCurrentStateCount();
 
         if (node.getElseSubstitution() != null) {
-            TemplateHandler.add(ifST, "else1", generateElse(node));
+            elseStr = Collections.singletonList(generateElse(node));
+            exprCountElse = machineGenerator.getCurrentExpressionCount();
+            stateCountElse = machineGenerator.getCurrentStateCount();
         }
 
+        if (machineGenerator.getMode() == GeneratorMode.PL) {
+            if (exprCountElse < exprCountThen) {
+                elseStr.add(",\nExpr_" + (exprCountThen-1) + " = Expr_" + (exprCountElse-1));
+            } else if (exprCountElse > exprCountThen) {
+                thenStr += ",\nExpr_" + (exprCountElse-1) + " = Expr_" + (exprCountThen-1);
+            }
+
+            if (stateCountElse < stateCountThen) {
+                elseStr.add(",\nState_" + stateCountThen + " = State_" + stateCountElse);
+            } else if (stateCountElse > stateCountThen) {
+                thenStr += ",\nState_" + stateCountElse + " = State_" + stateCountThen;
+            }
+        }
+
+        TemplateHandler.add(ifST, "then", thenStr);
+        TemplateHandler.add(ifST, "else1", elseStr);
 
         int counter = 0;
         String operation = null;

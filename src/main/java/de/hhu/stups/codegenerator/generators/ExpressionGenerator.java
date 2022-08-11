@@ -360,19 +360,18 @@ public class ExpressionGenerator {
                         ST assignment = currentGroup.getInstanceOf("enum_assignment");
                         TemplateHandler.add(assignment, "identifier", id.toString());
                         TemplateHandler.add(assignment, "ExprCount", machineGenerator.getAndIncCurrentExpressionCount());
-                        exprOpNodes.add(assignment.render());
+                        exprOpNodes.add(visitExprNode(n, true));
                         expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
                     }
                 } else {
                     String s = machineGenerator.visitExprOperatorNode((ExpressionOperatorNode) n, null);
-                    if (machineGenerator.getCurrentExpressionCount() == 0 || !s.contains("=") || !s.contains("(")) { // is not assignment or method call
+                    if (machineGenerator.getCurrentExpressionCount() == 0 && !s.contains("=") && (!s.contains("(") || isNoMethod(s))) { // is not assignment or method call
                         expressionList.add(s);
                     } else {
                         exprOpNodes.add(s);
                         expressionList.add("Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
                     }
                 }
-
             } else if (n instanceof IdentifierExprNode && machineGenerator.getEnumIdentifier().contains(n.toString())) {
                 ST assignment = currentGroup.getInstanceOf("enum_assignment");
                 TemplateHandler.add(assignment, "identifier", n.toString());
@@ -384,6 +383,10 @@ public class ExpressionGenerator {
             }
         }
         return operatorGenerator.generateBinary(((OperatorNode<?>) node)::getOperator, expressionList, machineGenerator, exprOpNodes);
+    }
+
+    private boolean isNoMethod(String s) {
+        return s.contains("interval") || s.contains("bSet");
     }
 
     /*
@@ -474,7 +477,21 @@ public class ExpressionGenerator {
     */
     private String generateUnaryExpression(ExpressionOperatorNode.ExpressionOperator operator, List<String> expressionList) {
         ST expression = generateUnary(operator);
-        TemplateHandler.add(expression, "obj", expressionList.get(0));
+        if (mode == GeneratorMode.PL) {
+            if (machineGenerator.getEnumIdentifier().contains(expressionList.get(0))) {
+                List<String> exprOpNodes = new ArrayList<>();
+                ST assignment = currentGroup.getInstanceOf("enum_assignment");
+                TemplateHandler.add(assignment, "identifier", expressionList.get(0));
+                TemplateHandler.add(assignment, "ExprCount", machineGenerator.getAndIncCurrentExpressionCount());
+                exprOpNodes.add(assignment.render());
+                TemplateHandler.add(expression, "obj", "Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                TemplateHandler.add(expression, "exprBefore", exprOpNodes);
+            } else {
+                TemplateHandler.add(expression, "obj", expressionList.get(0));
+            }
+        } else {
+            TemplateHandler.add(expression, "obj", expressionList.get(0));
+        }
         TemplateHandler.add(expression, "args", expressionList.subList(1, expressionList.size()));
         TemplateHandler.add(expression, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         TemplateHandler.add(expression, "stateCount", machineGenerator.getCurrentStateCount());

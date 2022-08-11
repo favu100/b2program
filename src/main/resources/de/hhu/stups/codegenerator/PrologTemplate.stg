@@ -1,5 +1,4 @@
 machine(forModelChecking, props, imports, machine, structs, constants_declarations, includes, enums, sets, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal) ::= <<
-% :- use_module(environment).
 :- use_module(evaluator).
 
 <imports>
@@ -47,9 +46,9 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 >>
 
 props(invariants) ::= <<
-prop(st, uninitialized).
+prop(st, uninitialized) :- !.
 prop(State, unsafe) :-
-    State \= st,
+    State \= st, !,
     <invariants:{it | \+ <it>(State)}; separator=";\n">.
 prop(State, List) :-
     State \= st,
@@ -91,7 +90,7 @@ and(arg1, arg2) ::= <<
 >>
 
 implies(arg1, arg2) ::= <<
-\+ <arg1>; <arg2>
+\+ (<arg1>); <arg2>
 >>
 
 equivalent(arg1, arg2) ::= <<
@@ -177,7 +176,7 @@ elseif(predicate, then) ::= <<
 >>
 
 enum_assignment(identifier, ExprCount) ::= <<
-<identifier>(Expr_<ExprCount>)
+enum_<identifier>(Expr_<ExprCount>)
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
@@ -483,7 +482,7 @@ Expr_<exprCount> = bSet([<enums; separator=", ">])<endif>
 >>
 
 set_enum_declaration(name, enumsCounted, exprCount) ::= <<
-<name>([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">]).
+enum_<name>(bSet([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">])).
 
 >>
 
@@ -508,7 +507,10 @@ type(type, fromOtherMachine, otherMachine) ::= <<
     <type>
 >>
 
-unary(operator, obj, args, exprCount, stateCount) ::= <<
+unary(operator, obj, args, exprCount, stateCount, exprBefore) ::= <<
+<if(exprBefore)>
+<exprBefore; separator=",\n">,
+<endif>
 <if(args)>
 <operator>(State_<stateCount>, <obj>, <args>, Expr_<exprCount>)<else>
 <operator>(State_<stateCount>, <obj>, Expr_<exprCount>)<endif>

@@ -444,6 +444,14 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return subset(arg).not();
 	}
 
+	public BBoolean strictSubset(BRelation<S,T> set) {
+		return new BBoolean(set.size() != this.size() && set.subset(this).booleanValue());
+	}
+
+	public BBoolean strictNotSubset(BRelation<S, T> set) {
+		return new BBoolean(set.size() == this.size() || !set.subset(this).booleanValue());
+	}
+
 	@SuppressWarnings("unchecked")
 	public BRelation<S,T> override(BRelation<S,T> arg) {
 		PersistentHashMap otherMap = arg.map;

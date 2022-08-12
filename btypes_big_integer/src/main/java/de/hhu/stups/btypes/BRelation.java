@@ -784,6 +784,54 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <S,T,R> BRelation<BTuple<S,BTuple<T,R>>, BTuple<T,R>> projection2(BSet<S> arg1, BRelation<T,R> arg2) {
+
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(Object e1 : arg1) {
+			for(Object e2 : arg2) {
+				S element1 = (S) e1;
+				BTuple<T,R> element2 = (BTuple<T,R>) e2;
+
+				BTuple<S,BTuple<T,R>> tuple = new BTuple<S,BTuple<T,R>>(element1, element2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
+			}
+		}
+		return new BRelation<BTuple<S,BTuple<T,R>>, BTuple<T,R>>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <S,T,R> BRelation<BTuple<BTuple<S,T>,R>, R> projection2(BRelation<S,T> arg1, BSet<R> arg2) {
+
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(Object e1 : arg1) {
+			for(Object e2 : arg2) {
+				BTuple<S,T> element1 = (BTuple<S,T>) e1;
+				R element2 = (R) e2;
+
+				BTuple<BTuple<S,T>,R> tuple = new BTuple<BTuple<S,T>,R>(element1, element2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
+			}
+		}
+		return new BRelation<BTuple<BTuple<S,T>,R>, R>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <S,T,R,A> BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<R,A>> projection2(BRelation<S,T> arg1, BRelation<R,A> arg2) {
+
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(Object e1 : arg1) {
+			for(Object e2 : arg2) {
+				BTuple<S,T> element1 = (BTuple<S,T>) e1;
+				BTuple<R,A> element2 = (BTuple<R,A>) e2;
+
+				BTuple<BTuple<S,T>,BTuple<R,A>> tuple = new BTuple<BTuple<S,T>,BTuple<R,A>>(element1, element2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
+			}
+		}
+		return new BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<R,A>>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
 	public BRelation<S,BSet<T>> fnc() {
 		PersistentHashMap thisMap = this.map;
 		PersistentHashSet domain = this.domain().getSet();

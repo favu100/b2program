@@ -851,6 +851,36 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <S,T,R> BRelation<S,BTuple<T,R>> cartesianProduct(BSet<S> arg1, BRelation<T,R> arg2) {
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(S e1 : arg1) {
+			PersistentHashSet rangeSet = PersistentHashSet.EMPTY;
+			for(BTuple<T,R> e2 : arg2) {
+				rangeSet = (PersistentHashSet) UNION.invoke(rangeSet, SET.invoke(SEQ.invoke(LIST.invoke(e2))));
+			}
+			if(!rangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, rangeSet);
+			}
+		}
+		return new BRelation<S,BTuple<T,R>>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <S,T,R,A> BRelation<BTuple<S,T>,BTuple<R,A>> cartesianProduct(BRelation<S,T> arg1, BRelation<R,A> arg2) {
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for(BTuple<S,T> e1 : arg1) {
+			PersistentHashSet rangeSet = PersistentHashSet.EMPTY;
+			for(BTuple<R,A> e2 : arg2) {
+				rangeSet = (PersistentHashSet) UNION.invoke(rangeSet, SET.invoke(SEQ.invoke(LIST.invoke(e2))));
+			}
+			if(!rangeSet.isEmpty()) {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, rangeSet);
+			}
+		}
+		return new BRelation<BTuple<S,T>,BTuple<R,A>>(resultMap);
+	}
+
+	@SuppressWarnings("unchecked")
 	public BTuple<S,T> nondeterminism(int index) {
 		int size = this.size();
 		if(index >= size) {

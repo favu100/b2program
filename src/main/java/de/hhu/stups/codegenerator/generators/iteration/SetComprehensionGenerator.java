@@ -271,7 +271,7 @@ public class SetComprehensionGenerator {
                 } else {
                     TemplateHandler.add(tuple, "arg1", result);
                 }
-                if(i+1 >= types.size()) {
+                if(i+1 >= declarations.size()) {
                     continue;
                 }
                 String name = declarations.get(i+1).getName();

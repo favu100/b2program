@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class ModelCheckingInfo {
 
@@ -24,9 +25,17 @@ public class ModelCheckingInfo {
 
     private final Map<String, List<String>> guardDependency;
 
+    private final Map<String, List<String>> guardsRead;
+
+    private final Map<String, List<String>> operationsRead;
+
+    private final Map<String, List<String>> operationsWrite;
+
     public ModelCheckingInfo(final String machineName, final List<String> variables, final List<String> constants, final Map<String, String> transitionEvaluationFunctions,
                              final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions,
-                             final Map<String, List<String>> invariantDependency, final Map<String, List<String>> guardDependency) {
+                             final Map<String, List<String>> invariantDependency, final Map<String, List<String>> guardDependency,
+                             final Map<String, List<String>> guardsRead,
+                             final Map<String, List<String>> operationsRead, final Map<String, List<String>> operationsWrite) {
         this.machineName = machineName;
         this.variables = variables;
         this.constants = constants;
@@ -35,6 +44,9 @@ public class ModelCheckingInfo {
         this.invariantFunctions = invariantFunctions;
         this.invariantDependency = invariantDependency;
         this.guardDependency = guardDependency;
+        this.guardsRead = guardsRead;
+        this.operationsRead = operationsRead;
+        this.operationsWrite = operationsWrite;
     }
 
     public String getMachineName() {
@@ -69,17 +81,33 @@ public class ModelCheckingInfo {
         return guardDependency;
     }
 
+    public Map<String, List<String>> getGuardsRead() {
+        return guardsRead;
+    }
+
+    public Map<String, List<String>> getOperationsRead() {
+        return operationsRead;
+    }
+
+    public Map<String, List<String>> getOperationsWrite() {
+        return operationsWrite;
+    }
+
     @Override
     public String toString() {
-        return "ModelCheckingInfo{" +
-                "machineName='" + machineName + '\'' +
-                ", variables=" + variables +
-                ", operationFunctions=" + operationFunctions +
-                ", transitionEvaluationFunctions=" + transitionEvaluationFunctions +
-                ", invariantFunctions=" + invariantFunctions +
-                ", invariantDependency=" + invariantDependency +
-                ", guardDependency=" + guardDependency +
-                '}';
+        return new StringJoiner(", ", ModelCheckingInfo.class.getSimpleName() + "[", "]")
+                .add("machineName='" + machineName + "'")
+                .add("variables=" + variables)
+                .add("constants=" + constants)
+                .add("operationFunctions=" + operationFunctions)
+                .add("transitionEvaluationFunctions=" + transitionEvaluationFunctions)
+                .add("invariantFunctions=" + invariantFunctions)
+                .add("invariantDependency=" + invariantDependency)
+                .add("guardDependency=" + guardDependency)
+                .add("guardsRead=" + guardsRead)
+                .add("operationsRead=" + operationsRead)
+                .add("operationsWrite=" + operationsWrite)
+                .toString();
     }
 
     public JsonObject toJsonObject() {
@@ -123,13 +151,37 @@ public class ModelCheckingInfo {
         }
         jsonObject.add("invariantDependency", writeInformationObject);
 
-        JsonObject invariantReadsObject = new JsonObject();
+        JsonObject guardReadsObject = new JsonObject();
         for(String key : guardDependency.keySet()) {
             JsonArray guardReadsArray = new JsonArray();
             guardDependency.get(key).forEach(guardReadsArray::add);
-            invariantReadsObject.add(key, guardReadsArray);
+            guardReadsObject.add(key, guardReadsArray);
         }
-        jsonObject.add("guardDependency", invariantReadsObject);
+        jsonObject.add("guardDependency", guardReadsObject);
+
+        JsonObject readGuardsObject = new JsonObject();
+        for(String key : guardsRead.keySet()) {
+            JsonArray guardsReadArray = new JsonArray();
+            guardsRead.get(key).forEach(guardsReadArray::add);
+            readGuardsObject.add(key, guardsReadArray);
+        }
+        jsonObject.add("guardsRead", readGuardsObject);
+
+        JsonObject operationReadsObject = new JsonObject();
+        for(String key : operationsRead.keySet()) {
+            JsonArray operationsReadsArray = new JsonArray();
+            operationsRead.get(key).forEach(operationsReadsArray::add);
+            operationReadsObject.add(key, operationsReadsArray);
+        }
+        jsonObject.add("operationsRead", operationReadsObject);
+
+        JsonObject operationWriteObject = new JsonObject();
+        for(String key : operationsWrite.keySet()) {
+            JsonArray operationsWriteArray = new JsonArray();
+            operationsWrite.get(key).forEach(operationsWriteArray::add);
+            operationWriteObject.add(key, operationsWriteArray);
+        }
+        jsonObject.add("operationsWrite", operationWriteObject);
 
         return jsonObject;
     }

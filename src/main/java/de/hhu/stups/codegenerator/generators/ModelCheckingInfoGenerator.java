@@ -104,17 +104,18 @@ public class ModelCheckingInfoGenerator {
         List<OperationFunctionInfo> operationFunctions = generateOperationFunctions(machineName, node);
         List<String> invariantFunctions = generateInvariantFunctions(node);
 
-        Map<String, List<String>> writeInformation = generateWriteInformation(node.getOperations(), node.getVariables());
+        Map<String, List<String>> operationWrites = generateWriteInformation(node.getOperations(), node.getVariables());
+        Map<String, List<String>> operationReads = generateReadInformation(node.getOperations(), node.getVariables());
         Map<String, List<String>> invariantReads = generateInvariantReads(node.getInvariant(), node.getVariables());
         Map<String, List<String>> guardsReads = generateGuardsRead(node.getOperations(), node.getVariables());
 
         // Map from event to invariant conjunct
         Map<String, List<String>> invariantDependency = new HashMap<>();
 
-        for(String writeKey : writeInformation.keySet()) {
+        for(String writeKey : operationWrites.keySet()) {
             Set<String> dependentInvariant = new HashSet<>();
             for(String invariantReadKey : invariantReads.keySet()) {
-                Set<String> writtenVariables = new HashSet<>(writeInformation.get(writeKey));
+                Set<String> writtenVariables = new HashSet<>(operationWrites.get(writeKey));
                 Set<String> readVariables = new HashSet<>(invariantReads.get(invariantReadKey));
 
                 for(String writtenVar : writtenVariables) {
@@ -129,10 +130,10 @@ public class ModelCheckingInfoGenerator {
 
         Map<String, List<String>> guardDependency = new HashMap<>();
 
-        for(String writeKey : writeInformation.keySet()) {
+        for(String writeKey : operationWrites.keySet()) {
             Set<String> dependentGuard = new HashSet<>();
             for(String guardReadKey : guardsReads.keySet()) {
-                Set<String> writtenVariables = new HashSet<>(writeInformation.get(writeKey));
+                Set<String> writtenVariables = new HashSet<>(operationWrites.get(writeKey));
                 Set<String> readVariables = new HashSet<>(guardsReads.get(guardReadKey));
 
                 for(String writtenVar : writtenVariables) {
@@ -146,7 +147,7 @@ public class ModelCheckingInfoGenerator {
 
         // TODO: Split guards conjuncts
         return new ModelCheckingInfo(machineName, variables, constants, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
-                invariantDependency, guardDependency);
+                invariantDependency, guardDependency, guardsReads, operationReads, operationWrites);
     }
 
     public Map<String, List<String>> generateWriteInformation(List<OperationNode> operations, List<DeclarationNode> variables) {
@@ -163,6 +164,22 @@ public class ModelCheckingInfoGenerator {
             writeInformation.put(opName, identifiers);
         }
         return writeInformation;
+    }
+
+    public Map<String, List<String>> generateReadInformation(List<OperationNode> operations, List<DeclarationNode> variables) {
+        List<String> variablesAsString = variables.stream().map(DeclarationNode::toString).collect(Collectors.toList());
+        Map<String, List<String>> readInformation = new HashMap<>();
+        for (OperationNode operation : operations) {
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitSubstitutionNode(operation.getSubstitution(), null);
+            List<String> identifiers = identifierAnalyzer.getIdentifiers()
+                    .stream()
+                    .filter(variablesAsString::contains)
+                    .collect(Collectors.toList());
+            String opName = nameHandler.handle(operation.getName());
+            readInformation.put(opName, identifiers);
+        }
+        return readInformation;
     }
 
     public Map<String, List<String>> generateInvariantReads(PredicateNode invariant, List<DeclarationNode> variables) {

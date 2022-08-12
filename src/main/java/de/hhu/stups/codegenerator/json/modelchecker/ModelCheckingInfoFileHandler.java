@@ -86,9 +86,42 @@ public class ModelCheckingInfoFileHandler {
             guardDependency.put(key, dependentGuard);
         }
 
+        Map<String, List<String>> guardReads = new HashMap<>();
+        JsonObject guardReadsObject = modelCheckingInfoObject.getAsJsonObject("guardsReads");
+        for(String key : guardReadsObject.keySet()) {
+            List<String> readVariables = new ArrayList<>();
+            JsonArray guardsReadArray = guardReadsObject.get(key).getAsJsonArray();
+            for(int i = 0; i < guardsReadArray.size(); i++) {
+                readVariables.add(guardsReadArray.get(i).getAsString());
+            }
+            guardReads.put(key, readVariables);
+        }
+
+        Map<String, List<String>> operationReads = new HashMap<>();
+        JsonObject operationReadsObject = modelCheckingInfoObject.getAsJsonObject("operationReads");
+        for(String key : operationReadsObject.keySet()) {
+            List<String> readVariables = new ArrayList<>();
+            JsonArray operationReadArray = operationReadsObject.get(key).getAsJsonArray();
+            for(int i = 0; i < operationReadArray.size(); i++) {
+                readVariables.add(operationReadArray.get(i).getAsString());
+            }
+            operationReads.put(key, readVariables);
+        }
+
+        Map<String, List<String>> operationWrites = new HashMap<>();
+        JsonObject operationWritesObject = modelCheckingInfoObject.getAsJsonObject("operationWrites");
+        for(String key : operationWritesObject.keySet()) {
+            List<String> writtenVariables = new ArrayList<>();
+            JsonArray operationWriteArray = operationWritesObject.get(key).getAsJsonArray();
+            for(int i = 0; i < operationWriteArray.size(); i++) {
+                writtenVariables.add(operationWriteArray.get(i).getAsString());
+            }
+            operationWrites.put(key, writtenVariables);
+        }
+
 
         return new ModelCheckingInfo(machineName, variables, constants, transitionEvaluationFunctions,  operationFunctions, invariants,
-                                    invariantDependency, guardDependency);
+                                    invariantDependency, guardDependency, guardReads, operationReads, operationWrites);
     }
 
 }

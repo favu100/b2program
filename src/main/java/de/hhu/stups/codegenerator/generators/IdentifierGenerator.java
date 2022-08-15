@@ -1,7 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
+//import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;

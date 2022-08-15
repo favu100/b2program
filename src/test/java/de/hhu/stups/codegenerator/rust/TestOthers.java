@@ -48,4 +48,24 @@ public class TestOthers extends TestRS{
     public void test_Doors() throws Exception {
         testRSMC("Doors", PROB_OTHER_PATH, true);
     }
+
+    @Test
+    public void test_EqualityLaws() throws Exception {
+        testRSMC("EqualityLaws", PROB_OTHER_PATH, true);
+    }
+
+    @Test
+    public void test_ExplicitChecks() throws Exception {
+        testRSMC("ExplicitChecks", PROB_OTHER_PATH, false);
+    }
+
+    @Test
+    public void test_Fin1Test() throws Exception {
+        testRSMC("Fin1Test", PROB_OTHER_PATH, true, true);
+    }
+
+    @Test
+    public void test_NatRangeLaws() throws Exception {
+        testRSMC("NatRangeLaws", PROB_OTHER_PATH, false);
+    }
 }

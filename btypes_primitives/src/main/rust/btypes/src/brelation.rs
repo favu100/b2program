@@ -365,7 +365,7 @@ impl<L: 'static + BObject, R: 'static + BObject> BRelation<L, R> {
     }
 
     pub fn _override(&self, arg: &BRelation<L, R>) -> BRelation<L, R> {
-        return BRelation { map: arg.map.clone().union(self.map.clone()), hash_cache: RefCell::new(Option::None)}
+        return BRelation { map: self.map.clone().union_with(arg.map.clone(), |_old_val, new_val| new_val), hash_cache: RefCell::new(Option::None)}
     }
 
     pub fn directProduct<ArgR: 'static + BObject>(&self, arg: &BRelation<L, ArgR>) -> BRelation<L, BTuple<R, ArgR>> {

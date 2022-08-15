@@ -55,7 +55,6 @@ impl<I: BObject> Ord for OrderedHashSet<I> {
     }
 }
 
-//TODO: check if replacing cache with mutex works and does not impact permormance too much
 unsafe impl<T: BObject> Sync for OrderedHashSet<T> {}
 
 impl<I: BObject> PartialEq for OrderedHashSet<I> {
@@ -124,6 +123,11 @@ impl<I: BObject> OrderedHashSet<I> {
     pub fn remove_min(&mut self) -> Option<I> {
         self.hash_cache.replace(Option::None);
         return self.set.remove_min()
+    }
+
+    pub fn remove(&mut self, value: &I) -> Option<I> {
+        self.hash_cache.replace(Option::None);
+        return self.set.remove(value);
     }
 
     pub fn get_min(&self) -> Option<&I> { self.set.get_min() }

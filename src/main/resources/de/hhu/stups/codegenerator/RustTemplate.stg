@@ -418,11 +418,11 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-<if(isRelation)>BRelation<if(!type)>::\<bobject::Dummy, bobject::Dummy><endif><else>BSet<if(!type)>::\<bobject::Dummy><endif><endif>::new(vec![<enums; separator=", ">])
+/*set_enum <leftType>*/<if(isRelation)>BRelation<if(!enums)>::\<<if(!leftType)>Dummy, Dummy<else><leftType>, <rightType><endif>\><endif><else>BSet<if(!enums)>::\<<if(!type)>Dummy<else><type><endif>\><endif><endif>::new(vec![<enums; separator=", ">])
 >>
 
 seq_enumeration(type, elements) ::= <<
-BRelation::new(vec![<elements; separator=", ">])
+/*seq_enum <type>*/BRelation<if(!type)>::\<BInteger, Dummy><endif>::new(vec![<elements; separator=", ">])
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
@@ -489,7 +489,7 @@ let mut _ld_<name> = <identifier>.clone();
 >>
 
 function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
-<expr>._override(&BRelation::new(vec![BTuple::new(<arg>,<val>)]))
+<expr>._override(&BRelation<if(!leftType)>::\<bobject::Dummy, bobject::Dummy><endif>::new(vec![BTuple::new(<arg>,<val>)]))
 >>
 
 function_call_nested(expr, arg, isNested) ::= <<
@@ -502,7 +502,7 @@ assignments(assignments) ::= <<
 
 nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
 <iterationConstruct; separator="\n">
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>._override(BRelation::new(BTuple::new(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>._override(BRelation<if(!leftType)>::\<bobject::Dummy, bobject::Dummy><endif>::new(BTuple::new(<arg>,<set>.nondeterminism()));<endif>
 >>
 
 type(type, fromOtherMachine, otherMachine) ::= <<

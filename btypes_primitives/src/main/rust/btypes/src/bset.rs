@@ -315,6 +315,14 @@ impl<T: 'static + BObject> BSet<T> {
         return self.equal(&of.domain());
     }
 
+    pub fn permutate(&self) -> BSet<BRelation<BInteger, T>> {
+        let interval = BSet::<BInteger>::interval(&BInteger::new(1), &self._size());
+        let result = BRelation::cartesianProduct(&interval, self).pow().iter()
+            .filter(|permutation| permutation.isBijection(self))
+            .fold(OrdSet::new(), |acc, e| acc.update(e.clone()));
+        return BSet::fromOrdSet(result);
+    }
+
     //rust specific
     pub fn cartesian<T1: 'static + BObject, T2: 'static + BObject>(set_a: &OrdSet<T1>, set_b: &OrdSet<T2>) -> OrdSet<BTuple<T1, T2>> {
         if set_a.is_empty() || set_b.is_empty() {return OrdSet::<BTuple<T1, T2>>::new();}

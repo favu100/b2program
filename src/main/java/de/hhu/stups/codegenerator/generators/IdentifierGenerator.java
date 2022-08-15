@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
@@ -130,6 +131,7 @@ public class IdentifierGenerator {
         }
         TemplateHandler.add(identifier, "fromOtherMachine", fromOtherMachine);
         TemplateHandler.add(identifier, "forVisualization", machineGenerator.getMode() == GeneratorMode.JS);
+        TemplateHandler.add(identifier, "isParameter", node.getDeclarationNode() != null && (DeclarationNode.Kind.OP_INPUT_PARAMETER.equals(node.getDeclarationNode().getKind()) || DeclarationNode.Kind.OP_OUTPUT_PARAMETER.equals(node.getDeclarationNode().getKind())));
         TemplateHandler.add(identifier, "isConstant", node.getDeclarationNode() != null && (DeclarationNode.Kind.CONSTANT.equals(node.getDeclarationNode().getKind()) || DeclarationNode.Kind.ENUMERATED_SET.equals(node.getDeclarationNode().getKind()) || DeclarationNode.Kind.DEFERRED_SET.equals(node.getDeclarationNode().getKind())));
         return identifier.render();
     }

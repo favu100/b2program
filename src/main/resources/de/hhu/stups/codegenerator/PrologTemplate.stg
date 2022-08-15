@@ -48,11 +48,13 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 props(invariants) ::= <<
 prop(st, uninitialized) :- !.
 prop(State, unsafe) :-
-    State \= st, !,
-    <invariants:{it | \+ <it>(State)}; separator=";\n">.
+    State \= st,
+    \+ (<invariants:{it | <it>(State)}; separator=";\n\t\t">),
+    !.
 prop(State, List) :-
     State \= st,
-    avl2List(State, List).
+    avl2List(State, List),
+    !.
 >>
 
 assignment(identifier, val, stateCount, nextStateCount, lastExprCount, isFinalExpr) ::= <<
@@ -193,8 +195,9 @@ getter() ::= <<
 global_declaration(type, identifier) ::= <<
 >>
 
-identifier(identifier, isConstant) ::= <<
-<if(isConstant)>
+identifier(identifier, isConstant, isParameter) ::= <<
+<if(isParameter)>
+P_<identifier><elseif(isConstant)>
 <identifier><else>
 '<identifier>'<endif>
 >>
@@ -342,8 +345,7 @@ parallel_load(type, identifier) ::= <<
 >>
 
 parameter(type, identifier) ::= <<
-% parameter
-% <type> <identifier>
+P_<identifier>
 >>
 
 parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<

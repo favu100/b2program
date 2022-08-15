@@ -473,18 +473,12 @@ set_declaration(identifier, type, enums) ::= <<
 
 set_enumeration(leftType, type, rightType, enums, isRelation, exprCount, isParameter) ::= <<
 <if(isParameter)>
-<if(isRelation)>
-bRel([<enums; separator=", ">])<else>
-bSet([<enums; separator=", ">])<endif>
-<else>
-<if(isRelation)>
-Expr_<exprCount> = bRel([<enums; separator=", ">])<else>
-Expr_<exprCount> = bSet([<enums; separator=", ">])<endif>
-<endif>
+[<enums; separator=", ">]<else>
+Expr_<exprCount> = [<enums; separator=", ">]<endif>
 >>
 
 set_enum_declaration(name, enumsCounted, exprCount) ::= <<
-enum_<name>(bSet([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">])).
+enum_<name>([<enumsCounted.keys:{k | '<enumsCounted.(k)>'}; separator=", ">]).
 
 >>
 

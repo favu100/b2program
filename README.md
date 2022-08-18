@@ -25,7 +25,7 @@ doi = {10.1007/978-3-030-34968-4_25}
 
 The main features of B2Program are:
 - Code generation from a formal model
-- Code generation for model checking including parallelization, and caching (only supported in Java and C++)
+- Code generation for model checking including parallelization, and caching (only supported in Java, C++ and Rust)
 - Code generation of interactive domain-specific visualizations (from VisB) in HTML and JavaScript/TypeScript
 
 
@@ -367,6 +367,9 @@ Remarks:
 # C
 ./gradlew run -Planguage="c" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
+# Rust
+./gradlew run -Planguage="rs" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+
 Default Values:
 big_integer: false
 minint: -2147483648
@@ -384,7 +387,7 @@ forModelchecking: false
 2. Generate code from the machine
 
 ```bash
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l {java|cpp|python|typescript|c} [-bi <isBigInteger>] [-min <minint>] [-max <maxint>] [-dss <deferred_set_size>] [-cs <use_constraint_solving>] [-mc <for_model_checking>] [-v <visualisation] -f <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l {java|cpp|python|typescript|c|rs} [-bi <isBigInteger>] [-min <minint>] [-max <maxint>] [-dss <deferred_set_size>] [-cs <use_constraint_solving>] [-mc <for_model_checking>] [-v <visualisation] -f <file_path_relative_to_jar_file>
 ```
 
 Remark: Visualisation is the path to a VisB file. It is only available for TypeScript/JavaScript
@@ -413,6 +416,11 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 4. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`
    (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
 
+#### Rust
+1. Copy the generated code into a cargo-project with proper dependencies set up (example: [btypes_primitives/src/main/rust/bmachine](btypes_primitives/src/main/rust/bmachine/src))
+   2. rename the file of the main-machine to `main.rs`
+2. run `cargo build --release`
+
 
 
 ### Execute generated code (manual simulation)
@@ -434,6 +442,10 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 2. `node --experimental-specifier-resolution=node <main file>`
 3. Example: `node --experimental-specifier-resolution=node TrafficLightExec.js`
 
+#### Rust
+1. Write a main function in the generated main class
+2. `cargo run --release`
+
 
 ### Execute generated model checking code
 
@@ -446,6 +458,14 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 
 1. `./<main file> <strategy> <threads> <caching>`
 2. Example: `./TrafficLight.exec mixed 6 true`
+
+#### Rust
+
+1. `cargo run --release -- <strategy> <threads> <caching> [-nodead]`
+2. Example: `cargo run --release -- mixed 2 true`
+
+Note: `threads` specifies the maximum number of executor threads. If `threads > 1`
+an additional coordinator thread is created, increasing the total number of threads by one.
 
 
 Remark: 
@@ -580,6 +600,25 @@ console.log(lift.getFloor().toString());
 * Execute the transpiled file with `node --experimental-specifier-resolution=node Lift.js`
 * Output: `3`
 
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Lift.mch ```
+* Rename `Lift.rs` to `main.rs` and move it to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* Write additional code executing generated functions of the Lift-machine
+    ```rust
+    pub fn() {
+        let mut lift = Lift::new();
+        lift.inc();
+        lift.inc();
+        lift.inc();
+        println!("{}", lift.getFloor());
+    }
+    ```
+* from the bmachine-directory, run `cargo run --release`
+* Output: `3`
+
 #### Model Checking
 
 ##### Java
@@ -606,6 +645,15 @@ make install
 
 * Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
 * Execute `Lift.exec` with `./Lift 1 false`
+
+
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Lift.mch -mc true```
+* Rename `Lift.rs` to `main.rs` and move it to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* from the bmachine-directory, run `cargo run --release -- mixed 1 false`
 
 
 ### Example 2: Cruise_finite1_deterministic_exec
@@ -767,6 +815,52 @@ false
 false
 ```
 
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Cruise_finite1_deterministic.mch```
+* Rename `Cruise_finite1_deterministic_exec.rs` to `main.rs` and move it and `Cruise_finite1_deterministic.rs` to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* Write additional code in `main.rs`
+    ```rust
+    pub fn() {
+        let mut cruise = Cruise_finite1_deterministic_exec::new();
+        cruise.simulate();
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseAllowed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseActive());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleCanKeepSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleTryKeepSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_SpeedAboveMax());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseSpeedAtMax());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstaclePresent());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstacleDistance());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstacleRelativeSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstacleStatusJustChanged());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CCInitialisationInProgress());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress());
+    }
+    ```
+* from the bmachine-directory, run `cargo run --release`
+* Output:
+    ```bash
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    ODnone
+    RSnone
+    false
+    false
+    false
+    ```
+
 #### Model Checking
 
 ##### Java
@@ -793,3 +887,12 @@ make install
 
 * Compile `Cruise_finite1_deterministic.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic.exec Cruise_finite1_deterministic.cpp`
 * Execute `Cruise_finite1_deterministic.exec` with `./Cruise_finite1_deterministic.exec mixed 6 true`
+
+
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic.mch` `java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Cruise_finite1_deterministic.mch -mc true`
+* Rename `Cruise_finite1_deterministic_exec.rs` to `main.rs` and move it and `Cruise_finite1_deterministic.rs` to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* from the bmachine-directory, run `cargo run --release -- mixed 6 true`

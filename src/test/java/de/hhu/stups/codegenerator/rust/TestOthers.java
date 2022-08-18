@@ -68,4 +68,34 @@ public class TestOthers extends TestRS{
     public void test_NatRangeLaws() throws Exception {
         testRSMC("NatRangeLaws", PROB_OTHER_PATH, false);
     }
+
+    @Test
+    public void test_SetLaws() throws Exception {
+        testRSMC("SetLaws", PROB_OTHER_PATH, true);
+    }
+
+    @Test
+    public void test_SetLawsNat() throws Exception {
+        testRSMC("SetLawsNat", PROB_OTHER_PATH, false);
+    }
+
+    @Test
+    public void test_SetLawsPow() throws Exception {
+        testRSMC("SetLawsPow", PROB_OTHER_PATH, true);
+    }
+
+    @Test
+    public void test_SetLawsPow2() throws Exception {
+        testRSMC("SetLawsPow2", PROB_OTHER_PATH, true);
+    }
+
+    @Test
+    public void test_SetLawsPowPow() throws Exception {
+        testRSMC("SetLawsPowPow", PROB_OTHER_PATH, false);
+    }
+
+    @Test
+    public void test_SetLawsPowPowCart() throws Exception {
+        testRSMC("SetLawsPowPowCart", PROB_OTHER_PATH, false);
+    }
 }

@@ -404,6 +404,9 @@ impl<T: 'static + SetLike> BSet<T> {
     }
 
     pub fn unary_intersect(&self) -> T {
-        return self.iter().fold(T::get_empty(), |result, next| result.intersect(next));
+        match self.iter().cloned().reduce(|result, next| result.intersect(&next)) {
+            Some(v) => return v,
+            None => panic!("Error: inter applied to empty set!"),
+        }
     }
 }

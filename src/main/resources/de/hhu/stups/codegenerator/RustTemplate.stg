@@ -307,7 +307,7 @@ for <identifier> in <set>.pow().iter().cloned() {
 
 iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
 <otherIterationConstructs>
-for <identifier> in <set>.pow().difference(<set>).iter().cloned() {
+for <identifier> in <set>.pow().iter().filter(|e| e.unequal(&<set>)).cloned() {
     <body>
 }
 >>
@@ -327,14 +327,23 @@ let mut <identifier> = <if(isRelation)>BRelation::\<<leftType>, <rightType>\><el
 <comprehension>
 >>
 
-set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType) ::= <<
+set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType, hasCondition, conditionalPredicate) ::= <<
+//set_comprehension_predicate
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
 <else>
+<if(hasCondition)>
+if (<conditionalPredicate>).booleanValue() {
+    if (<predicate>).booleanValue() {
+        <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+    }
+}
+<else>
 if (<predicate>).booleanValue() {
     <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
 }
+<endif>
 <endif>
 >>
 
@@ -403,6 +412,7 @@ if <conditionalPredicate>.booleanValue() {
 >>
 
 quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
+//quantified_expression_evaluation
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <identifier> = <identifier>.<operation>(&<expression>);
@@ -418,11 +428,11 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-/*set_enum <leftType>*/<if(isRelation)>BRelation<if(!enums)>::\<<if(!leftType)>Dummy, Dummy<else><leftType>, <rightType><endif>\><endif><else>BSet<if(!enums)>::\<<if(!type)>Dummy<else><type><endif>\><endif><endif>::new(vec![<enums; separator=", ">])
+/*set_enum <leftType>*/<if(isRelation)>BRelation<if(!enums)>::\<<if(!leftType)>Dummy, Dummy<else><leftType>, <rightType><endif>\><endif><else>BSet<if(!enums)>::\<<if(!type)>Dummy<else><type><endif>\><endif><endif>::new(vec![<if(isRelation)><enums; separator=", "><else><enums:{e | <e>.clone()}; separator=", "><endif>])
 >>
 
 seq_enumeration(type, elements) ::= <<
-/*seq_enum <type>*/BRelation<if(!type)>::\<BInteger, Dummy><endif>::new(vec![<elements; separator=", ">])
+BRelation<if(!type)>::\<BInteger, Dummy><endif>::new(vec![<elements; separator=", ">])
 >>
 
 enum_call(machine, class, identifier, isCurrentMachine) ::= <<
@@ -1103,6 +1113,7 @@ impl fmt::Display for <machine> {
 >>
 
 parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
+//parameter_combination_predicate
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <set> = <set>._union(&BSet::new(vec![<element>]));

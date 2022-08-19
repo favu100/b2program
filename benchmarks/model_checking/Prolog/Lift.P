@@ -35,7 +35,3 @@ trans('dec', State_0, State_1) :-
     minus(State_0, 'floor', 1, Expr_0),
     update('floor', Expr_0, State_0, State_1).
 
-trans('getFloor', State_0, State_1) :-
-    State_0 \= st,
-
-    update(P_out, 'floor', State_0, State_1).

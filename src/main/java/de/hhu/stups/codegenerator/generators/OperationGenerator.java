@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
@@ -93,7 +94,16 @@ public class OperationGenerator {
         machineGenerator.resetCurrentStateCount();
         ST operation = generate(node, globals);
         TemplateHandler.add(operation, "machine", nameHandler.handle(machineGenerator.getMachineName()));
-        TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+        if (machineGenerator.getMode() == GeneratorMode.PL) { // prevents rendering of getter operations
+            String body = machineGenerator.visitSubstitutionNode(node.getSubstitution(), null);
+            if (body.split("\n").length > 1 || !body.startsWith("update")) {
+                TemplateHandler.add(operation, "body", body);
+            } else {
+                return "";
+            }
+        } else {
+            TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+        }
         TemplateHandler.add(operation, "lastStateCount", machineGenerator.getCurrentStateCount());
         return operation.render();
     }

@@ -39,7 +39,6 @@ elementOf(State, X, List) :-
     member(X, List),
     !.
 elementOf(State, X, Key) :-
-    var(X),
     avl:avl_fetch(Key, State, List),
     member(X, List),
     !.

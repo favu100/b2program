@@ -2,7 +2,7 @@
 
 .PHONY: all clean
 
-all: Lift
+all: Lift scheduler_deterministic_MC
 PROBCLI=./probcli.sh
 FLAGS=--model-check -disable-time-out -p OPERATION_REUSE full -pref_group model_check unlimited -p COMPRESSION TRUE -noass -memory
 OUTPUT ?= runtimes.txt

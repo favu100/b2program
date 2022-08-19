@@ -1,0 +1,38 @@
+:- use_module(evaluator).
+
+start(st).
+
+prop(st, uninitialized) :- !.
+prop(State, unsafe) :-
+    State \= st,
+    \+ (check_inv_1(State)),
+    !.
+prop(State, List) :-
+    State \= st,
+    avl2List(State, List),
+    !.
+
+check_inv_1(State_0) :-
+        % relation_predicate:predicates
+        and(State_, and(State_, and(State_,     % relation_check_domain,     % relation_check_range, Expr_),     % relation_function, Expr_),     % relation_total_partial, Expr_)
+
+        % relation_predicate:checkElementOf
+        true.
+
+trans(initialize, st, State_1) :-
+    empty(State_0),
+    Expr_1 = [],
+    update('queens', Expr_1, State_0, State_1).
+
+trans('Solve', State_0, State_1) :-
+    State_0 \= st,
+
+    (elementOf(State_0, P_solution, allFields),
+    domain(State_0, P_solution, Expr_23),
+    equal(State_0, Expr_23, interval),
+    range(State_0, P_solution, Expr_24),
+    equal(State_0, Expr_24, interval),
+    PL_ic_boolean_1,
+    PL_ic_boolean_2,
+    PL_ic_boolean_3),
+    update('queens', P_solution, State_0, State_1).

@@ -1,0 +1,44 @@
+:- use_module(evaluator).
+
+start(st).
+
+prop(st, uninitialized) :- !.
+prop(State, unsafe) :-
+    State \= st,
+    \+ (check_inv_1(State);
+		check_inv_2(State)),
+    !.
+prop(State, List) :-
+    State \= st,
+    avl2List(State, List),
+    !.
+
+check_inv_1(State_0) :-
+        % relation_predicate:predicates
+        and(State_, and(State_,     % relation_check_domain,     % relation_check_range, Expr_),     % relation_function, Expr_)
+
+        % relation_predicate:checkElementOf
+        true.
+
+check_inv_2(State_0) :-
+    pow(State_0, interval(-2147483648, 2147483647), Expr_0),
+    elementOf(State_0, 'r', Expr_0).
+
+trans(initialize, st, State_2) :-
+    empty(State_0),
+    Expr_0 = [(1/2), (2/3), (3/4), (4/5)],
+    update('f', Expr_0, State_0, State_1),
+    Expr_1 = [],
+    update('r', Expr_1, State_1, State_2).
+
+trans('calculate', State_0, State_1) :-
+    State_0 \= st,
+
+    range(State_0, 'f', Expr_0),
+    update('r', Expr_0, State_0, State_1).
+
+trans('getRes', State_0, State_1) :-
+    State_0 \= st,
+
+    card(State_0, 'r', Expr_0),
+    update(P_out, Expr_0, State_0, State_1).

@@ -1,0 +1,130 @@
+:- use_module(evaluator).
+
+enum_PID(['process1', 'process2', 'process3']).
+
+start(st).
+
+prop(st, uninitialized) :- !.
+prop(State, unsafe) :-
+    State \= st,
+    \+ (check_inv_1(State);
+		check_inv_2(State);
+		check_inv_3(State);
+		check_inv_4(State);
+		check_inv_5(State);
+		check_inv_6(State);
+		check_inv_7(State);
+		check_inv_8(State);
+		check_inv_9(State)),
+    !.
+prop(State, List) :-
+    State \= st,
+    avl2List(State, List),
+    !.
+
+check_inv_1(State_0) :-
+    enum_PID(Expr_1),
+    pow(State_0, Expr_1, Expr_2),
+    elementOf(State_0, 'active', Expr_2).
+
+check_inv_2(State_0) :-
+    enum_PID(Expr_1),
+    pow(State_0, Expr_1, Expr_2),
+    elementOf(State_0, 'ready', Expr_2).
+
+check_inv_3(State_0) :-
+    enum_PID(Expr_1),
+    pow(State_0, Expr_1, Expr_2),
+    elementOf(State_0, 'waiting', Expr_2).
+
+check_inv_4(State_0) :-
+    enum_PID(Expr_0),
+    subset(State_0, 'active', Expr_0).
+
+check_inv_5(State_0) :-
+    enum_PID(Expr_0),
+    subset(State_0, 'ready', Expr_0).
+
+check_inv_6(State_0) :-
+    enum_PID(Expr_0),
+    subset(State_0, 'waiting', Expr_0).
+
+check_inv_7(State_0) :-
+    intersect(State_0, 'ready', 'waiting', Expr_0),
+    Expr_1 = [],
+    equal(State_0, Expr_0, Expr_1).
+
+check_inv_8(State_0) :-
+    union(State_0, 'ready', 'waiting', Expr_0),
+    intersect(State_0, 'active', Expr_0, Expr_1),
+    Expr_2 = [],
+    equal(State_0, Expr_1, Expr_2).
+
+check_inv_9(State_0) :-
+    card(State_0, 'active', Expr_0),
+    lessEqual(State_0, Expr_0, 1).
+
+trans(initialize, st, State_3) :-
+    empty(State_0),
+    Expr_1 = [],
+    update('active', Expr_1, State_0, State_1),
+    Expr_2 = [],
+    update('ready', Expr_2, State_1, State_2),
+    Expr_3 = [],
+    update('waiting', Expr_3, State_2, State_3).
+
+trans('new', State_0, State_1) :-
+    State_0 \= st,
+
+    (enum_PID(Expr_0),
+    elementOf(State_0, P_pp, Expr_0),
+    notElementOf(State_0, P_pp, 'active'),
+    union(State_0, 'ready', 'waiting', Expr_1),
+    notElementOf(State_0, P_pp, Expr_1)),
+    Expr_4 = [P_pp],
+    union(State_0, 'waiting', Expr_4, Expr_5),
+    update('waiting', Expr_5, State_0, State_1).
+
+trans('del', State_0, State_1) :-
+    State_0 \= st,
+
+    elementOf(State_0, P_pp, 'waiting'),
+    Expr_0 = [P_pp],
+    difference(State_0, 'waiting', Expr_0, Expr_1),
+    update('waiting', Expr_1, State_0, State_1).
+
+trans('ready', State_0, State_2) :-
+    State_0 \= st,
+
+    elementOf(State_0, P_rr, 'waiting'),
+    Expr_0 = [P_rr],
+    difference(State_0, 'waiting', Expr_0, Expr_1),
+    update('waiting', Expr_1, State_0, State_1),
+    (Expr_2 = [],
+    equal(State_1, 'active', Expr_2) -> (Expr_3 = [P_rr],
+    update('active', Expr_3, State_1, State_2),
+    Expr_4 = Expr_3) ; (Expr_3 = [P_rr],
+    union(State_1, 'ready', Expr_3, Expr_4),
+    update('ready', Expr_4, State_1, State_2))).
+
+trans('swap', State_0, State_3) :-
+    State_0 \= st,
+
+    (enum_PID(Expr_0),
+    elementOf(State_0, P_pp, Expr_0),
+    (\+ (Expr_1 = [],
+    unequal(State_0, 'ready', Expr_1)); elementOf(State_0, P_pp, 'ready')),
+    Expr_3 = [],
+    unequal(State_0, 'active', Expr_3)),
+
+    union(State_0, 'waiting', 'active', Expr_6),
+    update('waiting', Expr_6, State_0, State_1),
+    (Expr_7 = [],
+    equal(State_1, 'ready', Expr_7) -> (Expr_8 = [],
+    update('active', Expr_8, State_1, State_2),
+    Expr_10 = Expr_8,
+    State_3 = State_2) ; (Expr_8 = [P_pp],
+    update('active', Expr_8, State_1, State_2),
+    Expr_9 = [P_pp],
+    difference(State_2, 'ready', Expr_9, Expr_10),
+    update('ready', Expr_10, State_2, State_3))).

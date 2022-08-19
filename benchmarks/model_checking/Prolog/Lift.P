@@ -1,0 +1,41 @@
+:- use_module(evaluator).
+
+start(st).
+
+prop(st, uninitialized) :- !.
+prop(State, unsafe) :-
+    State \= st,
+    \+ (check_inv_1(State)),
+    !.
+prop(State, List) :-
+    State \= st,
+    avl2List(State, List),
+    !.
+
+check_inv_1(State_0) :-
+    elementOf(State_0, 'floor', interval(0, 100)).
+
+trans(initialize, st, State_1) :-
+    empty(State_0),
+    update('floor', 0, State_0, State_1).
+
+trans('inc', State_0, State_1) :-
+    State_0 \= st,
+
+    less(State_0, 'floor', 100),
+
+    plus(State_0, 'floor', 1, Expr_0),
+    update('floor', Expr_0, State_0, State_1).
+
+trans('dec', State_0, State_1) :-
+    State_0 \= st,
+
+    greater(State_0, 'floor', 0),
+
+    minus(State_0, 'floor', 1, Expr_0),
+    update('floor', Expr_0, State_0, State_1).
+
+trans('getFloor', State_0, State_1) :-
+    State_0 \= st,
+
+    update(P_out, 'floor', State_0, State_1).

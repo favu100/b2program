@@ -1,7 +1,7 @@
 :- module(evaluator, [elementOf/3,
                       notElementOf/3,
                       isNatural/2,
-                      cartesianProduct/3,
+                      cartesianProduct/4,
                       pow/3,
                       range/3,
                       domain/3,
@@ -66,7 +66,20 @@ isNatural(State, Key) :-
 
 % implement (e.g. 1..100 * 1..100, NAT * NAT)
 % avl-tree key: integer, value: list of integer
-cartesianProduct(_, _, notImplemented).
+cartesianProduct(State, A, B, Product) :-
+    avl:avl_fetch(A, State, AV),
+    avl:avl_fetch(B, State, BV),
+    findall([AX, BX],
+            (b_member(AX, AV), b_member(BX, BV)),
+            Product
+    ),
+    !.
+cartesianProduct(_, A, B, Product) :-
+    findall([AX, BX],
+            (b_member(AX, A), b_member(BX, B)),
+            Product
+    ),
+    !.
 
 pow(_, List, Pow) :-
     sets:setof(P, lists:subseq0(List, P), Pow),
@@ -202,6 +215,10 @@ b_member(A, interval(A, B)) :-
 b_member(Val, interval(A, B)) :-
     A1 is A + 1,
     b_member(Val, interval(A1, B)).
+b_member(Val, List) :-
+    lists:is_list(List),
+    member(Val, List),
+    !.
 
 
 next(interval(A, A), A, empty).

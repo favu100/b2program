@@ -101,8 +101,8 @@ equivalent(arg1, arg2) ::= <<
 !
 >>
 
-cartesian_product(arg1, arg2) ::= <<
-cartesianProduct(<arg1>, <arg2>, CartesianProduct)
+cartesian_product(arg1, arg2, stateCount, exprCount) ::= <<
+cartesianProduct(State_<stateCount>, <arg1>, <arg2>, Expr_<exprCount>)
 >>
 
 choice_point_declaration(choicePoint, operation) ::= <<
@@ -152,9 +152,15 @@ choice_point_operation_apply_choice_point_flag(operation) ::= <<
 constant_declaration(type, identifier) ::= <<
 >>
 
-constant_initialization(iterationConstruct, identifier, val) ::= <<
-update(<identifier>, <val>),
-
+constant_initialization(iterationConstruct, identifier, val, exprCount, exprBefore, stateCount, stateNextCount) ::= <<
+<if(exprBefore)>
+<iterationConstruct>
+<exprBefore>,
+update('<identifier>', Expr_<exprCount>, State_<stateCount>, State_<stateNextCount>),
+<else>
+<iterationConstruct>
+update('<identifier>', <val>, State_<stateCount>, State_<stateNextCount>),
+<endif>
 >>
 
 copy() ::= <<
@@ -195,10 +201,11 @@ getter() ::= <<
 global_declaration(type, identifier) ::= <<
 >>
 
+// TODO: check if isConstant usage works on all machines
 identifier(identifier, isConstant, isParameter) ::= <<
 <if(isParameter)>
 P_<identifier><elseif(isConstant)>
-<identifier><else>
+'<identifier>'<else>
 '<identifier>'<endif>
 >>
 
@@ -217,6 +224,7 @@ initialization(machine, properties, values, body, stateCount) ::= <<
 trans(initialize, st, State_<stateCount>) :-
     empty(State_0),
     <values>
+    <properties>
     <body>.
 >>
 
@@ -254,6 +262,57 @@ iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, b
 >>
 
 keywords() ::= <<
+>>
+
+lambda(type, identifier, lambda, leftType, rightType) ::= <<
+LAMBDA:
+type:
+<type>
+
+identifier:
+<identifier>
+
+lambda:
+<lambda>
+
+leftType:
+<leftType>
+
+rightType:
+<rightType>
+>>
+
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, hasCondition, conditionalPredicate, predicate, leftType, rightType) ::= <<
+LAMBDA EXPRESSION:
+other:
+<otherIterationConstructs>
+
+relation:
+<relation>
+
+element:
+<element>
+
+expression:
+<expression>
+
+emptyPredicate:
+<emptyPredicate>
+
+hasCondition:
+<hasCondition>
+
+conditionalPredicate:
+<conditionalPredicate>
+
+predicate:
+<predicate>
+
+leftType:
+<leftType>
+
+rightType:
+<rightType>
 >>
 
 local_declaration() ::= <<
@@ -486,6 +545,10 @@ set_type(type) ::= <<
     % set_type
 >>
 
+skip() ::= <<
+true
+>>
+
 tuple_create(arg1, arg2) ::= <<
 (<arg1>/<arg2>)
 >>
@@ -503,13 +566,16 @@ type(type, fromOtherMachine, otherMachine) ::= <<
     <type>
 >>
 
-unary(operator, obj, args, exprCount, stateCount, exprBefore) ::= <<
+unary(operator, obj, args, exprCount, stateCount, exprBefore, parameterEvaluated) ::= <<
 <if(exprBefore)>
 <exprBefore; separator=",\n">,
 <endif>
+<if(parameterEvaluated)>
+<operator>(State_<stateCount>, Expr_<obj>, Expr_<exprCount>)<else>
 <if(args)>
 <operator>(State_<stateCount>, <obj>, <args>, Expr_<exprCount>)<else>
 <operator>(State_<stateCount>, <obj>, Expr_<exprCount>)<endif>
+<endif>
 >>
 
 values(assignments) ::= <<

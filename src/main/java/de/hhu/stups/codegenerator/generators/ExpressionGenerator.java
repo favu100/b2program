@@ -482,12 +482,14 @@ public class ExpressionGenerator {
                 List<String> exprOpNodes = new ArrayList<>();
                 ST assignment = currentGroup.getInstanceOf("enum_assignment");
                 TemplateHandler.add(assignment, "identifier", expressionList.get(0));
-                TemplateHandler.add(assignment, "ExprCount", machineGenerator.getAndIncCurrentExpressionCount());
                 exprOpNodes.add(assignment.render());
-                TemplateHandler.add(expression, "obj", "Expr_" + (machineGenerator.getCurrentExpressionCount()-1));
+                TemplateHandler.add(expression, "obj", "Expr_" + machineGenerator.getCurrentExpressionCount());
+                TemplateHandler.add(assignment, "ExprCount", machineGenerator.getAndIncCurrentExpressionCount());
                 TemplateHandler.add(expression, "exprBefore", exprOpNodes);
             } else {
-                TemplateHandler.add(expression, "obj", expressionList.get(0));
+                TemplateHandler.add(expression, "exprBefore", expressionList);
+                TemplateHandler.add(expression, "parameterEvaluated", true);
+                TemplateHandler.add(expression, "obj", (machineGenerator.getCurrentExpressionCount() - 1));
             }
         } else {
             TemplateHandler.add(expression, "obj", expressionList.get(0));
@@ -826,8 +828,10 @@ public class ExpressionGenerator {
         ST identity = currentGroup.getInstanceOf("cartesian_product");
         TemplateHandler.add(identity, "leftType", typeGenerator.generate(leftType));
         TemplateHandler.add(identity, "rightType", typeGenerator.generate(rightType));
+        TemplateHandler.add(identity, "stateCount", machineGenerator.getCurrentStateCount());
         TemplateHandler.add(identity, "arg1", expressionList.get(0));
         TemplateHandler.add(identity, "arg2", expressionList.get(1));
+        TemplateHandler.add(identity, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
         return identity.render();
     }
 

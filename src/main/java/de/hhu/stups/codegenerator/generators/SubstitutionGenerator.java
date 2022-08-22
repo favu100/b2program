@@ -180,7 +180,18 @@ public class SubstitutionGenerator {
             return "";
         }
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());
-        TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+        if (machineGenerator.getMode() == GeneratorMode.PL) {
+            if (expression instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) expression).getOperator() != ExpressionOperatorNode.ExpressionOperator.INTERVAL) {
+                TemplateHandler.add(initialization, "exprBefore", machineGenerator.visitExprNode(expression, null));
+                TemplateHandler.add(initialization, "exprCount", machineGenerator.getCurrentExpressionCount() - 1);
+            } else {
+                TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+            }
+            TemplateHandler.add(initialization, "stateCount", machineGenerator.getAndIncCurrentStateCount());
+            TemplateHandler.add(initialization, "stateNextCount", machineGenerator.getCurrentStateCount());
+        } else {
+            TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
+        }
         TemplateHandler.add(initialization, "machineName", node.getName());
         return initialization.render();
     }

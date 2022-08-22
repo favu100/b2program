@@ -24,6 +24,11 @@ public class TestMachines extends TestProlog {
     }
 
     @Test
+    public void testSort_m2_data1000_MC() throws Exception {
+        testProlog("sort_m2_data1000_MC");
+    }
+
+    @Test
     public void testRange() throws Exception {
         testProlog("Range");
     }

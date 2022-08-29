@@ -37,11 +37,11 @@ public class TestRS {
     }
 
     public void testRS(String machine) throws Exception {
-        testRS(machine, machine, "DefaultAddition.strs", false);
+        testRS(machine, null, "DefaultAddition.strs", false);
     }
 
     public void testRS(String machine, String machineName, String addition, boolean execute) throws Exception {
-        testRS(machine, machineName, addition, execute, false, false);
+        testRS(machine, machineName, addition, execute, false, false, false);
     }
 
     public void testRSMC(String machine) throws Exception {
@@ -57,10 +57,14 @@ public class TestRS {
     }
 
     public void testRSMC(String machine, String machinePath, boolean execute, boolean noDead) throws Exception {
-        testRS(machine, machinePath, null, execute, true, noDead);
+        testRSMC(machine, machinePath, execute, noDead, false);
     }
 
-    public void testRS(String machine, String machinePath, String addition, boolean execute, boolean modelChecking, boolean noDead) throws Exception {
+    public void testRSMC(String machine, String machinePath, boolean execute, boolean noDead, boolean noInv) throws Exception {
+        testRS(machine, machinePath, null, execute, true, noDead, noInv);
+    }
+
+    public void testRS(String machine, String machinePath, String addition, boolean execute, boolean modelChecking, boolean noDead, boolean noInv) throws Exception {
         if (machinePath == null) { machinePath = "../../../resources/test/de/hhu/stups/codegenerator/"; }
         if (!machinePath.endsWith("/")) { machinePath += "/"; }
         Path mchPath = Paths.get(CodeGenerator.class.getClassLoader().getResource("").toURI()).resolve(machinePath + machine + ".mch").normalize();
@@ -110,6 +114,7 @@ public class TestRS {
         String progArgs = "";
         if (modelChecking) { progArgs = " -- mixed 2 true"; }
         if (noDead) { progArgs += " -nodead"; }
+        if (noInv) { progArgs += " -noinv"; }
 
         Process executeProcess = runtime.exec("cargo run --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml" + progArgs);
         executeProcess.waitFor();

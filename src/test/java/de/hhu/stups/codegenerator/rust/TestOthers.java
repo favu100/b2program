@@ -98,4 +98,29 @@ public class TestOthers extends TestRS{
     public void test_SetLawsPowPowCart() throws Exception {
         testRSMC("SetLawsPowPowCart", PROB_OTHER_PATH, false);
     }
+
+    @Test
+    public void test_StringLaws() throws Exception {
+        testRSMC("StringLaws", PROB_OTHER_PATH, true);
+    }
+
+    @Test
+    public void test_SubsetLaws() throws Exception {
+        testRSMC("SubsetLaws", PROB_OTHER_PATH, true, true);
+    }
+
+    @Test //cnt:INT test takes to long, since it creates the max integer intervall (could probably be optimized)
+    public void test_SubstitutionLaws() throws Exception {
+        testRSMC("SubstitutionLaws", PROB_OTHER_PATH, false);
+    }
+
+    @Test
+    public void test_TautologiesPL() throws Exception {
+        testRSMC("TautologiesPL", PROB_OTHER_PATH, true);
+    }
+
+    @Test
+    public void test_tictac() throws Exception {
+        testRSMC("tictac", PROB_OTHER_PATH, true, true, true);
+    }
 }

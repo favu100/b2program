@@ -88,20 +88,22 @@ fn main() {
     };
 
     let mut no_dead = false;
+    let mut no_inv = false;
 
     if args.len() > 4 {
         for arg in args.iter().skip(4) {
             match arg.as_str() {
                 "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
                 _ => {}
             }
         }
     }
 
     if threads == 1 {
-        <machine>::model_check_single_threaded(mc_type, is_caching, no_dead);
+        <machine>::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead);
+        <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }
 <endif>
@@ -428,7 +430,7 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-/*set_enum <leftType>*/<if(isRelation)>BRelation<if(!enums)>::\<<if(!leftType)>Dummy, Dummy<else><leftType>, <rightType><endif>\><endif><else>BSet<if(!enums)>::\<<if(!type)>Dummy<else><type><endif>\><endif><endif>::new(vec![<if(isRelation)><enums; separator=", "><else><enums:{e | <e>.clone()}; separator=", "><endif>])
+<if(isRelation)>BRelation<if(!enums)>::\<<if(!leftType)>Dummy, Dummy<else><leftType>, <rightType><endif>\><endif><else>BSet<if(!enums)>::\<<if(!type)>Dummy<else><type><endif>\><endif><endif>::new(vec![<if(isRelation)><enums; separator=", "><else><enums:{e | <e>.clone()}; separator=", "><endif>])
 >>
 
 seq_enumeration(type, elements) ::= <<
@@ -916,7 +918,7 @@ fn get_invariant_dependencies(op: &'static str) -> Vec\<&str> {
     }
 }
 
-fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool) {
+fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
     let mut machine = <machine>::new();
 
     let mut all_states = HashSet::\<<machine>\>::new();
@@ -934,7 +936,7 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool
 
         let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-        if !Self::checkInvariants(&state, last_op, is_caching) {
+        if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
             println!("INVARIANT VIOLATED");
             stop_threads = true;
         }
@@ -956,7 +958,7 @@ fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool
     Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
 }
 
-fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool) {
+fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
     let threadPool = ThreadPool::new(threads);
 
     let machine = <machine>::new();
@@ -992,7 +994,7 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, n
                        .filter(|(next_state, _)| states.insert((*next_state).clone()))
                        .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 let _ = tx.send(Err("INVARIANT VIOLATED"));
             }
             //println!("Thread {:?} done", thread::current().id());
@@ -1039,10 +1041,10 @@ pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::=
 //pre_assert
 <if(isModelChecking && !isTopLevel)>
 <iterationConstruct; separator="\n">
-if((<predicate>).booleanValue()) {
+if (<predicate>).booleanValue() {
     <then>
 } else {
-    throw new PreconditionOrAssertionViolation("Precondition or Assertion Error occured.");
+    panic!("Precondition or Assertion Error occurred.");
 }
 <else>
 <then>

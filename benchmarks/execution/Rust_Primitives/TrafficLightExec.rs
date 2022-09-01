@@ -1,17 +1,28 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 mod TrafficLight;
 
 
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct TrafficLightExec {
     counter: BInteger,
     _TrafficLight: TrafficLight::TrafficLight,
+}
+
+impl fmt::Display for TrafficLightExec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "TrafficLightExec: (".to_owned();
+        result += &format!("_get_counter: {}, ", self._get_counter());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl TrafficLightExec {
@@ -27,7 +38,7 @@ impl TrafficLightExec {
         self._TrafficLight = TrafficLight::TrafficLight::new();
     }
 
-    pub fn get_counter(&self) -> BInteger {
+    pub fn _get_counter(&self) -> BInteger {
         return self.counter.clone();
     }
 

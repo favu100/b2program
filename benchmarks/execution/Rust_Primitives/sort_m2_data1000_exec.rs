@@ -1,18 +1,30 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 mod sort_m2_data1000;
 
 
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct sort_m2_data1000_exec {
     counter: BInteger,
     sorted: BInteger,
     _sort_m2_data1000: sort_m2_data1000::sort_m2_data1000,
+}
+
+impl fmt::Display for sort_m2_data1000_exec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "sort_m2_data1000_exec: (".to_owned();
+        result += &format!("_get_counter: {}, ", self._get_counter());
+        result += &format!("_get_sorted: {}, ", self._get_sorted());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl sort_m2_data1000_exec {
@@ -29,11 +41,11 @@ impl sort_m2_data1000_exec {
         self._sort_m2_data1000 = sort_m2_data1000::sort_m2_data1000::new();
     }
 
-    pub fn get_counter(&self) -> BInteger {
+    pub fn _get_counter(&self) -> BInteger {
         return self.counter.clone();
     }
 
-    pub fn get_sorted(&self) -> BInteger {
+    pub fn _get_sorted(&self) -> BInteger {
         return self.sorted.clone();
     }
 

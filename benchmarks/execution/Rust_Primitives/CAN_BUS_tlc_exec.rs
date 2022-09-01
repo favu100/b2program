@@ -1,17 +1,28 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 mod CAN_BUS_tlc;
 
 
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct CAN_BUS_tlc_exec {
     counter: BInteger,
     _CAN_BUS_tlc: CAN_BUS_tlc::CAN_BUS_tlc,
+}
+
+impl fmt::Display for CAN_BUS_tlc_exec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "CAN_BUS_tlc_exec: (".to_owned();
+        result += &format!("_get_counter: {}, ", self._get_counter());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl CAN_BUS_tlc_exec {
@@ -27,7 +38,7 @@ impl CAN_BUS_tlc_exec {
         self._CAN_BUS_tlc = CAN_BUS_tlc::CAN_BUS_tlc::new();
     }
 
-    pub fn get_counter(&self) -> BInteger {
+    pub fn _get_counter(&self) -> BInteger {
         return self.counter.clone();
     }
 

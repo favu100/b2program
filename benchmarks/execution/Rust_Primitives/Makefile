@@ -6,7 +6,7 @@ all: CAN_BUS_tlc_exec Cruise_finite1_deterministic_exec LiftExec scheduler_deter
 
 OUTPUT ?= runtimes.txt
 
-CARGO_PROJ_PATH=../../btypes_primitives/src/main/rust/bmachine
+CARGO_PROJ_PATH=../../../btypes_primitives/src/main/rust/bmachine
 CARGO_BUILD=cargo build --release --manifest-path $(CARGO_PROJ_PATH)/Cargo.toml
 
 %.main : %.rs
@@ -20,6 +20,10 @@ CARGO_BUILD=cargo build --release --manifest-path $(CARGO_PROJ_PATH)/Cargo.toml
 
 % : clean %.cp
 	$(CARGO_BUILD)
+	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine
+	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine
+	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine
+	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine
 	/usr/bin/time -f "$(*) %E %M" -ao $(OUTPUT) $(CARGO_PROJ_PATH)/target/release/bmachine
 
 clean:

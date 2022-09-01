@@ -1,7 +1,9 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 use btypes::bobject::BObject;
@@ -9,10 +11,19 @@ mod scheduler_deterministic;
 
 
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct scheduler_deterministic_exec {
     counter: BInteger,
     _scheduler_deterministic: scheduler_deterministic::scheduler_deterministic,
+}
+
+impl fmt::Display for scheduler_deterministic_exec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "scheduler_deterministic_exec: (".to_owned();
+        result += &format!("_get_counter: {}, ", self._get_counter());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl scheduler_deterministic_exec {
@@ -28,7 +39,7 @@ impl scheduler_deterministic_exec {
         self._scheduler_deterministic = scheduler_deterministic::scheduler_deterministic::new();
     }
 
-    pub fn get_counter(&self) -> BInteger {
+    pub fn _get_counter(&self) -> BInteger {
         return self.counter.clone();
     }
 

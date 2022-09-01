@@ -1,7 +1,9 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::bset::BSet;
 use btypes::bobject::BObject;
@@ -9,8 +11,8 @@ use btypes::bobject::BObject;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum PID {
-    process1, 
-    process2, 
+    process1,
+    process2,
     process3
 }
 impl PID {
@@ -23,20 +25,31 @@ impl Default for PID {
 }
 impl fmt::Display for PID {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           PID::process1 => write!(f, "process1"),
-           PID::process2 => write!(f, "process2"),
-           PID::process3 => write!(f, "process3"),
-       }
+        match *self {
+            PID::process1 => write!(f, "process1"),
+            PID::process2 => write!(f, "process2"),
+            PID::process3 => write!(f, "process3"),
+        }
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct scheduler_deterministic {
     active: BSet<PID>,
     _ready: BSet<PID>,
     waiting: BSet<PID>,
     _PID: BSet<PID>,
+}
+
+impl fmt::Display for scheduler_deterministic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "scheduler_deterministic: (".to_owned();
+        result += &format!("_get_active: {}, ", self._get_active());
+        result += &format!("_get__ready: {}, ", self._get__ready());
+        result += &format!("_get_waiting: {}, ", self._get_waiting());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl scheduler_deterministic {
@@ -48,31 +61,31 @@ impl scheduler_deterministic {
         return m;
     }
     fn init(&mut self) {
-        self.active = BSet::new(vec![]).clone().clone();
-        self._ready = BSet::new(vec![]).clone().clone();
-        self.waiting = BSet::new(vec![]).clone().clone();
         self._PID = BSet::new(vec![PID::process1, PID::process2, PID::process3]);
+        self.active = BSet::<PID>::new(vec![]).clone().clone();
+        self._ready = BSet::<PID>::new(vec![]).clone().clone();
+        self.waiting = BSet::<PID>::new(vec![]).clone().clone();
     }
 
-    pub fn get_active(&self) -> BSet<PID> {
+    pub fn _get_active(&self) -> BSet<PID> {
         return self.active.clone();
     }
 
-    pub fn get__ready(&self) -> BSet<PID> {
+    pub fn _get__ready(&self) -> BSet<PID> {
         return self._ready.clone();
     }
 
-    pub fn get_waiting(&self) -> BSet<PID> {
+    pub fn _get_waiting(&self) -> BSet<PID> {
         return self.waiting.clone();
     }
 
-    pub fn get__PID(&self) -> BSet<PID> {
+    pub fn _get__PID(&self) -> BSet<PID> {
         return self._PID.clone();
     }
 
     pub fn _new(&mut self, mut pp: PID) -> () {
-        if (self._PID.elementOf(&pp).and(&self.active.notElementOf(&pp)).and(&self._ready._union(&self.waiting).notElementOf(&pp))).booleanValue() {
-            self.waiting = self.waiting._union(&BSet::new(vec![pp])).clone().clone();
+        if (((self._PID.elementOf(&pp) && self.active.notElementOf(&pp)) && self._ready._union(&self.waiting).notElementOf(&pp))).booleanValue() {
+            self.waiting = self.waiting._union(&BSet::new(vec![pp.clone()])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -80,7 +93,7 @@ impl scheduler_deterministic {
 
     pub fn del(&mut self, mut pp: PID) -> () {
         if (self.waiting.elementOf(&pp)).booleanValue() {
-            self.waiting = self.waiting.difference(&BSet::new(vec![pp])).clone().clone();
+            self.waiting = self.waiting.difference(&BSet::new(vec![pp.clone()])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
         }
@@ -88,11 +101,11 @@ impl scheduler_deterministic {
 
     pub fn ready(&mut self, mut rr: PID) -> () {
         if (self.waiting.elementOf(&rr)).booleanValue() {
-            self.waiting = self.waiting.difference(&BSet::new(vec![rr])).clone().clone();
-            if (self.active.equal(&BSet::new(vec![]))).booleanValue() {
-                self.active = BSet::new(vec![rr]).clone().clone();
+            self.waiting = self.waiting.difference(&BSet::new(vec![rr.clone()])).clone().clone();
+            if (self.active.equal(&BSet::<PID>::new(vec![]))).booleanValue() {
+                self.active = BSet::new(vec![rr.clone()]).clone().clone();
             } else {
-                self._ready = self._ready._union(&BSet::new(vec![rr])).clone().clone();
+                self._ready = self._ready._union(&BSet::new(vec![rr.clone()])).clone().clone();
             }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -100,13 +113,14 @@ impl scheduler_deterministic {
     }
 
     pub fn swap(&mut self, mut pp: PID) -> () {
-        if (self.active.unequal(&BSet::new(vec![]))).booleanValue() {
+        //pre_assert
+        if (self.active.unequal(&BSet::<PID>::new(vec![]))).booleanValue() {
             self.waiting = self.waiting._union(&self.active).clone().clone();
-            if (self._ready.equal(&BSet::new(vec![]))).booleanValue() {
-                self.active = BSet::new(vec![]).clone().clone();
+            if (self._ready.equal(&BSet::<PID>::new(vec![]))).booleanValue() {
+                self.active = BSet::<PID>::new(vec![]).clone().clone();
             } else {
-                self.active = BSet::new(vec![pp]).clone().clone();
-                self._ready = self._ready.difference(&BSet::new(vec![pp])).clone().clone();
+                self.active = BSet::new(vec![pp.clone()]).clone().clone();
+                self._ready = self._ready.difference(&BSet::new(vec![pp.clone()])).clone().clone();
             }
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");

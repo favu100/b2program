@@ -1,7 +1,9 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 use btypes::bobject::BObject;
@@ -9,10 +11,19 @@ mod Cruise_finite1_deterministic;
 
 
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct Cruise_finite1_deterministic_exec {
     counter: BInteger,
     _Cruise_finite1_deterministic: Cruise_finite1_deterministic::Cruise_finite1_deterministic,
+}
+
+impl fmt::Display for Cruise_finite1_deterministic_exec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "Cruise_finite1_deterministic_exec: (".to_owned();
+        result += &format!("_get_counter: {}, ", self._get_counter());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl Cruise_finite1_deterministic_exec {
@@ -28,7 +39,7 @@ impl Cruise_finite1_deterministic_exec {
         self._Cruise_finite1_deterministic = Cruise_finite1_deterministic::Cruise_finite1_deterministic::new();
     }
 
-    pub fn get_counter(&self) -> BInteger {
+    pub fn _get_counter(&self) -> BInteger {
         return self.counter.clone();
     }
 

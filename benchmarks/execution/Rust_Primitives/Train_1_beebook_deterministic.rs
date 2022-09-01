@@ -1,7 +1,9 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::brelation::BRelation;
 use btypes::bset::BSet;
@@ -11,19 +13,19 @@ use btypes::btuple::BTuple;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum BLOCKS {
-    A, 
-    B, 
-    C, 
-    D, 
-    E, 
-    F, 
-    G, 
-    H, 
-    I, 
-    J, 
-    K, 
-    L, 
-    M, 
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    I,
+    J,
+    K,
+    L,
+    M,
     N
 }
 impl BLOCKS {
@@ -36,36 +38,36 @@ impl Default for BLOCKS {
 }
 impl fmt::Display for BLOCKS {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           BLOCKS::A => write!(f, "A"),
-           BLOCKS::B => write!(f, "B"),
-           BLOCKS::C => write!(f, "C"),
-           BLOCKS::D => write!(f, "D"),
-           BLOCKS::E => write!(f, "E"),
-           BLOCKS::F => write!(f, "F"),
-           BLOCKS::G => write!(f, "G"),
-           BLOCKS::H => write!(f, "H"),
-           BLOCKS::I => write!(f, "I"),
-           BLOCKS::J => write!(f, "J"),
-           BLOCKS::K => write!(f, "K"),
-           BLOCKS::L => write!(f, "L"),
-           BLOCKS::M => write!(f, "M"),
-           BLOCKS::N => write!(f, "N"),
-       }
+        match *self {
+            BLOCKS::A => write!(f, "A"),
+            BLOCKS::B => write!(f, "B"),
+            BLOCKS::C => write!(f, "C"),
+            BLOCKS::D => write!(f, "D"),
+            BLOCKS::E => write!(f, "E"),
+            BLOCKS::F => write!(f, "F"),
+            BLOCKS::G => write!(f, "G"),
+            BLOCKS::H => write!(f, "H"),
+            BLOCKS::I => write!(f, "I"),
+            BLOCKS::J => write!(f, "J"),
+            BLOCKS::K => write!(f, "K"),
+            BLOCKS::L => write!(f, "L"),
+            BLOCKS::M => write!(f, "M"),
+            BLOCKS::N => write!(f, "N"),
+        }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ROUTES {
-    R1, 
-    R2, 
-    R3, 
-    R4, 
-    R5, 
-    R6, 
-    R7, 
-    R8, 
-    R9, 
+    R1,
+    R2,
+    R3,
+    R4,
+    R5,
+    R6,
+    R7,
+    R8,
+    R9,
     R10
 }
 impl ROUTES {
@@ -78,22 +80,22 @@ impl Default for ROUTES {
 }
 impl fmt::Display for ROUTES {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           ROUTES::R1 => write!(f, "R1"),
-           ROUTES::R2 => write!(f, "R2"),
-           ROUTES::R3 => write!(f, "R3"),
-           ROUTES::R4 => write!(f, "R4"),
-           ROUTES::R5 => write!(f, "R5"),
-           ROUTES::R6 => write!(f, "R6"),
-           ROUTES::R7 => write!(f, "R7"),
-           ROUTES::R8 => write!(f, "R8"),
-           ROUTES::R9 => write!(f, "R9"),
-           ROUTES::R10 => write!(f, "R10"),
-       }
+        match *self {
+            ROUTES::R1 => write!(f, "R1"),
+            ROUTES::R2 => write!(f, "R2"),
+            ROUTES::R3 => write!(f, "R3"),
+            ROUTES::R4 => write!(f, "R4"),
+            ROUTES::R5 => write!(f, "R5"),
+            ROUTES::R6 => write!(f, "R6"),
+            ROUTES::R7 => write!(f, "R7"),
+            ROUTES::R8 => write!(f, "R8"),
+            ROUTES::R9 => write!(f, "R9"),
+            ROUTES::R10 => write!(f, "R10"),
+        }
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct Train_1_beebook_deterministic {
     LBT: BSet<BLOCKS>,
     TRK: BRelation<BLOCKS, BLOCKS>,
@@ -110,6 +112,21 @@ pub struct Train_1_beebook_deterministic {
     _ROUTES: BSet<ROUTES>,
 }
 
+impl fmt::Display for Train_1_beebook_deterministic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "Train_1_beebook_deterministic: (".to_owned();
+        result += &format!("_get_LBT: {}, ", self._get_LBT());
+        result += &format!("_get_TRK: {}, ", self._get_TRK());
+        result += &format!("_get_frm: {}, ", self._get_frm());
+        result += &format!("_get_OCC: {}, ", self._get_OCC());
+        result += &format!("_get_resbl: {}, ", self._get_resbl());
+        result += &format!("_get_resrt: {}, ", self._get_resrt());
+        result += &format!("_get_rsrtbl: {}, ", self._get_rsrtbl());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
+}
+
 impl Train_1_beebook_deterministic {
 
     pub fn new() -> Train_1_beebook_deterministic {
@@ -119,137 +136,155 @@ impl Train_1_beebook_deterministic {
         return m;
     }
     fn init(&mut self) {
-        self.resrt = BSet::new(vec![]).clone().clone();
-        self.resbl = BSet::new(vec![]).clone().clone();
-        self.rsrtbl = BRelation::new(vec![]).clone().clone();
-        self.OCC = BSet::new(vec![]).clone().clone();
-        self.TRK = BRelation::new(vec![]).clone().clone();
-        self.frm = BSet::new(vec![]).clone().clone();
-        self.LBT = BSet::new(vec![]).clone().clone();
         self._BLOCKS = BSet::new(vec![BLOCKS::A, BLOCKS::B, BLOCKS::C, BLOCKS::D, BLOCKS::E, BLOCKS::F, BLOCKS::G, BLOCKS::H, BLOCKS::I, BLOCKS::J, BLOCKS::K, BLOCKS::L, BLOCKS::M, BLOCKS::N]);
         self._ROUTES = BSet::new(vec![ROUTES::R1, ROUTES::R2, ROUTES::R3, ROUTES::R4, ROUTES::R5, ROUTES::R6, ROUTES::R7, ROUTES::R8, ROUTES::R9, ROUTES::R10]);
+        self.nxt = BRelation::new(vec![BTuple::from_refs(&ROUTES::R1, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::L, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::C)])), BTuple::from_refs(&ROUTES::R2, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::L, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::E), BTuple::from_refs(&BLOCKS::E, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::G)])), BTuple::from_refs(&ROUTES::R3, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::L, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::N)])), BTuple::from_refs(&ROUTES::R4, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::M, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::G)])), BTuple::from_refs(&ROUTES::R5, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::M, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::N)])), BTuple::from_refs(&ROUTES::R6, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::C, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::L)])), BTuple::from_refs(&ROUTES::R7, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::G, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::E), BTuple::from_refs(&BLOCKS::E, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::L)])), BTuple::from_refs(&ROUTES::R8, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::N, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::L)])), BTuple::from_refs(&ROUTES::R9, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::G, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::M)])), BTuple::from_refs(&ROUTES::R10, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::N, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::M)]))]);
         self.fst = BRelation::new(vec![BTuple::from_refs(&ROUTES::R1, &BLOCKS::L), BTuple::from_refs(&ROUTES::R2, &BLOCKS::L), BTuple::from_refs(&ROUTES::R3, &BLOCKS::L), BTuple::from_refs(&ROUTES::R4, &BLOCKS::M), BTuple::from_refs(&ROUTES::R5, &BLOCKS::M), BTuple::from_refs(&ROUTES::R6, &BLOCKS::C), BTuple::from_refs(&ROUTES::R7, &BLOCKS::G), BTuple::from_refs(&ROUTES::R8, &BLOCKS::N), BTuple::from_refs(&ROUTES::R9, &BLOCKS::G), BTuple::from_refs(&ROUTES::R10, &BLOCKS::N)]);
         self.lst = BRelation::new(vec![BTuple::from_refs(&ROUTES::R1, &BLOCKS::C), BTuple::from_refs(&ROUTES::R2, &BLOCKS::G), BTuple::from_refs(&ROUTES::R3, &BLOCKS::N), BTuple::from_refs(&ROUTES::R4, &BLOCKS::G), BTuple::from_refs(&ROUTES::R5, &BLOCKS::N), BTuple::from_refs(&ROUTES::R6, &BLOCKS::L), BTuple::from_refs(&ROUTES::R7, &BLOCKS::L), BTuple::from_refs(&ROUTES::R8, &BLOCKS::L), BTuple::from_refs(&ROUTES::R9, &BLOCKS::M), BTuple::from_refs(&ROUTES::R10, &BLOCKS::M)]);
-        self.nxt = BRelation::new(vec![BTuple::from_refs(&ROUTES::R1, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::L, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::C)])), BTuple::from_refs(&ROUTES::R2, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::L, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::E), BTuple::from_refs(&BLOCKS::E, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::G)])), BTuple::from_refs(&ROUTES::R3, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::L, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::N)])), BTuple::from_refs(&ROUTES::R4, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::M, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::G)])), BTuple::from_refs(&ROUTES::R5, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::M, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::N)])), BTuple::from_refs(&ROUTES::R6, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::C, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::L)])), BTuple::from_refs(&ROUTES::R7, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::G, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::E), BTuple::from_refs(&BLOCKS::E, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::L)])), BTuple::from_refs(&ROUTES::R8, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::N, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::D), BTuple::from_refs(&BLOCKS::D, &BLOCKS::B), BTuple::from_refs(&BLOCKS::B, &BLOCKS::A), BTuple::from_refs(&BLOCKS::A, &BLOCKS::L)])), BTuple::from_refs(&ROUTES::R9, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::G, &BLOCKS::F), BTuple::from_refs(&BLOCKS::F, &BLOCKS::K), BTuple::from_refs(&BLOCKS::K, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::M)])), BTuple::from_refs(&ROUTES::R10, &BRelation::new(vec![BTuple::from_refs(&BLOCKS::N, &BLOCKS::J), BTuple::from_refs(&BLOCKS::J, &BLOCKS::I), BTuple::from_refs(&BLOCKS::I, &BLOCKS::H), BTuple::from_refs(&BLOCKS::H, &BLOCKS::M)]))]);
         let mut _ic_set_0 = BRelation::<BLOCKS, ROUTES>::new(vec![]);
         for _ic_b_1 in self._BLOCKS.clone().iter().cloned() {
             for _ic_r_1 in self._ROUTES.clone().iter().cloned() {
-                if (self.nxt.domain().elementOf(&_ic_r_1).and(&self.nxt.functionCall(&_ic_r_1).domain().elementOf(&_ic_b_1).or(&self.nxt.functionCall(&_ic_r_1).range().elementOf(&_ic_b_1)))).booleanValue() {
+                //set_comprehension_predicate
+                if ((self.nxt.domain().elementOf(&_ic_r_1) && (self.nxt.functionCall(&_ic_r_1).domain().elementOf(&_ic_b_1) || self.nxt.functionCall(&_ic_r_1).range().elementOf(&_ic_b_1)))).booleanValue() {
                     _ic_set_0 = _ic_set_0._union(&BRelation::<BLOCKS, ROUTES>::new(vec![BTuple::from_refs(&_ic_b_1, &_ic_r_1)]));
                 }
 
             }
         }
         self.rtbl = _ic_set_0;
+        self.resrt = BSet::<ROUTES>::new(vec![]).clone().clone();
+        self.resbl = BSet::<BLOCKS>::new(vec![]).clone().clone();
+        self.rsrtbl = BRelation::<BLOCKS, ROUTES>::new(vec![]).clone().clone();
+        self.OCC = BSet::<BLOCKS>::new(vec![]).clone().clone();
+        self.TRK = BRelation::<BLOCKS, BLOCKS>::new(vec![]).clone().clone();
+        self.frm = BSet::<ROUTES>::new(vec![]).clone().clone();
+        self.LBT = BSet::<BLOCKS>::new(vec![]).clone().clone();
     }
 
-    pub fn get_fst(&self) -> BRelation<ROUTES, BLOCKS> {
+    pub fn _get_fst(&self) -> BRelation<ROUTES, BLOCKS> {
         return self.fst.clone();
     }
 
-    pub fn get_lst(&self) -> BRelation<ROUTES, BLOCKS> {
+    pub fn _get_lst(&self) -> BRelation<ROUTES, BLOCKS> {
         return self.lst.clone();
     }
 
-    pub fn get_nxt(&self) -> BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>> {
+    pub fn _get_nxt(&self) -> BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>> {
         return self.nxt.clone();
     }
 
-    pub fn get_rtbl(&self) -> BRelation<BLOCKS, ROUTES> {
+    pub fn _get_rtbl(&self) -> BRelation<BLOCKS, ROUTES> {
         return self.rtbl.clone();
     }
 
-    pub fn get_LBT(&self) -> BSet<BLOCKS> {
+    pub fn _get_LBT(&self) -> BSet<BLOCKS> {
         return self.LBT.clone();
     }
 
-    pub fn get_TRK(&self) -> BRelation<BLOCKS, BLOCKS> {
+    pub fn _get_TRK(&self) -> BRelation<BLOCKS, BLOCKS> {
         return self.TRK.clone();
     }
 
-    pub fn get_frm(&self) -> BSet<ROUTES> {
+    pub fn _get_frm(&self) -> BSet<ROUTES> {
         return self.frm.clone();
     }
 
-    pub fn get_OCC(&self) -> BSet<BLOCKS> {
+    pub fn _get_OCC(&self) -> BSet<BLOCKS> {
         return self.OCC.clone();
     }
 
-    pub fn get_resbl(&self) -> BSet<BLOCKS> {
+    pub fn _get_resbl(&self) -> BSet<BLOCKS> {
         return self.resbl.clone();
     }
 
-    pub fn get_resrt(&self) -> BSet<ROUTES> {
+    pub fn _get_resrt(&self) -> BSet<ROUTES> {
         return self.resrt.clone();
     }
 
-    pub fn get_rsrtbl(&self) -> BRelation<BLOCKS, ROUTES> {
+    pub fn _get_rsrtbl(&self) -> BRelation<BLOCKS, ROUTES> {
         return self.rsrtbl.clone();
     }
 
-    pub fn get__BLOCKS(&self) -> BSet<BLOCKS> {
+    pub fn _get__BLOCKS(&self) -> BSet<BLOCKS> {
         return self._BLOCKS.clone();
     }
 
-    pub fn get__ROUTES(&self) -> BSet<ROUTES> {
+    pub fn _get__ROUTES(&self) -> BSet<ROUTES> {
         return self._ROUTES.clone();
     }
 
     pub fn route_reservation(&mut self, mut r: ROUTES) -> () {
+        //pre_assert
         let mut _ld_resrt = self.resrt.clone();
         let mut _ld_rsrtbl = self.rsrtbl.clone();
         let mut _ld_resbl = self.resbl.clone();
-        self.resrt = _ld_resrt._union(&BSet::new(vec![r])).clone().clone();
-        self.rsrtbl = _ld_rsrtbl._union(&self.rtbl.rangeRestriction(&BSet::new(vec![r]))).clone().clone();
-        self.resbl = _ld_resbl._union(&self.rtbl.inverse().relationImage(&BSet::new(vec![r]))).clone().clone();
+        self.resrt = _ld_resrt._union(&BSet::new(vec![r.clone()])).clone().clone();
+        self.rsrtbl = _ld_rsrtbl._union(&self.rtbl.rangeRestriction(&BSet::new(vec![r.clone()]))).clone().clone();
+        self.resbl = _ld_resbl._union(&self.rtbl.inverse().relationImage(&BSet::new(vec![r.clone()]))).clone().clone();
+
     }
 
     pub fn route_freeing(&mut self, mut r: ROUTES) -> () {
+        //pre_assert
         let mut _ld_frm = self.frm.clone();
         let mut _ld_resrt = self.resrt.clone();
-        self.resrt = _ld_resrt.difference(&BSet::new(vec![r])).clone().clone();
-        self.frm = _ld_frm.difference(&BSet::new(vec![r])).clone().clone();
+        self.resrt = _ld_resrt.difference(&BSet::new(vec![r.clone()])).clone().clone();
+        self.frm = _ld_frm.difference(&BSet::new(vec![r.clone()])).clone().clone();
+
     }
 
     pub fn FRONT_MOVE_1(&mut self, mut r: ROUTES) -> () {
+        //pre_assert
         let mut _ld_OCC = self.OCC.clone();
         let mut _ld_LBT = self.LBT.clone();
-        self.OCC = _ld_OCC._union(&BSet::new(vec![self.fst.functionCall(&r)])).clone().clone();
-        self.LBT = _ld_LBT._union(&BSet::new(vec![self.fst.functionCall(&r)])).clone().clone();
+        self.OCC = _ld_OCC._union(&BSet::new(vec![self.fst.functionCall(&r).clone()])).clone().clone();
+        self.LBT = _ld_LBT._union(&BSet::new(vec![self.fst.functionCall(&r).clone()])).clone().clone();
+
     }
 
     pub fn FRONT_MOVE_2(&mut self, mut b: BLOCKS) -> () {
-        self.OCC = self.OCC._union(&BSet::new(vec![self.TRK.functionCall(&b)])).clone().clone();
+        //pre_assert
+        self.OCC = self.OCC._union(&BSet::new(vec![self.TRK.functionCall(&b).clone()])).clone().clone();
+
     }
 
     pub fn BACK_MOVE_1(&mut self, mut b: BLOCKS) -> () {
+        //pre_assert
         let mut _ld_rsrtbl = self.rsrtbl.clone();
         let mut _ld_resbl = self.resbl.clone();
         let mut _ld_OCC = self.OCC.clone();
         let mut _ld_LBT = self.LBT.clone();
-        self.OCC = _ld_OCC.difference(&BSet::new(vec![b])).clone().clone();
-        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b])).clone().clone();
-        self.resbl = _ld_resbl.difference(&BSet::new(vec![b])).clone().clone();
-        self.LBT = _ld_LBT.difference(&BSet::new(vec![b])).clone().clone();
+        self.OCC = _ld_OCC.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b.clone()])).clone().clone();
+        self.resbl = _ld_resbl.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.LBT = _ld_LBT.difference(&BSet::new(vec![b.clone()])).clone().clone();
+
     }
 
     pub fn BACK_MOVE_2(&mut self, mut b: BLOCKS) -> () {
+        //pre_assert
         let mut _ld_rsrtbl = self.rsrtbl.clone();
         let mut _ld_resbl = self.resbl.clone();
         let mut _ld_OCC = self.OCC.clone();
         let mut _ld_LBT = self.LBT.clone();
-        self.OCC = _ld_OCC.difference(&BSet::new(vec![b])).clone().clone();
-        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b])).clone().clone();
-        self.resbl = _ld_resbl.difference(&BSet::new(vec![b])).clone().clone();
-        self.LBT = _ld_LBT.difference(&BSet::new(vec![b]))._union(&BSet::new(vec![self.TRK.functionCall(&b)])).clone().clone();
+        self.OCC = _ld_OCC.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b.clone()])).clone().clone();
+        self.resbl = _ld_resbl.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.LBT = _ld_LBT.difference(&BSet::new(vec![b.clone()]))._union(&BSet::new(vec![self.TRK.functionCall(&b).clone()])).clone().clone();
+
     }
 
     pub fn point_positionning(&mut self, mut r: ROUTES) -> () {
+        //pre_assert
         self.TRK = self.TRK.domainSubstraction(&self.nxt.functionCall(&r).domain()).rangeSubstraction(&self.nxt.functionCall(&r).range())._union(&self.nxt.functionCall(&r)).clone().clone();
+
     }
 
     pub fn route_formation(&mut self, mut r: ROUTES) -> () {
-        self.frm = self.frm._union(&BSet::new(vec![r])).clone().clone();
+        //pre_assert
+        self.frm = self.frm._union(&BSet::new(vec![r.clone()])).clone().clone();
+
     }
 }
+
 

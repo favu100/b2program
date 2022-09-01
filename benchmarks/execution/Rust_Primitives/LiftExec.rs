@@ -1,17 +1,28 @@
-#![ allow( dead_code, unused_imports, unused_mut, non_snake_case, non_camel_case_types, unused_assignments ) ]
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
 mod Lift;
 
 
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]
 pub struct LiftExec {
     counter: BInteger,
     _Lift: Lift::Lift,
+}
+
+impl fmt::Display for LiftExec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result = "LiftExec: (".to_owned();
+        result += &format!("_get_counter: {}, ", self._get_counter());
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
 }
 
 impl LiftExec {
@@ -27,7 +38,7 @@ impl LiftExec {
         self._Lift = Lift::Lift::new();
     }
 
-    pub fn get_counter(&self) -> BInteger {
+    pub fn _get_counter(&self) -> BInteger {
         return self.counter.clone();
     }
 

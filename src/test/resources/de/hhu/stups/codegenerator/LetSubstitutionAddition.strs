@@ -1,0 +1,5 @@
+fn main() {
+    let mut let_sub = LetSubstitution::new();
+    let_sub.calculate();
+    println!("{}", let_sub.getRes());
+}

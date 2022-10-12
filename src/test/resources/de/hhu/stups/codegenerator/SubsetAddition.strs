@@ -1,0 +1,5 @@
+fn main() {
+    let mut subset = Subset::new();
+    subset.calculate();
+    println!("{}", subset.getRes());
+}

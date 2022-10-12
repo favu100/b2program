@@ -1,0 +1,5 @@
+fn main() {
+    let mut iff = IfExpression::new();
+    iff.calculate();
+    println!("{}", iff.getRes());
+}

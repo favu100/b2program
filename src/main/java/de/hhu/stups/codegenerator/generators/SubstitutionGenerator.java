@@ -26,6 +26,7 @@ import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
+import org.antlr.v4.runtime.misc.OrderedHashSet;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -35,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.List.of;
 
 public class SubstitutionGenerator {
 
@@ -119,12 +118,18 @@ public class SubstitutionGenerator {
                 .map(reference -> nameHandler.handle(reference.getMachineNode().getName()))
                 .collect(Collectors.toList()));
         TemplateHandler.add(initialization, "includes", declarationGenerator.generateIncludes(node));
+        TemplateHandler.add(initialization, "includesInitialization", declarationGenerator.generateIncludesInitialization(node));
         TemplateHandler.add(initialization, "properties", generateConstantsInitializations(node));
         TemplateHandler.add(initialization, "values", generateValues(node));
-        if(node.getInitialisation() != null) {
-            TemplateHandler.add(initialization, "body", machineGenerator.visitSubstitutionNode(node.getInitialisation(), null));
-        }
+
+        String body = "";
+        if (node.getInitialisation() != null) body = machineGenerator.visitSubstitutionNode(node.getInitialisation(), null);
+        //TODO: add empty templates in other languages instead of checking for existence
+        List<String> setInitializations = declarationGenerator.generateSetDeclarations(node, "set_initialization");
+        if (setInitializations.size() > 0) TemplateHandler.add(initialization, "set_initializations", String.join("\n", setInitializations));
         TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());
+        if (body.trim().length() > 0) TemplateHandler.add(initialization, "body", body);
+
         return initialization.render();
     }
 
@@ -144,17 +149,35 @@ public class SubstitutionGenerator {
     }
 
     /*
-    * This function generates code for initiailizing all constants from the given AST node of a machine
+    * This function generates code for initializing all constants from the given AST node of a machine
     */
     public List<String> generateConstantsInitializations(MachineNode node) {
-        // TODO: Check that constants must be declared in the order they appear in the PROPERTIES. Furthermore, also check that used constants in other constants has to be declared before.
+        // TODO: Check that used constants in other constants has to be declared before.
         Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
+        OrderedHashSet<String> propertiesIdentifiersSet = new OrderedHashSet<>();
+        predicateGenerator.extractProperties(node).forEach(prop -> {
+            if (!(prop instanceof PredicateOperatorWithExprArgsNode)) return;
+            ((PredicateOperatorWithExprArgsNode)prop).getExpressionNodes().forEach(exprNode -> {
+                if (exprNode instanceof IdentifierExprNode) propertiesIdentifiersSet.add(((IdentifierExprNode) exprNode).getName());
+            });
+        });
+        ArrayList<String> propertiesIdentifiers = new ArrayList<>(propertiesIdentifiersSet);
+
+        List<DeclarationNode> constants = node.getConstants().stream().sorted((nodeA, nodeB) -> {
+            int indexA = propertiesIdentifiers.indexOf(nodeA.getName());
+            int indexB = propertiesIdentifiers.indexOf(nodeB.getName());
+            if (indexA >= 0 && indexB >= 0) return Integer.compare(indexA, indexB);
+            if (indexA >= 0) return -1;
+            if (indexB >= 0) return +1;
+            return nodeA.getName().compareTo(nodeB.getName());
+        }).collect(Collectors.toList());
+
         List<String> constantsInitializations = new ArrayList<>();
-        constantsInitializations.addAll(node.getConstants().stream()
+        constantsInitializations.addAll(constants.stream()
                 .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
                 .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
                 .collect(Collectors.toList()));
-        constantsInitializations.addAll(node.getConstants().stream()
+        constantsInitializations.addAll(constants.stream()
                 .filter(constant -> !lambdaFunctions.contains(constant.getName()))
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList()));
@@ -167,6 +190,7 @@ public class SubstitutionGenerator {
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
         List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
             return "";
@@ -199,6 +223,7 @@ public class SubstitutionGenerator {
     private String generateConstantFromDeferredSet(DeclarationNode constant, String machineName) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
         TemplateHandler.add(initialization, "val", declarationGenerator.callEnum(constant.getType().toString(), constant));
         TemplateHandler.add(initialization, "machineName", machineName);
         return initialization.render();
@@ -435,6 +460,7 @@ public class SubstitutionGenerator {
     */
     public String generateAssignment(ExprNode lhs, ExprNode rhs) {
         ST substitution = currentGroup.getInstanceOf("assignment");
+        TemplateHandler.add(substitution, "useBigInteger", machineGenerator.isUseBigInteger());
         generateAssignmentBody(substitution, lhs, rhs, 0, "", false);
         if(lhs instanceof ExpressionOperatorNode && ((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
             TemplateHandler.add(substitution, "val", getNestedFunctionCall(lhs, rhs));
@@ -443,6 +469,11 @@ public class SubstitutionGenerator {
         } else {
             TemplateHandler.add(substitution, "val", machineGenerator.visitExprNode(rhs, null));
             TemplateHandler.add(substitution, "isFinalExpr", isFinalExpr(rhs));
+        }
+        if (lhs instanceof IdentifierExprNode){
+            IdentifierExprNode leftIdentifier = (IdentifierExprNode) lhs;
+            TemplateHandler.add(substitution, "lhsIsLocal", !machineGenerator.getNameHandler().getGlobals().contains(nameHandler.handleIdentifier(leftIdentifier.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)));
+            TemplateHandler.add(substitution, "lhsIsParam", leftIdentifier.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER));
         }
         TemplateHandler.add(substitution, "stateCount", machineGenerator.getAndIncCurrentStateCount());
         TemplateHandler.add(substitution, "nextStateCount", machineGenerator.getCurrentStateCount());
@@ -597,6 +628,7 @@ public class SubstitutionGenerator {
         IdentifierExprNode identifier = getIdentifierOnLhs(lhs);
         boolean isIdentifierLhs = lhs instanceof IdentifierExprNode;
         boolean isRecordLhs = lhs instanceof RecordFieldAccessNode;
+        TemplateHandler.add(substitution, "rightTypeIsCollection", rhs.getType() instanceof SetType);
         parallelConstructHandler.setLhsInParallel(true);
         generateAssignmentArgument(substitution, lhs);
         TemplateHandler.add(substitution, "isIdentifierLhs", isIdentifierLhs);
@@ -949,7 +981,7 @@ public class SubstitutionGenerator {
     private String generateVariableInVar(DeclarationNode identifier) {
         ST declaration = currentGroup.getInstanceOf("local_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(identifier.getType()));
-        TemplateHandler.add(declaration, "identifier", identifierGenerator.generateVarDeclaration(identifier.getName(), true));
+        TemplateHandler.add(declaration, "identifier", identifierGenerator.generateVarDeclaration(identifier.getName(), true, false));
         return declaration.render();
     }
 

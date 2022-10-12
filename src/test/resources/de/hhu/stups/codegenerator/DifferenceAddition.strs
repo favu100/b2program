@@ -1,0 +1,5 @@
+fn main() {
+    let mut difference = Difference::new();
+    difference.calculate();
+    println!("{}", difference.getRes());
+}

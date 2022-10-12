@@ -1,0 +1,5 @@
+fn main() {
+    let mut parallel = ParallelProduct::new();
+    parallel.calculate();
+    println!("{}", parallel.getRes());
+}

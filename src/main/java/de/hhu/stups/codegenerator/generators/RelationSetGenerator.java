@@ -171,17 +171,17 @@ public class RelationSetGenerator {
             return infiniteSetGenerator.generateInfiniteTotalPartial(node, operator, domain);
         }
 
-        ST template = currentGroup.getInstanceOf("relation_total_partial");
-        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+        ST template;
         if(TOTAL_EXPRESSIONS.contains(operator)) {
-            TemplateHandler.add(template, "operator", "isTotal");
+            template = currentGroup.getInstanceOf("relation_is_total");
         } else if(PARTIAL_EXPRESSIONS.contains(operator)) {
-            TemplateHandler.add(template, "operator", "isPartial");
+            template = currentGroup.getInstanceOf("relation_is_partial");
         } else {
             //Must be empty because predicate can be optional
             return "";
         }
 
+        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         TemplateHandler.add(template, "domain", machineGenerator.visitExprNode(domain, null));
         return template.render();
     }

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
@@ -813,7 +814,7 @@ public class Cruise_finite1_deterministic_MC {
         private final boolean isDebug;
 
         private final LinkedList<Cruise_finite1_deterministic_MC> unvisitedStates = new LinkedList<>();
-        private final Set<Cruise_finite1_deterministic_MC> states = new HashSet<>();
+        private final Set<Cruise_finite1_deterministic_MC> states = ConcurrentHashMap.newKeySet();
         private AtomicInteger transitions = new AtomicInteger(0);
         private ThreadPoolExecutor threadPool;
         private Object waitLock = new Object();
@@ -906,17 +907,14 @@ public class Cruise_finite1_deterministic_MC {
                     Set<Cruise_finite1_deterministic_MC> nextStates = generateNextStates(state);
 
                     nextStates.forEach(nextState -> {
-                        synchronized (states) {
-                            if(!states.contains(nextState)) {
-                                states.add(nextState);
-                                synchronized (unvisitedStates) {
-                                    unvisitedStates.add(nextState);
-                                }
-                                if(states.size() % 50000 == 0 && isDebug) {
-                                    System.out.println("VISITED STATES: " + states.size());
-                                    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                    System.out.println("-------------------");
-                                }
+                        if(states.add(nextState)) {
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
                             }
                         }
                     });
@@ -2169,7 +2167,7 @@ public class Cruise_finite1_deterministic_MC {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -2182,7 +2180,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -2194,7 +2192,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -2202,7 +2200,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

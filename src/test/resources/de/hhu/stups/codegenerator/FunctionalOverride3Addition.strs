@@ -1,0 +1,5 @@
+fn main() {
+    let mut functional = FunctionalOverride3::new();
+    functional.calculate();
+    println!("{}", functional.getRes());
+}

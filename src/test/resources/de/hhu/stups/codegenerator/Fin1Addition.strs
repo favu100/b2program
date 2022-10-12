@@ -1,0 +1,5 @@
+fn main() {
+    let mut fin = Fin1::new();
+    fin.calculate();
+    println!("{}", fin.getRes());
+}

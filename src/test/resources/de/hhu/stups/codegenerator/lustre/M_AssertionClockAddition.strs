@@ -1,0 +1,5 @@
+fn main() {
+    let mut program = M_AssertionClock::new();
+    program.clock_step(BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(true))), BRelation::new(BTuple::new(LibraryLustre.REF.ref, BBoolean::new(true))));
+    println!("{}", program.getRes());
+}

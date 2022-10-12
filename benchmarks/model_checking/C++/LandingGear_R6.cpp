@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -30,7 +31,6 @@ class LandingGear_R6 {
     public:
 
         enum Type { BFS, DFS, MIXED };
-
 
         class DOOR_STATE : public BObject {
             public:
@@ -409,6 +409,7 @@ class LandingGear_R6 {
                 }
         };
 
+
         struct Hash {
             public:
                 size_t operator()(const LandingGear_R6& obj) const {
@@ -457,8 +458,48 @@ class LandingGear_R6 {
         DOOR_STATE door;
         GEAR_STATE gear;
 
+        mutable boost::optional<bool> _tr_cache_begin_flying;
+        mutable boost::optional<bool> _tr_cache_land_plane;
+        mutable boost::optional<bool> _tr_cache_open_valve_door_open;
+        mutable boost::optional<bool> _tr_cache_close_valve_door_open;
+        mutable boost::optional<bool> _tr_cache_open_valve_door_close;
+        mutable boost::optional<bool> _tr_cache_close_valve_door_close;
+        mutable boost::optional<bool> _tr_cache_open_valve_retract_gear;
+        mutable boost::optional<bool> _tr_cache_close_valve_retract_gear;
+        mutable boost::optional<bool> _tr_cache_open_valve_extend_gear;
+        mutable boost::optional<bool> _tr_cache_close_valve_extend_gear;
+        mutable boost::optional<bool> _tr_cache_con_stimulate_open_door_valve;
+        mutable boost::optional<bool> _tr_cache_con_stop_stimulate_open_door_valve;
+        mutable boost::optional<bool> _tr_cache_con_stimulate_close_door_valve;
+        mutable boost::optional<bool> _tr_cache_con_stop_stimulate_close_door_valve;
+        mutable boost::optional<bool> _tr_cache_con_stimulate_retract_gear_valve;
+        mutable boost::optional<bool> _tr_cache_con_stop_stimulate_retract_gear_valve;
+        mutable boost::optional<bool> _tr_cache_con_stimulate_extend_gear_valve;
+        mutable boost::optional<bool> _tr_cache_con_stop_stimulate_extend_gear_valve;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_start_retracting_first;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_retract_gear_skip;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_retract_gear_last;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_start_extending;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_extend_gear_last;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_extend_gear_skip;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_start_open_door;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_open_door_last;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_open_door_skip;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_start_close_door;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_close_door;
+        mutable boost::optional<BSet<POSITION>> _tr_cache_env_close_door_skip;
+        mutable boost::optional<bool> _tr_cache_toggle_handle_up;
+        mutable boost::optional<bool> _tr_cache_toggle_handle_down;
+        mutable boost::optional<bool> _tr_cache_con_stimulate_general_valve;
+        mutable boost::optional<bool> _tr_cache_con_stop_stimulate_general_valve;
+        mutable boost::optional<bool> _tr_cache_evn_open_general_valve;
+        mutable boost::optional<bool> _tr_cache_evn_close_general_valve;
+        mutable boost::optional<bool> _tr_cache_env_close_analogical_switch;
+        mutable boost::optional<bool> _tr_cache_env_open_analogical_switch;
 
     public:
+
+        std::string stateAccessedVia;
 
         LandingGear_R6() {
             gears = (BRelation<POSITION, GEAR_STATE >::cartesianProduct(_POSITION, (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))));
@@ -812,240 +853,418 @@ class LandingGear_R6 {
         }
 
 
-        bool _tr_begin_flying() const {
-            return (shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground)))).booleanValue();
-        }
-
-        bool _tr_land_plane() const {
-            return (shock_absorber.equal((PLANE_STATE(PLANE_STATE::flight)))).booleanValue();
-        }
-
-        bool _tr_open_valve_door_open() const {
-            return ((BBoolean(valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && open_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_close_valve_door_open() const {
-            return ((BBoolean(valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_open_valve_door_close() const {
-            return ((BBoolean(valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && close_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_close_valve_door_close() const {
-            return ((BBoolean(valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_open_valve_retract_gear() const {
-            return ((BBoolean(valve_retract_gear.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && retract_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_close_valve_retract_gear() const {
-            return ((BBoolean(valve_retract_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_open_valve_extend_gear() const {
-            return ((BBoolean(valve_extend_gear.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && extend_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_close_valve_extend_gear() const {
-            return ((BBoolean(valve_extend_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stimulate_open_door_valve() const {
-            return ((BBoolean((BBoolean((BBoolean(open_EV.equal((BBoolean(false))).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)))))._not().booleanValue())).booleanValue() || (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted)))))._not().booleanValue())).booleanValue() && (BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue()))._not().booleanValue())).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stop_stimulate_open_door_valve() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean(open_EV.equal((BBoolean(true))).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stimulate_close_door_valve() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(close_EV.equal((BBoolean(false))).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue())).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed)))))._not().booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stop_stimulate_close_door_valve() const {
-            return ((BBoolean((BBoolean(close_EV.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() || (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stimulate_retract_gear_valve() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(retract_EV.equal((BBoolean(false))).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(true))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted)))))._not().booleanValue())).booleanValue() && shock_absorber.equal((PLANE_STATE(PLANE_STATE::flight))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stop_stimulate_retract_gear_valve() const {
-            return ((BBoolean((BBoolean(retract_EV.equal((BBoolean(true))).booleanValue() && (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stimulate_extend_gear_valve() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(extend_EV.equal((BBoolean(false))).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(true))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)))))._not().booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_con_stop_stimulate_extend_gear_valve() const {
-            return ((BBoolean((BBoolean(extend_EV.equal((BBoolean(true))).booleanValue() && (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
-        }
-
-        BSet<POSITION> _tr_env_start_retracting_first() const {
-            BSet<POSITION> _ic_set_18 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue() && valve_retract_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)), (GEAR_STATE(GEAR_STATE::gear_moving)))).elementOf(gear).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
-                    _ic_set_18 = _ic_set_18._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_begin_flying(bool isCaching) const {
+            if (this->_tr_cache_begin_flying == boost::none){
+                bool __tmp_result = (shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground)))).booleanValue();
+                if (isCaching) this->_tr_cache_begin_flying = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_18;
+            return this->_tr_cache_begin_flying.get();
         }
 
-        BSet<POSITION> _tr_env_retract_gear_skip() const {
-            BSet<POSITION> _ic_set_19 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
-                    _ic_set_19 = _ic_set_19._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_land_plane(bool isCaching) const {
+            if (this->_tr_cache_land_plane == boost::none){
+                bool __tmp_result = (shock_absorber.equal((PLANE_STATE(PLANE_STATE::flight)))).booleanValue();
+                if (isCaching) this->_tr_cache_land_plane = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_19;
+            return this->_tr_cache_land_plane.get();
         }
 
-        BSet<POSITION> _tr_env_retract_gear_last() const {
-            BSet<POSITION> _ic_set_20 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
-                    _ic_set_20 = _ic_set_20._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_open_valve_door_open(bool isCaching) const {
+            if (this->_tr_cache_open_valve_door_open == boost::none){
+                bool __tmp_result = ((BBoolean(valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && open_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_open_valve_door_open = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_20;
+            return this->_tr_cache_open_valve_door_open.get();
         }
 
-        BSet<POSITION> _tr_env_start_extending() const {
-            BSet<POSITION> _ic_set_21 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::retracted))).booleanValue())).booleanValue() && valve_extend_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::gear_moving)), (GEAR_STATE(GEAR_STATE::retracted)))).elementOf(gear).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
-                    _ic_set_21 = _ic_set_21._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_close_valve_door_open(bool isCaching) const {
+            if (this->_tr_cache_close_valve_door_open == boost::none){
+                bool __tmp_result = ((BBoolean(valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_close_valve_door_open = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_21;
+            return this->_tr_cache_close_valve_door_open.get();
         }
 
-        BSet<POSITION> _tr_env_extend_gear_last() const {
-            BSet<POSITION> _ic_set_22 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
-                    _ic_set_22 = _ic_set_22._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_open_valve_door_close(bool isCaching) const {
+            if (this->_tr_cache_open_valve_door_close == boost::none){
+                bool __tmp_result = ((BBoolean(valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && close_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_open_valve_door_close = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_22;
+            return this->_tr_cache_open_valve_door_close.get();
         }
 
-        BSet<POSITION> _tr_env_extend_gear_skip() const {
-            BSet<POSITION> _ic_set_23 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
-                    _ic_set_23 = _ic_set_23._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_close_valve_door_close(bool isCaching) const {
+            if (this->_tr_cache_close_valve_door_close == boost::none){
+                bool __tmp_result = ((BBoolean(valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_close_valve_door_close = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_23;
+            return this->_tr_cache_close_valve_door_close.get();
         }
 
-        BSet<POSITION> _tr_env_start_open_door() const {
-            BSet<POSITION> _ic_set_24 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::closed))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed)), (DOOR_STATE(DOOR_STATE::door_moving)))).elementOf(door).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::retracted))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
-                    _ic_set_24 = _ic_set_24._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_open_valve_retract_gear(bool isCaching) const {
+            if (this->_tr_cache_open_valve_retract_gear == boost::none){
+                bool __tmp_result = ((BBoolean(valve_retract_gear.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && retract_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_open_valve_retract_gear = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_24;
+            return this->_tr_cache_open_valve_retract_gear.get();
         }
 
-        BSet<POSITION> _tr_env_open_door_last() const {
-            BSet<POSITION> _ic_set_25 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::retracted))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
-                    _ic_set_25 = _ic_set_25._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_close_valve_retract_gear(bool isCaching) const {
+            if (this->_tr_cache_close_valve_retract_gear == boost::none){
+                bool __tmp_result = ((BBoolean(valve_retract_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_close_valve_retract_gear = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_25;
+            return this->_tr_cache_close_valve_retract_gear.get();
         }
 
-        BSet<POSITION> _tr_env_open_door_skip() const {
-            BSet<POSITION> _ic_set_26 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
-                    _ic_set_26 = _ic_set_26._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_open_valve_extend_gear(bool isCaching) const {
+            if (this->_tr_cache_open_valve_extend_gear == boost::none){
+                bool __tmp_result = ((BBoolean(valve_extend_gear.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue() && extend_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_open_valve_extend_gear = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_26;
+            return this->_tr_cache_open_valve_extend_gear.get();
         }
 
-        BSet<POSITION> _tr_env_start_close_door() const {
-            BSet<POSITION> _ic_set_27 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::open))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::door_moving)), (DOOR_STATE(DOOR_STATE::open)))).elementOf(door).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)), (GEAR_STATE(GEAR_STATE::retracted)))).elementOf(gear).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
-                    _ic_set_27 = _ic_set_27._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_close_valve_extend_gear(bool isCaching) const {
+            if (this->_tr_cache_close_valve_extend_gear == boost::none){
+                bool __tmp_result = ((BBoolean(valve_extend_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_close_valve_extend_gear = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_27;
+            return this->_tr_cache_close_valve_extend_gear.get();
         }
 
-        BSet<POSITION> _tr_env_close_door() const {
-            BSet<POSITION> _ic_set_28 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)), (GEAR_STATE(GEAR_STATE::retracted)))).elementOf(gear).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
-                    _ic_set_28 = _ic_set_28._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_con_stimulate_open_door_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stimulate_open_door_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean(open_EV.equal((BBoolean(false))).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)))))._not().booleanValue())).booleanValue() || (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted)))))._not().booleanValue())).booleanValue() && (BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue()))._not().booleanValue())).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stimulate_open_door_valve = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_28;
+            return this->_tr_cache_con_stimulate_open_door_valve.get();
         }
 
-        BSet<POSITION> _tr_env_close_door_skip() const {
-            BSet<POSITION> _ic_set_29 = BSet<POSITION>();
-            for(POSITION _ic_gr_1 : gears.domain()) {
-                if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
-                    _ic_set_29 = _ic_set_29._union(BSet<POSITION>(_ic_gr_1));
-                }
-
+        bool _tr_con_stop_stimulate_open_door_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stop_stimulate_open_door_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean(open_EV.equal((BBoolean(true))).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stop_stimulate_open_door_valve = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_29;
+            return this->_tr_cache_con_stop_stimulate_open_door_valve.get();
         }
 
-        bool _tr_toggle_handle_up() const {
-            return (handle.equal((HANDLE_STATE(HANDLE_STATE::down)))).booleanValue();
+        bool _tr_con_stimulate_close_door_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stimulate_close_door_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(close_EV.equal((BBoolean(false))).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue())).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed)))))._not().booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stimulate_close_door_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stimulate_close_door_valve.get();
         }
 
-        bool _tr_toggle_handle_down() const {
-            return (handle.equal((HANDLE_STATE(HANDLE_STATE::up)))).booleanValue();
+        bool _tr_con_stop_stimulate_close_door_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stop_stimulate_close_door_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(close_EV.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() || (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stop_stimulate_close_door_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stop_stimulate_close_door_valve.get();
         }
 
-        bool _tr_con_stimulate_general_valve() const {
-            return ((BBoolean(general_EV.equal((BBoolean(false))).booleanValue() && handle_move.equal((BBoolean(true))).booleanValue()))).booleanValue();
+        bool _tr_con_stimulate_retract_gear_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stimulate_retract_gear_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(retract_EV.equal((BBoolean(false))).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(true))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted)))))._not().booleanValue())).booleanValue() && shock_absorber.equal((PLANE_STATE(PLANE_STATE::flight))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stimulate_retract_gear_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stimulate_retract_gear_valve.get();
         }
 
-        bool _tr_con_stop_stimulate_general_valve() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(general_EV.equal((BBoolean(true))).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue() || (BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() || (BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue()))).booleanValue();
+        bool _tr_con_stop_stimulate_retract_gear_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stop_stimulate_retract_gear_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(retract_EV.equal((BBoolean(true))).booleanValue() && (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stop_stimulate_retract_gear_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stop_stimulate_retract_gear_valve.get();
         }
 
-        bool _tr_evn_open_general_valve() const {
-            return ((BBoolean((BBoolean(general_EV.equal((BBoolean(true))).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue())).booleanValue() && analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_closed))).booleanValue()))).booleanValue();
+        bool _tr_con_stimulate_extend_gear_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stimulate_extend_gear_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(extend_EV.equal((BBoolean(false))).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(true))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)))))._not().booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stimulate_extend_gear_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stimulate_extend_gear_valve.get();
         }
 
-        bool _tr_evn_close_general_valve() const {
-            return ((BBoolean((BBoolean(general_EV.equal((BBoolean(false))).booleanValue() || analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue();
+        bool _tr_con_stop_stimulate_extend_gear_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stop_stimulate_extend_gear_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(extend_EV.equal((BBoolean(true))).booleanValue() && (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() && general_EV.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stop_stimulate_extend_gear_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stop_stimulate_extend_gear_valve.get();
         }
 
-        bool _tr_env_close_analogical_switch() const {
-            return ((BBoolean(analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_open))).booleanValue() && handle_move.equal((BBoolean(true))).booleanValue()))).booleanValue();
+        BSet<POSITION> _tr_env_start_retracting_first(bool isCaching) const {
+            if (this->_tr_cache_env_start_retracting_first == boost::none){
+                BSet<POSITION> _ic_set_18 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue() && valve_retract_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)), (GEAR_STATE(GEAR_STATE::gear_moving)))).elementOf(gear).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
+                        _ic_set_18 = _ic_set_18._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_start_retracting_first = _ic_set_18;
+                else return _ic_set_18;
+            }
+            return this->_tr_cache_env_start_retracting_first.get();
         }
 
-        bool _tr_env_open_analogical_switch() const {
-            return (analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_closed)))).booleanValue();
+        BSet<POSITION> _tr_env_retract_gear_skip(bool isCaching) const {
+            if (this->_tr_cache_env_retract_gear_skip == boost::none){
+                BSet<POSITION> _ic_set_19 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
+                        _ic_set_19 = _ic_set_19._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_retract_gear_skip = _ic_set_19;
+                else return _ic_set_19;
+            }
+            return this->_tr_cache_env_retract_gear_skip.get();
+        }
+
+        BSet<POSITION> _tr_env_retract_gear_last(bool isCaching) const {
+            if (this->_tr_cache_env_retract_gear_last == boost::none){
+                BSet<POSITION> _ic_set_20 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
+                        _ic_set_20 = _ic_set_20._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_retract_gear_last = _ic_set_20;
+                else return _ic_set_20;
+            }
+            return this->_tr_cache_env_retract_gear_last.get();
+        }
+
+        BSet<POSITION> _tr_env_start_extending(bool isCaching) const {
+            if (this->_tr_cache_env_start_extending == boost::none){
+                BSet<POSITION> _ic_set_21 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::retracted))).booleanValue())).booleanValue() && valve_extend_gear.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::gear_moving)), (GEAR_STATE(GEAR_STATE::retracted)))).elementOf(gear).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
+                        _ic_set_21 = _ic_set_21._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_start_extending = _ic_set_21;
+                else return _ic_set_21;
+            }
+            return this->_tr_cache_env_start_extending.get();
+        }
+
+        BSet<POSITION> _tr_env_extend_gear_last(bool isCaching) const {
+            if (this->_tr_cache_env_extend_gear_last == boost::none){
+                BSet<POSITION> _ic_set_22 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue()) {
+                        _ic_set_22 = _ic_set_22._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_extend_gear_last = _ic_set_22;
+                else return _ic_set_22;
+            }
+            return this->_tr_cache_env_extend_gear_last.get();
+        }
+
+        BSet<POSITION> _tr_env_extend_gear_skip(bool isCaching) const {
+            if (this->_tr_cache_env_extend_gear_skip == boost::none){
+                BSet<POSITION> _ic_set_23 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean(doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue() && handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue())).booleanValue() && gears.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && gears.functionCall(_ic_gr_1).equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
+                        _ic_set_23 = _ic_set_23._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_extend_gear_skip = _ic_set_23;
+                else return _ic_set_23;
+            }
+            return this->_tr_cache_env_extend_gear_skip.get();
+        }
+
+        BSet<POSITION> _tr_env_start_open_door(bool isCaching) const {
+            if (this->_tr_cache_env_start_open_door == boost::none){
+                BSet<POSITION> _ic_set_24 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::closed))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed)), (DOOR_STATE(DOOR_STATE::door_moving)))).elementOf(door).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::retracted))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
+                        _ic_set_24 = _ic_set_24._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_start_open_door = _ic_set_24;
+                else return _ic_set_24;
+            }
+            return this->_tr_cache_env_start_open_door.get();
+        }
+
+        BSet<POSITION> _tr_env_open_door_last(bool isCaching) const {
+            if (this->_tr_cache_env_open_door_last == boost::none){
+                BSet<POSITION> _ic_set_25 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::retracted))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
+                        _ic_set_25 = _ic_set_25._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_open_door_last = _ic_set_25;
+                else return _ic_set_25;
+            }
+            return this->_tr_cache_env_open_door_last.get();
+        }
+
+        BSet<POSITION> _tr_env_open_door_skip(bool isCaching) const {
+            if (this->_tr_cache_env_open_door_skip == boost::none){
+                BSet<POSITION> _ic_set_26 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::open))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_open_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
+                        _ic_set_26 = _ic_set_26._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_open_door_skip = _ic_set_26;
+                else return _ic_set_26;
+            }
+            return this->_tr_cache_env_open_door_skip.get();
+        }
+
+        BSet<POSITION> _tr_env_start_close_door(bool isCaching) const {
+            if (this->_tr_cache_env_start_close_door == boost::none){
+                BSet<POSITION> _ic_set_27 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::open))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::door_moving)), (DOOR_STATE(DOOR_STATE::open)))).elementOf(door).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)), (GEAR_STATE(GEAR_STATE::retracted)))).elementOf(gear).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
+                        _ic_set_27 = _ic_set_27._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_start_close_door = _ic_set_27;
+                else return _ic_set_27;
+            }
+            return this->_tr_cache_env_start_close_door.get();
+        }
+
+        BSet<POSITION> _tr_env_close_door(bool isCaching) const {
+            if (this->_tr_cache_env_close_door == boost::none){
+                BSet<POSITION> _ic_set_28 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && door.equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue())).booleanValue() && gear.unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gear.equal((GEAR_STATE(GEAR_STATE::extended))).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended)), (GEAR_STATE(GEAR_STATE::retracted)))).elementOf(gear).booleanValue())).booleanValue())).booleanValue()))).booleanValue()) {
+                        _ic_set_28 = _ic_set_28._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_close_door = _ic_set_28;
+                else return _ic_set_28;
+            }
+            return this->_tr_cache_env_close_door.get();
+        }
+
+        BSet<POSITION> _tr_env_close_door_skip(bool isCaching) const {
+            if (this->_tr_cache_env_close_door_skip == boost::none){
+                BSet<POSITION> _ic_set_29 = BSet<POSITION>();
+                for(const POSITION& _ic_gr_1 : gears.domain()) {
+                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(doors.functionCall(_ic_gr_1).equal((DOOR_STATE(DOOR_STATE::door_moving))).booleanValue() && gears.functionCall(_ic_gr_1).unequal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && gears.range().notElementOf((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue())).booleanValue() && doors.relationImage(_POSITION.difference((BSet<POSITION >(_ic_gr_1)))).unequal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && (BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && (BBoolean(gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue() || gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue() || (BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue())).booleanValue())).booleanValue() && valve_close_door.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() || shock_absorber.equal((PLANE_STATE(PLANE_STATE::ground))).booleanValue())).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue()) {
+                        _ic_set_29 = _ic_set_29._union(BSet<POSITION>(_ic_gr_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_env_close_door_skip = _ic_set_29;
+                else return _ic_set_29;
+            }
+            return this->_tr_cache_env_close_door_skip.get();
+        }
+
+        bool _tr_toggle_handle_up(bool isCaching) const {
+            if (this->_tr_cache_toggle_handle_up == boost::none){
+                bool __tmp_result = (handle.equal((HANDLE_STATE(HANDLE_STATE::down)))).booleanValue();
+                if (isCaching) this->_tr_cache_toggle_handle_up = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_toggle_handle_up.get();
+        }
+
+        bool _tr_toggle_handle_down(bool isCaching) const {
+            if (this->_tr_cache_toggle_handle_down == boost::none){
+                bool __tmp_result = (handle.equal((HANDLE_STATE(HANDLE_STATE::up)))).booleanValue();
+                if (isCaching) this->_tr_cache_toggle_handle_down = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_toggle_handle_down.get();
+        }
+
+        bool _tr_con_stimulate_general_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stimulate_general_valve == boost::none){
+                bool __tmp_result = ((BBoolean(general_EV.equal((BBoolean(false))).booleanValue() && handle_move.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stimulate_general_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stimulate_general_valve.get();
+        }
+
+        bool _tr_con_stop_stimulate_general_valve(bool isCaching) const {
+            if (this->_tr_cache_con_stop_stimulate_general_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(general_EV.equal((BBoolean(true))).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && retract_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && extend_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && close_EV.equal((BBoolean(false))).booleanValue())).booleanValue() && (BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::retracted))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue() || (BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::down))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() || (BBoolean((BBoolean((BBoolean(handle.equal((HANDLE_STATE(HANDLE_STATE::up))).booleanValue() && gears.range().equal((BSet<GEAR_STATE >((GEAR_STATE(GEAR_STATE::extended))))).booleanValue())).booleanValue() && doors.range().equal((BSet<DOOR_STATE >((DOOR_STATE(DOOR_STATE::closed))))).booleanValue())).booleanValue() && open_EV.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_con_stop_stimulate_general_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_con_stop_stimulate_general_valve.get();
+        }
+
+        bool _tr_evn_open_general_valve(bool isCaching) const {
+            if (this->_tr_cache_evn_open_general_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(general_EV.equal((BBoolean(true))).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_closed))).booleanValue())).booleanValue() && analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_closed))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_evn_open_general_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_evn_open_general_valve.get();
+        }
+
+        bool _tr_evn_close_general_valve(bool isCaching) const {
+            if (this->_tr_cache_evn_close_general_valve == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(general_EV.equal((BBoolean(false))).booleanValue() || analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_open))).booleanValue())).booleanValue() && general_valve.equal((VALVE_STATE(VALVE_STATE::valve_open))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_evn_close_general_valve = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_evn_close_general_valve.get();
+        }
+
+        bool _tr_env_close_analogical_switch(bool isCaching) const {
+            if (this->_tr_cache_env_close_analogical_switch == boost::none){
+                bool __tmp_result = ((BBoolean(analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_open))).booleanValue() && handle_move.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_env_close_analogical_switch = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_env_close_analogical_switch.get();
+        }
+
+        bool _tr_env_open_analogical_switch(bool isCaching) const {
+            if (this->_tr_cache_env_open_analogical_switch == boost::none){
+                bool __tmp_result = (analogical_switch.equal((SWITCH_STATE(SWITCH_STATE::switch_closed)))).booleanValue();
+                if (isCaching) this->_tr_cache_env_open_analogical_switch = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_env_open_analogical_switch.get();
         }
 
         bool _check_inv_1() const {
@@ -1148,8 +1367,61 @@ class LandingGear_R6 {
             return ((BBoolean(!gear.equal((GEAR_STATE(GEAR_STATE::gear_moving))).booleanValue() || door.equal((DOOR_STATE(DOOR_STATE::open))).booleanValue()))).booleanValue();
         }
 
-        LandingGear_R6 _copy() const {
-            return LandingGear_R6(analogical_switch, general_EV, general_valve, handle_move, close_EV, extend_EV, open_EV, retract_EV, shock_absorber, valve_close_door, valve_extend_gear, valve_open_door, valve_retract_gear, doors, gears, handle, door, gear);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        LandingGear_R6 _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_begin_flying", "_tr_land_plane", "_tr_open_valve_door_open", "_tr_close_valve_door_open", "_tr_open_valve_door_close", "_tr_close_valve_door_close", "_tr_open_valve_retract_gear", "_tr_close_valve_retract_gear", "_tr_open_valve_extend_gear", "_tr_close_valve_extend_gear", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_retract_gear_skip", "_tr_env_retract_gear_last", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_extend_gear_skip", "_tr_env_start_open_door", "_tr_env_open_door_last", "_tr_env_open_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_env_close_door_skip", "_tr_toggle_handle_up", "_tr_toggle_handle_down", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_evn_open_general_valve", "_tr_evn_close_general_valve", "_tr_env_close_analogical_switch", "_tr_env_open_analogical_switch"};
+
+            LandingGear_R6 result = LandingGear_R6(analogical_switch, general_EV, general_valve, handle_move, close_EV, extend_EV, open_EV, retract_EV, shock_absorber, valve_close_door, valve_extend_gear, valve_open_door, valve_retract_gear, doors, gears, handle, door, gear);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_begin_flying"): result._tr_cache_begin_flying = this->_tr_cache_begin_flying; break;
+                        case strHash("_tr_land_plane"): result._tr_cache_land_plane = this->_tr_cache_land_plane; break;
+                        case strHash("_tr_open_valve_door_open"): result._tr_cache_open_valve_door_open = this->_tr_cache_open_valve_door_open; break;
+                        case strHash("_tr_close_valve_door_open"): result._tr_cache_close_valve_door_open = this->_tr_cache_close_valve_door_open; break;
+                        case strHash("_tr_open_valve_door_close"): result._tr_cache_open_valve_door_close = this->_tr_cache_open_valve_door_close; break;
+                        case strHash("_tr_close_valve_door_close"): result._tr_cache_close_valve_door_close = this->_tr_cache_close_valve_door_close; break;
+                        case strHash("_tr_open_valve_retract_gear"): result._tr_cache_open_valve_retract_gear = this->_tr_cache_open_valve_retract_gear; break;
+                        case strHash("_tr_close_valve_retract_gear"): result._tr_cache_close_valve_retract_gear = this->_tr_cache_close_valve_retract_gear; break;
+                        case strHash("_tr_open_valve_extend_gear"): result._tr_cache_open_valve_extend_gear = this->_tr_cache_open_valve_extend_gear; break;
+                        case strHash("_tr_close_valve_extend_gear"): result._tr_cache_close_valve_extend_gear = this->_tr_cache_close_valve_extend_gear; break;
+                        case strHash("_tr_con_stimulate_open_door_valve"): result._tr_cache_con_stimulate_open_door_valve = this->_tr_cache_con_stimulate_open_door_valve; break;
+                        case strHash("_tr_con_stop_stimulate_open_door_valve"): result._tr_cache_con_stop_stimulate_open_door_valve = this->_tr_cache_con_stop_stimulate_open_door_valve; break;
+                        case strHash("_tr_con_stimulate_close_door_valve"): result._tr_cache_con_stimulate_close_door_valve = this->_tr_cache_con_stimulate_close_door_valve; break;
+                        case strHash("_tr_con_stop_stimulate_close_door_valve"): result._tr_cache_con_stop_stimulate_close_door_valve = this->_tr_cache_con_stop_stimulate_close_door_valve; break;
+                        case strHash("_tr_con_stimulate_retract_gear_valve"): result._tr_cache_con_stimulate_retract_gear_valve = this->_tr_cache_con_stimulate_retract_gear_valve; break;
+                        case strHash("_tr_con_stop_stimulate_retract_gear_valve"): result._tr_cache_con_stop_stimulate_retract_gear_valve = this->_tr_cache_con_stop_stimulate_retract_gear_valve; break;
+                        case strHash("_tr_con_stimulate_extend_gear_valve"): result._tr_cache_con_stimulate_extend_gear_valve = this->_tr_cache_con_stimulate_extend_gear_valve; break;
+                        case strHash("_tr_con_stop_stimulate_extend_gear_valve"): result._tr_cache_con_stop_stimulate_extend_gear_valve = this->_tr_cache_con_stop_stimulate_extend_gear_valve; break;
+                        case strHash("_tr_env_start_retracting_first"): result._tr_cache_env_start_retracting_first = this->_tr_cache_env_start_retracting_first; break;
+                        case strHash("_tr_env_retract_gear_skip"): result._tr_cache_env_retract_gear_skip = this->_tr_cache_env_retract_gear_skip; break;
+                        case strHash("_tr_env_retract_gear_last"): result._tr_cache_env_retract_gear_last = this->_tr_cache_env_retract_gear_last; break;
+                        case strHash("_tr_env_start_extending"): result._tr_cache_env_start_extending = this->_tr_cache_env_start_extending; break;
+                        case strHash("_tr_env_extend_gear_last"): result._tr_cache_env_extend_gear_last = this->_tr_cache_env_extend_gear_last; break;
+                        case strHash("_tr_env_extend_gear_skip"): result._tr_cache_env_extend_gear_skip = this->_tr_cache_env_extend_gear_skip; break;
+                        case strHash("_tr_env_start_open_door"): result._tr_cache_env_start_open_door = this->_tr_cache_env_start_open_door; break;
+                        case strHash("_tr_env_open_door_last"): result._tr_cache_env_open_door_last = this->_tr_cache_env_open_door_last; break;
+                        case strHash("_tr_env_open_door_skip"): result._tr_cache_env_open_door_skip = this->_tr_cache_env_open_door_skip; break;
+                        case strHash("_tr_env_start_close_door"): result._tr_cache_env_start_close_door = this->_tr_cache_env_start_close_door; break;
+                        case strHash("_tr_env_close_door"): result._tr_cache_env_close_door = this->_tr_cache_env_close_door; break;
+                        case strHash("_tr_env_close_door_skip"): result._tr_cache_env_close_door_skip = this->_tr_cache_env_close_door_skip; break;
+                        case strHash("_tr_toggle_handle_up"): result._tr_cache_toggle_handle_up = this->_tr_cache_toggle_handle_up; break;
+                        case strHash("_tr_toggle_handle_down"): result._tr_cache_toggle_handle_down = this->_tr_cache_toggle_handle_down; break;
+                        case strHash("_tr_con_stimulate_general_valve"): result._tr_cache_con_stimulate_general_valve = this->_tr_cache_con_stimulate_general_valve; break;
+                        case strHash("_tr_con_stop_stimulate_general_valve"): result._tr_cache_con_stop_stimulate_general_valve = this->_tr_cache_con_stop_stimulate_general_valve; break;
+                        case strHash("_tr_evn_open_general_valve"): result._tr_cache_evn_open_general_valve = this->_tr_cache_evn_open_general_valve; break;
+                        case strHash("_tr_evn_close_general_valve"): result._tr_cache_evn_close_general_valve = this->_tr_cache_evn_close_general_valve; break;
+                        case strHash("_tr_env_close_analogical_switch"): result._tr_cache_env_close_analogical_switch = this->_tr_cache_env_close_analogical_switch; break;
+                        case strHash("_tr_env_open_analogical_switch"): result._tr_cache_env_open_analogical_switch = this->_tr_cache_env_open_analogical_switch; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const LandingGear_R6& o1, const LandingGear_R6& o2) {
@@ -1236,2412 +1508,724 @@ class LandingGear_R6 {
 };
 
 
-static std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> generateNextStates(std::mutex& guardMutex, const LandingGear_R6& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentGuard, std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& guardCache, std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& parents, std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> result = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        bool _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_begin_flying"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_begin_flying") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_1 = state._tr_begin_flying();
-        } else {
-            _trid_1 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_begin_flying", _trid_1);
-        if(_trid_1) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.begin_flying();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["begin_flying"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["begin_flying"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "begin_flying"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_land_plane"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_land_plane") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_2 = state._tr_land_plane();
-        } else {
-            _trid_2 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_land_plane", _trid_2);
-        if(_trid_2) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.land_plane();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["land_plane"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["land_plane"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "land_plane"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_3;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_open_valve_door_open"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_open_valve_door_open") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_3 = state._tr_open_valve_door_open();
-        } else {
-            _trid_3 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_open_valve_door_open", _trid_3);
-        if(_trid_3) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_door_open();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["open_valve_door_open"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["open_valve_door_open"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_door_open"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_4;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_close_valve_door_open"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_close_valve_door_open") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_4 = state._tr_close_valve_door_open();
-        } else {
-            _trid_4 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_close_valve_door_open", _trid_4);
-        if(_trid_4) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_door_open();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["close_valve_door_open"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["close_valve_door_open"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_door_open"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_5;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_open_valve_door_close"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_open_valve_door_close") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_5 = state._tr_open_valve_door_close();
-        } else {
-            _trid_5 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_open_valve_door_close", _trid_5);
-        if(_trid_5) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_door_close();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["open_valve_door_close"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["open_valve_door_close"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_door_close"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_6;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_close_valve_door_close"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_close_valve_door_close") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_6 = state._tr_close_valve_door_close();
-        } else {
-            _trid_6 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_close_valve_door_close", _trid_6);
-        if(_trid_6) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_door_close();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["close_valve_door_close"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["close_valve_door_close"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_door_close"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_7;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_open_valve_retract_gear"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_open_valve_retract_gear") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_7 = state._tr_open_valve_retract_gear();
-        } else {
-            _trid_7 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_open_valve_retract_gear", _trid_7);
-        if(_trid_7) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_retract_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["open_valve_retract_gear"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["open_valve_retract_gear"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_retract_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_8;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_close_valve_retract_gear"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_close_valve_retract_gear") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_8 = state._tr_close_valve_retract_gear();
-        } else {
-            _trid_8 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_close_valve_retract_gear", _trid_8);
-        if(_trid_8) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_retract_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["close_valve_retract_gear"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["close_valve_retract_gear"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_retract_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_9;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_open_valve_extend_gear"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_open_valve_extend_gear") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_9 = state._tr_open_valve_extend_gear();
-        } else {
-            _trid_9 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_open_valve_extend_gear", _trid_9);
-        if(_trid_9) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_extend_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["open_valve_extend_gear"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["open_valve_extend_gear"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_extend_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_10;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_close_valve_extend_gear"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_close_valve_extend_gear") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_10 = state._tr_close_valve_extend_gear();
-        } else {
-            _trid_10 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_close_valve_extend_gear", _trid_10);
-        if(_trid_10) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_extend_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["close_valve_extend_gear"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["close_valve_extend_gear"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_extend_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_11;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stimulate_open_door_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stimulate_open_door_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_11 = state._tr_con_stimulate_open_door_valve();
-        } else {
-            _trid_11 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stimulate_open_door_valve", _trid_11);
-        if(_trid_11) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_open_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stimulate_open_door_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stimulate_open_door_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_open_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_12;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stop_stimulate_open_door_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stop_stimulate_open_door_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_12 = state._tr_con_stop_stimulate_open_door_valve();
-        } else {
-            _trid_12 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stop_stimulate_open_door_valve", _trid_12);
-        if(_trid_12) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_open_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stop_stimulate_open_door_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stop_stimulate_open_door_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_open_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_13;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stimulate_close_door_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stimulate_close_door_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_13 = state._tr_con_stimulate_close_door_valve();
-        } else {
-            _trid_13 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stimulate_close_door_valve", _trid_13);
-        if(_trid_13) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_close_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stimulate_close_door_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stimulate_close_door_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_close_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_14;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stop_stimulate_close_door_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stop_stimulate_close_door_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_14 = state._tr_con_stop_stimulate_close_door_valve();
-        } else {
-            _trid_14 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stop_stimulate_close_door_valve", _trid_14);
-        if(_trid_14) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_close_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stop_stimulate_close_door_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stop_stimulate_close_door_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_close_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_15;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stimulate_retract_gear_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stimulate_retract_gear_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_15 = state._tr_con_stimulate_retract_gear_valve();
-        } else {
-            _trid_15 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stimulate_retract_gear_valve", _trid_15);
-        if(_trid_15) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_retract_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stimulate_retract_gear_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stimulate_retract_gear_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_retract_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_16;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stop_stimulate_retract_gear_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stop_stimulate_retract_gear_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_16 = state._tr_con_stop_stimulate_retract_gear_valve();
-        } else {
-            _trid_16 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stop_stimulate_retract_gear_valve", _trid_16);
-        if(_trid_16) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_retract_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stop_stimulate_retract_gear_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stop_stimulate_retract_gear_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_retract_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_17;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stimulate_extend_gear_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stimulate_extend_gear_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_17 = state._tr_con_stimulate_extend_gear_valve();
-        } else {
-            _trid_17 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stimulate_extend_gear_valve", _trid_17);
-        if(_trid_17) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_extend_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stimulate_extend_gear_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stimulate_extend_gear_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_extend_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_18;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stop_stimulate_extend_gear_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stop_stimulate_extend_gear_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_18 = state._tr_con_stop_stimulate_extend_gear_valve();
-        } else {
-            _trid_18 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stop_stimulate_extend_gear_valve", _trid_18);
-        if(_trid_18) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_extend_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stop_stimulate_extend_gear_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stop_stimulate_extend_gear_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_extend_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_19;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_start_retracting_first"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_start_retracting_first") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_19 = state._tr_env_start_retracting_first();
-        } else {
-            _trid_19 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_start_retracting_first", _trid_19);
-        for(const LandingGear_R6::POSITION& param : _trid_19) {
-            LandingGear_R6::POSITION _tmp_1 = param;
+class ModelChecker {
+    private:
+        LandingGear_R6::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
 
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_retracting_first(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_start_retracting_first"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_start_retracting_first"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_retracting_first"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_20;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_retract_gear_skip"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_retract_gear_skip") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_20 = state._tr_env_retract_gear_skip();
-        } else {
-            _trid_20 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_retract_gear_skip", _trid_20);
-        for(const LandingGear_R6::POSITION& param : _trid_20) {
-            LandingGear_R6::POSITION _tmp_1 = param;
+        std::list<LandingGear_R6> unvisitedStates;
+        std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
 
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_retract_gear_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_retract_gear_skip"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_retract_gear_skip"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_retract_gear_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_21;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_retract_gear_last"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_retract_gear_last") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_21 = state._tr_env_retract_gear_last();
-        } else {
-            _trid_21 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_retract_gear_last", _trid_21);
-        for(const LandingGear_R6::POSITION& param : _trid_21) {
-            LandingGear_R6::POSITION _tmp_1 = param;
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        LandingGear_R6 counterExampleState;
 
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_retract_gear_last(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_retract_gear_last"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_retract_gear_last"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_retract_gear_last"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_22;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_start_extending"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_start_extending") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_22 = state._tr_env_start_extending();
-        } else {
-            _trid_22 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_start_extending", _trid_22);
-        for(const LandingGear_R6::POSITION& param : _trid_22) {
-            LandingGear_R6::POSITION _tmp_1 = param;
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> parents;
 
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_extending(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_start_extending"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_start_extending"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_extending"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_23;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_extend_gear_last"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_extend_gear_last") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_23 = state._tr_env_extend_gear_last();
-        } else {
-            _trid_23 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_extend_gear_last", _trid_23);
-        for(const LandingGear_R6::POSITION& param : _trid_23) {
-            LandingGear_R6::POSITION _tmp_1 = param;
+    public:
+        ModelChecker() {}
 
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_extend_gear_last(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_extend_gear_last"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_extend_gear_last"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_extend_gear_last"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_24;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_extend_gear_skip"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_extend_gear_skip") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_24 = state._tr_env_extend_gear_skip();
-        } else {
-            _trid_24 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_extend_gear_skip", _trid_24);
-        for(const LandingGear_R6::POSITION& param : _trid_24) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_extend_gear_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_extend_gear_skip"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_extend_gear_skip"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_extend_gear_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_25;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_start_open_door"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_start_open_door") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_25 = state._tr_env_start_open_door();
-        } else {
-            _trid_25 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_start_open_door", _trid_25);
-        for(const LandingGear_R6::POSITION& param : _trid_25) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_open_door(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_start_open_door"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_start_open_door"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_open_door"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_26;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_open_door_last"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_open_door_last") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_26 = state._tr_env_open_door_last();
-        } else {
-            _trid_26 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_open_door_last", _trid_26);
-        for(const LandingGear_R6::POSITION& param : _trid_26) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_open_door_last(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_open_door_last"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_open_door_last"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_open_door_last"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_27;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_open_door_skip"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_open_door_skip") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_27 = state._tr_env_open_door_skip();
-        } else {
-            _trid_27 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_open_door_skip", _trid_27);
-        for(const LandingGear_R6::POSITION& param : _trid_27) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_open_door_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_open_door_skip"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_open_door_skip"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_open_door_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_28;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_start_close_door"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_start_close_door") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_28 = state._tr_env_start_close_door();
-        } else {
-            _trid_28 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_start_close_door", _trid_28);
-        for(const LandingGear_R6::POSITION& param : _trid_28) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_close_door(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_start_close_door"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_start_close_door"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_close_door"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_29;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_close_door"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_close_door") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_29 = state._tr_env_close_door();
-        } else {
-            _trid_29 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_close_door", _trid_29);
-        for(const LandingGear_R6::POSITION& param : _trid_29) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_close_door(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_close_door"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_close_door"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_close_door"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_30;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_close_door_skip"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_close_door_skip") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_30 = state._tr_env_close_door_skip();
-        } else {
-            _trid_30 = boost::any_cast<BSet<LandingGear_R6::POSITION>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_close_door_skip", _trid_30);
-        for(const LandingGear_R6::POSITION& param : _trid_30) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_close_door_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_close_door_skip"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_close_door_skip"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_close_door_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_31;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_toggle_handle_up"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_toggle_handle_up") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_31 = state._tr_toggle_handle_up();
-        } else {
-            _trid_31 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_toggle_handle_up", _trid_31);
-        if(_trid_31) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.toggle_handle_up();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["toggle_handle_up"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["toggle_handle_up"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "toggle_handle_up"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_32;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_toggle_handle_down"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_toggle_handle_down") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_32 = state._tr_toggle_handle_down();
-        } else {
-            _trid_32 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_toggle_handle_down", _trid_32);
-        if(_trid_32) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.toggle_handle_down();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["toggle_handle_down"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["toggle_handle_down"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "toggle_handle_down"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_33;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stimulate_general_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stimulate_general_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_33 = state._tr_con_stimulate_general_valve();
-        } else {
-            _trid_33 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stimulate_general_valve", _trid_33);
-        if(_trid_33) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stimulate_general_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stimulate_general_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_34;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_con_stop_stimulate_general_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_con_stop_stimulate_general_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_34 = state._tr_con_stop_stimulate_general_valve();
-        } else {
-            _trid_34 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_con_stop_stimulate_general_valve", _trid_34);
-        if(_trid_34) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["con_stop_stimulate_general_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["con_stop_stimulate_general_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_35;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_evn_open_general_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_evn_open_general_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_35 = state._tr_evn_open_general_valve();
-        } else {
-            _trid_35 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_evn_open_general_valve", _trid_35);
-        if(_trid_35) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.evn_open_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["evn_open_general_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["evn_open_general_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "evn_open_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_36;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_evn_close_general_valve"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_evn_close_general_valve") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_36 = state._tr_evn_close_general_valve();
-        } else {
-            _trid_36 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_evn_close_general_valve", _trid_36);
-        if(_trid_36) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.evn_close_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["evn_close_general_valve"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["evn_close_general_valve"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "evn_close_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_37;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_close_analogical_switch"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_close_analogical_switch") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_37 = state._tr_env_close_analogical_switch();
-        } else {
-            _trid_37 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_close_analogical_switch", _trid_37);
-        if(_trid_37) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_close_analogical_switch();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_close_analogical_switch"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_close_analogical_switch"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_close_analogical_switch"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_38;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_env_open_analogical_switch"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_env_open_analogical_switch") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_38 = state._tr_env_open_analogical_switch();
-        } else {
-            _trid_38 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_env_open_analogical_switch", _trid_38);
-        if(_trid_38) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_open_analogical_switch();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["env_open_analogical_switch"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["env_open_analogical_switch"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_open_analogical_switch"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+        ModelChecker(LandingGear_R6::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        if(state._tr_begin_flying()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.begin_flying();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "begin_flying"});
-                }
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
             }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_land_plane()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.land_plane();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "land_plane"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_open_valve_door_open()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_door_open();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_door_open"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_close_valve_door_open()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_door_open();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_door_open"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_open_valve_door_close()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_door_close();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_door_close"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_close_valve_door_close()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_door_close();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_door_close"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_open_valve_retract_gear()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_retract_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_retract_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_close_valve_retract_gear()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_retract_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_retract_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_open_valve_extend_gear()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.open_valve_extend_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "open_valve_extend_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_close_valve_extend_gear()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.close_valve_extend_gear();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "close_valve_extend_gear"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stimulate_open_door_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_open_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_open_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stop_stimulate_open_door_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_open_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_open_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stimulate_close_door_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_close_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_close_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stop_stimulate_close_door_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_close_door_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_close_door_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stimulate_retract_gear_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_retract_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_retract_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stop_stimulate_retract_gear_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_retract_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_retract_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stimulate_extend_gear_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_extend_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_extend_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stop_stimulate_extend_gear_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_extend_gear_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_extend_gear_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_19 = state._tr_env_start_retracting_first();
-        for(const LandingGear_R6::POSITION& param : _trid_19) {
-            LandingGear_R6::POSITION _tmp_1 = param;
 
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_retracting_first(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_retracting_first"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_20 = state._tr_env_retract_gear_skip();
-        for(const LandingGear_R6::POSITION& param : _trid_20) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_retract_gear_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_retract_gear_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_21 = state._tr_env_retract_gear_last();
-        for(const LandingGear_R6::POSITION& param : _trid_21) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_retract_gear_last(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_retract_gear_last"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_22 = state._tr_env_start_extending();
-        for(const LandingGear_R6::POSITION& param : _trid_22) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_extending(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_extending"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_23 = state._tr_env_extend_gear_last();
-        for(const LandingGear_R6::POSITION& param : _trid_23) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_extend_gear_last(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_extend_gear_last"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_24 = state._tr_env_extend_gear_skip();
-        for(const LandingGear_R6::POSITION& param : _trid_24) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_extend_gear_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_extend_gear_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_25 = state._tr_env_start_open_door();
-        for(const LandingGear_R6::POSITION& param : _trid_25) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_open_door(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_open_door"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_26 = state._tr_env_open_door_last();
-        for(const LandingGear_R6::POSITION& param : _trid_26) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_open_door_last(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_open_door_last"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_27 = state._tr_env_open_door_skip();
-        for(const LandingGear_R6::POSITION& param : _trid_27) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_open_door_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_open_door_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_28 = state._tr_env_start_close_door();
-        for(const LandingGear_R6::POSITION& param : _trid_28) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_start_close_door(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_start_close_door"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_29 = state._tr_env_close_door();
-        for(const LandingGear_R6::POSITION& param : _trid_29) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_close_door(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_close_door"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<LandingGear_R6::POSITION> _trid_30 = state._tr_env_close_door_skip();
-        for(const LandingGear_R6::POSITION& param : _trid_30) {
-            LandingGear_R6::POSITION _tmp_1 = param;
-
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_close_door_skip(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_close_door_skip"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_toggle_handle_up()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.toggle_handle_up();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "toggle_handle_up"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_toggle_handle_down()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.toggle_handle_down();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "toggle_handle_down"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stimulate_general_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stimulate_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stimulate_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_con_stop_stimulate_general_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.con_stop_stimulate_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "con_stop_stimulate_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_evn_open_general_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.evn_open_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "evn_open_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_evn_close_general_valve()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.evn_close_general_valve();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "evn_close_general_valve"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_env_close_analogical_switch()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_close_analogical_switch();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_close_analogical_switch"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_env_open_analogical_switch()) {
-            LandingGear_R6 copiedState = state._copy();
-            copiedState.env_open_analogical_switch();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "env_open_analogical_switch"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, LandingGear_R6& counterExampleState, std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& parents, std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        LandingGear_R6 currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const LandingGear_R6& state, bool isCaching, std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_3()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_4()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_5()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_6()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_7()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_8()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_9()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_10()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_11()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_12()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_13()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_14()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_15()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_16()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_17()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_18()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_19()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_20()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_21") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_21()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_22") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_22()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_23") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_23()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_24") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_24()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_25") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_25()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20() || !state._check_inv_21() || !state._check_inv_22() || !state._check_inv_23() || !state._check_inv_24() || !state._check_inv_25());
-}
-
-static LandingGear_R6 next(std::list<LandingGear_R6>& collection, std::mutex& mutex, LandingGear_R6::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case LandingGear_R6::BFS: {
-            LandingGear_R6 state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case LandingGear_R6::DFS: {
-            LandingGear_R6 state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case LandingGear_R6::MIXED: {
-            if(collection.size() % 2 == 0) {
-                LandingGear_R6 state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                LandingGear_R6 state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(LandingGear_R6::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    LandingGear_R6 machine = LandingGear_R6();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> states = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<LandingGear_R6> collection = std::list<LandingGear_R6>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> dependentInvariant;
-    std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> dependentGuard;
-    std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> guardCache;
-    std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> parents;
-    std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"close_valve_door_close", {"_check_inv_10"}});
-        invariantDependency.insert({"close_valve_retract_gear", {"_check_inv_13"}});
-        invariantDependency.insert({"con_stimulate_open_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_7"}});
-        invariantDependency.insert({"env_close_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        invariantDependency.insert({"env_start_close_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        invariantDependency.insert({"toggle_handle_up", {"_check_inv_4", "_check_inv_14"}});
-        invariantDependency.insert({"toggle_handle_down", {"_check_inv_4", "_check_inv_14"}});
-        invariantDependency.insert({"open_valve_door_open", {"_check_inv_12"}});
-        invariantDependency.insert({"env_retract_gear_last", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"env_open_door_last", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        invariantDependency.insert({"con_stop_stimulate_retract_gear_valve", {"_check_inv_17", "_check_inv_8"}});
-        invariantDependency.insert({"env_close_door_skip", {"_check_inv_21", "_check_inv_20", "_check_inv_22"}});
-        invariantDependency.insert({"con_stop_stimulate_close_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_5"}});
-        invariantDependency.insert({"env_open_analogical_switch", {"_check_inv_1"}});
-        invariantDependency.insert({"con_stop_stimulate_general_valve", {"_check_inv_17", "_check_inv_2", "_check_inv_4"}});
-        invariantDependency.insert({"env_extend_gear_last", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"evn_open_general_valve", {"_check_inv_3"}});
-        invariantDependency.insert({"land_plane", {"_check_inv_9"}});
-        invariantDependency.insert({"con_stimulate_retract_gear_valve", {"_check_inv_17", "_check_inv_8"}});
-        invariantDependency.insert({"con_stimulate_general_valve", {"_check_inv_17", "_check_inv_2"}});
-        invariantDependency.insert({"env_start_retracting_first", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"env_retract_gear_skip", {"_check_inv_19", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"open_valve_extend_gear", {"_check_inv_11"}});
-        invariantDependency.insert({"begin_flying", {"_check_inv_9"}});
-        invariantDependency.insert({"open_valve_retract_gear", {"_check_inv_13"}});
-        invariantDependency.insert({"env_close_analogical_switch", {"_check_inv_1"}});
-        invariantDependency.insert({"env_start_extending", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"open_valve_door_close", {"_check_inv_10"}});
-        invariantDependency.insert({"con_stop_stimulate_open_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_7"}});
-        invariantDependency.insert({"con_stop_stimulate_extend_gear_valve", {"_check_inv_17", "_check_inv_6"}});
-        invariantDependency.insert({"evn_close_general_valve", {"_check_inv_3"}});
-        invariantDependency.insert({"close_valve_extend_gear", {"_check_inv_11"}});
-        invariantDependency.insert({"con_stimulate_extend_gear_valve", {"_check_inv_17", "_check_inv_6"}});
-        invariantDependency.insert({"close_valve_door_open", {"_check_inv_12"}});
-        invariantDependency.insert({"con_stimulate_close_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_5"}});
-        invariantDependency.insert({"env_extend_gear_skip", {"_check_inv_19", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"env_open_door_skip", {"_check_inv_21", "_check_inv_20", "_check_inv_22"}});
-        invariantDependency.insert({"env_start_open_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        guardDependency.insert({"close_valve_door_close", {"_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"close_valve_retract_gear", {"_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"}});
-        guardDependency.insert({"con_stimulate_open_door_valve", {"_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"env_close_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_start_close_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"toggle_handle_up", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"}});
-        guardDependency.insert({"toggle_handle_down", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"}});
-        guardDependency.insert({"open_valve_door_open", {"_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"env_retract_gear_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_open_door_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"con_stop_stimulate_retract_gear_valve", {"_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
-        guardDependency.insert({"env_close_door_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"con_stop_stimulate_close_door_valve", {"_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"env_open_analogical_switch", {"_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"}});
-        guardDependency.insert({"con_stop_stimulate_general_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve"}});
-        guardDependency.insert({"env_extend_gear_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"evn_open_general_valve", {"_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"land_plane", {"_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"}});
-        guardDependency.insert({"con_stimulate_retract_gear_valve", {"_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
-        guardDependency.insert({"con_stimulate_general_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
-        guardDependency.insert({"env_start_retracting_first", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_retract_gear_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"open_valve_extend_gear", {"_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"}});
-        guardDependency.insert({"begin_flying", {"_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"}});
-        guardDependency.insert({"open_valve_retract_gear", {"_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"}});
-        guardDependency.insert({"env_close_analogical_switch", {"_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"}});
-        guardDependency.insert({"env_start_extending", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"open_valve_door_close", {"_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"con_stop_stimulate_open_door_valve", {"_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"con_stop_stimulate_extend_gear_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"}});
-        guardDependency.insert({"evn_close_general_valve", {"_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"close_valve_extend_gear", {"_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"}});
-        guardDependency.insert({"con_stimulate_extend_gear_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"}});
-        guardDependency.insert({"close_valve_door_open", {"_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"con_stimulate_close_door_valve", {"_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"env_extend_gear_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_open_door_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_start_open_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    LandingGear_R6 counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        LandingGear_R6 state = next(collection, mutex, type);
-
-        std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            LandingGear_R6 machine = LandingGear_R6();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                LandingGear_R6 state = next();
 
-static void modelCheckMultiThreaded(LandingGear_R6::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    LandingGear_R6 machine = LandingGear_R6();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> states = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<LandingGear_R6> collection = std::list<LandingGear_R6>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> dependentInvariant;
-    std::unordered_map<LandingGear_R6, std::unordered_set<string>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> dependentGuard;
-    std::unordered_map<LandingGear_R6, immer::map<string, boost::any>, LandingGear_R6::Hash, LandingGear_R6::HashEqual> guardCache;
-    std::unordered_map<LandingGear_R6, LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> parents;
-    std::unordered_map<LandingGear_R6, string, LandingGear_R6::Hash, LandingGear_R6::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"close_valve_door_close", {"_check_inv_10"}});
-        invariantDependency.insert({"close_valve_retract_gear", {"_check_inv_13"}});
-        invariantDependency.insert({"con_stimulate_open_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_7"}});
-        invariantDependency.insert({"env_close_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        invariantDependency.insert({"env_start_close_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        invariantDependency.insert({"toggle_handle_up", {"_check_inv_4", "_check_inv_14"}});
-        invariantDependency.insert({"toggle_handle_down", {"_check_inv_4", "_check_inv_14"}});
-        invariantDependency.insert({"open_valve_door_open", {"_check_inv_12"}});
-        invariantDependency.insert({"env_retract_gear_last", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"env_open_door_last", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        invariantDependency.insert({"con_stop_stimulate_retract_gear_valve", {"_check_inv_17", "_check_inv_8"}});
-        invariantDependency.insert({"env_close_door_skip", {"_check_inv_21", "_check_inv_20", "_check_inv_22"}});
-        invariantDependency.insert({"con_stop_stimulate_close_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_5"}});
-        invariantDependency.insert({"env_open_analogical_switch", {"_check_inv_1"}});
-        invariantDependency.insert({"con_stop_stimulate_general_valve", {"_check_inv_17", "_check_inv_2", "_check_inv_4"}});
-        invariantDependency.insert({"env_extend_gear_last", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"evn_open_general_valve", {"_check_inv_3"}});
-        invariantDependency.insert({"land_plane", {"_check_inv_9"}});
-        invariantDependency.insert({"con_stimulate_retract_gear_valve", {"_check_inv_17", "_check_inv_8"}});
-        invariantDependency.insert({"con_stimulate_general_valve", {"_check_inv_17", "_check_inv_2"}});
-        invariantDependency.insert({"env_start_retracting_first", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"env_retract_gear_skip", {"_check_inv_19", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"open_valve_extend_gear", {"_check_inv_11"}});
-        invariantDependency.insert({"begin_flying", {"_check_inv_9"}});
-        invariantDependency.insert({"open_valve_retract_gear", {"_check_inv_13"}});
-        invariantDependency.insert({"env_close_analogical_switch", {"_check_inv_1"}});
-        invariantDependency.insert({"env_start_extending", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"open_valve_door_close", {"_check_inv_10"}});
-        invariantDependency.insert({"con_stop_stimulate_open_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_7"}});
-        invariantDependency.insert({"con_stop_stimulate_extend_gear_valve", {"_check_inv_17", "_check_inv_6"}});
-        invariantDependency.insert({"evn_close_general_valve", {"_check_inv_3"}});
-        invariantDependency.insert({"close_valve_extend_gear", {"_check_inv_11"}});
-        invariantDependency.insert({"con_stimulate_extend_gear_valve", {"_check_inv_17", "_check_inv_6"}});
-        invariantDependency.insert({"close_valve_door_open", {"_check_inv_12"}});
-        invariantDependency.insert({"con_stimulate_close_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_5"}});
-        invariantDependency.insert({"env_extend_gear_skip", {"_check_inv_19", "_check_inv_24", "_check_inv_23"}});
-        invariantDependency.insert({"env_open_door_skip", {"_check_inv_21", "_check_inv_20", "_check_inv_22"}});
-        invariantDependency.insert({"env_start_open_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
-        guardDependency.insert({"close_valve_door_close", {"_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"close_valve_retract_gear", {"_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"}});
-        guardDependency.insert({"con_stimulate_open_door_valve", {"_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"env_close_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_start_close_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"toggle_handle_up", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"}});
-        guardDependency.insert({"toggle_handle_down", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"}});
-        guardDependency.insert({"open_valve_door_open", {"_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"env_retract_gear_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_open_door_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"con_stop_stimulate_retract_gear_valve", {"_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
-        guardDependency.insert({"env_close_door_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"con_stop_stimulate_close_door_valve", {"_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"env_open_analogical_switch", {"_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"}});
-        guardDependency.insert({"con_stop_stimulate_general_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve"}});
-        guardDependency.insert({"env_extend_gear_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"evn_open_general_valve", {"_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"land_plane", {"_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"}});
-        guardDependency.insert({"con_stimulate_retract_gear_valve", {"_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
-        guardDependency.insert({"con_stimulate_general_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
-        guardDependency.insert({"env_start_retracting_first", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_retract_gear_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"open_valve_extend_gear", {"_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"}});
-        guardDependency.insert({"begin_flying", {"_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"}});
-        guardDependency.insert({"open_valve_retract_gear", {"_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"}});
-        guardDependency.insert({"env_close_analogical_switch", {"_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"}});
-        guardDependency.insert({"env_start_extending", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"open_valve_door_close", {"_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"con_stop_stimulate_open_door_valve", {"_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"con_stop_stimulate_extend_gear_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"}});
-        guardDependency.insert({"evn_close_general_valve", {"_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"close_valve_extend_gear", {"_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"}});
-        guardDependency.insert({"con_stimulate_extend_gear_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"}});
-        guardDependency.insert({"close_valve_door_open", {"_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"}});
-        guardDependency.insert({"con_stimulate_close_door_valve", {"_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"}});
-        guardDependency.insert({"env_extend_gear_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_open_door_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        guardDependency.insert({"env_start_open_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    LandingGear_R6 counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        LandingGear_R6 state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            LandingGear_R6 machine = LandingGear_R6();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                LandingGear_R6 state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(LandingGear_R6& machine) {
+            invariantDependency.insert({"close_valve_door_close", {"_check_inv_10"}});
+            invariantDependency.insert({"close_valve_retract_gear", {"_check_inv_13"}});
+            invariantDependency.insert({"con_stimulate_open_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_7"}});
+            invariantDependency.insert({"env_close_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
+            invariantDependency.insert({"env_start_close_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
+            invariantDependency.insert({"toggle_handle_up", {"_check_inv_4", "_check_inv_14"}});
+            invariantDependency.insert({"toggle_handle_down", {"_check_inv_4", "_check_inv_14"}});
+            invariantDependency.insert({"open_valve_door_open", {"_check_inv_12"}});
+            invariantDependency.insert({"env_retract_gear_last", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
+            invariantDependency.insert({"env_open_door_last", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
+            invariantDependency.insert({"con_stop_stimulate_retract_gear_valve", {"_check_inv_17", "_check_inv_8"}});
+            invariantDependency.insert({"env_close_door_skip", {"_check_inv_21", "_check_inv_20", "_check_inv_22"}});
+            invariantDependency.insert({"con_stop_stimulate_close_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_5"}});
+            invariantDependency.insert({"env_open_analogical_switch", {"_check_inv_1"}});
+            invariantDependency.insert({"con_stop_stimulate_general_valve", {"_check_inv_17", "_check_inv_2", "_check_inv_4"}});
+            invariantDependency.insert({"env_extend_gear_last", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
+            invariantDependency.insert({"evn_open_general_valve", {"_check_inv_3"}});
+            invariantDependency.insert({"land_plane", {"_check_inv_9"}});
+            invariantDependency.insert({"con_stimulate_retract_gear_valve", {"_check_inv_17", "_check_inv_8"}});
+            invariantDependency.insert({"con_stimulate_general_valve", {"_check_inv_17", "_check_inv_2"}});
+            invariantDependency.insert({"env_start_retracting_first", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
+            invariantDependency.insert({"env_retract_gear_skip", {"_check_inv_19", "_check_inv_24", "_check_inv_23"}});
+            invariantDependency.insert({"open_valve_extend_gear", {"_check_inv_11"}});
+            invariantDependency.insert({"begin_flying", {"_check_inv_9"}});
+            invariantDependency.insert({"open_valve_retract_gear", {"_check_inv_13"}});
+            invariantDependency.insert({"env_close_analogical_switch", {"_check_inv_1"}});
+            invariantDependency.insert({"env_start_extending", {"_check_inv_16", "_check_inv_19", "_check_inv_25", "_check_inv_24", "_check_inv_23"}});
+            invariantDependency.insert({"open_valve_door_close", {"_check_inv_10"}});
+            invariantDependency.insert({"con_stop_stimulate_open_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_7"}});
+            invariantDependency.insert({"con_stop_stimulate_extend_gear_valve", {"_check_inv_17", "_check_inv_6"}});
+            invariantDependency.insert({"evn_close_general_valve", {"_check_inv_3"}});
+            invariantDependency.insert({"close_valve_extend_gear", {"_check_inv_11"}});
+            invariantDependency.insert({"con_stimulate_extend_gear_valve", {"_check_inv_17", "_check_inv_6"}});
+            invariantDependency.insert({"close_valve_door_open", {"_check_inv_12"}});
+            invariantDependency.insert({"con_stimulate_close_door_valve", {"_check_inv_18", "_check_inv_17", "_check_inv_5"}});
+            invariantDependency.insert({"env_extend_gear_skip", {"_check_inv_19", "_check_inv_24", "_check_inv_23"}});
+            invariantDependency.insert({"env_open_door_skip", {"_check_inv_21", "_check_inv_20", "_check_inv_22"}});
+            invariantDependency.insert({"env_start_open_door", {"_check_inv_15", "_check_inv_21", "_check_inv_20", "_check_inv_25", "_check_inv_22"}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"close_valve_door_close", {"_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"}});
+            guardDependency.insert({"close_valve_retract_gear", {"_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"}});
+            guardDependency.insert({"con_stimulate_open_door_valve", {"_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"}});
+            guardDependency.insert({"env_close_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"env_start_close_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"toggle_handle_up", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"}});
+            guardDependency.insert({"toggle_handle_down", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip", "_tr_con_stimulate_general_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_toggle_handle_down", "_tr_env_open_door_last", "_tr_toggle_handle_up", "_tr_env_start_close_door", "_tr_con_stop_stimulate_close_door_valve"}});
+            guardDependency.insert({"open_valve_door_open", {"_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"}});
+            guardDependency.insert({"env_retract_gear_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"env_open_door_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"con_stop_stimulate_retract_gear_valve", {"_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
+            guardDependency.insert({"env_close_door_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"con_stop_stimulate_close_door_valve", {"_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"}});
+            guardDependency.insert({"env_open_analogical_switch", {"_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"}});
+            guardDependency.insert({"con_stop_stimulate_general_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve"}});
+            guardDependency.insert({"env_extend_gear_last", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"evn_open_general_valve", {"_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"land_plane", {"_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"}});
+            guardDependency.insert({"con_stimulate_retract_gear_valve", {"_tr_close_valve_retract_gear", "_tr_con_stimulate_extend_gear_valve", "_tr_open_valve_retract_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
+            guardDependency.insert({"con_stimulate_general_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_con_stimulate_general_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_evn_open_general_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_evn_close_general_valve", "_tr_con_stop_stimulate_retract_gear_valve"}});
+            guardDependency.insert({"env_start_retracting_first", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"env_retract_gear_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"open_valve_extend_gear", {"_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"}});
+            guardDependency.insert({"begin_flying", {"_tr_land_plane", "_tr_begin_flying", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_close_door"}});
+            guardDependency.insert({"open_valve_retract_gear", {"_tr_close_valve_retract_gear", "_tr_open_valve_retract_gear", "_tr_env_start_retracting_first"}});
+            guardDependency.insert({"env_close_analogical_switch", {"_tr_env_open_analogical_switch", "_tr_evn_open_general_valve", "_tr_env_close_analogical_switch", "_tr_evn_close_general_valve"}});
+            guardDependency.insert({"env_start_extending", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"open_valve_door_close", {"_tr_open_valve_door_close", "_tr_env_close_door_skip", "_tr_env_start_close_door", "_tr_env_close_door", "_tr_close_valve_door_close"}});
+            guardDependency.insert({"con_stop_stimulate_open_door_valve", {"_tr_open_valve_door_open", "_tr_con_stimulate_extend_gear_valve", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_open"}});
+            guardDependency.insert({"con_stop_stimulate_extend_gear_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"}});
+            guardDependency.insert({"evn_close_general_valve", {"_tr_env_retract_gear_last", "_tr_env_close_door_skip", "_tr_evn_open_general_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_evn_close_general_valve", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"close_valve_extend_gear", {"_tr_close_valve_extend_gear", "_tr_open_valve_extend_gear", "_tr_env_start_extending"}});
+            guardDependency.insert({"con_stimulate_extend_gear_valve", {"_tr_con_stimulate_extend_gear_valve", "_tr_close_valve_extend_gear", "_tr_con_stop_stimulate_open_door_valve", "_tr_open_valve_extend_gear", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_extend_gear_valve"}});
+            guardDependency.insert({"close_valve_door_open", {"_tr_open_valve_door_open", "_tr_env_open_door_last", "_tr_env_start_open_door", "_tr_env_open_door_skip", "_tr_close_valve_door_open"}});
+            guardDependency.insert({"con_stimulate_close_door_valve", {"_tr_open_valve_door_close", "_tr_con_stimulate_close_door_valve", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_close_valve_door_close"}});
+            guardDependency.insert({"env_extend_gear_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_con_stop_stimulate_extend_gear_valve", "_tr_env_start_retracting_first", "_tr_con_stop_stimulate_retract_gear_valve", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"env_open_door_skip", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+            guardDependency.insert({"env_start_open_door", {"_tr_env_retract_gear_last", "_tr_con_stimulate_extend_gear_valve", "_tr_env_close_door_skip", "_tr_con_stop_stimulate_open_door_valve", "_tr_con_stimulate_retract_gear_valve", "_tr_con_stimulate_close_door_valve", "_tr_env_retract_gear_skip", "_tr_env_start_open_door", "_tr_env_close_door", "_tr_env_start_retracting_first", "_tr_env_extend_gear_skip", "_tr_env_open_door_last", "_tr_env_start_close_door", "_tr_con_stop_stimulate_general_valve", "_tr_con_stop_stimulate_close_door_valve", "_tr_con_stimulate_open_door_valve", "_tr_env_start_extending", "_tr_env_extend_gear_last", "_tr_env_open_door_skip"}});
+        }
 
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
 
-
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        LandingGear_R6 next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case LandingGear_R6::BFS: {
+                    LandingGear_R6 state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case LandingGear_R6::DFS: {
+                    LandingGear_R6 state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case LandingGear_R6::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        LandingGear_R6 state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        LandingGear_R6 state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> generateNextStates(const LandingGear_R6& state) {
+            std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual> result = std::unordered_set<LandingGear_R6, LandingGear_R6::Hash, LandingGear_R6::HashEqual>();
+            if(state._tr_begin_flying(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["begin_flying"]);
+                copiedState.begin_flying();
+                copiedState.stateAccessedVia = "begin_flying";
+                result.insert(copiedState);
+            }
+            if(state._tr_land_plane(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["land_plane"]);
+                copiedState.land_plane();
+                copiedState.stateAccessedVia = "land_plane";
+                result.insert(copiedState);
+            }
+            if(state._tr_open_valve_door_open(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["open_valve_door_open"]);
+                copiedState.open_valve_door_open();
+                copiedState.stateAccessedVia = "open_valve_door_open";
+                result.insert(copiedState);
+            }
+            if(state._tr_close_valve_door_open(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["close_valve_door_open"]);
+                copiedState.close_valve_door_open();
+                copiedState.stateAccessedVia = "close_valve_door_open";
+                result.insert(copiedState);
+            }
+            if(state._tr_open_valve_door_close(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["open_valve_door_close"]);
+                copiedState.open_valve_door_close();
+                copiedState.stateAccessedVia = "open_valve_door_close";
+                result.insert(copiedState);
+            }
+            if(state._tr_close_valve_door_close(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["close_valve_door_close"]);
+                copiedState.close_valve_door_close();
+                copiedState.stateAccessedVia = "close_valve_door_close";
+                result.insert(copiedState);
+            }
+            if(state._tr_open_valve_retract_gear(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["open_valve_retract_gear"]);
+                copiedState.open_valve_retract_gear();
+                copiedState.stateAccessedVia = "open_valve_retract_gear";
+                result.insert(copiedState);
+            }
+            if(state._tr_close_valve_retract_gear(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["close_valve_retract_gear"]);
+                copiedState.close_valve_retract_gear();
+                copiedState.stateAccessedVia = "close_valve_retract_gear";
+                result.insert(copiedState);
+            }
+            if(state._tr_open_valve_extend_gear(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["open_valve_extend_gear"]);
+                copiedState.open_valve_extend_gear();
+                copiedState.stateAccessedVia = "open_valve_extend_gear";
+                result.insert(copiedState);
+            }
+            if(state._tr_close_valve_extend_gear(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["close_valve_extend_gear"]);
+                copiedState.close_valve_extend_gear();
+                copiedState.stateAccessedVia = "close_valve_extend_gear";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stimulate_open_door_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stimulate_open_door_valve"]);
+                copiedState.con_stimulate_open_door_valve();
+                copiedState.stateAccessedVia = "con_stimulate_open_door_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stop_stimulate_open_door_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stop_stimulate_open_door_valve"]);
+                copiedState.con_stop_stimulate_open_door_valve();
+                copiedState.stateAccessedVia = "con_stop_stimulate_open_door_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stimulate_close_door_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stimulate_close_door_valve"]);
+                copiedState.con_stimulate_close_door_valve();
+                copiedState.stateAccessedVia = "con_stimulate_close_door_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stop_stimulate_close_door_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stop_stimulate_close_door_valve"]);
+                copiedState.con_stop_stimulate_close_door_valve();
+                copiedState.stateAccessedVia = "con_stop_stimulate_close_door_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stimulate_retract_gear_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stimulate_retract_gear_valve"]);
+                copiedState.con_stimulate_retract_gear_valve();
+                copiedState.stateAccessedVia = "con_stimulate_retract_gear_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stop_stimulate_retract_gear_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stop_stimulate_retract_gear_valve"]);
+                copiedState.con_stop_stimulate_retract_gear_valve();
+                copiedState.stateAccessedVia = "con_stop_stimulate_retract_gear_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stimulate_extend_gear_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stimulate_extend_gear_valve"]);
+                copiedState.con_stimulate_extend_gear_valve();
+                copiedState.stateAccessedVia = "con_stimulate_extend_gear_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stop_stimulate_extend_gear_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stop_stimulate_extend_gear_valve"]);
+                copiedState.con_stop_stimulate_extend_gear_valve();
+                copiedState.stateAccessedVia = "con_stop_stimulate_extend_gear_valve";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_19 = state._tr_env_start_retracting_first(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_19) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_start_retracting_first"]);
+                copiedState.env_start_retracting_first(_tmp_1);
+                copiedState.stateAccessedVia = "env_start_retracting_first";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_20 = state._tr_env_retract_gear_skip(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_20) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_retract_gear_skip"]);
+                copiedState.env_retract_gear_skip(_tmp_1);
+                copiedState.stateAccessedVia = "env_retract_gear_skip";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_21 = state._tr_env_retract_gear_last(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_21) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_retract_gear_last"]);
+                copiedState.env_retract_gear_last(_tmp_1);
+                copiedState.stateAccessedVia = "env_retract_gear_last";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_22 = state._tr_env_start_extending(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_22) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_start_extending"]);
+                copiedState.env_start_extending(_tmp_1);
+                copiedState.stateAccessedVia = "env_start_extending";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_23 = state._tr_env_extend_gear_last(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_23) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_extend_gear_last"]);
+                copiedState.env_extend_gear_last(_tmp_1);
+                copiedState.stateAccessedVia = "env_extend_gear_last";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_24 = state._tr_env_extend_gear_skip(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_24) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_extend_gear_skip"]);
+                copiedState.env_extend_gear_skip(_tmp_1);
+                copiedState.stateAccessedVia = "env_extend_gear_skip";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_25 = state._tr_env_start_open_door(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_25) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_start_open_door"]);
+                copiedState.env_start_open_door(_tmp_1);
+                copiedState.stateAccessedVia = "env_start_open_door";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_26 = state._tr_env_open_door_last(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_26) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_open_door_last"]);
+                copiedState.env_open_door_last(_tmp_1);
+                copiedState.stateAccessedVia = "env_open_door_last";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_27 = state._tr_env_open_door_skip(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_27) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_open_door_skip"]);
+                copiedState.env_open_door_skip(_tmp_1);
+                copiedState.stateAccessedVia = "env_open_door_skip";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_28 = state._tr_env_start_close_door(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_28) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_start_close_door"]);
+                copiedState.env_start_close_door(_tmp_1);
+                copiedState.stateAccessedVia = "env_start_close_door";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_29 = state._tr_env_close_door(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_29) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_close_door"]);
+                copiedState.env_close_door(_tmp_1);
+                copiedState.stateAccessedVia = "env_close_door";
+                result.insert(copiedState);
+            }
+            BSet<LandingGear_R6::POSITION> _trid_30 = state._tr_env_close_door_skip(isCaching);
+            for(const LandingGear_R6::POSITION& param : _trid_30) {
+                LandingGear_R6::POSITION _tmp_1 = param;
+
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_close_door_skip"]);
+                copiedState.env_close_door_skip(_tmp_1);
+                copiedState.stateAccessedVia = "env_close_door_skip";
+                result.insert(copiedState);
+            }
+            if(state._tr_toggle_handle_up(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["toggle_handle_up"]);
+                copiedState.toggle_handle_up();
+                copiedState.stateAccessedVia = "toggle_handle_up";
+                result.insert(copiedState);
+            }
+            if(state._tr_toggle_handle_down(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["toggle_handle_down"]);
+                copiedState.toggle_handle_down();
+                copiedState.stateAccessedVia = "toggle_handle_down";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stimulate_general_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stimulate_general_valve"]);
+                copiedState.con_stimulate_general_valve();
+                copiedState.stateAccessedVia = "con_stimulate_general_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_con_stop_stimulate_general_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["con_stop_stimulate_general_valve"]);
+                copiedState.con_stop_stimulate_general_valve();
+                copiedState.stateAccessedVia = "con_stop_stimulate_general_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_evn_open_general_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["evn_open_general_valve"]);
+                copiedState.evn_open_general_valve();
+                copiedState.stateAccessedVia = "evn_open_general_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_evn_close_general_valve(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["evn_close_general_valve"]);
+                copiedState.evn_close_general_valve();
+                copiedState.stateAccessedVia = "evn_close_general_valve";
+                result.insert(copiedState);
+            }
+            if(state._tr_env_close_analogical_switch(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_close_analogical_switch"]);
+                copiedState.env_close_analogical_switch();
+                copiedState.stateAccessedVia = "env_close_analogical_switch";
+                result.insert(copiedState);
+            }
+            if(state._tr_env_open_analogical_switch(isCaching)) {
+                LandingGear_R6 copiedState = state._copy(guardDependency["env_open_analogical_switch"]);
+                copiedState.env_open_analogical_switch();
+                copiedState.stateAccessedVia = "env_open_analogical_switch";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const LandingGear_R6& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_7()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_8()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_9()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_10()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_11()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_12()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_13()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_14()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_15()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_16()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_17()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_18()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_19()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_20()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_21") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_21()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_22") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_22()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_23") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_23()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_24") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_24()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_25") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_25()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20() && state._check_inv_21() && state._check_inv_22() && state._check_inv_23() && state._check_inv_24() && state._check_inv_25());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -3690,11 +2274,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

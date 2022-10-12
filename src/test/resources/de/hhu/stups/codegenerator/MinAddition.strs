@@ -1,0 +1,5 @@
+fn main() {
+    let mut mmin = Min::new();
+    mmin.calculate();
+    println!("{}", mmin.getRes());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut logical = Implies::new();
+    logical.calculate();
+    println!("{}", logical.getRes());
+}

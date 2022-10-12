@@ -1,0 +1,5 @@
+fn main() {
+    let mut record = RecordsAccess3::new();
+    record.calculate();
+    println!("{}", record.getRes());
+}

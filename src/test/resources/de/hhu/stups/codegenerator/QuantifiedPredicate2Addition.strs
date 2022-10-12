@@ -1,0 +1,5 @@
+fn main() {
+    let mut predicate = QuantifiedPredicate2::new();
+    predicate.calculate();
+    println!("{}", predicate.getRes());
+}

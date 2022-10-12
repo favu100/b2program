@@ -1,0 +1,9 @@
+fn main() {
+    let mut counter: Counter = Counter::new();
+    counter.Reset();
+    counter.Inc();
+    counter.Odd();
+    counter.Inc();
+    counter.Even();
+    println!("{}", counter.getCount());
+}

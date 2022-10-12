@@ -1,0 +1,4 @@
+fn main() {
+    let mut locals = ManyLocalDeclarations::new();
+    println!("{}", locals.Inc(BInteger::new(10)).card());
+}

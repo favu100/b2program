@@ -1,0 +1,7 @@
+fn main() {
+    let mut lift: Lift = Lift::new();
+    lift.inc();
+    lift.inc();
+    lift.inc();
+    println!("{}", lift.getFloor());
+}

@@ -5,6 +5,7 @@ import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
+import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetElementNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.Node;
@@ -307,7 +308,8 @@ public class ExpressionGenerator {
         }
         if(substitutionGenerator.getCurrentLocalScope() > 0 && identifierGenerator.getCurrentLocals().containsKey(node.getName())) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
-            return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned);
+            boolean isParam = node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER);
+            return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned, isParam);
         }
         return identifierGenerator.generate(node);
     }
@@ -505,6 +507,7 @@ public class ExpressionGenerator {
     */
     private ST generateUnary(ExpressionOperatorNode.ExpressionOperator operator) {
         ST template = currentGroup.getInstanceOf("unary");
+        boolean isOverloadedOperator = false; // indicates if the unary-operator has a binary equivalent, used for languages that don't support method overloading (like rust)
         String operatorName;
         switch (operator) {
             case UNARY_MINUS:
@@ -563,9 +566,11 @@ public class ExpressionGenerator {
                 break;
             case GENERALIZED_UNION:
                 operatorName = "union";
+                isOverloadedOperator = true;
                 break;
             case GENERALIZED_INTER:
                 operatorName = "intersect";
+                isOverloadedOperator = true;
                 break;
             case FIRST:
                 operatorName = "first";
@@ -607,6 +612,7 @@ public class ExpressionGenerator {
                 throw new RuntimeException("Given operator is not implemented: " + operator);
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
+        TemplateHandler.add(template, "isOverloadedOperator", isOverloadedOperator);
         return template;
     }
 

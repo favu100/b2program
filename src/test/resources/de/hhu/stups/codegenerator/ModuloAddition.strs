@@ -1,0 +1,5 @@
+fn main() {
+    let mut modulo = Modulo::new();
+    modulo.calculate();
+    println!("{}", modulo.getRes());
+}

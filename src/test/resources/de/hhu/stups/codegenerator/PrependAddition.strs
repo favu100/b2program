@@ -1,0 +1,5 @@
+fn main() {
+    let mut prepend = Prepend::new();
+    prepend.calculate();
+    println!("{}", prepend.getRes());
+}

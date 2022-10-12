@@ -1,0 +1,5 @@
+fn main() {
+    let mut notElementOf = NotElementOf::new();
+    notElementOf.calculate();
+    println!("{}", notElementOf.getRes());
+}

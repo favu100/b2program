@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -62,13 +63,19 @@ class sort_m2_data1000_MC {
         BInteger l;
         BRelation<BInteger, BInteger > g;
 
+        mutable boost::optional<bool> _tr_cache_progress;
+        mutable boost::optional<bool> _tr_cache_prog1;
+        mutable boost::optional<bool> _tr_cache_prog2;
+        mutable boost::optional<bool> _tr_cache_final_evt;
 
     public:
+
+        std::string stateAccessedVia;
 
         sort_m2_data1000_MC() {
             n = (BInteger(1000));
             BRelation<BInteger, BInteger > _ic_set_0 = BRelation<BInteger, BInteger >();
-            for(BInteger _ic_i_1 : (BSet<BInteger>::interval((BInteger(1)),n))) {
+            for(const BInteger& _ic_i_1 : (BSet<BInteger>::interval((BInteger(1)),n))) {
                 _ic_set_0 = _ic_set_0._union(BRelation<BInteger, BInteger>(BTuple<BInteger, BInteger>(_ic_i_1, (BInteger(15000)).minus(_ic_i_1))));
 
             }
@@ -143,20 +150,40 @@ class sort_m2_data1000_MC {
         }
 
 
-        bool _tr_progress() const {
-            return ((BBoolean(k.unequal(n).booleanValue() && j.equal(n).booleanValue()))).booleanValue();
+        bool _tr_progress(bool isCaching) const {
+            if (this->_tr_cache_progress == boost::none){
+                bool __tmp_result = ((BBoolean(k.unequal(n).booleanValue() && j.equal(n).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_progress = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_progress.get();
         }
 
-        bool _tr_prog1() const {
-            return ((BBoolean((BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue())).booleanValue() && g.functionCall(l).lessEqual(g.functionCall(j.plus((BInteger(1))))).booleanValue()))).booleanValue();
+        bool _tr_prog1(bool isCaching) const {
+            if (this->_tr_cache_prog1 == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue())).booleanValue() && g.functionCall(l).lessEqual(g.functionCall(j.plus((BInteger(1))))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_prog1 = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_prog1.get();
         }
 
-        bool _tr_prog2() const {
-            return ((BBoolean((BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue())).booleanValue() && g.functionCall(l).greater(g.functionCall(j.plus((BInteger(1))))).booleanValue()))).booleanValue();
+        bool _tr_prog2(bool isCaching) const {
+            if (this->_tr_cache_prog2 == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(k.unequal(n).booleanValue() && j.unequal(n).booleanValue())).booleanValue() && g.functionCall(l).greater(g.functionCall(j.plus((BInteger(1))))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_prog2 = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_prog2.get();
         }
 
-        bool _tr_final_evt() const {
-            return (k.equal(n)).booleanValue();
+        bool _tr_final_evt(bool isCaching) const {
+            if (this->_tr_cache_final_evt == boost::none){
+                bool __tmp_result = (k.equal(n)).booleanValue();
+                if (isCaching) this->_tr_cache_final_evt = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_final_evt.get();
         }
 
         bool _check_inv_1() const {
@@ -183,8 +210,27 @@ class sort_m2_data1000_MC {
             return (((g.checkDomain((BSet<BInteger>::interval((BInteger(1)),n))))._and((g.checkRangeNatural()))._and((g.isFunction()))._and((g.isTotal((BSet<BInteger>::interval((BInteger(1)),n))))))).booleanValue();
         }
 
-        sort_m2_data1000_MC _copy() const {
-            return sort_m2_data1000_MC(n, f, j, k, l, g);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        sort_m2_data1000_MC _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_progress", "_tr_prog1", "_tr_prog2", "_tr_final_evt"};
+
+            sort_m2_data1000_MC result = sort_m2_data1000_MC(n, f, j, k, l, g);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_progress"): result._tr_cache_progress = this->_tr_cache_progress; break;
+                        case strHash("_tr_prog1"): result._tr_cache_prog1 = this->_tr_cache_prog1; break;
+                        case strHash("_tr_prog2"): result._tr_cache_prog2 = this->_tr_cache_prog2; break;
+                        case strHash("_tr_final_evt"): result._tr_cache_final_evt = this->_tr_cache_final_evt; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const sort_m2_data1000_MC& o1, const sort_m2_data1000_MC& o2) {
@@ -229,523 +275,321 @@ class sort_m2_data1000_MC {
 };
 
 
-static std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> generateNextStates(std::mutex& guardMutex, const sort_m2_data1000_MC& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentGuard, std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& guardCache, std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& parents, std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> result = std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        bool _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_progress"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_progress") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_1 = state._tr_progress();
-        } else {
-            _trid_1 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_progress", _trid_1);
-        if(_trid_1) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.progress();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["progress"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["progress"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "progress"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_prog1"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_prog1") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_2 = state._tr_prog1();
-        } else {
-            _trid_2 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_prog1", _trid_2);
-        if(_trid_2) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.prog1();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["prog1"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["prog1"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "prog1"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_3;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_prog2"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_prog2") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_3 = state._tr_prog2();
-        } else {
-            _trid_3 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_prog2", _trid_3);
-        if(_trid_3) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.prog2();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["prog2"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["prog2"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "prog2"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_4;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_final_evt"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_final_evt") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_4 = state._tr_final_evt();
-        } else {
-            _trid_4 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_final_evt", _trid_4);
-        if(_trid_4) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.final_evt();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["final_evt"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["final_evt"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "final_evt"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+class ModelChecker {
+    private:
+        sort_m2_data1000_MC::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
+
+        std::list<sort_m2_data1000_MC> unvisitedStates;
+        std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
+
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        sort_m2_data1000_MC counterExampleState;
+
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> parents;
+
+    public:
+        ModelChecker() {}
+
+        ModelChecker(sort_m2_data1000_MC::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        if(state._tr_progress()) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.progress();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "progress"});
-                }
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
             }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_prog1()) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.prog1();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "prog1"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_prog2()) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.prog2();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "prog2"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_final_evt()) {
-            sort_m2_data1000_MC copiedState = state._copy();
-            copiedState.final_evt();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "final_evt"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
 
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, sort_m2_data1000_MC& counterExampleState, std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& parents, std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        sort_m2_data1000_MC currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const sort_m2_data1000_MC& state, bool isCaching, std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_3()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_4()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_5()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_6()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6());
-}
-
-static sort_m2_data1000_MC next(std::list<sort_m2_data1000_MC>& collection, std::mutex& mutex, sort_m2_data1000_MC::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case sort_m2_data1000_MC::BFS: {
-            sort_m2_data1000_MC state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case sort_m2_data1000_MC::DFS: {
-            sort_m2_data1000_MC state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case sort_m2_data1000_MC::MIXED: {
-            if(collection.size() % 2 == 0) {
-                sort_m2_data1000_MC state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                sort_m2_data1000_MC state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(sort_m2_data1000_MC::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    sort_m2_data1000_MC machine = sort_m2_data1000_MC();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> states = std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<sort_m2_data1000_MC> collection = std::list<sort_m2_data1000_MC>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> dependentInvariant;
-    std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> dependentGuard;
-    std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> guardCache;
-    std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> parents;
-    std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"prog2", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
-        invariantDependency.insert({"prog1", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
-        invariantDependency.insert({"progress", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_6", "_check_inv_4", "_check_inv_5"}});
-        invariantDependency.insert({"final_evt", {}});
-        guardDependency.insert({"prog2", {"_tr_progress", "_tr_prog1", "_tr_prog2"}});
-        guardDependency.insert({"prog1", {"_tr_progress", "_tr_prog1", "_tr_prog2"}});
-        guardDependency.insert({"progress", {"_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2"}});
-        guardDependency.insert({"final_evt", {}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    sort_m2_data1000_MC counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        sort_m2_data1000_MC state = next(collection, mutex, type);
-
-        std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            sort_m2_data1000_MC machine = sort_m2_data1000_MC();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                sort_m2_data1000_MC state = next();
 
-static void modelCheckMultiThreaded(sort_m2_data1000_MC::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    sort_m2_data1000_MC machine = sort_m2_data1000_MC();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> states = std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<sort_m2_data1000_MC> collection = std::list<sort_m2_data1000_MC>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> dependentInvariant;
-    std::unordered_map<sort_m2_data1000_MC, std::unordered_set<string>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> dependentGuard;
-    std::unordered_map<sort_m2_data1000_MC, immer::map<string, boost::any>, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> guardCache;
-    std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> parents;
-    std::unordered_map<sort_m2_data1000_MC, string, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"prog2", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
-        invariantDependency.insert({"prog1", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
-        invariantDependency.insert({"progress", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_6", "_check_inv_4", "_check_inv_5"}});
-        invariantDependency.insert({"final_evt", {}});
-        guardDependency.insert({"prog2", {"_tr_progress", "_tr_prog1", "_tr_prog2"}});
-        guardDependency.insert({"prog1", {"_tr_progress", "_tr_prog1", "_tr_prog2"}});
-        guardDependency.insert({"progress", {"_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2"}});
-        guardDependency.insert({"final_evt", {}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    sort_m2_data1000_MC counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        sort_m2_data1000_MC state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            sort_m2_data1000_MC machine = sort_m2_data1000_MC();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                sort_m2_data1000_MC state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(sort_m2_data1000_MC& machine) {
+            invariantDependency.insert({"prog2", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
+            invariantDependency.insert({"prog1", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5"}});
+            invariantDependency.insert({"progress", {"_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_6", "_check_inv_4", "_check_inv_5"}});
+            invariantDependency.insert({"final_evt", {}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"prog2", {"_tr_progress", "_tr_prog1", "_tr_prog2"}});
+            guardDependency.insert({"prog1", {"_tr_progress", "_tr_prog1", "_tr_prog2"}});
+            guardDependency.insert({"progress", {"_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2"}});
+            guardDependency.insert({"final_evt", {}});
+        }
 
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
 
-
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        sort_m2_data1000_MC next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case sort_m2_data1000_MC::BFS: {
+                    sort_m2_data1000_MC state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case sort_m2_data1000_MC::DFS: {
+                    sort_m2_data1000_MC state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case sort_m2_data1000_MC::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        sort_m2_data1000_MC state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        sort_m2_data1000_MC state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> generateNextStates(const sort_m2_data1000_MC& state) {
+            std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> result = std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual>();
+            if(state._tr_progress(isCaching)) {
+                sort_m2_data1000_MC copiedState = state._copy(guardDependency["progress"]);
+                copiedState.progress();
+                copiedState.stateAccessedVia = "progress";
+                result.insert(copiedState);
+            }
+            if(state._tr_prog1(isCaching)) {
+                sort_m2_data1000_MC copiedState = state._copy(guardDependency["prog1"]);
+                copiedState.prog1();
+                copiedState.stateAccessedVia = "prog1";
+                result.insert(copiedState);
+            }
+            if(state._tr_prog2(isCaching)) {
+                sort_m2_data1000_MC copiedState = state._copy(guardDependency["prog2"]);
+                copiedState.prog2();
+                copiedState.stateAccessedVia = "prog2";
+                result.insert(copiedState);
+            }
+            if(state._tr_final_evt(isCaching)) {
+                sort_m2_data1000_MC copiedState = state._copy(guardDependency["final_evt"]);
+                copiedState.final_evt();
+                copiedState.stateAccessedVia = "final_evt";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const sort_m2_data1000_MC& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -794,11 +638,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

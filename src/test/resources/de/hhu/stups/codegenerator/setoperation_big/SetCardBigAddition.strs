@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = SetCardBig::new();
+    set.simulate();
+    println!("{}", set.getResult());
+}

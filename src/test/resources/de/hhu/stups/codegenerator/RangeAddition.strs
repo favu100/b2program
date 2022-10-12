@@ -1,0 +1,5 @@
+fn main() {
+    let mut range = Range::new();
+    range.calculate();
+    println!("{}", range.getRes());
+}

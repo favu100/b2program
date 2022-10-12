@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod) ::= <<
+machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration) ::= <<
 #include \<iostream>
 #include \<string>
 <if(forModelChecking)>
@@ -20,6 +20,7 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<boost/asio/post.hpp>
 #include \<boost/asio/thread_pool.hpp>
 #include \<boost/any.hpp>
+#include \<boost/optional.hpp>
 <endif>
 <if(useBigInteger)>
 #include \<btypes_big_integer/BUtils.hpp>
@@ -78,9 +79,16 @@ class <machine> {
         <sets; separator="\n">
 
         <declarations; separator="\n">
+        <if(forModelChecking)>
 
+        <transitionCachesDeclaration; separator="\n">
+        <endif>
 
     public:
+        <if(forModelChecking)>
+
+        std::string stateAccessedVia;
+        <endif>
 
         <initialization>
 
@@ -484,18 +492,24 @@ if((<predicate>).booleanValue()) {
 >>
 
 transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
-<if(noParameters)>bool<else>BSet\<<subType>\><endif> _tr_<operationName>() const {
-    <if(noParameters)>
-    <if(noPredicate)>
-    return true;
-    <else>
-    return (<predicate>).booleanValue();
-    <endif>
-    <else>
-    BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
-    <combination>
-    return <identifier>;
-    <endif>
+<if(noParameters)>bool<else>BSet\<<subType>\><endif> _tr_<operationName>(bool isCaching) const {
+    if (this->_tr_cache_<operationName> == boost::none){
+        <if(noParameters)>
+        <if(noPredicate)>
+        return true;
+        <else>
+        bool __tmp_result = (<predicate>).booleanValue();
+        if (isCaching) this->_tr_cache_<operationName> = __tmp_result;
+        else return __tmp_result;
+        <endif>
+        <else>
+        BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
+        <combination>
+        if (isCaching) this->_tr_cache_<operationName> = <identifier>;
+        else return <identifier>;
+        <endif>
+    }
+    return this->_tr_cache_<operationName>.get();
 }
 >>
 
@@ -516,9 +530,25 @@ copy_assignment(variable) ::= <<
 this-><variable> = <variable>;
 >>
 
-copy(machine, parameters) ::= <<
-<machine> _copy() const {
-    return <machine>(<parameters; separator=", ">);
+copy(machine, parameters, operations) ::= <<
+static constexpr unsigned int strHash(const char *s, int off = 0) {
+    return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+}
+
+<machine> _copy(unordered_set\<string> toInvalidate) const {
+    static const char* allTransitions[] = {<operations: {op | "_tr_<op>"}; separator=", ">};
+
+    <machine> result = <machine>(<parameters; separator=", ">);
+
+    for (const auto &item : allTransitions) {
+        if(toInvalidate.find(item) == toInvalidate.end()) {
+            switch(strHash(item)) {
+                <operations: {op | case strHash("_tr_<op>"): result._tr_cache_<op> = this->_tr_cache_<op>; break;}; separator="\n">
+                default: cout \<\< "Transition " \<\< item \<\< " not found!";
+            }
+        }
+    }
+    return result;
 }
 >>
 
@@ -924,8 +954,12 @@ relation_check_range(arg, range) ::= <<
 (<arg>.checkRange(<range>))
 >>
 
-relation_total_partial(arg, operator, domain) ::= <<
-(<arg>.<operator>(<domain>))
+relation_is_total(arg, domain) ::= <<
+(<arg>.isTotal(<domain>))
+>>
+
+relation_is_partial(arg, domain) ::= <<
+(<arg>.isPartial(<domain>))
 >>
 
 relation_function(arg, operator) ::= <<
@@ -993,11 +1027,7 @@ class ModelChecker {
 
         std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency;
         std::unordered_map\<string, std::unordered_set\<string>\> guardDependency;
-        std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentInvariant;
-        std::unordered_map\<<machine>, std::unordered_set\<string>, <machine>::Hash, <machine>::HashEqual> dependentGuard;
-        std::unordered_map\<<machine>, immer::map\<string, boost::any>, <machine>::Hash, <machine>::HashEqual> guardCache;
         std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
-        std::unordered_map\<<machine>, string, <machine>::Hash, <machine>::HashEqual> stateAccessedVia;
 
     public:
         ModelChecker() {}
@@ -1069,118 +1099,34 @@ model_check(addCachedInfos, nextStates, printResult, checkInvariants, main) ::= 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
-    if(isCaching) {
-        immer::map\<string, boost::any> parentsGuard;
-        immer::map\<string, boost::any> newCache;
-        bool parentsExist = (parents.find(state) != parents.end());
-        std::unordered_set\<string> dependentGuardsOfState;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock\<std::mutex> lock(guardMutex);
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                newCache = guardCache[parents[state]];
-            }
-            if((dependentGuardsExist)) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        <transitionsWithCaching>
-        {
-            std::unique_lock\<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        <transitionsWithoutCaching>
-    }
+    <transitionsWithCaching>
     return result;
 }
 >>
 
 model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
-<if(isCaching)>
-BSet\<<tupleType>\> <transitionIdentifier>;
-if(dependentGuardsExist) {
-    cachedValue = parentsGuard["<evalTransitions>"];
-    dependentGuardsBoolean = (dependentGuardsOfState.find("<evalTransitions>") != dependentGuardsOfState.end());
-}
-if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = boost::any_cast\<BSet\<<tupleType>\>>(cachedValue);
-}
-newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
+BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>(isCaching);
 for(const <tupleType>& param : <transitionIdentifier>) {
     <execTransitions>
 }
 <else>
-BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
-for(const <tupleType>& param : <transitionIdentifier>) {
+if(state.<evalTransitions>(isCaching)) {
     <execTransitions>
 }
-<endif>
-<else>
-<if(isCaching)>
-bool <transitionIdentifier>;
-if(dependentGuardsExist) {
-    cachedValue = parentsGuard["<evalTransitions>"];
-    dependentGuardsBoolean = (dependentGuardsOfState.find("<evalTransitions>") != dependentGuardsOfState.end());
-}
-if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = boost::any_cast\<bool>(cachedValue);
-}
-newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
-if(<transitionIdentifier>) {
-    <execTransitions>
-}
-<else>
-if(state.<evalTransitions>()) {
-    <execTransitions>
-}
-<endif>
 <endif>
 >>
 
 model_check_add_cached_infos(machine) ::= <<
-void addCachedInfos(const std::string& operation, const <machine>& state, const <machine>& copiedState) {
-    if(isCaching) {
-        std::unique_lock\<std::mutex> lock(guardMutex);
-        if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-            dependentInvariant.insert({copiedState, invariantDependency[operation]});
-        }
-        if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-            dependentGuard.insert({copiedState, guardDependency[operation]});
-        }
-        if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-            stateAccessedVia.insert({copiedState, operation});
-        }
-        if(parents.find(copiedState) == parents.end()) {
-            parents.insert({copiedState, state});
-        }
-    } else {
-        std::unique_lock\<std::mutex> lock(guardMutex);
-        if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-            stateAccessedVia.insert({copiedState, operation});
-        }
-        if(parents.find(copiedState) == parents.end()) {
-            parents.insert({copiedState, state});
-        }
-    }
-}
 >>
 
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
-<machine> copiedState = state._copy();
+<machine> copiedState = state._copy(guardDependency["<operation>"]);
 copiedState.<operation>(<parameters; separator=", ">);
-addCachedInfos(std::string("<operation>"), state, copiedState);
+copiedState.stateAccessedVia = "<operation>";
 result.insert(copiedState);
 transitions += 1;
 >>
@@ -1199,6 +1145,8 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 
 model_check_invariants(machine, invariantViolated) ::= <<
 bool invariantViolated(const <machine>& state) {
+    std::unordered_set\<string> dependentInvariantsOfState;
+    if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
     <invariantViolated; separator="\n">
     return false;
 }
@@ -1206,7 +1154,6 @@ bool invariantViolated(const <machine>& state) {
 
 model_check_invariant(invariant) ::= <<
 if(isCaching) {
-    std::unordered_set\<string> dependentInvariantsOfState = dependentInvariant[state];
     if(dependentInvariantsOfState.find("<invariant>") == dependentInvariantsOfState.end()) {
         if(!state.<invariant>()) {
             cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
@@ -1245,7 +1192,7 @@ void printResult() {
             stringStream \<\< counterExampleState;
             trace.insert(0, stringStream.str());
             trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[counterExampleState]);
+            trace.insert(0, counterExampleState.stateAccessedVia);
             trace.insert(0, "\n\n");
             counterExampleState = parents[counterExampleState];
         }
@@ -1294,6 +1241,7 @@ void modelCheckSingleThreaded() {
         for(auto& nextState : nextStates) {
             if(states.find(nextState) == states.end()) {
                 states.insert(nextState);
+                parents.insert({nextState, state});
                 unvisitedStates.push_back(nextState);
                 if(states.size() % 50000 == 0) {
                     cout \<\< "VISITED STATES: " \<\< states.size() \<\< "\n";
@@ -1347,6 +1295,7 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
                     std::unique_lock\<std::mutex> lock(mutex);
                     if(states.find(nextState) == states.end()) {
                         states.insert(nextState);
+                        parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState); // TODO: sync ?
                         if(isDebug && states.size() % 50000 == 0) {
                             cout \<\< "VISITED STATES: " \<\< states.size() \<\< "\n";
@@ -1389,7 +1338,7 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 
         {
             std::unique_lock\<std::mutex> lock(waitMutex);
-            if (unvisitedStates.empty() && possibleQueueChanges > 0) {
+            while (unvisitedStates.empty() && possibleQueueChanges > 0) {
                 waitCV.wait(lock, [&] {
                     return waitFlag == false;
                 });
@@ -1402,8 +1351,8 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 
 void initCache(<machine>& machine) {
     <invariantDependency; separator="\n">
+    invariantDependency.insert({"", {}});
     <guardDependency; separator="\n">
-    dependentInvariant.insert({machine, std::unordered_set\<string>()});
 }
 >>
 
@@ -1467,3 +1416,12 @@ int main(int argc, char *argv[]) {
 
 record_private_variable_prefix() ::= <<
 >>
+
+include_initialization() ::= <<
+>>
+
+transition_cache_declaration(type, identifier, operationHasParams) ::= <<
+mutable boost::optional\<<if(operationHasParams)>BSet\<<type>\><else>bool<endif>\> _tr_cache_<identifier>;
+>>
+
+set_initialization(identifier, type, enums) ::= <<>>

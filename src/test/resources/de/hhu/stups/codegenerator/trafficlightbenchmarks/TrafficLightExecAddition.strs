@@ -1,0 +1,5 @@
+fn main() {
+    let mut traffic = TrafficLightExec::new();
+    traffic.simulate();
+    println!("{}", traffic.getCounter());
+}

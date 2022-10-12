@@ -7,6 +7,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
+import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
@@ -15,6 +16,7 @@ import org.stringtemplate.v4.STGroup;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.*;
@@ -153,10 +155,18 @@ public class OperationGenerator {
     private void generateReturnStatementIdentifier(ST operation, List<DeclarationNode> outputs) {
         BType type = outputs.get(0).getType();
         String identifier = outputs.get(0).getName();
+        //TODO: render identifier via template instead of transforming it here
+        boolean isGlobal = false;
+        if (nameHandler.getGlobals().contains(identifier)) {
+            isGlobal = true;
+            String privateVariablePrefix = group.getInstanceOf("record_private_variable_prefix").render();
+            identifier = privateVariablePrefix + identifier;
+        }
         TemplateHandler.add(operation, "returnType", typeGenerator.generate(type));
         ST returnTemplate = group.getInstanceOf("return");
         TemplateHandler.add(returnTemplate, "identifier", nameHandler.handleIdentifier(identifier, FUNCTION_NAMES));
         TemplateHandler.add(returnTemplate, "machine", nameHandler.handle(machineGenerator.getMachineName()));
+        TemplateHandler.add(returnTemplate, "isLocal", !isGlobal);
         TemplateHandler.add(operation, "isTyped", true);
         TemplateHandler.add(operation, "return", returnTemplate.render());
     }
@@ -169,15 +179,12 @@ public class OperationGenerator {
         String struct = recordStructGenerator.getStruct(node);
         TemplateHandler.add(operation, "returnType", struct);
 
-        List<String> identifiers = outputs.stream()
-                .map(declarationNode -> {
-                    String generatedParameter = nameHandler.handleIdentifier(declarationNode.getName(), FUNCTION_NAMES);
-                    if (nameHandler.getGlobals().contains(declarationNode.getName())) {
-                        generatedParameter = group.getInstanceOf("record_private_variable_prefix").render() + generatedParameter;
-                    }
-                    return generatedParameter;
-                    })
-                .collect(Collectors.toList());
+        List <String> identifiers = outputs.stream().map(declarationNode -> {
+            IdentifierExprNode asIdExpr = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+            asIdExpr.setDeclarationNode(declarationNode);
+            asIdExpr.setParent(declarationNode.getParent());
+            return identifierGenerator.generate(asIdExpr);
+        }).collect(Collectors.toList());
 
         ST recordTemplate = group.getInstanceOf("record");
         TemplateHandler.add(recordTemplate, "struct", struct);

@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = SetElementOfSmall::new();
+    set.simulate();
+    println!("{}", set.getCounter());
+}

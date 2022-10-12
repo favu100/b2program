@@ -1,0 +1,5 @@
+fn main() {
+    let mut relation = RelationalImage::new();
+    relation.calculate();
+    println!("{}", relation.getRes());
+}

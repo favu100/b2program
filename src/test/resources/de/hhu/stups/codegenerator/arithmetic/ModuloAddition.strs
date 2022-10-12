@@ -1,0 +1,5 @@
+fn main() {
+    let mut arithmetic = Modulo::new();
+    arithmetic.simulate();
+    println!("{}", arithmetic.getValue());
+}

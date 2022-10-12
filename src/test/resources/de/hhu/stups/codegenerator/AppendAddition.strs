@@ -1,0 +1,5 @@
+fn main() {
+    let mut append = Append::new();
+    append.calculate();
+    println!("{}", append.getRes());
+}

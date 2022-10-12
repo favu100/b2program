@@ -1,0 +1,5 @@
+fn main() {
+    let mut multiply = Multiply::new();
+    multiply.calculate();
+    println!("{}", multiply.getRes());
+}

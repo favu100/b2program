@@ -1,0 +1,5 @@
+fn main() {
+    let mut lift = LiftExec::new();
+    lift.simulate();
+    println!("{}", lift.getCounter());
+}

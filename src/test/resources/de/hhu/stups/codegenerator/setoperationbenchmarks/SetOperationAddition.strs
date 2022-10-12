@@ -1,0 +1,5 @@
+fn main() {
+    let mut setoperation = SetOperation::new();
+    setoperation.simulate();
+    println!("{}", setoperation.getSet().card());
+}

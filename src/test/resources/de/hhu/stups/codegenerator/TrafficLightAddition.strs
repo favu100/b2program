@@ -1,0 +1,10 @@
+fn main() {
+    let mut traffic: TrafficLight = TrafficLight::new();
+    traffic.cars_ry();
+    traffic.cars_g();
+    traffic.cars_y();
+    traffic.cars_r();
+    traffic.peds_g();
+    println!("{} {}", traffic.getCars(), traffic.getPeds());
+    traffic.peds_r();
+}

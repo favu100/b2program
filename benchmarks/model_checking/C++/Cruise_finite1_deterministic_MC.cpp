@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -30,7 +31,6 @@ class Cruise_finite1_deterministic_MC {
     public:
 
         enum Type { BFS, DFS, MIXED };
-
 
         class RSset : public BObject {
             public:
@@ -144,6 +144,7 @@ class Cruise_finite1_deterministic_MC {
                 }
         };
 
+
         struct Hash {
             public:
                 size_t operator()(const Cruise_finite1_deterministic_MC& obj) const {
@@ -184,8 +185,36 @@ class Cruise_finite1_deterministic_MC {
         BBoolean CruiseSpeedChangeInProgress;
         BInteger NumberOfSetCruise;
 
+        mutable boost::optional<bool> _tr_cache_CruiseBecomesNotAllowed;
+        mutable boost::optional<bool> _tr_cache_CruiseBecomesAllowed;
+        mutable boost::optional<BSet<BTuple<BBoolean, BBoolean >>> _tr_cache_SetCruiseSpeed;
+        mutable boost::optional<BSet<BTuple<BBoolean, BBoolean >>> _tr_cache_CCInitialisationFinished;
+        mutable boost::optional<bool> _tr_cache_CCInitialisationDelayFinished;
+        mutable boost::optional<BSet<BTuple<BBoolean, BBoolean >>> _tr_cache_CruiseSpeedChangeFinished;
+        mutable boost::optional<bool> _tr_cache_CruiseSpeedChangeDelayFinished;
+        mutable boost::optional<bool> _tr_cache_CruiseOff;
+        mutable boost::optional<bool> _tr_cache_ExternalForcesBecomesExtreme;
+        mutable boost::optional<bool> _tr_cache_ExternalForcesBecomesNormal;
+        mutable boost::optional<bool> _tr_cache_VehicleLeavesCruiseSpeed;
+        mutable boost::optional<bool> _tr_cache_VehicleReachesCruiseSpeed;
+        mutable boost::optional<bool> _tr_cache_VehicleExceedsMaxCruiseSpeed;
+        mutable boost::optional<bool> _tr_cache_VehicleFallsBelowMaxCruiseSpeed;
+        mutable boost::optional<bool> _tr_cache_ObstacleDistanceBecomesVeryClose;
+        mutable boost::optional<bool> _tr_cache_ObstacleDistanceBecomesClose;
+        mutable boost::optional<bool> _tr_cache_ObstacleDistanceBecomesBig;
+        mutable boost::optional<bool> _tr_cache_ObstacleStartsTravelFaster;
+        mutable boost::optional<bool> _tr_cache_ObstacleStopsTravelFaster;
+        mutable boost::optional<bool> _tr_cache_ObstacleStartsTravelSlower;
+        mutable boost::optional<bool> _tr_cache_ObstacleStopsTravelSlower;
+        mutable boost::optional<BSet<BTuple<RSset, ODset >>> _tr_cache_ObstacleAppearsWhenCruiseActive;
+        mutable boost::optional<BSet<RSset>> _tr_cache_ObstacleAppearsWhenCruiseInactive;
+        mutable boost::optional<bool> _tr_cache_ObstacleDisappears;
+        mutable boost::optional<BSet<BTuple<BBoolean, BBoolean >>> _tr_cache_VehicleManageObstacle;
+        mutable boost::optional<bool> _tr_cache_ObstacleBecomesOld;
 
     public:
+
+        std::string stateAccessedVia;
 
         Cruise_finite1_deterministic_MC() {
             CruiseAllowed = (BBoolean(true));
@@ -501,160 +530,284 @@ class Cruise_finite1_deterministic_MC {
         }
 
 
-        bool _tr_CruiseBecomesNotAllowed() const {
-            return (CruiseAllowed.equal((BBoolean(true)))).booleanValue();
+        bool _tr_CruiseBecomesNotAllowed(bool isCaching) const {
+            if (this->_tr_cache_CruiseBecomesNotAllowed == boost::none){
+                bool __tmp_result = (CruiseAllowed.equal((BBoolean(true)))).booleanValue();
+                if (isCaching) this->_tr_cache_CruiseBecomesNotAllowed = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_CruiseBecomesNotAllowed.get();
         }
 
-        bool _tr_CruiseBecomesAllowed() const {
-            return (CruiseAllowed.equal((BBoolean(false)))).booleanValue();
+        bool _tr_CruiseBecomesAllowed(bool isCaching) const {
+            if (this->_tr_cache_CruiseBecomesAllowed == boost::none){
+                bool __tmp_result = (CruiseAllowed.equal((BBoolean(false)))).booleanValue();
+                if (isCaching) this->_tr_cache_CruiseBecomesAllowed = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_CruiseBecomesAllowed.get();
         }
 
-        BSet<BTuple<BBoolean, BBoolean >> _tr_SetCruiseSpeed() const {
-            BSet<BTuple<BBoolean, BBoolean >> _ic_set_2 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(BBoolean _ic_vcks_1 : (BOOL)) {
-                for(BBoolean _ic_csam_1 : (BOOL)) {
-                    if((CruiseAllowed.equal((BBoolean(true)))).booleanValue()) {
-                        _ic_set_2 = _ic_set_2._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vcks_1, _ic_csam_1))));
+        BSet<BTuple<BBoolean, BBoolean >> _tr_SetCruiseSpeed(bool isCaching) const {
+            if (this->_tr_cache_SetCruiseSpeed == boost::none){
+                BSet<BTuple<BBoolean, BBoolean >> _ic_set_2 = BSet<BTuple<BBoolean, BBoolean >>();
+                for(const BBoolean& _ic_vcks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_csam_1 : (BOOL)) {
+                        if((CruiseAllowed.equal((BBoolean(true)))).booleanValue()) {
+                            _ic_set_2 = _ic_set_2._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vcks_1, _ic_csam_1))));
+                        }
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_SetCruiseSpeed = _ic_set_2;
+                else return _ic_set_2;
+            }
+            return this->_tr_cache_SetCruiseSpeed.get();
+        }
+
+        BSet<BTuple<BBoolean, BBoolean >> _tr_CCInitialisationFinished(bool isCaching) const {
+            if (this->_tr_cache_CCInitialisationFinished == boost::none){
+                BSet<BTuple<BBoolean, BBoolean >> _ic_set_3 = BSet<BTuple<BBoolean, BBoolean >>();
+                for(const BBoolean& _ic_vtks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
+                        if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
+                            _ic_set_3 = _ic_set_3._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+                        }
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_CCInitialisationFinished = _ic_set_3;
+                else return _ic_set_3;
+            }
+            return this->_tr_cache_CCInitialisationFinished.get();
+        }
+
+        bool _tr_CCInitialisationDelayFinished(bool isCaching) const {
+            if (this->_tr_cache_CCInitialisationDelayFinished == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(CCInitialisationInProgress.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_CCInitialisationDelayFinished = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_CCInitialisationDelayFinished.get();
+        }
+
+        BSet<BTuple<BBoolean, BBoolean >> _tr_CruiseSpeedChangeFinished(bool isCaching) const {
+            if (this->_tr_cache_CruiseSpeedChangeFinished == boost::none){
+                BSet<BTuple<BBoolean, BBoolean >> _ic_set_5 = BSet<BTuple<BBoolean, BBoolean >>();
+                for(const BBoolean& _ic_vtks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
+                        if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
+                            _ic_set_5 = _ic_set_5._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+                        }
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_CruiseSpeedChangeFinished = _ic_set_5;
+                else return _ic_set_5;
+            }
+            return this->_tr_cache_CruiseSpeedChangeFinished.get();
+        }
+
+        bool _tr_CruiseSpeedChangeDelayFinished(bool isCaching) const {
+            if (this->_tr_cache_CruiseSpeedChangeDelayFinished == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_CruiseSpeedChangeDelayFinished = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_CruiseSpeedChangeDelayFinished.get();
+        }
+
+        bool _tr_CruiseOff(bool isCaching) const {
+            if (this->_tr_cache_CruiseOff == boost::none){
+                bool __tmp_result = (CruiseActive.equal((BBoolean(true)))).booleanValue();
+                if (isCaching) this->_tr_cache_CruiseOff = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_CruiseOff.get();
+        }
+
+        bool _tr_ExternalForcesBecomesExtreme(bool isCaching) const {
+            if (this->_tr_cache_ExternalForcesBecomesExtreme == boost::none){
+                bool __tmp_result = (VehicleCanKeepSpeed.equal((BBoolean(true)))).booleanValue();
+                if (isCaching) this->_tr_cache_ExternalForcesBecomesExtreme = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ExternalForcesBecomesExtreme.get();
+        }
+
+        bool _tr_ExternalForcesBecomesNormal(bool isCaching) const {
+            if (this->_tr_cache_ExternalForcesBecomesNormal == boost::none){
+                bool __tmp_result = ((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_ExternalForcesBecomesNormal = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ExternalForcesBecomesNormal.get();
+        }
+
+        bool _tr_VehicleLeavesCruiseSpeed(bool isCaching) const {
+            if (this->_tr_cache_VehicleLeavesCruiseSpeed == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(VehicleAtCruiseSpeed.equal((BBoolean(true))).booleanValue() && (BBoolean(VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue() && VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_VehicleLeavesCruiseSpeed = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_VehicleLeavesCruiseSpeed.get();
+        }
+
+        bool _tr_VehicleReachesCruiseSpeed(bool isCaching) const {
+            if (this->_tr_cache_VehicleReachesCruiseSpeed == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && VehicleAtCruiseSpeed.equal((BBoolean(false))).booleanValue())).booleanValue() && SpeedAboveMax.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_VehicleReachesCruiseSpeed = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_VehicleReachesCruiseSpeed.get();
+        }
+
+        bool _tr_VehicleExceedsMaxCruiseSpeed(bool isCaching) const {
+            if (this->_tr_cache_VehicleExceedsMaxCruiseSpeed == boost::none){
+                bool __tmp_result = ((BBoolean(SpeedAboveMax.equal((BBoolean(false))).booleanValue() && (BBoolean((BBoolean(CruiseActive.equal((BBoolean(false))).booleanValue() || VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue())).booleanValue() || (BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_VehicleExceedsMaxCruiseSpeed = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_VehicleExceedsMaxCruiseSpeed.get();
+        }
+
+        bool _tr_VehicleFallsBelowMaxCruiseSpeed(bool isCaching) const {
+            if (this->_tr_cache_VehicleFallsBelowMaxCruiseSpeed == boost::none){
+                bool __tmp_result = (SpeedAboveMax.equal((BBoolean(true)))).booleanValue();
+                if (isCaching) this->_tr_cache_VehicleFallsBelowMaxCruiseSpeed = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_VehicleFallsBelowMaxCruiseSpeed.get();
+        }
+
+        bool _tr_ObstacleDistanceBecomesVeryClose(bool isCaching) const {
+            if (this->_tr_cache_ObstacleDistanceBecomesVeryClose == boost::none){
+                bool __tmp_result = ((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleDistanceBecomesVeryClose = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleDistanceBecomesVeryClose.get();
+        }
+
+        bool _tr_ObstacleDistanceBecomesClose(bool isCaching) const {
+            if (this->_tr_cache_ObstacleDistanceBecomesClose == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(ObstaclePresent.equal((BBoolean(true))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue())).booleanValue() || (BBoolean(ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue())).booleanValue())).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleDistanceBecomesClose = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleDistanceBecomesClose.get();
+        }
+
+        bool _tr_ObstacleDistanceBecomesBig(bool isCaching) const {
+            if (this->_tr_cache_ObstacleDistanceBecomesBig == boost::none){
+                bool __tmp_result = ((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleDistanceBecomesBig = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleDistanceBecomesBig.get();
+        }
+
+        bool _tr_ObstacleStartsTravelFaster(bool isCaching) const {
+            if (this->_tr_cache_ObstacleStartsTravelFaster == boost::none){
+                bool __tmp_result = ((BBoolean(ObstaclePresent.equal((BBoolean(true))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleStartsTravelFaster = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleStartsTravelFaster.get();
+        }
+
+        bool _tr_ObstacleStopsTravelFaster(bool isCaching) const {
+            if (this->_tr_cache_ObstacleStopsTravelFaster == boost::none){
+                bool __tmp_result = (ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleStopsTravelFaster = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleStopsTravelFaster.get();
+        }
+
+        bool _tr_ObstacleStartsTravelSlower(bool isCaching) const {
+            if (this->_tr_cache_ObstacleStartsTravelSlower == boost::none){
+                bool __tmp_result = (ObstacleRelativeSpeed.equal((RSset(RSset::RSequal)))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleStartsTravelSlower = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleStartsTravelSlower.get();
+        }
+
+        bool _tr_ObstacleStopsTravelSlower(bool isCaching) const {
+            if (this->_tr_cache_ObstacleStopsTravelSlower == boost::none){
+                bool __tmp_result = (ObstacleRelativeSpeed.equal((RSset(RSset::RSneg)))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleStopsTravelSlower = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleStopsTravelSlower.get();
+        }
+
+        BSet<BTuple<RSset, ODset >> _tr_ObstacleAppearsWhenCruiseActive(bool isCaching) const {
+            if (this->_tr_cache_ObstacleAppearsWhenCruiseActive == boost::none){
+                BSet<BTuple<RSset, ODset >> _ic_set_21 = BSet<BTuple<RSset, ODset >>();
+                for(const RSset& _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
+                    for(const ODset& _ic_od_1 : _ODset.difference((BSet<ODset >((ODset(ODset::ODnone)))))) {
+                        if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
+                            _ic_set_21 = _ic_set_21._union(BSet<BTuple<RSset, ODset >>((BTuple<RSset, ODset >(_ic_ors_1, _ic_od_1))));
+                        }
+
+                    }
+                }
+                if (isCaching) this->_tr_cache_ObstacleAppearsWhenCruiseActive = _ic_set_21;
+                else return _ic_set_21;
+            }
+            return this->_tr_cache_ObstacleAppearsWhenCruiseActive.get();
+        }
+
+        BSet<RSset> _tr_ObstacleAppearsWhenCruiseInactive(bool isCaching) const {
+            if (this->_tr_cache_ObstacleAppearsWhenCruiseInactive == boost::none){
+                BSet<RSset> _ic_set_22 = BSet<RSset>();
+                for(const RSset& _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
+                    if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
+                        _ic_set_22 = _ic_set_22._union(BSet<RSset>(_ic_ors_1));
                     }
 
                 }
+                if (isCaching) this->_tr_cache_ObstacleAppearsWhenCruiseInactive = _ic_set_22;
+                else return _ic_set_22;
             }
-            return _ic_set_2;
+            return this->_tr_cache_ObstacleAppearsWhenCruiseInactive.get();
         }
 
-        BSet<BTuple<BBoolean, BBoolean >> _tr_CCInitialisationFinished() const {
-            BSet<BTuple<BBoolean, BBoolean >> _ic_set_3 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(BBoolean _ic_vtks_1 : (BOOL)) {
-                for(BBoolean _ic_vtktg_1 : (BOOL)) {
-                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_3 = _ic_set_3._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+        bool _tr_ObstacleDisappears(bool isCaching) const {
+            if (this->_tr_cache_ObstacleDisappears == boost::none){
+                bool __tmp_result = (ObstaclePresent.equal((BBoolean(true)))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleDisappears = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_ObstacleDisappears.get();
+        }
+
+        BSet<BTuple<BBoolean, BBoolean >> _tr_VehicleManageObstacle(bool isCaching) const {
+            if (this->_tr_cache_VehicleManageObstacle == boost::none){
+                BSet<BTuple<BBoolean, BBoolean >> _ic_set_24 = BSet<BTuple<BBoolean, BBoolean >>();
+                for(const BBoolean& _ic_vtks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
+                        if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
+                            _ic_set_24 = _ic_set_24._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+                        }
+
                     }
-
                 }
+                if (isCaching) this->_tr_cache_VehicleManageObstacle = _ic_set_24;
+                else return _ic_set_24;
             }
-            return _ic_set_3;
+            return this->_tr_cache_VehicleManageObstacle.get();
         }
 
-        bool _tr_CCInitialisationDelayFinished() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(CCInitialisationInProgress.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue();
-        }
-
-        BSet<BTuple<BBoolean, BBoolean >> _tr_CruiseSpeedChangeFinished() const {
-            BSet<BTuple<BBoolean, BBoolean >> _ic_set_5 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(BBoolean _ic_vtks_1 : (BOOL)) {
-                for(BBoolean _ic_vtktg_1 : (BOOL)) {
-                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_5 = _ic_set_5._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
-                    }
-
-                }
+        bool _tr_ObstacleBecomesOld(bool isCaching) const {
+            if (this->_tr_cache_ObstacleBecomesOld == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_ObstacleBecomesOld = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_5;
-        }
-
-        bool _tr_CruiseSpeedChangeDelayFinished() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_CruiseOff() const {
-            return (CruiseActive.equal((BBoolean(true)))).booleanValue();
-        }
-
-        bool _tr_ExternalForcesBecomesExtreme() const {
-            return (VehicleCanKeepSpeed.equal((BBoolean(true)))).booleanValue();
-        }
-
-        bool _tr_ExternalForcesBecomesNormal() const {
-            return ((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_VehicleLeavesCruiseSpeed() const {
-            return ((BBoolean((BBoolean(VehicleAtCruiseSpeed.equal((BBoolean(true))).booleanValue() && (BBoolean(VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue() && VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_VehicleReachesCruiseSpeed() const {
-            return ((BBoolean((BBoolean(CruiseActive.equal((BBoolean(true))).booleanValue() && VehicleAtCruiseSpeed.equal((BBoolean(false))).booleanValue())).booleanValue() && SpeedAboveMax.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_VehicleExceedsMaxCruiseSpeed() const {
-            return ((BBoolean(SpeedAboveMax.equal((BBoolean(false))).booleanValue() && (BBoolean((BBoolean(CruiseActive.equal((BBoolean(false))).booleanValue() || VehicleCanKeepSpeed.equal((BBoolean(false))).booleanValue())).booleanValue() || (BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_VehicleFallsBelowMaxCruiseSpeed() const {
-            return (SpeedAboveMax.equal((BBoolean(true)))).booleanValue();
-        }
-
-        bool _tr_ObstacleDistanceBecomesVeryClose() const {
-            return ((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_ObstacleDistanceBecomesClose() const {
-            return ((BBoolean((BBoolean(ObstaclePresent.equal((BBoolean(true))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue())).booleanValue() || (BBoolean(ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue())).booleanValue())).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_ObstacleDistanceBecomesBig() const {
-            return ((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_ObstacleStartsTravelFaster() const {
-            return ((BBoolean(ObstaclePresent.equal((BBoolean(true))).booleanValue() && ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_ObstacleStopsTravelFaster() const {
-            return (ObstacleRelativeSpeed.equal((RSset(RSset::RSpos)))).booleanValue();
-        }
-
-        bool _tr_ObstacleStartsTravelSlower() const {
-            return (ObstacleRelativeSpeed.equal((RSset(RSset::RSequal)))).booleanValue();
-        }
-
-        bool _tr_ObstacleStopsTravelSlower() const {
-            return (ObstacleRelativeSpeed.equal((RSset(RSset::RSneg)))).booleanValue();
-        }
-
-        BSet<BTuple<RSset, ODset >> _tr_ObstacleAppearsWhenCruiseActive() const {
-            BSet<BTuple<RSset, ODset >> _ic_set_21 = BSet<BTuple<RSset, ODset >>();
-            for(RSset _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
-                for(ODset _ic_od_1 : _ODset.difference((BSet<ODset >((ODset(ODset::ODnone)))))) {
-                    if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_21 = _ic_set_21._union(BSet<BTuple<RSset, ODset >>((BTuple<RSset, ODset >(_ic_ors_1, _ic_od_1))));
-                    }
-
-                }
-            }
-            return _ic_set_21;
-        }
-
-        BSet<RSset> _tr_ObstacleAppearsWhenCruiseInactive() const {
-            BSet<RSset> _ic_set_22 = BSet<RSset>();
-            for(RSset _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
-                if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
-                    _ic_set_22 = _ic_set_22._union(BSet<RSset>(_ic_ors_1));
-                }
-
-            }
-            return _ic_set_22;
-        }
-
-        bool _tr_ObstacleDisappears() const {
-            return (ObstaclePresent.equal((BBoolean(true)))).booleanValue();
-        }
-
-        BSet<BTuple<BBoolean, BBoolean >> _tr_VehicleManageObstacle() const {
-            BSet<BTuple<BBoolean, BBoolean >> _ic_set_24 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(BBoolean _ic_vtks_1 : (BOOL)) {
-                for(BBoolean _ic_vtktg_1 : (BOOL)) {
-                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_24 = _ic_set_24._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
-                    }
-
-                }
-            }
-            return _ic_set_24;
-        }
-
-        bool _tr_ObstacleBecomesOld() const {
-            return ((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue() && (BBoolean((BBoolean((BBoolean(VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepTimeGap.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue();
+            return this->_tr_cache_ObstacleBecomesOld.get();
         }
 
         bool _check_inv_1() const {
@@ -813,8 +966,49 @@ class Cruise_finite1_deterministic_MC {
             return ((BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean((BBoolean(ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() || VehicleTryKeepSpeed.equal((BBoolean(true))).booleanValue()))).booleanValue();
         }
 
-        Cruise_finite1_deterministic_MC _copy() const {
-            return Cruise_finite1_deterministic_MC(CruiseAllowed, CruiseActive, VehicleAtCruiseSpeed, VehicleCanKeepSpeed, VehicleTryKeepSpeed, SpeedAboveMax, VehicleTryKeepTimeGap, CruiseSpeedAtMax, ObstaclePresent, ObstacleDistance, ObstacleRelativeSpeed, ObstacleStatusJustChanged, CCInitialisationInProgress, CruiseSpeedChangeInProgress, NumberOfSetCruise);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        Cruise_finite1_deterministic_MC _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_CruiseBecomesNotAllowed", "_tr_CruiseBecomesAllowed", "_tr_SetCruiseSpeed", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_CruiseOff", "_tr_ExternalForcesBecomesExtreme", "_tr_ExternalForcesBecomesNormal", "_tr_VehicleLeavesCruiseSpeed", "_tr_VehicleReachesCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleDistanceBecomesClose", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStopsTravelSlower", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_ObstacleAppearsWhenCruiseInactive", "_tr_ObstacleDisappears", "_tr_VehicleManageObstacle", "_tr_ObstacleBecomesOld"};
+
+            Cruise_finite1_deterministic_MC result = Cruise_finite1_deterministic_MC(CruiseAllowed, CruiseActive, VehicleAtCruiseSpeed, VehicleCanKeepSpeed, VehicleTryKeepSpeed, SpeedAboveMax, VehicleTryKeepTimeGap, CruiseSpeedAtMax, ObstaclePresent, ObstacleDistance, ObstacleRelativeSpeed, ObstacleStatusJustChanged, CCInitialisationInProgress, CruiseSpeedChangeInProgress, NumberOfSetCruise);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_CruiseBecomesNotAllowed"): result._tr_cache_CruiseBecomesNotAllowed = this->_tr_cache_CruiseBecomesNotAllowed; break;
+                        case strHash("_tr_CruiseBecomesAllowed"): result._tr_cache_CruiseBecomesAllowed = this->_tr_cache_CruiseBecomesAllowed; break;
+                        case strHash("_tr_SetCruiseSpeed"): result._tr_cache_SetCruiseSpeed = this->_tr_cache_SetCruiseSpeed; break;
+                        case strHash("_tr_CCInitialisationFinished"): result._tr_cache_CCInitialisationFinished = this->_tr_cache_CCInitialisationFinished; break;
+                        case strHash("_tr_CCInitialisationDelayFinished"): result._tr_cache_CCInitialisationDelayFinished = this->_tr_cache_CCInitialisationDelayFinished; break;
+                        case strHash("_tr_CruiseSpeedChangeFinished"): result._tr_cache_CruiseSpeedChangeFinished = this->_tr_cache_CruiseSpeedChangeFinished; break;
+                        case strHash("_tr_CruiseSpeedChangeDelayFinished"): result._tr_cache_CruiseSpeedChangeDelayFinished = this->_tr_cache_CruiseSpeedChangeDelayFinished; break;
+                        case strHash("_tr_CruiseOff"): result._tr_cache_CruiseOff = this->_tr_cache_CruiseOff; break;
+                        case strHash("_tr_ExternalForcesBecomesExtreme"): result._tr_cache_ExternalForcesBecomesExtreme = this->_tr_cache_ExternalForcesBecomesExtreme; break;
+                        case strHash("_tr_ExternalForcesBecomesNormal"): result._tr_cache_ExternalForcesBecomesNormal = this->_tr_cache_ExternalForcesBecomesNormal; break;
+                        case strHash("_tr_VehicleLeavesCruiseSpeed"): result._tr_cache_VehicleLeavesCruiseSpeed = this->_tr_cache_VehicleLeavesCruiseSpeed; break;
+                        case strHash("_tr_VehicleReachesCruiseSpeed"): result._tr_cache_VehicleReachesCruiseSpeed = this->_tr_cache_VehicleReachesCruiseSpeed; break;
+                        case strHash("_tr_VehicleExceedsMaxCruiseSpeed"): result._tr_cache_VehicleExceedsMaxCruiseSpeed = this->_tr_cache_VehicleExceedsMaxCruiseSpeed; break;
+                        case strHash("_tr_VehicleFallsBelowMaxCruiseSpeed"): result._tr_cache_VehicleFallsBelowMaxCruiseSpeed = this->_tr_cache_VehicleFallsBelowMaxCruiseSpeed; break;
+                        case strHash("_tr_ObstacleDistanceBecomesVeryClose"): result._tr_cache_ObstacleDistanceBecomesVeryClose = this->_tr_cache_ObstacleDistanceBecomesVeryClose; break;
+                        case strHash("_tr_ObstacleDistanceBecomesClose"): result._tr_cache_ObstacleDistanceBecomesClose = this->_tr_cache_ObstacleDistanceBecomesClose; break;
+                        case strHash("_tr_ObstacleDistanceBecomesBig"): result._tr_cache_ObstacleDistanceBecomesBig = this->_tr_cache_ObstacleDistanceBecomesBig; break;
+                        case strHash("_tr_ObstacleStartsTravelFaster"): result._tr_cache_ObstacleStartsTravelFaster = this->_tr_cache_ObstacleStartsTravelFaster; break;
+                        case strHash("_tr_ObstacleStopsTravelFaster"): result._tr_cache_ObstacleStopsTravelFaster = this->_tr_cache_ObstacleStopsTravelFaster; break;
+                        case strHash("_tr_ObstacleStartsTravelSlower"): result._tr_cache_ObstacleStartsTravelSlower = this->_tr_cache_ObstacleStartsTravelSlower; break;
+                        case strHash("_tr_ObstacleStopsTravelSlower"): result._tr_cache_ObstacleStopsTravelSlower = this->_tr_cache_ObstacleStopsTravelSlower; break;
+                        case strHash("_tr_ObstacleAppearsWhenCruiseActive"): result._tr_cache_ObstacleAppearsWhenCruiseActive = this->_tr_cache_ObstacleAppearsWhenCruiseActive; break;
+                        case strHash("_tr_ObstacleAppearsWhenCruiseInactive"): result._tr_cache_ObstacleAppearsWhenCruiseInactive = this->_tr_cache_ObstacleAppearsWhenCruiseInactive; break;
+                        case strHash("_tr_ObstacleDisappears"): result._tr_cache_ObstacleDisappears = this->_tr_cache_ObstacleDisappears; break;
+                        case strHash("_tr_VehicleManageObstacle"): result._tr_cache_VehicleManageObstacle = this->_tr_cache_VehicleManageObstacle; break;
+                        case strHash("_tr_ObstacleBecomesOld"): result._tr_cache_ObstacleBecomesOld = this->_tr_cache_ObstacleBecomesOld; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const Cruise_finite1_deterministic_MC& o1, const Cruise_finite1_deterministic_MC& o2) {
@@ -892,1850 +1086,685 @@ class Cruise_finite1_deterministic_MC {
 };
 
 
-static std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> generateNextStates(std::mutex& guardMutex, const Cruise_finite1_deterministic_MC& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentGuard, std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& guardCache, std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& parents, std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> result = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        bool _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CruiseBecomesNotAllowed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CruiseBecomesNotAllowed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_1 = state._tr_CruiseBecomesNotAllowed();
-        } else {
-            _trid_1 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CruiseBecomesNotAllowed", _trid_1);
-        if(_trid_1) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseBecomesNotAllowed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CruiseBecomesNotAllowed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CruiseBecomesNotAllowed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseBecomesNotAllowed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CruiseBecomesAllowed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CruiseBecomesAllowed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_2 = state._tr_CruiseBecomesAllowed();
-        } else {
-            _trid_2 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CruiseBecomesAllowed", _trid_2);
-        if(_trid_2) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseBecomesAllowed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CruiseBecomesAllowed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CruiseBecomesAllowed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseBecomesAllowed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_3;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_SetCruiseSpeed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_SetCruiseSpeed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_3 = state._tr_SetCruiseSpeed();
-        } else {
-            _trid_3 = boost::any_cast<BSet<BTuple<BBoolean, BBoolean >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_SetCruiseSpeed", _trid_3);
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
+class ModelChecker {
+    private:
+        Cruise_finite1_deterministic_MC::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
 
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["SetCruiseSpeed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["SetCruiseSpeed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "SetCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_4;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CCInitialisationFinished"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CCInitialisationFinished") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_4 = state._tr_CCInitialisationFinished();
-        } else {
-            _trid_4 = boost::any_cast<BSet<BTuple<BBoolean, BBoolean >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CCInitialisationFinished", _trid_4);
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
+        std::list<Cruise_finite1_deterministic_MC> unvisitedStates;
+        std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
 
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CCInitialisationFinished"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CCInitialisationFinished"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CCInitialisationFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_5;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CCInitialisationDelayFinished"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CCInitialisationDelayFinished") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_5 = state._tr_CCInitialisationDelayFinished();
-        } else {
-            _trid_5 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CCInitialisationDelayFinished", _trid_5);
-        if(_trid_5) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CCInitialisationDelayFinished();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CCInitialisationDelayFinished"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CCInitialisationDelayFinished"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CCInitialisationDelayFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_6;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CruiseSpeedChangeFinished"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CruiseSpeedChangeFinished") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_6 = state._tr_CruiseSpeedChangeFinished();
-        } else {
-            _trid_6 = boost::any_cast<BSet<BTuple<BBoolean, BBoolean >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CruiseSpeedChangeFinished", _trid_6);
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        Cruise_finite1_deterministic_MC counterExampleState;
 
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CruiseSpeedChangeFinished"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CruiseSpeedChangeFinished"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_7;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CruiseSpeedChangeDelayFinished"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CruiseSpeedChangeDelayFinished") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_7 = state._tr_CruiseSpeedChangeDelayFinished();
-        } else {
-            _trid_7 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CruiseSpeedChangeDelayFinished", _trid_7);
-        if(_trid_7) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseSpeedChangeDelayFinished();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CruiseSpeedChangeDelayFinished"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CruiseSpeedChangeDelayFinished"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeDelayFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_8;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_CruiseOff"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_CruiseOff") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_8 = state._tr_CruiseOff();
-        } else {
-            _trid_8 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_CruiseOff", _trid_8);
-        if(_trid_8) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseOff();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["CruiseOff"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["CruiseOff"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseOff"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_9;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ExternalForcesBecomesExtreme"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ExternalForcesBecomesExtreme") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_9 = state._tr_ExternalForcesBecomesExtreme();
-        } else {
-            _trid_9 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ExternalForcesBecomesExtreme", _trid_9);
-        if(_trid_9) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ExternalForcesBecomesExtreme();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ExternalForcesBecomesExtreme"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ExternalForcesBecomesExtreme"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesExtreme"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_10;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ExternalForcesBecomesNormal"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ExternalForcesBecomesNormal") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_10 = state._tr_ExternalForcesBecomesNormal();
-        } else {
-            _trid_10 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ExternalForcesBecomesNormal", _trid_10);
-        if(_trid_10) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ExternalForcesBecomesNormal();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ExternalForcesBecomesNormal"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ExternalForcesBecomesNormal"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesNormal"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_11;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_VehicleLeavesCruiseSpeed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_VehicleLeavesCruiseSpeed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_11 = state._tr_VehicleLeavesCruiseSpeed();
-        } else {
-            _trid_11 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_VehicleLeavesCruiseSpeed", _trid_11);
-        if(_trid_11) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleLeavesCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["VehicleLeavesCruiseSpeed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["VehicleLeavesCruiseSpeed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleLeavesCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_12;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_VehicleReachesCruiseSpeed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_VehicleReachesCruiseSpeed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_12 = state._tr_VehicleReachesCruiseSpeed();
-        } else {
-            _trid_12 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_VehicleReachesCruiseSpeed", _trid_12);
-        if(_trid_12) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleReachesCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["VehicleReachesCruiseSpeed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["VehicleReachesCruiseSpeed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleReachesCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_13;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_VehicleExceedsMaxCruiseSpeed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_VehicleExceedsMaxCruiseSpeed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_13 = state._tr_VehicleExceedsMaxCruiseSpeed();
-        } else {
-            _trid_13 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_VehicleExceedsMaxCruiseSpeed", _trid_13);
-        if(_trid_13) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleExceedsMaxCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["VehicleExceedsMaxCruiseSpeed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["VehicleExceedsMaxCruiseSpeed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleExceedsMaxCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_14;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_VehicleFallsBelowMaxCruiseSpeed"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_VehicleFallsBelowMaxCruiseSpeed") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_14 = state._tr_VehicleFallsBelowMaxCruiseSpeed();
-        } else {
-            _trid_14 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_VehicleFallsBelowMaxCruiseSpeed", _trid_14);
-        if(_trid_14) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleFallsBelowMaxCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["VehicleFallsBelowMaxCruiseSpeed"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["VehicleFallsBelowMaxCruiseSpeed"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleFallsBelowMaxCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_15;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleDistanceBecomesVeryClose"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleDistanceBecomesVeryClose") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_15 = state._tr_ObstacleDistanceBecomesVeryClose();
-        } else {
-            _trid_15 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleDistanceBecomesVeryClose", _trid_15);
-        if(_trid_15) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDistanceBecomesVeryClose();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleDistanceBecomesVeryClose"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleDistanceBecomesVeryClose"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesVeryClose"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_16;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleDistanceBecomesClose"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleDistanceBecomesClose") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_16 = state._tr_ObstacleDistanceBecomesClose();
-        } else {
-            _trid_16 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleDistanceBecomesClose", _trid_16);
-        if(_trid_16) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDistanceBecomesClose();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleDistanceBecomesClose"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleDistanceBecomesClose"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesClose"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_17;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleDistanceBecomesBig"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleDistanceBecomesBig") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_17 = state._tr_ObstacleDistanceBecomesBig();
-        } else {
-            _trid_17 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleDistanceBecomesBig", _trid_17);
-        if(_trid_17) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDistanceBecomesBig();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleDistanceBecomesBig"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleDistanceBecomesBig"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesBig"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_18;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleStartsTravelFaster"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleStartsTravelFaster") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_18 = state._tr_ObstacleStartsTravelFaster();
-        } else {
-            _trid_18 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleStartsTravelFaster", _trid_18);
-        if(_trid_18) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStartsTravelFaster();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleStartsTravelFaster"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleStartsTravelFaster"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelFaster"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_19;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleStopsTravelFaster"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleStopsTravelFaster") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_19 = state._tr_ObstacleStopsTravelFaster();
-        } else {
-            _trid_19 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleStopsTravelFaster", _trid_19);
-        if(_trid_19) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStopsTravelFaster();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleStopsTravelFaster"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleStopsTravelFaster"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelFaster"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_20;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleStartsTravelSlower"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleStartsTravelSlower") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_20 = state._tr_ObstacleStartsTravelSlower();
-        } else {
-            _trid_20 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleStartsTravelSlower", _trid_20);
-        if(_trid_20) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStartsTravelSlower();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleStartsTravelSlower"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleStartsTravelSlower"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelSlower"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_21;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleStopsTravelSlower"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleStopsTravelSlower") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_21 = state._tr_ObstacleStopsTravelSlower();
-        } else {
-            _trid_21 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleStopsTravelSlower", _trid_21);
-        if(_trid_21) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStopsTravelSlower();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleStopsTravelSlower"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleStopsTravelSlower"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelSlower"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleAppearsWhenCruiseActive"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleAppearsWhenCruiseActive") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_22 = state._tr_ObstacleAppearsWhenCruiseActive();
-        } else {
-            _trid_22 = boost::any_cast<BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleAppearsWhenCruiseActive", _trid_22);
-        for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
-            Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
-            Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> parents;
 
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleAppearsWhenCruiseActive"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleAppearsWhenCruiseActive"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseActive"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleAppearsWhenCruiseInactive"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleAppearsWhenCruiseInactive") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_23 = state._tr_ObstacleAppearsWhenCruiseInactive();
-        } else {
-            _trid_23 = boost::any_cast<BSet<Cruise_finite1_deterministic_MC::RSset>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleAppearsWhenCruiseInactive", _trid_23);
-        for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
-            Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
+    public:
+        ModelChecker() {}
 
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleAppearsWhenCruiseInactive"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleAppearsWhenCruiseInactive"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseInactive"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_24;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleDisappears"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleDisappears") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_24 = state._tr_ObstacleDisappears();
-        } else {
-            _trid_24 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleDisappears", _trid_24);
-        if(_trid_24) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDisappears();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleDisappears"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleDisappears"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDisappears"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_25;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_VehicleManageObstacle"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_VehicleManageObstacle") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_25 = state._tr_VehicleManageObstacle();
-        } else {
-            _trid_25 = boost::any_cast<BSet<BTuple<BBoolean, BBoolean >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_VehicleManageObstacle", _trid_25);
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
-
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["VehicleManageObstacle"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["VehicleManageObstacle"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleManageObstacle"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_26;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_ObstacleBecomesOld"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_ObstacleBecomesOld") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_26 = state._tr_ObstacleBecomesOld();
-        } else {
-            _trid_26 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_ObstacleBecomesOld", _trid_26);
-        if(_trid_26) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleBecomesOld();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["ObstacleBecomesOld"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["ObstacleBecomesOld"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleBecomesOld"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+        ModelChecker(Cruise_finite1_deterministic_MC::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        if(state._tr_CruiseBecomesNotAllowed()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseBecomesNotAllowed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseBecomesNotAllowed"});
-                }
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
             }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_CruiseBecomesAllowed()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseBecomesAllowed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseBecomesAllowed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_3 = state._tr_SetCruiseSpeed();
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
 
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "SetCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_4 = state._tr_CCInitialisationFinished();
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
-
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CCInitialisationFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_CCInitialisationDelayFinished()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CCInitialisationDelayFinished();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CCInitialisationDelayFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_6 = state._tr_CruiseSpeedChangeFinished();
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
-
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_CruiseSpeedChangeDelayFinished()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseSpeedChangeDelayFinished();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseSpeedChangeDelayFinished"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_CruiseOff()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.CruiseOff();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "CruiseOff"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ExternalForcesBecomesExtreme()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ExternalForcesBecomesExtreme();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesExtreme"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ExternalForcesBecomesNormal()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ExternalForcesBecomesNormal();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ExternalForcesBecomesNormal"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_VehicleLeavesCruiseSpeed()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleLeavesCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleLeavesCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_VehicleReachesCruiseSpeed()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleReachesCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleReachesCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_VehicleExceedsMaxCruiseSpeed()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleExceedsMaxCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleExceedsMaxCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_VehicleFallsBelowMaxCruiseSpeed()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleFallsBelowMaxCruiseSpeed();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleFallsBelowMaxCruiseSpeed"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleDistanceBecomesVeryClose()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDistanceBecomesVeryClose();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesVeryClose"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleDistanceBecomesClose()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDistanceBecomesClose();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesClose"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleDistanceBecomesBig()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDistanceBecomesBig();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDistanceBecomesBig"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleStartsTravelFaster()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStartsTravelFaster();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelFaster"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleStopsTravelFaster()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStopsTravelFaster();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelFaster"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleStartsTravelSlower()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStartsTravelSlower();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStartsTravelSlower"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleStopsTravelSlower()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleStopsTravelSlower();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleStopsTravelSlower"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22 = state._tr_ObstacleAppearsWhenCruiseActive();
-        for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
-            Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
-            Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
-
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseActive"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23 = state._tr_ObstacleAppearsWhenCruiseInactive();
-        for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
-            Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
-
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleAppearsWhenCruiseInactive"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleDisappears()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleDisappears();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleDisappears"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BBoolean, BBoolean >> _trid_25 = state._tr_VehicleManageObstacle();
-        for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
-            BBoolean _tmp_1 = param.projection2();
-            BBoolean _tmp_2 = param.projection1();
-
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "VehicleManageObstacle"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_ObstacleBecomesOld()) {
-            Cruise_finite1_deterministic_MC copiedState = state._copy();
-            copiedState.ObstacleBecomesOld();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "ObstacleBecomesOld"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, Cruise_finite1_deterministic_MC& counterExampleState, std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& parents, std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        Cruise_finite1_deterministic_MC currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const Cruise_finite1_deterministic_MC& state, bool isCaching, std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_3()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_4()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_5()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_6()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_7()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_8()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_9()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_10()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_11()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_12()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_13()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_14()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_15()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_16()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_17()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_18()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_19()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_20()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_21") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_21()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_22") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_22()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_23") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_23()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_24") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_24()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_25") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_25()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_26") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_26()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_27") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_27()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_28") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_28()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_29") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_29()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_30") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_30()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_31") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_31()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_32") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_32()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_33") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_33()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_34") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_34()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_35") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_35()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_36") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_36()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_37") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_37()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_38") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_38()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_39") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_39()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20() || !state._check_inv_21() || !state._check_inv_22() || !state._check_inv_23() || !state._check_inv_24() || !state._check_inv_25() || !state._check_inv_26() || !state._check_inv_27() || !state._check_inv_28() || !state._check_inv_29() || !state._check_inv_30() || !state._check_inv_31() || !state._check_inv_32() || !state._check_inv_33() || !state._check_inv_34() || !state._check_inv_35() || !state._check_inv_36() || !state._check_inv_37() || !state._check_inv_38() || !state._check_inv_39());
-}
-
-static Cruise_finite1_deterministic_MC next(std::list<Cruise_finite1_deterministic_MC>& collection, std::mutex& mutex, Cruise_finite1_deterministic_MC::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case Cruise_finite1_deterministic_MC::BFS: {
-            Cruise_finite1_deterministic_MC state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case Cruise_finite1_deterministic_MC::DFS: {
-            Cruise_finite1_deterministic_MC state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case Cruise_finite1_deterministic_MC::MIXED: {
-            if(collection.size() % 2 == 0) {
-                Cruise_finite1_deterministic_MC state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                Cruise_finite1_deterministic_MC state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(Cruise_finite1_deterministic_MC::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    Cruise_finite1_deterministic_MC machine = Cruise_finite1_deterministic_MC();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> states = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<Cruise_finite1_deterministic_MC> collection = std::list<Cruise_finite1_deterministic_MC>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> dependentInvariant;
-    std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> dependentGuard;
-    std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> guardCache;
-    std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> parents;
-    std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"ObstacleStopsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"SetCruiseSpeed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
-        invariantDependency.insert({"VehicleLeavesCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_34"}});
-        invariantDependency.insert({"VehicleFallsBelowMaxCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_6", "_check_inv_34"}});
-        invariantDependency.insert({"CCInitialisationFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"VehicleReachesCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_34"}});
-        invariantDependency.insert({"ObstacleAppearsWhenCruiseActive", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
-        invariantDependency.insert({"ObstacleStartsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"CruiseBecomesNotAllowed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_12", "_check_inv_34", "_check_inv_33", "_check_inv_28", "_check_inv_27", "_check_inv_26", "_check_inv_21", "_check_inv_7", "_check_inv_20", "_check_inv_4", "_check_inv_5", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3", "_check_inv_1"}});
-        invariantDependency.insert({"ObstacleAppearsWhenCruiseInactive", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_36", "_check_inv_13", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
-        invariantDependency.insert({"CCInitialisationDelayFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_36", "_check_inv_25", "_check_inv_35"}});
-        invariantDependency.insert({"ObstacleDistanceBecomesClose", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
-        invariantDependency.insert({"ObstacleStartsTravelFaster", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"ExternalForcesBecomesExtreme", {"_check_inv_18", "_check_inv_4"}});
-        invariantDependency.insert({"CruiseOff", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_12", "_check_inv_34", "_check_inv_33", "_check_inv_28", "_check_inv_27", "_check_inv_26", "_check_inv_21", "_check_inv_7", "_check_inv_20", "_check_inv_4", "_check_inv_5", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
-        invariantDependency.insert({"CruiseSpeedChangeDelayFinished", {"_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_37", "_check_inv_26", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"ObstacleStopsTravelFaster", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"ObstacleDistanceBecomesVeryClose", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
-        invariantDependency.insert({"VehicleManageObstacle", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"CruiseBecomesAllowed", {"_check_inv_1", "_check_inv_33"}});
-        invariantDependency.insert({"VehicleExceedsMaxCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_6", "_check_inv_34"}});
-        invariantDependency.insert({"CruiseSpeedChangeFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"ObstacleDisappears", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
-        invariantDependency.insert({"ExternalForcesBecomesNormal", {"_check_inv_18", "_check_inv_4"}});
-        invariantDependency.insert({"ObstacleBecomesOld", {"_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"ObstacleDistanceBecomesBig", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
-        guardDependency.insert({"ObstacleStopsTravelSlower", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"SetCruiseSpeed", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesClose", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"VehicleLeavesCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"VehicleFallsBelowMaxCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CCInitialisationFinished", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"VehicleReachesCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"ObstacleAppearsWhenCruiseActive", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"ObstacleStartsTravelSlower", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"CruiseBecomesNotAllowed", {"_tr_SetCruiseSpeed", "_tr_VehicleManageObstacle", "_tr_CruiseBecomesAllowed", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseBecomesNotAllowed", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"ObstacleAppearsWhenCruiseInactive", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"CCInitialisationDelayFinished", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleDistanceBecomesClose", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleStartsTravelFaster", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"ExternalForcesBecomesExtreme", {"_tr_ExternalForcesBecomesNormal", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ExternalForcesBecomesExtreme", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CruiseOff", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"CruiseSpeedChangeDelayFinished", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleStopsTravelFaster", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"ObstacleDistanceBecomesVeryClose", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"VehicleManageObstacle", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CruiseBecomesAllowed", {"_tr_SetCruiseSpeed", "_tr_CruiseBecomesAllowed", "_tr_CruiseBecomesNotAllowed"}});
-        guardDependency.insert({"VehicleExceedsMaxCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CruiseSpeedChangeFinished", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"ObstacleDisappears", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"ExternalForcesBecomesNormal", {"_tr_ExternalForcesBecomesNormal", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ExternalForcesBecomesExtreme", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"ObstacleBecomesOld", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleDistanceBecomesBig", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    Cruise_finite1_deterministic_MC counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        Cruise_finite1_deterministic_MC state = next(collection, mutex, type);
-
-        std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            Cruise_finite1_deterministic_MC machine = Cruise_finite1_deterministic_MC();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                Cruise_finite1_deterministic_MC state = next();
 
-static void modelCheckMultiThreaded(Cruise_finite1_deterministic_MC::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    Cruise_finite1_deterministic_MC machine = Cruise_finite1_deterministic_MC();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> states = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<Cruise_finite1_deterministic_MC> collection = std::list<Cruise_finite1_deterministic_MC>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> dependentInvariant;
-    std::unordered_map<Cruise_finite1_deterministic_MC, std::unordered_set<string>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> dependentGuard;
-    std::unordered_map<Cruise_finite1_deterministic_MC, immer::map<string, boost::any>, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> guardCache;
-    std::unordered_map<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> parents;
-    std::unordered_map<Cruise_finite1_deterministic_MC, string, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"ObstacleStopsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"SetCruiseSpeed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
-        invariantDependency.insert({"VehicleLeavesCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_34"}});
-        invariantDependency.insert({"VehicleFallsBelowMaxCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_6", "_check_inv_34"}});
-        invariantDependency.insert({"CCInitialisationFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"VehicleReachesCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_34"}});
-        invariantDependency.insert({"ObstacleAppearsWhenCruiseActive", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
-        invariantDependency.insert({"ObstacleStartsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"CruiseBecomesNotAllowed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_12", "_check_inv_34", "_check_inv_33", "_check_inv_28", "_check_inv_27", "_check_inv_26", "_check_inv_21", "_check_inv_7", "_check_inv_20", "_check_inv_4", "_check_inv_5", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3", "_check_inv_1"}});
-        invariantDependency.insert({"ObstacleAppearsWhenCruiseInactive", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_36", "_check_inv_13", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
-        invariantDependency.insert({"CCInitialisationDelayFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_36", "_check_inv_25", "_check_inv_35"}});
-        invariantDependency.insert({"ObstacleDistanceBecomesClose", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
-        invariantDependency.insert({"ObstacleStartsTravelFaster", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"ExternalForcesBecomesExtreme", {"_check_inv_18", "_check_inv_4"}});
-        invariantDependency.insert({"CruiseOff", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_12", "_check_inv_34", "_check_inv_33", "_check_inv_28", "_check_inv_27", "_check_inv_26", "_check_inv_21", "_check_inv_7", "_check_inv_20", "_check_inv_4", "_check_inv_5", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
-        invariantDependency.insert({"CruiseSpeedChangeDelayFinished", {"_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_37", "_check_inv_26", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"ObstacleStopsTravelFaster", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"ObstacleDistanceBecomesVeryClose", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
-        invariantDependency.insert({"VehicleManageObstacle", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"CruiseBecomesAllowed", {"_check_inv_1", "_check_inv_33"}});
-        invariantDependency.insert({"VehicleExceedsMaxCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_6", "_check_inv_34"}});
-        invariantDependency.insert({"CruiseSpeedChangeFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
-        invariantDependency.insert({"ObstacleDisappears", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
-        invariantDependency.insert({"ExternalForcesBecomesNormal", {"_check_inv_18", "_check_inv_4"}});
-        invariantDependency.insert({"ObstacleBecomesOld", {"_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24"}});
-        invariantDependency.insert({"ObstacleDistanceBecomesBig", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
-        guardDependency.insert({"ObstacleStopsTravelSlower", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"SetCruiseSpeed", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesClose", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"VehicleLeavesCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"VehicleFallsBelowMaxCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CCInitialisationFinished", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"VehicleReachesCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"ObstacleAppearsWhenCruiseActive", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"ObstacleStartsTravelSlower", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"CruiseBecomesNotAllowed", {"_tr_SetCruiseSpeed", "_tr_VehicleManageObstacle", "_tr_CruiseBecomesAllowed", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseBecomesNotAllowed", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"ObstacleAppearsWhenCruiseInactive", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"CCInitialisationDelayFinished", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleDistanceBecomesClose", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleStartsTravelFaster", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"ExternalForcesBecomesExtreme", {"_tr_ExternalForcesBecomesNormal", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ExternalForcesBecomesExtreme", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CruiseOff", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"CruiseSpeedChangeDelayFinished", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleStopsTravelFaster", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
-        guardDependency.insert({"ObstacleDistanceBecomesVeryClose", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"VehicleManageObstacle", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CruiseBecomesAllowed", {"_tr_SetCruiseSpeed", "_tr_CruiseBecomesAllowed", "_tr_CruiseBecomesNotAllowed"}});
-        guardDependency.insert({"VehicleExceedsMaxCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"CruiseSpeedChangeFinished", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"ObstacleDisappears", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
-        guardDependency.insert({"ExternalForcesBecomesNormal", {"_tr_ExternalForcesBecomesNormal", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ExternalForcesBecomesExtreme", "_tr_VehicleLeavesCruiseSpeed"}});
-        guardDependency.insert({"ObstacleBecomesOld", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        guardDependency.insert({"ObstacleDistanceBecomesBig", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    Cruise_finite1_deterministic_MC counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        Cruise_finite1_deterministic_MC state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            Cruise_finite1_deterministic_MC machine = Cruise_finite1_deterministic_MC();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                Cruise_finite1_deterministic_MC state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(Cruise_finite1_deterministic_MC& machine) {
+            invariantDependency.insert({"ObstacleStopsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
+            invariantDependency.insert({"SetCruiseSpeed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_34", "_check_inv_33", "_check_inv_26", "_check_inv_21", "_check_inv_20", "_check_inv_4", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
+            invariantDependency.insert({"VehicleLeavesCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_34"}});
+            invariantDependency.insert({"VehicleFallsBelowMaxCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_6", "_check_inv_34"}});
+            invariantDependency.insert({"CCInitialisationFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
+            invariantDependency.insert({"VehicleReachesCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_34"}});
+            invariantDependency.insert({"ObstacleAppearsWhenCruiseActive", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
+            invariantDependency.insert({"ObstacleStartsTravelSlower", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
+            invariantDependency.insert({"CruiseBecomesNotAllowed", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_12", "_check_inv_34", "_check_inv_33", "_check_inv_28", "_check_inv_27", "_check_inv_26", "_check_inv_21", "_check_inv_7", "_check_inv_20", "_check_inv_4", "_check_inv_5", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3", "_check_inv_1"}});
+            invariantDependency.insert({"ObstacleAppearsWhenCruiseInactive", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_36", "_check_inv_13", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
+            invariantDependency.insert({"CCInitialisationDelayFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_36", "_check_inv_25", "_check_inv_35"}});
+            invariantDependency.insert({"ObstacleDistanceBecomesClose", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
+            invariantDependency.insert({"ObstacleStartsTravelFaster", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
+            invariantDependency.insert({"ExternalForcesBecomesExtreme", {"_check_inv_18", "_check_inv_4"}});
+            invariantDependency.insert({"CruiseOff", {"_check_inv_18", "_check_inv_17", "_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_15", "_check_inv_37", "_check_inv_19", "_check_inv_10", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_12", "_check_inv_34", "_check_inv_33", "_check_inv_28", "_check_inv_27", "_check_inv_26", "_check_inv_21", "_check_inv_7", "_check_inv_20", "_check_inv_4", "_check_inv_5", "_check_inv_25", "_check_inv_24", "_check_inv_8", "_check_inv_23", "_check_inv_9", "_check_inv_22", "_check_inv_2", "_check_inv_3"}});
+            invariantDependency.insert({"CruiseSpeedChangeDelayFinished", {"_check_inv_39", "_check_inv_16", "_check_inv_38", "_check_inv_37", "_check_inv_26", "_check_inv_36", "_check_inv_35"}});
+            invariantDependency.insert({"ObstacleStopsTravelFaster", {"_check_inv_29", "_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24"}});
+            invariantDependency.insert({"ObstacleDistanceBecomesVeryClose", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_37", "_check_inv_32", "_check_inv_31", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
+            invariantDependency.insert({"VehicleManageObstacle", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
+            invariantDependency.insert({"CruiseBecomesAllowed", {"_check_inv_1", "_check_inv_33"}});
+            invariantDependency.insert({"VehicleExceedsMaxCruiseSpeed", {"_check_inv_17", "_check_inv_3", "_check_inv_6", "_check_inv_34"}});
+            invariantDependency.insert({"CruiseSpeedChangeFinished", {"_check_inv_39", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_19", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_5", "_check_inv_36", "_check_inv_35"}});
+            invariantDependency.insert({"ObstacleDisappears", {"_check_inv_29", "_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_13", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23", "_check_inv_11"}});
+            invariantDependency.insert({"ExternalForcesBecomesNormal", {"_check_inv_18", "_check_inv_4"}});
+            invariantDependency.insert({"ObstacleBecomesOld", {"_check_inv_39", "_check_inv_38", "_check_inv_37", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24"}});
+            invariantDependency.insert({"ObstacleDistanceBecomesBig", {"_check_inv_39", "_check_inv_28", "_check_inv_38", "_check_inv_27", "_check_inv_37", "_check_inv_32", "_check_inv_21", "_check_inv_31", "_check_inv_7", "_check_inv_30", "_check_inv_14", "_check_inv_36", "_check_inv_35", "_check_inv_24", "_check_inv_12", "_check_inv_23"}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"ObstacleStopsTravelSlower", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
+            guardDependency.insert({"SetCruiseSpeed", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesClose", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleAppearsWhenCruiseInactive"}});
+            guardDependency.insert({"VehicleLeavesCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"VehicleFallsBelowMaxCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"CCInitialisationFinished", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"VehicleReachesCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"ObstacleAppearsWhenCruiseActive", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
+            guardDependency.insert({"ObstacleStartsTravelSlower", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
+            guardDependency.insert({"CruiseBecomesNotAllowed", {"_tr_SetCruiseSpeed", "_tr_VehicleManageObstacle", "_tr_CruiseBecomesAllowed", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseBecomesNotAllowed", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
+            guardDependency.insert({"ObstacleAppearsWhenCruiseInactive", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
+            guardDependency.insert({"CCInitialisationDelayFinished", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
+            guardDependency.insert({"ObstacleDistanceBecomesClose", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
+            guardDependency.insert({"ObstacleStartsTravelFaster", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
+            guardDependency.insert({"ExternalForcesBecomesExtreme", {"_tr_ExternalForcesBecomesNormal", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ExternalForcesBecomesExtreme", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"CruiseOff", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_ExternalForcesBecomesNormal", "_tr_CruiseSpeedChangeFinished", "_tr_ExternalForcesBecomesExtreme", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleReachesCruiseSpeed", "_tr_CruiseOff", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
+            guardDependency.insert({"CruiseSpeedChangeDelayFinished", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
+            guardDependency.insert({"ObstacleStopsTravelFaster", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose"}});
+            guardDependency.insert({"ObstacleDistanceBecomesVeryClose", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
+            guardDependency.insert({"VehicleManageObstacle", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"CruiseBecomesAllowed", {"_tr_SetCruiseSpeed", "_tr_CruiseBecomesAllowed", "_tr_CruiseBecomesNotAllowed"}});
+            guardDependency.insert({"VehicleExceedsMaxCruiseSpeed", {"_tr_VehicleReachesCruiseSpeed", "_tr_VehicleFallsBelowMaxCruiseSpeed", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"CruiseSpeedChangeFinished", {"_tr_ObstacleBecomesOld", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"ObstacleDisappears", {"_tr_ObstacleStopsTravelFaster", "_tr_ObstacleStopsTravelSlower", "_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleDisappears", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished", "_tr_ObstacleStartsTravelSlower", "_tr_ObstacleStartsTravelFaster", "_tr_ObstacleAppearsWhenCruiseActive", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_ObstacleAppearsWhenCruiseInactive"}});
+            guardDependency.insert({"ExternalForcesBecomesNormal", {"_tr_ExternalForcesBecomesNormal", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_ExternalForcesBecomesExtreme", "_tr_VehicleLeavesCruiseSpeed"}});
+            guardDependency.insert({"ObstacleBecomesOld", {"_tr_VehicleManageObstacle", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
+            guardDependency.insert({"ObstacleDistanceBecomesBig", {"_tr_VehicleManageObstacle", "_tr_ObstacleDistanceBecomesBig", "_tr_ObstacleDistanceBecomesClose", "_tr_VehicleExceedsMaxCruiseSpeed", "_tr_CruiseSpeedChangeFinished", "_tr_ObstacleBecomesOld", "_tr_ObstacleDistanceBecomesVeryClose", "_tr_CCInitialisationFinished", "_tr_CCInitialisationDelayFinished", "_tr_CruiseSpeedChangeDelayFinished"}});
+        }
 
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
 
-
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        Cruise_finite1_deterministic_MC next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case Cruise_finite1_deterministic_MC::BFS: {
+                    Cruise_finite1_deterministic_MC state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case Cruise_finite1_deterministic_MC::DFS: {
+                    Cruise_finite1_deterministic_MC state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case Cruise_finite1_deterministic_MC::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        Cruise_finite1_deterministic_MC state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        Cruise_finite1_deterministic_MC state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> generateNextStates(const Cruise_finite1_deterministic_MC& state) {
+            std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual> result = std::unordered_set<Cruise_finite1_deterministic_MC, Cruise_finite1_deterministic_MC::Hash, Cruise_finite1_deterministic_MC::HashEqual>();
+            if(state._tr_CruiseBecomesNotAllowed(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CruiseBecomesNotAllowed"]);
+                copiedState.CruiseBecomesNotAllowed();
+                copiedState.stateAccessedVia = "CruiseBecomesNotAllowed";
+                result.insert(copiedState);
+            }
+            if(state._tr_CruiseBecomesAllowed(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CruiseBecomesAllowed"]);
+                copiedState.CruiseBecomesAllowed();
+                copiedState.stateAccessedVia = "CruiseBecomesAllowed";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BBoolean, BBoolean >> _trid_3 = state._tr_SetCruiseSpeed(isCaching);
+            for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
+                BBoolean _tmp_1 = param.projection2();
+                BBoolean _tmp_2 = param.projection1();
+
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["SetCruiseSpeed"]);
+                copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "SetCruiseSpeed";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BBoolean, BBoolean >> _trid_4 = state._tr_CCInitialisationFinished(isCaching);
+            for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
+                BBoolean _tmp_1 = param.projection2();
+                BBoolean _tmp_2 = param.projection1();
+
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CCInitialisationFinished"]);
+                copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "CCInitialisationFinished";
+                result.insert(copiedState);
+            }
+            if(state._tr_CCInitialisationDelayFinished(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CCInitialisationDelayFinished"]);
+                copiedState.CCInitialisationDelayFinished();
+                copiedState.stateAccessedVia = "CCInitialisationDelayFinished";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BBoolean, BBoolean >> _trid_6 = state._tr_CruiseSpeedChangeFinished(isCaching);
+            for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
+                BBoolean _tmp_1 = param.projection2();
+                BBoolean _tmp_2 = param.projection1();
+
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CruiseSpeedChangeFinished"]);
+                copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "CruiseSpeedChangeFinished";
+                result.insert(copiedState);
+            }
+            if(state._tr_CruiseSpeedChangeDelayFinished(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CruiseSpeedChangeDelayFinished"]);
+                copiedState.CruiseSpeedChangeDelayFinished();
+                copiedState.stateAccessedVia = "CruiseSpeedChangeDelayFinished";
+                result.insert(copiedState);
+            }
+            if(state._tr_CruiseOff(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["CruiseOff"]);
+                copiedState.CruiseOff();
+                copiedState.stateAccessedVia = "CruiseOff";
+                result.insert(copiedState);
+            }
+            if(state._tr_ExternalForcesBecomesExtreme(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ExternalForcesBecomesExtreme"]);
+                copiedState.ExternalForcesBecomesExtreme();
+                copiedState.stateAccessedVia = "ExternalForcesBecomesExtreme";
+                result.insert(copiedState);
+            }
+            if(state._tr_ExternalForcesBecomesNormal(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ExternalForcesBecomesNormal"]);
+                copiedState.ExternalForcesBecomesNormal();
+                copiedState.stateAccessedVia = "ExternalForcesBecomesNormal";
+                result.insert(copiedState);
+            }
+            if(state._tr_VehicleLeavesCruiseSpeed(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["VehicleLeavesCruiseSpeed"]);
+                copiedState.VehicleLeavesCruiseSpeed();
+                copiedState.stateAccessedVia = "VehicleLeavesCruiseSpeed";
+                result.insert(copiedState);
+            }
+            if(state._tr_VehicleReachesCruiseSpeed(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["VehicleReachesCruiseSpeed"]);
+                copiedState.VehicleReachesCruiseSpeed();
+                copiedState.stateAccessedVia = "VehicleReachesCruiseSpeed";
+                result.insert(copiedState);
+            }
+            if(state._tr_VehicleExceedsMaxCruiseSpeed(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["VehicleExceedsMaxCruiseSpeed"]);
+                copiedState.VehicleExceedsMaxCruiseSpeed();
+                copiedState.stateAccessedVia = "VehicleExceedsMaxCruiseSpeed";
+                result.insert(copiedState);
+            }
+            if(state._tr_VehicleFallsBelowMaxCruiseSpeed(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["VehicleFallsBelowMaxCruiseSpeed"]);
+                copiedState.VehicleFallsBelowMaxCruiseSpeed();
+                copiedState.stateAccessedVia = "VehicleFallsBelowMaxCruiseSpeed";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleDistanceBecomesVeryClose(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleDistanceBecomesVeryClose"]);
+                copiedState.ObstacleDistanceBecomesVeryClose();
+                copiedState.stateAccessedVia = "ObstacleDistanceBecomesVeryClose";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleDistanceBecomesClose(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleDistanceBecomesClose"]);
+                copiedState.ObstacleDistanceBecomesClose();
+                copiedState.stateAccessedVia = "ObstacleDistanceBecomesClose";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleDistanceBecomesBig(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleDistanceBecomesBig"]);
+                copiedState.ObstacleDistanceBecomesBig();
+                copiedState.stateAccessedVia = "ObstacleDistanceBecomesBig";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleStartsTravelFaster(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleStartsTravelFaster"]);
+                copiedState.ObstacleStartsTravelFaster();
+                copiedState.stateAccessedVia = "ObstacleStartsTravelFaster";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleStopsTravelFaster(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleStopsTravelFaster"]);
+                copiedState.ObstacleStopsTravelFaster();
+                copiedState.stateAccessedVia = "ObstacleStopsTravelFaster";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleStartsTravelSlower(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleStartsTravelSlower"]);
+                copiedState.ObstacleStartsTravelSlower();
+                copiedState.stateAccessedVia = "ObstacleStartsTravelSlower";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleStopsTravelSlower(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleStopsTravelSlower"]);
+                copiedState.ObstacleStopsTravelSlower();
+                copiedState.stateAccessedVia = "ObstacleStopsTravelSlower";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22 = state._tr_ObstacleAppearsWhenCruiseActive(isCaching);
+            for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
+                Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
+                Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
+
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleAppearsWhenCruiseActive"]);
+                copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseActive";
+                result.insert(copiedState);
+            }
+            BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23 = state._tr_ObstacleAppearsWhenCruiseInactive(isCaching);
+            for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
+                Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
+
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleAppearsWhenCruiseInactive"]);
+                copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
+                copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseInactive";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleDisappears(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleDisappears"]);
+                copiedState.ObstacleDisappears();
+                copiedState.stateAccessedVia = "ObstacleDisappears";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BBoolean, BBoolean >> _trid_25 = state._tr_VehicleManageObstacle(isCaching);
+            for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
+                BBoolean _tmp_1 = param.projection2();
+                BBoolean _tmp_2 = param.projection1();
+
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["VehicleManageObstacle"]);
+                copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "VehicleManageObstacle";
+                result.insert(copiedState);
+            }
+            if(state._tr_ObstacleBecomesOld(isCaching)) {
+                Cruise_finite1_deterministic_MC copiedState = state._copy(guardDependency["ObstacleBecomesOld"]);
+                copiedState.ObstacleBecomesOld();
+                copiedState.stateAccessedVia = "ObstacleBecomesOld";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const Cruise_finite1_deterministic_MC& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_7()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_8()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_9()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_10()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_11()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_12()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_13()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_14()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_15()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_16()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_17()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_18()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_19()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_20()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_21") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_21()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_22") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_22()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_23") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_23()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_24") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_24()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_25") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_25()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_26") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_26()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_27") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_27()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_28") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_28()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_29") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_29()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_30") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_30()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_31") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_31()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_32") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_32()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_33") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_33()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_34") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_34()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_35") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_35()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_36") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_36()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_37") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_37()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_38") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_38()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_39") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_39()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20() && state._check_inv_21() && state._check_inv_22() && state._check_inv_23() && state._check_inv_24() && state._check_inv_25() && state._check_inv_26() && state._check_inv_27() && state._check_inv_28() && state._check_inv_29() && state._check_inv_30() && state._check_inv_31() && state._check_inv_32() && state._check_inv_33() && state._check_inv_34() && state._check_inv_35() && state._check_inv_36() && state._check_inv_37() && state._check_inv_38() && state._check_inv_39());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -2784,11 +1813,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

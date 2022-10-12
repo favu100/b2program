@@ -1,0 +1,6 @@
+fn main() {
+    let mut counter: ACounter = ACounter::new();
+    counter.inc();
+    counter.inc();
+    println!("{}", counter.res());
+}

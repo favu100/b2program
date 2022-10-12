@@ -1,0 +1,4 @@
+fn main() {
+    let mut sieve = SieveParallel::new();
+    println!("{}", sieve.ComputeNumberOfPrimes());
+}

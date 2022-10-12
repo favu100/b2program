@@ -1,0 +1,5 @@
+fn main() {
+    let mut succ = Succ::new();
+    succ.calculate();
+    println!("{}", succ.getRes());
+}

@@ -1,0 +1,5 @@
+fn main() {
+    let mut range = RangeSmall::new();
+    range.simulate();
+    println!("{}", range.getSet().card());
+}

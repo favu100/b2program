@@ -1,0 +1,4 @@
+fn main() {
+    let mut map = MapFunction::new();
+    println!("{} {}", map.getYY().domain().card(), map.getYY().range().card());
+}

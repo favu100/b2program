@@ -1,0 +1,1150 @@
+keywords() ::= <<
+as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, abstract, become, box, do, final, macro, override, priv, typeof, unsized, virtual, yield, try, union, dyn, min, max, new
+>>
+
+
+machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck, transitionCachesDeclaration, hash_equal) ::= <<
+#![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
+<if(forModelChecking)>
+use std::env;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, mpsc, Mutex};
+use std::collections::{HashSet, LinkedList};
+use dashmap::DashSet;
+use threadpool::ThreadPool;
+use std::sync::mpsc::channel;
+use derivative::Derivative;
+use std::time::{Duration};
+<endif>
+use std::fmt;
+use rand::{thread_rng, Rng};
+use btypes::butils;
+use btypes::bobject;
+use btypes::bboolean::{IntoBool, BBooleanT};
+<imports; separator="\n">
+<includedMachines; separator="\n">
+
+<if(forModelChecking)>
+#[derive(Clone, Copy)]
+pub enum MC_TYPE { BFS, DFS, MIXED }
+<endif>
+
+<structs; separator="\n\n">
+
+<enums; separator="\n\n">
+
+<if(forModelChecking)>
+#[derive(Derivative)]
+#[derivative(Clone, Default, Debug, Hash, PartialEq, Eq)]
+<else>#[derive(Clone, Default, Debug, Hash, PartialEq, Eq)]<\n><endif>
+pub struct <machine> {
+    <if(declarations)><declarations; separator="\n"><endif>
+    <if(includes)><includes; separator="\n"><endif>
+    <if(constants_declarations)><constants_declarations; separator="\n"><endif>
+    <sets; separator="\n">
+    <if(forModelChecking)>
+    <if(transitionCachesDeclaration)>#[derivative(Hash="ignore", PartialEq="ignore")]<endif>
+    <transitionCachesDeclaration; separator="\n#[derivative(Hash=\"ignore\", PartialEq=\"ignore\")]\n"><endif>
+}
+
+<hash_equal>
+
+impl <machine> {
+    <initialization>
+    <if(getters)><\n><getters; separator="\n\n"><endif>
+    <if(operations)><\n><operations; separator="\n\n">
+    <endif>
+
+<if(forModelChecking)>
+
+    <transitions; separator="\n\n">
+
+    <invariant; separator="\n\n">
+
+    <copy>
+
+    <modelcheck>
+
+<endif>
+}
+
+<lambdaFunctions; separator="\n\n">
+<addition>
+
+<if(forModelChecking)>
+fn main() {
+    let args: Vec\<String> = env::args().collect();
+    if args.len() \< 4 { panic!("Number of arguments errorneous"); }
+
+    let threads = args.get(2).unwrap().parse::\<usize>().unwrap();
+    if threads \<= 0 { panic!("Input for number of threads is wrong."); }
+
+    let is_caching = args.get(3).unwrap().parse::\<bool>().unwrap();
+    let mc_type = match args.get(1).unwrap().as_str() {
+        "mixed" => MC_TYPE::MIXED,
+        "bf" => MC_TYPE::BFS,
+        "df" => MC_TYPE::DFS,
+        _    => panic!("Input for strategy is wrong.")
+    };
+
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
+    if threads == 1 {
+        <machine>::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
+    } else {
+        <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
+    }
+}
+<endif>
+>>
+
+import_type(type, useBigInteger) ::= <<
+use btypes::<type; format="lower">::<type>;
+>>
+
+initialization(machine, properties, values, body, set_initializations, includesInitialization) ::= <<
+
+pub fn new() -> <machine> {
+<if(values)>    //values: '<values>'<endif>
+    let mut m: <machine> = Default::default();
+    m.init();
+    return m;
+}
+fn init(&mut self) {
+    <set_initializations; separator="\n">
+    <properties; separator="\n">
+    <body>
+    <includesInitialization; separator="\n">
+}
+>>
+
+assignment(leftType, rightType, rightTypeIsCollection, iterationConstruct, identifier, modified_identifier, val, isIdentifierLhs, isRecordAccessLhs, arg, lhsIsLocal, lhsIsParam, useBigInteger) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <if(lhsIsLocal && !lhsIsParam)>Option::Some(<endif><val><if(rightTypeIsCollection || useBigInteger)>.clone()<endif><if(lhsIsLocal && !lhsIsParam)>)<endif><if(rightTypeIsCollection)>.clone()<endif>;<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<val>);<else><identifier> = <modified_identifier>._override(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<arg>,<val>)]));<endif>
+>>
+
+identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigned, rhsOnLhs, fromOtherMachine, otherMachine, isConstant, isDefiningLdVariable, useBigInteger) ::= <<
+<if(fromOtherMachine)>self.<otherMachine>.get_<identifier>()<elseif(isLocal && !isParam && !isAssigned && !isConstant)><identifier><if(useBigInteger)>.as_ref()<endif>.unwrap()<else><if(rhsOnLhs)>_ld_<elseif(isPrivate && !isDefiningLdVariable)>self.<elseif(isConstant)>self.<endif><identifier><endif>
+>>
+
+getter(returnType, isConstant, machine, variable) ::= <<
+pub fn _get_<variable>(&self) -> <returnType> {
+    return self.<variable>.clone();
+}
+>>
+
+operation(returnType, operationName, parameters, locals, body, return) ::= <<
+pub fn <operationName>(&mut self<if(parameters)>, <endif><parameters; separator=", ">) -> <returnType> {
+    <locals; separator="\n">
+    <body>
+    <return>
+}
+>>
+
+parameter(type, identifier) ::= <<
+mut <identifier>: <type>
+>>
+
+return(identifier,isLocal) ::= <<
+return <identifier><if(isLocal)>.unwrap()<endif>;
+>>
+
+no_return() ::=<<
+>>
+
+void() ::= <<
+()
+>>
+
+local_declaration(type, identifier) ::= <<
+<declaration(type, identifier)>
+>>
+
+declaration(type, identifier) ::= <<
+let mut <identifier>: Option\<<type>\> = Option::None;
+>>
+
+number(number, useBigInteger) ::= <<
+BInteger::new(<if(useBigInteger)>b"<number>"<else><number><endif>)
+>>
+
+struct(name, declarations, parameters, initializations, functions, assignments, equalPredicates, unequalPredicates, values, fields) ::= <<
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct <name> {
+    <if(declarations)><declarations; separator="\n"><endif>
+}
+
+impl fmt::Display for <name> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "<values:{v | <v>: {\}}; separator=",">", <values:{v | self.<v>}; separator=" ,">)
+    }
+}
+
+impl BObject for <name> {}
+impl BStruct for <name> {}
+
+impl <name> {
+    pub fn new(<parameters; separator=", ">) -> <name> {
+        let mut m: <name> = Default::default();
+        <initializations>
+        return m;
+    }
+
+    <functions; separator="\n\n">
+
+    pub fn equal(
+    &self, other: &<name>) -> BBoolean {
+        return BBoolean::new(<equalPredicates; separator=" && ">);
+    }
+
+    pub fn unequal(&self, other: &<name>) -> BBoolean {
+        return BBoolean::new(<unequalPredicates; separator=" || ">);
+    }
+
+    <if(assignments)><assignments><endif>
+}
+>>
+
+record_field_initialization(identifier) ::= <<
+m.<identifier> = <identifier>;
+>>
+
+record_field_get(type, field) ::= <<
+pub fn get_<field>(&self) -> <type> {
+    return self.<field>.clone();
+}
+>>
+
+record_field_override(name, field, type, val, parameters) ::= <<
+pub fn override_<field>(&self, <field>: <type>) -> <name> {
+    return <name>::new(<parameters; separator=".clone(), "><if(parameters)>.clone()<endif>);
+}
+<if(val)>// val = '<val>'<endif>
+>>
+
+record_private_variable_prefix() ::= <<
+self.
+>>
+
+record_equal_predicate(field) ::= <<
+self.<field> == other.<field>
+>>
+
+record_unequal_predicate(field) ::= <<
+self.<field> != other.<field>
+>>
+
+record_assignment(identifier) ::= <<
+>>
+
+record(struct, parameters) ::= <<
+<struct>::new(<parameters; separator=", ">)
+>>
+
+constant_initialization(iterationConstruct, identifier, type, val) ::= <<
+<iterationConstruct; separator="\n">
+self.<identifier> = <val>;
+>>
+
+record_field_access(record, field) ::= <<
+<record>.get_<field>()
+>>
+
+record_access_nested(record, field, isNested) ::= <<
+<if(!isNested)><record><else><record>.get_<field>()<endif>
+>>
+
+record_access_element(expr, arg, val) ::= <<
+<expr>.override_<arg>(<val>)
+>>
+
+record_field_to_string(identifier) ::= <<
+<identifier>
+>>
+
+method() ::= <<
+method()
+>>
+
+set_declaration(identifier, type, enums) ::= <<
+<identifier>: BSet\<<type>\>,
+>>
+
+set_initialization(identifier, type, enums) ::= <<
+self.<identifier> = BSet::new(vec![<enums; separator=", ">]);
+>>
+
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for <identifier> in <set>.clone().iter().cloned() {
+    <body>
+}
+>>
+
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+{
+    let mut <identifier> = <set>;
+    <body>
+}
+>>
+
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for <identifier> in <set>.pow().iter().cloned() {
+    <body>
+}
+>>
+
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+<otherIterationConstructs>
+for <identifier> in <set>.pow().iter().filter(|e| e.unequal(&<set>)).cloned() {
+    <body>
+}
+>>
+
+let_expression_predicate(type, isBool, identifier, body) ::= <<
+let mut <identifier>: <type><if(isBool)> = BBoolean::new(false)<endif>;
+<body>
+>>
+
+let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
+<otherIterationConstructs>
+<identifier> = <val>;
+>>
+
+set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
+let mut <identifier> = <if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![]);
+<comprehension>
+>>
+
+set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType, hasCondition, conditionalPredicate) ::= <<
+//set_comprehension_predicate
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+<else>
+<if(hasCondition)>
+if (<conditionalPredicate>).booleanValue() {
+    if (<predicate>).booleanValue() {
+        <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+    }
+}
+<else>
+if (<predicate>).booleanValue() {
+    <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+}
+<endif>
+<endif>
+>>
+
+lambda(type, identifier, lambda, leftType, rightType) ::= <<
+let mut <identifier> = BRelation::\<<leftType>, <rightType>\>::new(vec![]);
+<lambda>
+>>
+
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
+//lambda_expression
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
+<else>
+if (<predicate>).booleanValue() {
+    <relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
+}
+<endif>
+>>
+
+lambda_function(function, parameters, returnType, expression) ::= <<
+pub fn <function>(<parameters; separator=", ">) -> <returnType> {
+    return <expression>;
+}
+>>
+
+lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>.<endif><arg1>(<arg2; separator=", ">)
+>>
+
+quantified_predicate(identifier, forall, hasCondition, conditionalPredicate, predicate) ::= <<
+//quantified_predicate
+let mut <identifier> = BBoolean::new(<if(forall)>true<else>false<endif>);
+<if(hasCondition)>
+if <conditionalPredicate>.booleanValue() {
+    <predicate>
+}
+<else>
+<predicate>
+<endif>
+>>
+
+quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, predicate, forall) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = BBoolean::new(<if(forall)>false<else>true<endif>);
+break;
+<else>
+if <if(forall)>!<endif>(<predicate>).booleanValue() {
+    <identifier> = BBoolean::new(<if(forall)>false<else>true<endif>);
+    break;
+}
+<endif>
+>>
+
+quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
+//quantified_expression
+let mut <identifier> = <if(isInteger)>BInteger::new(<identity>);<else>BSet::\<<setType>\>::new(vec![]);<endif>
+<if(hasCondition)>
+if <conditionalPredicate>.booleanValue() {
+    <evaluation>
+}
+<else>
+<evaluation>
+<endif>
+>>
+
+quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, predicate, identifier, operation, expression) ::= <<
+//quantified_expression_evaluation
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<identifier> = <identifier>.<operation>(&<expression>);
+<else>
+if (<predicate>).booleanValue() {
+    <identifier> = <identifier>.<operation>(&<expression>);
+}
+<endif>
+>>
+
+if_expression_predicate(predicate, ifThen, ifElse) ::= <<
+(if <predicate>.booleanValue() { <ifThen> } else { <ifElse> })
+>>
+
+set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
+<if(isRelation)>BRelation<if(!enums)>::\<<if(!leftType)>Dummy, Dummy<else><leftType>, <rightType><endif>\><endif><else>BSet<if(!enums)>::\<<if(!type)>Dummy<else><type><endif>\><endif><endif>::new(vec![<if(isRelation)><enums; separator=", "><else><enums:{e | <e>.clone()}; separator=", "><endif>])
+>>
+
+seq_enumeration(type, elements) ::= <<
+BRelation<if(!type)>::\<BInteger, Dummy><endif>::new(vec![<elements; separator=", ">])
+>>
+
+enum_call(machine, class, identifier, isCurrentMachine) ::= <<
+<if(!isCurrentMachine)><machine>::<endif><class>::<identifier>
+>>
+
+set_enum_declaration(name,enums) ::= <<
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum <name> {
+    <enums; separator=", \n">
+}
+impl <name> {
+    pub fn equal(&self, other: &<name>) -> BBoolean { BBoolean::new(*self == *other)}
+    pub fn unequal(&self, other: &<name>) -> BBoolean { BBoolean::new(*self != *other)}
+}
+impl BObject for <name> {}
+impl Default for <name> {
+    fn default() -> Self { <name>::<first(enums)> }
+}
+impl fmt::Display for <name> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+       match *self {
+           <enums:{e | <name>::<e> => write!(f, "<e>"),}; separator="\n">
+       }
+    }
+}
+>>
+
+bool() ::= <<
+(*butils::BOOL)
+>>
+
+include_declaration(type, identifier) ::= <<
+<identifier>: <type>::<type>,
+>>
+
+include_initialization(type, identifier) ::= <<
+self.<identifier> = <type>::<type>::new();
+>>
+
+global_declaration(type, identifier) ::= <<
+<identifier>: <type>,
+>>
+
+transition_cache_declaration(type, identifier, operationHasParams) ::= <<
+_tr_cache_<identifier>: Option\<<if(operationHasParams)>BSet\<<type>\><else>bool<endif>\>,
+>>
+
+constant_declaration(type, identifier) ::= <<
+<identifier>: <type>,
+>>
+
+values() ::= <<
+values()
+>>
+
+parallel(loads, others) ::=<<
+<loads; separator="\n">
+<others; separator="\n">
+>>
+
+parallel_load(type, identifier, name) ::= <<
+let mut _ld_<name> = <identifier>.clone();
+>>
+
+function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
+<expr>._override(&BRelation<if(!leftType)>::\<bobject::Dummy, bobject::Dummy><endif>::new(vec![BTuple::new(<arg>,<val>)]))
+>>
+
+function_call_nested(expr, arg, isNested) ::= <<
+<if(!isNested)><expr><else><expr>.functionCall(&<arg>)<endif>
+>>
+
+assignments(assignments) ::= <<
+<assignments; separator="\n">
+>>
+
+nondeterminism(iterationConstruct, leftType, rightType, identifier, modified_identifier, set, isIdentifierLhs, isRecordAccessLhs, arg) ::= <<
+<iterationConstruct; separator="\n">
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>._override(BRelation<if(!leftType)>::\<bobject::Dummy, bobject::Dummy><endif>::new(BTuple::new(<arg>,<set>.nondeterminism()));<endif>
+>>
+
+type(type, fromOtherMachine, otherMachine) ::= <<
+<if(fromOtherMachine)><otherMachine>::<endif><type>
+>>
+
+tuple_type(leftType, rightType) ::=<<
+BTuple\<<leftType>, <rightType>\>
+>>
+
+set_type(type) ::=<<
+BSet\<<type>\>
+>>
+
+relation_type(leftType, rightType) ::=<<
+BRelation\<<leftType>, <rightType>\>
+>>
+
+import_machine(machine) ::= <<
+mod <machine>;
+>>
+
+
+interval(arg1, arg2) ::= <<
+BSet::\<BInteger>::interval(&<arg1>, &<arg2>)
+>>
+
+projection(domainType, rangeType, arg1, arg2, isProjection1) ::= <<
+BRelation::<if(isProjection1)>projection1<else>projection2<endif>(&<arg1>, &<arg2>)
+>>
+
+projection_tuple(arg, isProjection1) ::= <<
+<arg>.<if(isProjection1)>projection1<else>projection2<endif>()
+>>
+
+identity(type, arg) ::= <<
+BRelation::\<<type>,<type>\>::identity(&<arg>)
+>>
+
+cartesian_product(leftType, rightType, arg1, arg2) ::= <<
+BRelation::cartesianProduct(&<arg1>, &<arg2>)
+>>
+
+tuple_create(leftType, rightType, arg1, arg1IsPrivate, arg2, arg2IsPrivate) ::= <<
+BTuple::from_refs(&<arg1>, &<arg2>)
+>>
+
+binary(arg1,operator,arg2) ::= <<
+<arg1>.<operator>(&<arg2>)
+>>
+
+or(arg1, arg2) ::= <<
+(<arg1> || <arg2>)
+>>
+
+and(arg1, arg2) ::= <<
+(<arg1> && <arg2>)
+>>
+
+implies(arg1, arg2) ::= <<
+<arg1>.implies(|| <arg2>.booleanValue())
+>>
+
+equivalent(arg1, arg2) ::= <<
+<arg1>.equivalent(&<arg2>)
+>>
+
+unary(operator, obj, isOverloadedOperator, args) ::= <<
+<obj>.<if(isOverloadedOperator)>unary_<endif><operator>(<if(args)>&<endif><args; separator=", &">)
+>>
+
+select(iterationConstruct, predicate, then) ::= <<
+<iterationConstruct; separator="\n">
+if (<predicate>).booleanValue() {
+    <then>
+} else {
+    panic!("ERROR: called SELECT-function with incompatible parameters!");
+}
+>>
+
+if(iterationConstruct, predicate, then, else1) ::= <<
+<iterationConstruct; separator="\n">
+if (<predicate>).booleanValue() {
+    <then>
+} <else1; separator=" ">
+>>
+
+elseif(predicate, then) ::= <<
+else if (<predicate>).booleanValue() {
+    <then>
+}
+>>
+
+else(then) ::= <<
+else {
+    <then>
+}
+>>
+
+choice(len, then, choice1) ::= <<
+let mut rng = thread_rng();
+match rng.gen_range(0..<len>) {
+    0 => {<then>},
+    <choice1; separator=",\n">
+}
+>>
+
+
+choice1(counter, then) ::= <<
+<counter> => {<then>}
+>>
+
+choice2(then) ::= <<
+_ => {<then>}
+>>
+
+any(body) ::= <<
+<body>
+>>
+
+any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<body>
+break;
+<else>
+if (<predicate>).booleanValue() {
+    <body>
+    break;
+}
+<endif>
+>>
+
+becomes_such_that(loads, body) ::= <<
+<loads; separator="\n">
+<body>
+>>
+
+becomes_such_that_body(otherIterationConstructs, emptyPredicate, predicate, stores) ::= <<
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<stores>
+break;
+<else>
+if (<predicate>).booleanValue() {
+    <stores>
+    break;
+}
+<endif>
+>>
+
+becomes_such_that_load(type, lhs, rhs) ::= <<
+let mut <lhs>: <type> = <rhs>;
+>>
+
+becomes_such_that_store(lhs, rhs) ::= <<
+<lhs> = <rhs>;
+>>
+
+while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+<iterationConstruct1; separator="\n">
+while (<predicate>).booleanValue() {
+    <then>
+    <iterationConstruct2; separator="\n">
+}
+>>
+
+var(locals, body) ::=<<
+<locals; separator="\n">
+<body>
+>>
+
+boolean_val(val) ::= <<
+BBoolean::new(<val>)
+>>
+
+infinite_predicate(arg, operator) ::= <<
+<arg>.<operator>()
+>>
+
+relation_predicate(predicates, checkElementOf) ::= <<
+<if(checkElementOf)><predicates><else><predicates>.not()<endif>
+>>
+
+relation_check_domain(arg, domain) ::= <<
+<domain>.check_domain_of(&<arg>)
+>>
+
+relation_check_range(arg, range) ::= <<
+<range>.check_range_of(&<arg>)
+>>
+
+relation_is_total(arg, domain) ::= <<
+<domain>.check_total_of(&<arg>)
+>>
+
+relation_is_partial(arg, domain) ::= <<
+<domain>.check_partial_of(&<arg>)
+>>
+
+relation_function(arg, operator) ::= <<
+<arg>.<operator>()
+>>
+
+relation_surjection(arg, range) ::= <<
+<arg>.isSurjection(&<range>)
+>>
+
+relation_injection(arg) ::= <<
+<arg>.isInjection()
+>>
+
+relation_bijection(arg, range) ::=<<
+<arg>.isBijection(&<range>)
+>>
+
+string(string) ::= <<
+BString::new(<string>)
+>>
+
+operation_call_with_assignment_many_parameters(struct, var, machine, machineInstance, function, args, this, assignments) ::= <<
+let mut <var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+<assignments; separator="\n">
+>>
+
+operation_call_assignment(var, record, field) ::= <<
+<var> = <record>.get_<field>();
+>>
+
+operation_call_with_assignment_one_parameter(var, machineInstance, function, args, this) ::= <<
+<var> = <operation_call_without_assignment(machineInstance, function, args, this)>
+>>
+
+operation_call_without_assignment(machineInstance, function, args, this) ::= <<
+<if(this)>self.<else>self.<machineInstance>.<endif><function>(<args; separator=",">);
+>>
+
+skip() ::= <<
+>>
+
+enum-import() ::= <<
+enum-import()
+>>
+
+mc_info_type(isSet, machine, type) ::= <<
+mc_info_type(<isSet>, <machine>, <type>)
+>>
+
+machine_equal() ::= <<
+>>
+
+machine_unequal() ::= <<
+>>
+
+machine_equal_predicate() ::= <<
+>>
+
+machine_unequal_predicate() ::= <<
+>>
+
+machine_hash() ::= <<
+>>
+
+machine_hash_assignment() ::= <<
+>>
+
+enum_import() ::= <<
+>>
+model_check(nextStates, evalState, checkInvariants, printResult, main) ::= <<
+<nextStates>
+
+<evalState>
+
+<checkInvariants>
+
+<printResult>
+
+<main>
+>>
+
+model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
+//model_check_next_states
+fn generateNextStates(state: &mut <machine>,
+                      isCaching: bool,
+                      transitions: Arc\<AtomicU64>) -> HashSet\<(<machine>, &'static str)> {
+    let mut result = HashSet::\<(<machine>, &'static str)>::new();
+    let mut evaluated_transitions: u64 = 0;
+    <transitionsWithCaching>
+
+    transitions.fetch_add(evaluated_transitions, Ordering::AcqRel);
+    return result;
+}
+>>
+
+model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
+//model_check_transition
+<if(hasParameters)>
+let mut <transitionIdentifier> = state.<evalTransitions>(isCaching);
+for param in <transitionIdentifier>.iter().cloned() {
+    <execTransitions>
+}
+<else>
+if state.<evalTransitions>(isCaching) {
+    <execTransitions>
+}
+<endif>
+>>
+
+model_check_invariants(machine, invariantViolated, invariants) ::= <<
+//model_check_invariants
+pub fn checkInvariants(state: &<machine>, last_op: &'static str, isCaching: bool) -> bool {
+    if isCaching {
+        let dependent_invariants_of_state = Self::get_invariant_dependencies(last_op);
+        <invariantViolated; separator="\n">
+        return true;
+    }
+    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+}
+>>
+
+model_check_invariant(invariant) ::= <<
+//model_check_invariant
+if dependent_invariants_of_state.contains(&"<invariant>") {
+    if !state.<invariant>() {
+        println!("<invariant> failed!");
+        return false;
+    }
+}
+>>
+
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
+//model_check_transition_body
+<if(hasParameters)>
+<readParameters>
+<endif>
+let mut copiedState = state.clone();
+copiedState.<operation>(<parameters; separator=", ">);
+if isCaching { copiedState.invalidate_caches(Self::get_guard_dependencies("<operation>")); }
+result.insert((copiedState, "<operation>"));
+evaluated_transitions += 1;
+>>
+
+model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
+//model_check_transition_param_assignment
+<if(isLhs)>
+let mut <param> = <val>.projection1();
+<else>
+<if(oneParameter)>
+let mut <param> = <val>;
+<else>
+let mut <param> = <val>.projection2();
+<endif>
+<endif>
+>>
+
+model_check_evaluate_state(machine, variables) ::= <<
+//model_check_evaluate_state
+>>
+
+model_check_evaluate_variable(getter) ::= <<
+//model_check_evaluate_variable
+state.put("<getter>", machine.<getter>());
+>>
+
+model_check_print() ::= <<
+//model_check_print
+fn print_result(states: usize, transitions: u64, error_detected: bool) {
+    if !error_detected { println!("MODEL CHECKING SUCCESSFUL"); }
+    println!("Number of States: {}", states);
+    println!("Number of Transitions: {}", transitions);
+}
+>>
+
+model_check_init_static(map, keyy, entries) ::= <<
+//model_check_init_static
+"<keyy>" => vec![<entries:{entry | "<entry>"}; separator=", ">],
+>>
+
+model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
+//model_check_main
+fn next(collection_m: Arc\<Mutex\<LinkedList\<(<machine>, &'static str)>\>>, mc_type: MC_TYPE) -> (<machine>, &'static str) {
+    let mut collection = collection_m.lock().unwrap();
+    return match mc_type {
+        MC_TYPE::BFS   => collection.pop_front().unwrap(),
+        MC_TYPE::DFS   => collection.pop_back().unwrap(),
+        MC_TYPE::MIXED => if collection.len() % 2 == 0 { collection.pop_front().unwrap() } else { collection.pop_back().unwrap() }
+    };
+}
+
+fn get_guard_dependencies(op: &'static str) -> Vec\<&str> {
+    return match op {
+        <guardDependency; separator="\n">
+        _ => vec![],
+    }
+}
+
+fn get_invariant_dependencies(op: &'static str) -> Vec\<&str> {
+    return match op {
+        <invariantDependency; separator="\n">
+        _ => vec![],
+    }
+}
+
+fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
+    let mut machine = <machine>::new();
+
+    let mut all_states = HashSet::\<<machine>\>::new();
+    all_states.insert(machine.clone());
+
+    let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::\<(<machine>, &'static str)>::new()));
+    states_to_process_mutex.lock().unwrap().push_back((machine.clone(), ""));
+
+    let num_transitions = Arc::new(AtomicU64::new(0));
+
+    let mut stop_threads = false;
+
+    while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+        let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
+
+        let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
+
+        if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
+            println!("INVARIANT VIOLATED");
+            stop_threads = true;
+        }
+        if !no_dead && next_states.is_empty() {
+            print!("DEADLOCK DETECTED");
+            stop_threads = true;
+        }
+
+        next_states.into_iter()
+                   .filter(|(next_state, _)| all_states.insert((*next_state).clone()))
+                   .for_each(|(next_state, last_op)| states_to_process_mutex.lock().unwrap().push_back((next_state, last_op)));
+
+        if all_states.len() % 50000 == 0 {
+            println!("VISITED STATES: {}", all_states.len());
+            println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+            println!("-------------------");
+        }
+    }
+    Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
+}
+
+fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
+    let threadPool = ThreadPool::new(threads);
+
+    let machine = <machine>::new();
+
+    let all_states = Arc::new(DashSet::\<<machine>\>::new());
+    all_states.insert(machine.clone());
+
+    let states_to_process_mutex = Arc::new(Mutex::new(LinkedList::\<(<machine>, &'static str)>::new()));
+    states_to_process_mutex.lock().unwrap().push_back((machine, ""));
+
+    let num_transitions = Arc::new(AtomicU64::new(0));
+
+    let mut stop_threads = false;
+    let mut spawned_tasks: u64 = 0;
+    let mut finished_tasks: u64 = 0;
+
+    let (tx, rx) = channel();
+    //println!("Thread {:?} starting threads", thread::current().id());
+    while !stop_threads && !states_to_process_mutex.lock().unwrap().is_empty() {
+        let (mut state, last_op) = Self::next(Arc::clone(&states_to_process_mutex), mc_type);
+
+        let states_to_process = Arc::clone(&states_to_process_mutex);
+        let transitions = Arc::clone(&num_transitions);
+        let states = Arc::clone(&all_states);
+        let tx = tx.clone();
+        //println!("Thread {:?} spawning a thread", thread::current().id());
+        threadPool.execute(move|| {
+            let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
+            if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+
+            //println!("Thread {:?} executing", thread::current().id());
+            next_states.into_iter()
+                       .filter(|(next_state, _)| states.insert((*next_state).clone()))
+                       .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
+
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
+                let _ = tx.send(Err("INVARIANT VIOLATED"));
+            }
+            //println!("Thread {:?} done", thread::current().id());
+            let _ = tx.send(Ok(1));
+        });
+
+        spawned_tasks += 1;
+        if spawned_tasks % 50000 == 0 {
+            println!("VISITED STATES: {}", all_states.len());
+            println!("EVALUATED TRANSITIONS: {}", num_transitions.load(Ordering::Acquire));
+            println!("-------------------");
+        }
+
+        while states_to_process_mutex.lock().unwrap().is_empty() && spawned_tasks - finished_tasks > 0 {
+            //println!("Thread {:?} (main) waiting for a thread to finish", thread::current().id());
+            match rx.try_recv() {
+                Ok(val)  => match val {
+                        Ok(_) => finished_tasks += 1,
+                        Err(msg) => { println!("{}", msg); stop_threads = true; },
+                    },
+                Err(_) => (),
+            }
+            if threadPool.panic_count() > 0 { stop_threads = true; }
+        }
+    }
+
+    Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
+}
+>>
+
+copy_constructor(machine, parameters, assignments) ::= <<
+public <machine>(<parameters; separator=", ">) {
+    //copy_constructor
+    <assignments; separator="\n">
+}
+>>
+
+copy_assignment(variable) ::= <<
+//copy_assignment
+this.<variable> = <variable>;
+>>
+
+pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+//pre_assert
+<if(isModelChecking && !isTopLevel)>
+<iterationConstruct; separator="\n">
+if (<predicate>).booleanValue() {
+    <then>
+} else {
+    panic!("Precondition or Assertion Error occurred.");
+}
+<else>
+<then>
+<endif>
+>>
+
+transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
+pub fn _tr_<operationName>(&mut self, is_caching: bool) -> <if(noParameters)>bool<else>BSet\<<subType>\><endif> {
+    //transition
+    if !is_caching || self._tr_cache_<operationName>.is_none() {
+        <if(noParameters)>
+        <if(noPredicate)>
+        self._tr_cache_<operationName> = Option::Some(true);
+        return true;
+        <else>
+        let mut __tmp__val__ = <predicate>.booleanValue();
+        self._tr_cache_<operationName> = Option::Some(__tmp__val__);
+        return __tmp__val__;
+        <endif>
+        <else>
+        let mut <identifier>: BSet\<<subType>\> = BSet::new(vec![]);
+        <if(hasCondition)>
+        if <conditionalPredicate>.booleanValue() {
+            <combination>
+        }
+        <else>
+        //transition, parameters, no condidtion
+        <combination>
+        <endif>
+        self._tr_cache_<operationName> = Option::Some(<identifier>.clone());
+        return <identifier>;
+        <endif>
+    } else {
+        return self._tr_cache_<operationName>.as_ref().unwrap().clone();
+    }
+}
+>>
+
+invariant(invariantFunction, iterationConstruct, predicate) ::= <<
+pub fn <invariantFunction>(&self) -> bool {
+    //invariant
+    <iterationConstruct; separator="\n">
+    return <predicate>.booleanValue();
+}
+>>
+
+copy(machine, parameters, operations) ::= <<
+fn invalidate_caches(&mut self, to_invalidate: Vec\<&'static str>) {
+    //calling the given functions without caching will recalculate them and cache them afterwards
+    for trans in to_invalidate {
+        match trans {
+            <operations: {op | "_tr_<op>" => <\u007B>self._tr_<op>(false);<\u007D>,}; separator="\n">
+            _ => {},
+        }
+    }
+}
+>>
+
+machine_string(variables, machine) ::= <<
+impl fmt::Display for <machine> {
+    fn fmt(&self, f: &mut fmt::Formatter\<'_>) -> fmt::Result {
+        let mut result = "<machine>: (".to_owned();
+        <variables:{var | result += &format!("<var>: <\u007B><\u007D>, ", self.<var>());}; separator="\n">
+        result = result + ")";
+        return write!(f, "{}", result);
+    }
+}
+>>
+
+parameter_combination_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, subType) ::= <<
+//parameter_combination_predicate
+<otherIterationConstructs>
+<if(emptyPredicate)>
+<set> = <set>._union(&BSet::new(vec![<element>]));
+<else>
+if (<predicate>).booleanValue() {
+    <set> = <set>._union(&BSet::new(vec![<element>]));
+}
+<endif>
+>>
+
+model_check_main_method() ::= <<>>
+modelchecker(main, invariantViolated, printResult, nextStates) ::= <<
+<nextStates>
+
+<invariantViolated>
+
+<printResult>
+
+<main>
+>>
+model_check_add_cached_infos() ::= <<>>
+choice_point_declaration() ::= <<>>
+choice_point_getter() ::= <<>>
+choice_point_operation_flag_declaration() ::= <<>>
+choice_point_operation_flag_getter() ::= <<>>
+choice_point_operation_flag_reset() ::= <<>>
+choice_point_operation_apply() ::= <<>>
+choice_point_operation_apply_choice_point() ::= <<>>
+choice_point_operation_apply_choice_point_flag() ::= <<>>
+choice_point_operation_triggered_declaration() ::= <<>>
+choice_point_operation_triggered() ::= <<>>
+choice_point_operation_triggered_reset() ::= <<>>

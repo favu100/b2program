@@ -1,0 +1,5 @@
+fn main() {
+    let mut mmax = Max::new();
+    mmax.calculate();
+    println!("{}", mmax.getRes());
+}

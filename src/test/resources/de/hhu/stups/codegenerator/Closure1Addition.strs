@@ -1,0 +1,5 @@
+fn main() {
+    let mut closure = Closure1::new();
+    closure.calculate();
+    println!("{}", closure.getRes());
+}

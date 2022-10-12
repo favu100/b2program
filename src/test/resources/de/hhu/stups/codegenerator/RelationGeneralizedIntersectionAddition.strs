@@ -1,0 +1,5 @@
+fn main() {
+    let mut calc = RelationGeneralizedIntersection::new();
+    calc.calculate();
+    println!("{}", calc.getRes().card());
+}

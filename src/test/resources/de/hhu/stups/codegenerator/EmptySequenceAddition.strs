@@ -1,0 +1,5 @@
+fn main() {
+    let mut empty = EmptySequence::new();
+    empty.calculate();
+    println!("{}", empty.getRes());
+}

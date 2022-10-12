@@ -1,0 +1,5 @@
+fn main() {
+    let mut set = SetDifferenceBig::new();
+    set.simulate();
+    println!("{}", set.getSet().card());
+}

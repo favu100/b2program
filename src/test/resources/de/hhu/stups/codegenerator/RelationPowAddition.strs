@@ -1,0 +1,5 @@
+fn main() {
+    let mut pow = RelationPow::new();
+    pow.calculate();
+    println!("{}", pow.getRes());
+}

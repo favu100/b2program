@@ -1,0 +1,5 @@
+fn main() {
+    let mut let_pred = LetPredicate::new();
+    let_pred.calculate();
+    println!("{}", let_pred.getRes());
+}

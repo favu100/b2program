@@ -1,0 +1,5 @@
+fn main() {
+    let mut logical = Or::new();
+    logical.calculate();
+    println!("{}", logical.getRes());
+}

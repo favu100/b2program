@@ -1,0 +1,4 @@
+fn main() {
+    let mut operation: Operation = Operation::new();
+    println!("{}", operation.Inc(BInteger::new(10)));
+}

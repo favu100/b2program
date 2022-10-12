@@ -644,8 +644,12 @@ relation_check_range(arg, range) ::= <<
 <arg>.checkRange(<range>)
 >>
 
-relation_total_partial(arg, operator, domain) ::= <<
-<arg>.<operator>(<domain>)
+relation_is_total(arg, domain) ::= <<
+<arg>.isTotal(<domain>)
+>>
+
+relation_is_partial(arg, domain) ::= <<
+<arg>.isPartial(<domain>)
 >>
 
 relation_function(arg, operator) ::= <<
@@ -725,3 +729,11 @@ record_private_variable_prefix() ::= <<
 
 enum_import() ::= <<
 >>
+
+include_initialization() ::= <<
+>>
+
+transition_cache_declaration(type, identifier, operationHasParams) ::= <<
+>>
+
+set_initialization(identifier, type, enums) ::= <<>>

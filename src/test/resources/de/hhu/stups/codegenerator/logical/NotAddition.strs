@@ -1,0 +1,5 @@
+fn main() {
+    let mut logical = Not::new();
+    logical.simulate();
+    println!("{}", logical.getCounter());
+}

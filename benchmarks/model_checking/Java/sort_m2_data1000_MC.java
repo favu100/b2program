@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
@@ -45,6 +46,12 @@ public class sort_m2_data1000_MC {
         MIXED
     }
 
+    public sort_m2_data1000_MC parent;
+    public Set<String> dependentGuard = new HashSet<>();
+    public PersistentHashMap guardCache = PersistentHashMap.EMPTY;
+    public Set<String> dependentInvariant = new HashSet<>();
+    public String stateAccessedVia;
+
 
 
     private static BInteger n;
@@ -76,6 +83,7 @@ public class sort_m2_data1000_MC {
         j = new BInteger(1);
     }
 
+
     public sort_m2_data1000_MC(BInteger n, BRelation<BInteger, BInteger> f, BInteger j, BInteger k, BInteger l, BRelation<BInteger, BInteger> g) {
         this.n = n;
         this.f = f;
@@ -84,6 +92,7 @@ public class sort_m2_data1000_MC {
         this.l = l;
         this.g = g;
     }
+
 
     public void progress() {
         BRelation<BInteger, BInteger> _ld_g = g;
@@ -220,523 +229,450 @@ public class sort_m2_data1000_MC {
         return String.join("\n", "_get_j: " + (this._get_j()).toString(), "_get_k: " + (this._get_k()).toString(), "_get_l: " + (this._get_l()).toString(), "_get_g: " + (this._get_g()).toString());
     }
 
-    @SuppressWarnings("unchecked")
-    private static Set<sort_m2_data1000_MC> generateNextStates(Object guardLock, sort_m2_data1000_MC state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<sort_m2_data1000_MC, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<sort_m2_data1000_MC, Set<String>> dependentGuard, Map<sort_m2_data1000_MC, PersistentHashMap> guardCache, Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents, Map<sort_m2_data1000_MC, String> stateAccessedVia, AtomicInteger transitions) {
-        Set<sort_m2_data1000_MC> result = new HashSet<>();
-        if(isCaching) {
-            PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
-            PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = dependentGuard.get(state);
-            Object cachedValue = null;
-            boolean dependentGuardsBoolean = true;
-            boolean _trid_1;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_progress");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_progress");
+
+    private static class ModelChecker {
+        private final Type type;
+        private final int threads;
+        private final boolean isCaching;
+        private final boolean isDebug;
+
+        private final LinkedList<sort_m2_data1000_MC> unvisitedStates = new LinkedList<>();
+        private final Set<sort_m2_data1000_MC> states = ConcurrentHashMap.newKeySet();
+        private AtomicInteger transitions = new AtomicInteger(0);
+        private ThreadPoolExecutor threadPool;
+        private Object waitLock = new Object();
+
+        private AtomicBoolean invariantViolated = new AtomicBoolean(false);
+        private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+        private sort_m2_data1000_MC counterExampleState = null;
+
+        private final Map<String, Set<String>> invariantDependency = new HashMap<>();
+        private final Map<String, Set<String>> guardDependency = new HashMap<>();
+
+        public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
+            this.type = type;
+            this.threads = threads;
+            this.isCaching = isCaching;
+            this.isDebug = isDebug;
+        }
+
+        public void modelCheck() {
+            if (isDebug) {
+                System.out.println("Starting Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
             }
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_1 = state._tr_progress();
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                _trid_1 = (boolean) cachedValue;
+                this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);
+                modelCheckMultiThreaded();
             }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_progress", _trid_1);
-            if(_trid_1) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.progress();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("progress"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("progress"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "progress");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_2;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_prog1");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_prog1");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_2 = state._tr_prog1();
-            } else {
-                _trid_2 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_prog1", _trid_2);
-            if(_trid_2) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.prog1();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("prog1"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("prog1"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "prog1");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_3;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_prog2");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_prog2");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_3 = state._tr_prog2();
-            } else {
-                _trid_3 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_prog2", _trid_3);
-            if(_trid_3) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.prog2();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("prog2"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("prog2"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "prog2");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_4;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_final_evt");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_final_evt");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_4 = state._tr_final_evt();
-            } else {
-                _trid_4 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_final_evt", _trid_4);
-            if(_trid_4) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.final_evt();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("final_evt"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("final_evt"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "final_evt");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-
-            synchronized(guardLock) {
-                guardCache.put(state, newCache);
-            }
-        } else {
-            if(state._tr_progress()) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.progress();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "progress");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_prog1()) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.prog1();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "prog1");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_prog2()) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.prog2();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "prog2");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_final_evt()) {
-                sort_m2_data1000_MC copiedState = state._copy();
-                copiedState.final_evt();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "final_evt");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-
         }
-        return result;
-    }
 
+        private void modelCheckSingleThreaded() {
+            sort_m2_data1000_MC machine = new sort_m2_data1000_MC();
+            states.add(machine); // TODO: store hashes instead of machine?
+            unvisitedStates.add(machine);
 
-    public static boolean checkInvariants(Object guardLock, sort_m2_data1000_MC state, boolean isCaching, Map<sort_m2_data1000_MC, Set<String>> dependentInvariant) {
-        if(isCaching) {
-            Set<String> dependentInvariantsOfState;
-            synchronized(guardLock) {
-                dependentInvariantsOfState = dependentInvariant.get(state);
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_1")) {
-                if(!state._check_inv_1()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_2")) {
-                if(!state._check_inv_2()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_3")) {
-                if(!state._check_inv_3()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_4")) {
-                if(!state._check_inv_4()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_5")) {
-                if(!state._check_inv_5()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_6")) {
-                if(!state._check_inv_6()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6());
-    }
-
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<sort_m2_data1000_MC> counterExampleState, Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents, Map<sort_m2_data1000_MC, String> stateAccessedVia) {
-
-        if(invariantViolated || deadlockDetected) {
-            if(deadlockDetected) {
-                System.out.println("DEADLOCK DETECTED");
-            }
-            if(invariantViolated) {
-                System.out.println("INVARIANT VIOLATED");
-            }
-            System.out.println("COUNTER EXAMPLE TRACE: ");
-            StringBuilder sb = new StringBuilder();
-            if(counterExampleState.size() >= 1) {
-                sort_m2_data1000_MC currentState = counterExampleState.get(0);
-                while(currentState != null) {
-                    sb.insert(0, currentState.toString());
-                    sb.insert(0, "\n");
-                    sb.insert(0, stateAccessedVia.get(currentState));
-                    sb.insert(0, "\n\n");
-                    currentState = parents.get(currentState);
-                }
-            }
-            System.out.println(sb.toString());
-
-        }
-        if(!deadlockDetected && !invariantViolated) {
-            System.out.println("MODEL CHECKING SUCCESSFUL");
-        }
-        System.out.println("Number of States: " + states);
-        System.out.println("Number of Transitions: " + transitions);
-    }
-
-    private static sort_m2_data1000_MC next(LinkedList<sort_m2_data1000_MC> collection, Object lock, Type type) {
-        synchronized(lock) {
-            return switch(type) {
-                case BFS -> collection.removeFirst();
-                case DFS -> collection.removeLast();
-                case MIXED -> collection.size() % 2 == 0 ? collection.removeFirst() : collection.removeLast();
-            };
-        }
-    }
-
-    private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
-        Object lock = new Object();
-        Object guardLock = new Object();
-
-        sort_m2_data1000_MC machine = new sort_m2_data1000_MC();
-
-
-        AtomicBoolean invariantViolated = new AtomicBoolean(false);
-        AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-        AtomicBoolean stopThreads = new AtomicBoolean(false);
-
-        Set<sort_m2_data1000_MC> states = new HashSet<>();
-        states.add(machine);
-        AtomicInteger numberStates = new AtomicInteger(1);
-
-        LinkedList<sort_m2_data1000_MC> collection = new LinkedList<>();
-        collection.add(machine);
-
-        Map<String, Set<String>> invariantDependency = new HashMap<>();
-        Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<sort_m2_data1000_MC, Set<String>> dependentInvariant = new HashMap<>();
-        Map<sort_m2_data1000_MC, Set<String>> dependentGuard = new HashMap<>();
-        Map<sort_m2_data1000_MC, PersistentHashMap> guardCache = new HashMap<>();
-        Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents = new HashMap<>();
-        Map<sort_m2_data1000_MC, String> stateAccessedVia = new HashMap<>();
-        if(isCaching) {
-            invariantDependency.put("prog2", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
-            invariantDependency.put("prog1", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
-            invariantDependency.put("progress", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_6", "_check_inv_4", "_check_inv_5")));
-            invariantDependency.put("final_evt", new HashSet<>(Arrays.asList()));
-            guardDependency.put("prog2", new HashSet<>(Arrays.asList("_tr_progress", "_tr_prog1", "_tr_prog2")));
-            guardDependency.put("prog1", new HashSet<>(Arrays.asList("_tr_progress", "_tr_prog1", "_tr_prog2")));
-            guardDependency.put("progress", new HashSet<>(Arrays.asList("_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2")));
-            guardDependency.put("final_evt", new HashSet<>(Arrays.asList()));
-            dependentInvariant.put(machine, new HashSet<>());
-        }
-        List<sort_m2_data1000_MC> counterExampleState = new ArrayList<>();
-        parents.put(machine, null);
-
-        AtomicInteger transitions = new AtomicInteger(0);
-
-        while(!collection.isEmpty() && !stopThreads.get()) {
-            sort_m2_data1000_MC state = next(collection, lock, type);
-
-            Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-            nextStates.forEach(nextState -> {
-                if(!states.contains(nextState)) {
-                    numberStates.getAndIncrement();
-                    states.add(nextState);
-                    collection.add(nextState);
-                    if(numberStates.get() % 50000 == 0) {
-                        System.out.println("VISITED STATES: " + numberStates.get());
-                        System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                        System.out.println("-------------------");
-                    }
-                }
-            });
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                counterExampleState.add(state);
+            if(isCaching) {
+                initCache(machine);
             }
 
-            if(nextStates.isEmpty()) {
-                deadlockDetected.set(true);
-                stopThreads.set(true);
-            }
+            while(!unvisitedStates.isEmpty()) {
+                sort_m2_data1000_MC state = next();
 
-        }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
-    }
-
-
-    private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
-        Object lock = new Object();
-        Object guardLock = new Object();
-        Object waitLock = new Object();
-        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
-
-        sort_m2_data1000_MC machine = new sort_m2_data1000_MC();
-
-
-        AtomicBoolean invariantViolated = new AtomicBoolean(false);
-        AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-        AtomicBoolean stopThreads = new AtomicBoolean(false);
-        AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        Set<sort_m2_data1000_MC> states = new HashSet<>();
-        states.add(machine);
-        AtomicInteger numberStates = new AtomicInteger(1);
-
-        LinkedList<sort_m2_data1000_MC> collection = new LinkedList<>();
-        collection.add(machine);
-
-        Map<String, Set<String>> invariantDependency = new HashMap<>();
-        Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<sort_m2_data1000_MC, Set<String>> dependentInvariant = new HashMap<>();
-        Map<sort_m2_data1000_MC, Set<String>> dependentGuard = new HashMap<>();
-        Map<sort_m2_data1000_MC, PersistentHashMap> guardCache = new HashMap<>();
-        Map<sort_m2_data1000_MC, sort_m2_data1000_MC> parents = new HashMap<>();
-        Map<sort_m2_data1000_MC, String> stateAccessedVia = new HashMap<>();
-        if(isCaching) {
-            invariantDependency.put("prog2", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
-            invariantDependency.put("prog1", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
-            invariantDependency.put("progress", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_6", "_check_inv_4", "_check_inv_5")));
-            invariantDependency.put("final_evt", new HashSet<>(Arrays.asList()));
-            guardDependency.put("prog2", new HashSet<>(Arrays.asList("_tr_progress", "_tr_prog1", "_tr_prog2")));
-            guardDependency.put("prog1", new HashSet<>(Arrays.asList("_tr_progress", "_tr_prog1", "_tr_prog2")));
-            guardDependency.put("progress", new HashSet<>(Arrays.asList("_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2")));
-            guardDependency.put("final_evt", new HashSet<>(Arrays.asList()));
-            dependentInvariant.put(machine, new HashSet<>());
-        }
-        List<sort_m2_data1000_MC> counterExampleState = new ArrayList<>();
-        parents.put(machine, null);
-        stateAccessedVia.put(machine, null);
-
-        AtomicInteger transitions = new AtomicInteger(0);
-
-        while(!collection.isEmpty() && !stopThreads.get()) {
-            possibleQueueChanges.incrementAndGet();
-            sort_m2_data1000_MC state = next(collection, lock, type);
-            Runnable task = () -> {
-                Set<sort_m2_data1000_MC> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
+                Set<sort_m2_data1000_MC> nextStates = generateNextStates(state);
 
                 nextStates.forEach(nextState -> {
-                    synchronized(lock) {
-                        if(!states.contains(nextState)) {
-                            numberStates.getAndIncrement();
-                            states.add(nextState);
-                            collection.add(nextState);
-                            if(numberStates.get() % 50000 == 0) {
-                                System.out.println("VISITED STATES: " + numberStates.get());
-                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                                System.out.println("-------------------");
-                            }
+                    if(!states.contains(nextState)) {
+                        states.add(nextState);
+                        unvisitedStates.add(nextState);
+                        if(states.size() % 50000 == 0 && isDebug) {
+                            System.out.println("VISITED STATES: " + states.size());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
                         }
                     }
                 });
 
-                synchronized (lock) {
-                    int running = possibleQueueChanges.decrementAndGet();
-                    if (!collection.isEmpty() || running == 0) {
-                        synchronized (waitLock) {
-                            waitLock.notify();
-                        }
-                    }
+                if(invariantViolated(state)) {
+                    invariantViolated.set(true);
+                    counterExampleState = state;
+                    break;
                 }
 
                 if(nextStates.isEmpty()) {
                     deadlockDetected.set(true);
-                    stopThreads.set(true);
+                    counterExampleState = state;
+                    break;
                 }
 
-                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                    invariantViolated.set(true);
-                    stopThreads.set(true);
-                    counterExampleState.add(state);
-                }
+            }
+            printResult(states.size(), transitions.get());
+        }
 
+        private void modelCheckMultiThreaded() {
+            sort_m2_data1000_MC machine = new sort_m2_data1000_MC();
+            states.add(machine);
+            unvisitedStates.add(machine);
 
-            };
-            threadPool.submit(task);
-            synchronized(waitLock) {
-                if (collection.isEmpty() && possibleQueueChanges.get() > 0) {
-                    try {
-                        waitLock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            AtomicBoolean stopThreads = new AtomicBoolean(false);
+            AtomicInteger possibleQueueChanges = new AtomicInteger(0);
+
+            if(isCaching) {
+                initCache(machine);
+            }
+
+            while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
+                possibleQueueChanges.incrementAndGet();
+                sort_m2_data1000_MC state = next();
+                Runnable task = () -> {
+                    Set<sort_m2_data1000_MC> nextStates = generateNextStates(state);
+
+                    nextStates.forEach(nextState -> {
+                        if(states.add(nextState)) {
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
+                            }
+                        }
+                    });
+
+                    synchronized (unvisitedStates) {
+                        int running = possibleQueueChanges.decrementAndGet();
+                        if (!unvisitedStates.isEmpty() || running == 0) {
+                            synchronized (waitLock) {
+                                waitLock.notify();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolated.set(true);
+                        counterExampleState = state;
+                        stopThreads.set(true);
+                    }
+
+                    if(nextStates.isEmpty()) {
+                        deadlockDetected.set(true);
+                        counterExampleState = state;
+                        stopThreads.set(true);
+                    }
+                };
+                threadPool.submit(task);
+                synchronized(waitLock) {
+                    if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
+                        try {
+                            waitLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
+            threadPool.shutdown();
+            try {
+                threadPool.awaitTermination(24, TimeUnit.HOURS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            printResult(states.size(), transitions.get());
+        }
 
+        private void initCache(final sort_m2_data1000_MC machine) {
+            invariantDependency.put("prog2", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
+            invariantDependency.put("prog1", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_4", "_check_inv_5")));
+            invariantDependency.put("progress", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_1", "_check_inv_6", "_check_inv_4", "_check_inv_5")));
+            invariantDependency.put("final_evt", new HashSet<>(Arrays.asList()));
+            guardDependency.put("prog2", new HashSet<>(Arrays.asList("_tr_progress", "_tr_prog1", "_tr_prog2")));
+            guardDependency.put("prog1", new HashSet<>(Arrays.asList("_tr_progress", "_tr_prog1", "_tr_prog2")));
+            guardDependency.put("progress", new HashSet<>(Arrays.asList("_tr_final_evt", "_tr_progress", "_tr_prog1", "_tr_prog2")));
+            guardDependency.put("final_evt", new HashSet<>(Arrays.asList()));
         }
-        threadPool.shutdown();
-        try {
-            threadPool.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        private sort_m2_data1000_MC next() {
+            synchronized(this.unvisitedStates) {
+                return switch(type) {
+                    case BFS -> this.unvisitedStates.removeFirst();
+                    case DFS -> this.unvisitedStates.removeLast();
+                    case MIXED -> this.unvisitedStates.size() % 2 == 0 ? this.unvisitedStates.removeFirst() : this.unvisitedStates.removeLast();
+                };
+            }
         }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
+
+        @SuppressWarnings("unchecked")
+        private Set<sort_m2_data1000_MC> generateNextStates(final sort_m2_data1000_MC state) {
+            Set<sort_m2_data1000_MC> result = new HashSet<>();
+            if(isCaching) {
+                PersistentHashMap parentsGuard = state.guardCache;
+                PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
+                Object cachedValue = null;
+                boolean dependentGuardsBoolean = true;
+                boolean _trid_1;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_progress");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_progress");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_1 = state._tr_progress();
+                } else {
+                    _trid_1 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_progress", _trid_1);
+                if(_trid_1) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.progress();
+                    copiedState.parent = state;
+                    addCachedInfos("progress", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_2;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_prog1");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_prog1");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_2 = state._tr_prog1();
+                } else {
+                    _trid_2 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_prog1", _trid_2);
+                if(_trid_2) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.prog1();
+                    copiedState.parent = state;
+                    addCachedInfos("prog1", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_3;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_prog2");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_prog2");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_3 = state._tr_prog2();
+                } else {
+                    _trid_3 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_prog2", _trid_3);
+                if(_trid_3) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.prog2();
+                    copiedState.parent = state;
+                    addCachedInfos("prog2", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_4;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_final_evt");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_final_evt");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_4 = state._tr_final_evt();
+                } else {
+                    _trid_4 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_final_evt", _trid_4);
+                if(_trid_4) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.final_evt();
+                    copiedState.parent = state;
+                    addCachedInfos("final_evt", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+
+                state.guardCache = newCache;
+            } else {
+                if(state._tr_progress()) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.progress();
+                    copiedState.parent = state;
+                    addCachedInfos("progress", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_prog1()) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.prog1();
+                    copiedState.parent = state;
+                    addCachedInfos("prog1", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_prog2()) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.prog2();
+                    copiedState.parent = state;
+                    addCachedInfos("prog2", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_final_evt()) {
+                    sort_m2_data1000_MC copiedState = state._copy();
+                    copiedState.final_evt();
+                    copiedState.parent = state;
+                    addCachedInfos("final_evt", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+
+            }
+            return result;
+        }
+
+        private boolean invariantViolated(final sort_m2_data1000_MC state) {
+            if(isCaching) {
+                if(state.dependentInvariant.contains("_check_inv_1")) {
+                    if(!state._check_inv_1()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_2")) {
+                    if(!state._check_inv_2()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_3")) {
+                    if(!state._check_inv_3()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_4")) {
+                    if(!state._check_inv_4()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_5")) {
+                    if(!state._check_inv_5()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_6")) {
+                    if(!state._check_inv_6()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6());
+        }
+
+        private void addCachedInfos(final String operation, final sort_m2_data1000_MC state, final sort_m2_data1000_MC copiedState) {
+            if(isCaching) {
+                copiedState.dependentInvariant = invariantDependency.get(operation);
+                copiedState.dependentGuard = guardDependency.get(operation);
+            }
+            copiedState.stateAccessedVia = operation;
+        }
+
+        private void printResult(final int states, final int transitions) {
+            if(invariantViolated.get() || deadlockDetected.get()) {
+                if(deadlockDetected.get()) {
+                    System.out.println("DEADLOCK DETECTED");
+                } else {
+                    System.out.println("INVARIANT VIOLATED");
+                }
+
+                System.out.println("COUNTER EXAMPLE TRACE: ");
+                StringBuilder sb = new StringBuilder();
+                while(counterExampleState != null) {
+                    sb.insert(0, counterExampleState);
+                    sb.insert(0, "\n");
+                    if(counterExampleState.stateAccessedVia != null) {
+                        sb.insert(0, counterExampleState.stateAccessedVia);
+                    }
+                    sb.insert(0, "\n\n");
+                    counterExampleState = counterExampleState.parent;
+                }
+                System.out.println(sb);
+            } else {
+                System.out.println("MODEL CHECKING SUCCESSFUL");
+            }
+
+            System.out.println("Number of States: " + states);
+            System.out.println("Number of Transitions: " + transitions);
+        }
     }
 
 
     public static void main(String[] args) {
-        if(args.length != 3) {
-            System.out.println("Number of arguments errorneous");
+        if(args.length > 4) {
+            System.out.println("Expecting 3 command-line arguments: STRATEGY THREADS CACHING DEBUG");
             return;
         }
-        String strategy = args[0];
-        String numberThreads = args[1];
-        String caching = args[2];
-
-        Type type;
-
-        if("mixed".equals(strategy)) {
-            type = Type.MIXED;
-        } else if("bf".equals(strategy)) {
-            type = Type.BFS;
-        } else if ("df".equals(strategy)) {
-            type = Type.DFS;
-        } else {
-            System.out.println("Input for strategy is wrong.");
-            return;
-        }
-
+        Type type = Type.MIXED;
         int threads = 0;
-        try {
-            threads = Integer.parseInt(numberThreads);
-        } catch(NumberFormatException e) {
-            System.out.println("Input for number of threads is wrong.");
-            return;
+        boolean isCaching = false;
+        boolean isDebug = false;
+
+        if(args.length > 0) { 
+            if("mixed".equals(args[0])) {
+                type = Type.MIXED;
+            } else if("bf".equals(args[0])) {
+                type = Type.BFS;
+            } else if ("df".equals(args[0])) {
+                type = Type.DFS;
+            } else {
+                System.out.println("Value for command-line argument STRATEGY is wrong.");
+                System.out.println("Expecting mixed, bf or df.");
+                return;
+            }
         }
-        if(threads <= 0) {
-            System.out.println("Input for number of threads is wrong.");
-            return;
+        if(args.length > 1) { 
+            try {
+                threads = Integer.parseInt(args[1]);
+            } catch(NumberFormatException e) {
+                System.out.println("Value for command-line argument THREADS is not a number.");
+                return;
+            }
+            if(threads <= 0) {
+                System.out.println("Value for command-line argument THREADS must be positive.");
+                return;
+            }
+        }
+        if(args.length > 2) { 
+            try {
+                isCaching = Boolean.parseBoolean(args[2]);
+            } catch(Exception e) {
+                System.out.println("Value for command-line argument CACHING is not a boolean.");
+                return;
+            }
+        }
+        if(args.length > 3) { 
+            try {
+                isDebug = Boolean.parseBoolean(args[3]);
+            } catch(Exception e) {
+                System.out.println("Value for command-line argument DEBUG is not a boolean.");
+                return;
+            }
         }
 
-        boolean isCaching = true;
-        try {
-            isCaching = Boolean.parseBoolean(caching);
-        } catch(Exception e) {
-            System.out.println("Input for caching is wrong.");
-            return;
-        }
-        if(threads == 1) {
-            modelCheckSingleThreaded(type, isCaching);
-        } else {
-            modelCheckMultiThreaded(type, threads, isCaching);
-        }
+        ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
+        modelchecker.modelCheck();
     }
 
 

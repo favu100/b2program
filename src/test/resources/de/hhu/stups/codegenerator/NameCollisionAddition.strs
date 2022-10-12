@@ -1,0 +1,4 @@
+fn main() {
+    let mut collision = NameCollision::new();
+    println!("{}", collision.getRes());
+}

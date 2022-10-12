@@ -1,0 +1,5 @@
+fn main() {
+    let mut plus = Plus::new();
+    plus.calculate();
+    println!("{}", plus.getRes());
+}

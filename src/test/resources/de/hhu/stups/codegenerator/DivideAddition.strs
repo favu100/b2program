@@ -1,0 +1,5 @@
+fn main() {
+    let mut divide = Divide::new();
+    divide.calculate();
+    println!("{}", divide.getRes());
+}

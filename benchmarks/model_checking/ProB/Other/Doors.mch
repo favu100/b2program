@@ -2,8 +2,8 @@ MACHINE           Doors
 
 SETS              DOOR; POSITION = {open, closed}
 
-DEFINITIONS
-                  scope_DOOR == 1..3
+/*DEFINITIONS   // Definitions currently unused in b2program
+                  scope_DOOR == 1..3*/
                   
 VARIABLES         position
 

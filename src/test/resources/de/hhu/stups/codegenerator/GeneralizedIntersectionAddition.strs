@@ -1,0 +1,5 @@
+fn main() {
+    let mut calc = GeneralizedIntersection::new();
+    calc.calculate();
+    println!("{}", calc.getRes().card());
+}

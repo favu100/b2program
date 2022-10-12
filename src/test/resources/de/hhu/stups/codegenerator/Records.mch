@@ -13,9 +13,9 @@ out <-- Inc(pp) =
     ELSIF xx < 2 THEN
         xx := xx - pp; out := xx + 1
     ELSIF xx > 3 THEN
-        xx := 1
+        xx := 1; out := xx
     ELSE
-        xx := 2
+        xx := 2; out := xx
     END
 
 END

@@ -10,6 +10,7 @@ OPERATIONS
 out <-- Inc(pp) =
   SELECT pp : 1..2
   THEN
+    out := xx;
     WHILE xx = 1 & xx < 10 DO
       xx := xx + pp; out := xx
     INVARIANT 1=1

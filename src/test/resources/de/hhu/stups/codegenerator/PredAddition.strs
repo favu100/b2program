@@ -1,0 +1,5 @@
+fn main() {
+    let mut pred = Pred::new();
+    pred.calculate();
+    println!("{}", pred.getRes());
+}

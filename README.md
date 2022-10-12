@@ -25,7 +25,7 @@ doi = {10.1007/978-3-030-34968-4_25}
 
 The main features of B2Program are:
 - Code generation from a formal model
-- Code generation for model checking including parallelization, and caching (only supported in Java and C++)
+- Code generation for model checking including parallelization, and caching (only supported in Java, C++ and Rust)
 - Code generation of interactive domain-specific visualizations (from VisB) in HTML and JavaScript/TypeScript
 
 
@@ -122,7 +122,7 @@ P is a conjunction of n conjuncts where the i-th conjunct must constraint xi for
 | Predicate             | Meaning    |
 |-----------------------|------------|
 | E = F                 | equality   |
-| E \= F                | inequality |
+| E \\= F               | inequality |
 
 ### Booleans:
 
@@ -136,31 +136,31 @@ P is a conjunction of n conjuncts where the i-th conjunct must constraint xi for
 
 ### Sets:
 
-| Set expression or predicate  | Meaining                                   |
-|------------------------------|--------------------------------------------|
-| {}                           | Empty Set                                  |
-| {E}                          | Singleton Set                              |
-| {E,F,...}                    | Set Enumeration                            |
-| {x1,...,xn\|P}               | Set Comprehension                          |
-| POW(S)                       | Power Set                                  |
-| POW1(S)                      | Set of Non-Empty Subsets                   |
-| FIN(S)                       | Set of All Finite Subsets                  |
-| FIN1(S)                      | Set of All Non-Empty Finite Subsets        |
-| card(S)                      | Cardinality                                |
-| S * T                        | Cartesian Product                          |
-| S \/ T                       | Set Union                                  |
-| S /\ T                       | Set Intersection                           |
-| S - T                        | Set Difference                             |
-| E : S                        | Element of                                 |
-| E /: S                       | Not Element of                             |
-| S <: T                       | Subset of                                  |
-| S /<: T                      | Not Subset of                              |
-| S <<: T                      | Strict Subset of                           |
-| S /<<: T                     | Not Strict Subset of                       |
-| union(S)                     | Generalized Union over Sets of Sets        |
-| inter(S)                     | Generalized Intersection over Sets of Sets |
-| UNION(z1,...,zn).(P\|E)      | Generalized Union with Predicate           |
-| INTER(z1,...,zn).(P\|E)      | Generalized Intersection with Predicate    |
+| Set expression or predicate   | Meaining                                   |
+|-------------------------------|--------------------------------------------|
+| {}                            | Empty Set                                  |
+| {E}                           | Singleton Set                              |
+| {E,F,...}                     | Set Enumeration                            |
+| {x1,...,xn&#124;P}            | Set Comprehension                          |
+| POW(S)                        | Power Set                                  |
+| POW1(S)                       | Set of Non-Empty Subsets                   |
+| FIN(S)                        | Set of All Finite Subsets                  |
+| FIN1(S)                       | Set of All Non-Empty Finite Subsets        |
+| card(S)                       | Cardinality                                |
+| S * T                         | Cartesian Product                          |
+| S \/ T                        | Set Union                                  |
+| S /\ T                        | Set Intersection                           |
+| S - T                         | Set Difference                             |
+| E : S                         | Element of                                 |
+| E /: S                        | Not Element of                             |
+| S <: T                        | Subset of                                  |
+| S /<: T                       | Not Subset of                              |
+| S <<: T                       | Strict Subset of                           |
+| S /<<: T                      | Not Strict Subset of                       |
+| union(S)                      | Generalized Union over Sets of Sets        |
+| inter(S)                      | Generalized Intersection over Sets of Sets |
+| UNION(z1,...,zn).(P &#124; E) | Generalized Union with Predicate           |
+| INTER(z1,...,zn).(P &#124; E) | Generalized Intersection with Predicate    |
 
 Restriction: Set comprehesions, generalized unions and generalized intersections are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
 The i-th conjunct must constraint xi for each i in {1,...,n}.
@@ -191,8 +191,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | m / n                          | Division                                      |
 | m ** n                         | Power                                         |
 | m mod n                        | Remainder of Division                         |
-| PI(z1,...,zn).(P\|E)           | Set product                                   |
-| SIGMA(z1,...,zn).(P\|E)        | Set summation                                 |
+| PI(z1,...,zn).(P &#124; E)     | Set product                                   |
+| SIGMA(z1,...,zn).(P &#124; E)  | Set summation                                 |
 | succ(n)                        | Successor                                     |
 | pred(n)                        | Predecessor                                   |
 
@@ -205,47 +205,47 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 
 ### Relations:
 
-| Relation expression | Meaining                                              |
-|---------------------|-------------------------------------------------------|
-| S <-> T             | Set of relation                                       |
-| E \|-> F            | Couple                                                |
-| dom(r)              | Domain of Relation                                    |
-| range(r)            | Range of Relation                                     |
-| id(S)               | Identity Relation                                     |
-| S <\| r             | Domain Restriction                                    |
-| S <<\| r            | Domain Substraction                                   |
-| r \|> S             | Range Restriction                                     |
-| r \|>> S            | Range Substraction                                    |
-| r~                  | Inverse of Relation                                   |
-| r[S]                | Relational Image                                      |
-| r1 <+ r2            | Relational Overriding                                 |
-| r1 >< r2            | Direct Product                                        |
-| (r1 ; r2)           | Relational Composition                                |
-| (r1 \|\| r2)        | Parallel Product                                      |
-| prj1(S,T)           | Projection Function                                   |
-| prj2(S,T)           | Projection Function                                   |
-| closure1(r)         | Transitive Closure                                    |
-| closure(r)          | Transitive Reflxibe Closure                           |
-| iterate(r,n)        | Iteration of r with n                                 |
-| fnc(r)              | Translate Relation A <-> B into function A +-> POW(B) |
-| rel(r)              | Translate Relation A <-> POW(B) into relation A <-> B |
+| Relation expression  | Meaining                                              |
+|----------------------|-------------------------------------------------------|
+| S <-> T              | Set of relation                                       |
+| E &#124;-> F         | Couple                                                |
+| dom(r)               | Domain of Relation                                    |
+| range(r)             | Range of Relation                                     |
+| id(S)                | Identity Relation                                     |
+| S <&#124; r          | Domain Restriction                                    |
+| S <<&#124; r         | Domain Substraction                                   |
+| r &#124;> S          | Range Restriction                                     |
+| r &#124;>> S         | Range Substraction                                    |
+| r~                   | Inverse of Relation                                   |
+| r[S]                 | Relational Image                                      |
+| r1 <+ r2             | Relational Overriding                                 |
+| r1 >< r2             | Direct Product                                        |
+| (r1 ; r2)            | Relational Composition                                |
+| (r1 &#124;&#124; r2) | Parallel Product                                      |
+| prj1(S,T)            | Projection Function                                   |
+| prj2(S,T)            | Projection Function                                   |
+| closure1(r)          | Transitive Closure                                    |
+| closure(r)           | Transitive Reflxibe Closure                           |
+| iterate(r,n)         | Iteration of r with n                                 |
+| fnc(r)               | Translate Relation A <-> B into function A +-> POW(B) |
+| rel(r)               | Translate Relation A <-> POW(B) into relation A <-> B |
 
 Restriction: Set of Relation mostly grows up very fast. They are only supported on the right-hand side of a set predicate.
 
 ### Functions:
 
-| Function Expression | Meaning                           |
-|---------------------|-----------------------------------|
-| S +-> T             | Partial Function                  |
-| S --> T             | Total Function                    |
-| S +->> T            | Partial Surjection                |
-| S -->> T            | Total Surjection                  |
-| S >+> T             | Partial Injection                 |
-| S >+>> T            | Partial Bijection                 |
-| S >->> T            | Total Bijection                   |
-| %(x1,...,xn).(P\|E) | Lambda Abstraction                |
-| f(E)                | Function Application              |
-| f(E1,...,EN)        | Function Application with Couples |
+| Function Expression      | Meaning                           |
+|--------------------------|-----------------------------------|
+| S +-> T                  | Partial Function                  |
+| S --> T                  | Total Function                    |
+| S +->> T                 | Partial Surjection                |
+| S -->> T                 | Total Surjection                  |
+| S >+> T                  | Partial Injection                 |
+| S >+>> T                 | Partial Bijection                 |
+| S >->> T                 | Total Bijection                   |
+| %(x1,...,xn).(P&#124;E)  | Lambda Abstraction                |
+| f(E)                     | Function Application              |
+| f(E1,...,EN)             | Function Application with Couples |
 
 Restriction: Lambda expressions are quantified constructs. The predicate P must be a conjunction where the first n conjuncts must constraint the bounded variables.
 The i-th conjunct must constraint xi for each i in {1,...,n}.
@@ -267,8 +267,8 @@ The i-th conjunct must constraint xi for each i in {1,...,n}.
 | front(S)            | Front of Sequence                      |
 | tail(S)             | Tail of Sequence                       |
 | conc(S)             | Concatenation of Sequence of Sequences |
-| s /\|\ n            | Take first n elements of sequence      |
-| s \\|/ n            | Drop first n elements of sequence      |
+| s /&#124;\ n        | Take first n elements of sequence      |
+| s \\&#124;/ n       | Drop first n elements of sequence      |
 
 The following constructs are not supported for code generation: seq(S), seq1(S), iseq(S), iseq1(S) and perm(S).
 They are only allowed in the predicate of constructs for verification such as invariant or precondition.
@@ -313,7 +313,7 @@ Restriction: STRING is a infinite set. It is only supported on the right-hand si
 | x :: S                                            | Choice from Set                                          |
 | x : (P)                                           | Choice by Predicate                                      |
 | x <-- OP(X)                                       | Operation Call and Assignment of Return Value            |
-| G \|\| H                                          | Parallel Substitution                                    |
+| G &#124;&#124; H                                  | Parallel Substitution                                    |
 | G ; H                                             | Sequential Substitution                                  |
 | ANY x1,...,xn WHERE P THEN G END                  | Non Deterministic Choice                                 |
 | LET x1,...,xn BE x1=E1 & ... & xn = En IN G END   | Let Substitution                                         |
@@ -367,6 +367,9 @@ Remarks:
 # C
 ./gradlew run -Planguage="c" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
+# Rust
+./gradlew run -Planguage="rs" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+
 Default Values:
 big_integer: false
 minint: -2147483648
@@ -384,7 +387,7 @@ forModelchecking: false
 2. Generate code from the machine
 
 ```bash
-java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l {java|cpp|python|typescript|c} [-bi <isBigInteger>] [-min <minint>] [-max <maxint>] [-dss <deferred_set_size>] [-cs <use_constraint_solving>] [-mc <for_model_checking>] [-v <visualisation] -f <file_path_relative_to_jar_file>
+java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l {java|cpp|python|typescript|c|rs} [-bi <isBigInteger>] [-min <minint>] [-max <maxint>] [-dss <deferred_set_size>] [-cs <use_constraint_solving>] [-mc <for_model_checking>] [-v <visualisation] -f <file_path_relative_to_jar_file>
 ```
 
 Remark: Visualisation is the path to a VisB file. It is only available for TypeScript/JavaScript
@@ -413,6 +416,11 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 4. Example: `tsc --target ES6 --moduleResolution node TrafficLightExec.ts TrafficLight.ts`
    (Code generated from TrafficLightExec.mch which includes TrafficLight.mch)
 
+#### Rust
+1. Copy the generated code into a cargo-project with proper dependencies set up (example: [btypes_primitives/src/main/rust/bmachine](btypes_primitives/src/main/rust/bmachine/src))
+   2. rename the file of the main-machine to `main.rs`
+2. run `cargo build --release`
+
 
 
 ### Execute generated code (manual simulation)
@@ -434,6 +442,10 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 2. `node --experimental-specifier-resolution=node <main file>`
 3. Example: `node --experimental-specifier-resolution=node TrafficLightExec.js`
 
+#### Rust
+1. Write a main function in the generated main class
+2. `cargo run --release`
+
 
 ### Execute generated model checking code
 
@@ -446,6 +458,14 @@ Remark: Visualisation is the path to a VisB file. It is only available for TypeS
 
 1. `./<main file> <strategy> <threads> <caching>`
 2. Example: `./TrafficLight.exec mixed 6 true`
+
+#### Rust
+
+1. `cargo run --release -- <strategy> <threads> <caching> [-nodead]`
+2. Example: `cargo run --release -- mixed 2 true`
+
+Note: `threads` specifies the maximum number of executor threads. If `threads > 1`
+an additional coordinator thread is created, increasing the total number of threads by one.
 
 
 Remark: 
@@ -580,6 +600,25 @@ console.log(lift.getFloor().toString());
 * Execute the transpiled file with `node --experimental-specifier-resolution=node Lift.js`
 * Output: `3`
 
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same directory as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Lift.mch ```
+* Rename `Lift.rs` to `main.rs` and move it to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* Write additional code executing generated functions of the Lift-machine
+    ```rust
+    pub fn() {
+        let mut lift = Lift::new();
+        lift.inc();
+        lift.inc();
+        lift.inc();
+        println!("{}", lift.getFloor());
+    }
+    ```
+* from the bmachine-directory, run `cargo run --release`
+* Output: `3`
+
 #### Model Checking
 
 ##### Java
@@ -606,6 +645,15 @@ make install
 
 * Compile `Lift.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Lift.exec Lift.cpp`
 * Execute `Lift.exec` with `./Lift 1 false`
+
+
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Lift.mch`
+* Generate code for `Lift.mch` with ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Lift.mch -mc true```
+* Rename `Lift.rs` to `main.rs` and move it to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* from the bmachine-directory, run `cargo run --release -- mixed 1 false`
 
 
 ### Example 2: Cruise_finite1_deterministic_exec
@@ -767,6 +815,52 @@ false
 false
 ```
 
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic_exec.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic_exec.mch` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Cruise_finite1_deterministic.mch```
+* Rename `Cruise_finite1_deterministic_exec.rs` to `main.rs` and move it and `Cruise_finite1_deterministic.rs` to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* Write additional code in `main.rs`
+    ```rust
+    pub fn() {
+        let mut cruise = Cruise_finite1_deterministic_exec::new();
+        cruise.simulate();
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseAllowed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseActive());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleCanKeepSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleTryKeepSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_SpeedAboveMax());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseSpeedAtMax());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstaclePresent());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstacleDistance());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstacleRelativeSpeed());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_ObstacleStatusJustChanged());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CCInitialisationInProgress());
+        println!("{}", cruise._Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress());
+    }
+    ```
+* from the bmachine-directory, run `cargo run --release`
+* Output:
+    ```bash
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    false
+    ODnone
+    RSnone
+    false
+    false
+    false
+    ```
+
 #### Model Checking
 
 ##### Java
@@ -793,3 +887,12 @@ make install
 
 * Compile `Cruise_finite1_deterministic.cpp` with `g++ -std=c++14 -O2 -flto -march=native -g -DIMMER_NO_THREAD_SAFETY -o Cruise_finite1_deterministic.exec Cruise_finite1_deterministic.cpp`
 * Execute `Cruise_finite1_deterministic.exec` with `./Cruise_finite1_deterministic.exec mixed 6 true`
+
+
+##### Rust
+
+* Run `./gradlew fatJar` to build the JAR-file
+* Move the built JAR-file `B2Program-all-0.1.0-SNAPSHOT` to the same folder as `Cruise_finite1_deterministic.mch` and `Cruise_finite1_deterministic.mch`
+* Generate code for `Cruise_finite1_deterministic.mch` `java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l rs -f Cruise_finite1_deterministic.mch -mc true`
+* Rename `Cruise_finite1_deterministic_exec.rs` to `main.rs` and move it and `Cruise_finite1_deterministic.rs` to [btypes_primitives/src/main/rust/bmachine/src](btypes_primitives/src/main/rust/bmachine/src)
+* from the bmachine-directory, run `cargo run --release -- mixed 6 true`

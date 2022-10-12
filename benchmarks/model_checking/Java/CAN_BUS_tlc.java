@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.Future;
 import java.util.concurrent.Executors;
@@ -45,6 +46,12 @@ public class CAN_BUS_tlc {
         DFS,
         MIXED
     }
+
+    public CAN_BUS_tlc parent;
+    public Set<String> dependentGuard = new HashSet<>();
+    public PersistentHashMap guardCache = PersistentHashMap.EMPTY;
+    public Set<String> dependentInvariant = new HashSet<>();
+    public String stateAccessedVia;
 
 
 
@@ -164,6 +171,7 @@ public class CAN_BUS_tlc {
         T2_mode = T2mode.T2MODE_SENSE;
     }
 
+
     public CAN_BUS_tlc(BSet<BInteger> NATSET, BInteger BUSpriority, BInteger BUSvalue, BRelation<BInteger, BInteger> BUSwrite, T1state T1_state, BInteger T1_timer, BInteger T1_writevalue, T2mode T2_mode, BInteger T2_readpriority, BInteger T2_readvalue, T2state T2_state, BInteger T2_timer, BInteger T2_writevalue, BInteger T2v, BBoolean T3_enabled, BBoolean T3_evaluated, BInteger T3_readpriority, BInteger T3_readvalue, T3state T3_state) {
         this.NATSET = NATSET;
         this.BUSpriority = BUSpriority;
@@ -185,6 +193,7 @@ public class CAN_BUS_tlc {
         this.T3_readvalue = T3_readvalue;
         this.T3_state = T3_state;
     }
+
 
     public void T1Evaluate() {
         T1_timer = new BInteger(0);
@@ -754,1197 +763,1078 @@ public class CAN_BUS_tlc {
         return String.join("\n", "_get_BUSpriority: " + (this._get_BUSpriority()).toString(), "_get_BUSvalue: " + (this._get_BUSvalue()).toString(), "_get_BUSwrite: " + (this._get_BUSwrite()).toString(), "_get_T1_state: " + (this._get_T1_state()).toString(), "_get_T1_timer: " + (this._get_T1_timer()).toString(), "_get_T1_writevalue: " + (this._get_T1_writevalue()).toString(), "_get_T2_mode: " + (this._get_T2_mode()).toString(), "_get_T2_readpriority: " + (this._get_T2_readpriority()).toString(), "_get_T2_readvalue: " + (this._get_T2_readvalue()).toString(), "_get_T2_state: " + (this._get_T2_state()).toString(), "_get_T2_timer: " + (this._get_T2_timer()).toString(), "_get_T2_writevalue: " + (this._get_T2_writevalue()).toString(), "_get_T2v: " + (this._get_T2v()).toString(), "_get_T3_enabled: " + (this._get_T3_enabled()).toString(), "_get_T3_evaluated: " + (this._get_T3_evaluated()).toString(), "_get_T3_readpriority: " + (this._get_T3_readpriority()).toString(), "_get_T3_readvalue: " + (this._get_T3_readvalue()).toString(), "_get_T3_state: " + (this._get_T3_state()).toString());
     }
 
-    @SuppressWarnings("unchecked")
-    private static Set<CAN_BUS_tlc> generateNextStates(Object guardLock, CAN_BUS_tlc state, boolean isCaching, Map<String, Set<String>> invariantDependency, Map<CAN_BUS_tlc, Set<String>> dependentInvariant, Map<String, Set<String>> guardDependency, Map<CAN_BUS_tlc, Set<String>> dependentGuard, Map<CAN_BUS_tlc, PersistentHashMap> guardCache, Map<CAN_BUS_tlc, CAN_BUS_tlc> parents, Map<CAN_BUS_tlc, String> stateAccessedVia, AtomicInteger transitions) {
-        Set<CAN_BUS_tlc> result = new HashSet<>();
-        if(isCaching) {
-            PersistentHashMap parentsGuard = guardCache.get(parents.get(state));
-            PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
-            Set<String> dependentGuardsOfState = dependentGuard.get(state);
-            Object cachedValue = null;
-            boolean dependentGuardsBoolean = true;
-            boolean _trid_1;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T1Evaluate");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1Evaluate");
-            }
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_1 = state._tr_T1Evaluate();
-            } else {
-                _trid_1 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1Evaluate", _trid_1);
-            if(_trid_1) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1Evaluate();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T1Evaluate"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T1Evaluate"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1Evaluate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_2;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T1Calculate");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1Calculate");
-            }
+    private static class ModelChecker {
+        private final Type type;
+        private final int threads;
+        private final boolean isCaching;
+        private final boolean isDebug;
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_2 = state._tr_T1Calculate();
-            } else {
-                _trid_2 = (BSet<BInteger>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1Calculate", _trid_2);
-            for(BInteger param : _trid_2) {
-                BInteger _tmp_1 = param;
+        private final LinkedList<CAN_BUS_tlc> unvisitedStates = new LinkedList<>();
+        private final Set<CAN_BUS_tlc> states = ConcurrentHashMap.newKeySet();
+        private AtomicInteger transitions = new AtomicInteger(0);
+        private ThreadPoolExecutor threadPool;
+        private Object waitLock = new Object();
 
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1Calculate(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T1Calculate"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T1Calculate"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1Calculate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_3;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T1SendResult");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1SendResult");
-            }
+        private AtomicBoolean invariantViolated = new AtomicBoolean(false);
+        private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
+        private CAN_BUS_tlc counterExampleState = null;
 
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_3 = state._tr_T1SendResult();
-            } else {
-                _trid_3 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1SendResult", _trid_3);
-            for(BTuple<BInteger, BInteger> param : _trid_3) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
+        private final Map<String, Set<String>> invariantDependency = new HashMap<>();
+        private final Map<String, Set<String>> guardDependency = new HashMap<>();
 
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1SendResult(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T1SendResult"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T1SendResult"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1SendResult");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_4;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T1Wait");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T1Wait");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_4 = state._tr_T1Wait();
-            } else {
-                _trid_4 = (BSet<BInteger>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1Wait", _trid_4);
-            for(BInteger param : _trid_4) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1Wait(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T1Wait"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T1Wait"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1Wait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_5;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2Evaluate");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Evaluate");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_5 = state._tr_T2Evaluate();
-            } else {
-                _trid_5 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Evaluate", _trid_5);
-            if(_trid_5) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Evaluate();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2Evaluate"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2Evaluate"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Evaluate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_6;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2ReadBus");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2ReadBus");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_6 = state._tr_T2ReadBus();
-            } else {
-                _trid_6 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2ReadBus", _trid_6);
-            for(BTuple<BInteger, BInteger> param : _trid_6) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2ReadBus(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2ReadBus"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2ReadBus"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2ReadBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_7;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2Reset");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Reset");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_7 = state._tr_T2Reset();
-            } else {
-                _trid_7 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Reset", _trid_7);
-            if(_trid_7) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Reset();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2Reset"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2Reset"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Reset");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_8;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2Complete");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Complete");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_8 = state._tr_T2Complete();
-            } else {
-                _trid_8 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Complete", _trid_8);
-            if(_trid_8) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Complete();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2Complete"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2Complete"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Complete");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_9;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2ReleaseBus");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2ReleaseBus");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_9 = state._tr_T2ReleaseBus();
-            } else {
-                _trid_9 = (BSet<BInteger>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2ReleaseBus", _trid_9);
-            for(BInteger param : _trid_9) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2ReleaseBus(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2ReleaseBus"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2ReleaseBus"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2ReleaseBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_10;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2Calculate");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Calculate");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_10 = state._tr_T2Calculate();
-            } else {
-                _trid_10 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Calculate", _trid_10);
-            if(_trid_10) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Calculate();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2Calculate"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2Calculate"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Calculate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_11;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2WriteBus");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2WriteBus");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_11 = state._tr_T2WriteBus();
-            } else {
-                _trid_11 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2WriteBus", _trid_11);
-            for(BTuple<BInteger, BInteger> param : _trid_11) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2WriteBus(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2WriteBus"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2WriteBus"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2WriteBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_12;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T2Wait");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T2Wait");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_12 = state._tr_T2Wait();
-            } else {
-                _trid_12 = (BSet<BInteger>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Wait", _trid_12);
-            for(BInteger param : _trid_12) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Wait(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T2Wait"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T2Wait"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Wait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_13;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3Initiate");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Initiate");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_13 = state._tr_T3Initiate();
-            } else {
-                _trid_13 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Initiate", _trid_13);
-            if(_trid_13) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Initiate();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3Initiate"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3Initiate"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Initiate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_14;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3Evaluate");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Evaluate");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_14 = state._tr_T3Evaluate();
-            } else {
-                _trid_14 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Evaluate", _trid_14);
-            if(_trid_14) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Evaluate();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3Evaluate"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3Evaluate"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Evaluate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_15;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3writebus");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3writebus");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_15 = state._tr_T3writebus();
-            } else {
-                _trid_15 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3writebus", _trid_15);
-            for(BTuple<BInteger, BInteger> param : _trid_15) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3writebus(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3writebus"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3writebus"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3writebus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_16;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3Read");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Read");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_16 = state._tr_T3Read();
-            } else {
-                _trid_16 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Read", _trid_16);
-            for(BTuple<BInteger, BInteger> param : _trid_16) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Read(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3Read"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3Read"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Read");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_17;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3Poll");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Poll");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_17 = state._tr_T3Poll();
-            } else {
-                _trid_17 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Poll", _trid_17);
-            if(_trid_17) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Poll();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3Poll"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3Poll"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Poll");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_18;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3ReleaseBus");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3ReleaseBus");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_18 = state._tr_T3ReleaseBus();
-            } else {
-                _trid_18 = (BSet<BInteger>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3ReleaseBus", _trid_18);
-            for(BInteger param : _trid_18) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3ReleaseBus(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3ReleaseBus"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3ReleaseBus"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3ReleaseBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_19;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3Wait");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3Wait");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_19 = state._tr_T3Wait();
-            } else {
-                _trid_19 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Wait", _trid_19);
-            if(_trid_19) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Wait();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3Wait"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3Wait"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Wait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            boolean _trid_20;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_T3ReEnableWait");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_T3ReEnableWait");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_20 = state._tr_T3ReEnableWait();
-            } else {
-                _trid_20 = (boolean) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3ReEnableWait", _trid_20);
-            if(_trid_20) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3ReEnableWait();
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("T3ReEnableWait"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("T3ReEnableWait"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3ReEnableWait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_21;
-            if(dependentGuardsOfState != null) {
-                cachedValue = GET.invoke(parentsGuard, "_tr_Update");
-                dependentGuardsBoolean = dependentGuardsOfState.contains("_tr_Update");
-            }
-
-            if(dependentGuardsOfState == null || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-                _trid_21 = state._tr_Update();
-            } else {
-                _trid_21 = (BSet<BInteger>) cachedValue;
-            }
-            newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_Update", _trid_21);
-            for(BInteger param : _trid_21) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.Update(_tmp_1);
-                synchronized(guardLock) {
-                    if(!dependentInvariant.containsKey(copiedState)) {
-                        dependentInvariant.put(copiedState, invariantDependency.get("Update"));
-                    }
-                    if(!dependentGuard.containsKey(copiedState)) {
-                        dependentGuard.put(copiedState, guardDependency.get("Update"));
-                    }
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "Update");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-
-            synchronized(guardLock) {
-                guardCache.put(state, newCache);
-            }
-        } else {
-            if(state._tr_T1Evaluate()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1Evaluate();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1Evaluate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_2 = state._tr_T1Calculate();
-            for(BInteger param : _trid_2) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1Calculate(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1Calculate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_3 = state._tr_T1SendResult();
-            for(BTuple<BInteger, BInteger> param : _trid_3) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1SendResult(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1SendResult");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_4 = state._tr_T1Wait();
-            for(BInteger param : _trid_4) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T1Wait(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T1Wait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T2Evaluate()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Evaluate();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Evaluate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_6 = state._tr_T2ReadBus();
-            for(BTuple<BInteger, BInteger> param : _trid_6) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2ReadBus(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2ReadBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T2Reset()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Reset();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Reset");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T2Complete()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Complete();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Complete");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus();
-            for(BInteger param : _trid_9) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2ReleaseBus(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2ReleaseBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T2Calculate()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Calculate();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Calculate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_11 = state._tr_T2WriteBus();
-            for(BTuple<BInteger, BInteger> param : _trid_11) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2WriteBus(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2WriteBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_12 = state._tr_T2Wait();
-            for(BInteger param : _trid_12) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T2Wait(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T2Wait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T3Initiate()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Initiate();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Initiate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T3Evaluate()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Evaluate();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Evaluate");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_15 = state._tr_T3writebus();
-            for(BTuple<BInteger, BInteger> param : _trid_15) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3writebus(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3writebus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BTuple<BInteger, BInteger>> _trid_16 = state._tr_T3Read();
-            for(BTuple<BInteger, BInteger> param : _trid_16) {
-                BInteger _tmp_1 = param.projection2();
-                BInteger _tmp_2 = param.projection1();
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Read(_tmp_2, _tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Read");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T3Poll()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Poll();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Poll");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus();
-            for(BInteger param : _trid_18) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3ReleaseBus(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3ReleaseBus");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T3Wait()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3Wait();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3Wait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            if(state._tr_T3ReEnableWait()) {
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.T3ReEnableWait();
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "T3ReEnableWait");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-            BSet<BInteger> _trid_21 = state._tr_Update();
-            for(BInteger param : _trid_21) {
-                BInteger _tmp_1 = param;
-
-                CAN_BUS_tlc copiedState = state._copy();
-                copiedState.Update(_tmp_1);
-                synchronized(guardLock) {
-                    if(!parents.containsKey(copiedState)) {
-                        parents.put(copiedState, state);
-                    }
-                    if(!stateAccessedVia.containsKey(copiedState)) {
-                        stateAccessedVia.put(copiedState, "Update");
-                    }
-                }
-                result.add(copiedState);
-                transitions.getAndIncrement();
-            }
-
+        public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
+            this.type = type;
+            this.threads = threads;
+            this.isCaching = isCaching;
+            this.isDebug = isDebug;
         }
-        return result;
-    }
 
+        public void modelCheck() {
+            if (isDebug) {
+                System.out.println("Starting Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
+            }
 
-    public static boolean checkInvariants(Object guardLock, CAN_BUS_tlc state, boolean isCaching, Map<CAN_BUS_tlc, Set<String>> dependentInvariant) {
-        if(isCaching) {
-            Set<String> dependentInvariantsOfState;
-            synchronized(guardLock) {
-                dependentInvariantsOfState = dependentInvariant.get(state);
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
+            } else {
+                this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);
+                modelCheckMultiThreaded();
             }
-            if(dependentInvariantsOfState.contains("_check_inv_1")) {
-                if(!state._check_inv_1()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_2")) {
-                if(!state._check_inv_2()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_3")) {
-                if(!state._check_inv_3()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_4")) {
-                if(!state._check_inv_4()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_5")) {
-                if(!state._check_inv_5()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_6")) {
-                if(!state._check_inv_6()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_7")) {
-                if(!state._check_inv_7()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_8")) {
-                if(!state._check_inv_8()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_9")) {
-                if(!state._check_inv_9()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_10")) {
-                if(!state._check_inv_10()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_11")) {
-                if(!state._check_inv_11()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_12")) {
-                if(!state._check_inv_12()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_13")) {
-                if(!state._check_inv_13()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_14")) {
-                if(!state._check_inv_14()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_15")) {
-                if(!state._check_inv_15()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_16")) {
-                if(!state._check_inv_16()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_17")) {
-                if(!state._check_inv_17()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_18")) {
-                if(!state._check_inv_18()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_19")) {
-                if(!state._check_inv_19()) {
-                    return false;
-                }
-            }
-            if(dependentInvariantsOfState.contains("_check_inv_20")) {
-                if(!state._check_inv_20()) {
-                    return false;
-                }
-            }
-            return true;
         }
-        return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20());
-    }
 
-    private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated, List<CAN_BUS_tlc> counterExampleState, Map<CAN_BUS_tlc, CAN_BUS_tlc> parents, Map<CAN_BUS_tlc, String> stateAccessedVia) {
+        private void modelCheckSingleThreaded() {
+            CAN_BUS_tlc machine = new CAN_BUS_tlc();
+            states.add(machine); // TODO: store hashes instead of machine?
+            unvisitedStates.add(machine);
 
-        if(invariantViolated || deadlockDetected) {
-            if(deadlockDetected) {
-                System.out.println("DEADLOCK DETECTED");
+            if(isCaching) {
+                initCache(machine);
             }
-            if(invariantViolated) {
-                System.out.println("INVARIANT VIOLATED");
+
+            while(!unvisitedStates.isEmpty()) {
+                CAN_BUS_tlc state = next();
+
+                Set<CAN_BUS_tlc> nextStates = generateNextStates(state);
+
+                nextStates.forEach(nextState -> {
+                    if(!states.contains(nextState)) {
+                        states.add(nextState);
+                        unvisitedStates.add(nextState);
+                        if(states.size() % 50000 == 0 && isDebug) {
+                            System.out.println("VISITED STATES: " + states.size());
+                            System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                            System.out.println("-------------------");
+                        }
+                    }
+                });
+
+                if(invariantViolated(state)) {
+                    invariantViolated.set(true);
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.isEmpty()) {
+                    deadlockDetected.set(true);
+                    counterExampleState = state;
+                    break;
+                }
+
             }
-            System.out.println("COUNTER EXAMPLE TRACE: ");
-            StringBuilder sb = new StringBuilder();
-            if(counterExampleState.size() >= 1) {
-                CAN_BUS_tlc currentState = counterExampleState.get(0);
-                while(currentState != null) {
-                    sb.insert(0, currentState.toString());
+            printResult(states.size(), transitions.get());
+        }
+
+        private void modelCheckMultiThreaded() {
+            CAN_BUS_tlc machine = new CAN_BUS_tlc();
+            states.add(machine);
+            unvisitedStates.add(machine);
+
+            AtomicBoolean stopThreads = new AtomicBoolean(false);
+            AtomicInteger possibleQueueChanges = new AtomicInteger(0);
+
+            if(isCaching) {
+                initCache(machine);
+            }
+
+            while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
+                possibleQueueChanges.incrementAndGet();
+                CAN_BUS_tlc state = next();
+                Runnable task = () -> {
+                    Set<CAN_BUS_tlc> nextStates = generateNextStates(state);
+
+                    nextStates.forEach(nextState -> {
+                        if(states.add(nextState)) {
+                            synchronized (unvisitedStates) {
+                                unvisitedStates.add(nextState);
+                            }
+                            if(states.size() % 50000 == 0 && isDebug) {
+                                System.out.println("VISITED STATES: " + states.size());
+                                System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
+                                System.out.println("-------------------");
+                            }
+                        }
+                    });
+
+                    synchronized (unvisitedStates) {
+                        int running = possibleQueueChanges.decrementAndGet();
+                        if (!unvisitedStates.isEmpty() || running == 0) {
+                            synchronized (waitLock) {
+                                waitLock.notify();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolated.set(true);
+                        counterExampleState = state;
+                        stopThreads.set(true);
+                    }
+
+                    if(nextStates.isEmpty()) {
+                        deadlockDetected.set(true);
+                        counterExampleState = state;
+                        stopThreads.set(true);
+                    }
+                };
+                threadPool.submit(task);
+                synchronized(waitLock) {
+                    if (unvisitedStates.isEmpty() && possibleQueueChanges.get() > 0) {
+                        try {
+                            waitLock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            threadPool.shutdown();
+            try {
+                threadPool.awaitTermination(24, TimeUnit.HOURS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            printResult(states.size(), transitions.get());
+        }
+
+        private void initCache(final CAN_BUS_tlc machine) {
+            invariantDependency.put("T1Wait", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
+            invariantDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_check_inv_7", "_check_inv_4")));
+            invariantDependency.put("T1SendResult", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_4")));
+            invariantDependency.put("T2ReadBus", new HashSet<>(Arrays.asList("_check_inv_17", "_check_inv_5", "_check_inv_9")));
+            invariantDependency.put("T2Reset", new HashSet<>(Arrays.asList("_check_inv_1", "_check_inv_5", "_check_inv_8", "_check_inv_12")));
+            invariantDependency.put("T2Complete", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_12")));
+            invariantDependency.put("T2Evaluate", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_11")));
+            invariantDependency.put("T3Evaluate", new HashSet<>(Arrays.asList("_check_inv_6")));
+            invariantDependency.put("T3ReleaseBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20")));
+            invariantDependency.put("T1Evaluate", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
+            invariantDependency.put("T3Initiate", new HashSet<>(Arrays.asList("_check_inv_3", "_check_inv_6")));
+            invariantDependency.put("T3ReEnableWait", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_6")));
+            invariantDependency.put("T3writebus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20")));
+            invariantDependency.put("Update", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_10", "_check_inv_14", "_check_inv_13", "_check_inv_11")));
+            invariantDependency.put("T2ReleaseBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5")));
+            invariantDependency.put("T2Wait", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_11")));
+            invariantDependency.put("T3Poll", new HashSet<>(Arrays.asList("_check_inv_6")));
+            invariantDependency.put("T2Calculate", new HashSet<>(Arrays.asList("_check_inv_1", "_check_inv_5")));
+            invariantDependency.put("T3Read", new HashSet<>(Arrays.asList("_check_inv_16", "_check_inv_15", "_check_inv_6")));
+            invariantDependency.put("T3Wait", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_6")));
+            invariantDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5")));
+            guardDependency.put("T1Wait", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
+            guardDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
+            guardDependency.put("T1SendResult", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T2ReleaseBus", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
+            guardDependency.put("T2ReadBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T2Reset", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T2Complete", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T2Evaluate", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T3Evaluate", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T3ReleaseBus", new HashSet<>(Arrays.asList("_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T1Evaluate", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
+            guardDependency.put("T3Initiate", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T3ReEnableWait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T3writebus", new HashSet<>(Arrays.asList("_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("Update", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T3Read", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T3Evaluate", "_tr_T3Initiate")));
+            guardDependency.put("T2ReleaseBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T2Wait", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T3Poll", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T2Calculate", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+            guardDependency.put("T3Read", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T3Wait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
+            guardDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
+        }
+
+        private CAN_BUS_tlc next() {
+            synchronized(this.unvisitedStates) {
+                return switch(type) {
+                    case BFS -> this.unvisitedStates.removeFirst();
+                    case DFS -> this.unvisitedStates.removeLast();
+                    case MIXED -> this.unvisitedStates.size() % 2 == 0 ? this.unvisitedStates.removeFirst() : this.unvisitedStates.removeLast();
+                };
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        private Set<CAN_BUS_tlc> generateNextStates(final CAN_BUS_tlc state) {
+            Set<CAN_BUS_tlc> result = new HashSet<>();
+            if(isCaching) {
+                PersistentHashMap parentsGuard = state.guardCache;
+                PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
+                Object cachedValue = null;
+                boolean dependentGuardsBoolean = true;
+                boolean _trid_1;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T1Evaluate");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T1Evaluate");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_1 = state._tr_T1Evaluate();
+                } else {
+                    _trid_1 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1Evaluate", _trid_1);
+                if(_trid_1) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1Evaluate();
+                    copiedState.parent = state;
+                    addCachedInfos("T1Evaluate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_2;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T1Calculate");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T1Calculate");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_2 = state._tr_T1Calculate();
+                } else {
+                    _trid_2 = (BSet<BInteger>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1Calculate", _trid_2);
+                for(BInteger param : _trid_2) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1Calculate(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T1Calculate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_3;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T1SendResult");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T1SendResult");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_3 = state._tr_T1SendResult();
+                } else {
+                    _trid_3 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1SendResult", _trid_3);
+                for(BTuple<BInteger, BInteger> param : _trid_3) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1SendResult(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T1SendResult", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_4;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T1Wait");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T1Wait");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_4 = state._tr_T1Wait();
+                } else {
+                    _trid_4 = (BSet<BInteger>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T1Wait", _trid_4);
+                for(BInteger param : _trid_4) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1Wait(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T1Wait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_5;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2Evaluate");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2Evaluate");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_5 = state._tr_T2Evaluate();
+                } else {
+                    _trid_5 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Evaluate", _trid_5);
+                if(_trid_5) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Evaluate();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Evaluate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_6;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2ReadBus");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2ReadBus");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_6 = state._tr_T2ReadBus();
+                } else {
+                    _trid_6 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2ReadBus", _trid_6);
+                for(BTuple<BInteger, BInteger> param : _trid_6) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2ReadBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_7;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2Reset");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2Reset");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_7 = state._tr_T2Reset();
+                } else {
+                    _trid_7 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Reset", _trid_7);
+                if(_trid_7) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Reset();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Reset", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_8;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2Complete");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2Complete");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_8 = state._tr_T2Complete();
+                } else {
+                    _trid_8 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Complete", _trid_8);
+                if(_trid_8) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Complete();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Complete", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_9;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2ReleaseBus");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2ReleaseBus");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_9 = state._tr_T2ReleaseBus();
+                } else {
+                    _trid_9 = (BSet<BInteger>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2ReleaseBus", _trid_9);
+                for(BInteger param : _trid_9) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2ReleaseBus(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2ReleaseBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_10;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2Calculate");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2Calculate");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_10 = state._tr_T2Calculate();
+                } else {
+                    _trid_10 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Calculate", _trid_10);
+                if(_trid_10) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Calculate();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Calculate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_11;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2WriteBus");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2WriteBus");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_11 = state._tr_T2WriteBus();
+                } else {
+                    _trid_11 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2WriteBus", _trid_11);
+                for(BTuple<BInteger, BInteger> param : _trid_11) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2WriteBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_12;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T2Wait");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T2Wait");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_12 = state._tr_T2Wait();
+                } else {
+                    _trid_12 = (BSet<BInteger>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T2Wait", _trid_12);
+                for(BInteger param : _trid_12) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Wait(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2Wait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_13;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3Initiate");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3Initiate");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_13 = state._tr_T3Initiate();
+                } else {
+                    _trid_13 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Initiate", _trid_13);
+                if(_trid_13) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Initiate();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Initiate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_14;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3Evaluate");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3Evaluate");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_14 = state._tr_T3Evaluate();
+                } else {
+                    _trid_14 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Evaluate", _trid_14);
+                if(_trid_14) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Evaluate();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Evaluate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_15;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3writebus");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3writebus");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_15 = state._tr_T3writebus();
+                } else {
+                    _trid_15 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3writebus", _trid_15);
+                for(BTuple<BInteger, BInteger> param : _trid_15) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3writebus(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T3writebus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_16;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3Read");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3Read");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_16 = state._tr_T3Read();
+                } else {
+                    _trid_16 = (BSet<BTuple<BInteger, BInteger>>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Read", _trid_16);
+                for(BTuple<BInteger, BInteger> param : _trid_16) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Read(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T3Read", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_17;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3Poll");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3Poll");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_17 = state._tr_T3Poll();
+                } else {
+                    _trid_17 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Poll", _trid_17);
+                if(_trid_17) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Poll();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Poll", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_18;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3ReleaseBus");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3ReleaseBus");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_18 = state._tr_T3ReleaseBus();
+                } else {
+                    _trid_18 = (BSet<BInteger>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3ReleaseBus", _trid_18);
+                for(BInteger param : _trid_18) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3ReleaseBus(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T3ReleaseBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_19;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3Wait");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3Wait");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_19 = state._tr_T3Wait();
+                } else {
+                    _trid_19 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3Wait", _trid_19);
+                if(_trid_19) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Wait();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Wait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                boolean _trid_20;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_T3ReEnableWait");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_T3ReEnableWait");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_20 = state._tr_T3ReEnableWait();
+                } else {
+                    _trid_20 = (boolean) cachedValue;
+                }
+
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_T3ReEnableWait", _trid_20);
+                if(_trid_20) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3ReEnableWait();
+                    copiedState.parent = state;
+                    addCachedInfos("T3ReEnableWait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_21;
+                if(!state.dependentGuard.isEmpty()) {
+                    cachedValue = GET.invoke(parentsGuard, "_tr_Update");
+                    dependentGuardsBoolean = state.dependentGuard.contains("_tr_Update");
+                }
+
+                if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+                    _trid_21 = state._tr_Update();
+                } else {
+                    _trid_21 = (BSet<BInteger>) cachedValue;
+                }
+                newCache = (PersistentHashMap) ASSOC.invoke(newCache, "_tr_Update", _trid_21);
+                for(BInteger param : _trid_21) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.Update(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("Update", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+
+                state.guardCache = newCache;
+            } else {
+                if(state._tr_T1Evaluate()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1Evaluate();
+                    copiedState.parent = state;
+                    addCachedInfos("T1Evaluate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_2 = state._tr_T1Calculate();
+                for(BInteger param : _trid_2) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1Calculate(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T1Calculate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_3 = state._tr_T1SendResult();
+                for(BTuple<BInteger, BInteger> param : _trid_3) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1SendResult(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T1SendResult", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_4 = state._tr_T1Wait();
+                for(BInteger param : _trid_4) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T1Wait(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T1Wait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T2Evaluate()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Evaluate();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Evaluate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_6 = state._tr_T2ReadBus();
+                for(BTuple<BInteger, BInteger> param : _trid_6) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2ReadBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T2Reset()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Reset();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Reset", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T2Complete()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Complete();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Complete", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus();
+                for(BInteger param : _trid_9) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2ReleaseBus(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2ReleaseBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T2Calculate()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Calculate();
+                    copiedState.parent = state;
+                    addCachedInfos("T2Calculate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_11 = state._tr_T2WriteBus();
+                for(BTuple<BInteger, BInteger> param : _trid_11) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2WriteBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_12 = state._tr_T2Wait();
+                for(BInteger param : _trid_12) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T2Wait(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T2Wait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T3Initiate()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Initiate();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Initiate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T3Evaluate()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Evaluate();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Evaluate", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_15 = state._tr_T3writebus();
+                for(BTuple<BInteger, BInteger> param : _trid_15) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3writebus(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T3writebus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BTuple<BInteger, BInteger>> _trid_16 = state._tr_T3Read();
+                for(BTuple<BInteger, BInteger> param : _trid_16) {
+                    BInteger _tmp_1 = param.projection2();
+                    BInteger _tmp_2 = param.projection1();
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Read(_tmp_2, _tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T3Read", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T3Poll()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Poll();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Poll", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus();
+                for(BInteger param : _trid_18) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3ReleaseBus(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("T3ReleaseBus", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T3Wait()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3Wait();
+                    copiedState.parent = state;
+                    addCachedInfos("T3Wait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                if(state._tr_T3ReEnableWait()) {
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.T3ReEnableWait();
+                    copiedState.parent = state;
+                    addCachedInfos("T3ReEnableWait", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+                BSet<BInteger> _trid_21 = state._tr_Update();
+                for(BInteger param : _trid_21) {
+                    BInteger _tmp_1 = param;
+
+                    CAN_BUS_tlc copiedState = state._copy();
+                    copiedState.Update(_tmp_1);
+                    copiedState.parent = state;
+                    addCachedInfos("Update", state, copiedState);
+                    result.add(copiedState);
+                    transitions.getAndIncrement();
+
+                }
+
+            }
+            return result;
+        }
+
+        private boolean invariantViolated(final CAN_BUS_tlc state) {
+            if(isCaching) {
+                if(state.dependentInvariant.contains("_check_inv_1")) {
+                    if(!state._check_inv_1()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_2")) {
+                    if(!state._check_inv_2()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_3")) {
+                    if(!state._check_inv_3()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_4")) {
+                    if(!state._check_inv_4()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_5")) {
+                    if(!state._check_inv_5()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_6")) {
+                    if(!state._check_inv_6()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_7")) {
+                    if(!state._check_inv_7()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_8")) {
+                    if(!state._check_inv_8()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_9")) {
+                    if(!state._check_inv_9()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_10")) {
+                    if(!state._check_inv_10()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_11")) {
+                    if(!state._check_inv_11()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_12")) {
+                    if(!state._check_inv_12()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_13")) {
+                    if(!state._check_inv_13()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_14")) {
+                    if(!state._check_inv_14()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_15")) {
+                    if(!state._check_inv_15()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_16")) {
+                    if(!state._check_inv_16()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_17")) {
+                    if(!state._check_inv_17()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_18")) {
+                    if(!state._check_inv_18()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_19")) {
+                    if(!state._check_inv_19()) {
+                        return true;
+                    }
+                }
+                if(state.dependentInvariant.contains("_check_inv_20")) {
+                    if(!state._check_inv_20()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20());
+        }
+
+        private void addCachedInfos(final String operation, final CAN_BUS_tlc state, final CAN_BUS_tlc copiedState) {
+            if(isCaching) {
+                copiedState.dependentInvariant = invariantDependency.get(operation);
+                copiedState.dependentGuard = guardDependency.get(operation);
+            }
+            copiedState.stateAccessedVia = operation;
+        }
+
+        private void printResult(final int states, final int transitions) {
+            if (invariantViolated.get() || deadlockDetected.get()) {
+                if (deadlockDetected.get()) {
+                    System.out.println("DEADLOCK DETECTED");
+                } else {
+                    System.out.println("INVARIANT VIOLATED");
+                }
+
+                System.out.println("COUNTER EXAMPLE TRACE: ");
+                StringBuilder sb = new StringBuilder();
+                while (counterExampleState != null) {
+                    sb.insert(0, counterExampleState);
                     sb.insert(0, "\n");
-                    sb.insert(0, stateAccessedVia.get(currentState));
+                    if (counterExampleState.stateAccessedVia != null) {
+                        sb.insert(0, counterExampleState.stateAccessedVia);
+                    }
                     sb.insert(0, "\n\n");
-                    currentState = parents.get(currentState);
+                    counterExampleState = counterExampleState.parent;
                 }
+                System.out.println(sb);
+            } else {
+                System.out.println("MODEL CHECKING SUCCESSFUL");
             }
-            System.out.println(sb.toString());
 
+            System.out.println("Number of States: " + states);
+            System.out.println("Number of Transitions: " + transitions);
         }
-        if(!deadlockDetected && !invariantViolated) {
-            System.out.println("MODEL CHECKING SUCCESSFUL");
-        }
-        System.out.println("Number of States: " + states);
-        System.out.println("Number of Transitions: " + transitions);
     }
 
     private static CAN_BUS_tlc next(LinkedList<CAN_BUS_tlc> collection, Object lock, Type type) {
@@ -2146,7 +2036,6 @@ public class CAN_BUS_tlc {
         AtomicInteger transitions = new AtomicInteger(0);
 
         while(!collection.isEmpty() && !stopThreads.get()) {
-
             possibleQueueChanges.incrementAndGet();
             CAN_BUS_tlc state = next(collection, lock, type);
             Runnable task = () -> {
@@ -2212,51 +2101,59 @@ public class CAN_BUS_tlc {
 
 
     public static void main(String[] args) {
-        if(args.length != 3) {
-            System.out.println("Number of arguments errorneous");
+        if(args.length > 4) {
+            System.out.println("Expecting 3 command-line arguments: STRATEGY THREADS CACHING DEBUG");
             return;
         }
-        String strategy = args[0];
-        String numberThreads = args[1];
-        String caching = args[2];
-
-        Type type;
-
-        if("mixed".equals(strategy)) {
-            type = Type.MIXED;
-        } else if("bf".equals(strategy)) {
-            type = Type.BFS;
-        } else if ("df".equals(strategy)) {
-            type = Type.DFS;
-        } else {
-            System.out.println("Input for strategy is wrong.");
-            return;
-        }
-
+        Type type = Type.MIXED;
         int threads = 0;
-        try {
-            threads = Integer.parseInt(numberThreads);
-        } catch(NumberFormatException e) {
-            System.out.println("Input for number of threads is wrong.");
-            return;
+        boolean isCaching = false;
+        boolean isDebug = false;
+
+        if(args.length > 0) {
+            if("mixed".equals(args[0])) {
+                type = Type.MIXED;
+            } else if("bf".equals(args[0])) {
+                type = Type.BFS;
+            } else if ("df".equals(args[0])) {
+                type = Type.DFS;
+            } else {
+                System.out.println("Value for command-line argument STRATEGY is wrong.");
+                System.out.println("Expecting mixed, bf or df.");
+                return;
+            }
         }
-        if(threads <= 0) {
-            System.out.println("Input for number of threads is wrong.");
-            return;
+        if(args.length > 1) {
+            try {
+                threads = Integer.parseInt(args[1]);
+            } catch(NumberFormatException e) {
+                System.out.println("Value for command-line argument THREADS is not a number.");
+                return;
+            }
+            if(threads <= 0) {
+                System.out.println("Value for command-line argument THREADS must be positive.");
+                return;
+            }
+        }
+        if(args.length > 2) {
+            try {
+                isCaching = Boolean.parseBoolean(args[2]);
+            } catch(Exception e) {
+                System.out.println("Value for command-line argument CACHING is not a boolean.");
+                return;
+            }
+        }
+        if(args.length > 3) {
+            try {
+                isDebug = Boolean.parseBoolean(args[3]);
+            } catch(Exception e) {
+                System.out.println("Value for command-line argument DEBUG is not a boolean.");
+                return;
+            }
         }
 
-        boolean isCaching = true;
-        try {
-            isCaching = Boolean.parseBoolean(caching);
-        } catch(Exception e) {
-            System.out.println("Input for caching is wrong.");
-            return;
-        }
-        if(threads == 1) {
-            modelCheckSingleThreaded(type, isCaching);
-        } else {
-            modelCheckMultiThreaded(type, threads, isCaching);
-        }
+        ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
+        modelchecker.modelCheck();
     }
 
 

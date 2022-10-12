@@ -11,6 +11,7 @@
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <boost/any.hpp>
+#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -31,7 +32,6 @@ class CAN_BUS_tlc {
     public:
 
         enum Type { BFS, DFS, MIXED };
-
 
         class T1state : public BObject {
             public:
@@ -269,6 +269,7 @@ class CAN_BUS_tlc {
                 }
         };
 
+
         struct Hash {
             public:
                 size_t operator()(const CAN_BUS_tlc& obj) const {
@@ -315,8 +316,31 @@ class CAN_BUS_tlc {
         BInteger T3_readvalue;
         T3state T3_state;
 
+        mutable boost::optional<bool> _tr_cache_T1Evaluate;
+        mutable boost::optional<BSet<BInteger>> _tr_cache_T1Calculate;
+        mutable boost::optional<BSet<BTuple<BInteger, BInteger >>> _tr_cache_T1SendResult;
+        mutable boost::optional<BSet<BInteger>> _tr_cache_T1Wait;
+        mutable boost::optional<bool> _tr_cache_T2Evaluate;
+        mutable boost::optional<BSet<BTuple<BInteger, BInteger >>> _tr_cache_T2ReadBus;
+        mutable boost::optional<bool> _tr_cache_T2Reset;
+        mutable boost::optional<bool> _tr_cache_T2Complete;
+        mutable boost::optional<BSet<BInteger>> _tr_cache_T2ReleaseBus;
+        mutable boost::optional<bool> _tr_cache_T2Calculate;
+        mutable boost::optional<BSet<BTuple<BInteger, BInteger >>> _tr_cache_T2WriteBus;
+        mutable boost::optional<BSet<BInteger>> _tr_cache_T2Wait;
+        mutable boost::optional<bool> _tr_cache_T3Initiate;
+        mutable boost::optional<bool> _tr_cache_T3Evaluate;
+        mutable boost::optional<BSet<BTuple<BInteger, BInteger >>> _tr_cache_T3writebus;
+        mutable boost::optional<BSet<BTuple<BInteger, BInteger >>> _tr_cache_T3Read;
+        mutable boost::optional<bool> _tr_cache_T3Poll;
+        mutable boost::optional<BSet<BInteger>> _tr_cache_T3ReleaseBus;
+        mutable boost::optional<bool> _tr_cache_T3Wait;
+        mutable boost::optional<bool> _tr_cache_T3ReEnableWait;
+        mutable boost::optional<BSet<BInteger>> _tr_cache_Update;
 
     public:
+
+        std::string stateAccessedVia;
 
         CAN_BUS_tlc() {
             NATSET = (BSet<BInteger>::interval((BInteger(0)),(BInteger(5))));
@@ -595,190 +619,284 @@ class CAN_BUS_tlc {
         }
 
 
-        bool _tr_T1Evaluate() const {
-            return ((BBoolean(T1_timer.equal((BInteger(0))).booleanValue() && T1_state.equal((T1state(T1state::T1_EN))).booleanValue()))).booleanValue();
-        }
-
-        BSet<BInteger> _tr_T1Calculate() const {
-            BSet<BInteger> _ic_set_1 = BSet<BInteger>();
-            for(BInteger _ic_p_1 : (BSet<BInteger>::interval((BInteger(1)).negative(),(BInteger(3))))) {
-                if((T1_state.equal((T1state(T1state::T1_CALC)))).booleanValue()) {
-                    _ic_set_1 = _ic_set_1._union(BSet<BInteger>(_ic_p_1));
-                }
-
+        bool _tr_T1Evaluate(bool isCaching) const {
+            if (this->_tr_cache_T1Evaluate == boost::none){
+                bool __tmp_result = ((BBoolean(T1_timer.equal((BInteger(0))).booleanValue() && T1_state.equal((T1state(T1state::T1_EN))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T1Evaluate = __tmp_result;
+                else return __tmp_result;
             }
-            return _ic_set_1;
+            return this->_tr_cache_T1Evaluate.get();
         }
 
-        BSet<BTuple<BInteger, BInteger >> _tr_T1SendResult() const {
-            BSet<BTuple<BInteger, BInteger >> _ic_set_2 = BSet<BTuple<BInteger, BInteger >>();
-            for(BInteger _ic_ppriority_1 : {(BInteger(3))}) {
-                for(BInteger _ic_pv_1 : {T1_writevalue}) {
-                    if((T1_state.equal((T1state(T1state::T1_SEND)))).booleanValue()) {
-                        _ic_set_2 = _ic_set_2._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+        BSet<BInteger> _tr_T1Calculate(bool isCaching) const {
+            if (this->_tr_cache_T1Calculate == boost::none){
+                BSet<BInteger> _ic_set_1 = BSet<BInteger>();
+                for(const BInteger& _ic_p_1 : (BSet<BInteger>::interval((BInteger(1)).negative(),(BInteger(3))))) {
+                    if((T1_state.equal((T1state(T1state::T1_CALC)))).booleanValue()) {
+                        _ic_set_1 = _ic_set_1._union(BSet<BInteger>(_ic_p_1));
+                    }
+
+                }
+                if (isCaching) this->_tr_cache_T1Calculate = _ic_set_1;
+                else return _ic_set_1;
+            }
+            return this->_tr_cache_T1Calculate.get();
+        }
+
+        BSet<BTuple<BInteger, BInteger >> _tr_T1SendResult(bool isCaching) const {
+            if (this->_tr_cache_T1SendResult == boost::none){
+                BSet<BTuple<BInteger, BInteger >> _ic_set_2 = BSet<BTuple<BInteger, BInteger >>();
+                for(const BInteger& _ic_ppriority_1 : {(BInteger(3))}) {
+                    for(const BInteger& _ic_pv_1 : {T1_writevalue}) {
+                        if((T1_state.equal((T1state(T1state::T1_SEND)))).booleanValue()) {
+                            _ic_set_2 = _ic_set_2._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+                        }
+
                     }
 
                 }
 
+                if (isCaching) this->_tr_cache_T1SendResult = _ic_set_2;
+                else return _ic_set_2;
             }
-
-            return _ic_set_2;
+            return this->_tr_cache_T1SendResult.get();
         }
 
-        BSet<BInteger> _tr_T1Wait() const {
-            BSet<BInteger> _ic_set_3 = BSet<BInteger>();
-            for(BInteger _ic_pt_1 : {(BInteger(2))}) {
-                if((T1_state.equal((T1state(T1state::T1_WAIT)))).booleanValue()) {
-                    _ic_set_3 = _ic_set_3._union(BSet<BInteger>(_ic_pt_1));
-                }
-
-            }
-
-            return _ic_set_3;
-        }
-
-        bool _tr_T2Evaluate() const {
-            return ((BBoolean(T2_timer.equal((BInteger(0))).booleanValue() && T2_state.equal((T2state(T2state::T2_EN))).booleanValue()))).booleanValue();
-        }
-
-        BSet<BTuple<BInteger, BInteger >> _tr_T2ReadBus() const {
-            BSet<BTuple<BInteger, BInteger >> _ic_set_5 = BSet<BTuple<BInteger, BInteger >>();
-            for(BInteger _ic_ppriority_1 : {BUSpriority}) {
-                for(BInteger _ic_pv_1 : {BUSvalue}) {
-                    if((T2_state.equal((T2state(T2state::T2_RCV)))).booleanValue()) {
-                        _ic_set_5 = _ic_set_5._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+        BSet<BInteger> _tr_T1Wait(bool isCaching) const {
+            if (this->_tr_cache_T1Wait == boost::none){
+                BSet<BInteger> _ic_set_3 = BSet<BInteger>();
+                for(const BInteger& _ic_pt_1 : {(BInteger(2))}) {
+                    if((T1_state.equal((T1state(T1state::T1_WAIT)))).booleanValue()) {
+                        _ic_set_3 = _ic_set_3._union(BSet<BInteger>(_ic_pt_1));
                     }
 
                 }
 
+                if (isCaching) this->_tr_cache_T1Wait = _ic_set_3;
+                else return _ic_set_3;
             }
-
-            return _ic_set_5;
+            return this->_tr_cache_T1Wait.get();
         }
 
-        bool _tr_T2Reset() const {
-            return ((BBoolean(T2_readpriority.equal((BInteger(4))).booleanValue() && T2_state.equal((T2state(T2state::T2_PROC))).booleanValue()))).booleanValue();
-        }
-
-        bool _tr_T2Complete() const {
-            return ((BBoolean((BBoolean(T2_state.equal((T2state(T2state::T2_PROC))).booleanValue() && T2_readpriority.equal((BInteger(5))).booleanValue())).booleanValue() && T2_mode.equal((T2mode(T2mode::T2MODE_TRANSMIT))).booleanValue()))).booleanValue();
-        }
-
-        BSet<BInteger> _tr_T2ReleaseBus() const {
-            BSet<BInteger> _ic_set_8 = BSet<BInteger>();
-            for(BInteger _ic_ppriority_1 : {T2_readpriority}) {
-                if(((BBoolean(BUSwrite.domain().elementOf(_ic_ppriority_1).booleanValue() && T2_state.equal((T2state(T2state::T2_RELEASE))).booleanValue()))).booleanValue()) {
-                    _ic_set_8 = _ic_set_8._union(BSet<BInteger>(_ic_ppriority_1));
-                }
-
+        bool _tr_T2Evaluate(bool isCaching) const {
+            if (this->_tr_cache_T2Evaluate == boost::none){
+                bool __tmp_result = ((BBoolean(T2_timer.equal((BInteger(0))).booleanValue() && T2_state.equal((T2state(T2state::T2_EN))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T2Evaluate = __tmp_result;
+                else return __tmp_result;
             }
-
-            return _ic_set_8;
+            return this->_tr_cache_T2Evaluate.get();
         }
 
-        bool _tr_T2Calculate() const {
-            return ((BBoolean(T2_readpriority.equal((BInteger(3))).booleanValue() && T2_state.equal((T2state(T2state::T2_PROC))).booleanValue()))).booleanValue();
-        }
+        BSet<BTuple<BInteger, BInteger >> _tr_T2ReadBus(bool isCaching) const {
+            if (this->_tr_cache_T2ReadBus == boost::none){
+                BSet<BTuple<BInteger, BInteger >> _ic_set_5 = BSet<BTuple<BInteger, BInteger >>();
+                for(const BInteger& _ic_ppriority_1 : {BUSpriority}) {
+                    for(const BInteger& _ic_pv_1 : {BUSvalue}) {
+                        if((T2_state.equal((T2state(T2state::T2_RCV)))).booleanValue()) {
+                            _ic_set_5 = _ic_set_5._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+                        }
 
-        BSet<BTuple<BInteger, BInteger >> _tr_T2WriteBus() const {
-            BSet<BTuple<BInteger, BInteger >> _ic_set_10 = BSet<BTuple<BInteger, BInteger >>();
-            for(BInteger _ic_ppriority_1 : {(BInteger(5))}) {
-                for(BInteger _ic_pv_1 : {T2_writevalue}) {
-                    if((T2_state.equal((T2state(T2state::T2_SEND)))).booleanValue()) {
-                        _ic_set_10 = _ic_set_10._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
                     }
 
                 }
 
+                if (isCaching) this->_tr_cache_T2ReadBus = _ic_set_5;
+                else return _ic_set_5;
             }
-
-            return _ic_set_10;
+            return this->_tr_cache_T2ReadBus.get();
         }
 
-        BSet<BInteger> _tr_T2Wait() const {
-            BSet<BInteger> _ic_set_11 = BSet<BInteger>();
-            for(BInteger _ic_pt_1 : {(BInteger(3))}) {
-                if((T2_state.equal((T2state(T2state::T2_WAIT)))).booleanValue()) {
-                    _ic_set_11 = _ic_set_11._union(BSet<BInteger>(_ic_pt_1));
-                }
-
+        bool _tr_T2Reset(bool isCaching) const {
+            if (this->_tr_cache_T2Reset == boost::none){
+                bool __tmp_result = ((BBoolean(T2_readpriority.equal((BInteger(4))).booleanValue() && T2_state.equal((T2state(T2state::T2_PROC))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T2Reset = __tmp_result;
+                else return __tmp_result;
             }
-
-            return _ic_set_11;
+            return this->_tr_cache_T2Reset.get();
         }
 
-        bool _tr_T3Initiate() const {
-            return ((BBoolean((BBoolean(T3_state.equal((T3state(T3state::T3_READY))).booleanValue() && T3_evaluated.equal((BBoolean(false))).booleanValue())).booleanValue() && T3_enabled.equal((BBoolean(true))).booleanValue()))).booleanValue();
+        bool _tr_T2Complete(bool isCaching) const {
+            if (this->_tr_cache_T2Complete == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(T2_state.equal((T2state(T2state::T2_PROC))).booleanValue() && T2_readpriority.equal((BInteger(5))).booleanValue())).booleanValue() && T2_mode.equal((T2mode(T2mode::T2MODE_TRANSMIT))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T2Complete = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T2Complete.get();
         }
 
-        bool _tr_T3Evaluate() const {
-            return ((BBoolean((BBoolean(T3_state.equal((T3state(T3state::T3_READY))).booleanValue() && T3_evaluated.equal((BBoolean(false))).booleanValue())).booleanValue() && T3_enabled.equal((BBoolean(false))).booleanValue()))).booleanValue();
-        }
-
-        BSet<BTuple<BInteger, BInteger >> _tr_T3writebus() const {
-            BSet<BTuple<BInteger, BInteger >> _ic_set_14 = BSet<BTuple<BInteger, BInteger >>();
-            for(BInteger _ic_ppriority_1 : {(BInteger(4))}) {
-                for(BInteger _ic_pv_1 : {(BInteger(0))}) {
-                    if((T3_state.equal((T3state(T3state::T3_WRITE)))).booleanValue()) {
-                        _ic_set_14 = _ic_set_14._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+        BSet<BInteger> _tr_T2ReleaseBus(bool isCaching) const {
+            if (this->_tr_cache_T2ReleaseBus == boost::none){
+                BSet<BInteger> _ic_set_8 = BSet<BInteger>();
+                for(const BInteger& _ic_ppriority_1 : {T2_readpriority}) {
+                    if(((BBoolean(BUSwrite.domain().elementOf(_ic_ppriority_1).booleanValue() && T2_state.equal((T2state(T2state::T2_RELEASE))).booleanValue()))).booleanValue()) {
+                        _ic_set_8 = _ic_set_8._union(BSet<BInteger>(_ic_ppriority_1));
                     }
 
                 }
 
+                if (isCaching) this->_tr_cache_T2ReleaseBus = _ic_set_8;
+                else return _ic_set_8;
             }
-
-            return _ic_set_14;
+            return this->_tr_cache_T2ReleaseBus.get();
         }
 
-        BSet<BTuple<BInteger, BInteger >> _tr_T3Read() const {
-            BSet<BTuple<BInteger, BInteger >> _ic_set_15 = BSet<BTuple<BInteger, BInteger >>();
-            for(BInteger _ic_ppriority_1 : {BUSpriority}) {
-                for(BInteger _ic_pv_1 : {BUSvalue}) {
-                    if((T3_state.equal((T3state(T3state::T3_READ)))).booleanValue()) {
-                        _ic_set_15 = _ic_set_15._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+        bool _tr_T2Calculate(bool isCaching) const {
+            if (this->_tr_cache_T2Calculate == boost::none){
+                bool __tmp_result = ((BBoolean(T2_readpriority.equal((BInteger(3))).booleanValue() && T2_state.equal((T2state(T2state::T2_PROC))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T2Calculate = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T2Calculate.get();
+        }
+
+        BSet<BTuple<BInteger, BInteger >> _tr_T2WriteBus(bool isCaching) const {
+            if (this->_tr_cache_T2WriteBus == boost::none){
+                BSet<BTuple<BInteger, BInteger >> _ic_set_10 = BSet<BTuple<BInteger, BInteger >>();
+                for(const BInteger& _ic_ppriority_1 : {(BInteger(5))}) {
+                    for(const BInteger& _ic_pv_1 : {T2_writevalue}) {
+                        if((T2_state.equal((T2state(T2state::T2_SEND)))).booleanValue()) {
+                            _ic_set_10 = _ic_set_10._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+                        }
+
                     }
 
                 }
 
+                if (isCaching) this->_tr_cache_T2WriteBus = _ic_set_10;
+                else return _ic_set_10;
             }
-
-            return _ic_set_15;
+            return this->_tr_cache_T2WriteBus.get();
         }
 
-        bool _tr_T3Poll() const {
-            return ((BBoolean(T3_readpriority.less((BInteger(5))).booleanValue() && T3_state.equal((T3state(T3state::T3_PROC))).booleanValue()))).booleanValue();
-        }
+        BSet<BInteger> _tr_T2Wait(bool isCaching) const {
+            if (this->_tr_cache_T2Wait == boost::none){
+                BSet<BInteger> _ic_set_11 = BSet<BInteger>();
+                for(const BInteger& _ic_pt_1 : {(BInteger(3))}) {
+                    if((T2_state.equal((T2state(T2state::T2_WAIT)))).booleanValue()) {
+                        _ic_set_11 = _ic_set_11._union(BSet<BInteger>(_ic_pt_1));
+                    }
 
-        BSet<BInteger> _tr_T3ReleaseBus() const {
-            BSet<BInteger> _ic_set_17 = BSet<BInteger>();
-            for(BInteger _ic_ppriority_1 : {(BInteger(4))}) {
-                if(((BBoolean(T3_readpriority.equal((BInteger(5))).booleanValue() && T3_state.equal((T3state(T3state::T3_PROC))).booleanValue()))).booleanValue()) {
-                    _ic_set_17 = _ic_set_17._union(BSet<BInteger>(_ic_ppriority_1));
                 }
 
+                if (isCaching) this->_tr_cache_T2Wait = _ic_set_11;
+                else return _ic_set_11;
             }
-
-            return _ic_set_17;
+            return this->_tr_cache_T2Wait.get();
         }
 
-        bool _tr_T3Wait() const {
-            return (T3_state.equal((T3state(T3state::T3_WAIT)))).booleanValue();
+        bool _tr_T3Initiate(bool isCaching) const {
+            if (this->_tr_cache_T3Initiate == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(T3_state.equal((T3state(T3state::T3_READY))).booleanValue() && T3_evaluated.equal((BBoolean(false))).booleanValue())).booleanValue() && T3_enabled.equal((BBoolean(true))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T3Initiate = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T3Initiate.get();
         }
 
-        bool _tr_T3ReEnableWait() const {
-            return (T3_state.equal((T3state(T3state::T3_RELEASE)))).booleanValue();
+        bool _tr_T3Evaluate(bool isCaching) const {
+            if (this->_tr_cache_T3Evaluate == boost::none){
+                bool __tmp_result = ((BBoolean((BBoolean(T3_state.equal((T3state(T3state::T3_READY))).booleanValue() && T3_evaluated.equal((BBoolean(false))).booleanValue())).booleanValue() && T3_enabled.equal((BBoolean(false))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T3Evaluate = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T3Evaluate.get();
         }
 
-        BSet<BInteger> _tr_Update() const {
-            BSet<BInteger> _ic_set_20 = BSet<BInteger>();
-            for(BInteger _ic_pmax_1 : {BUSwrite.domain().max()}) {
-                if(((BBoolean((BBoolean(T1_timer.greater((BInteger(0))).booleanValue() && T2_timer.greater((BInteger(0))).booleanValue())).booleanValue() && (BBoolean(T3_enabled.equal((BBoolean(true))).booleanValue() || T3_evaluated.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue()) {
-                    _ic_set_20 = _ic_set_20._union(BSet<BInteger>(_ic_pmax_1));
+        BSet<BTuple<BInteger, BInteger >> _tr_T3writebus(bool isCaching) const {
+            if (this->_tr_cache_T3writebus == boost::none){
+                BSet<BTuple<BInteger, BInteger >> _ic_set_14 = BSet<BTuple<BInteger, BInteger >>();
+                for(const BInteger& _ic_ppriority_1 : {(BInteger(4))}) {
+                    for(const BInteger& _ic_pv_1 : {(BInteger(0))}) {
+                        if((T3_state.equal((T3state(T3state::T3_WRITE)))).booleanValue()) {
+                            _ic_set_14 = _ic_set_14._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+                        }
+
+                    }
+
                 }
 
+                if (isCaching) this->_tr_cache_T3writebus = _ic_set_14;
+                else return _ic_set_14;
             }
+            return this->_tr_cache_T3writebus.get();
+        }
 
-            return _ic_set_20;
+        BSet<BTuple<BInteger, BInteger >> _tr_T3Read(bool isCaching) const {
+            if (this->_tr_cache_T3Read == boost::none){
+                BSet<BTuple<BInteger, BInteger >> _ic_set_15 = BSet<BTuple<BInteger, BInteger >>();
+                for(const BInteger& _ic_ppriority_1 : {BUSpriority}) {
+                    for(const BInteger& _ic_pv_1 : {BUSvalue}) {
+                        if((T3_state.equal((T3state(T3state::T3_READ)))).booleanValue()) {
+                            _ic_set_15 = _ic_set_15._union(BSet<BTuple<BInteger, BInteger >>((BTuple<BInteger, BInteger >(_ic_ppriority_1, _ic_pv_1))));
+                        }
+
+                    }
+
+                }
+
+                if (isCaching) this->_tr_cache_T3Read = _ic_set_15;
+                else return _ic_set_15;
+            }
+            return this->_tr_cache_T3Read.get();
+        }
+
+        bool _tr_T3Poll(bool isCaching) const {
+            if (this->_tr_cache_T3Poll == boost::none){
+                bool __tmp_result = ((BBoolean(T3_readpriority.less((BInteger(5))).booleanValue() && T3_state.equal((T3state(T3state::T3_PROC))).booleanValue()))).booleanValue();
+                if (isCaching) this->_tr_cache_T3Poll = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T3Poll.get();
+        }
+
+        BSet<BInteger> _tr_T3ReleaseBus(bool isCaching) const {
+            if (this->_tr_cache_T3ReleaseBus == boost::none){
+                BSet<BInteger> _ic_set_17 = BSet<BInteger>();
+                for(const BInteger& _ic_ppriority_1 : {(BInteger(4))}) {
+                    if(((BBoolean(T3_readpriority.equal((BInteger(5))).booleanValue() && T3_state.equal((T3state(T3state::T3_PROC))).booleanValue()))).booleanValue()) {
+                        _ic_set_17 = _ic_set_17._union(BSet<BInteger>(_ic_ppriority_1));
+                    }
+
+                }
+
+                if (isCaching) this->_tr_cache_T3ReleaseBus = _ic_set_17;
+                else return _ic_set_17;
+            }
+            return this->_tr_cache_T3ReleaseBus.get();
+        }
+
+        bool _tr_T3Wait(bool isCaching) const {
+            if (this->_tr_cache_T3Wait == boost::none){
+                bool __tmp_result = (T3_state.equal((T3state(T3state::T3_WAIT)))).booleanValue();
+                if (isCaching) this->_tr_cache_T3Wait = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T3Wait.get();
+        }
+
+        bool _tr_T3ReEnableWait(bool isCaching) const {
+            if (this->_tr_cache_T3ReEnableWait == boost::none){
+                bool __tmp_result = (T3_state.equal((T3state(T3state::T3_RELEASE)))).booleanValue();
+                if (isCaching) this->_tr_cache_T3ReEnableWait = __tmp_result;
+                else return __tmp_result;
+            }
+            return this->_tr_cache_T3ReEnableWait.get();
+        }
+
+        BSet<BInteger> _tr_Update(bool isCaching) const {
+            if (this->_tr_cache_Update == boost::none){
+                BSet<BInteger> _ic_set_20 = BSet<BInteger>();
+                for(const BInteger& _ic_pmax_1 : {BUSwrite.domain().max()}) {
+                    if(((BBoolean((BBoolean(T1_timer.greater((BInteger(0))).booleanValue() && T2_timer.greater((BInteger(0))).booleanValue())).booleanValue() && (BBoolean(T3_enabled.equal((BBoolean(true))).booleanValue() || T3_evaluated.equal((BBoolean(true))).booleanValue())).booleanValue()))).booleanValue()) {
+                        _ic_set_20 = _ic_set_20._union(BSet<BInteger>(_ic_pmax_1));
+                    }
+
+                }
+
+                if (isCaching) this->_tr_cache_Update = _ic_set_20;
+                else return _ic_set_20;
+            }
+            return this->_tr_cache_Update.get();
         }
 
         bool _check_inv_1() const {
@@ -861,8 +979,44 @@ class CAN_BUS_tlc {
             return (BUSwrite.domain().elementOf((BInteger(0)))).booleanValue();
         }
 
-        CAN_BUS_tlc _copy() const {
-            return CAN_BUS_tlc(NATSET, BUSpriority, BUSvalue, BUSwrite, T1_state, T1_timer, T1_writevalue, T2_mode, T2_readpriority, T2_readvalue, T2_state, T2_timer, T2_writevalue, T2v, T3_enabled, T3_evaluated, T3_readpriority, T3_readvalue, T3_state);
+        static constexpr unsigned int strHash(const char *s, int off = 0) {
+            return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
+        }
+
+        CAN_BUS_tlc _copy(unordered_set<string> toInvalidate) const {
+            static const char* allTransitions[] = {"_tr_T1Evaluate", "_tr_T1Calculate", "_tr_T1SendResult", "_tr_T1Wait", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2Reset", "_tr_T2Complete", "_tr_T2ReleaseBus", "_tr_T2Calculate", "_tr_T2WriteBus", "_tr_T2Wait", "_tr_T3Initiate", "_tr_T3Evaluate", "_tr_T3writebus", "_tr_T3Read", "_tr_T3Poll", "_tr_T3ReleaseBus", "_tr_T3Wait", "_tr_T3ReEnableWait", "_tr_Update"};
+
+            CAN_BUS_tlc result = CAN_BUS_tlc(NATSET, BUSpriority, BUSvalue, BUSwrite, T1_state, T1_timer, T1_writevalue, T2_mode, T2_readpriority, T2_readvalue, T2_state, T2_timer, T2_writevalue, T2v, T3_enabled, T3_evaluated, T3_readpriority, T3_readvalue, T3_state);
+
+            for (const auto &item : allTransitions) {
+                if(toInvalidate.find(item) == toInvalidate.end()) {
+                    switch(strHash(item)) {
+                        case strHash("_tr_T1Evaluate"): result._tr_cache_T1Evaluate = this->_tr_cache_T1Evaluate; break;
+                        case strHash("_tr_T1Calculate"): result._tr_cache_T1Calculate = this->_tr_cache_T1Calculate; break;
+                        case strHash("_tr_T1SendResult"): result._tr_cache_T1SendResult = this->_tr_cache_T1SendResult; break;
+                        case strHash("_tr_T1Wait"): result._tr_cache_T1Wait = this->_tr_cache_T1Wait; break;
+                        case strHash("_tr_T2Evaluate"): result._tr_cache_T2Evaluate = this->_tr_cache_T2Evaluate; break;
+                        case strHash("_tr_T2ReadBus"): result._tr_cache_T2ReadBus = this->_tr_cache_T2ReadBus; break;
+                        case strHash("_tr_T2Reset"): result._tr_cache_T2Reset = this->_tr_cache_T2Reset; break;
+                        case strHash("_tr_T2Complete"): result._tr_cache_T2Complete = this->_tr_cache_T2Complete; break;
+                        case strHash("_tr_T2ReleaseBus"): result._tr_cache_T2ReleaseBus = this->_tr_cache_T2ReleaseBus; break;
+                        case strHash("_tr_T2Calculate"): result._tr_cache_T2Calculate = this->_tr_cache_T2Calculate; break;
+                        case strHash("_tr_T2WriteBus"): result._tr_cache_T2WriteBus = this->_tr_cache_T2WriteBus; break;
+                        case strHash("_tr_T2Wait"): result._tr_cache_T2Wait = this->_tr_cache_T2Wait; break;
+                        case strHash("_tr_T3Initiate"): result._tr_cache_T3Initiate = this->_tr_cache_T3Initiate; break;
+                        case strHash("_tr_T3Evaluate"): result._tr_cache_T3Evaluate = this->_tr_cache_T3Evaluate; break;
+                        case strHash("_tr_T3writebus"): result._tr_cache_T3writebus = this->_tr_cache_T3writebus; break;
+                        case strHash("_tr_T3Read"): result._tr_cache_T3Read = this->_tr_cache_T3Read; break;
+                        case strHash("_tr_T3Poll"): result._tr_cache_T3Poll = this->_tr_cache_T3Poll; break;
+                        case strHash("_tr_T3ReleaseBus"): result._tr_cache_T3ReleaseBus = this->_tr_cache_T3ReleaseBus; break;
+                        case strHash("_tr_T3Wait"): result._tr_cache_T3Wait = this->_tr_cache_T3Wait; break;
+                        case strHash("_tr_T3ReEnableWait"): result._tr_cache_T3ReEnableWait = this->_tr_cache_T3ReEnableWait; break;
+                        case strHash("_tr_Update"): result._tr_cache_Update = this->_tr_cache_Update; break;
+                        default: cout << "Transition " << item << " not found!";
+                    }
+                }
+            }
+            return result;
         }
 
         friend bool operator ==(const CAN_BUS_tlc& o1, const CAN_BUS_tlc& o2) {
@@ -949,1525 +1103,565 @@ class CAN_BUS_tlc {
 };
 
 
-static std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> generateNextStates(std::mutex& guardMutex, const CAN_BUS_tlc& state, bool isCaching, std::unordered_map<string, std::unordered_set<string>>& invariantDependency, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentInvariant, std::unordered_map<string, std::unordered_set<string>>& guardDependency, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentGuard, std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& guardCache, std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& parents, std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& stateAccessedVia, std::atomic<int>& transitions) {
-    std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> result = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
-    if(isCaching) {
-        immer::map<string, boost::any> parentsGuard;
-        std::unordered_set<string> dependentGuardsOfState;
-        bool parentsExist = false;
-        bool dependentGuardsExist = false;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            parentsExist = (parents.find(state) != parents.end());
-            dependentGuardsExist = (dependentGuard.find(state) != dependentGuard.end());
-            if(parentsExist) {
-                parentsGuard = guardCache[parents[state]];
-            }
-            if(dependentGuardsExist) {
-                dependentGuardsOfState = dependentGuard[state];
-            }
-        }
-        immer::map<string, boost::any> newCache = parentsGuard;
-        boost::any cachedValue;
-        bool dependentGuardsBoolean = true;
-        bool _trid_1;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T1Evaluate"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T1Evaluate") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_1 = state._tr_T1Evaluate();
-        } else {
-            _trid_1 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T1Evaluate", _trid_1);
-        if(_trid_1) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1Evaluate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T1Evaluate"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T1Evaluate"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1Evaluate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_2;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T1Calculate"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T1Calculate") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_2 = state._tr_T1Calculate();
-        } else {
-            _trid_2 = boost::any_cast<BSet<BInteger>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T1Calculate", _trid_2);
-        for(const BInteger& param : _trid_2) {
-            BInteger _tmp_1 = param;
+class ModelChecker {
+    private:
+        CAN_BUS_tlc::Type type;
+        int threads;
+        bool isCaching;
+        bool isDebug;
 
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1Calculate(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T1Calculate"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T1Calculate"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1Calculate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_3;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T1SendResult"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T1SendResult") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_3 = state._tr_T1SendResult();
-        } else {
-            _trid_3 = boost::any_cast<BSet<BTuple<BInteger, BInteger >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T1SendResult", _trid_3);
-        for(const BTuple<BInteger, BInteger >& param : _trid_3) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
+        std::list<CAN_BUS_tlc> unvisitedStates;
+        std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> states;
+        std::atomic<int> transitions;
+        std::mutex mutex;
+        std::mutex waitMutex;
+        std::mutex guardMutex;
+        std::condition_variable waitCV;
 
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1SendResult(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T1SendResult"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T1SendResult"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1SendResult"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_4;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T1Wait"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T1Wait") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_4 = state._tr_T1Wait();
-        } else {
-            _trid_4 = boost::any_cast<BSet<BInteger>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T1Wait", _trid_4);
-        for(const BInteger& param : _trid_4) {
-            BInteger _tmp_1 = param;
+        std::atomic<bool> invariantViolatedBool;
+        std::atomic<bool> deadlockDetected;
+        CAN_BUS_tlc counterExampleState;
 
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1Wait(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T1Wait"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T1Wait"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1Wait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_5;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2Evaluate"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2Evaluate") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_5 = state._tr_T2Evaluate();
-        } else {
-            _trid_5 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2Evaluate", _trid_5);
-        if(_trid_5) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Evaluate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2Evaluate"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2Evaluate"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Evaluate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_6;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2ReadBus"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2ReadBus") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_6 = state._tr_T2ReadBus();
-        } else {
-            _trid_6 = boost::any_cast<BSet<BTuple<BInteger, BInteger >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2ReadBus", _trid_6);
-        for(const BTuple<BInteger, BInteger >& param : _trid_6) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
+        std::unordered_map<string, std::unordered_set<string>> invariantDependency;
+        std::unordered_map<string, std::unordered_set<string>> guardDependency;
+        std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> parents;
 
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2ReadBus(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2ReadBus"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2ReadBus"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2ReadBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_7;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2Reset"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2Reset") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_7 = state._tr_T2Reset();
-        } else {
-            _trid_7 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2Reset", _trid_7);
-        if(_trid_7) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Reset();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2Reset"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2Reset"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Reset"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_8;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2Complete"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2Complete") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_8 = state._tr_T2Complete();
-        } else {
-            _trid_8 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2Complete", _trid_8);
-        if(_trid_8) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Complete();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2Complete"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2Complete"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Complete"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_9;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2ReleaseBus"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2ReleaseBus") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_9 = state._tr_T2ReleaseBus();
-        } else {
-            _trid_9 = boost::any_cast<BSet<BInteger>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2ReleaseBus", _trid_9);
-        for(const BInteger& param : _trid_9) {
-            BInteger _tmp_1 = param;
+    public:
+        ModelChecker() {}
 
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2ReleaseBus(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2ReleaseBus"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2ReleaseBus"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2ReleaseBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_10;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2Calculate"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2Calculate") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_10 = state._tr_T2Calculate();
-        } else {
-            _trid_10 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2Calculate", _trid_10);
-        if(_trid_10) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Calculate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2Calculate"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2Calculate"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Calculate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_11;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2WriteBus"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2WriteBus") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_11 = state._tr_T2WriteBus();
-        } else {
-            _trid_11 = boost::any_cast<BSet<BTuple<BInteger, BInteger >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2WriteBus", _trid_11);
-        for(const BTuple<BInteger, BInteger >& param : _trid_11) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2WriteBus(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2WriteBus"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2WriteBus"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2WriteBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_12;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T2Wait"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T2Wait") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_12 = state._tr_T2Wait();
-        } else {
-            _trid_12 = boost::any_cast<BSet<BInteger>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T2Wait", _trid_12);
-        for(const BInteger& param : _trid_12) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Wait(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T2Wait"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T2Wait"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Wait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_13;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3Initiate"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3Initiate") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_13 = state._tr_T3Initiate();
-        } else {
-            _trid_13 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3Initiate", _trid_13);
-        if(_trid_13) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Initiate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3Initiate"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3Initiate"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Initiate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_14;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3Evaluate"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3Evaluate") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_14 = state._tr_T3Evaluate();
-        } else {
-            _trid_14 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3Evaluate", _trid_14);
-        if(_trid_14) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Evaluate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3Evaluate"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3Evaluate"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Evaluate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_15;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3writebus"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3writebus") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_15 = state._tr_T3writebus();
-        } else {
-            _trid_15 = boost::any_cast<BSet<BTuple<BInteger, BInteger >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3writebus", _trid_15);
-        for(const BTuple<BInteger, BInteger >& param : _trid_15) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3writebus(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3writebus"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3writebus"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3writebus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_16;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3Read"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3Read") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_16 = state._tr_T3Read();
-        } else {
-            _trid_16 = boost::any_cast<BSet<BTuple<BInteger, BInteger >>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3Read", _trid_16);
-        for(const BTuple<BInteger, BInteger >& param : _trid_16) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Read(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3Read"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3Read"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Read"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_17;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3Poll"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3Poll") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_17 = state._tr_T3Poll();
-        } else {
-            _trid_17 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3Poll", _trid_17);
-        if(_trid_17) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Poll();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3Poll"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3Poll"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Poll"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_18;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3ReleaseBus"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3ReleaseBus") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_18 = state._tr_T3ReleaseBus();
-        } else {
-            _trid_18 = boost::any_cast<BSet<BInteger>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3ReleaseBus", _trid_18);
-        for(const BInteger& param : _trid_18) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3ReleaseBus(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3ReleaseBus"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3ReleaseBus"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3ReleaseBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_19;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3Wait"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3Wait") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_19 = state._tr_T3Wait();
-        } else {
-            _trid_19 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3Wait", _trid_19);
-        if(_trid_19) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Wait();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3Wait"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3Wait"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Wait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        bool _trid_20;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_T3ReEnableWait"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_T3ReEnableWait") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || parentsExist) {
-            _trid_20 = state._tr_T3ReEnableWait();
-        } else {
-            _trid_20 = boost::any_cast<bool>(cachedValue);
-        }
-        newCache = newCache.set("_tr_T3ReEnableWait", _trid_20);
-        if(_trid_20) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3ReEnableWait();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["T3ReEnableWait"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["T3ReEnableWait"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3ReEnableWait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_21;
-        if(dependentGuardsExist) {
-            cachedValue = parentsGuard["_tr_Update"];
-            dependentGuardsBoolean = (dependentGuardsOfState.find("_tr_Update") != dependentGuardsOfState.end());
-        }
-        if(dependentGuardsExist || dependentGuardsBoolean || !parentsExist) {
-            _trid_21 = state._tr_Update();
-        } else {
-            _trid_21 = boost::any_cast<BSet<BInteger>>(cachedValue);
-        }
-        newCache = newCache.set("_tr_Update", _trid_21);
-        for(const BInteger& param : _trid_21) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.Update(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(dependentInvariant.find(copiedState) == dependentInvariant.end()) {
-                    dependentInvariant.insert({copiedState, invariantDependency["Update"]});
-                }
-                if(dependentGuard.find(copiedState) == dependentGuard.end()) {
-                    dependentGuard.insert({copiedState, guardDependency["Update"]});
-                }
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "Update"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
+        ModelChecker(CAN_BUS_tlc::Type type, int threads, bool isCaching, bool isDebug) {
+            this->type = type;
+            this->threads = threads;
+            this->isCaching = isCaching;
+            this->isDebug = isDebug;
+            this->invariantViolatedBool = false;
+            this->deadlockDetected = false;
+            this->transitions = 0;
         }
 
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            guardCache.insert({state, newCache});
-        }
-    } else {
-        if(state._tr_T1Evaluate()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1Evaluate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1Evaluate"});
-                }
+        void modelCheck() {
+            if (isDebug) {
+                cout << "Starting Modelchecking, STRATEGY=" << type << ", THREADS=" << threads << ", CACHING=" << isCaching << "\n";
             }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_2 = state._tr_T1Calculate();
-        for(const BInteger& param : _trid_2) {
-            BInteger _tmp_1 = param;
 
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1Calculate(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1Calculate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_3 = state._tr_T1SendResult();
-        for(const BTuple<BInteger, BInteger >& param : _trid_3) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1SendResult(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1SendResult"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_4 = state._tr_T1Wait();
-        for(const BInteger& param : _trid_4) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T1Wait(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T1Wait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T2Evaluate()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Evaluate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Evaluate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_6 = state._tr_T2ReadBus();
-        for(const BTuple<BInteger, BInteger >& param : _trid_6) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2ReadBus(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2ReadBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T2Reset()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Reset();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Reset"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T2Complete()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Complete();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Complete"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus();
-        for(const BInteger& param : _trid_9) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2ReleaseBus(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2ReleaseBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T2Calculate()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Calculate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Calculate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_11 = state._tr_T2WriteBus();
-        for(const BTuple<BInteger, BInteger >& param : _trid_11) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2WriteBus(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2WriteBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_12 = state._tr_T2Wait();
-        for(const BInteger& param : _trid_12) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T2Wait(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T2Wait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T3Initiate()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Initiate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Initiate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T3Evaluate()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Evaluate();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Evaluate"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_15 = state._tr_T3writebus();
-        for(const BTuple<BInteger, BInteger >& param : _trid_15) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3writebus(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3writebus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BTuple<BInteger, BInteger >> _trid_16 = state._tr_T3Read();
-        for(const BTuple<BInteger, BInteger >& param : _trid_16) {
-            BInteger _tmp_1 = param.projection2();
-            BInteger _tmp_2 = param.projection1();
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Read(_tmp_2, _tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Read"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T3Poll()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Poll();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Poll"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus();
-        for(const BInteger& param : _trid_18) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3ReleaseBus(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3ReleaseBus"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T3Wait()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3Wait();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3Wait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        if(state._tr_T3ReEnableWait()) {
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.T3ReEnableWait();
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "T3ReEnableWait"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-        BSet<BInteger> _trid_21 = state._tr_Update();
-        for(const BInteger& param : _trid_21) {
-            BInteger _tmp_1 = param;
-
-            CAN_BUS_tlc copiedState = state._copy();
-            copiedState.Update(_tmp_1);
-            {
-                std::unique_lock<std::mutex> lock(guardMutex);
-                if(parents.find(copiedState) == parents.end()) {
-                    parents.insert({copiedState, state});
-                }
-                if(stateAccessedVia.find(copiedState) == stateAccessedVia.end()) {
-                    stateAccessedVia.insert({copiedState, "Update"});
-                }
-            }
-            result.insert(copiedState);
-            transitions += 1;
-        }
-
-    }
-    return result;
-}
-
-static void printResult(int states, int transitions, bool deadlockDetected, bool invariantViolated, CAN_BUS_tlc& counterExampleState, std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& parents, std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& stateAccessedVia) {
-    if(deadlockDetected || invariantViolated) {
-        if(deadlockDetected) {
-            cout << "DEADLOCK DETECTED" << "\n";
-        }
-        if(invariantViolated) {
-            cout << "INVARIANT VIOLATED" << "\n";
-        }
-        cout << "COUNTER EXAMPLE TRACE: " << "\n";
-
-        CAN_BUS_tlc currentState = counterExampleState;
-        std::string trace = "";
-        while(parents.find(currentState) != parents.end()) {
-            std::stringstream stringStream;
-            stringStream << currentState;
-            trace.insert(0, stringStream.str());
-            trace.insert(0, "\n");
-            trace.insert(0, stateAccessedVia[currentState]);
-            trace.insert(0, "\n\n");
-            currentState = parents[currentState];
-        }
-        cout << trace;
-    }
-
-    if(!deadlockDetected && !invariantViolated) {
-        cout << "MODEL CHECKING SUCCESSFUL" << "\n";
-    }
-    cout << "Number of States: " << states << "\n";
-    cout << "Number of Transitions: " << transitions << "\n";
-}
-
-static bool checkInvariants(std::mutex& guardMutex, const CAN_BUS_tlc& state, bool isCaching, std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>& dependentInvariant) {
-    if(isCaching) {
-        std::unordered_set<string> dependentInvariantsOfState;
-        {
-            std::unique_lock<std::mutex> lock(guardMutex);
-            dependentInvariantsOfState = dependentInvariant[state];
-        }
-        if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_1()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_2()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_3()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_4()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_5()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_6()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_7()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_8()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_9()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_10()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_11()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_12()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_13()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_14()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_15()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_16()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_17()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_18()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_19()) {
-                return false;
-            }
-        }
-        if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
-            if(!state._check_inv_20()) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return !(!state._check_inv_1() || !state._check_inv_2() || !state._check_inv_3() || !state._check_inv_4() || !state._check_inv_5() || !state._check_inv_6() || !state._check_inv_7() || !state._check_inv_8() || !state._check_inv_9() || !state._check_inv_10() || !state._check_inv_11() || !state._check_inv_12() || !state._check_inv_13() || !state._check_inv_14() || !state._check_inv_15() || !state._check_inv_16() || !state._check_inv_17() || !state._check_inv_18() || !state._check_inv_19() || !state._check_inv_20());
-}
-
-static CAN_BUS_tlc next(std::list<CAN_BUS_tlc>& collection, std::mutex& mutex, CAN_BUS_tlc::Type type) {
-    std::unique_lock<std::mutex> lock(mutex);
-    switch(type) {
-        case CAN_BUS_tlc::BFS: {
-            CAN_BUS_tlc state = collection.front();
-            collection.pop_front();
-            return state;
-        }
-        case CAN_BUS_tlc::DFS: {
-            CAN_BUS_tlc state = collection.back();
-            collection.pop_back();
-            return state;
-        }
-        case CAN_BUS_tlc::MIXED: {
-            if(collection.size() % 2 == 0) {
-                CAN_BUS_tlc state = collection.front();
-                collection.pop_front();
-                return state;
+            if (threads <= 1) {
+                modelCheckSingleThreaded();
             } else {
-                CAN_BUS_tlc state = collection.back();
-                collection.pop_back();
-                return state;
-            }
-        }
-    };
-}
-
-static void modelCheckSingleThreaded(CAN_BUS_tlc::Type type, bool isCaching) {
-    std::mutex mutex;
-    std::mutex guardMutex;
-
-    CAN_BUS_tlc machine = CAN_BUS_tlc();
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> states = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<CAN_BUS_tlc> collection = std::list<CAN_BUS_tlc>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> dependentInvariant;
-    std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> dependentGuard;
-    std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> guardCache;
-    std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> parents;
-    std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"T1Wait", {"_check_inv_10", "_check_inv_4"}});
-        invariantDependency.insert({"T1Calculate", {"_check_inv_7", "_check_inv_4"}});
-        invariantDependency.insert({"T1SendResult", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_4"}});
-        invariantDependency.insert({"T2ReadBus", {"_check_inv_17", "_check_inv_5", "_check_inv_9"}});
-        invariantDependency.insert({"T2Reset", {"_check_inv_1", "_check_inv_5", "_check_inv_8", "_check_inv_12"}});
-        invariantDependency.insert({"T2Complete", {"_check_inv_5", "_check_inv_12"}});
-        invariantDependency.insert({"T2Evaluate", {"_check_inv_5", "_check_inv_11"}});
-        invariantDependency.insert({"T3Evaluate", {"_check_inv_6"}});
-        invariantDependency.insert({"T3ReleaseBus", {"_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20"}});
-        invariantDependency.insert({"T1Evaluate", {"_check_inv_10", "_check_inv_4"}});
-        invariantDependency.insert({"T3Initiate", {"_check_inv_3", "_check_inv_6"}});
-        invariantDependency.insert({"T3ReEnableWait", {"_check_inv_2", "_check_inv_3", "_check_inv_6"}});
-        invariantDependency.insert({"T3writebus", {"_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20"}});
-        invariantDependency.insert({"Update", {"_check_inv_2", "_check_inv_10", "_check_inv_14", "_check_inv_13", "_check_inv_11"}});
-        invariantDependency.insert({"T2ReleaseBus", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5"}});
-        invariantDependency.insert({"T2Wait", {"_check_inv_5", "_check_inv_11"}});
-        invariantDependency.insert({"T3Poll", {"_check_inv_6"}});
-        invariantDependency.insert({"T2Calculate", {"_check_inv_1", "_check_inv_5"}});
-        invariantDependency.insert({"T3Read", {"_check_inv_16", "_check_inv_15", "_check_inv_6"}});
-        invariantDependency.insert({"T3Wait", {"_check_inv_2", "_check_inv_6"}});
-        invariantDependency.insert({"T2WriteBus", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5"}});
-        guardDependency.insert({"T1Wait", {"_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T1Calculate", {"_tr_T1Evaluate", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T1SendResult", {"_tr_T1Evaluate", "_tr_T2ReleaseBus", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T2ReadBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Reset", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Complete", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Evaluate", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T3Evaluate", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3ReleaseBus", {"_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T1Evaluate", {"_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T3Initiate", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3ReEnableWait", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3writebus", {"_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"Update", {"_tr_T1Evaluate", "_tr_T3Read", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T3Evaluate", "_tr_T3Initiate"}});
-        guardDependency.insert({"T2ReleaseBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Wait", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T3Poll", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T2Calculate", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T3Read", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3Wait", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T2WriteBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    CAN_BUS_tlc counterExampleState;
-
-    while(!collection.empty() && !stopThreads) {
-        CAN_BUS_tlc state = next(collection, mutex, type);
-
-        std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-        for(auto nextState : nextStates) {
-            if(states.find(nextState) == states.end()) {
-                numberStates += 1;
-                states.insert(nextState);
-                collection.push_back(nextState);
-                if(numberStates % 50000 == 0) {
-                    cout << "VISITED STATES: " << numberStates << "\n";
-                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
-                    cout << "-------------------" << "\n";
-                }
+                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                modelCheckMultiThreaded(workers);
             }
         }
 
-        if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-            invariantViolated = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+        void modelCheckSingleThreaded() {
+            CAN_BUS_tlc machine = CAN_BUS_tlc();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
 
-        if(nextStates.empty()) {
-            deadlockDetected = true;
-            stopThreads = true;
-            counterExampleState = state;
-        }
+            if (isCaching) {
+                initCache(machine);
+            }
 
-    }
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+            while(!unvisitedStates.empty()) {
+                CAN_BUS_tlc state = next();
 
-static void modelCheckMultiThreaded(CAN_BUS_tlc::Type type, int threads, bool isCaching) {
-    std::mutex mutex;
-    std::mutex waitMutex;
-    std::mutex guardMutex;
-    std::condition_variable waitCV;
+                std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(state);
+                transitions += nextStates.size();
 
-    CAN_BUS_tlc machine = CAN_BUS_tlc();
-
-
-    std::atomic<bool> invariantViolated;
-    invariantViolated = false;
-    std::atomic<bool> deadlockDetected;
-    deadlockDetected = false;
-    std::atomic<bool> stopThreads;
-    stopThreads = false;
-
-    std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> states = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
-    states.insert(machine);
-    std::atomic<int> numberStates;
-    numberStates = 1;
-
-    std::list<CAN_BUS_tlc> collection = std::list<CAN_BUS_tlc>();
-    collection.push_back(machine);
-
-    std::atomic<int> transitions;
-    transitions = 0;
-
-    std::atomic<int> possibleQueueChanges;
-    possibleQueueChanges = 0;
-
-    std::atomic<bool> waitFlag;
-    waitFlag = true;
-
-    std::unordered_map<string, std::unordered_set<string>> invariantDependency;
-    std::unordered_map<string, std::unordered_set<string>> guardDependency;
-    std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> dependentInvariant;
-    std::unordered_map<CAN_BUS_tlc, std::unordered_set<string>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> dependentGuard;
-    std::unordered_map<CAN_BUS_tlc, immer::map<string, boost::any>, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> guardCache;
-    std::unordered_map<CAN_BUS_tlc, CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> parents;
-    std::unordered_map<CAN_BUS_tlc, string, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> stateAccessedVia;
-    if(isCaching) {
-        invariantDependency.insert({"T1Wait", {"_check_inv_10", "_check_inv_4"}});
-        invariantDependency.insert({"T1Calculate", {"_check_inv_7", "_check_inv_4"}});
-        invariantDependency.insert({"T1SendResult", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_4"}});
-        invariantDependency.insert({"T2ReadBus", {"_check_inv_17", "_check_inv_5", "_check_inv_9"}});
-        invariantDependency.insert({"T2Reset", {"_check_inv_1", "_check_inv_5", "_check_inv_8", "_check_inv_12"}});
-        invariantDependency.insert({"T2Complete", {"_check_inv_5", "_check_inv_12"}});
-        invariantDependency.insert({"T2Evaluate", {"_check_inv_5", "_check_inv_11"}});
-        invariantDependency.insert({"T3Evaluate", {"_check_inv_6"}});
-        invariantDependency.insert({"T3ReleaseBus", {"_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20"}});
-        invariantDependency.insert({"T1Evaluate", {"_check_inv_10", "_check_inv_4"}});
-        invariantDependency.insert({"T3Initiate", {"_check_inv_3", "_check_inv_6"}});
-        invariantDependency.insert({"T3ReEnableWait", {"_check_inv_2", "_check_inv_3", "_check_inv_6"}});
-        invariantDependency.insert({"T3writebus", {"_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20"}});
-        invariantDependency.insert({"Update", {"_check_inv_2", "_check_inv_10", "_check_inv_14", "_check_inv_13", "_check_inv_11"}});
-        invariantDependency.insert({"T2ReleaseBus", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5"}});
-        invariantDependency.insert({"T2Wait", {"_check_inv_5", "_check_inv_11"}});
-        invariantDependency.insert({"T3Poll", {"_check_inv_6"}});
-        invariantDependency.insert({"T2Calculate", {"_check_inv_1", "_check_inv_5"}});
-        invariantDependency.insert({"T3Read", {"_check_inv_16", "_check_inv_15", "_check_inv_6"}});
-        invariantDependency.insert({"T3Wait", {"_check_inv_2", "_check_inv_6"}});
-        invariantDependency.insert({"T2WriteBus", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5"}});
-        guardDependency.insert({"T1Wait", {"_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T1Calculate", {"_tr_T1Evaluate", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T1SendResult", {"_tr_T1Evaluate", "_tr_T2ReleaseBus", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T2ReadBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Reset", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Complete", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Evaluate", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T3Evaluate", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3ReleaseBus", {"_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T1Evaluate", {"_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
-        guardDependency.insert({"T3Initiate", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3ReEnableWait", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3writebus", {"_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"Update", {"_tr_T1Evaluate", "_tr_T3Read", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T3Evaluate", "_tr_T3Initiate"}});
-        guardDependency.insert({"T2ReleaseBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T2Wait", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T3Poll", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T2Calculate", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        guardDependency.insert({"T3Read", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T3Wait", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
-        guardDependency.insert({"T2WriteBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
-        dependentInvariant.insert({machine, std::unordered_set<string>()});
-    }
-    CAN_BUS_tlc counterExampleState;
-
-    boost::asio::thread_pool workers(threads);
-
-    while(!collection.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
-        CAN_BUS_tlc state = next(collection, mutex, type);
-        std::packaged_task<void()> task([&, state] {
-            std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(guardMutex, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-
-            for(auto nextState : nextStates) {
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
-                        numberStates += 1;
                         states.insert(nextState);
-                        collection.push_back(nextState);
-                        if(numberStates % 50000 == 0) {
-                            cout << "VISITED STATES: " << numberStates << "\n";
+                        parents.insert({nextState, state});
+                        unvisitedStates.push_back(nextState);
+                        if(states.size() % 50000 == 0) {
+                            cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
                         }
                     }
                 }
+
+                if(invariantViolated(state)) {
+                    invariantViolatedBool = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+                if(nextStates.empty()) {
+                    deadlockDetected = true;
+                    counterExampleState = state;
+                    break;
+                }
+
+            }
+            printResult();
+        }
+
+        void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
+            CAN_BUS_tlc machine = CAN_BUS_tlc();
+            states.insert(machine);
+            unvisitedStates.push_back(machine);
+
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
+            std::atomic<int> possibleQueueChanges;
+            possibleQueueChanges = 0;
+
+            if(isCaching) {
+                initCache(machine);
             }
 
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
-                if (!collection.empty() || running == 0) {
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
+                CAN_BUS_tlc state = next();
+                std::packaged_task<void()> task([&, state] {
+                    std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(state);
+                    transitions += nextStates.size();
+
+                    for(auto& nextState : nextStates) {
+                        {
+                            std::unique_lock<std::mutex> lock(mutex);
+                            if(states.find(nextState) == states.end()) {
+                                states.insert(nextState);
+                                parents.insert({nextState, state});
+                                unvisitedStates.push_back(nextState); // TODO: sync ?
+                                if(isDebug && states.size() % 50000 == 0) {
+                                    cout << "VISITED STATES: " << states.size() << "\n";
+                                    cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
+                                    cout << "-------------------" << "\n";
+                                }
+                            }
+                        }
+                    }
+
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
-                        waitFlag = false;
-                        waitCV.notify_one();
+                        std::unique_lock<std::mutex> lock(mutex);
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
+                                waitCV.notify_one();
+                            }
+                        }
+                    }
+
+                    if(invariantViolated(state)) {
+                        invariantViolatedBool = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                    if(nextStates.empty()) {
+                        deadlockDetected = true;
+                        counterExampleState = state;
+                        stopThreads = true;
+                    }
+
+                });
+
+                waitFlag = true;
+                boost::asio::post(workers, std::move(task));
+
+                {
+                    std::unique_lock<std::mutex> lock(waitMutex);
+                    while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
                     }
                 }
             }
+            workers.join();
+            printResult();
+        }
 
-            if(nextStates.empty()) {
-                deadlockDetected = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
+        void initCache(CAN_BUS_tlc& machine) {
+            invariantDependency.insert({"T1Wait", {"_check_inv_10", "_check_inv_4"}});
+            invariantDependency.insert({"T1Calculate", {"_check_inv_7", "_check_inv_4"}});
+            invariantDependency.insert({"T1SendResult", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_4"}});
+            invariantDependency.insert({"T2ReadBus", {"_check_inv_17", "_check_inv_5", "_check_inv_9"}});
+            invariantDependency.insert({"T2Reset", {"_check_inv_1", "_check_inv_5", "_check_inv_8", "_check_inv_12"}});
+            invariantDependency.insert({"T2Complete", {"_check_inv_5", "_check_inv_12"}});
+            invariantDependency.insert({"T2Evaluate", {"_check_inv_5", "_check_inv_11"}});
+            invariantDependency.insert({"T3Evaluate", {"_check_inv_6"}});
+            invariantDependency.insert({"T3ReleaseBus", {"_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20"}});
+            invariantDependency.insert({"T1Evaluate", {"_check_inv_10", "_check_inv_4"}});
+            invariantDependency.insert({"T3Initiate", {"_check_inv_3", "_check_inv_6"}});
+            invariantDependency.insert({"T3ReEnableWait", {"_check_inv_2", "_check_inv_3", "_check_inv_6"}});
+            invariantDependency.insert({"T3writebus", {"_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20"}});
+            invariantDependency.insert({"Update", {"_check_inv_2", "_check_inv_10", "_check_inv_14", "_check_inv_13", "_check_inv_11"}});
+            invariantDependency.insert({"T2ReleaseBus", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5"}});
+            invariantDependency.insert({"T2Wait", {"_check_inv_5", "_check_inv_11"}});
+            invariantDependency.insert({"T3Poll", {"_check_inv_6"}});
+            invariantDependency.insert({"T2Calculate", {"_check_inv_1", "_check_inv_5"}});
+            invariantDependency.insert({"T3Read", {"_check_inv_16", "_check_inv_15", "_check_inv_6"}});
+            invariantDependency.insert({"T3Wait", {"_check_inv_2", "_check_inv_6"}});
+            invariantDependency.insert({"T2WriteBus", {"_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5"}});
+            invariantDependency.insert({"", {}});
+            guardDependency.insert({"T1Wait", {"_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
+            guardDependency.insert({"T1Calculate", {"_tr_T1Evaluate", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
+            guardDependency.insert({"T1SendResult", {"_tr_T1Evaluate", "_tr_T2ReleaseBus", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
+            guardDependency.insert({"T2ReadBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T2Reset", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T2Complete", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T2Evaluate", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T3Evaluate", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T3ReleaseBus", {"_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T1Evaluate", {"_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait"}});
+            guardDependency.insert({"T3Initiate", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T3ReEnableWait", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T3writebus", {"_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"Update", {"_tr_T1Evaluate", "_tr_T3Read", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T3Evaluate", "_tr_T3Initiate"}});
+            guardDependency.insert({"T2ReleaseBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T2Wait", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T3Poll", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T2Calculate", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+            guardDependency.insert({"T3Read", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T3Wait", {"_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate"}});
+            guardDependency.insert({"T2WriteBus", {"_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait"}});
+        }
 
-            if(!checkInvariants(guardMutex, state, isCaching, dependentInvariant)) {
-                invariantViolated = true;
-                stopThreads = true;
-                counterExampleState = state;
-            }
 
-
-        });
-        waitFlag = true;
-        boost::asio::post(workers, std::move(task));
-
-        {
-            std::unique_lock<std::mutex> lock(waitMutex);
-            if (collection.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
+    private:
+        CAN_BUS_tlc next() {
+            std::unique_lock<std::mutex> lock(mutex);
+            switch(type) {
+                case CAN_BUS_tlc::BFS: {
+                    CAN_BUS_tlc state = unvisitedStates.front();
+                    unvisitedStates.pop_front();
+                    return state;
+                }
+                case CAN_BUS_tlc::DFS: {
+                    CAN_BUS_tlc state = unvisitedStates.back();
+                    unvisitedStates.pop_back();
+                    return state;
+                }
+                case CAN_BUS_tlc::MIXED: {
+                    if(unvisitedStates.size() % 2 == 0) {
+                        CAN_BUS_tlc state = unvisitedStates.front();
+                        unvisitedStates.pop_front();
+                        return state;
+                    } else {
+                        CAN_BUS_tlc state = unvisitedStates.back();
+                        unvisitedStates.pop_back();
+                        return state;
+                    }
+                }
             }
         }
-    }
-    workers.join();
-    printResult(numberStates, transitions, deadlockDetected, invariantViolated, counterExampleState, parents, stateAccessedVia);
-}
+
+        std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> generateNextStates(const CAN_BUS_tlc& state) {
+            std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> result = std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual>();
+            if(state._tr_T1Evaluate(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T1Evaluate"]);
+                copiedState.T1Evaluate();
+                copiedState.stateAccessedVia = "T1Evaluate";
+                result.insert(copiedState);
+            }
+            BSet<BInteger> _trid_2 = state._tr_T1Calculate(isCaching);
+            for(const BInteger& param : _trid_2) {
+                BInteger _tmp_1 = param;
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T1Calculate"]);
+                copiedState.T1Calculate(_tmp_1);
+                copiedState.stateAccessedVia = "T1Calculate";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BInteger, BInteger >> _trid_3 = state._tr_T1SendResult(isCaching);
+            for(const BTuple<BInteger, BInteger >& param : _trid_3) {
+                BInteger _tmp_1 = param.projection2();
+                BInteger _tmp_2 = param.projection1();
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T1SendResult"]);
+                copiedState.T1SendResult(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "T1SendResult";
+                result.insert(copiedState);
+            }
+            BSet<BInteger> _trid_4 = state._tr_T1Wait(isCaching);
+            for(const BInteger& param : _trid_4) {
+                BInteger _tmp_1 = param;
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T1Wait"]);
+                copiedState.T1Wait(_tmp_1);
+                copiedState.stateAccessedVia = "T1Wait";
+                result.insert(copiedState);
+            }
+            if(state._tr_T2Evaluate(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Evaluate"]);
+                copiedState.T2Evaluate();
+                copiedState.stateAccessedVia = "T2Evaluate";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BInteger, BInteger >> _trid_6 = state._tr_T2ReadBus(isCaching);
+            for(const BTuple<BInteger, BInteger >& param : _trid_6) {
+                BInteger _tmp_1 = param.projection2();
+                BInteger _tmp_2 = param.projection1();
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2ReadBus"]);
+                copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "T2ReadBus";
+                result.insert(copiedState);
+            }
+            if(state._tr_T2Reset(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Reset"]);
+                copiedState.T2Reset();
+                copiedState.stateAccessedVia = "T2Reset";
+                result.insert(copiedState);
+            }
+            if(state._tr_T2Complete(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Complete"]);
+                copiedState.T2Complete();
+                copiedState.stateAccessedVia = "T2Complete";
+                result.insert(copiedState);
+            }
+            BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus(isCaching);
+            for(const BInteger& param : _trid_9) {
+                BInteger _tmp_1 = param;
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2ReleaseBus"]);
+                copiedState.T2ReleaseBus(_tmp_1);
+                copiedState.stateAccessedVia = "T2ReleaseBus";
+                result.insert(copiedState);
+            }
+            if(state._tr_T2Calculate(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Calculate"]);
+                copiedState.T2Calculate();
+                copiedState.stateAccessedVia = "T2Calculate";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BInteger, BInteger >> _trid_11 = state._tr_T2WriteBus(isCaching);
+            for(const BTuple<BInteger, BInteger >& param : _trid_11) {
+                BInteger _tmp_1 = param.projection2();
+                BInteger _tmp_2 = param.projection1();
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2WriteBus"]);
+                copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "T2WriteBus";
+                result.insert(copiedState);
+            }
+            BSet<BInteger> _trid_12 = state._tr_T2Wait(isCaching);
+            for(const BInteger& param : _trid_12) {
+                BInteger _tmp_1 = param;
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Wait"]);
+                copiedState.T2Wait(_tmp_1);
+                copiedState.stateAccessedVia = "T2Wait";
+                result.insert(copiedState);
+            }
+            if(state._tr_T3Initiate(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Initiate"]);
+                copiedState.T3Initiate();
+                copiedState.stateAccessedVia = "T3Initiate";
+                result.insert(copiedState);
+            }
+            if(state._tr_T3Evaluate(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Evaluate"]);
+                copiedState.T3Evaluate();
+                copiedState.stateAccessedVia = "T3Evaluate";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BInteger, BInteger >> _trid_15 = state._tr_T3writebus(isCaching);
+            for(const BTuple<BInteger, BInteger >& param : _trid_15) {
+                BInteger _tmp_1 = param.projection2();
+                BInteger _tmp_2 = param.projection1();
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3writebus"]);
+                copiedState.T3writebus(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "T3writebus";
+                result.insert(copiedState);
+            }
+            BSet<BTuple<BInteger, BInteger >> _trid_16 = state._tr_T3Read(isCaching);
+            for(const BTuple<BInteger, BInteger >& param : _trid_16) {
+                BInteger _tmp_1 = param.projection2();
+                BInteger _tmp_2 = param.projection1();
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Read"]);
+                copiedState.T3Read(_tmp_2, _tmp_1);
+                copiedState.stateAccessedVia = "T3Read";
+                result.insert(copiedState);
+            }
+            if(state._tr_T3Poll(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Poll"]);
+                copiedState.T3Poll();
+                copiedState.stateAccessedVia = "T3Poll";
+                result.insert(copiedState);
+            }
+            BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus(isCaching);
+            for(const BInteger& param : _trid_18) {
+                BInteger _tmp_1 = param;
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3ReleaseBus"]);
+                copiedState.T3ReleaseBus(_tmp_1);
+                copiedState.stateAccessedVia = "T3ReleaseBus";
+                result.insert(copiedState);
+            }
+            if(state._tr_T3Wait(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Wait"]);
+                copiedState.T3Wait();
+                copiedState.stateAccessedVia = "T3Wait";
+                result.insert(copiedState);
+            }
+            if(state._tr_T3ReEnableWait(isCaching)) {
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["T3ReEnableWait"]);
+                copiedState.T3ReEnableWait();
+                copiedState.stateAccessedVia = "T3ReEnableWait";
+                result.insert(copiedState);
+            }
+            BSet<BInteger> _trid_21 = state._tr_Update(isCaching);
+            for(const BInteger& param : _trid_21) {
+                BInteger _tmp_1 = param;
+
+                CAN_BUS_tlc copiedState = state._copy(guardDependency["Update"]);
+                copiedState.Update(_tmp_1);
+                copiedState.stateAccessedVia = "Update";
+                result.insert(copiedState);
+            }
+
+            return result;
+        }
+
+        bool invariantViolated(const CAN_BUS_tlc& state) {
+            if(isCaching) {
+                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_1()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_7()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_8()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_9()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_10()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_11()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_12()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_13()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_14()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_15()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_16()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_17()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_18()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_19()) {
+                        return false;
+                    }
+                }
+                if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_20()) {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20());
+        }
+
+
+        void printResult() {
+            if(deadlockDetected || invariantViolatedBool) {
+                if(deadlockDetected) {
+                    cout << "DEADLOCK DETECTED" << "\n";
+                } else {
+                    cout << "INVARIANT VIOLATED" << "\n";
+                }
+
+                cout << "COUNTER EXAMPLE TRACE: " << "\n";
+
+                std::string trace = "";
+                while(parents.find(counterExampleState) != parents.end()) {
+                    std::stringstream stringStream;
+                    stringStream << counterExampleState;
+                    trace.insert(0, stringStream.str());
+                    trace.insert(0, "\n");
+                    trace.insert(0, counterExampleState.stateAccessedVia);
+                    trace.insert(0, "\n\n");
+                    counterExampleState = parents[counterExampleState];
+                }
+                cout << trace;
+            } else {
+                cout << "MODEL CHECKING SUCCESSFUL" << "\n";
+            }
+
+            cout << "Number of States: " << states.size() << "\n";
+            cout << "Number of Transitions: " << transitions << "\n";
+        }
+};
 
 int main(int argc, char *argv[]) {
     if(argc != 4) {
@@ -2516,11 +1710,12 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    if(threads == 1) {
-        modelCheckSingleThreaded(type, isCaching);
-    } else {
-        modelCheckMultiThreaded(type, threads, isCaching);
-    }
+    bool isDebug = true;
+    // TODO
+
+    ModelChecker modelchecker(type, threads, isCaching, isDebug);
+    modelchecker.modelCheck();
+
     return 0;
 }
 

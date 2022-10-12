@@ -8,7 +8,9 @@ The work for Clojure and C has begun but not continued.
 
 Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Generator_for_High-Level_B
 
-Citation:
+Citations:
+
+- B2Program Paper:
 
 ```
 @InProceedings{b2program,
@@ -20,6 +22,44 @@ Booktitle = {Proceedings {iFM} 2019},
 title = {A Multi-target Code Generator for High-Level B},
 isbn = {978-3-030-34967-7},
 doi = {10.1007/978-3-030-34968-4_25}
+}
+```
+
+- B2Program Validation Documents Paper:
+
+```
+@InProceedings{b2program_js,
+author="Vu, Fabian
+and Happe, Christopher
+and Leuschel, Michael",
+editor="Groote, Jan Friso
+and Huisman, Marieke",
+title="Generating Domain-Specific Interactive Validation Documents",
+booktitle="Formal Methods for Industrial Critical Systems",
+year="2022",
+publisher="Springer International Publishing",
+address="Cham",
+pages="32--49",
+isbn="978-3-031-15008-1"
+}
+```
+
+- B2Program Model Checking Code Generation Paper:
+
+```
+@InProceedings{b2program_mc,
+author="Vu, Fabian
+and Brandt, Dominik
+and Leuschel, Michael",
+editor="Riesco, Adrian
+and Zhang, Min",
+title="Model Checking B Models via High-Level Code Generation",
+booktitle="Formal Methods  and Software Engineering",
+year="2022",
+publisher="Springer International Publishing",
+address="Cham",
+pages="334--351",
+isbn="978-3-031-17244-1"
 }
 ```
 

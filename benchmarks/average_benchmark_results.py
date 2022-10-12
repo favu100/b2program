@@ -6,9 +6,13 @@ file = sys.argv[1]
 print('opening file: ', file)
 
 full_print = True
-if len(sys.argv) > 2 and sys.argv[2].upper() == 'SHORT':
-    print('argv2 provided')
-    full_print = False
+mc = True
+
+for arg in sys.argv[2:]:
+    if arg.upper() == 'SHORT':
+        full_print = False
+    elif arg.upper() == 'NO_MC':
+        mc = False
 
 #      {machine: { (mode: str, threads: int, caching: bool): {times: [], memory: []} }}
 data = {}
@@ -19,7 +23,11 @@ with open(file, 'r') as lines:
         stripped_line = line.strip()
         if stripped_line == '' or stripped_line.startswith('-'):
             continue
-        machine, mode, threads, caching, time, memory = stripped_line.split(' ')
+        machine, mode, threads, caching, time, memory = ('', '', 1, 'False', 0, '')
+        if mc:
+            machine, mode, threads, caching, time, memory = stripped_line.split(' ')
+        else:
+            machine, time, memory = stripped_line.split(' ')
         if machine not in data:
             data[machine] = {}
         params = (mode, int(threads), caching.upper() == 'TRUE')

@@ -1,6 +1,8 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import de.hhu.stups.codegenerator.definitions.SetDefinition;
+import de.hhu.stups.codegenerator.definitions.SetDefinitions;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.types.BType;
@@ -16,6 +18,11 @@ import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public class TypeGenerator {
 
     private final STGroup group;
@@ -28,12 +35,15 @@ public class TypeGenerator {
 
     private RecordStructGenerator recordStructGenerator;
 
+    private final SetDefinitions setDefinitions;
+
     private boolean fromOutside = false;
 
-    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator) {
+    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator, final SetDefinitions setDefinitions) {
         this.group = group;
         this.nameHandler = nameHandler;
         this.machineGenerator = machineGenerator;
+        this.setDefinitions = setDefinitions;
         this.declarationGenerator = null;
     }
 
@@ -120,7 +130,7 @@ public class TypeGenerator {
         if(subType instanceof CoupleType) {
             return generateBRelation((CoupleType) subType);
         } else {
-
+            addSetDefinition(type);
             ST template = group.getInstanceOf("set_type");
             TemplateHandler.add(template, "fromOtherMachine", false);
             if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
@@ -135,10 +145,63 @@ public class TypeGenerator {
     * This function generates code for the subtypes of a relation from the given couple type
     */
     private String generateBRelation(CoupleType type) {
+        addSetDefinition(type);
         ST template = group.getInstanceOf("relation_type");
         TemplateHandler.add(template, "leftType", generate(type.getLeft()));
+        TemplateHandler.add(template, "leftName", declarationGenerator.generateSetEnumName(type.getLeft()));
         TemplateHandler.add(template, "rightType", generate(type.getRight()));
+        TemplateHandler.add(template, "rightName", declarationGenerator.generateSetEnumName(type.getRight()));
         return template.render();
+    }
+
+    public void addSetDefinition(BType type) {
+        if (this.setDefinitions.containsDefinition(type)) return;
+
+        List<String> variants;
+        if (type instanceof SetType) {
+            variants = getTypeVariants(((SetType)type).getSubType());
+        } else if(type instanceof CoupleType) {
+            variants = getTypeVariants(type);
+        } else {
+            throw new RuntimeException("cannot add setDef for type "+type);
+        }
+        SetDefinition setDefinition = new SetDefinition(type, variants);
+        this.setDefinitions.addDefinition(setDefinition);
+    }
+
+    private List<String> getTypeVariants(BType type) {
+        if(type instanceof EnumeratedSetElementType) return ((EnumeratedSetElementType) type).getElements();
+        else if (type instanceof SetType) return getSetVariants((SetType) type);
+        else if (type instanceof CoupleType) return getRelationVariants((CoupleType) type);
+        else if (type instanceof BoolType) return Arrays.asList("BFALSE", "BTRUE"); //TODO: put in template?
+
+        throw new RuntimeException("cannot get Variants for type "+type);
+    }
+
+    public List<String> getSetVariants(SetType type) {
+        if(!this.setDefinitions.containsDefinition(type)) {
+            //TODO: try to generate missing set-types on the fly?
+            throw new RuntimeException("Could not find SetDefinition for type "+type);
+        }
+        ST setElementName = group.getInstanceOf("set_element_name");
+        return this.setDefinitions.getDefinition(type).getSubSets().stream().map(subset -> {
+            setElementName.remove("elements");
+            setElementName.add("elements", subset);
+            return setElementName.render();
+        }).collect(Collectors.toList());
+    }
+
+    public List<String> getRelationVariants(CoupleType relType) {
+        List<String> leftElements = getTypeVariants(relType.getLeft());
+        List<String> rightElements = getTypeVariants(relType.getRight());
+        //TODO: Limit size?
+        ST relElementGenerator = group.getInstanceOf("relation_element_name");
+        return leftElements.stream().flatMap(l ->
+                rightElements.stream().map(r -> {
+                    relElementGenerator.remove("leftElement");
+                    relElementGenerator.remove("rightElement");
+                    return relElementGenerator.add("leftElement", l).add("rightElement", r).render();
+                })).collect(Collectors.toList());
     }
 
     /*

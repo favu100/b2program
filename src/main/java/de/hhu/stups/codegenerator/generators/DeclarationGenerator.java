@@ -2,21 +2,22 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
+import de.hhu.stups.codegenerator.definitions.EnumType;
+import de.hhu.stups.codegenerator.definitions.SetDefinition;
+import de.hhu.stups.codegenerator.definitions.SetDefinitions;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
-import de.prob.parser.ast.types.CoupleType;
-import de.prob.parser.ast.types.SetType;
+import de.prob.parser.ast.types.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class DeclarationGenerator {
 
@@ -36,9 +37,12 @@ public class DeclarationGenerator {
 
     private final DeferredSetAnalyzer deferredSetAnalyzer;
 
+    private final SetDefinitions setDefinitions;
+
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
-                                final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer) {
+                                final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer,
+                                final SetDefinitions setDefinitions) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
@@ -48,6 +52,7 @@ public class DeclarationGenerator {
         this.deferredSetAnalyzer = deferredSetAnalyzer;
         this.setToEnum = new HashMap<>();
         this.enumToMachine = new HashMap<>();
+        this.setDefinitions = setDefinitions;
     }
 
     /*
@@ -238,12 +243,16 @@ public class DeclarationGenerator {
     private String declareEnums(EnumeratedSetDeclarationNode node) {
         importGenerator.addImport(node.getElements().get(0).getType());
         ST enumDeclaration = currentGroup.getInstanceOf("set_enum_declaration");
-        TemplateHandler.add(enumDeclaration, "name", nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        String enumName = nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);
+        TemplateHandler.add(enumDeclaration, "name", enumName);
         List<String> enums = node.getElements().stream()
                 .map(element -> nameHandler.handleEnum(element.getName(), node.getElements().stream().map(DeclarationNode::getName).collect(Collectors.toList())))
                 .collect(Collectors.toList());
         TemplateHandler.add(enumDeclaration, "enums", enums);
 
+        //SetDefinition setDef = new SetDefinition(new EnumeratedSetElementType(enumName, null), enums);
+        //setDef.setName(enumName);
+        //setDefinitions.addDefinition(setDef);
         Map<Integer, String> enumsCounted = enums.stream().collect(Collectors.toMap(enums::indexOf, Function.identity()));
         TemplateHandler.add(enumDeclaration, "enumsCounted", enumsCounted);
         TemplateHandler.add(enumDeclaration, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
@@ -265,13 +274,71 @@ public class DeclarationGenerator {
         return enumDeclaration.render();
     }
 
+    // for embedded code generation, defining sets(/relations) as bit-arrays
+    public List<String> generateSetDefinitions() {
+        return setDefinitions.getSetDefinitions().map(def -> {
+            if (def.getSetType() instanceof CoupleType) return generateRelationDefinition(def);
+            else return generateSetDefinition(def);
+        }).collect(Collectors.toList());
+    }
+
+    private String generateSetDefinition(SetDefinition setDefinition) {
+        ST declTemplate = currentGroup.getInstanceOf("enum_set_declaration");
+        SetType setType = (SetType) setDefinition.getSetType();
+        declTemplate.add("name", generateSetEnumName(setType));
+        declTemplate.add("elementType", generateSetEnumName(setType.getSubType()));
+        declTemplate.add("elementVariantsCount", setDefinition.getElements().size());
+        declTemplate.add("idx2elements", setDefinition.subSetsIndexed());
+        declTemplate.add("idx2bools", setDefinition.subSetVecsIndexed());
+        return declTemplate.render();
+    }
+
+    private String generateRelationDefinition(SetDefinition setDefinition) {
+        ST declTemplate = currentGroup.getInstanceOf("relation_declaration");
+        CoupleType setType = (CoupleType) setDefinition.getSetType();
+        declTemplate.add("name", generateSetEnumName(setType));
+        declTemplate.add("leftType", typeGenerator.generate(setType.getLeft()));
+        declTemplate.add("rightType", typeGenerator.generate(setType.getRight()));
+        declTemplate.add("elements", setDefinition.elementsIndexed());
+        return declTemplate.render();
+    }
+
+    public String generateSetEnumName(BType type) {
+        if (type instanceof EnumeratedSetElementType) return ((EnumeratedSetElementType)type).getSetName();
+        if (type instanceof BoolType) return "BOOL"; //TODO?
+
+        SetDefinition setDef = setDefinitions.getDefinition(type);
+        if (setDef.getName() != null) return setDef.getName();
+        String result;
+        if(type instanceof CoupleType) {
+            String leftName = generateSetEnumName(((CoupleType) type).getLeft());
+            String rightName = generateSetEnumName(((CoupleType) type).getRight());
+            ST relationName = currentGroup.getInstanceOf("relation_name");
+            relationName.add("leftType", leftName);
+            relationName.add("rightType", rightName);
+            result = relationName.render();
+        } else if(type instanceof SetType) {
+            String innerName = generateSetEnumName(((SetType) type).getSubType());
+            ST setName = currentGroup.getInstanceOf("set_name");
+            setName.add("elementType", innerName);
+            result = setName.render();
+        } else {
+            throw new RuntimeException("cannot generate name for type " + type);
+        }
+        setDef.setName(result);
+        return result;
+    }
+
     /*
     * This function generates code with creating a BSet for an enumerated set from the belonging AST node and the belonging template.
     */
     public String visitEnumeratedSetDeclarationNode(EnumeratedSetDeclarationNode node, String templateName) {
-        importGenerator.addImport(node.getSetDeclarationNode().getType());
+        BType setType = node.getSetDeclarationNode().getType();
+        this.typeGenerator.addSetDefinition(setType);
+        importGenerator.addImport(setType);
         ST setDeclaration = currentGroup.getInstanceOf(templateName);
-        TemplateHandler.add(setDeclaration, "type", nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        String type = nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);
+        TemplateHandler.add(setDeclaration, "type", type);
         TemplateHandler.add(setDeclaration, "identifier", nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES));
         List<String> enums = node.getElements().stream()
                 .map(declaration -> callEnum(node.getSetDeclarationNode().getName(), declaration))

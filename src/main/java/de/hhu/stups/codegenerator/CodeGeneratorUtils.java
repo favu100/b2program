@@ -25,6 +25,7 @@ public class CodeGeneratorUtils {
     private static final STGroup TS_GROUP;
     private static final STGroup PL_GROUP;
     private static final STGroup RS_GROUP;
+    private static final STGroup RS_E_GROUP;
 
     private static final Map<GeneratorMode, STGroup> TEMPLATE_MAP = new HashMap<>();
 
@@ -37,7 +38,9 @@ public class CodeGeneratorUtils {
         TS_GROUP = new STGroupFile("de/hhu/stups/codegenerator/TsTemplate.stg");
         PL_GROUP = new STGroupFile("de/hhu/stups/codegenerator/PrologTemplate.stg");
         RS_GROUP = new STGroupFile("de/hhu/stups/codegenerator/RustTemplate.stg");
+        RS_E_GROUP = new STGroupFile("de/hhu/stups/codegenerator/RustTemplate_e.stg");
         RS_GROUP.registerRenderer(String.class, new StringRenderer());
+        RS_E_GROUP.registerRenderer(String.class, new StringRenderer());
         TEMPLATE_MAP.put(JAVA, JAVA_GROUP);
         TEMPLATE_MAP.put(C, C_GROUP);
         TEMPLATE_MAP.put(CPP, CPP_GROUP);
@@ -46,6 +49,7 @@ public class CodeGeneratorUtils {
         TEMPLATE_MAP.put(TS, TS_GROUP);
         TEMPLATE_MAP.put(PL, PL_GROUP);
         TEMPLATE_MAP.put(RS, RS_GROUP);
+        TEMPLATE_MAP.put(RS_E, RS_E_GROUP);
     }
 
     public static STGroup getGroup(GeneratorMode mode) {

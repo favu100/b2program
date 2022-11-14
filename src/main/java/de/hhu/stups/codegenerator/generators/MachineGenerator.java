@@ -4,6 +4,7 @@ import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
+import de.hhu.stups.codegenerator.definitions.SetDefinitions;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
@@ -144,6 +145,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private Set<String> enumIdentifier;
 
+	private final SetDefinitions setDefinitions;
+
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
 							boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine,
 							boolean forVisualisation, String serverLink) {
@@ -161,9 +164,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 				e.printStackTrace();
 			}
 		}
+		this.setDefinitions = new SetDefinitions(currentGroup.getInstanceOf("relation_name"));
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
-		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
+		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this, setDefinitions);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.backtrackingGenerator = new BacktrackingGenerator(currentGroup);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, backtrackingGenerator, useConstraintSolving);
@@ -171,7 +175,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, this, nameHandler);
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
-		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);
+		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer, setDefinitions);
 		this.expressionGenerator = new ExpressionGenerator(mode, currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
 				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler, infiniteSetGenerator);
@@ -303,8 +307,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	private void generateBody(MachineNode node, ST machine) {
 		Set<String> identifier = new HashSet<>();
-		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
 		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node, identifier));
+		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
 		enumIdentifier.addAll(identifier);
 		TemplateHandler.add(machine, "enum_imports", importGenerator.getImportedEnums());
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));
@@ -340,6 +344,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "choicePointOperationTriggeredResets", backtrackingGenerator.getChoicePointOperationTriggeredResets());
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
+		TemplateHandler.add(machine, "setDefinitions", declarationGenerator.generateSetDefinitions());
 	}
 
 	/*

@@ -124,7 +124,6 @@ public class SubstitutionGenerator {
 
         String body = "";
         if (node.getInitialisation() != null) body = machineGenerator.visitSubstitutionNode(node.getInitialisation(), null);
-        //TODO: add empty templates in other languages instead of checking for existence
         List<String> setInitializations = declarationGenerator.generateSetDeclarations(node, "set_initialization");
         if (setInitializations.size() > 0) TemplateHandler.add(initialization, "set_initializations", String.join("\n", setInitializations));
         TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());

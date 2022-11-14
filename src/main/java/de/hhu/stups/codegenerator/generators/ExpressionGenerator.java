@@ -832,8 +832,12 @@ public class ExpressionGenerator {
     */
     private String generateCartesianProduct(List<String> expressionList, BType leftType, BType rightType) {
         ST identity = currentGroup.getInstanceOf("cartesian_product");
+        typeGenerator.addSetDefinition(new SetType(leftType));
         TemplateHandler.add(identity, "leftType", typeGenerator.generate(leftType));
+        TemplateHandler.add(identity, "leftName", declarationGenerator.generateSetEnumName(leftType));
+        typeGenerator.addSetDefinition(new SetType(rightType));
         TemplateHandler.add(identity, "rightType", typeGenerator.generate(rightType));
+        TemplateHandler.add(identity, "rightName", declarationGenerator.generateSetEnumName(rightType));
         TemplateHandler.add(identity, "stateCount", machineGenerator.getCurrentStateCount());
         TemplateHandler.add(identity, "arg1", expressionList.get(0));
         TemplateHandler.add(identity, "arg2", expressionList.get(1));
@@ -882,6 +886,7 @@ public class ExpressionGenerator {
         if(subType instanceof CoupleType) {
             TemplateHandler.add(enumeration, "leftType", typeGenerator.generate(((CoupleType) subType).getLeft()));
             TemplateHandler.add(enumeration, "rightType", typeGenerator.generate(((CoupleType) subType).getRight()));
+            TemplateHandler.add(enumeration, "relationName", declarationGenerator.generateSetEnumName(subType));
         } else if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
             TemplateHandler.add(enumeration, "type", typeGenerator.generate(subType));
         }

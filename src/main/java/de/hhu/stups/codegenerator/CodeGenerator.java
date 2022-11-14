@@ -141,7 +141,9 @@ public class CodeGenerator {
 			mode = GeneratorMode.PL;
 		} else if("rs".equals(languageOption)) {
 			mode = GeneratorMode.RS;
-		} else {
+		} else if("rs_e".equals(languageOption)) {
+		    mode = GeneratorMode.RS_E;
+	    } else {
 			throw new RuntimeException(String.format("Wrong argument '%s' for language (must be java, python, c, cpp, clojure, ts, rs)", languageOption));
 		}
 		return mode;

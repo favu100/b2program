@@ -77,6 +77,7 @@ public class CodeGenerator {
 		String serverLink = cmd.getOptionValue("sl") == null ? "." : cmd.getOptionValue("sl");
 		String simulationFile = cmd.getOptionValue("sim") == null ? "" : cmd.getOptionValue("sim");
 		String addition = cmd.getOptionValue("a");
+		boolean embedded = cmd.hasOption("e");
 
 		checkPath(path);
 		checkIntegerRange(useBigInteger, minint, maxint);
@@ -87,7 +88,7 @@ public class CodeGenerator {
 		if(forVisualisation && mode != GeneratorMode.TS) {
 			throw new CodeGenerationException("Generating a visualisation is only supported for TypeScript");
 		}
-		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile, serverLink);
+		codeGenerator.generate(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, true, addition, false, forVisualisation, visualisationFile, serverLink, embedded);
 
 		if(!simulationFile.isEmpty()) {
 			SimulationRewriter.rewriteConfigurationFromJSON(new File(simulationFile), new File(simulationFile.replaceAll(".json", "_new.json")));
@@ -97,6 +98,7 @@ public class CodeGenerator {
 	private static CommandLine processArgs(String[] args) {
 		options = new Options();
 		options.addOption("l", "language", true, "Target Language");
+		options.addOption("e", "embedded", false, "Toggle embedded code generation (no std)");
 		options.addOption("bi", "big_integer", true, "Use Big Integer");
 		options.addOption("min", "minint", true, "MININT");
 		options.addOption("max", "maxint", true, "MAXINT");
@@ -114,7 +116,7 @@ public class CodeGenerator {
 			return parser.parse(options, args);
 		} catch (ParseException e) {
 			System.out.println(e.getMessage());
-			new HelpFormatter().printHelp("{-l <language> -bi <use_big_integer> -min <minint> -max <maxint> -dss <deferred_set_size> -cs <use_constraint_solving> -mc <forModelChecking> -f <filename> -v <visualisation> -a <additionalMain>} | -sim <simb_file>", options);
+			new HelpFormatter().printHelp("{-l <language> [-e] -bi <use_big_integer> -min <minint> -max <maxint> -dss <deferred_set_size> -cs <use_constraint_solving> -mc <forModelChecking> -f <filename> -v <visualisation> -a <additionalMain>} | -sim <simb_file>", options);
 		}
 		return null;
 	}
@@ -141,9 +143,7 @@ public class CodeGenerator {
 			mode = GeneratorMode.PL;
 		} else if("rs".equals(languageOption)) {
 			mode = GeneratorMode.RS;
-		} else if("rs_e".equals(languageOption)) {
-		    mode = GeneratorMode.RS_E;
-	    } else {
+		} else {
 			throw new RuntimeException(String.format("Wrong argument '%s' for language (must be java, python, c, cpp, clojure, ts, rs)", languageOption));
 		}
 		return mode;
@@ -219,15 +219,15 @@ public class CodeGenerator {
 														 boolean isMain, String addition, boolean isIncludedMachine,
 														 boolean forVisualisation,
 														 String visualisationFile,
-							   							 String serverLink) throws CodeGenerationException, IOException {
+							   							 String serverLink, boolean embedded) throws CodeGenerationException, IOException {
 		if(isMain) {
 			paths.clear();
 		}
 
 		BProject project = parseProject(path);
 		Path additionPath = Paths.get(path.getParent().toString(), addition != null ? addition: "");
-		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, forVisualisation, serverLink);
-		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile, project, serverLink));
+		machineReferenceGenerator.generateIncludedMachines(project, path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, forVisualisation, serverLink, embedded);
+		paths.add(generateCode(path, mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking, useConstraintSolving, project.getMainMachine(), addition != null ? additionPath : null, isIncludedMachine, forVisualisation, visualisationFile, project, serverLink, embedded));
 		return paths;
 	}
 
@@ -238,10 +238,10 @@ public class CodeGenerator {
 							  String minint, String maxint, String deferredSetSize,
 							  boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
 							  Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile,
-							  BProject project, String serverLink) throws IOException {
+							  BProject project, String serverLink, boolean embedded) throws IOException {
 		MachineGenerator generator =
 				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
-									useConstraintSolving, addition, isIncludedMachine, forVisualisation, serverLink);
+									useConstraintSolving, addition, isIncludedMachine, forVisualisation, serverLink, embedded);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
@@ -320,7 +320,7 @@ public class CodeGenerator {
 	/*
 	* This function executes parsing and semantic checking on a project
 	*/
-	private BProject parseProject(Path path) throws CodeGenerationException {
+	public static BProject parseProject(Path path) throws CodeGenerationException {
 		BProject project;
 		try {
 			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile());

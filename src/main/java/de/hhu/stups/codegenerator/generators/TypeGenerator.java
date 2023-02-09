@@ -18,6 +18,7 @@ import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -47,10 +48,12 @@ public class TypeGenerator {
         this.declarationGenerator = null;
     }
 
-    /*
+    public String generate(BType type) { return this.generate(type, false); }
+    /**
     * This function generates code for a type with the given type and the information whether the type is generated for casting an object
-    */
-    public String generate(BType type) {
+    * @param constant: indicates if this type is used for a constant, used to optimize embedded code-generation
+    **/
+    public String generate(BType type, boolean constant) {
         if(type instanceof IntegerType) {
             return generateBInteger();
         } else if(type instanceof BoolType) {
@@ -58,7 +61,7 @@ public class TypeGenerator {
         } else if(type instanceof StringType) {
             return generateBString();
         } else if(type instanceof SetType) {
-            return generateBSet((SetType) type);
+            return generateBSet((SetType) type, constant);
         } else if(type instanceof EnumeratedSetElementType) {
             return generateEnumeratedSetElement((EnumeratedSetElementType) type);
         } else if(type instanceof DeferredSetElementType) {
@@ -125,12 +128,12 @@ public class TypeGenerator {
     /*
     * This function generates code for BSet and its subtypes from the given type
     */
-    private String generateBSet(SetType type) {
+    private String generateBSet(SetType type, boolean constant) {
         BType subType = type.getSubType();
         if(subType instanceof CoupleType) {
-            return generateBRelation((CoupleType) subType);
+            return generateBRelation((CoupleType) subType, constant);
         } else {
-            addSetDefinition(type);
+            addSetDefinition(subType, constant);
             ST template = group.getInstanceOf("set_type");
             TemplateHandler.add(template, "fromOtherMachine", false);
             if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
@@ -144,29 +147,48 @@ public class TypeGenerator {
     /*
     * This function generates code for the subtypes of a relation from the given couple type
     */
-    private String generateBRelation(CoupleType type) {
-        addSetDefinition(type);
+    private String generateBRelation(CoupleType type, boolean constant) {
         ST template = group.getInstanceOf("relation_type");
-        TemplateHandler.add(template, "leftType", generate(type.getLeft()));
+        TemplateHandler.add(template, "leftType", generate(type.getLeft(), constant));
+        addSetDefinition(type.getLeft(), constant);
         TemplateHandler.add(template, "leftName", declarationGenerator.generateSetEnumName(type.getLeft()));
-        TemplateHandler.add(template, "rightType", generate(type.getRight()));
+        TemplateHandler.add(template, "rightType", generate(type.getRight(), constant));
+        addSetDefinition(type.getRight(), constant);
         TemplateHandler.add(template, "rightName", declarationGenerator.generateSetEnumName(type.getRight()));
         return template.render();
     }
 
-    public void addSetDefinition(BType type) {
-        if (this.setDefinitions.containsDefinition(type)) return;
+    public SetDefinition addSetDefinition(BType type) { return this.addSetDefinition(type, false); }
+    public SetDefinition addSetDefinition(BType type, boolean constant) {
+        if (this.setDefinitions.containsDefinition(type)) return this.setDefinitions.getDefinition(type); //TODO: const check
 
         List<String> variants;
+        String name = null;
         if (type instanceof SetType) {
-            variants = getTypeVariants(((SetType)type).getSubType());
-        } else if(type instanceof CoupleType) {
+            if (constant) {
+                variants = new ArrayList<>();
+            } else {
+                BType subType = ((SetType) type).getSubType();
+                SetDefinition subDefinition = this.setDefinitions.getDefinition(subType);
+                if (subDefinition == null) subDefinition = addSetDefinition(subType);
+                SetDefinition result = subDefinition.getPowSetDefinition(group.getInstanceOf("set_element_name"));
+                this.setDefinitions.addDefinition(result);
+                return result;
+            }
+        } else if (type instanceof CoupleType) {
             variants = getTypeVariants(type);
+        } else if (type instanceof EnumeratedSetElementType) {
+            EnumeratedSetElementType enumType = (EnumeratedSetElementType) type;
+            variants = enumType.getElements();
+            name = nameHandler.handleIdentifier(enumType.getSetName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);
         } else {
             throw new RuntimeException("cannot add setDef for type "+type);
         }
         SetDefinition setDefinition = new SetDefinition(type, variants);
+        if (constant) setDefinition.makeConstant();
+        if (name != null) setDefinition.setName(name);
         this.setDefinitions.addDefinition(setDefinition);
+        return setDefinition;
     }
 
     private List<String> getTypeVariants(BType type) {
@@ -181,14 +203,16 @@ public class TypeGenerator {
     public List<String> getSetVariants(SetType type) {
         if(!this.setDefinitions.containsDefinition(type)) {
             //TODO: try to generate missing set-types on the fly?
-            throw new RuntimeException("Could not find SetDefinition for type "+type);
-        }
+            addSetDefinition(type);
+            //throw new RuntimeException("Could not find SetDefinition for type "+type);
+        }/*
         ST setElementName = group.getInstanceOf("set_element_name");
         return this.setDefinitions.getDefinition(type).getSubSets().stream().map(subset -> {
             setElementName.remove("elements");
             setElementName.add("elements", subset);
             return setElementName.render();
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList());*/
+        return setDefinitions.getDefinition(type).getElements();
     }
 
     public List<String> getRelationVariants(CoupleType relType) {

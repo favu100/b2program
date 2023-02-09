@@ -28,6 +28,7 @@ public class CodeGeneratorUtils {
     private static final STGroup RS_E_GROUP;
 
     private static final Map<GeneratorMode, STGroup> TEMPLATE_MAP = new HashMap<>();
+    private static final Map<GeneratorMode, STGroup> TEMPLATE_MAP_EMBEDDED = new HashMap<>();
 
     static {
         JAVA_GROUP = new STGroupFile("de/hhu/stups/codegenerator/JavaTemplate.stg");
@@ -49,10 +50,11 @@ public class CodeGeneratorUtils {
         TEMPLATE_MAP.put(TS, TS_GROUP);
         TEMPLATE_MAP.put(PL, PL_GROUP);
         TEMPLATE_MAP.put(RS, RS_GROUP);
-        TEMPLATE_MAP.put(RS_E, RS_E_GROUP);
+        TEMPLATE_MAP_EMBEDDED.put(RS, RS_E_GROUP);
     }
 
-    public static STGroup getGroup(GeneratorMode mode) {
-        return TEMPLATE_MAP.get(mode);
+    public static STGroup getGroup(GeneratorMode mode, boolean embedded) {
+        if (!embedded) return TEMPLATE_MAP.get(mode);
+        else return TEMPLATE_MAP_EMBEDDED.get(mode);
     }
 }

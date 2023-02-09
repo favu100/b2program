@@ -1,16 +1,17 @@
 #![ allow( non_snake_case) ]
 
 use core::marker::PhantomData;
-use crate::bset::{BSet, Set, SetItem};
+use crate::binteger::BInteger;
+use crate::bset::{BSet, PowSetItem, Set, SetItem};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, PartialOrd, Ord)]
-pub struct BRelation<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize> {
+pub struct BRelation<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize, const REL_SIZE: usize> {
     rel: [[bool; RS]; LS], // indexing: rel[l_idx][r_idx]
     _p: core::marker::PhantomData<L>,
     _p2: core::marker::PhantomData<R>,
 }
 
-impl<L, const LS: usize, R, const RS: usize> Default for BRelation<L, LS, R, RS>
+impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> Default for BRelation<L, LS, R, RS, REL_SIZE>
 where L: SetItem<LS>,
       R: SetItem<RS>{
     fn default() -> Self {
@@ -18,7 +19,44 @@ where L: SetItem<LS>,
     }
 }
 
-impl<L, const LS: usize, R, const RS: usize> BRelation<L, LS, R, RS>
+pub trait RelLeftItem<const LEFT_SIZE: usize, RightItem: SetItem<RIGHT_SIZE>, const RIGHT_SIZE: usize, const REL_VARIANTS: usize, const REL_SIZE: usize>: SetItem<LEFT_SIZE> {
+    type RelEnum: PowSetItem<REL_VARIANTS, REL_SIZE>;
+
+    fn rel_to_idx(rel_arr: [[bool; RIGHT_SIZE]; LEFT_SIZE]) -> usize {
+        let mut flat_arr = [false; REL_SIZE];
+        for left_idx in 0..6 {
+            for right_idx in 0..6 {
+                flat_arr[left_idx * 6 + right_idx] = rel_arr[left_idx][right_idx];
+            }
+        }
+        return Self::RelEnum::arr_to_idx(flat_arr);
+    }
+
+    fn idx_to_rel(idx: usize) -> [[bool; RIGHT_SIZE]; LEFT_SIZE] {
+        let flat_arr = Self::RelEnum::idx_to_arr(idx);
+        let mut result = [[false; RIGHT_SIZE]; LEFT_SIZE];
+        for left_idx in 0..LEFT_SIZE {
+            for right_idx in 0..RIGHT_SIZE {
+                result[left_idx][right_idx] = flat_arr[left_idx * 6 + right_idx];
+            }
+        }
+        return result;
+    }
+}
+
+impl<L, const LS: usize, R, const RS: usize, const SIZE: usize, const REL_SIZE: usize> SetItem<SIZE> for BRelation<L, LS, R, RS, REL_SIZE>
+where L: SetItem<LS> + RelLeftItem<LS, R, RS, SIZE, REL_SIZE>,
+      R: SetItem<RS>{
+    fn as_idx(&self) -> usize {
+        return L::rel_to_idx(self.rel);
+    }
+
+    fn from_idx(idx: usize) -> Self {
+        return BRelation { rel: L::idx_to_rel(idx), _p: PhantomData, _p2: PhantomData };
+    }
+}
+
+impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L, LS, R, RS, REL_SIZE>
     where L: SetItem<LS>,
           R: SetItem<RS>{
     
@@ -35,11 +73,12 @@ impl<L, const LS: usize, R, const RS: usize> BRelation<L, LS, R, RS>
         let left_idx = left_item.as_idx();
         let right_idx = right_item.as_idx();
         result.rel[left_idx] = [false; RS];
-        result.rel[left_idx][right_item.as_idx()] = true;
+        result.rel[left_idx][right_idx] = true;
         return result;
     }
 
     pub fn add_tuple(&mut self, left_item: &L, right_item: &R) {
+        //println!("adding tuple ({:?},{:?}), idx = [{}][{}]", left_item, right_item, left_item.as_idx(), right_item.as_idx());
         self.rel[left_item.as_idx()][right_item.as_idx()] = true;
     }
 
@@ -61,6 +100,16 @@ impl<L, const LS: usize, R, const RS: usize> BRelation<L, LS, R, RS>
         for left_idx in 0..LS {
             for right_idx in 0..RS {
                 if other.rel[left_idx][right_idx] { result.rel[left_idx][right_idx] = true; }
+            }
+        }
+        return result;
+    }
+
+    pub fn card(&self) -> BInteger {
+        let mut result: BInteger = 0;
+        for left_idx in 0..LS {
+            for right_idx in 0..RS {
+                result += self.rel[left_idx][right_idx] as BInteger;
             }
         }
         return result;
@@ -145,24 +194,6 @@ impl<L, const LS: usize, R, const RS: usize> BRelation<L, LS, R, RS>
         return result;
     }
 }
-/*
-impl<L, const LS: usize, R, const RS: usize> BRelation<L, LS, R, RS>
-    where L: SetItem<LS> + SetEnum<LS>,
-          R: SetItem<RS> + SetEnum<RS>{
-
-
-
-    pub fn function_call(&self, key: L) -> BSet<R, RS> {
-        let result_set: [bool; RS] = self.rel[key.as_idx()];
-        for i in 0..RS {
-            if result_set[i] { return <R as SetEnum<RS>>::from_idx(i) }
-        }
-        panic!("ERROR: key {:?} not found in set!", key);
-    }
-
-
-}
-*/
 
 #[macro_export]
 macro_rules! brel {

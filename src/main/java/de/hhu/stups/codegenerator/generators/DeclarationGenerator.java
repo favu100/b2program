@@ -2,7 +2,6 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
-import de.hhu.stups.codegenerator.definitions.EnumType;
 import de.hhu.stups.codegenerator.definitions.SetDefinition;
 import de.hhu.stups.codegenerator.definitions.SetDefinitions;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
@@ -123,7 +122,7 @@ public class DeclarationGenerator {
     */
     public String generateConstantDeclaration(DeclarationNode constant) {
         ST declaration = currentGroup.getInstanceOf("constant_declaration");
-        TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType()));
+        TemplateHandler.add(declaration, "type", typeGenerator.generate(constant.getType(), true));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return declaration.render();
     }
@@ -249,10 +248,7 @@ public class DeclarationGenerator {
                 .map(element -> nameHandler.handleEnum(element.getName(), node.getElements().stream().map(DeclarationNode::getName).collect(Collectors.toList())))
                 .collect(Collectors.toList());
         TemplateHandler.add(enumDeclaration, "enums", enums);
-
-        //SetDefinition setDef = new SetDefinition(new EnumeratedSetElementType(enumName, null), enums);
-        //setDef.setName(enumName);
-        //setDefinitions.addDefinition(setDef);
+        typeGenerator.addSetDefinition(((SetType)node.getSetDeclarationNode().getType()).getSubType());
         Map<Integer, String> enumsCounted = enums.stream().collect(Collectors.toMap(enums::indexOf, Function.identity()));
         TemplateHandler.add(enumDeclaration, "enumsCounted", enumsCounted);
         TemplateHandler.add(enumDeclaration, "exprCount", machineGenerator.getAndIncCurrentExpressionCount());
@@ -278,6 +274,7 @@ public class DeclarationGenerator {
     public List<String> generateSetDefinitions() {
         return setDefinitions.getSetDefinitions().map(def -> {
             if (def.getSetType() instanceof CoupleType) return generateRelationDefinition(def);
+            else if (def.getSetType() instanceof EnumeratedSetElementType) return ""; //TODO?
             else return generateSetDefinition(def);
         }).collect(Collectors.toList());
     }
@@ -285,11 +282,19 @@ public class DeclarationGenerator {
     private String generateSetDefinition(SetDefinition setDefinition) {
         ST declTemplate = currentGroup.getInstanceOf("enum_set_declaration");
         SetType setType = (SetType) setDefinition.getSetType();
+        Map<Integer, boolean[]> idxToBitArr = setDefinition.bitArrIndexed();
         declTemplate.add("name", generateSetEnumName(setType));
         declTemplate.add("elementType", generateSetEnumName(setType.getSubType()));
-        declTemplate.add("elementVariantsCount", setDefinition.getElements().size());
-        declTemplate.add("idx2elements", setDefinition.subSetsIndexed());
-        declTemplate.add("idx2bools", setDefinition.subSetVecsIndexed());
+        declTemplate.add("elementVariantsCount", idxToBitArr.get(0).length);
+        declTemplate.add("idx2elements", setDefinition.elementsIndexed());
+        declTemplate.add("idx2bools", idxToBitArr);
+
+        BType subType = ((SetType) setDefinition.getSetType()).getSubType();
+        if (subType instanceof CoupleType) {
+            declTemplate.add("leftType", typeGenerator.generate(((CoupleType) subType).getLeft()));
+            declTemplate.add("rightType", typeGenerator.generate(((CoupleType) subType).getRight()));
+        }
+
         return declTemplate.render();
     }
 
@@ -308,6 +313,10 @@ public class DeclarationGenerator {
         if (type instanceof BoolType) return "BOOL"; //TODO?
 
         SetDefinition setDef = setDefinitions.getDefinition(type);
+        if (setDef == null) {
+            setDef = new SetDefinition(type, new ArrayList<>()); //TODO?
+            if (setDef.isConstant()) setDef.makeConstant();
+        }
         if (setDef.getName() != null) return setDef.getName();
         String result;
         if(type instanceof CoupleType) {
@@ -334,7 +343,6 @@ public class DeclarationGenerator {
     */
     public String visitEnumeratedSetDeclarationNode(EnumeratedSetDeclarationNode node, String templateName) {
         BType setType = node.getSetDeclarationNode().getType();
-        this.typeGenerator.addSetDefinition(setType);
         importGenerator.addImport(setType);
         ST setDeclaration = currentGroup.getInstanceOf(templateName);
         String type = nameHandler.handleIdentifier(node.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);

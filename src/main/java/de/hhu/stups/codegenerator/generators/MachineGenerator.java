@@ -149,9 +149,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
 							boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine,
-							boolean forVisualisation, String serverLink) {
+							boolean forVisualisation, String serverLink, boolean embedded) {
 		this.mode = mode;
-		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
+		this.currentGroup = CodeGeneratorUtils.getGroup(mode, embedded);
 		this.forModelChecking = forModelChecking;
 		this.forVisualisation = forVisualisation;
 		this.useBigInteger = useBigInteger;
@@ -177,7 +177,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer, setDefinitions);
 		this.expressionGenerator = new ExpressionGenerator(mode, currentGroup, this, useBigInteger, minint, maxint, nameHandler, importGenerator,
-				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator);
+				declarationGenerator, identifierGenerator, typeGenerator, iterationConstructHandler, recordStructGenerator, setDefinitions);
 		this.predicateGenerator = new PredicateGenerator(currentGroup, this, nameHandler, importGenerator, iterationConstructHandler, infiniteSetGenerator);
 		this.lambdaFunctionGenerator = new LambdaFunctionGenerator(currentGroup, expressionGenerator, predicateGenerator, typeGenerator, declarationGenerator);
 		this.recordStructAnalyzer = new RecordStructAnalyzer(recordStructGenerator);
@@ -450,6 +450,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public String visitExprNode(ExprNode node, Void expected) {
 		return expressionGenerator.visitExprNode(node);
 	}
+
+//	public String visitExprNode(ExprNode node, Void expected, )
 
 	@Override
 	public String visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
@@ -810,5 +812,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public String getServerLink() {
 		return serverLink;
 	}
+
+	public SetDefinitions getSetDefinitions() { return this.setDefinitions; }
 
 }

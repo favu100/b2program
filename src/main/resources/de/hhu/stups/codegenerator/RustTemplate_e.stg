@@ -9,9 +9,9 @@ use btypes::{bset, brel};
 //use btypes::set::{BSet, SetItem, BRelation, RelItem};
 use btypes::bset::BSet;
 use btypes::bset::SetItem;
-use btypes::bset::SetEnum;
-use btypes::bset::PowEnumRepresented;
+use btypes::bset::PowSetItem;
 use btypes::brelation::BRelation;
+use btypes::brelation::RelLeftItem;
 use btypes::bboolean::BBoolean;
 use btypes::binteger::BInteger;
 
@@ -400,32 +400,51 @@ impl SetItem\<<length(enums)>\> for <name> {
     fn as_idx(&self) -> usize { self.to_idx() }
     fn from_idx(idx: usize) -> Self { Self::from_idx(idx) }
 }
+
+type set_<name> = BSet\<<name>, <length(enums)>\>;
 //set_enum_declaration done
 >>
 set_name(elementType) ::= <<
 Set<elementType>
 >>
 set_element_name(elements) ::= <<
-SET_<elements; separator="_">_TES
+SET_<elements; separator="__">_TES
 >>
 
 bool_arr(arr) ::= <<
 [<arr; separator=", ">]
 >>
 
-enum_set_declaration(name, elementType, elementVariantsCount, idx2elements, idx2bools) ::= <<
+enum_set_declaration(name, elementType, elementVariantsCount, idx2elements, idx2bools, leftType, rightType) ::= <<
 //enum_set_declaration start
 #[derive(Default, Debug, Clone, Copy)]
+// each enum value corresponds to one BSet
 pub enum <name> {
     #[default]
     <idx2elements.keys:{k | <set_element_name(idx2elements.(k))> = <k>}; separator=", \n">
 }
-type set_<elementType> = BSet\<<elementType>, <elementVariantsCount>\>;
+type set_<name> = BSet\<<if(leftType)>rel<else>set<endif>_<elementType>, <length(idx2elements)>\>;
 
-impl PowEnumRepresented\<<length(idx2elements)>, <elementVariantsCount>\> for <elementType> {
+impl PowSetItem\<<length(idx2elements)>, <elementVariantsCount>\> for <elementType> {
     type SetRepr = <name>;
+    fn arr_to_idx(set: [bool; <elementVariantsCount>]) -> usize {
+        match set {
+            <idx2bools.keys:{idx | <bool_arr(idx2bools.(idx))> => <idx>,}; separator="\n">
+            _ => panic!("Attempting to convert non-existing set to index!") // only happens if this is a const-set and code-generation missed a necessary value
+        }
+    }
+    fn idx_to_arr(idx: usize) -> [bool; <elementVariantsCount>] {
+        match idx {
+            <idx2bools.keys:{idx | <idx> => <bool_arr(idx2bools.(idx))>,}; separator="\n">
+            _ => panic!("<name> index out of range! {:?}", idx)
+        }
+    }
 }
-
+<if(leftType && rightType)>
+impl RelLeftItem\<{<leftType>::VARIANTS}, <rightType>, { <rightType>::VARIANTS}, <length(idx2elements)>, <elementVariantsCount>\> for <leftType> {
+    type RelEnum = <elementType>;
+}
+<endif>
 impl <name> {
     pub const fn to_idx(self) -> usize { self as usize }
     pub fn from_idx(idx: usize) -> Self {
@@ -441,19 +460,6 @@ impl SetItem\<<length(idx2elements)>\> for <name> {
     fn from_idx(idx: usize) -> Self { Self::from_idx(idx) }
 }
 
-impl SetEnum\<<elementVariantsCount>\> for <name> {
-    fn as_idx(set: [bool; <elementVariantsCount>]) -> usize {
-        match set {
-            <idx2bools.keys:{idx | <bool_arr(idx2bools.(idx))> => <idx>}; separator=",\n">
-        }
-    }
-    fn from_idx(idx: usize) -> [bool; <elementVariantsCount>] {
-        match idx {
-            <idx2bools.keys:{idx | <idx> => <bool_arr(idx2bools.(idx))>,}; separator="\n">
-            _ => panic!("<name> index out of range! {:?}", idx)
-        }
-    }
-}
 //enum_set_declaration done
 >>
 
@@ -467,15 +473,15 @@ relation_element_name(leftElement, rightElement) ::= <<
 >>
 relation_declaration(name, leftType, rightType, elements) ::= <<
 //relation_declaration
+<if(elements)>
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum <name> {
     #[default]
     <elements.keys:{k | <elements.(k)> = <k>}; separator=", \n">
 }
-//set_def![set_<name>, <name>, <length(elements)>];
-//rel_def![set_<name>, set_<leftType>, set_<rightType>];
-type rel_<name> = BRelation\<<leftType>, { <leftType>::VARIANTS }, <rightType>, { <rightType>::VARIANTS }>;
-
+<endif>
+type rel_<name> = BRelation\<<leftType>, { <leftType>::VARIANTS }, <rightType>, { <rightType>::VARIANTS }, <length(elements)>\>;
+<if(false)>
 impl <name> {
     pub fn equal(&self, other: &<name>) -> bool { *self == *other }
     pub fn unequal(&self, other: &<name>) -> bool { *self != *other }
@@ -487,7 +493,7 @@ impl <name> {
         }
     }
 }
-
+<endif>
 //relation_declaration done
 >>
 

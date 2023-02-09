@@ -2,6 +2,8 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.definitions.SetDefinition;
+import de.hhu.stups.codegenerator.definitions.SetDefinitions;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
@@ -33,13 +35,7 @@ import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.BOOL;
@@ -175,10 +171,12 @@ public class ExpressionGenerator {
 
     private final IterationConstructHandler iterationConstructHandler;
 
+    private SetDefinitions setDefinitions;
+
     public ExpressionGenerator(final GeneratorMode mode, final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
-                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator) {
+                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator, SetDefinitions setDefinitions) {
         this.mode = mode;
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
@@ -193,6 +191,7 @@ public class ExpressionGenerator {
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationConstructHandler.setExpressionGenerator(this);
         this.recordStructGenerator = recordStructGenerator;
+        this.setDefinitions = setDefinitions;
     }
 
     /*
@@ -434,6 +433,7 @@ public class ExpressionGenerator {
             return generateBoolean(operator);
         } else if(node.getOperator() == SET_ENUMERATION) {
             List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
+            addElementToConstSet(node);
             return generateSetEnumeration(node.getType(), expressionList);
         } else if(node.getOperator() == SEQ_ENUMERATION) {
             List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
@@ -472,6 +472,57 @@ public class ExpressionGenerator {
             return generateNat1();
         }
         throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
+    }
+
+    private void addElementToConstSet(ExprNode expr) {
+        if (!(expr.getType() instanceof SetType)) return;
+        BType subType = ((SetType) expr.getType()).getSubType();
+        typeGenerator.addSetDefinition(subType, true); //making sure that a setDef for this type exists
+        SetDefinition setDef = this.setDefinitions.getDefinition(subType);
+        if (!setDef.isConstant()) return;
+        if (expr instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode opNode = (ExpressionOperatorNode) expr;
+            switch (opNode.getOperator()) {
+                case SET_ENUMERATION:
+                    opNode.getExpressionNodes().stream().forEach(this::getExprAsElementString);
+                    break;
+                case COUPLE:
+                    ST relElementGenerator = currentGroup.getInstanceOf("relation_element_name");
+                    relElementGenerator.add("leftElement", getExprAsElementString(opNode.getExpressionNodes().get(0)));
+                    relElementGenerator.add("rightElement", getExprAsElementString(opNode.getExpressionNodes().get(1)));
+                    //TODO: setDef.addElement(relElementGenerator.render());
+                    break;
+            }
+        }
+    }
+
+    private String getExprAsElementString(ExprNode exprNode) {
+        if (exprNode instanceof IdentifierExprNode) {
+            return ((IdentifierExprNode)exprNode).getName();
+        }
+        if (exprNode instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode opNode = (ExpressionOperatorNode) exprNode;
+            if (opNode.getOperator() == SET_ENUMERATION) {
+                BType subtype = ((SetType)opNode.getType()).getSubType();
+                typeGenerator.addSetDefinition(subtype, true); //making sure that a setDef for this type exists
+                List<String> subElements = setDefinitions.getDefinition(subtype).getElements();
+                boolean[] bitArr = new boolean[subElements.size()];
+                List<String> elements = opNode.getExpressionNodes().stream().map(this::getExprAsElementString).sorted(Comparator.comparingInt(subElements::indexOf)).collect(Collectors.toList());
+                elements.forEach(e -> bitArr[subElements.indexOf(e)] = true);
+                ST setElementName = currentGroup.getInstanceOf("set_element_name");
+                setElementName.add("elements", elements);
+                String result = setElementName.render();
+                this.setDefinitions.getDefinition(opNode.getType()).addElement(result, bitArr);
+                return result;
+            }
+            if (opNode.getOperator() == COUPLE) {
+                ST relElementNameGenerator =currentGroup.getInstanceOf("relation_element_name");
+                relElementNameGenerator.add("leftElement", getExprAsElementString(opNode.getExpressionNodes().get(0)));
+                relElementNameGenerator.add("rightElement", getExprAsElementString(opNode.getExpressionNodes().get(1)));
+                return relElementNameGenerator.render();
+            }
+        }
+        throw new RuntimeException(String.format("Cannot convert Expression %s to set-element!", exprNode.toString()));
     }
 
     /*
@@ -553,6 +604,7 @@ public class ExpressionGenerator {
                 operatorName = "max";
                 break;
             case POW:
+                //TODO: embedded: make sure to generate setDef!
                 operatorName = "pow";
                 break;
             case POW1:

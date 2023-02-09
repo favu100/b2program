@@ -16,6 +16,8 @@ public class SetDefinitions {
         this.relNameGenerator = typeNameTemplate;
     }
 
+    public int size() { return this.setDefinitions.size(); }
+
     public void addDefinition(SetDefinition definition) {
         if (!containsDefinition(definition.getSetType())) {
             setDefinitions.put(definition.getSetType().toString(), definition);

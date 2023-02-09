@@ -61,7 +61,8 @@ public class TestJava {
 				false,
 				false,
 				null,
-				null);
+				null,
+				false);
 		Process process = Runtime.getRuntime()
 				.exec("javac -classpath btypes.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
@@ -101,7 +102,8 @@ public class TestJava {
 				false,
 				false,
 				null,
-				null);
+				null,
+				false);
 		Runtime runtime = Runtime.getRuntime();
 		Process compileProcess = runtime.exec("javac -cp btypes.jar " +
 				String.join(" ", javaFilePaths.stream()
@@ -161,7 +163,8 @@ public class TestJava {
 				false,
 				false,
 				null,
-				null);
+				null,
+				false);
 		Process process = Runtime.getRuntime()
 				.exec("javac -cp btypes.jar " + String.join(" ", javaFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())

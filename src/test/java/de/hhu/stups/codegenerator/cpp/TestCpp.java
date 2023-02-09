@@ -63,7 +63,8 @@ public class TestCpp {
 				false,
 				false,
 				null,
-				null);
+				null,
+				false);
 
 		Process process = Runtime.getRuntime()
 				.exec("g++ -std=c++14 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
@@ -92,7 +93,8 @@ public class TestCpp {
 						false,
 						false,
 						null,
-						null);
+						null,
+						false);
 
 		Runtime runtime = Runtime.getRuntime();
 
@@ -147,7 +149,8 @@ public class TestCpp {
 				false,
 				false,
 				null,
-				null);
+				null,
+				false);
 
 		Process process = Runtime.getRuntime()
 				.exec("g++ -std=c++14 -O2 -g -ferror-limit=100 -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());

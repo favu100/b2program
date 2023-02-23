@@ -324,9 +324,9 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     //TODO: directProduct/ParallelProduct maybe?
 
     //TODO: support const-params in template? maybe compiler can figure them out itself?
-    pub fn composition<NewR, const NewRS: usize, const ParamTotal: usize, const NewTotal: usize>(&self, arg: &BRelation<R, RS, NewR, NewRS, ParamTotal>) -> BRelation<L, LS, NewR, NewRS, NewTotal>
-    where NewR: SetItem<NewRS>{
-        let mut result = BRelation::<L, LS, NewR, NewRS, NewTotal>::empty();
+    pub fn composition<NewR, const NEW_RS: usize, const PARAM_TOTAL: usize, const NEW_TOTAL: usize>(&self, arg: &BRelation<R, RS, NewR, NEW_RS, PARAM_TOTAL>) -> BRelation<L, LS, NewR, NEW_RS, NEW_TOTAL>
+    where NewR: SetItem<NEW_RS>{
+        let mut result = BRelation::<L, LS, NewR, NEW_RS, NEW_TOTAL>::empty();
         for left_idx in 0..LS {
             result.rel[left_idx] = arg.relationImage(&BSet::const_from_arr(self.rel[left_idx])).as_arr()
         }
@@ -337,10 +337,10 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     //      or we use the relation-item enums for the tuples as well...
 
     //TODO: support const-params in template? maybe compiler can figure them out itself?
-    pub fn fnc<NewR, const NewRS: usize, const newRelTotal: usize>(&self) -> BRelation<L, LS, NewR, NewRS, newRelTotal>
-    where NewR: Set<RS> + SetItem<NewRS>{                                  //BRelation<L, LS, BSet<R, RS>, NewRS, newRelTotal
+    pub fn fnc<NewR, const NEW_RS: usize, const NEW_REL_TOTAL: usize>(&self) -> BRelation<L, LS, NewR, NEW_RS, NEW_REL_TOTAL>
+    where NewR: Set<RS> + SetItem<NEW_RS>{                                  //BRelation<L, LS, BSet<R, RS>, NewRS, newRelTotal
         //NewR::ItemType = R; not yet supported in rust, NewR: Set<RS, I = R> might be, but I'd need to rewrite the trait for that and the related code. For now, we assume the code-generator creates correct code (if it wouldn't the code probably wouldn't run anyway...)
-        let mut result = BRelation::<L, LS, NewR, NewRS, newRelTotal>::empty();
+        let mut result = BRelation::<L, LS, NewR, NEW_RS, NEW_REL_TOTAL>::empty();
         for left_idx in 0..LS {
             result.rel[left_idx][NewR::from_arr(self.rel[left_idx]).as_idx()] = true;
         }

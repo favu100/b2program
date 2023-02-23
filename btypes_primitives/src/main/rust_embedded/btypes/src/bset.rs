@@ -2,7 +2,9 @@
 
 use core::fmt::Debug;
 use core::marker::PhantomData;
+use crate::bboolean::BBoolean;
 use crate::binteger::BInteger;
+use crate::brelation::BRelation;
 
 /// Used to map an Enum to the position in a Set of it's type. \
 /// This is necessary since, even though a [BSet] is alway represented as a flat, 1D-array,
@@ -128,6 +130,9 @@ impl<const SETVARIANTS: usize, const ITEMVARIANTS: usize, const A: usize, I> Pow
 
 pub trait PowAble<const SETLEN: usize, const ITEMVARS: usize>: Set<SETLEN> + SetItem<ITEMVARS> {
     fn pow(&self) -> BSet<Self, ITEMVARS>;
+    fn pow1(&self) -> BSet<Self, ITEMVARS>;
+    fn fin(&self) -> BSet<Self, ITEMVARS> { self.pow() }
+    fn fin1(&self) -> BSet<Self, ITEMVARS> { self.pow1() }
 }
 
 /// To generate the powerset of a BSet we need the corresponding enum already generated.
@@ -145,6 +150,13 @@ impl<const SETLEN: usize, const ITEMVARS: usize , I> PowAble<SETLEN, ITEMVARS> f
         }
         return result;
     }
+
+    fn pow1(&self) -> BSet<Self, ITEMVARS> {
+        let mut result = self.pow();
+        //remove empty set (usually, the index should always be 0, but this ensures that we get the correct one)
+        result.arr[Self::from_arr([false; SETLEN]).as_idx()] = false;
+        return result;
+    }
 }
 
 
@@ -157,7 +169,8 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
 
     pub fn is_empty(&self) -> bool { !self.arr.contains(&true) }
 
-    pub fn equal(&self, other: &Self) -> bool { self.arr.eq(&other.arr) }
+    pub fn equal(&self, other: &Self) -> BBoolean { self.arr.eq(&other.arr) }
+    pub fn unequal(&self, other: &Self) -> BBoolean { !self.arr.eq(&other.arr) }
 
     pub fn card(&self) -> BInteger {
         return self.arr.iter().fold(0,
@@ -165,7 +178,10 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
                                                                  else { size });
     }
 
-    pub fn subset(&self, other: &Self) -> bool { self.subset_of(other) }
+    pub fn subset(&self, other: &Self) -> BBoolean { self.subset_of(other) }
+    pub fn strictSubset(&self, other: &Self) -> BBoolean { self.card() < other.card() && self.subset_of(other) }
+    pub fn notSubset(&self, other: &Self) -> BBoolean { !self.subset_of(other) }
+    pub fn strictNotSubset(&self, other: &Self) -> BBoolean { self.card() >= other.card() || self.notSubset(other) }
 
     pub fn _union(&self, other: &Self) -> Self {
         let mut result = self.copy();
@@ -192,8 +208,107 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
     }
 
     //name hard-coded in b2program
-    pub fn elementOf(&self, element: &I) -> bool { self.arr[element.as_idx()] }
-    pub fn notElementOf(&self, element: &I) -> bool { !self.arr[element.as_idx()] }
+    pub fn elementOf(&self, element: &I) -> BBoolean { self.arr[element.as_idx()] }
+    pub fn notElementOf(&self, element: &I) -> BBoolean { !self.arr[element.as_idx()] }
+
+    //TODO: interval(a: Binteger, b: BInteger) -> BSet<BInteger>
+    //      currently, Int-Sets/Relations are not supported though
+    //TODO: nondeterminism needs external libraries
+
+    pub const fn subsetOfInteger(&self) -> BBoolean { false }
+
+    pub const fn strictSubsetOfInteger(&self) -> BBoolean { return self.subsetOfInteger(); }
+
+    pub const fn notSubsetOfInteger(&self) -> BBoolean { return !self.subsetOfInteger(); }
+
+    pub const fn equalInteger(&self) -> BBoolean { false }
+
+    pub const fn unequalInteger(&self) -> BBoolean { true }
+
+    pub const fn equalNatural(&self) -> BBoolean { false }
+
+    pub const fn unequalNatural(&self) -> BBoolean { true }
+
+    pub const fn equalNatural1(&self) -> BBoolean { false }
+
+    pub const fn unequalNatural1(&self) -> BBoolean { true }
+
+    pub const fn equalString(&self) -> BBoolean { false }
+
+    pub const fn unequalString(&self) -> BBoolean { true }
+
+    pub const fn equalStruct(&self) -> BBoolean { false }
+
+    pub const fn unequalStruct(&self) -> BBoolean { true }
+
+    pub const fn subsetOfString(&self) -> BBoolean { !todo!() }
+
+    pub const fn strictSubsetOfString(&self) -> BBoolean { return self.subsetOfString(); }
+
+    pub const fn notSubsetOfString(&self) -> BBoolean { return !self.subsetOfString(); }
+
+    pub const fn notStrictSubsetOfString(&self) -> BBoolean { return !self.strictSubsetOfString(); }
+
+    pub const fn subsetOfStruct(&self) -> BBoolean { false } //TODO?
+
+    pub const fn strictsubsetOfStruct(&self) -> BBoolean { return self.subsetOfStruct(); }
+
+    pub const fn notsubsetOfStruct(&self) -> BBoolean { return !self.subsetOfStruct(); }
+
+    pub const fn notStrictsubsetOfStruct(&self) -> BBoolean { return !self.strictsubsetOfStruct(); }
+
+    //equals BRelation.checkDomain(BSet)
+    pub fn check_domain_of<R: SetItem<RS>, const RS: usize, const TOTAL_REL: usize>(&self, of: &BRelation<I, SIZE, R, RS, TOTAL_REL>) -> BBoolean {
+        return self.is_superset(&of.domain());
+    }
+
+    //equals BRelation.checkRange(BSet)
+    pub fn check_range_of<L: SetItem<LS>, const LS: usize, const TOTAL_REL: usize>(&self, of: &BRelation<L, LS, I, SIZE, TOTAL_REL>) -> BBoolean {
+        return self.is_superset(&of.range());
+    }
+
+    pub fn check_partial_of<R: SetItem<RS>, const RS: usize, const TOTAL_REL: usize>(&self, of: &BRelation<I, SIZE, R, RS, TOTAL_REL>) -> BBoolean {
+        return self.is_superset(&of.domain());
+    }
+
+    pub fn is_superset(&self, other: &Self) -> BBoolean { return other.subset(self); }
+
+    pub fn check_total_of<R: SetItem<RS>, const RS: usize, const TOTAL_REL: usize>(&self, of: &BRelation<I, SIZE, R, RS, TOTAL_REL>) -> BBoolean {
+        return self.equal(&of.domain());
+    }
+}
+
+trait NestedSet<const OUTER_SIZE: usize, const INNER_SIZE: usize>: Set<OUTER_SIZE> {
+    type InnerSet: Set<INNER_SIZE> + SetItem<INNER_SIZE>;
+
+    fn unary__union(&self) -> BSet<Self::InnerSet, INNER_SIZE> { self.unary__combine(|l, r| l || r) }
+    fn unary__intersect(&self) -> BSet<Self::InnerSet, INNER_SIZE> { self.unary__combine(|l, r| l && r) }
+    fn unary__combine(&self, comb_fn: fn(left_bool:bool, right_bool: bool) -> bool) -> BSet<Self::InnerSet, INNER_SIZE>;
+}
+
+/// Implements functions for netsted-Sets.
+/// A nested-Set is still just a 1D-array, but the Set-Item implements the Set-trait,
+/// so the index can be converted to another 1D-array (this then being the representation of the inners Sets)
+///
+/// Because Rust is a bit constrained in how these implementations can be defined, we need to use
+/// a trait to define how the specific Set should look, and then implement that trait generically for
+/// any I that conforms to further constrictions.
+/// (This will ulitmately only apply to BSets where the inner-type is also a BSet.)
+impl<const OUTER_SIZE: usize, const INNER_SIZE: usize, I> NestedSet<OUTER_SIZE, INNER_SIZE> for I
+where I: Set<OUTER_SIZE>,
+      I::ItemType: Set<INNER_SIZE> + SetItem<INNER_SIZE>{
+    type InnerSet = I::ItemType;
+
+    fn unary__combine(&self, comb_fn: fn(left_bool:bool, right_bool: bool) -> bool) -> BSet<Self::InnerSet, INNER_SIZE> {
+        let mut result_arr = [false; INNER_SIZE]; // empty array representation of the inner settype
+        for outer_idx in 0..OUTER_SIZE {
+            if self.contains_idx(outer_idx) {
+                let inner_set_arr = I::ItemType::from_idx(outer_idx).as_arr(); // array representation of the current inner-set
+                for inner_idx in 0..INNER_SIZE { result_arr[inner_idx] = comb_fn(result_arr[inner_idx], inner_set_arr[inner_idx]); } // logical combination between the arrays (or = union; and = intersection between sets)
+            }
+        }
+        return BSet::<Self::InnerSet, INNER_SIZE>::const_from_arr(result_arr);
+    }
 }
 
 pub struct BSetIter<I: SetItem<SIZE>, const SIZE: usize> {

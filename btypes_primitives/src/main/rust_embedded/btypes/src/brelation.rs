@@ -346,6 +346,61 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         }
         return result;
     }
+
+    //pub fn nondeterminism(&self) -> (L, R) {
+    //    !todo!(RNG does not work without std/external crates)
+    //}
+
+    pub fn isTotalInteger(&self) -> BBoolean { return false; }
+    pub fn isTotalNatural(&self) -> BBoolean { return false; }
+    pub fn isTotalNatural1(&self) -> BBoolean { return false; }
+    pub fn isTotalString(&self) -> BBoolean { return false; }
+    pub fn isTotalStruct(&self) -> BBoolean { return false; }
+    pub fn isRelation(&self) -> BBoolean { return true;}
+    pub fn isSurjection(&self, range: &BSet<R, RS>) -> BBoolean { return self.range().equal(range); }
+    pub fn isSurjectionInteger(&self) -> BBoolean { return false; }
+    pub fn isSurjectionNatural(&self) -> BBoolean { return false; }
+    pub fn isSurjectionNatural1(&self) -> BBoolean { return false; }
+    pub fn isSurjectionString(&self) -> BBoolean { return false; }
+    pub fn isSurjectionStruct(&self) -> BBoolean { return false; }
+    pub fn isBijection(&self, range: &BSet<R, RS>) -> BBoolean { return self.isSurjection(range) && self.isInjection(); }
+    pub fn isBijectionInteger(&self) -> BBoolean { return false; }
+    pub fn isBijectionNatural(&self) -> BBoolean { return false; }
+    pub fn isBijectionNatural1(&self) -> BBoolean { return false; }
+    pub fn isBijectionString(&self) -> BBoolean { return false; }
+    pub fn isBijectionStruct(&self) -> BBoolean { return false; }
+}
+
+impl<L, const LS: usize, const REL_SIZE: usize> BRelation<L, LS, L, LS, REL_SIZE>
+where L: SetItem<LS> {
+    pub fn identity(set: &BSet<L, LS>) -> Self {
+        let mut result = Self::empty();
+        for i in 0..LS {
+            if set.contains_idx(i) { result.rel[i][i] = true; }
+        }
+        return result;
+    }
+
+    pub fn iterate(&self, n: &BInteger) -> Self {
+        return (0..*n).fold(BRelation::identity(&self.domain()._union(&self.range())),
+                                     |rel, _| rel.composition(self));
+    }
+
+    pub fn closure(&self) -> Self { return self.closure_closure1(false); }
+
+    pub fn closure1(&self) -> Self { return self.closure_closure1(true); }
+
+    fn closure_closure1(&self, is_closure1: bool) -> Self {
+        let mut result = if is_closure1 { Self::empty() } else { self.iterate(&0) };
+        let mut current_iteration = self.iterate(&1);
+        let mut next_result = result._union(&current_iteration);
+        while !result.equal(&next_result) {
+            result = next_result;
+            current_iteration = current_iteration.composition(self);
+            next_result = result._union(&current_iteration);
+        }
+        return result;
+    }
 }
 
 #[macro_export]

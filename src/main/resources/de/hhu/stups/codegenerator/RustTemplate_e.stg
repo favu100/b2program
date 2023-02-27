@@ -5,15 +5,17 @@ as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl,
 
 machine(imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, setDefinitions, declarations, initialization, operations, addition, useBigInteger, getters, lambdaFunctions, forModelChecking, transitions, invariant, copy, modelcheck, transitionCachesDeclaration, hash_equal) ::= <<
 #![ allow( dead_code, unused, non_snake_case, non_camel_case_types, unused_assignments ) ]
+//#![no_std] //std is enabled for the generated machine by default, since without it there is no println which makes unit-testing very difficult
 use btypes::{bset, brel};
-//use btypes::set::{BSet, SetItem, BRelation, RelItem};
 use btypes::bset::BSet;
 use btypes::bset::SetItem;
 use btypes::bset::PowSetItem;
 use btypes::brelation::BRelation;
 use btypes::brelation::RelLeftItem;
 use btypes::bboolean::BBoolean;
+use btypes::bboolean::BBool;
 use btypes::binteger::BInteger;
+use btypes::binteger::BInt;
 
 
 <includedMachines; separator="\n">

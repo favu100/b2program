@@ -1,0 +1,5 @@
+fn main() {
+    let mut ip = IntegerPower::new();
+    ip.calculate();
+    println!("{}", ip.getRes());
+}

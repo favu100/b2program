@@ -1,9 +1,7 @@
 package de.hhu.stups.codegenerator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -17,6 +15,10 @@ public class TestHelper {
 
     public static void writeInputToSystem(InputStream inputStream) throws IOException {
         writeInputToOutput(inputStream, System.err);
+    }
+
+    public static String readFile(File file) throws IOException {
+        return streamToString(Files.newInputStream(file.toPath()));
     }
 
     public static String streamToString(InputStream inputStream) throws IOException {

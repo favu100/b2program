@@ -1,86 +1,123 @@
 package de.hhu.stups.codegenerator.rust_embedded;
 
-import de.hhu.stups.codegenerator.CodeGenerator;
-import de.hhu.stups.codegenerator.GeneratorMode;
-import de.hhu.stups.codegenerator.TestHelper;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertNotNull;
+public class TestSets extends TestRSE {
+    public TestSets() throws URISyntaxException, IOException {}
 
-public class TestSets {
-    final ClassLoader classLoader = this.getClass().getClassLoader();
-    final Path rustSrcPath = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine/src"));
-    final Runtime runtime = Runtime.getRuntime();
-
-    public TestSets() throws URISyntaxException, IOException {
-        Files.createDirectories(rustSrcPath);
-    }
-
-    @Before
-    public void beforeEach() {
-        File[] oldFiles = rustSrcPath.toFile().listFiles();
-        if (oldFiles != null) Arrays.stream(oldFiles).forEach(File::delete);
+    @Test
+    public void testEmptySet() throws Exception {
+        testRSE("EmptySet", "EmptySetAddition.strs");
     }
 
     @Test
-    public void test_SimpleEnumeratedSet() throws IOException, InterruptedException {
-        boolean execute = true;
-        boolean modelChecking = false;
-        boolean noInv = false;
-        boolean noDead = false;
+    public void testPow() throws Exception {
+        testRSE("Pow", "PowAddition.strs");
+    }
 
-        String machineFile = "";
-        URL machineURL = classLoader.getResource("de/hhu/stups/codegenerator/embedded/" + machineFile);
-        assertNotNull(machineURL);
-        Path machinePath = Paths.get(machineURL.getPath());
-        List<Path> rsFilePaths = TestHelper.generateCode(machinePath, GeneratorMode.RS, false, "DefaultAddition.strs", true);
-        rsFilePaths = rsFilePaths.stream().map(path -> {
-            Path dest = rustSrcPath.resolve(Paths.get(path.toFile().getName()));
-            path.toFile().renameTo(dest.toFile());
-            return dest;
-        }).collect(Collectors.toList());
+    @Test
+    public void testPow1() throws Exception {
+        testRSE("Pow1", "Pow1Addition.strs");
+    }
 
-        Path mainPath = rsFilePaths.get(rsFilePaths.size() - 1);
-        File newMainFile = rustSrcPath.resolve(Paths.get("main.rs")).toFile();
-        mainPath.toFile().renameTo(newMainFile);
+    @Test
+    public void testFin() throws Exception {
+        testRSE("Fin", "FinAddition.strs");
+    }
 
-        Process process = runtime.exec("cargo build --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml");
-        TestHelper.writeInputToSystem(process.getErrorStream());
-        TestHelper.writeInputToOutput(process.getErrorStream(), process.getOutputStream());
-        process.waitFor();
-        if (process.exitValue() != 0) {
-            throw new RuntimeException("cargo build failed, exitcode: " + process.exitValue());
-        }
+    @Test
+    public void testFin1() throws Exception {
+        testRSE("Fin1", "Fin1Addition.strs");
+    }
 
-        if(!execute) {
-            rsFilePaths.forEach(p -> p.toFile().delete());
-            return;
-        }
+    @Test
+    public void testCard() throws Exception {
+        testRSE("Card", "CardAddition.strs");
+    }
 
-        String progArgs = "";
-        if (modelChecking) { progArgs = " -- mixed 2 true"; }
-        if (noDead) { progArgs += " -nodead"; }
-        if (noInv) { progArgs += " -noinv"; }
+    @Test
+    public void testUnion() throws Exception {
+        testRSE("Union", "UnionAddition.strs");
+    }
 
-        Process executeProcess = runtime.exec("cargo run --release --manifest-path " + mainPath.getParent().getParent().toFile().getAbsolutePath() + "/Cargo.toml" + progArgs);
-        executeProcess.waitFor();
+    @Test
+    public void testIntersection() throws Exception {
+        testRSE("Intersection", "IntersectionAddition.strs");
+    }
 
-        String error = TestHelper.streamToString(executeProcess.getErrorStream());
-        if(executeProcess.exitValue() != 0) {
-            throw new RuntimeException(error);
-        }
-        String result = TestHelper.streamToString(executeProcess.getInputStream());
+    @Test
+    public void testDifference() throws Exception {
+        testRSE("Difference", "DifferenceAddition.strs");
+    }
+
+    @Test
+    public void testElementOf() throws Exception {
+        testRSE("ElementOf", "ElementOfAddition.strs");
+    }
+
+    @Test
+    public void testNotElementOf() throws Exception {
+        testRSE("NotElementOf", "NotElementOfAddition.strs");
+    }
+
+    @Test
+    public void testSubset() throws Exception {
+        testRSE("Subset", "SubsetAddition.strs");
+    }
+
+    @Test
+    public void testNotSubset() throws Exception {
+        testRSE("NotSubset", "NotSubsetAddition.strs");
+    }
+
+    @Test
+    public void testStrictSubset() throws Exception {
+        testRSE("StrictSubset", "StrictSubsetAddition.strs");
+    }
+
+    @Test
+    public void testNotStrictSubset() throws Exception {
+        testRSE("NotStrictSubset", "NotStrictSubsetAddition.strs");
+    }
+
+    @Test
+    public void testGeneralizedUnion() throws Exception {
+        testRSE("GeneralizedUnion", "GeneralizedUnionAddition.strs");
+    }
+
+    @Test
+    public void testGeneralizedUnionEmpty() throws Exception {
+        testRSE("GeneralizedUnionEmpty", "GeneralizedUnionEmptyAddition.strs");
+    }
+
+    @Test
+    public void testGeneralizedIntersection() throws Exception {
+        testRSE("GeneralizedIntersection", "GeneralizedIntersectionAddition.strs");
+    }
+
+    @Test
+    public void testGeneralizedIntersectionEmpty() throws Exception {
+        testRSE("GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmptyAddition.strs");
+    }
+
+
+
+// These tests won't work, because they require Integer-Sets, which embedded code-gen cannot do (for now)
+    @Test(expected = RuntimeException.class)
+    public void testInterval() throws Exception {
+        testRSE("Interval", "IntervalAddition.strs");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMax() throws Exception {
+        testRSE("Max", "MaxAddition.strs");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMin() throws Exception {
+        testRSE("Min", "MinAddition.strs");
     }
 }

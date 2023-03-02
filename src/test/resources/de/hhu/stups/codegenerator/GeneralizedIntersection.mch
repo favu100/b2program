@@ -1,10 +1,12 @@
 MACHINE GeneralizedIntersection
 
+SETS EINT = {ONE, TWO, THREE, FOUR}
+
 VARIABLES  set, x
 
-INVARIANT  set : POW(POW(INTEGER)) & x : POW(INTEGER)
+INVARIANT  set : POW(POW(EINT)) & x : POW(EINT)
 
-INITIALISATION set := {{1},{2},{3}}; x := {}
+INITIALISATION set := {{ONE},{TWO},{THREE}}; x := {}
 
 OPERATIONS
 

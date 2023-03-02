@@ -1,10 +1,12 @@
 MACHINE NotSubset
 
+SETS EINT = {ONE, TWO, THREE, FOUR}
+
 VARIABLES  x, y, r
 
-INVARIANT  x : POW(INT) & y : POW(INT) & r : BOOL
+INVARIANT  x <: EINT & y <: EINT & r : BOOL
 
-INITIALISATION x := {1,2}; y:= {1,2,3}; r := FALSE
+INITIALISATION x := {ONE, TWO}; y:= {ONE, TWO, THREE}; r := FALSE
 
 OPERATIONS
 

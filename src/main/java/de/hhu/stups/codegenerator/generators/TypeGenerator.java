@@ -39,13 +39,15 @@ public class TypeGenerator {
     private final SetDefinitions setDefinitions;
 
     private boolean fromOutside = false;
+    private boolean forEmbedded = false;
 
-    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator, final SetDefinitions setDefinitions) {
+    public TypeGenerator(final STGroup group, final NameHandler nameHandler, final MachineGenerator machineGenerator, final SetDefinitions setDefinitions, boolean forEmbedded) {
         this.group = group;
         this.nameHandler = nameHandler;
         this.machineGenerator = machineGenerator;
         this.setDefinitions = setDefinitions;
         this.declarationGenerator = null;
+        this.forEmbedded = forEmbedded;
     }
 
     public String generate(BType type) { return this.generate(type, false); }
@@ -137,7 +139,13 @@ public class TypeGenerator {
             ST template = group.getInstanceOf("set_type");
             TemplateHandler.add(template, "fromOtherMachine", false);
             if(!(subType instanceof UntypedType)) { // subType is a type other than couple type and void type
-                TemplateHandler.add(template, "type", generate(subType));
+                if (forEmbedded) {
+                    if (!setDefinitions.containsDefinition(subType)) generate(subType);
+                    SetDefinition subDefinition = setDefinitions.getDefinition(subType);
+                    TemplateHandler.add(template, "type", subDefinition.getName());
+                } else {
+                    TemplateHandler.add(template, "type", generate(subType));
+                }
             }
             return template.render();
 
@@ -173,6 +181,7 @@ public class TypeGenerator {
                 if (subDefinition == null) subDefinition = addSetDefinition(subType);
                 SetDefinition result = subDefinition.getPowSetDefinition(group.getInstanceOf("set_element_name"));
                 this.setDefinitions.addDefinition(result);
+                declarationGenerator.generateSetEnumName(type);
                 return result;
             }
         } else if (type instanceof CoupleType) {

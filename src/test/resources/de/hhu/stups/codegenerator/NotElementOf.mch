@@ -1,10 +1,12 @@
 MACHINE NotElementOf
 
+SETS EINT = {ONE, TWO, THREE}
+
 VARIABLES  x, y, r
 
-INVARIANT  x : POW(INT) & y : INT & r : BOOL
+INVARIANT  x <: EINT & y : EINT & r : BOOL
 
-INITIALISATION x := {1,2}; y:= 1; r := FALSE
+INITIALISATION x := {ONE, TWO}; y:= ONE; r := FALSE
 
 OPERATIONS
 

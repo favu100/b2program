@@ -1,8 +1,10 @@
 MACHINE EmptySet
 
+SETS S={S1}
+
 VARIABLES  f
 
-INVARIANT  f : POW(INT)
+INVARIANT  f : POW(S)
 
 INITIALISATION f := {}
 

@@ -149,9 +149,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
 							boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine,
-							boolean forVisualisation, String serverLink, boolean embedded) {
+							boolean forVisualisation, String serverLink, boolean forEmbedded) {
 		this.mode = mode;
-		this.currentGroup = CodeGeneratorUtils.getGroup(mode, embedded);
+		this.currentGroup = CodeGeneratorUtils.getGroup(mode, forEmbedded);
 		this.forModelChecking = forModelChecking;
 		this.forVisualisation = forVisualisation;
 		this.useBigInteger = useBigInteger;
@@ -167,7 +167,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.setDefinitions = new SetDefinitions(currentGroup.getInstanceOf("relation_name"));
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
-		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this, setDefinitions);
+		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this, setDefinitions, forEmbedded);
 		this.importGenerator = new ImportGenerator(currentGroup, nameHandler, useBigInteger);
 		this.backtrackingGenerator = new BacktrackingGenerator(currentGroup);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, backtrackingGenerator, useConstraintSolving);

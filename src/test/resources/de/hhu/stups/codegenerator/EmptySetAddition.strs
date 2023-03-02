@@ -1,5 +1,6 @@
 fn main() {
     let mut empty = EmptySet::new();
     empty.calculate();
-    println!("{}", empty.getRes());
+    if empty.getRes().card() == 0 { println!("{{}}"); }
+    else { println!("Wrong output!") }
 }

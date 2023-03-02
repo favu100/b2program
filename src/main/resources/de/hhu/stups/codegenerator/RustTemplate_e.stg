@@ -1,5 +1,5 @@
 keywords() ::= <<
-as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, abstract, become, box, do, final, macro, override, priv, typeof, unsized, virtual, yield, try, union, dyn, min, max, new
+as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, abstract, become, box, do, final, macro, override, priv, typeof, unsized, virtual, yield, try, dyn, min, max, new
 >>
 
 
@@ -10,6 +10,8 @@ use btypes::{bset, brel};
 use btypes::bset::BSet;
 use btypes::bset::SetItem;
 use btypes::bset::PowSetItem;
+use btypes::bset::PowAble;
+use btypes::bset::NestedSet;
 use btypes::brelation::BRelation;
 use btypes::brelation::RelLeftItem;
 use btypes::bboolean::BBoolean;

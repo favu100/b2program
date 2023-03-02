@@ -1,10 +1,12 @@
 MACHINE Intersection
 
+SETS EINT = {ONE, TWO, THREE, FOUR}
+
 VARIABLES  x, y, z
 
-INVARIANT  x : POW(INT) & y : POW(INT) & z : POW(INT)
+INVARIANT  x <: EINT & y <: EINT & z <: EINT
 
-INITIALISATION x := {1,2}; y := {2,3}; z := {}
+INITIALISATION x := {ONE, TWO}; y := {TWO, THREE}; z := {}
 
 OPERATIONS
 

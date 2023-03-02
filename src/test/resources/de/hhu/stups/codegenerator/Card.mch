@@ -1,14 +1,16 @@
 MACHINE Card
 
-VARIABLES  x, r
+SETS X = {ONE, TWO}
 
-INVARIANT  x : POW(INT) & r : INT
+VARIABLES  r
 
-INITIALISATION x := {1,2}; r := 0
+INVARIANT  r : INT
+
+INITIALISATION r := 0
 
 OPERATIONS
 
-	calculate = BEGIN r := card(x) END;
+	calculate = BEGIN r := card(X) END;
 	out <-- getRes = out := r
 
 END

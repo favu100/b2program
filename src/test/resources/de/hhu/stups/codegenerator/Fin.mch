@@ -1,14 +1,16 @@
 MACHINE Fin
 
-VARIABLES  f, r
+SETS F = {ONE, TWO, THREE}
 
-INVARIANT  f : POW(INT) & r : POW(POW(INT))
+VARIABLES  r
 
-INITIALISATION f := {1,2,3}; r := {}
+INVARIANT  r <: POW(F)
+
+INITIALISATION r := {}
 
 OPERATIONS
 
-	calculate = BEGIN r := FIN(f) END;
+	calculate = BEGIN r := FIN(F) END;
 	out <-- getRes = out := card(r)
 
 END

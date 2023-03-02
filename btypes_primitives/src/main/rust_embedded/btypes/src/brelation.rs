@@ -164,7 +164,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let mut checked = BSet::<R, RS>::empty(); //stores all the R's that were already 'used'
         for to_check in self.rel.iter().cloned().map(|arr| BSet::<R, RS>::const_from_arr(arr)) {
             if !checked.intersect(&to_check).is_empty() { return false; }
-            checked = checked._union(&to_check);
+            checked = checked.union(&to_check);
         }
         return true;
     }
@@ -270,7 +270,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         return self.relation_combine(other, |s, o| s && !o);
     }
 
-    pub fn _union(&self, other: &Self) -> Self {
+    pub fn union(&self, other: &Self) -> Self {
         return self.relation_combine(other, |s, o| s | o);
     }
 
@@ -382,7 +382,7 @@ where L: SetItem<LS> {
     }
 
     pub fn iterate(&self, n: &BInteger) -> Self {
-        return (0..*n).fold(BRelation::identity(&self.domain()._union(&self.range())),
+        return (0..*n).fold(BRelation::identity(&self.domain().union(&self.range())),
                                      |rel, _| rel.composition(self));
     }
 
@@ -393,11 +393,11 @@ where L: SetItem<LS> {
     fn closure_closure1(&self, is_closure1: bool) -> Self {
         let mut result = if is_closure1 { Self::empty() } else { self.iterate(&0) };
         let mut current_iteration = self.iterate(&1);
-        let mut next_result = result._union(&current_iteration);
+        let mut next_result = result.union(&current_iteration);
         while !result.equal(&next_result) {
             result = next_result;
             current_iteration = current_iteration.composition(self);
-            next_result = result._union(&current_iteration);
+            next_result = result.union(&current_iteration);
         }
         return result;
     }

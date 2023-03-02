@@ -183,7 +183,7 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
     pub fn notSubset(&self, other: &Self) -> BBoolean { !self.subset_of(other) }
     pub fn strictNotSubset(&self, other: &Self) -> BBoolean { self.card() >= other.card() || self.notSubset(other) }
 
-    pub fn _union(&self, other: &Self) -> Self {
+    pub fn union(&self, other: &Self) -> Self {
         let mut result = self.copy();
         for i in 0..SIZE {
             if other.arr[i] { result.arr[i] = true; }
@@ -241,7 +241,7 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
 
     pub const fn unequalStruct(&self) -> BBoolean { true }
 
-    pub const fn subsetOfString(&self) -> BBoolean { !todo!() }
+    pub const fn subsetOfString(&self) -> BBoolean { false } //TODO?
 
     pub const fn strictSubsetOfString(&self) -> BBoolean { return self.subsetOfString(); }
 
@@ -277,16 +277,22 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
         return self.equal(&of.domain());
     }
 }
+/*
+EINT: SetItem<4> + PowSetItem<16, 4>
+BSet<EINT, 4>: Set<4> + SetItem<16>
+BSet<BSet<Enit, 4>, 16>: Set<16>
+*/
 
-trait NestedSet<const OUTER_SIZE: usize, const INNER_SIZE: usize>: Set<OUTER_SIZE> {
-    type InnerSet: Set<INNER_SIZE> + SetItem<INNER_SIZE>;
+pub trait NestedSet<const OUTER_SIZE: usize, const INNER_SIZE: usize>
+where Self: Set<OUTER_SIZE>,
+      Self::ItemType: Set<INNER_SIZE> + SetItem<OUTER_SIZE> {
 
-    fn unary__union(&self) -> BSet<Self::InnerSet, INNER_SIZE> { self.unary__combine(|l, r| l || r) }
-    fn unary__intersect(&self) -> BSet<Self::InnerSet, INNER_SIZE> { self.unary__combine(|l, r| l && r) }
-    fn unary__combine(&self, comb_fn: fn(left_bool:bool, right_bool: bool) -> bool) -> BSet<Self::InnerSet, INNER_SIZE>;
+    fn unary_union(&self) -> Self::ItemType { self.unary_combine(|l, r| l || r) }
+    fn unary_intersect(&self) -> Self::ItemType { self.unary_combine(|l, r| l && r) }
+    fn unary_combine(&self, comb_fn: fn(left_bool:bool, right_bool: bool) -> bool) -> Self::ItemType;
 }
 
-/// Implements functions for netsted-Sets.
+/// Implements functions for nested-Sets.
 /// A nested-Set is still just a 1D-array, but the Set-Item implements the Set-trait,
 /// so the index can be converted to another 1D-array (this then being the representation of the inners Sets)
 ///
@@ -296,10 +302,9 @@ trait NestedSet<const OUTER_SIZE: usize, const INNER_SIZE: usize>: Set<OUTER_SIZ
 /// (This will ulitmately only apply to BSets where the inner-type is also a BSet.)
 impl<const OUTER_SIZE: usize, const INNER_SIZE: usize, I> NestedSet<OUTER_SIZE, INNER_SIZE> for I
 where I: Set<OUTER_SIZE>,
-      I::ItemType: Set<INNER_SIZE> + SetItem<INNER_SIZE>{
-    type InnerSet = I::ItemType;
+      I::ItemType: Set<INNER_SIZE> + SetItem<OUTER_SIZE>{
 
-    fn unary__combine(&self, comb_fn: fn(left_bool:bool, right_bool: bool) -> bool) -> BSet<Self::InnerSet, INNER_SIZE> {
+    fn unary_combine(&self, comb_fn: fn(left_bool:bool, right_bool: bool) -> bool) -> I::ItemType {
         let mut result_arr = [false; INNER_SIZE]; // empty array representation of the inner settype
         for outer_idx in 0..OUTER_SIZE {
             if self.contains_idx(outer_idx) {
@@ -307,7 +312,7 @@ where I: Set<OUTER_SIZE>,
                 for inner_idx in 0..INNER_SIZE { result_arr[inner_idx] = comb_fn(result_arr[inner_idx], inner_set_arr[inner_idx]); } // logical combination between the arrays (or = union; and = intersection between sets)
             }
         }
-        return BSet::<Self::InnerSet, INNER_SIZE>::const_from_arr(result_arr);
+        return I::ItemType::from_arr(result_arr);
     }
 }
 

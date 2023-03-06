@@ -1,14 +1,16 @@
 MACHINE Id
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, r
 
-INVARIANT  f : POW(INT) & r : INT --> INT
+INVARIANT  f : POW(EINT) & r : EINT --> EINT
 
-INITIALISATION f := {1,2,3}; r := {}
+INITIALISATION f := {ONE,TWO,THREE}; r := {}
 
 OPERATIONS
 
-	calculate = BEGIN r := id(f) END;
+	calculate = BEGIN IF id(f)[{TWO}] = {TWO} THEN r := id(f) ELSE r := {} END END;
 	out <-- getRes = out := card(r)
 
 END

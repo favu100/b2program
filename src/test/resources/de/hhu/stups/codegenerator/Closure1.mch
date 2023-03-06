@@ -1,10 +1,12 @@
 MACHINE Closure1
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, s
 
-INVARIANT  f : INT --> INT & s : INT --> INT
+INVARIANT  f : EINT --> EINT & s : EINT --> EINT
 
-INITIALISATION f := {0|->1, 1|->2, 2|->3}; s := {}
+INITIALISATION f := {ZERO|->ONE, ONE|->TWO, TWO|->THREE}; s := {}
 
 OPERATIONS
 

@@ -1,10 +1,12 @@
 MACHINE Rel
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, r
 
-INVARIANT  f : INT +-> POW(INT) & r : INT <-> INT
+INVARIANT  f : EINT +-> POW(EINT) & r : EINT <-> EINT
 
-INITIALISATION f := {1|->{2,3,4}, 2|->{1}}; r := {}
+INITIALISATION f := {ONE|->{TWO,THREE,FOUR}, TWO|->{ONE}}; r := {}
 
 OPERATIONS
 

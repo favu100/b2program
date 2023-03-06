@@ -1,10 +1,12 @@
 MACHINE Fnc
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, r
 
-INVARIANT  f : INT <-> INT & r : INT +-> POW(INT)
+INVARIANT  f : EINT <-> EINT & r : EINT +-> POW(EINT)
 
-INITIALISATION f := {1|->2, 1|->3, 1|->4, 2|->1}; r := {}
+INITIALISATION f := {ONE|->TWO, ONE|->THREE, ONE|->FOUR, TWO|->ONE}; r := {}
 
 OPERATIONS
 

@@ -8,7 +8,7 @@ pub mod binteger;
 //pub mod bstruct;
 pub mod bset;
 //pub mod bstring;
-//pub mod btuple;
+pub mod btuple;
 pub mod brelation;
 //pub mod butils;
 //pub mod orderedhashset;

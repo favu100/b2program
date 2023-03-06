@@ -1,10 +1,12 @@
 MACHINE RelationalImage
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, g, r
 
-INVARIANT  f : POW(INT * INT) & g : POW(INT) & r : POW(INT)
+INVARIANT  f : POW(EINT * EINT) & g : POW(EINT) & r : POW(EINT)
 
-INITIALISATION f := {(1 |-> 2), (2 |-> 3), (3 |-> 4), (4 |-> 5)}; g := {1,2}; r := {}
+INITIALISATION f := {(ONE |-> TWO), (TWO |-> THREE), (THREE |-> FOUR), (FOUR |-> FIFE)}; g := {ONE,TWO}; r := {}
 
 OPERATIONS
 

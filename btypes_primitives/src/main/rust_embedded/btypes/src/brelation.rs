@@ -323,7 +323,6 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
 
     //TODO: directProduct/ParallelProduct maybe?
 
-    //TODO: support const-params in template? maybe compiler can figure them out itself?
     pub fn composition<NewR, const NEW_RS: usize, const PARAM_TOTAL: usize, const NEW_TOTAL: usize>(&self, arg: &BRelation<R, RS, NewR, NEW_RS, PARAM_TOTAL>) -> BRelation<L, LS, NewR, NEW_RS, NEW_TOTAL>
     where NewR: SetItem<NEW_RS>{
         let mut result = BRelation::<L, LS, NewR, NEW_RS, NEW_TOTAL>::empty();
@@ -342,6 +341,8 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         //NewR::ItemType = R; not yet supported in rust, NewR: Set<RS, I = R> might be, but I'd need to rewrite the trait for that and the related code. For now, we assume the code-generator creates correct code (if it wouldn't the code probably wouldn't run anyway...)
         let mut result = BRelation::<L, LS, NewR, NEW_RS, NEW_REL_TOTAL>::empty();
         for left_idx in 0..LS {
+            let result_set = self.rel[left_idx];
+            if !result_set.contains(&true) { continue; } // dont create mappings to empty set
             result.rel[left_idx][NewR::from_arr(self.rel[left_idx]).as_idx()] = true;
         }
         return result;
@@ -402,7 +403,17 @@ where L: SetItem<LS> {
         return result;
     }
 }
-
+/* // Does not work in stable rust
+impl<L, const LS: usize, R, const RS: usize, const TOTAL: usize, const INNER_RS: usize> BRelation<L, LS, R, RS, TOTAL>
+  where L: SetItem<LS>,
+        R: SetItem<RS> + Set<RS>,
+        R::ItemType: SetItem<INNER_RS>{
+    pub fn rel<const NEWSIZE: usize>(&self) -> BRelation<L, LS, R::ItemType, INNER_RS, NEWSIZE> {
+        let result = BRelation::<L, LS, R::ItemType, R::ItemType::VARIS, NEWSIZE>::empty();
+        return result;
+    }
+}
+*/
 #[macro_export]
 macro_rules! brel {
     ($rel_type:ty $( ,$e:expr )* ) => {

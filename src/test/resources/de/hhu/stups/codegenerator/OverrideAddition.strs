@@ -1,5 +1,9 @@
 fn main() {
     let mut _override = Override::new();
     _override.calculate();
-    println!("{}", _override.getRes());
+    if _override.getRes().eq(&EINT::THREE) {
+        println!("3");
+    } else {
+        println!("Wrong result!");
+    }
 }

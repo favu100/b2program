@@ -1,14 +1,16 @@
 MACHINE Override
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, s, r
 
-INVARIANT  f : INT --> INT & s : INT --> INT & r : INT --> INT
+INVARIANT  f : EINT --> EINT & s : EINT --> EINT & r : EINT --> EINT
 
-INITIALISATION f := {0|->0, 1|->1, 2|->2}; s := {1|->3}; r:= {}
+INITIALISATION f := {ZERO|->ZERO, ONE|->ONE, TWO|->TWO}; s := {ONE|->THREE}; r:= {}
 
 OPERATIONS
 
 	calculate = BEGIN r := r <+ s END;
-	out <-- getRes = out := r(1)
+	out <-- getRes = out := r(ONE)
 
 END

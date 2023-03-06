@@ -1,10 +1,12 @@
 MACHINE Domain
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR, FIFE, SIX}
+
 VARIABLES  f, r
 
-INVARIANT  f : POW(INT * INT) & r : POW(INT)
+INVARIANT  f : POW(EINT * EINT) & r : POW(EINT)
 
-INITIALISATION f := {(1 |-> 2), (2 |-> 3), (3 |-> 4), (4 |-> 5)}; r := {}
+INITIALISATION f := {(ONE |-> TWO), (TWO |-> THREE), (THREE |-> FOUR), (FOUR |-> FIFE)}; r := {}
 
 OPERATIONS
 

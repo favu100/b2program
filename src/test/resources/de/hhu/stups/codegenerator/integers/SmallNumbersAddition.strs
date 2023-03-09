@@ -1,0 +1,5 @@
+fn main() {
+    let mut numbers = SmallNumbers::new();
+    numbers.simulate();
+    println!("{}", numbers.getValue());
+}

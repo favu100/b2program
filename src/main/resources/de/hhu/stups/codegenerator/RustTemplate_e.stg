@@ -16,6 +16,7 @@ use btypes::brelation::BRelation;
 use btypes::brelation::RelLeftItem;
 use btypes::bboolean::BBoolean;
 use btypes::bboolean::BBool;
+use btypes::bboolean::BOOL;
 use btypes::binteger::BInteger;
 use btypes::binteger::BInt;
 
@@ -79,7 +80,7 @@ identifier(machine, identifier, isReturn, isPrivate, isLocal, isParam, isAssigne
 >>
 
 getter(returnType, isConstant, machine, variable) ::= <<
-pub fn _get_<variable>(&self) -> <returnType> {
+pub fn get_<variable>(&self) -> <returnType> {
     return self.<variable>.clone();
 }
 >>
@@ -502,7 +503,7 @@ impl <name> {
 >>
 
 bool() ::= <<
-(*butils::BOOL)
+BOOL
 >>
 
 include_declaration(type, identifier) ::= <<

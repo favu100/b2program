@@ -36,18 +36,19 @@ public class TestRSE {
         if (oldFiles != null) Arrays.stream(oldFiles).forEach(File::delete);
     }
 
-    public void generateTestFiles(String machineName, boolean modelChecking, String addition) throws IOException {
+    public void generateTestFiles(String machineRelPath, boolean modelChecking, String addition) throws IOException {
         if (addition == null) addition = "DefaultAddition.strs";
         cleanup();
 
-        Path machinePath = testFileBasePath.resolve(machineName + ".mch");
+        Path machinePath = testFileBasePath.resolve(machineRelPath + ".mch");
         List<Path> rsFilePaths = TestHelper.generateCode(machinePath, GeneratorMode.RS, modelChecking, addition, true);
         rsFilePaths.forEach(path -> {
             Path dest = rustSrcPath.resolve(Paths.get(path.toFile().getName()));
             path.toFile().renameTo(dest.toFile());
         });
 
-        File mainPath = rustSrcPath.resolve(machineName + ".rs").toFile();
+        int i = machineRelPath.lastIndexOf('/');
+        File mainPath = rustSrcPath.resolve(machineRelPath.substring(i+1) + ".rs").toFile();
         File newMainFile = rustSrcPath.resolve("main.rs").toFile();
         mainPath.renameTo(newMainFile);
     }

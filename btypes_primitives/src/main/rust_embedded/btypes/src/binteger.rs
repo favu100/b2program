@@ -6,6 +6,7 @@ pub type BInteger = i128;
 
 pub trait BInt {
     fn equal(&self, other: &Self) -> bool;
+    fn unequal(&self, other: &Self) -> bool;
 
     fn greater(&self, other: &Self) -> bool;
     fn greaterEqual(&self, other: &Self) -> bool;
@@ -26,6 +27,7 @@ pub trait BInt {
 
 impl BInt for BInteger {
     fn equal(&self, other: &Self) -> bool { self.eq(&other) }
+    fn unequal(&self, other: &Self) -> bool { !self.eq(&other) }
 
     fn greater(&self, other: &Self) -> bool { self > other }
     fn greaterEqual(&self, other: &Self) -> bool { self >= other }

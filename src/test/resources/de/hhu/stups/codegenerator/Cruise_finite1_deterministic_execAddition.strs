@@ -1,0 +1,8 @@
+fn main() {
+    let mut cruise = Cruise_finite1_deterministic_exec::new();
+    cruise.simulate();
+    println!("{};", cruise._Cruise_finite1_deterministic.get_CruiseAllowed());
+    println!("{};", cruise._Cruise_finite1_deterministic.get_CruiseActive());
+    println!("{:?};", cruise._Cruise_finite1_deterministic.get_ObstacleRelativeSpeed());
+    println!("{};", cruise._Cruise_finite1_deterministic.get_NumberOfSetCruise());
+}

@@ -1,0 +1,8 @@
+fn main() {
+    let mut exec = scheduler_deterministic_exec::new();
+    exec.simulate();
+    println!("{};", exec.get_counter());
+    println!("{};", exec._scheduler_deterministic.get_active().card());
+    println!("{};", exec._scheduler_deterministic.get__ready().card());
+    println!("{}", exec._scheduler_deterministic.get_waiting().card());
+}

@@ -26,6 +26,10 @@ public class SetDefinitions {
         }
     }
 
+    public void deleteDefinition(BType type) {
+        setDefinitions.remove(type.toString());
+    }
+
     public boolean containsDefinition(BType type) {
         //EnumeratedSetElementType and others does not implement hash
         return setDefinitions.containsKey(type.toString());

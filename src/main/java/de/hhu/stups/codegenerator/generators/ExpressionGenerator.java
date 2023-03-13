@@ -477,14 +477,13 @@ public class ExpressionGenerator {
     private void addElementToConstSet(ExprNode expr) {
         if (!(expr.getType() instanceof SetType)) return;
         BType subType = ((SetType) expr.getType()).getSubType();
-        typeGenerator.addSetDefinition(subType, true); //making sure that a setDef for this type exists
-        SetDefinition setDef = this.setDefinitions.getDefinition(subType);
-        if (!setDef.isConstant()) return;
+        SetDefinition setDef = typeGenerator.addSetDefinition(subType, true); //create const-setDef is necessary
+        if (!setDef.isConstant()) return; //skip if a dynamic set of this type is already present
         if (expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode opNode = (ExpressionOperatorNode) expr;
             switch (opNode.getOperator()) {
                 case SET_ENUMERATION:
-                    opNode.getExpressionNodes().stream().forEach(this::getExprAsElementString);
+                    opNode.getExpressionNodes().forEach(this::getExprAsElementString);
                     break;
                 case COUPLE:
                     ST relElementGenerator = currentGroup.getInstanceOf("relation_element_name");

@@ -189,7 +189,7 @@ public class SubstitutionGenerator {
     private String generateConstantInitialization(MachineNode node, DeclarationNode constant) {
         ST initialization = currentGroup.getInstanceOf("constant_initialization");
         TemplateHandler.add(initialization, "identifier", nameHandler.handleIdentifier(constant.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
-        TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
+        TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType(), true));
         List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
             return "";

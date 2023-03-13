@@ -1,0 +1,6 @@
+fn main() {
+    let mut exec = TrafficLightExec::new();
+    exec.simulate();
+    println!("{:?};", exec._TrafficLight.get_tl_peds());
+    println!("{:?}", exec._TrafficLight.get_tl_cars());
+}

@@ -38,10 +38,6 @@ public class SetDefinition {
         this.elementToBitArr = elementToBitArr;
     }
 
-    public void setVariations() {
-        throw new RuntimeException("should variation generation be done here?");
-    }
-
     public SetDefinition getPowSetDefinition(ST setElementNameGenerator) {
         int maxCard = elements.size();
         //TODO: limit may become configurable?
@@ -95,10 +91,6 @@ public class SetDefinition {
         this.isConstant = true;
         this.elementToBitArr = new HashMap<>();
     }
-    public List<List<String>> getSubSets() {
-        if (subSets == null) setVariations();
-        return this.subSets;
-    }
 
     public Map<Integer, String> elementsIndexed() {
         return listIndexed(elements);
@@ -106,13 +98,6 @@ public class SetDefinition {
 
     public Map<Integer, boolean[]> bitArrIndexed() {
         return elementsIndexed().keySet().stream().collect(Collectors.toMap(Function.identity(), idx -> elementToBitArr.get(elements.get(idx))));
-    }
-
-    public Map<Integer, List<String>> subSetsIndexed() { return listIndexed(getSubSets()); }
-
-    public Map<Integer, boolean[]> subSetVecsIndexed() {
-        if (subSetVecs == null) setVariations();
-        return listIndexed(subSetVecs);
     }
 
     private <T> Map<Integer, T> listIndexed(List<T> list) {

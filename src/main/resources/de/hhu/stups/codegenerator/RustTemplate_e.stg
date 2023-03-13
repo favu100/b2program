@@ -224,7 +224,7 @@ self.<identifier> = <set_enumeration(type=type, enums=enums)>;
 iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
 //iteration_construct_enumeration
 <otherIterationConstructs>
-for <identifier> in <set>.clone().iter().cloned() {
+for <identifier> in <set>.clone().iter() {
     <body>
 }
 >>
@@ -241,7 +241,7 @@ iteration_construct_assignment(otherIterationConstructs, type, identifier, set, 
 iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
 //iteration_construct_subset
 <otherIterationConstructs>
-for <identifier> in <set>.pow().iter().cloned() {
+for <identifier> in <set>.pow().iter() {
     <body>
 }
 >>
@@ -264,7 +264,7 @@ let_expression_predicate_body(otherIterationConstructs, identifier, val) ::= <<
 >>
 
 set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
-let mut <identifier> = <if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![]);
+let mut <identifier> = <if(isRelation)><relation_type(leftType, rightType)><else><set_type(subType)><endif>::empty();
 <comprehension>
 >>
 
@@ -272,24 +272,24 @@ set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredica
 //set_comprehension_predicate TODO: FASTER!
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+<set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<set_type(subType)><endif>, <element>]);
 <else>
 <if(hasCondition)>
 if <conditionalPredicate> {
     if <predicate> {
-        <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+        <set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<set_type(subType)><endif>, <element>]);
     }
 }
 <else>
 if <predicate> {
-    <set> = <set>._union(&<if(isRelation)>BRelation::\<<leftType>, <rightType>\><else>BSet::\<<subType>\><endif>::new(vec![<element>]));
+    <set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<set_type(subType)><endif>, <element>]);
 }
 <endif>
 <endif>
 >>
 
 lambda(type, identifier, lambda, leftType, rightType) ::= <<
-let mut <identifier> = BRelation::\<<leftType>, <rightType>\>::new(vec![]);
+let mut <identifier> = <relation_type(leftType, rightType)>::empty();
 <lambda>
 >>
 
@@ -297,10 +297,10 @@ lambda_expression(otherIterationConstructs, relation, element, expression, empty
 //lambda_expression TODO: FASTER
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
+<relation> = <relation>.union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
 <else>
 if <predicate> {
-    <relation> = <relation>._union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
+    <relation> = <relation>.union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
 }
 <endif>
 >>
@@ -1158,10 +1158,10 @@ parameter_combination_predicate(otherIterationConstructs, set, element, emptyPre
 //parameter_combination_predicate TODO: FASTER
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<set> = <set>._union(&BSet::new(vec![<element>]));
+<set> = <set>.union(&BSet::new(vec![<element>]));
 <else>
 if <predicate> {
-    <set> = <set>._union(&BSet::new(vec![<element>]));
+    <set> = <set>.union(&BSet::new(vec![<element>]));
 }
 <endif>
 >>

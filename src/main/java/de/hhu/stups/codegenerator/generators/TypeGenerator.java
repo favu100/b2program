@@ -168,7 +168,11 @@ public class TypeGenerator {
 
     public SetDefinition addSetDefinition(BType type) { return this.addSetDefinition(type, false); }
     public SetDefinition addSetDefinition(BType type, boolean constant) {
-        if (this.setDefinitions.containsDefinition(type)) return this.setDefinitions.getDefinition(type); //TODO: const check
+        SetDefinition existingDef = this.setDefinitions.getDefinition(type);
+        if (existingDef != null) {
+            if (constant || !existingDef.isConstant()) return existingDef; //returns dynamic set if it exists, even if constant set is 'requested'. Caller needs to check for that. (we only keep const-definitions if there is no dynamic one)
+            else this.setDefinitions.deleteDefinition(type); //dynamic set found after const-set -> overwrite
+        }
 
         List<String> variants;
         String name = null;

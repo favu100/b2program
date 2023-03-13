@@ -44,4 +44,19 @@ public class TestBenchmarks extends TestRSE {
     public void testCruise_finite_deterministic() throws Exception {
         testRSE("Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_execAddition.strs");
     }
+
+    @Test
+    public void testScheduler_deterministic() throws Exception {
+        testRSE("scheduler_deterministic_exec", "scheduler_deterministic_execAddition.strs");
+    }
+
+    @Test
+    public void testTrafficLight() throws Exception {
+        testRSE("TrafficLightExec", "TrafficLightExecAddition.strs");
+    }
+
+    @Test
+    public void testTrain_1_beebook_deterministic_exec() throws Exception {
+        testRSE("Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_execAddition.strs");
+    }
 }

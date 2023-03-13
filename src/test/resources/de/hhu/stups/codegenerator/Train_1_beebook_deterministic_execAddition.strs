@@ -1,0 +1,7 @@
+fn main() {
+    let mut exec = Train_1_beebook_deterministic_exec::new();
+    exec.simulate();
+    println!("{};", exec._Train_1_beebook_deterministic.get_resbl().card());
+    println!("{};", exec._Train_1_beebook_deterministic.get_resrt().card());
+    println!("{}", exec._Train_1_beebook_deterministic.get_TRK().card());
+}

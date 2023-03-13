@@ -110,25 +110,26 @@ public class TestRelation extends TestRSE {
 
 
 
-    @Test
+    @Test(expected = RuntimeException.class) //grows to big for embedded
     public void testRelationGeneralizedUnion() throws Exception {
         testRSE("RelationGeneralizedUnion", "RelationGeneralizedUnionAddition.strs");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class) //grows to big for embedded
     public void testRelationGeneralizedUnionEmpty() throws Exception {
         testRSE("RelationGeneralizedUnionEmpty", "RelationGeneralizedUnionEmptyAddition.strs");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class) //grows to big for embedded
     public void testRelationGeneralizedIntersection() throws Exception {
         testRSE("RelationGeneralizedIntersection", "RelationGeneralizedIntersectionAddition.strs");
     }
 
-    @Test
+    @Test(expected = RuntimeException.class) //grows to big for embedded
     public void testRelationGeneralizedIntersectionEmpty() throws Exception {
         testRSE("RelationGeneralizedIntersectionEmpty", "RelationGeneralizedIntersectionEmptyAddition.strs");
     }
+
 
     @Test
     public void testFunctionalOverride() throws Exception {

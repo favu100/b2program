@@ -37,11 +37,12 @@ public class DeclarationGenerator {
     private final DeferredSetAnalyzer deferredSetAnalyzer;
 
     private final SetDefinitions setDefinitions;
+    private final boolean forEmbedded;
 
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
                                 final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer,
-                                final SetDefinitions setDefinitions) {
+                                final SetDefinitions setDefinitions, final boolean forEmbedded) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.typeGenerator = typeGenerator;
@@ -52,6 +53,7 @@ public class DeclarationGenerator {
         this.setToEnum = new HashMap<>();
         this.enumToMachine = new HashMap<>();
         this.setDefinitions = setDefinitions;
+        this.forEmbedded = forEmbedded;
     }
 
     /*
@@ -309,6 +311,7 @@ public class DeclarationGenerator {
     }
 
     public String generateSetEnumName(BType type) {
+        if (!this.forEmbedded) return "";
         if (type instanceof EnumeratedSetElementType) return ((EnumeratedSetElementType)type).getSetName();
         if (type instanceof BoolType) return "BOOL"; //TODO?
 

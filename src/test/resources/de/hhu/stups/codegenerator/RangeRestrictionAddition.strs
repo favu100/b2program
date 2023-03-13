@@ -3,7 +3,7 @@ fn main() {
     range.calculate();
     let res =  range.getRes();
     if res.card() == 1 && res.functionCall(&EINT::ONE).eq(&EINT::TWO) {
-        println!("{{(1 |-> 2)}}");
+        println!("{{(ONE |-> TWO)}}");
     } else {
         println!("Wrong result!");
     }

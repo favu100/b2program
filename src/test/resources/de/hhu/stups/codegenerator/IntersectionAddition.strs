@@ -3,7 +3,7 @@ fn main() {
     intersection.calculate();
     let res = intersection.getRes();
     if res.card() == 1 && res.elementOf(&EINT::TWO) {
-        println!("{{2}}");
+        println!("{{TWO}}");
     } else {
         println!("Wrong output! Card is: {}", res.card())
     }

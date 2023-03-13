@@ -1,14 +1,16 @@
 MACHINE FunctionalOverride
 
+SETS EINT = {ZERO, ONE, TWO, THREE, FOUR}
+
 VARIABLES  f, s
 
-INVARIANT  f : INT --> INT & s : INT
+INVARIANT  f : EINT --> EINT & s : EINT
 
-INITIALISATION f := {0|->0, 1|->1, 2|->2}; s := 3
+INITIALISATION f := {ZERO|->ZERO, ONE|->ONE, TWO|->TWO}; s := THREE
 
 OPERATIONS
 
-	calculate = BEGIN s := f(1) END;
-	out <-- getRes = out := s
+	calculate = BEGIN s := f(ONE) END;
+	out <-- getRes = IF s = ONE THEN out := 1 ELSE out := 0 END
 
 END

@@ -121,9 +121,9 @@ public class TestJava {
 			return;
 		}
 
-		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
-
-		Process executeProcess = runtime.exec("java -cp btypes.jar:" + generatedMachinePath);
+		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length())).toString();
+		String separator = ";"; // For windows, use ';', UNIX ':'
+		Process executeProcess = runtime.exec("java -cp \"btypes.jar" + separator + generatedMachinePath + "\" " + machineName);
 		executeProcess.waitFor();
 
 		error = streamToString(executeProcess.getErrorStream());
@@ -131,7 +131,7 @@ public class TestJava {
 			throw new RuntimeException(error);
 		}
 
-		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
+		String result = streamToString(executeProcess.getInputStream()).replaceAll("[\n\r]", "");
 		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out"))).replaceAll("\n", "");
 
 		System.out.println("Assert: " + result + " = " + expectedOutput);

@@ -11,6 +11,6 @@ INITIALISATION f := {ZERO|->ZERO, ONE|->ONE, TWO|->TWO}; s := {ONE|->THREE}; r:=
 OPERATIONS
 
 	calculate = BEGIN r := r <+ s END;
-	out <-- getRes = out := r(ONE)
+	out <-- getRes = IF r(ONE) = THREE THEN out := 3 ELSE out := 0 END
 
 END

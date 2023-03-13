@@ -172,11 +172,12 @@ public class ExpressionGenerator {
     private final IterationConstructHandler iterationConstructHandler;
 
     private SetDefinitions setDefinitions;
+    private final boolean forEmbedded;
 
     public ExpressionGenerator(final GeneratorMode mode, final STGroup currentGroup, final MachineGenerator machineGenerator, boolean useBigInteger, String minint, String maxint, final NameHandler nameHandler,
                                final ImportGenerator importGenerator, final DeclarationGenerator declarationGenerator,
                                final IdentifierGenerator identifierGenerator, final TypeGenerator typeGenerator,
-                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator, SetDefinitions setDefinitions) {
+                               final IterationConstructHandler iterationConstructHandler, final RecordStructGenerator recordStructGenerator, SetDefinitions setDefinitions, boolean forEmbedded) {
         this.mode = mode;
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
@@ -192,6 +193,7 @@ public class ExpressionGenerator {
         this.iterationConstructHandler.setExpressionGenerator(this);
         this.recordStructGenerator = recordStructGenerator;
         this.setDefinitions = setDefinitions;
+        this.forEmbedded = forEmbedded;
     }
 
     /*
@@ -475,6 +477,7 @@ public class ExpressionGenerator {
     }
 
     private void addElementToConstSet(ExprNode expr) {
+        if (!this.forEmbedded) return;
         if (!(expr.getType() instanceof SetType)) return;
         BType subType = ((SetType) expr.getType()).getSubType();
         SetDefinition setDef = typeGenerator.addSetDefinition(subType, true); //create const-setDef is necessary

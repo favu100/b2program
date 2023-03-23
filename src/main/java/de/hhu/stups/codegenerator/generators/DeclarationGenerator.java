@@ -277,6 +277,7 @@ public class DeclarationGenerator {
         return setDefinitions.getSetDefinitions().map(def -> {
             if (def.getSetType() instanceof CoupleType) return generateRelationDefinition(def);
             else if (def.getSetType() instanceof EnumeratedSetElementType) return ""; //TODO?
+            else if (def.getSetType() instanceof IntegerType) return ""; //TODO?
             else return generateSetDefinition(def);
         }).collect(Collectors.toList());
     }
@@ -314,6 +315,7 @@ public class DeclarationGenerator {
         if (!this.forEmbedded) return "";
         if (type instanceof EnumeratedSetElementType) return ((EnumeratedSetElementType)type).getSetName();
         if (type instanceof BoolType) return "BOOL"; //TODO?
+        if(type instanceof IntegerType) return "BInteger";
 
         SetDefinition setDef = setDefinitions.getDefinition(type);
         if (setDef == null) {

@@ -103,20 +103,17 @@ public class TestSets extends TestRSE {
         testRSE("GeneralizedIntersectionEmpty", "GeneralizedIntersectionEmptyAddition.strs");
     }
 
-
-
-// These tests won't work, because they require Integer-Sets, which embedded code-gen cannot do (for now)
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testInterval() throws Exception {
         testRSE("Interval", "IntervalAddition.strs");
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testMax() throws Exception {
         testRSE("Max", "MaxAddition.strs");
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testMin() throws Exception {
         testRSE("Min", "MinAddition.strs");
     }

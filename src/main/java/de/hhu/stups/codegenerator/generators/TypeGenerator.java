@@ -195,6 +195,11 @@ public class TypeGenerator {
             EnumeratedSetElementType enumType = (EnumeratedSetElementType) type;
             variants = enumType.getElements();
             name = nameHandler.handleIdentifier(enumType.getSetName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);
+        } else if (type instanceof IntegerType) {
+            variants = new ArrayList<>();
+            name = "BInteger";
+            // The integer-set is hard-coded into the BType-library (since there isn't a good way of creating it dynamically with generated code)
+            // Nesting of integer-sets is not supported at all (but the generator won't stop this)
         } else {
             throw new RuntimeException("cannot add setDef for type "+type);
         }
@@ -210,22 +215,15 @@ public class TypeGenerator {
         else if (type instanceof SetType) return getSetVariants((SetType) type);
         else if (type instanceof CoupleType) return getRelationVariants((CoupleType) type);
         else if (type instanceof BoolType) return Arrays.asList("BFALSE", "BTRUE"); //TODO: put in template?
+        else if (type instanceof IntegerType) return new ArrayList<>();
 
         throw new RuntimeException("cannot get Variants for type "+type);
     }
 
     public List<String> getSetVariants(SetType type) {
         if(!this.setDefinitions.containsDefinition(type)) {
-            //TODO: try to generate missing set-types on the fly?
             addSetDefinition(type);
-            //throw new RuntimeException("Could not find SetDefinition for type "+type);
-        }/*
-        ST setElementName = group.getInstanceOf("set_element_name");
-        return this.setDefinitions.getDefinition(type).getSubSets().stream().map(subset -> {
-            setElementName.remove("elements");
-            setElementName.add("elements", subset);
-            return setElementName.render();
-        }).collect(Collectors.toList());*/
+        }
         return setDefinitions.getDefinition(type).getElements();
     }
 

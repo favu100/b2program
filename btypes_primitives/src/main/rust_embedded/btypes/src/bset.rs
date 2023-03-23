@@ -3,7 +3,8 @@
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use crate::bboolean::BBoolean;
-use crate::binteger::BInteger;
+use crate::binteger;
+use crate::binteger::{BInt, BInteger, set_BInteger};
 use crate::brelation::BRelation;
 
 /// Used to map an Enum to the position in a Set of it's type. \
@@ -211,15 +212,15 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
     pub fn elementOf(&self, element: &I) -> BBoolean { self.arr[element.as_idx()] }
     pub fn notElementOf(&self, element: &I) -> BBoolean { !self.arr[element.as_idx()] }
 
-    //TODO: interval(a: Binteger, b: BInteger) -> BSet<BInteger>
-    //      currently, Int-Sets/Relations are not supported though
     //TODO: nondeterminism needs external libraries
 
-    pub const fn subsetOfInteger(&self) -> BBoolean { false }
-
-    pub const fn strictSubsetOfInteger(&self) -> BBoolean { return self.subsetOfInteger(); }
-
-    pub const fn notSubsetOfInteger(&self) -> BBoolean { return !self.subsetOfInteger(); }
+    pub fn interval(a: &BInteger, b: &BInteger) -> binteger::set_BInteger {
+        let mut result = set_BInteger::empty();
+        for idx in a.as_idx()..=b.as_idx() {
+            result.arr[idx] = true;
+        }
+        return result;
+    }
 
     pub const fn equalInteger(&self) -> BBoolean { false }
 
@@ -277,6 +278,63 @@ impl<I: SetItem<SIZE>, const SIZE: usize> BSet<I, SIZE> {
         return self.equal(&of.domain());
     }
 }
+
+impl <I: SetItem<SIZE> + BInt, const SIZE: usize> BSet<I, SIZE> {
+
+    pub const fn subsetOfInteger(&self) -> BBoolean { true }
+
+    pub const fn notSubsetOfInteger(&self) -> BBoolean { !self.subsetOfInteger() }
+
+    pub const fn strictSubsetOfInteger(&self) -> BBoolean { self.subsetOfInteger() }
+
+    pub fn notStrictSubsetOfInteger(&self) -> BBoolean { !self.strictSubsetOfInteger() }
+
+    pub fn subsetOfNatural(&self) -> BBoolean {
+        if binteger::LOWER_BOUND < 0 { // if LB >= 0, every Int-set only holds Integers >= 0
+            for idx in 0..BInteger::as_idx(&0) {
+                if self.arr[idx] { return false; }
+            }
+        }
+        return true;
+    }
+
+    pub fn notSubsetOfNatural(&self) -> BBoolean { !self.subsetOfNatural() }
+
+    pub fn strictSubsetOfNatural(&self) -> BBoolean { self.subsetOfNatural() }
+
+    pub fn notStrictSubsetOfNatural(&self) -> BBoolean { self.strictSubsetOfNatural() }
+
+    pub fn subsetOfNatural1(&self) -> BBoolean {
+        if binteger::LOWER_BOUND < 1 {
+            for idx in 0..BInteger::as_idx(&1) {
+                if self.arr[idx] { return false; }
+            }
+        }
+        // we could also do self.min() > 0, but that might be slower
+        return true;
+    }
+
+    pub fn notSubsetOfNatural1(&self) -> BBoolean { !self.subsetOfNatural1() }
+
+    pub fn strictSubsetOfNatural1(&self) -> BBoolean { self.subsetOfNatural() }
+
+    pub fn notStrictSubsetOfNatural1(&self) -> BBoolean { !self.strictSubsetOfNatural1() }
+
+    pub fn _min(&self) -> BInteger {
+        for idx in 0..SIZE {
+            if self.arr[idx] { return BInteger::from_idx(idx); }
+        }
+        panic!("Called min on empty Set!");
+    }
+
+    pub fn _max(&self) -> BInteger {
+        for idx in (0..SIZE).rev() {
+            if self.arr[idx] { return BInteger::from_idx(idx); }
+        }
+        panic!("Called max on empty Set!");
+    }
+}
+
 /*
 EINT: SetItem<4> + PowSetItem<16, 4>
 BSet<EINT, 4>: Set<4> + SetItem<16>

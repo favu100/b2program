@@ -1,8 +1,14 @@
-#![allow(non_snake_case)]
+#![allow(non_snake_case, non_camel_case_types)]
 
 use core::convert::TryInto;
+use crate::bset::{BSet, SetItem};
 
 pub type BInteger = i128;
+pub type set_BInteger = BSet<BInteger, INTEGER_SIZE>;
+
+pub const LOWER_BOUND: BInteger = -10;
+pub const UPPER_BOUND: BInteger = 10;
+pub const INTEGER_SIZE: usize = 21; //UB - LB + 1
 
 pub trait BInt {
     fn equal(&self, other: &Self) -> bool;
@@ -48,4 +54,23 @@ impl BInt for BInteger {
     fn negative(&self) -> Self { -self }
     fn pred(&self) -> Self { self - 1 }
     fn succ(&self) -> Self { self + 1 }
+}
+
+
+
+impl SetItem<INTEGER_SIZE> for BInteger {
+    fn as_idx(&self) -> usize {
+        if self < &LOWER_BOUND || self > &UPPER_BOUND {
+            panic!("Integer {} out of Integer bounds!", self);
+        }
+        return (self - LOWER_BOUND).try_into().unwrap();
+    }
+
+    fn from_idx(idx: usize) -> Self {
+        if idx > INTEGER_SIZE {
+            panic!("Integer-index {} is too large!", idx);
+        }
+        let bint_idx: BInteger = idx.try_into().unwrap();
+        return bint_idx + LOWER_BOUND;
+    }
 }

@@ -524,6 +524,9 @@ public class ExpressionGenerator {
                 return relElementNameGenerator.render();
             }
         }
+        if (exprNode instanceof NumberNode) {
+            return ((NumberNode) exprNode).getValue().toString();
+        }
         throw new RuntimeException(String.format("Cannot convert Expression %s to set-element!", exprNode.toString()));
     }
 

@@ -19,6 +19,7 @@ use btypes::bboolean::BBool;
 use btypes::bboolean::BOOL;
 use btypes::binteger::BInteger;
 use btypes::binteger::BInt;
+use btypes::binteger::set_BInteger;
 
 
 <includedMachines; separator="\n">
@@ -578,7 +579,7 @@ mod <machine>;
 
 
 interval(arg1, arg2) ::= <<
-BSet::\<BInteger>::interval(&<arg1>, &<arg2>)
+set_BInteger::interval(&<arg1>, &<arg2>)
 >>
 
 projection(domainType, rangeType, arg1, arg2, isProjection1) ::= <<

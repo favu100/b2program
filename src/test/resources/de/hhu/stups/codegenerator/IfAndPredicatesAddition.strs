@@ -1,5 +1,5 @@
 fn main() {
     let mut iff = IfAndPredicates::new();
-    iff.calculate();
-    println!(iff.getRes());
+    iff.Inc(BInteger::new(10));
+    println!("{}", iff.getRes());
 }

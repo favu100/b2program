@@ -344,7 +344,7 @@ if <if(forall)>!<endif><predicate> {
 
 quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
 //quantified_expression
-let mut <identifier> = <if(isInteger)>BInteger::new(<identity>);<else>BSet::\<<setType>\>::new(vec![]);<endif>
+let mut <identifier> = <if(isInteger)><identity>;<else>BSet::\<<setType>\>::new(vec![]);<endif>
 <if(hasCondition)>
 if <conditionalPredicate> {
     <evaluation>
@@ -543,11 +543,11 @@ let mut _ld_<name> = <identifier>.clone();
 >>
 
 function_call_range_element(expr, leftType, rightType, arg, val) ::= <<
-<expr>._override(&BRelation<if(!leftType)>::\<bobject::Dummy, bobject::Dummy><endif>::new(vec![BTuple::new(<arg>,<val>)]))
+<expr>._override_single(<arg>, <val>)
 >>
 
 function_call_nested(expr, arg, isNested) ::= <<
-<if(!isNested)><expr><else><expr>.functionCall(<arg>)<endif>
+<if(!isNested)><expr><else><expr>.functionCall(&<arg>)<endif>
 >>
 
 assignments(assignments) ::= <<

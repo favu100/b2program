@@ -14,6 +14,7 @@ use btypes::bset::PowAble;
 use btypes::bset::NestedSet;
 use btypes::brelation::BRelation;
 use btypes::brelation::RelLeftItem;
+use btypes::brelation::RelPowAble;
 use btypes::bboolean::BBoolean;
 use btypes::bboolean::BBool;
 use btypes::bboolean::BOOL;
@@ -374,7 +375,8 @@ set_enumeration(leftType, type, rightType, relationName, enums, isRelation) ::= 
 <else>bset![<type><if(enums)>, <endif><enums; separator=", ">]<endif>
 >>
 
-seq_enumeration(type, elements) ::= <<
+seq_enumeration(type, elements, relationName) ::= <<
+<set_enumeration(leftType="BInteger", rightType=type, relationName=relationName, enums=elements, isRelation=true)>
 /*seq_enumeration <type>; <elements; separator=", "> */
 >>
 

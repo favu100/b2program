@@ -1,5 +1,10 @@
 fn main() {
     let mut empty = EmptySequence::new();
     empty.calculate();
-    println!("{}", empty.getRes());
+    let res = empty.getRes();
+    if res.card().equal(&0) {
+        println!("{{}}");
+    } else {
+        println!("Wrong result!");
+    }
 }

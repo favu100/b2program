@@ -1,0 +1,10 @@
+fn main() {
+    let mut sequence = SequenceOperateRelation::new();
+    sequence.calculate();
+    let res = sequence.getRes();
+    if res.card().equal(&1) && res.domain().elementOf(&1) && res.range().elementOf(&2) {
+        println!("{{(1 |-> 2)}}");
+    } else {
+        println!("wrong result!");
+    }
+}

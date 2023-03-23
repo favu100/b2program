@@ -1,10 +1,12 @@
 MACHINE RelationPow
 
+SETS EINT = {ONE, TWO, THREE}
+
 VARIABLES  f, g
 
-INVARIANT  f : POW(INT * INT) & g : POW(POW(INT * INT))
+INVARIANT  f : POW(EINT * EINT) & g : POW(POW(EINT * EINT))
 
-INITIALISATION f := {1|->2, 2|-> 3}; g := POW(f)
+INITIALISATION f := {ONE|->TWO, TWO|-> THREE}; g := POW(f)
 
 OPERATIONS
 

@@ -1,0 +1,8 @@
+fn main() {
+    let mut can_exec = CAN_BUS_tlc_exec::new();
+    can_exec.simulate();
+    println!("{:?};", can_exec._CAN_BUS_tlc_NoIntSet.get_T2_mode()); //T2MODE_SENSE
+    println!("{:?};", can_exec._CAN_BUS_tlc_NoIntSet.get_T2_state()); //T2_EN
+    println!("{};", can_exec._CAN_BUS_tlc_NoIntSet.get_T3_enabled()); //true
+    println!("{:?}", can_exec._CAN_BUS_tlc_NoIntSet.get_BUSvalue()); //ZERO
+}

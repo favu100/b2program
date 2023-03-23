@@ -480,7 +480,7 @@ public class ExpressionGenerator {
         if (!this.forEmbedded) return;
         if (!(expr.getType() instanceof SetType)) return;
         BType subType = ((SetType) expr.getType()).getSubType();
-        SetDefinition setDef = typeGenerator.addSetDefinition(subType, true); //create const-setDef is necessary
+        SetDefinition setDef = typeGenerator.addSetDefinition(subType, true); //create const-setDef if necessary
         if (!setDef.isConstant()) return; //skip if a dynamic set of this type is already present
         if (expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode opNode = (ExpressionOperatorNode) expr;
@@ -974,6 +974,7 @@ public class ExpressionGenerator {
         TemplateHandler.add(enumeration,"elements", tuples);
         TemplateHandler.add(enumeration, "type", typeGenerator.generate(rhsType));
         TemplateHandler.add(enumeration, "isParameter", isParameter);
+        TemplateHandler.add(enumeration, "relationName", declarationGenerator.generateSetEnumName(subType));
         return enumeration.render();
     }
 
@@ -981,24 +982,7 @@ public class ExpressionGenerator {
     * This function generates code for sequence enumeration from the given semantic information
     */
     private String generateSeqEnumeration(BType type, List<String> expressions) {
-        ST enumeration = currentGroup.getInstanceOf("seq_enumeration");
-        BType subType = ((SetType) type).getSubType();
-        BType rhsType = ((CoupleType) subType).getRight();
-        List<String> tuples = new ArrayList<>();
-        if(expressions.size() > 0) {
-            importGenerator.addImport(new CoupleType(new UntypedType(), new UntypedType()));
-        }
-        importGenerator.addImport(IntegerType.getInstance());
-        for(int i = 1; i <= expressions.size(); i++) {
-            ST number = currentGroup.getInstanceOf("number");
-            TemplateHandler.add(number, "number", String.valueOf(i));
-            TemplateHandler.add(number, "useBigInteger", useBigInteger);
-            String lhs = number.render();
-            tuples.add(generateTuple(Arrays.asList(lhs, expressions.get(i-1)), IntegerType.getInstance(), rhsType));
-        }
-        TemplateHandler.add(enumeration,"elements", tuples);
-        TemplateHandler.add(enumeration, "type", typeGenerator.generate(rhsType));
-        return enumeration.render();
+        return generateSeqEnumeration(type, expressions, false);
     }
 
     /*

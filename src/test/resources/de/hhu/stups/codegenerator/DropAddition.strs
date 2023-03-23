@@ -1,5 +1,10 @@
 fn main() {
     let mut drop = Drop::new();
     drop.calculate();
-    println!("{}", drop.getRes());
+    let res = drop.getRes();
+    if res.card().equal(&1) && res.domain().elementOf(&1) && res.range().elementOf(&3) {
+        println!("{{(1 |-> 3)}}");
+    } else {
+        println!("wrong result!");
+    }
 }

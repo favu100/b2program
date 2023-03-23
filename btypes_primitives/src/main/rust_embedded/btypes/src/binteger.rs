@@ -29,6 +29,8 @@ pub trait BInt {
     fn negative(&self) -> Self;
     fn pred(&self) -> Self;
     fn succ(&self) -> Self;
+
+    fn from(source: BInteger) -> Self;
 }
 
 impl BInt for BInteger {
@@ -54,6 +56,8 @@ impl BInt for BInteger {
     fn negative(&self) -> Self { -self }
     fn pred(&self) -> Self { self - 1 }
     fn succ(&self) -> Self { self + 1 }
+
+    fn from(source: BInteger) -> Self { source }
 }
 
 

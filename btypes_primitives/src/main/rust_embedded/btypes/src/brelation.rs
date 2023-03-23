@@ -2,7 +2,7 @@
 
 use core::marker::PhantomData;
 use crate::bboolean::BBoolean;
-use crate::binteger::BInteger;
+use crate::binteger::{BInt, BInteger};
 use crate::bset::{BSet, PowSetItem, Set, SetItem};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, PartialOrd, Ord)]
@@ -56,10 +56,55 @@ where L: SetItem<LS> + RelLeftItem<LS, R, RS, SIZE, REL_SIZE>,
         return BRelation { rel: L::idx_to_rel(idx), _p: PhantomData, _p2: PhantomData };
     }
 }
+/*
+impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> Set<REL_SIZE> for BRelation<L, LS, R, RS, REL_SIZE>
+    where L: SetItem<LS> + RelLeftItem<LS, R, RS, REL_SIZE>,
+          R: SetItem<RS>{
+    type ItemType = L::RelEnum;
 
-//impl<I> PowAble<> for I
-//where I: SetItem<>
-//TODO: pow/fin/pow1/fin1, maybe
+    fn as_arr(&self) -> [bool; REL_SIZE] {
+        todo!()
+    }
+
+    fn from_arr(arr: [bool; REL_SIZE]) -> Self {
+        todo!()
+    }
+
+    fn contains_idx(&self, idx: usize) -> bool {
+        todo!()
+    }
+
+    fn subset_of(&self, other: &Self) -> bool {
+        todo!()
+    }
+}
+*/
+
+pub trait RelPowAble<const REL_VARIANTS: usize, const REL_SIZE: usize>: SetItem<REL_VARIANTS> {
+    fn pow(&self) -> BSet<Self, REL_VARIANTS>;
+    fn pow1(&self) -> BSet<Self, REL_VARIANTS>;
+}
+
+impl<L, const LS: usize, R, const RS: usize, const SIZE: usize, const REL_SIZE: usize> RelPowAble<SIZE, REL_SIZE> for BRelation<L, LS, R, RS, REL_SIZE>
+    where L: SetItem<LS> + RelLeftItem<LS, R, RS, SIZE, REL_SIZE>,
+          R: SetItem<RS>{
+    fn pow(&self) -> BSet<Self, SIZE> {
+        let mut result_arr = [false; SIZE];
+        for idx in 0..SIZE {
+            let crel = Self::from_idx(idx);
+            result_arr[idx] = self.subset(&crel);
+        }
+        return BSet::<Self, SIZE>::const_from_arr(result_arr);
+    }
+
+    fn pow1(&self) -> BSet<Self, SIZE> {
+        let mut result_arr = self.pow().as_arr();
+        let empty_self = Self::empty();
+        let empty_idx = empty_self.as_idx();
+        result_arr[empty_idx] = false;
+        return BSet::const_from_arr(result_arr);
+    }
+}
 
 impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L, LS, R, RS, REL_SIZE>
     where L: SetItem<LS>,
@@ -300,6 +345,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         return !self.rel[k.as_idx()][v.as_idx()];
     }
 
+    //subset or equal
     pub fn subset(&self, other: &Self) -> BBoolean {
         for left_idx in 0..LS {
             for right_idx in 0..RS {
@@ -403,6 +449,73 @@ where L: SetItem<LS> {
         return result;
     }
 }
+
+//Sequence
+impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L, LS, R, RS, REL_SIZE>
+where L: SetItem<LS> + BInt,
+      R: SetItem<RS>{
+
+    pub fn first(&self) -> R { self.functionCall(&L::from(1)) }
+    pub fn last(&self) -> R { self.functionCall(&L::from(self.card())) }
+    pub fn size(&self) -> BInteger { self.card() }
+
+    pub fn concat(&self, other: &Self) -> Self {
+        let mut result = self.copy();
+        let self_size = self.size();
+        for i in 1..=other.size() {
+            result.add_tuple(&L::from(self_size + i), &other.functionCall(&L::from(i)));
+        }
+        return result;
+    }
+
+    pub fn prepend(&self, e: &R) -> Self {
+        let mut result = Self::empty();
+        result.add_tuple(&L::from(1), e);
+        return result.concat(self);
+    }
+
+    pub fn append(&self, e: &R) -> Self {
+        let mut result = self.copy();
+        result.add_tuple(&L::from(self.size()+1), e);
+        return result;
+    }
+
+    pub fn reverse(&self) -> Self {
+        let mut result = Self::empty();
+        let self_size = self.size();
+        for i in 1..=self_size {
+            result.add_tuple(&L::from(i), &self.functionCall(&L::from(self_size - i + 1)))
+        }
+        return result;
+    }
+
+    pub fn front(&self) -> Self {
+        return self.take(&self.size().pred());
+    }
+
+    pub fn tail(&self) -> Self {
+        return self.drop(&1);
+    }
+
+    pub fn take(&self, n: &BInteger) -> Self {
+        let mut result = self.copy();
+        for i in (*n+1)..=self.size() {
+            let i_as_l = L::from(i);
+            result.rel[i_as_l.as_idx()][self.functionCall(&i_as_l).as_idx()] = false;
+        }
+        return result;
+    }
+
+    pub fn drop(&self, n: &BInteger) -> Self {
+        let mut result = Self::empty();
+        for i in (*n+1)..=self.size() {
+            result.add_tuple(&L::from(i-(*n)), &self.functionCall(&L::from(i)))
+        }
+        return result;
+    }
+}
+
+
 /* // Does not work in stable rust
 impl<L, const LS: usize, R, const RS: usize, const TOTAL: usize, const INNER_RS: usize> BRelation<L, LS, R, RS, TOTAL>
   where L: SetItem<LS>,

@@ -156,21 +156,21 @@ public class TestRelation extends TestRSE {
         testRSE("RelationPow1", "RelationPow1Addition.strs");
     }
 
+
+    // Sequences
     @Test
-    public void testTupleProjection1() throws Exception {
-        testRSE("TupleProjection1", "TupleProjection1Addition.strs");
+    public void testSizeOfSequence() throws Exception {
+        testRSE("SizeOfSequence", "SizeOfSequenceAdditions.strs");
     }
 
     @Test
-    public void testTupleProjection2() throws Exception {
-        testRSE("TupleProjection2", "TupleProjection2Addition.strs");
+    public void testConcat() throws Exception {
+        testRSE("Concat", "ConcatAddition.strs");
     }
 
-
-
     @Test
-    public void testTake() throws Exception {
-        testRSE("Take", "TakeAddition.strs");
+    public void testPrepend() throws Exception {
+        testRSE("Prepend", "PrependAddition.strs");
     }
 
     @Test
@@ -179,13 +179,38 @@ public class TestRelation extends TestRSE {
     }
 
     @Test
+    public void testReverse() throws Exception {
+        testRSE("ReverseSequence", "ReverseSequenceAddition.strs");
+    }
+
+    @Test
+    public void testFirstElementSequence() throws Exception {
+        testRSE("FirstElementSequence", "FirstElementSequenceAddition.strs");
+    }
+
+    @Test
+    public void testLastElementSequence() throws Exception {
+        testRSE("LastElementSequence", "LastElementSequenceAddition.strs");
+    }
+
+    @Test
+    public void testFrontSequence() throws Exception {
+        testRSE("FrontSequence", "FrontSequenceAddition.strs");
+    }
+
+    @Test
+    public void testTailSequence() throws Exception {
+        testRSE("TailSequence", "TailSequenceAddition.strs");
+    }
+
+    @Test(expected = Exception.class) // would require POW(INT->INT), which embedded does not support
     public void testConc() throws Exception {
         testRSE("Conc", "ConcAddition.strs");
     }
 
     @Test
-    public void testConcat() throws Exception {
-        testRSE("Concat", "ConcatAddition.strs");
+    public void testTake() throws Exception {
+        testRSE("Take", "TakeAddition.strs");
     }
 
     @Test
@@ -200,46 +225,11 @@ public class TestRelation extends TestRSE {
 
     @Test
     public void testEnumeratedSequence() throws Exception {
-        testRSE("EnumeratedSequence", null);
-    }
-
-    @Test
-    public void testFirstElementSequence() throws Exception {
-        testRSE("FirstElementSequence", "FirstElementSequenceAddition.strs");
-    }
-
-    @Test
-    public void testFrontSequence() throws Exception {
-        testRSE("FrontSequence", "FrontSequenceAddition.strs");
-    }
-
-    @Test
-    public void testLastElementSequence() throws Exception {
-        testRSE("LastElementSequence", "LastElementSequenceAddition.strs");
-    }
-
-    @Test
-    public void testPrepend() throws Exception {
-        testRSE("Prepend", "PrependAddition.strs");
-    }
-
-    @Test
-    public void testReverse() throws Exception {
-        testRSE("ReverseSequence", "ReverseSequenceAddition.strs");
-    }
-
-    @Test
-    public void testSizeOfSequence() throws Exception {
-        testRSE("SizeOfSequence", null);
-    }
-
-    @Test
-    public void testTailSequence() throws Exception {
-        testRSE("TailSequence", "TailSequenceAddition.strs");
+        testRSE("EnumeratedSequence", "EnumeratedSequenceAddition.strs");
     }
 
     @Test
     public void testSequenceOperateRelation() throws Exception {
-        testRSE("SequenceOperateRelation", "SequenceOperateRelationAddition.strs");
+        testRSE("SequenceOperateRelation", "SequenceOperateRelationAddition.strs_e");
     }
 }

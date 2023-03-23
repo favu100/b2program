@@ -1,0 +1,5 @@
+fn main() {
+    let mut machine = SizeOfSequence::new();
+    machine.calculate();
+    println!("{}", machine.get_f().card());
+}

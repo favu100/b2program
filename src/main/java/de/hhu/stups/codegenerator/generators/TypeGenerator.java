@@ -163,6 +163,7 @@ public class TypeGenerator {
         TemplateHandler.add(template, "rightType", generate(type.getRight(), constant));
         addSetDefinition(type.getRight(), constant);
         TemplateHandler.add(template, "rightName", declarationGenerator.generateSetEnumName(type.getRight()));
+        addSetDefinition(type, constant);
         return template.render();
     }
 

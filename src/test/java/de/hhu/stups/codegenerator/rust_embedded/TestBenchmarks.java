@@ -38,7 +38,15 @@ public class TestBenchmarks extends TestRSE {
         testRSE("setoperationbenchmarks/SetOperation",  "SetOperationAddition.strs");
     }
 
-    //TODO: CAN_BUS: either allow const-intSet or rewrite machine
+    @Test
+    public void testCAN_BUS_tcl() throws Exception {
+        testRSE("CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.strs");
+    }
+
+    @Test
+    public void testCAN_BUS_NOIntSet() throws Exception {
+        testRSE("embedded/CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.strs");
+    }
 
     @Test
     public void testCruise_finite_deterministic() throws Exception {

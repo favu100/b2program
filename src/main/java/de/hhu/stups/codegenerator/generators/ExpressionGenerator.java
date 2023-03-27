@@ -504,24 +504,26 @@ public class ExpressionGenerator {
         }
         if (exprNode instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode opNode = (ExpressionOperatorNode) exprNode;
-            if (opNode.getOperator() == SET_ENUMERATION) {
-                BType subtype = ((SetType)opNode.getType()).getSubType();
-                typeGenerator.addSetDefinition(subtype, true); //making sure that a setDef for this type exists
-                List<String> subElements = setDefinitions.getDefinition(subtype).getElements();
-                boolean[] bitArr = new boolean[subElements.size()];
-                List<String> elements = opNode.getExpressionNodes().stream().map(this::getExprAsElementString).sorted(Comparator.comparingInt(subElements::indexOf)).collect(Collectors.toList());
-                elements.forEach(e -> bitArr[subElements.indexOf(e)] = true);
-                ST setElementName = currentGroup.getInstanceOf("set_element_name");
-                setElementName.add("elements", elements);
-                String result = setElementName.render();
-                this.setDefinitions.getDefinition(opNode.getType()).addElement(result, bitArr);
-                return result;
-            }
-            if (opNode.getOperator() == COUPLE) {
-                ST relElementNameGenerator =currentGroup.getInstanceOf("relation_element_name");
-                relElementNameGenerator.add("leftElement", getExprAsElementString(opNode.getExpressionNodes().get(0)));
-                relElementNameGenerator.add("rightElement", getExprAsElementString(opNode.getExpressionNodes().get(1)));
-                return relElementNameGenerator.render();
+            switch (opNode.getOperator()) {
+                case SET_ENUMERATION:
+                    BType subtype = ((SetType)opNode.getType()).getSubType();
+                    typeGenerator.addSetDefinition(subtype, true); //making sure that a setDef for this type exists
+                    List<String> subElements = setDefinitions.getDefinition(subtype).getElements();
+                    boolean[] bitArr = new boolean[subElements.size()];
+                    List<String> elements = opNode.getExpressionNodes().stream().map(this::getExprAsElementString).sorted(Comparator.comparingInt(subElements::indexOf)).collect(Collectors.toList());
+                    elements.forEach(e -> bitArr[subElements.indexOf(e)] = true);
+                    ST setElementName = currentGroup.getInstanceOf("set_element_name");
+                    setElementName.add("elements", elements);
+                    String result = setElementName.render();
+                    this.setDefinitions.getDefinition(opNode.getType()).addElement(result, bitArr);
+                    return result;
+                case COUPLE:
+                    ST relElementNameGenerator =currentGroup.getInstanceOf("relation_element_name");
+                    relElementNameGenerator.add("leftElement", getExprAsElementString(opNode.getExpressionNodes().get(0)));
+                    relElementNameGenerator.add("rightElement", getExprAsElementString(opNode.getExpressionNodes().get(1)));
+                    return relElementNameGenerator.render();
+                case UNARY_MINUS:
+                    return "-" + getExprAsElementString(opNode.getExpressionNodes().get(0));
             }
         }
         if (exprNode instanceof NumberNode) {

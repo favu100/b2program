@@ -2,5 +2,6 @@ fn main() {
     let mut projection = TupleProjection1::new();
     projection.calculate();
     println!("{} ", projection.getRes());
-    println!("{}", projection.getPair());
+    let pair = projection.getPair();
+    println!("({} |-> {})", pair.projection1(), pair.projection2());
 }

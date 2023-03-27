@@ -31,6 +31,7 @@ pub trait BInt {
     fn succ(&self) -> Self;
 
     fn from(source: BInteger) -> Self;
+    fn new(source: BInteger) -> Self;
 }
 
 impl BInt for BInteger {
@@ -58,6 +59,7 @@ impl BInt for BInteger {
     fn succ(&self) -> Self { self + 1 }
 
     fn from(source: BInteger) -> Self { source }
+    fn new(source: BInteger) -> Self { source }
 }
 
 

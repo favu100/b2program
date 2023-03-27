@@ -21,6 +21,7 @@ use btypes::bboolean::BOOL;
 use btypes::binteger::BInteger;
 use btypes::binteger::BInt;
 use btypes::binteger::set_BInteger;
+use btypes::btuple::BTuple;
 
 
 <includedMachines; separator="\n">
@@ -564,7 +565,7 @@ type(type, fromOtherMachine, otherMachine) ::= <<
 >>
 
 tuple_type(leftType, rightType) ::=<<
-BTuple\<<leftType>, <rightType>\>
+(<leftType>, <rightType>)
 >>
 
 set_type(type) ::=<<
@@ -601,7 +602,7 @@ cartesian_product(leftName, rightName, arg1, arg2) ::= <<
 >>
 
 tuple_create(leftType, rightType, arg1, arg1IsPrivate, arg2, arg2IsPrivate) ::= <<
-(&<arg1>, &<arg2>)
+(<arg1>.clone(), <arg2>.clone())
 >>
 
 binary(arg1,operator,arg2) ::= <<

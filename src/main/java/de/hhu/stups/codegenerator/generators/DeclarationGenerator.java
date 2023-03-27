@@ -261,14 +261,24 @@ public class DeclarationGenerator {
     * This function generates code for declaring an enum for a deferred set from the belonging AST node and the belonging template.
     */
     private String declareEnums(DeclarationNode node) {
-        importGenerator.addImport(((SetType) node.getType()).getSubType());
+        BType subType = ((SetType) node.getType()).getSubType();
+        String setName = nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);
+        importGenerator.addImport(subType);
         ST enumDeclaration = currentGroup.getInstanceOf("set_enum_declaration");
-        TemplateHandler.add(enumDeclaration, "name", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        TemplateHandler.add(enumDeclaration, "name", setName);
         List<String> elements = extractEnumsOfDeferredSet(node);
         List<String> enums = elements.stream()
                 .map(element -> nameHandler.handleEnum(element, elements))
                 .collect(Collectors.toList());
         TemplateHandler.add(enumDeclaration, "enums", enums);
+        Map<Integer, String> enumsCounted = enums.stream().collect(Collectors.toMap(enums::indexOf, Function.identity()));
+        TemplateHandler.add(enumDeclaration, "enumsCounted", enumsCounted);
+
+        if (!this.setDefinitions.containsDefinition(subType)) {
+            SetDefinition setDef = new SetDefinition(subType, enums);
+            setDef.setName(setName);
+            this.setDefinitions.addDefinition(setDef);
+        }
         return enumDeclaration.render();
     }
 
@@ -277,6 +287,7 @@ public class DeclarationGenerator {
         return setDefinitions.getSetDefinitions().map(def -> {
             if (def.getSetType() instanceof CoupleType) return generateRelationDefinition(def);
             else if (def.getSetType() instanceof EnumeratedSetElementType) return ""; //TODO?
+            else if (def.getSetType() instanceof DeferredSetElementType) return ""; //TODO?
             else if (def.getSetType() instanceof IntegerType) return ""; //TODO?
             else return generateSetDefinition(def);
         }).collect(Collectors.toList());

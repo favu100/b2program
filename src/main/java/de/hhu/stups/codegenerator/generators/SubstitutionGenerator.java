@@ -173,7 +173,7 @@ public class SubstitutionGenerator {
 
         List<String> constantsInitializations = new ArrayList<>();
         constantsInitializations.addAll(constants.stream()
-                .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
+                .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()) && constant.getType() instanceof DeferredSetElementType)
                 .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
                 .collect(Collectors.toList()));
         constantsInitializations.addAll(constants.stream()

@@ -337,11 +337,11 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         return !self.rel.eq(&other.rel);
     }
 
-    pub fn elementOf(&self, (k, v): (L, R)) -> BBoolean {
+    pub fn elementOf(&self, (k, v): &(L, R)) -> BBoolean {
         return self.rel[k.as_idx()][v.as_idx()];
     }
 
-    pub fn noElementOf(&self, (k, v): (L, R)) -> BBoolean {
+    pub fn noElementOf(&self, (k, v): &(L, R)) -> BBoolean {
         return !self.rel[k.as_idx()][v.as_idx()];
     }
 

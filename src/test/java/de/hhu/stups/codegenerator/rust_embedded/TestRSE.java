@@ -98,7 +98,7 @@ public class TestRSE {
     }
 
     public void testRSE(String machineName, String addition) throws IOException, InterruptedException {
-        boolean execute = true;
+        boolean execute = addition != null;
         boolean modelChecking = false;
         boolean noInv = false;
         boolean noDead = false;

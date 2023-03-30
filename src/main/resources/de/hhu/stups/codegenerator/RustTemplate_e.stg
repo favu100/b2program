@@ -272,20 +272,20 @@ let mut <identifier> = <if(isRelation)><relation_type(leftType, rightType)><else
 >>
 
 set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredicate, predicate, isRelation, leftType, rightType, subType, hasCondition, conditionalPredicate) ::= <<
-//set_comprehension_predicate TODO: FASTER!
+//set_comprehension_predicate
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<set_type(subType)><endif>, <element>]);
+<set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<subType><endif>, <element>]);
 <else>
 <if(hasCondition)>
 if <conditionalPredicate> {
     if <predicate> {
-        <set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<set_type(subType)><endif>, <element>]);
+        <set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<subType><endif>, <element>]);
     }
 }
 <else>
 if <predicate> {
-    <set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<set_type(subType)><endif>, <element>]);
+    <set> = <set>.union(&<if(isRelation)>brel![<relation_type(leftType, rightType)><else>bset![<subType><endif>, <element>]);
 }
 <endif>
 <endif>
@@ -372,8 +372,7 @@ if_expression_predicate(predicate, ifThen, ifElse) ::= <<
 >>
 
 set_enumeration(leftType, type, rightType, relationName, enums, isRelation) ::= <<
-<if(isRelation)>brel![rel_<relationName><if(enums)>, <endif><enums; separator=", ">]
-<else>bset![<type><if(enums)>, <endif><enums; separator=", ">]<endif>
+<if(isRelation)>brel![rel_<relationName><else>bset![<type><endif><if(enums)>, <endif><enums; separator=", ">]
 >>
 
 seq_enumeration(type, elements, relationName) ::= <<
@@ -680,7 +679,7 @@ _ => {<then>}
 >>
 
 any(body) ::= <<
-/any
+//any
 <body>
 >>
 
@@ -689,11 +688,9 @@ any_body(otherIterationConstructs, emptyPredicate, predicate, body) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
 <body>
-break;
 <else>
 if <predicate> {
     <body>
-    break;
 }
 <endif>
 >>

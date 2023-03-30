@@ -533,7 +533,7 @@ macro_rules! brel {
         {
             let mut __temp_gen_rel__ = <$rel_type>::empty();
             $(
-                __temp_gen_rel__.add_tuple($e.0, $e.1);
+                __temp_gen_rel__.add_tuple(&$e.0, &$e.1);
             )*
             __temp_gen_rel__
         }

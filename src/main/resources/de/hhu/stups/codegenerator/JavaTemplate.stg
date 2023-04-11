@@ -1312,7 +1312,7 @@ private void addCachedInfos(final String operation, final <machine> state, final
 }
 >>
 
-model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters, caching) ::= <<
+model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
@@ -1431,7 +1431,7 @@ public void modelCheck() {
 
 private void modelCheckSingleThreaded() {
     <machine> machine = new <machine>();
-    states.add(machine); // TODO: store hashes instead of machine?
+    states.add(machine);
     unvisitedStates.add(machine);
 
     if(isCaching) {

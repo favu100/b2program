@@ -83,9 +83,20 @@ public class TestJs {
 		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath()));
 	}
 
+	public void testJSMC(String machine) throws Exception {
+		List<Path> tsFilePaths = compileMachine(machine, null, null, false, true);
+
+		Set<File> jsFiles = tsFilePaths.stream()
+				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
+				.collect(Collectors.toSet());
+
+		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath()));
+	}
+
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
 		testJs(machinePath, machineName, addition, null, execute, false);
 	}
+
 
 	private List<Path> compileMachine(String machinePath, String addition, String visualisation, boolean forVisualisation, boolean forModelChecking) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()

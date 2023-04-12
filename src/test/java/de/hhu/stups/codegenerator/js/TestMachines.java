@@ -127,6 +127,11 @@ public class TestMachines extends TestJs {
         testJs("CAN_BUS_tlc");
     }
 
+    @Test
+    public void testCanBusTLC_MC() throws Exception {
+        testJSMC("CAN_BUS_tlc");
+    }
+
     @Ignore
     @Test
     public void testCanBusTLCExec() throws Exception {

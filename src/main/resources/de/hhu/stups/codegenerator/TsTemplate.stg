@@ -3,18 +3,40 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, forVisualisation, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, lambdaFunctions) ::= <<
+machine(forModelChecking, forVisualisation, imports, includedMachines, machine, structs, constants_declarations, includes, enums, enum_imports, sets, declarations, initialization, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, mainMethod, lambdaFunctions) ::= <<
 <imports; separator="\n">
 <enum_imports; separator="\n">
 <includedMachines; separator="\n">
 import {BUtils} from "./btypes/BUtils.js";
 <if(forVisualisation)>import {SelectError} from "./btypes/BUtils.js";<endif>
+<if(forModelChecking)>
+import * as immutable from "./immutable/dist/immutable.es.js";
+import LinkedList from 'ts-linked-list';
+import LinkedListNode from 'ts-linked-list';
+<endif>
+
 
 <enums; separator="\n\n">
 
 <structs; separator= "\n\n">
 
+<if(forModelChecking)>
+export enum Type {
+    BFS,
+    DFS,
+    MIXED
+}
+<endif>
+
 export default class <machine> {
+
+    <if(forModelChecking)>
+    parent: <machine>;
+    dependentGuard: Set\<string> = new Set();
+    guardCache: immutable.Map = immutable.Map();
+    dependentInvariant: Set\<string> = new Set();
+    stateAccessedVia: string;
+    <endif>
 
     <includes; separator="\n">
 
@@ -28,7 +50,6 @@ export default class <machine> {
 
     <if(forModelChecking || forVisualisation)>
     <copyConstructor>
-    <copy>
     <endif>
 
     <operations; separator="\n\n">
@@ -39,11 +60,25 @@ export default class <machine> {
     <transitions; separator="\n\n">
 
     <invariant; separator="\n\n">
+
+    <hash_equal; separator="\n\n">
+
+    <endif>
+
+    <if(forModelChecking || forVisualisation)>
+    <copy>
     <endif>
 
     <lambdaFunctions; separator="\n\n">
 
 }
+
+<if(forModelChecking)>
+
+<modelcheck>
+
+<mainMethod>
+<endif>
 
 <addition>
 >>
@@ -54,16 +89,38 @@ machine_unequal() ::= <<
 machine_unequal_predicate() ::= <<
 >>
 
-machine_equal() ::= <<
+machine_equal(machine, predicates) ::= <<
+equals(o: any): boolean {
+    let o1: <machine> = this;
+    let o2: <machine> = o as <machine>;
+    return <predicates; separator= " && ">;
+}
 >>
 
-machine_equal_predicate() ::= <<
+machine_equal_predicate(var) ::= <<
+o1.<var>().equals(o2.<var>())
 >>
 
-machine_hash() ::= <<
+machine_hash(assignments1, assignments2) ::= <<
+hashCode(): number {
+    return this._hashCode_1();
+}
+
+_hashCode_1(): number {
+    let result: number = 1;
+    <assignments1; separator= "\n">
+    return result;
+}
+
+_hashCode_2(): number {
+    let result: number = 1;
+    <assignments2; separator= "\n">
+    return result;
+}
 >>
 
-machine_hash_assignment() ::= <<
+machine_hash_assignment(primeNumber, var) ::= <<
+result = (<primeNumber> * result) ^ ((this.<var>()).hashCode() \<\< 1);
 >>
 
 getter(returnType, variable, isConstant, machineName) ::= <<
@@ -861,28 +918,118 @@ record_private_variable_prefix() ::= <<
 this.
 >>
 
-model_check(nextStates, evalState, printResult, main) ::= <<
-<nextStates>
 
-<evalState>
+modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
+export class ModelChecker {
+    private type: Type;
+    private isCaching: boolean;
+    private isDebug: boolean;
 
-<printResult>
+    private unvisitedStates: LinkedList\<<machine>\> = new LinkedList();
+    private states: Set\<<machine>\> = new Set();
+    private transitions: number = 0;
 
-<main>
+    private invariantViolated: boolean = false;
+    private deadlockDetected: boolean = false;
+    private counterExampleState: <machine> = undefined;
+
+    private invariantDependency: Map\<string, Set\<string>\> = new Map();
+    private guardDependency: Map\<string, Set\<string>\> = new Map();
+
+    constructor(type: Type, isCaching: boolean, isDebug: boolean) {
+        this.type = type;
+        this.isCaching = isCaching;
+        this.isDebug = isDebug;
+    }
+
+    <main>
+
+    next(): <machine> {
+        switch(this.type) {
+            case Type.BFS:
+                return this.unvisitedStates.removeNode(this.unvisitedStates.head).value;
+            case Type.DFS:
+                return this.unvisitedStates.removeNode(this.unvisitedStates.tail).value;
+            case Type.MIXED:
+                if(this.unvisitedStates.length % 2 == 0) {
+                    return this.unvisitedStates.removeNode(this.unvisitedStates.head).value;
+                } else {
+                    return this.unvisitedStates.removeNode(this.unvisitedStates.tail).value;
+                }
+            default:
+                break;
+        }
+        return undefined;
+    }
+
+    <nextStates>
+
+    <invariantViolated>
+
+    <addCachedInfos>
+
+    <printResult>
+}
+
 >>
 
-model_check_next_states(machine, transitions) ::= <<
-private static Set\<<machine>\> generateNextStates(<machine> state, AtomicInteger transitions) {
-    Set\<<machine>\> result = new HashSet\<>();
-    <transitions>
+model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
+generateNextStates(state: <machine>): Set\<<machine>\> {
+    let result: Set\<<machine>\> = new Set();
+    if(this.isCaching) {
+        let parentsGuard: immutable.Map = state.guardCache;
+        let newCache: immutable.Map = parentsGuard == null ? immutable.Map() : parentsGuard;
+        let cachedValue: any = null;
+        let dependentGuardsBoolean: boolean = true;
+        <transitionsWithCaching>
+        state.guardCache = newCache;
+    } else {
+        <transitionsWithoutCaching>
+    }
     return result;
 }
 >>
 
-model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions) ::= <<
+model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
-BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
-for(<tupleType> param : <transitionIdentifier>) {
+<if(isCaching)>
+let <transitionIdentifier>: BSet\<<tupleType>\>;
+if(!(state.dependentGuard.size === 0)) {
+    cachedValue = parentsGuard["<evalTransitions>"];
+    dependentGuardsBoolean = "<evalTransitions>" in state.dependentGuard;
+}
+
+if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+    <transitionIdentifier> = state.<evalTransitions>();
+} else {
+    <transitionIdentifier> = cachedValue as BSet\<<tupleType>\>;
+}
+newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
+for(let param of <transitionIdentifier>) {
+    <execTransitions>
+}
+<else>
+let <transitionIdentifier>: BSet\<<tupleType>\> = state.<evalTransitions>();
+for(let param of <transitionIdentifier>) {
+    <execTransitions>
+}
+<endif>
+<else>
+<if(isCaching)>
+let <transitionIdentifier>: boolean;
+if(!(state.dependentGuard.size === 0)) {
+    cachedValue = parentsGuard["<evalTransitions>"];
+    dependentGuardsBoolean = "<evalTransitions>" in state.dependentGuard;
+}
+
+if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+    <transitionIdentifier> = state.<evalTransitions>();
+} else {
+    <transitionIdentifier> = cachedValue as boolean;
+}
+
+newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
+if(<transitionIdentifier>) {
     <execTransitions>
 }
 <else>
@@ -890,99 +1037,204 @@ if(state.<evalTransitions>()) {
     <execTransitions>
 }
 <endif>
+<endif>
+>>
+
+model_check_add_cached_infos(machine) ::= <<
+addCachedInfos(operation: string, state: <machine>, copiedState: <machine>): void {
+    if(this.isCaching) {
+        copiedState.dependentInvariant = this.invariantDependency[operation];
+        copiedState.dependentGuard = this.guardDependency[operation];
+    }
+    copiedState.stateAccessedVia = operation;
+}
 >>
 
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
-<machine> copiedState = state._copy();
+let copiedState: <machine> = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
+copiedState.parent = state;
+this.addCachedInfos("<operation>", state, copiedState);
 result.add(copiedState);
-transitions.set(transitions.get() + 1);
+this.transitions = this.transitions + 1;
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
 <if(isLhs)>
+let <param>: <type> = <val>.projection1();
+<else>
 <if(oneParameter)>
-<type> <param> = <val>;
+let <param>: <type> = <val>;
 <else>
-<type> <param> = <val>.projection1();
+let <param>: <type> = <val>.projection2();
 <endif>
-<else>
-<type> <param> = <val>.projection2();
 <endif>
 >>
 
-model_check_invariants(machine, checkInvariants, invariants) ::= <<
-public static boolean checkInvariants(Object guardLock, <machine> state, boolean isCaching, Map\<<machine>, Set\<String>\> dependentInvariant) {
-    if(isCaching) {
-        Set\<String> dependentInvariantsOfState;
-        synchronized(guardLock) {
-            dependentInvariantsOfState = dependentInvariant.get(state);
-        }
-        <checkInvariants; separator="\n">
-        return true;
-    }
-    return !(<invariants:{inv | !state.<inv>()}; separator=" || ">);
+model_check_invariants(machine, invariantViolated) ::= <<
+invViolated(state: <machine>): boolean {
+    <invariantViolated; separator="\n">
+    return false;
 }
 >>
 
 model_check_invariant(invariant) ::= <<
-if(dependentInvariantsOfState.contains("<invariant>")) {
+if(!(this.isCaching) || "<invariant>" in state.dependentInvariant) {
     if(!state.<invariant>()) {
-        return false;
+        console.log("INVARIANT CONJUNCT VIOLATED: <invariant>");
+        return true;
     }
 }
 >>
 
 model_check_evaluate_state(machine, variables) ::= <<
-private static Map\<String, Object> evaluateState(<machine> machine) {
-    Map\<String, Object> state = new HashMap\<>();
-    <variables; separator="\n">
-    return state;
-}
 >>
 
 model_check_evaluate_variable(getter) ::= <<
-state.put("<getter>", machine.<getter>());
+state.set("<getter>", machine.<getter>());
 >>
 
-model_check_print() ::= <<
-private static void printResult(int states, int transitions, boolean deadlockDetected, boolean invariantViolated) {
-    if(deadlockDetected) {
-        System.out.println("DEADLOCK DETECTED");
+model_check_print(machine) ::= <<
+printResult(states: number, transitions: number): void {
+    if(this.invariantViolated || this.deadlockDetected) {
+        if(this.deadlockDetected) {
+            console.log("DEADLOCK DETECTED");
+        } else {
+            console.log("INVARIANT VIOLATED");
+        }
+
+        console.log("COUNTER EXAMPLE TRACE: ");
+        let sb: string = '';
+        while(this.counterExampleState != null) {
+            sb = this.counterExampleState + '\n' + sb;
+            if(this.counterExampleState.stateAccessedVia != null) {
+                sb = this.counterExampleState.stateAccessedVia + sb;
+            }
+            sb = '\n\n' + sb;
+            this.counterExampleState = this.counterExampleState.parent;
+        }
+        console.log(sb);
+    } else {
+        console.log("MODEL CHECKING SUCCESSFUL");
     }
-    if(invariantViolated) {
-        System.out.println("INVARIANT VIOLATED");
-    }
-    if(!deadlockDetected && !invariantViolated) {
-        System.out.println("MODEL CHECKING SUCCESSFUL");
-    }
-    System.out.println("Number of States: " + states);
-    System.out.println("Number of Transitions: " + transitions);
+
+    console.log("Number of States: " + this.states);
+    console.log("Number of Transitions: " + this.transitions);
 }
 >>
 
 model_check_init_static(map, keyy, entries) ::= <<
+this.<map>.set("<keyy>", new Set([<entries:{entry | "<entry>"}; separator=", ">]));
 >>
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
+modelCheck(): void {
+    if (this.isDebug) {
+        console.log("Starting Modelchecking, STRATEGY=" + this.type + ", CACHING=" + this.isCaching);
+    }
+    this.modelCheckSingleThreaded();
+}
+
+modelCheckSingleThreaded(): void {
+    let machine: <machine> = new <machine>();
+    this.states.add(machine);
+    this.unvisitedStates.append(machine);
+
+    if(this.isCaching) {
+        this.initCache(machine);
+    }
+
+    while(!(this.unvisitedStates.length === 0)) {
+        let state: <machine> = this.next();
+
+        let nextStates: Set\<<machine>\> = this.generateNextStates(state);
+
+        for(let nextState of nextStates) {
+            if(!this.states.has(nextState)) {
+                this.states.add(nextState);
+                this.unvisitedStates.append(nextState);
+                if(this.states.size % 50000 == 0 && this.isDebug) {
+                    console.log("VISITED STATES: " + this.states.size);
+                    console.log("EVALUATED TRANSITIONS: " + this.transitions);
+                    console.log("-------------------");
+                }
+            }
+        }
+
+        if(this.invViolated(state)) {
+            this.invariantViolated = true;
+            this.counterExampleState = state;
+            break;
+        }
+
+        if(nextStates.size == 0) {
+            this.deadlockDetected = true;
+            this.counterExampleState = state;
+            break;
+        }
+
+    }
+    this.printResult(this.states.size, this.transitions);
+}
+
+initCache(machine: <machine> ): void {
+    <invariantDependency; separator="\n">
+    <guardDependency; separator="\n">
+}
 >>
 
 model_check_main_method(machine) ::= <<
->>
 
-modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
->>
+let args : string[] = process.argv;
+if(args.length > 3) {
+    console.log("Expecting 3 command-line arguments: STRATEGY CACHING DEBUG");
+    process.exit(-1);
+}
+let type: Type = Type.MIXED;
+let threads: number = 0;
+let isCaching: boolean = false;
+let isDebug: boolean = false;
 
-model_check_add_cached_infos(machine) ::= <<
+if(args.length > 0) {
+    if("mixed" === args[0]) {
+        type = Type.MIXED;
+    } else if("bf" === args[0]) {
+        type = Type.BFS;
+    } else if ("df" === args[0]) {
+        type = Type.DFS;
+    } else {
+        console.log("Value for command-line argument STRATEGY is wrong.");
+        console.log("Expecting mixed, bf or df.");
+        process.exit(-1);
+    }
+}
+if(args.length > 1) {
+    try {
+        isCaching = JSON.parse(args[1].toLowerCase());
+    } catch(e) {
+        console.log("Value for command-line argument CACHING is not a boolean.");
+        process.exit(-1);
+    }
+}
+if(args.length > 2) {
+    try {
+        isDebug = JSON.parse(args[2].toLowerCase());
+    } catch(e) {
+        console.log("Value for command-line argument DEBUG is not a boolean.");
+        process.exit(-1);
+    }
+}
+let modelchecker: ModelChecker = new ModelChecker(type, isCaching, isDebug);
+modelchecker.modelCheck();
+
 >>
 
 machine_string(variables) ::= <<
 /* TODO
-@Override
-public String toString() {
+toString(): string {
     <if(variables)>
     return String.join("\n", <variables:{var | "<var>: " + (this.<var>()).toString()}; separator=", ">);
     <else>

@@ -30,9 +30,9 @@ export default class <machine> {
 
     <if(forModelChecking)>
     parent: <machine>;
-    dependentGuard: Set\<string> = new Set();
+    dependentGuard: immutable.Set\<string> = immutable.Set();
     guardCache: immutable.Map = immutable.Map();
-    dependentInvariant: Set\<string> = new Set();
+    dependentInvariant: immutable.Set\<string> = immutable.Set();
     stateAccessedVia: string;
     <endif>
 
@@ -995,7 +995,7 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 <if(isCaching)>
 let <transitionIdentifier>: BSet\<<tupleType>\>;
 if(!(state.dependentGuard.size === 0)) {
-    cachedValue = parentsGuard["<evalTransitions>"];
+    cachedValue = parentsGuard.get("<evalTransitions>");
     dependentGuardsBoolean = "<evalTransitions>" in state.dependentGuard;
 }
 
@@ -1018,7 +1018,7 @@ for(let param of <transitionIdentifier>) {
 <if(isCaching)>
 let <transitionIdentifier>: boolean;
 if(!(state.dependentGuard.size === 0)) {
-    cachedValue = parentsGuard["<evalTransitions>"];
+    cachedValue = parentsGuard.get("<evalTransitions>");
     dependentGuardsBoolean = "<evalTransitions>" in state.dependentGuard;
 }
 
@@ -1043,8 +1043,8 @@ if(state.<evalTransitions>()) {
 model_check_add_cached_infos(machine) ::= <<
 addCachedInfos(operation: string, state: <machine>, copiedState: <machine>): void {
     if(this.isCaching) {
-        copiedState.dependentInvariant = this.invariantDependency[operation];
-        copiedState.dependentGuard = this.guardDependency[operation];
+        copiedState.dependentInvariant = this.invariantDependency.get(operation);
+        copiedState.dependentGuard = this.guardDependency.get(operation);
     }
     copiedState.stateAccessedVia = operation;
 }
@@ -1127,7 +1127,7 @@ printResult(states: number, transitions: number): void {
 >>
 
 model_check_init_static(map, keyy, entries) ::= <<
-this.<map> = this.<map>.set("<keyy>", new Set([<entries:{entry | "<entry>"}; separator=", ">]));
+this.<map> = this.<map>.set("<keyy>", immutable.Set([<entries:{entry | "<entry>"}; separator=", ">]));
 >>
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<

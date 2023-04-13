@@ -510,7 +510,7 @@ export class <name> implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value \<\< 1);
     }
 
     toString() {
@@ -933,8 +933,8 @@ export class ModelChecker {
     private deadlockDetected: boolean = false;
     private counterExampleState: <machine> = undefined;
 
-    private invariantDependency: Map\<string, Set\<string>\> = new Map();
-    private guardDependency: Map\<string, Set\<string>\> = new Map();
+    private invariantDependency: immutable.Map\<string, immutable.Set\<string>\> = new immutable.Map();
+    private guardDependency: immutable.Map\<string, immutable.Set\<string>\> = new immutable.Map();
 
     constructor(type: Type, isCaching: boolean, isDebug: boolean) {
         this.type = type;
@@ -975,7 +975,7 @@ export class ModelChecker {
 
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 generateNextStates(state: <machine>): Set\<<machine>\> {
-    let result: Set\<<machine>\> = new Set();
+    let result: immutable.Set\<<machine>\> = immutable.Set();
     if(this.isCaching) {
         let parentsGuard: immutable.Map = state.guardCache;
         let newCache: immutable.Map = parentsGuard == null ? immutable.Map() : parentsGuard;
@@ -1058,7 +1058,7 @@ let copiedState: <machine> = state._copy();
 copiedState.<operation>(<parameters; separator=", ">);
 copiedState.parent = state;
 this.addCachedInfos("<operation>", state, copiedState);
-result.add(copiedState);
+result = result.add(copiedState);
 this.transitions = this.transitions + 1;
 >>
 
@@ -1127,7 +1127,7 @@ printResult(states: number, transitions: number): void {
 >>
 
 model_check_init_static(map, keyy, entries) ::= <<
-this.<map>.set("<keyy>", new Set([<entries:{entry | "<entry>"}; separator=", ">]));
+this.<map> = this.<map>.set("<keyy>", new Set([<entries:{entry | "<entry>"}; separator=", ">]));
 >>
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<

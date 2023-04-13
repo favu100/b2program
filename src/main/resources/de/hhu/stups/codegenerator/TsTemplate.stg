@@ -11,8 +11,6 @@ import {BUtils} from "./btypes/BUtils.js";
 <if(forVisualisation)>import {SelectError} from "./btypes/BUtils.js";<endif>
 <if(forModelChecking)>
 import * as immutable from "./immutable/dist/immutable.es.js";
-import LinkedList from 'ts-linked-list';
-import LinkedListNode from 'ts-linked-list';
 <endif>
 
 
@@ -466,11 +464,13 @@ copy_assignment(variable) ::= <<
 
 copy(machine, parameters) ::= <<
 public _copy(): <machine> {
-    let _instance = Object.create(<machine>.prototype);
-    for(let key of Object.keys(this)) {
-        _instance[key] = this[key]._copy?.() ?? this[key];
-    }
-    return _instance;
+  const _instance = new <machine>();
+  for (const key of Object.keys(this)) {
+    _instance[key] = typeof this[key] === 'object' && this[key] !== null
+      ? this[key]._copy?.() ?? this[key]
+      : this[key];
+  }
+  return _instance;
 }
 >>
 
@@ -925,7 +925,7 @@ export class ModelChecker {
     private isCaching: boolean;
     private isDebug: boolean;
 
-    private unvisitedStates: LinkedList\<<machine>\> = new LinkedList();
+    private unvisitedStates: <machine>[] = new Array();
     private states: Set\<<machine>\> = new Set();
     private transitions: number = 0;
 
@@ -947,14 +947,14 @@ export class ModelChecker {
     next(): <machine> {
         switch(this.type) {
             case Type.BFS:
-                return this.unvisitedStates.removeNode(this.unvisitedStates.head).value;
+                return this.unvisitedStates.shift();
             case Type.DFS:
-                return this.unvisitedStates.removeNode(this.unvisitedStates.tail).value;
+                return this.unvisitedStates.pop();
             case Type.MIXED:
                 if(this.unvisitedStates.length % 2 == 0) {
-                    return this.unvisitedStates.removeNode(this.unvisitedStates.head).value;
+                    return this.unvisitedStates.shift();
                 } else {
-                    return this.unvisitedStates.removeNode(this.unvisitedStates.tail).value;
+                    return this.unvisitedStates.pop();
                 }
             default:
                 break;
@@ -1141,7 +1141,7 @@ modelCheck(): void {
 modelCheckSingleThreaded(): void {
     let machine: <machine> = new <machine>();
     this.states.add(machine);
-    this.unvisitedStates.append(machine);
+    this.unvisitedStates.push(machine);
 
     if(this.isCaching) {
         this.initCache(machine);
@@ -1155,7 +1155,7 @@ modelCheckSingleThreaded(): void {
         for(let nextState of nextStates) {
             if(!this.states.has(nextState)) {
                 this.states.add(nextState);
-                this.unvisitedStates.append(nextState);
+                this.unvisitedStates.push(nextState);
                 if(this.states.size % 50000 == 0 && this.isDebug) {
                     console.log("VISITED STATES: " + this.states.size);
                     console.log("EVALUATED TRANSITIONS: " + this.transitions);
@@ -1189,7 +1189,7 @@ initCache(machine: <machine> ): void {
 model_check_main_method(machine) ::= <<
 
 let args : string[] = process.argv;
-if(args.length > 3) {
+if(args.length > 5) {
     console.log("Expecting 3 command-line arguments: STRATEGY CACHING DEBUG");
     process.exit(-1);
 }
@@ -1198,12 +1198,12 @@ let threads: number = 0;
 let isCaching: boolean = false;
 let isDebug: boolean = false;
 
-if(args.length > 0) {
-    if("mixed" === args[0]) {
+if(args.length > 2) {
+    if("mixed" === args[2]) {
         type = Type.MIXED;
-    } else if("bf" === args[0]) {
+    } else if("bf" === args[2]) {
         type = Type.BFS;
-    } else if ("df" === args[0]) {
+    } else if ("df" === args[2]) {
         type = Type.DFS;
     } else {
         console.log("Value for command-line argument STRATEGY is wrong.");
@@ -1211,17 +1211,17 @@ if(args.length > 0) {
         process.exit(-1);
     }
 }
-if(args.length > 1) {
+if(args.length > 3) {
     try {
-        isCaching = JSON.parse(args[1].toLowerCase());
+        isCaching = JSON.parse(args[3].toLowerCase());
     } catch(e) {
         console.log("Value for command-line argument CACHING is not a boolean.");
         process.exit(-1);
     }
 }
-if(args.length > 2) {
+if(args.length > 4) {
     try {
-        isDebug = JSON.parse(args[2].toLowerCase());
+        isDebug = JSON.parse(args[4].toLowerCase());
     } catch(e) {
         console.log("Value for command-line argument DEBUG is not a boolean.");
         process.exit(-1);

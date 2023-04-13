@@ -51,6 +51,12 @@ public class TestMachines extends TestJs {
     }
 
     @Test
+    public void testLiftMC() throws Exception {
+        testJSMC("Lift_MC");
+    }
+
+
+    @Test
     public void testTravelAgency() throws Exception {
         testJs("TravelAgency");
     }

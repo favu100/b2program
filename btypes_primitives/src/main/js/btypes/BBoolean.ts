@@ -57,7 +57,7 @@ export class BBoolean implements BObject{
     }
 
     hashCode(): number {
-        return this.value? 1: 0;
+        return (31 * 1) ^ (this.value == true ? 1 : 0 << 1);
     }
 
 }

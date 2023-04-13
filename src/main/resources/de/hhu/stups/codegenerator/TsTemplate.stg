@@ -926,7 +926,7 @@ export class ModelChecker {
     private isDebug: boolean;
 
     private unvisitedStates: <machine>[] = new Array();
-    private states: Set\<<machine>\> = new Set();
+    private states: immutable.Set\<<machine>\> = new immutable.Set();
     private transitions: number = 0;
 
     private invariantViolated: boolean = false;
@@ -1121,7 +1121,7 @@ printResult(states: number, transitions: number): void {
         console.log("MODEL CHECKING SUCCESSFUL");
     }
 
-    console.log("Number of States: " + this.states);
+    console.log("Number of States: " + this.states.size);
     console.log("Number of Transitions: " + this.transitions);
 }
 >>
@@ -1140,7 +1140,7 @@ modelCheck(): void {
 
 modelCheckSingleThreaded(): void {
     let machine: <machine> = new <machine>();
-    this.states.add(machine);
+    this.states = this.states.add(machine);
     this.unvisitedStates.push(machine);
 
     if(this.isCaching) {
@@ -1154,7 +1154,7 @@ modelCheckSingleThreaded(): void {
 
         for(let nextState of nextStates) {
             if(!this.states.has(nextState)) {
-                this.states.add(nextState);
+                this.states = this.states.add(nextState);
                 this.unvisitedStates.push(nextState);
                 if(this.states.size % 50000 == 0 && this.isDebug) {
                     console.log("VISITED STATES: " + this.states.size);

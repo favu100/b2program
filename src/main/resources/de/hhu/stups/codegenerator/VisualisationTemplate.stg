@@ -31,6 +31,7 @@ function initialize() {
     var <initialMachineVar()> = new <machineName>();
     var _state_list = [];
     var _transition_list = [];
+    var _description_list = [];
     var _included_machines = {};
     _included_machines["<machineName>"] = function(){return <initialMachineVar()>};
     <includedMachines; separator="\n">
@@ -55,6 +56,9 @@ function initialize() {
         _machine_vars["_check_inv_"+i].innerHTML = _machine["_check_inv_"+i]();
       }
       checkTransitions();
+      if(document.querySelector(".active") != null) {
+        document.getElementById("descriptionText").innerHTML = _description_list[document.querySelector(".active").index];
+      }
     }
 
     var _history_view_buttons = document.getElementById("_history_view_buttons");
@@ -238,10 +242,11 @@ function initialize() {
     _history_view_buttons.appendChild(_buttonRun500);
 
     createHistoryElement("Initialisation", 0);
+    _description_list.push("");
     var _current_trace = [{name: "$initialise_machine", params: {}}];
 
 
-    createHistoryElement("Initialisation", 0);
+
 
 
     _buttonLoadSimulation.textContent = "Load Simulation";
@@ -264,7 +269,9 @@ function initialize() {
     function displayTrace(trace) {
         selectHistoryElement(-_history_view.querySelector(".active").index);
         let transitions = trace.transitionList
+        _description_list = [];
         for(let transition of transitions) {
+          _description_list.push(transition.description == null ? "" : transition.description);
           if(transition.name.startsWith("$")) {
             continue;
           }
@@ -468,6 +475,8 @@ function() {
   try {
     var parameters = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>];
     var returnValue = <initialMachineVar()>.<machineEvent>(...parameters);
+    _description_list = _description_list.slice(0, index + 1);
+    _description_list.push("");
     createHistoryElement("<machineEvent>(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
     let parametersJSON = {};
     <parameterNames: {param | parametersJSON["<param>"] = _machine_events["<machineEvent>"]["<param>"].getValue().toString();};separator="\n">

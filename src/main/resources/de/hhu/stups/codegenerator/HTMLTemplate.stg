@@ -15,8 +15,8 @@ html(machineName, svgName, btypeImports) ::= <<
   \<div>
     \<h1>Visualization \<br>\</h1>
     <if(svgName)>\<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml">\</object>\<br>\<br>\<br><endif>
-    \<label for="descriptionHeader">Description:\</label>\<br>
-    \<label for="descriptionText">\</label>
+    \<label id="descriptionHeader">Description:\</label>\<br>
+    \<label id="descriptionText">\</label>
   \</div>
   \<div>
       \<h1>Operations View \<br>\</h1>

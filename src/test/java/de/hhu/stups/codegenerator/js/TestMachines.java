@@ -138,6 +138,11 @@ public class TestMachines extends TestJs {
         testJSMC("CAN_BUS_tlc");
     }
 
+    @Test
+    public void testLandingGear() throws Exception {
+        testJSMC("landing_gear/LandingGear_R6");
+    }
+
     @Ignore
     @Test
     public void testCanBusTLCExec() throws Exception {

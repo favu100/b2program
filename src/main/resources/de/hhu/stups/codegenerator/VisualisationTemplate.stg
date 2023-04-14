@@ -312,6 +312,11 @@ function initialize() {
 
     function exportTrace() {
       var transitions = _current_trace;
+      let i = 0;
+      for(let transition of transitions) {
+        transition.description = _description_list[i];
+        i++;
+      }
       var object = {
         description: "Created from B2Program JS Export",
         transitionList: transitions,

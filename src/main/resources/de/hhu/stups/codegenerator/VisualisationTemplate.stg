@@ -57,7 +57,7 @@ function initialize() {
       }
       checkTransitions();
       if(document.querySelector(".active") != null) {
-        document.getElementById("descriptionText").innerHTML = _description_list[document.querySelector(".active").index];
+        descriptionText.innerHTML = _description_list[document.querySelector(".active").index];
       }
     }
 
@@ -245,7 +245,26 @@ function initialize() {
     _description_list.push("");
     var _current_trace = [{name: "$initialise_machine", params: {}}];
 
+    let isEditing = false;
 
+    btEditDescription = document.getElementById("btEditDescription");
+    descriptionText = document.getElementById("descriptionText");
+    taDescription = document.getElementById("taDescription");
+
+    btEditDescription.onclick = function() {
+        if(isEditing) {
+            btEditDescription.textContent = "Edit";
+            descriptionText.removeAttribute("hidden");
+            taDescription.setAttribute("hidden", "hidden");
+            descriptionText.textContent = taDescription.value;
+        } else {
+            btEditDescription.textContent = "Apply";
+            descriptionText.setAttribute("hidden", "hidden");
+            taDescription.removeAttribute("hidden");
+            taDescription.value = descriptionText.textContent;
+        }
+        isEditing = !isEditing;
+    };
 
 
 

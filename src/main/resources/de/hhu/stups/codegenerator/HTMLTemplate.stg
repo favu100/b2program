@@ -17,6 +17,8 @@ html(machineName, svgName, btypeImports) ::= <<
     <if(svgName)>\<object id="<svgName>" data="<svgName>.svg" type="image/svg+xml">\</object>\<br>\<br>\<br><endif>
     \<label id="descriptionHeader">Description:\</label>\<br>
     \<label id="descriptionText">\</label>
+    \<textarea id="taDescription" hidden="hidden">\</textarea>\<br>\<br>
+    \<button id="btEditDescription"\>Edit\</button>
   \</div>
   \<div>
       \<h1>Operations View \<br>\</h1>

@@ -71,7 +71,7 @@ export default class <machine> {
 
 }
 
-<if(forModelChecking)>
+<if(forModelChecking && !forVisualisation)>
 
 <modelcheck>
 
@@ -1187,7 +1187,6 @@ initCache(machine: <machine> ): void {
 >>
 
 model_check_main_method(machine) ::= <<
-
 let args : string[] = process.argv;
 if(args.length > 5) {
     console.log("Expecting 3 command-line arguments: STRATEGY CACHING DEBUG");
@@ -1229,7 +1228,6 @@ if(args.length > 4) {
 }
 let modelchecker: ModelChecker = new ModelChecker(type, isCaching, isDebug);
 modelchecker.modelCheck();
-
 >>
 
 machine_string(variables) ::= <<

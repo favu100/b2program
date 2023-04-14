@@ -70,7 +70,6 @@ public class VisualisationGenerator {
     TemplateHandler.add(visualisation, "svgElements", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem::getId)).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "events", visBProject.getProject().getMainMachine().getOperations().stream().map(machineEvent -> this.generateMachineEvent(machineEvent, withoutSvg? null: visBProject.getVisualisation().getSvgPath().getFileName().toString().split("\\.")[0], visBProject.getVisualisation().getVisBEvents())).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "visualUpdates", visBProject.getVisualisation().getVisBItems().stream().map((VisBItem item) -> generateVisualUpdate(item, visBProject)).collect(Collectors.toSet()));
-    TemplateHandler.add(visualisation, "machineEnums", expressionGenerator.getNameHandler().getEnumTypes().keySet().stream().filter((String machineEnum) -> expressionGenerator.getNameHandler().getEnumToMachine().get(machineEnum).equals(visBProject.getProject().getMainMachine().getName())).collect(Collectors.toSet()));
     TemplateHandler.add(visualisation, "importedEnums", importGenerator.getImportedEnums());
     TemplateHandler.add(visualisation, "includedMachines", generateIncludedMachines(visBProject.getProject().getMainMachine()));
     TemplateHandler.add(visualisation, "variables", generateVariables(visBProject.getProject().getMainMachine()));

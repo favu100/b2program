@@ -3,12 +3,10 @@ document, false, for, function, import, true, var
 >>
 
 
-visualisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, machineEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
+visualisation(imports, machineName, svgName, svgElements, events, visualUpdates, importedEnums, variables, constants, sets, invariant, invariantCount, variableUpdates, includedMachines) ::= <<
 import <machineName> from "./<machineName>.js";
 import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">
-<machineEnums : {enum | import {<enum>\} from "./<machineName>.js"<\n>}>
-<machineEnums : {enum | import {enum_<enum>\} from "./<machineName>.js"<\n>}>
 <imports; separator="\n">
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -443,7 +441,7 @@ function() {
         alert("Event <machineEvent> is not enabled!");
         return;
     }
-  } else {
+  <if(parameterNames)>} else {
     try  {
         if(<parameterNames: {param | _machine_events["<machineEvent>"]["<param>"].getValue() == null}; separator=" && ">) {
             for(let tr of transition) {
@@ -465,6 +463,7 @@ function() {
         alert("Invalid parameters for event <machineEvent>!\nPossible values are:\n" + transition.toString());
         return;
     }
+  <endif>
   }
   try {
     var parameters = [<parameterNames: {param| parameters?.<param> ?? _machine_events["<machineEvent>"]["<param>"].getValue(), }>];

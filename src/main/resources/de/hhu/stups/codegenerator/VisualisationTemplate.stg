@@ -257,6 +257,7 @@ function initialize() {
             descriptionText.removeAttribute("hidden");
             taDescription.setAttribute("hidden", "hidden");
             descriptionText.textContent = taDescription.value;
+            _description_list[document.querySelector(".active").index] = taDescription.value;
         } else {
             btEditDescription.textContent = "Apply";
             descriptionText.setAttribute("hidden", "hidden");

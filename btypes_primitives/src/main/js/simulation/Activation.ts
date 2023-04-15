@@ -28,16 +28,19 @@ export class Activation {
         this.time -= delta;
     }
 
+    getTime(): number {
+        return this.time;
+    }
+
     equals(other: Activation): boolean {
-        return
-          this.operation === other.operation &&
+        return (this.operation === other.operation &&
           this.time === other.time &&
           this.additionalGuards === other.additionalGuards &&
           this.activationKind === other.activationKind &&
           this.probabilisticVariables === other.probabilisticVariables &&
           this.firingTransitionParameters === other.firingTransitionParameters &&
           this.firingTransitionParametersPredicate ===
-            other.firingTransitionParametersPredicate;
+            other.firingTransitionParametersPredicate);
     }
 
 }

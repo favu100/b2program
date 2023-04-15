@@ -9,6 +9,9 @@ import {SelectError} from "./btypes/BUtils.js";
 <importedEnums; separator="\n">
 <imports; separator="\n">
 
+import {Activation} from "./simulation/Activation.js";
+import {ActivationKind} from "./simulation/ActivationKind.js";
+
 document.addEventListener('DOMContentLoaded', (event) => {
   checkLoaded();
 });
@@ -206,7 +209,7 @@ function initialize() {
       _simulation_view.appendChild(div_element);
       simulation_element.onclick = function() {
         try {
-            playSimulation(simulation);
+            playSimulation(_current_simulation);
         } catch (error) {
             alert("Simulation could not be played.");
             console.error(error);
@@ -388,16 +391,40 @@ function initialize() {
         }
     }
 
+    let activationConfigurationsSorted = new Array();
+    let noActivationQueued = false;
+    let time = 0;
+    let delay = 0;
+    let configurationToActivation = {};
+    let activationConfigurationMap = {};
+    let timestamps = new Array();
+    let operationToActivations = {};
+
     async function playSimulation(simulation) {
         // initialize
-        var simTime = 0;
-        var delay = 0;
-        var schedulingTable = {};
-        var newDelay = 0;
+        let schedulingTable = {};
+        let newDelay = 0;
+
+        for(let config of simulation["activations"]) {
+            let id = config["id"];
+            let opName = config["execute"];
+            if(opName != null) {
+                activationConfigurationsSorted.push(config)
+                if(operationToActivations[opName] == null) {
+                    operationToActivations[opName] = new Set();
+                }
+                operationToActivations[opName].add(id);
+                configurationToActivation[id] = new Array();
+            }
+            activationConfigurationMap[id] = config;
+        }
+
+        activationConfigurationsSorted.sort((act1, act2) => act1["priority"] == null ? false : act2["priority"] == null ? true : act1["priority"] - act2["priority"]);
+
+        console.log(activationConfigurationsSorted);
 
 
         while(true) { // Finish at ending condition
-            simTime = simTime + delay; // Update time
             // Update scheduling table
             newDelay = Number.MAX_VALUE;
             Object.keys(schedulingTable).forEach((key, index) => {
@@ -410,14 +437,59 @@ function initialize() {
                 });
             });
             delay = newDelay;
+            updateRemainingTime();
             executeActivatedEvents(); // Execute activated events
+            updateDelay();
             await sleep(delay);
-            console.log(simTime);
         }
     }
 
-    function executeActivatedEvents() {
 
+    function executeActivatedEvents() {
+        for(let opConfig of activationConfigurationsSorted) {
+            if (endingConditionReached()) {
+                break;
+            }
+            executeActivatedEvent(opConfig);
+        }
+    }
+
+    function executeActivatedEvent(opConfig) {
+
+    }
+
+    function updateRemainingTime() {
+        updateRemainingTime(delay);
+    }
+
+    function updateRemainingTime(delay) {
+        time += delay;
+        for (let key in configurationToActivation) {
+            for (let i = 0; i \< configurationToActivation[key].length; i++) {
+                let activation = configurationToActivation[key][i];
+                activation.decreaseTime(delay);
+            }
+        }
+    }
+
+    function updateDelay() {
+        noActivationQueued = true;
+        let newDelay = Number.MAX_SAFE_INTEGER;
+        for (let key in configurationToActivation) {
+            for (let i = 0; i \< configurationToActivation[key].length; i++) {
+                let activation = configurationToActivation[key][i];
+                noActivationQueued = false;
+                if (activation.getTime() \< delay) {
+                    newDelay = activation.getTime();
+                }
+            }
+        }
+        delay = newDelay;
+    }
+
+
+    function endingConditionReached() {
+        return noActivationQueued;
     }
 }
 >>

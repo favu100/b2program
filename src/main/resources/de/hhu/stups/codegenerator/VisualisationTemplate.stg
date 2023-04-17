@@ -421,8 +421,15 @@ function initialize() {
 
         activationConfigurationsSorted.sort((act1, act2) => act1["priority"] == null ? false : act2["priority"] == null ? true : act1["priority"] - act2["priority"]);
 
-        console.log(activationConfigurationsSorted);
+        if(Object.keys(configurationToActivation).includes("$setup_constants")) {
+            let activation = activationConfigurationMap["$setup_constants"];
+            activateEvent(activation, new Array(), "1=1");
+        }
 
+        if(Object.keys(configurationToActivation).includes("$initialise_machine")) {
+            let activation = activationConfigurationMap["$initialise_machine"];
+            activateEvent(activation, new Array(), "1=1");
+        }
 
         while(true) { // Finish at ending condition
             // Update scheduling table
@@ -455,7 +462,34 @@ function initialize() {
     }
 
     function executeActivatedEvent(opConfig) {
+        let id = opConfig["id"];
+        let activationConfiguration = opConfig["activating"];
 
+		let activationForOperation = configurationToActivation[id];
+		let activationForOperationCopy = [...activationForOperation];
+
+		for(let activation of activationForOperationCopy) {
+			// select operation only if its time is 0
+			if(activation.getTime() > 0) {
+				break;
+			}
+			activationForOperation.remove(activation);
+			//State currentState = newTrace.getCurrentState();
+			//Transition transition = simulationEventHandler.selectTransition(activation, currentState);
+			// TODO: Compute outgoing transition
+			if (transition != null) {
+				//List\<String> parameterNames = transition.getParameterNames() == null ? new ArrayList\<>() : transition.getParameterNames();
+				//String parameterPredicate = transition.getParameterPredicate() == null ? "1=1" : transition.getParameterPredicate();
+				// TODO
+				activateEvents(activationConfiguration, new Array(), "1=1");
+				timestamps.add(time);
+			} else if("skip".equals(activation.getOperation())) {
+				activateEvents(activationConfiguration, new Array(), "1=1");
+				timestamps.add(time);
+			} else if(!activationConfig.isActivatingOnlyWhenExecuted()) {
+				activateEvents(activationConfiguration, new Array(), "1=1");;
+			}
+		}
     }
 
     function updateRemainingTime() {
@@ -491,6 +525,75 @@ function initialize() {
     function endingConditionReached() {
         return noActivationQueued;
     }
+
+    function activateEvents(activation, parametersAsString, parameterPredicates) {
+        if(activation != null) {
+            for(let activationConfiguration of activation) {
+                handleOperationConfiguration(activationConfigurationMap[activationConfiguration], parametersAsString, parameterPredicates);
+            }
+        }
+    }
+
+    function handleOperationConfiguration(activationConfiguration, parametersAsString, parameterPredicates) {
+        if(activationConfiguration["execute"] != null) {
+            chooseEvent(activationConfiguration, parametersAsString, parameterPredicates);
+        } else if(activationConfiguration["chooseActivation"] != null) {
+            activateEvent(activationConfiguration, parametersAsString, parameterPredicates);
+        }
+    }
+
+    function chooseEvent(activationChoiceConfiguration, parametersAsString, parameterPredicates) {
+        let probabilityMinimum = 0.0;
+        let randomDouble = Math.random();
+        for (const id of Object.keys(activationChoiceConfiguration.activations)) {
+          let activationConfiguration = activationConfigurationMap[id];
+          let evalProbability = parseFloat(cache.readValueWithCaching(state, activationChoiceConfiguration.activations[id]));
+          if (randomDouble > probabilityMinimum && randomDouble \< probabilityMinimum + evalProbability) {
+            handleOperationConfiguration(activationConfiguration, parametersAsString, parameterPredicates);
+          }
+          probabilityMinimum += evalProbability;
+        }
+        if (Math.abs(1.0 - probabilityMinimum) > 0.000001) {
+          throw new Error("Sum of probabilistic choice is not equal 1");
+        }
+
+    }
+
+    function activateEvent(activationOperationConfiguration, parametersAsString, parameterPredicates) {
+        let activationsForId = configurationToActivation[activationOperationConfiguration["id"]];
+        if (!activationsForId) {
+          return;
+        }
+        let id = activationOperationConfiguration["id"];
+        let opName = activationOperationConfiguration["opName"];
+        let time = activationOperationConfiguration["after"];
+        let activationKind = activationOperationConfiguration["activationKind"];
+        let additionalGuards = activationOperationConfiguration["additionalGuards"];
+        let parameters = activationOperationConfiguration["fixedVariables"];
+        let probability = activationOperationConfiguration["probabilisticVariables"];
+        let evaluatedTime = parseInt(time);
+
+        switch (activationKind) {
+          case 'SINGLE':
+          case 'SINGLE_MAX':
+          case 'SINGLE_MIN':
+            activateSingleOperations(id, activationKind, new Activation(opName, evaluatedTime, additionalGuards, activationKind, parameters, probability, parametersAsString, parameterPredicates));
+            break;
+          case 'MULTI':
+          default:
+            activateMultiOperations(activationsForId, new Activation(opName, evaluatedTime, additionalGuards, activationKind, parameters, probability, parametersAsString, parameterPredicates));
+            break;
+        }
+    }
+
+    function activateMultiOperations(activationsForId, activation) {
+        console.log("TEST");
+    }
+
+    function activateSingleOperations(id, activationKind, activation) {
+        console.log("TEST");
+    }
+
 }
 >>
 

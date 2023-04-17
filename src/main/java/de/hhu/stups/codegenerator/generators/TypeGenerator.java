@@ -172,7 +172,8 @@ public class TypeGenerator {
         if (!this.forEmbedded) return null;
         SetDefinition existingDef = this.setDefinitions.getDefinition(type);
         if (existingDef != null) {
-            if (constant || !existingDef.isConstant()) return existingDef; //returns dynamic set if it exists, even if constant set is 'requested'. Caller needs to check for that. (we only keep const-definitions if there is no dynamic one)
+            if (constant || !existingDef.isConstant())
+                return existingDef; //returns dynamic set if it exists, even if constant set is 'requested'. Caller needs to check for that. (we only keep const-definitions if there is no dynamic one)
             else this.setDefinitions.deleteDefinition(type); //dynamic set found after const-set -> overwrite
         }
 
@@ -201,6 +202,9 @@ public class TypeGenerator {
             name = "BInteger";
             // The integer-set is hard-coded into the BType-library (since there isn't a good way of creating it dynamically with generated code)
             // Nesting of integer-sets is not supported at all (but the generator won't stop this)
+        } else if(type instanceof BoolType) {
+            variants = getTypeVariants(type);
+            name = "BOOL";
         } else {
             throw new RuntimeException("cannot add setDef for type "+type);
         }

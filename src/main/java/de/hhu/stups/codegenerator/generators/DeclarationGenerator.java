@@ -289,6 +289,7 @@ public class DeclarationGenerator {
             else if (def.getSetType() instanceof EnumeratedSetElementType) return ""; //TODO?
             else if (def.getSetType() instanceof DeferredSetElementType) return ""; //TODO?
             else if (def.getSetType() instanceof IntegerType) return ""; //TODO?
+            else if (def.getSetType() instanceof BoolType) return ""; //TODO?
             else return generateSetDefinition(def);
         }).collect(Collectors.toList());
     }

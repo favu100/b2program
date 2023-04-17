@@ -1,6 +1,7 @@
 #![allow(non_snake_case, non_camel_case_types)]
 
 use core::convert::TryInto;
+use crate::bboolean::BBoolean;
 use crate::bset::{BSet, SetItem};
 
 pub type BInteger = i128;
@@ -32,6 +33,13 @@ pub trait BInt {
 
     fn from(source: BInteger) -> Self;
     fn new(source: BInteger) -> Self;
+
+    fn isInteger(&self) -> BBoolean { true }
+    fn isNotInteger(&self) -> BBoolean { false }
+    fn isNatural(&self) -> BBoolean;
+    fn isNotNatural(&self) -> BBoolean;
+    fn isNatural1(&self) -> BBoolean;
+    fn isNotNatural1(&self) -> BBoolean;
 }
 
 impl BInt for BInteger {
@@ -60,6 +68,14 @@ impl BInt for BInteger {
 
     fn from(source: BInteger) -> Self { source }
     fn new(source: BInteger) -> Self { source }
+
+    fn isNatural(&self) -> BBoolean { return *self >= 0; }
+
+    fn isNotNatural(&self) -> BBoolean { return *self < 0; }
+
+    fn isNatural1(&self) -> BBoolean { return *self > 0; }
+
+    fn isNotNatural1(&self) -> BBoolean { return *self < 1; }
 }
 
 

@@ -23,8 +23,25 @@ use btypes::binteger::BInt;
 use btypes::binteger::set_BInteger;
 use btypes::btuple::BTuple;
 
+<if(forModelChecking)>
+use std::env;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, mpsc, Mutex};
+use std::collections::{HashSet, LinkedList};
+use dashmap::DashSet;
+use threadpool::ThreadPool;
+use std::sync::mpsc::channel;
+use derivative::Derivative;
+use std::time::{Duration};
+<endif>
+
 
 <includedMachines; separator="\n">
+
+<if(forModelChecking)>
+#[derive(Clone, Copy)]
+pub enum MC_TYPE { BFS, DFS, MIXED }
+<endif>
 
 <structs; separator="\n\n">
 
@@ -32,12 +49,18 @@ use btypes::btuple::BTuple;
 
 <setDefinitions; separator="\n\n">
 
-#[derive(Default, Debug)]
+<if(forModelChecking)>
+#[derive(Derivative)]
+#[derivative(Clone, Default, Debug, Hash, PartialEq, Eq)]
+<else>#[derive(Default, Debug)]<endif>
 pub struct <machine> {
     <if(declarations)>/*declarations*/<declarations; separator="\n"><endif>
     <if(includes)>/*includes*/<includes; separator="\n"><endif>
     <if(constants_declarations)>/*constant_declarations*/<constants_declarations; separator="\n"><endif>
     <if(sets)>/*sets*/<sets; separator="\n"><endif>
+    <if(forModelChecking)>
+    <if(transitionCachesDeclaration)>#[derivative(Hash="ignore", PartialEq="ignore")]<endif>
+    <transitionCachesDeclaration; separator="\n#[derivative(Hash=\"ignore\", PartialEq=\"ignore\")]\n"><endif>
 }
 
 <hash_equal>
@@ -47,10 +70,59 @@ impl <machine> {
     <if(getters)><\n><getters; separator="\n\n"><endif>
     <if(operations)><\n><operations; separator="\n\n">
     <endif>
+
+    <if(forModelChecking)>
+
+    <transitions; separator="\n\n">
+
+    <invariant; separator="\n\n">
+
+    <copy>
+
+    <modelcheck>
+
+    <endif>
 }
 
 <lambdaFunctions; separator="\n\n">
 <addition>
+
+<if(forModelChecking)>
+fn main() {
+    let args: Vec\<String> = env::args().collect();
+    if args.len() \< 4 { panic!("Number of arguments errorneous"); }
+
+    let threads = args.get(2).unwrap().parse::\<usize>().unwrap();
+    if threads \<= 0 { panic!("Input for number of threads is wrong."); }
+
+    let is_caching = args.get(3).unwrap().parse::\<bool>().unwrap();
+    let mc_type = match args.get(1).unwrap().as_str() {
+        "mixed" => MC_TYPE::MIXED,
+        "bf" => MC_TYPE::BFS,
+        "df" => MC_TYPE::DFS,
+        _    => panic!("Input for strategy is wrong.")
+    };
+
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
+    if threads == 1 {
+        <machine>::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
+    } else {
+        <machine>::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
+    }
+}
+<endif>
 >>
 
 import_type(type, useBigInteger) ::= <<
@@ -522,7 +594,7 @@ global_declaration(type, identifier) ::= <<
 >>
 
 transition_cache_declaration(type, identifier, operationHasParams) ::= <<
-_tr_cache_<identifier>: Option\<<if(operationHasParams)>BSet\<<type>\><else>bool<endif>\>,
+_tr_cache_<identifier>: Option\<<if(operationHasParams)>HashSet\<<type>\><else>bool<endif>\>,
 >>
 
 constant_declaration(type, identifier) ::= <<
@@ -1074,17 +1146,9 @@ fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, n
 }
 >>
 
-copy_constructor(machine, parameters, assignments) ::= <<
-public <machine>(<parameters; separator=", ">) {
-    //copy_constructor
-    <assignments; separator="\n">
-}
->>
+copy_constructor() ::= <<>>
 
-copy_assignment(variable) ::= <<
-//copy_assignment
-this.<variable> = <variable>;
->>
+copy_assignment() ::= <<>>
 
 pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
 //pre_assert
@@ -1101,7 +1165,7 @@ if <predicate> {
 >>
 
 transition(noParameters, noPredicate, identifier, subType, operationName, predicate, hasCondition, conditionalPredicate, combination) ::= <<
-pub fn _tr_<operationName>(&mut self, is_caching: bool) -> <if(noParameters)>bool<else>BSet\<<subType>\><endif> {
+pub fn _tr_<operationName>(&mut self, is_caching: bool) -> <if(noParameters)>bool<else>HashSet\<<subType>\><endif> {
     //transition
     if !is_caching || self._tr_cache_<operationName>.is_none() {
         <if(noParameters)>
@@ -1114,7 +1178,7 @@ pub fn _tr_<operationName>(&mut self, is_caching: bool) -> <if(noParameters)>boo
         return __tmp__val__;
         <endif>
         <else>
-        let mut <identifier>: BSet\<<subType>\> = BSet::new(vec![]);
+        let mut <identifier>: HashSet\<<subType>\> = HashSet::new();
         <if(hasCondition)>
         if <conditionalPredicate> {
             <combination>
@@ -1159,10 +1223,10 @@ parameter_combination_predicate(otherIterationConstructs, set, element, emptyPre
 //parameter_combination_predicate TODO: FASTER
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<set> = <set>.union(&BSet::new(vec![<element>]));
+<set>.insert(<element>);
 <else>
 if <predicate> {
-    <set> = <set>.union(&BSet::new(vec![<element>]));
+    <set>.insert(<element>);
 }
 <endif>
 >>

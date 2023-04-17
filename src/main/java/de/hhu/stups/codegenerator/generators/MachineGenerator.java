@@ -377,6 +377,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private String generateCopyConstructor(MachineNode node) {
 		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
 			ST template = currentGroup.getInstanceOf("copy_constructor");
+			if (template.getAttributes() == null || template.getAttributes().isEmpty()) return template.render(); // rust does not need this and it produces issues on embedded code generation
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
 			parameters.addAll(node.getVariables());

@@ -106,6 +106,28 @@ impl<L, const LS: usize, R, const RS: usize, const SIZE: usize, const REL_SIZE: 
     }
 }
 
+
+
+pub trait TBRelation {
+    fn isPartialInteger(&self) -> BBoolean { false }
+    fn checkDomainInteger(&self) -> BBoolean { false }
+    fn isPartialNatural(&self) -> BBoolean { false }
+    fn checkDomainNatural(&self) -> BBoolean { false }
+    fn isPartialNatural1(&self) -> BBoolean { false }
+    fn checkDomainNatural1(&self) -> BBoolean { false }
+    fn checkRangeInteger(&self) -> BBoolean { false }
+    fn checkRangeNatural(&self) -> BBoolean { false }
+    fn checkRangeNatural1(&self) -> BBoolean { false }
+    fn checkDomainString(&self) -> BBoolean { false }
+    fn isPartialString(&self) -> BBoolean { false }
+    fn checkRangeString(&self) -> BBoolean { false }
+    fn checkDomainStruct(&self) -> BBoolean { false }
+    fn isPartialStruct(&self) -> BBoolean { false }
+    fn checkRangeStruct(&self) -> BBoolean { false }
+}
+
+impl<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize, const REL_SIZE: usize> TBRelation for BRelation<L, LS, R, RS, REL_SIZE> {}
+
 impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L, LS, R, RS, REL_SIZE>
     where L: SetItem<LS>,
           R: SetItem<RS>{
@@ -117,6 +139,8 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub const fn copy(&self) -> Self {
         BRelation { rel: self.rel, _p: PhantomData, _p2: PhantomData }
     }
+
+    pub fn iter(&self) -> BRelIter<L, LS, R, RS> { BRelIter::new(self.rel) }
 
     pub fn _override_single(&self, left_item: L, right_item: R) -> Self {
         let mut result = self.copy();
@@ -514,6 +538,53 @@ where L: SetItem<LS> + BInt,
             result.add_tuple(&L::from(i-(*n)), &self.functionCall(&L::from(i)))
         }
         return result;
+    }
+
+    pub fn isPartialInteger(&self) -> BBoolean { true }
+    pub fn checkDomainInteger(&self) -> BBoolean { return self.isPartialInteger(); }
+    pub fn isPartialNatural(&self) -> BBoolean { return self.domain().subsetOfNatural(); }
+    pub fn checkDomainNatural(&self) -> BBoolean { return self.isPartialNatural(); }
+    pub fn isPartialNatural1(&self) -> BBoolean { return self.domain().subsetOfNatural1(); }
+    pub fn checkDomainNatural1(&self) -> BBoolean { return self.isPartialNatural1(); }
+}
+
+impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L, LS, R, RS, REL_SIZE>
+where L: SetItem<LS>,
+      R: SetItem<RS> + BInt{
+    pub fn checkRangeInteger(&self) -> BBoolean { true }
+    pub fn checkRangeNatural(&self) -> BBoolean { return self.range().subsetOfNatural(); }
+    pub fn checkRangeNatural1(&self) -> BBoolean { return self.range().subsetOfNatural1(); }
+}
+
+
+pub struct BRelIter<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize> {
+    brel: [[bool; RS]; LS],
+    c_l: usize,
+    c_r: usize,
+    _p: PhantomData<L>,
+    _p2: PhantomData<R>,
+}
+
+impl<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize> BRelIter<L, LS, R, RS> {
+    pub const fn new(arr: [[bool; RS]; LS]) -> Self { BRelIter { brel: arr, c_l: 0, c_r: 0, _p: PhantomData, _p2: PhantomData } }
+}
+
+impl<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize> Iterator for BRelIter<L, LS, R, RS> {
+    type Item = (L, R);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while self.c_l < LS {
+            while self.c_r < RS {
+                if self.brel[self.c_l][self.c_r] {
+                    self.c_r += 1;
+                    return Option::Some((L::from_idx(self.c_l), R::from_idx(self.c_r-1)));
+                }
+                self.c_r += 1;
+            }
+            self.c_l += 1;
+            self.c_r = 0;
+        }
+        return Option::None;
     }
 }
 

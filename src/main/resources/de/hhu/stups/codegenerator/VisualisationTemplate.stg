@@ -447,6 +447,7 @@ function initialize() {
             updateRemainingTime();
             executeActivatedEvents(); // Execute activated events
             updateDelay();
+            updateVisuals();
             await sleep(delay);
         }
     }
@@ -464,32 +465,54 @@ function initialize() {
     function executeActivatedEvent(opConfig) {
         let id = opConfig["id"];
         let activationConfiguration = opConfig["activating"];
+        if(typeof activationConfiguration === 'string') {
+            activationConfiguration = [activationConfiguration];
+        }
 
 		let activationForOperation = configurationToActivation[id];
 		let activationForOperationCopy = [...activationForOperation];
 
+        let index = 0;
 		for(let activation of activationForOperationCopy) {
 			// select operation only if its time is 0
 			if(activation.getTime() > 0) {
 				break;
 			}
-			activationForOperation.remove(activation);
+            activationForOperation.splice(index, 1);
 			//State currentState = newTrace.getCurrentState();
 			//Transition transition = simulationEventHandler.selectTransition(activation, currentState);
 			// TODO: Compute outgoing transition
-			if (transition != null) {
+			//let transition = null;
+			let executed = executeTransition(activation);
+			if(executed) {
+                activateEvents(activationConfiguration, new Array(), "1=1");
+                timestamps.push(time);
+            }
+			//if (transition != null) {
 				//List\<String> parameterNames = transition.getParameterNames() == null ? new ArrayList\<>() : transition.getParameterNames();
 				//String parameterPredicate = transition.getParameterPredicate() == null ? "1=1" : transition.getParameterPredicate();
 				// TODO
-				activateEvents(activationConfiguration, new Array(), "1=1");
-				timestamps.add(time);
-			} else if("skip".equals(activation.getOperation())) {
-				activateEvents(activationConfiguration, new Array(), "1=1");
-				timestamps.add(time);
-			} else if(!activationConfig.isActivatingOnlyWhenExecuted()) {
-				activateEvents(activationConfiguration, new Array(), "1=1");;
-			}
+			//	activateEvents(activationConfiguration, new Array(), "1=1");
+			//	timestamps.push(time);
+			//} else if("skip" === activation.getOperation()) {
+			//	activateEvents(activationConfiguration, new Array(), "1=1");
+			//	timestamps.push(time);
+			//} else if(!activationConfig.isActivatingOnlyWhenExecuted()) {
+			//	activateEvents(activationConfiguration, new Array(), "1=1");;
+			//}
+			index = index + 1;
 		}
+    }
+
+    function executeTransition(activation) {
+        if("$setup_constants" === activation.getOperation() || "$initialise_machine" === activation.getOperation()) {
+            return true;
+        }
+        if(_machine["_tr_" + activation.getOperation()]()) {
+            _machine[activation.getOperation()]();
+            return true;
+        }
+        return false;
     }
 
     function updateRemainingTime() {
@@ -529,27 +552,27 @@ function initialize() {
     function activateEvents(activation, parametersAsString, parameterPredicates) {
         if(activation != null) {
             for(let activationConfiguration of activation) {
-                handleOperationConfiguration(activationConfigurationMap[activationConfiguration], parametersAsString, parameterPredicates);
+                handleEventConfiguration(activationConfigurationMap[activationConfiguration], parametersAsString, parameterPredicates);
             }
         }
     }
 
-    function handleOperationConfiguration(activationConfiguration, parametersAsString, parameterPredicates) {
+    function handleEventConfiguration(activationConfiguration, parametersAsString, parameterPredicates) {
         if(activationConfiguration["execute"] != null) {
-            chooseEvent(activationConfiguration, parametersAsString, parameterPredicates);
-        } else if(activationConfiguration["chooseActivation"] != null) {
             activateEvent(activationConfiguration, parametersAsString, parameterPredicates);
+        } else if(activationConfiguration["chooseActivation"] != null) {
+            chooseEvent(activationConfiguration, parametersAsString, parameterPredicates);
         }
     }
 
     function chooseEvent(activationChoiceConfiguration, parametersAsString, parameterPredicates) {
         let probabilityMinimum = 0.0;
         let randomDouble = Math.random();
-        for (const id of Object.keys(activationChoiceConfiguration.activations)) {
+        for (const id of Object.keys(activationChoiceConfiguration["chooseActivation"])) {
           let activationConfiguration = activationConfigurationMap[id];
-          let evalProbability = parseFloat(cache.readValueWithCaching(state, activationChoiceConfiguration.activations[id]));
+          let evalProbability = parseFloat(activationChoiceConfiguration["chooseActivation"][id]);
           if (randomDouble > probabilityMinimum && randomDouble \< probabilityMinimum + evalProbability) {
-            handleOperationConfiguration(activationConfiguration, parametersAsString, parameterPredicates);
+            handleEventConfiguration(activationConfiguration, parametersAsString, parameterPredicates);
           }
           probabilityMinimum += evalProbability;
         }
@@ -565,7 +588,7 @@ function initialize() {
           return;
         }
         let id = activationOperationConfiguration["id"];
-        let opName = activationOperationConfiguration["opName"];
+        let opName = activationOperationConfiguration["execute"];
         let time = activationOperationConfiguration["after"];
         let activationKind = activationOperationConfiguration["activationKind"];
         let additionalGuards = activationOperationConfiguration["additionalGuards"];
@@ -586,13 +609,46 @@ function initialize() {
         }
     }
 
-    function activateMultiOperations(activationsForId, activation) {
-        console.log("TEST");
+    function activateMultiOperations(activationsForOperation, activation) {
+      let insertionIndex = 0;
+      while (insertionIndex \< activationsForOperation.length && activation.time >= activationsForOperation[insertionIndex].time) {
+        insertionIndex++;
+      }
+      activationsForOperation.splice(insertionIndex, 0, activation);
     }
 
     function activateSingleOperations(id, activationKind, activation) {
-        console.log("TEST");
+      let evaluatedTime = activation.time;
+
+      let activationsForId = configurationToActivation[id];
+      if (activationsForId.length > 0) {
+        switch (activationKind) {
+          case 'SINGLE_MIN': {
+            let activationForId = activationsForId[0];
+            let otherActivationTime = activationForId.time;
+            if (evaluatedTime \< otherActivationTime) {
+              activationsForId.splice(0, activationsForId.length, activation);
+            }
+            return;
+          }
+          case 'SINGLE_MAX': {
+            let activationForId = activationsForId[0];
+            let otherActivationTime = activationForId.time;
+            if (evaluatedTime > otherActivationTime) {
+              activationsForId.splice(0, activationsForId.length, activation);
+            }
+            return;
+          }
+          case 'SINGLE':
+            return;
+          default:
+            break;
+        }
+      }
+
+      configurationToActivation[id].push(activation);
     }
+
 
 }
 >>

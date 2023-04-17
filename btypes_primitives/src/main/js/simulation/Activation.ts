@@ -28,8 +28,36 @@ export class Activation {
         this.time -= delta;
     }
 
+    getOperation(): string {
+        return this.operation;
+    }
+
     getTime(): number {
         return this.time;
+    }
+
+    getAdditionalGuards(): string {
+        return this.additionalGuards;
+    }
+
+    getActivationKind(): ActivationKind {
+        return this.activationKind;
+    }
+
+    getFixedVariables(): Map<string, string> {
+        return this.fixedVariables;
+    }
+
+    getProbabilisticVariables(): any {
+        return this.probabilisticVariables;
+    }
+
+    getFiringTransitionParameters(): Array<string> {
+        return this.firingTransitionParameters;
+    }
+
+    getFiringTransitionParametersPredicate(): string {
+        return this.firingTransitionParametersPredicate;
     }
 
     equals(other: Activation): boolean {

@@ -1,0 +1,5 @@
+fn main() {
+  let mut machine = RelationSubset::new();
+  machine.calculate();
+  println!("{}", machine.getRes());
+}

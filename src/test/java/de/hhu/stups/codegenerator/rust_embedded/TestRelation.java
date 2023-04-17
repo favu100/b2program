@@ -19,6 +19,11 @@ public class TestRelation extends TestRSE {
     }
 
     @Test
+    public void testSubset() throws Exception {
+        testRSE("RelationSubset", "RelationSubsetAddition.strs");
+    }
+
+    @Test
     public void testId() throws Exception {
         testRSE("Id", "IdAddition.strs");
     }

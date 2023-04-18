@@ -510,6 +510,11 @@ function initialize() {
         }
         if(_machine["_tr_" + activation.getOperation()]()) {
             _machine[activation.getOperation()]();
+            let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+            createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);
+            _current_trace = _current_trace.slice(0, index + 1)
+            _current_trace.push({name: activation.getOperation(), params: {}});
+            _description_list.push("");
             return true;
         }
         return false;

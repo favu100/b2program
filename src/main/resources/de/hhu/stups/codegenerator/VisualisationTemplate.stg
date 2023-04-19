@@ -84,6 +84,20 @@ function initialize() {
         return [...flattenTuple(tuple.projection1()), tuple.projection2()];
     }
 
+    function unflattenTuple(arr) {
+        if(arr.length == 1) {
+            return arr[0];
+        }
+        let last = arr.pop();
+        let tuple = last;
+
+        for (let i = arr.length - 2; i >= 0; i--) {
+          tuple = new BTuple(arr[i], tuple);
+        }
+
+        return tuple;
+    }
+
     function createOptionList(event, transition) {
         let collator = new Intl.Collator([], {numeric: true});
         for(let index in _machine_events[event].parameterNames) {
@@ -483,27 +497,11 @@ function initialize() {
 				break;
 			}
             activationForOperation.splice(index, 1);
-			//State currentState = newTrace.getCurrentState();
-			//Transition transition = simulationEventHandler.selectTransition(activation, currentState);
-			// TODO: Compute outgoing transition
-			//let transition = null;
 			let executed = executeTransition(activation);
 			if(executed) {
                 activateEvents(activationConfiguration, new Array(), "1=1");
                 timestamps.push(time);
             }
-			//if (transition != null) {
-				//List\<String> parameterNames = transition.getParameterNames() == null ? new ArrayList\<>() : transition.getParameterNames();
-				//String parameterPredicate = transition.getParameterPredicate() == null ? "1=1" : transition.getParameterPredicate();
-				// TODO
-			//	activateEvents(activationConfiguration, new Array(), "1=1");
-			//	timestamps.push(time);
-			//} else if("skip" === activation.getOperation()) {
-			//	activateEvents(activationConfiguration, new Array(), "1=1");
-			//	timestamps.push(time);
-			//} else if(!activationConfig.isActivatingOnlyWhenExecuted()) {
-			//	activateEvents(activationConfiguration, new Array(), "1=1");;
-			//}
 			index = index + 1;
 		}
     }
@@ -523,10 +521,14 @@ function initialize() {
                 return true;
             }
         } else if(transition.size().intValue() > 0) {
-        } else {
-            // TODO: Create tuple from list
-            if(activation.getFixedVariables() in transition) {
-                _machine[activation.getOperation()](flattenTuple());
+            let fixedVariables = activation.getFixedVariables();
+            let parameters = [];
+            for(let key of Object.keys(fixedVariables)) {
+                parameters.push(_machine_events[activation.getOperation()][key].parseValue(fixedVariables[key]));
+            }
+            let parameterAsExpression = unflattenTuple(parameters);
+            if(transition.elementOf(parameterAsExpression).booleanValue()) {
+                _machine[activation.getOperation()](...parameters);
                 let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
                 createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);
                 _current_trace = _current_trace.slice(0, index + 1)

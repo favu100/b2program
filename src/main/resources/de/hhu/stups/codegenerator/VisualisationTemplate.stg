@@ -397,7 +397,6 @@ function initialize() {
     let activationConfigurationMap = {};
     let timestamps = new Array();
     let operationToActivations = {};
-    let schedulingTable = {};
     let newDelay = 0;
     let thread = 0;
 
@@ -415,8 +414,6 @@ function initialize() {
         updateVisuals();
 
         // initialize
-        schedulingTable = {};
-        newDelay = 0;
         thread = thread + 1;
         let currentThread = thread;
 
@@ -448,18 +445,6 @@ function initialize() {
         }
 
         while(true) { // Finish at ending condition
-            // Update scheduling table
-            newDelay = Number.MAX_VALUE;
-            Object.keys(schedulingTable).forEach((key, index) => {
-                schedulingTable(key).forEach(activation => {
-                    activation.decreaseTime(delay);
-                    // Update new delay
-                    if(activation.time \< newDelay) {
-                        newDelay = activation.time;
-                    }
-                });
-            });
-            delay = newDelay;
             updateRemainingTime();
             executeActivatedEvents(); // Execute activated events
             updateDelay();
@@ -553,10 +538,6 @@ function initialize() {
     }
 
     function updateRemainingTime() {
-        updateRemainingTime(delay);
-    }
-
-    function updateRemainingTime(delay) {
         time += delay;
         for (let key in configurationToActivation) {
             for (let i = 0; i \< configurationToActivation[key].length; i++) {
@@ -573,7 +554,7 @@ function initialize() {
             for (let i = 0; i \< configurationToActivation[key].length; i++) {
                 let activation = configurationToActivation[key][i];
                 noActivationQueued = false;
-                if (activation.getTime() \< delay) {
+                if (activation.getTime() \< newDelay) {
                     newDelay = activation.getTime();
                 }
             }

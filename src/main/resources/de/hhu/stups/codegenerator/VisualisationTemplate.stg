@@ -161,6 +161,8 @@ function initialize() {
       _state_list.push(<initialMachineVar()>._copy());
       _transition_list = _transition_list.slice(0, index);
       _transition_list.push({});
+      _description_list = _description_list.slice(0, index);
+      _description_list.push("");
       while(_history_view.querySelectorAll("span").length > index && _history_view.lastChild !== null) {
         _history_view.removeChild(_history_view.lastChild);
       }
@@ -245,7 +247,6 @@ function initialize() {
     _history_view_buttons.appendChild(_buttonRun500);
 
     createHistoryElement("Initialisation", 0);
-    _description_list.push("");
     var _current_trace = [{name: "$initialise_machine", params: {}}];
 
     let isEditing = false;
@@ -399,11 +400,29 @@ function initialize() {
     let activationConfigurationMap = {};
     let timestamps = new Array();
     let operationToActivations = {};
+    let schedulingTable = {};
+    let newDelay = 0;
+    let thread = 0;
 
     async function playSimulation(simulation) {
+        <initialMachineVar()> = new <machineName>();
+        activationConfigurationsSorted = new Array();
+        noActivationQueued = false;
+        time = 0;
+        delay = 0;
+        configurationToActivation = {};
+        activationConfigurationMap = {};
+        timestamps = new Array();
+        operationToActivations = {};
+        createHistoryElement("Initialisation", 0);
+        updateVisuals();
+
         // initialize
-        let schedulingTable = {};
-        let newDelay = 0;
+        schedulingTable = {};
+        newDelay = 0;
+        thread = thread + 1;
+        let currentThread = thread;
+
 
         for(let config of simulation["activations"]) {
             let id = config["id"];
@@ -449,6 +468,9 @@ function initialize() {
             updateDelay();
             updateVisuals();
             await sleep(delay);
+            if(currentThread != thread) {
+                break;
+            }
         }
     }
 
@@ -508,14 +530,27 @@ function initialize() {
         if("$setup_constants" === activation.getOperation() || "$initialise_machine" === activation.getOperation()) {
             return true;
         }
-        if(_machine["_tr_" + activation.getOperation()]()) {
-            _machine[activation.getOperation()]();
-            let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-            createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);
-            _current_trace = _current_trace.slice(0, index + 1)
-            _current_trace.push({name: activation.getOperation(), params: {}});
-            _description_list.push("");
-            return true;
+        let transition = _machine["_tr_" + activation.getOperation()]();
+        if(!(transition instanceof BSet)) {
+            if(transition) {
+                _machine[activation.getOperation()]();
+                let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+                createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);
+                _current_trace = _current_trace.slice(0, index + 1)
+                _current_trace.push({name: activation.getOperation(), params: {}});
+                return true;
+            }
+        } else if(transition.size().intValue() > 0) {
+        } else {
+            // TODO: Create tuple from list
+            if(activation.getFixedVariables() in transition) {
+                _machine[activation.getOperation()](flattenTuple());
+                let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+                createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);
+                _current_trace = _current_trace.slice(0, index + 1)
+                _current_trace.push({name: activation.getOperation(), params: {}});
+                return true;
+            }
         }
         return false;
     }

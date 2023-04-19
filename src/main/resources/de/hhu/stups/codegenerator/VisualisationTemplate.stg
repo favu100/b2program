@@ -200,7 +200,7 @@ function initialize() {
       };
     }
 
-    function createSimulationElement(text) {
+    function createSimulationElement(text, simulation) {
       var simulation_element = document.createElement("button");
       var remove_element = document.createElement("button");
       simulation_element.innerHTML = text + "\</br>";
@@ -211,7 +211,7 @@ function initialize() {
       _simulation_view.appendChild(div_element);
       simulation_element.onclick = function() {
         try {
-            playSimulation(_current_simulation);
+            playSimulation(simulation);
         } catch (error) {
             alert("Simulation could not be played.");
             console.error(error);
@@ -276,8 +276,6 @@ function initialize() {
     _buttonLoadSimulation.textContent = "Load Simulation";
     _buttonLoadSimulation.onclick = loadSimulation;
     _simulation_view_buttons.appendChild(_buttonLoadSimulation);
-
-    var _current_simulation = null;
 
     var _param_div;
     var _param_datalist;
@@ -367,8 +365,7 @@ function initialize() {
             let response = await fetch(file.name);
             let data = await response.text();
             let simulation = JSON.parse(data);
-            _current_simulation = simulation;
-            createSimulationElement(file.name);
+            createSimulationElement(file.name, simulation);
         };
 
         _file_input.click();

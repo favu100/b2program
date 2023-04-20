@@ -1,11 +1,6 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
-import de.hhu.stups.codegenerator.generators.BacktrackingGenerator;
-import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
-import de.hhu.stups.codegenerator.generators.ImportGenerator;
-import de.hhu.stups.codegenerator.generators.MachineGenerator;
-import de.hhu.stups.codegenerator.generators.PredicateGenerator;
-import de.hhu.stups.codegenerator.generators.TypeGenerator;
+import de.hhu.stups.codegenerator.generators.*;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.prob.parser.ast.SourceCodePosition;
@@ -102,11 +97,11 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
 
     public IterationConstructGenerator(final IterationConstructHandler iterationConstructHandler, final MachineGenerator machineGenerator, final NameHandler nameHandler, final STGroup group,
                                        final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final ExpressionGenerator expressionGenerator,
-                                       final PredicateGenerator predicateGenerator, final BacktrackingGenerator backtrackingGenerator, final boolean useConstraintSolving) {
+                                       final PredicateGenerator predicateGenerator, final BacktrackingGenerator backtrackingGenerator, final boolean useConstraintSolving, final DeclarationGenerator declarationGenerator) {
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = new IterationPredicateGenerator(group, machineGenerator, typeGenerator, iterationConstructHandler);
         this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator, expressionGenerator, predicateGenerator);
-        this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
+        this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator, declarationGenerator);
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, backtrackingGenerator);

@@ -1,5 +1,10 @@
 fn main() {
     let mut set = SetComprehension4::new();
     set.calculate();
-    println!("{}", set.getRes());
+    let mut res = set.getRes();
+    if res.card().eq(&0) {
+        println!("{{}}");
+    } else {
+        println!("Wrong result!: {:?}", res);
+    }
 }

@@ -373,7 +373,6 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn subset(&self, other: &Self) -> BBoolean {
         for left_idx in 0..LS {
             for right_idx in 0..RS {
-                if other.rel[left_idx][right_idx] && !self.rel[left_idx][right_idx] { return false; }
                 // if self/left side contains an element that other/right side does not -> self not subset of other
                 if self.rel[left_idx][right_idx] && !other.rel[left_idx][right_idx] { return false; }
             }

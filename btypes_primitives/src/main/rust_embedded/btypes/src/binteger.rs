@@ -8,8 +8,8 @@ pub type BInteger = i128;
 pub type set_BInteger = BSet<BInteger, INTEGER_SIZE>;
 
 pub const LOWER_BOUND: BInteger = -10;
-pub const UPPER_BOUND: BInteger = 10;
-pub const INTEGER_SIZE: usize = 21; //UB - LB + 1
+pub const UPPER_BOUND: BInteger = 20;
+pub const INTEGER_SIZE: usize = 31; //UB - LB + 1
 
 pub trait BInt {
     fn equal(&self, other: &Self) -> bool;

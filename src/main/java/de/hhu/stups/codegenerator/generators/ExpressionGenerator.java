@@ -524,6 +524,8 @@ public class ExpressionGenerator {
                     return relElementNameGenerator.render();
                 case UNARY_MINUS:
                     return "-" + getExprAsElementString(opNode.getExpressionNodes().get(0));
+                case PLUS:
+                    return getExprAsElementString(opNode.getExpressionNodes().get(0)) + " + " + getExprAsElementString(opNode.getExpressionNodes().get(1));
             }
         }
         if (exprNode instanceof NumberNode) {

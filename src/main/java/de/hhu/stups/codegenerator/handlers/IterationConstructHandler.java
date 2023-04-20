@@ -1,12 +1,7 @@
 package de.hhu.stups.codegenerator.handlers;
 
-import de.hhu.stups.codegenerator.generators.BacktrackingGenerator;
-import de.hhu.stups.codegenerator.generators.ExpressionGenerator;
-import de.hhu.stups.codegenerator.generators.ImportGenerator;
-import de.hhu.stups.codegenerator.generators.PredicateGenerator;
+import de.hhu.stups.codegenerator.generators.*;
 import de.hhu.stups.codegenerator.generators.iteration.IterationConstructGenerator;
-import de.hhu.stups.codegenerator.generators.MachineGenerator;
-import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
@@ -41,10 +36,11 @@ public class IterationConstructHandler {
     private ExpressionGenerator expressionGenerator;
 
     private PredicateGenerator predicateGenerator;
+    private final DeclarationGenerator declarationGenerator;
 
     public IterationConstructHandler(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                                      final TypeGenerator typeGenerator, final ImportGenerator importGenerator, final BacktrackingGenerator backtrackingGenerator,
-                                     final boolean useConstraintSolving) {
+                                     final boolean useConstraintSolving, final DeclarationGenerator declarationGenerator) {
         this.currentIterationConstructGenerator = null;
         this.iterationConstructCounter = 0;
         this.machineGenerator = machineGenerator;
@@ -54,6 +50,7 @@ public class IterationConstructHandler {
         this.backtrackingGenerator = backtrackingGenerator;
         this.group = group;
         this.useConstraintSolving = useConstraintSolving;
+        this.declarationGenerator = declarationGenerator;
     }
 
     public void setIterationConstructGenerator(IterationConstructGenerator iterationConstructGenerator) {
@@ -75,7 +72,7 @@ public class IterationConstructHandler {
     * This function returns a new IterationConstructGenerator
     */
     public IterationConstructGenerator getNewIterationConstructGenerator() {
-        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, backtrackingGenerator, useConstraintSolving);
+        return new IterationConstructGenerator(this, machineGenerator, nameHandler, group, typeGenerator, importGenerator, expressionGenerator, predicateGenerator, backtrackingGenerator, useConstraintSolving, declarationGenerator);
     }
 
     /*

@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.generators.DeclarationGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -36,16 +37,18 @@ public class LambdaGenerator {
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
     private final TypeGenerator typeGenerator;
+    private final DeclarationGenerator declarationGenerator;
 
     public LambdaGenerator(final STGroup group, final MachineGenerator machineGenerator, final IterationConstructGenerator iterationConstructGenerator,
                                      final IterationConstructHandler iterationConstructHandler, final IterationPredicateGenerator iterationPredicateGenerator,
-                                     final TypeGenerator typeGenerator) {
+                                     final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
         this.typeGenerator = typeGenerator;
+        this.declarationGenerator = declarationGenerator;
     }
 
     /*
@@ -113,7 +116,7 @@ public class LambdaGenerator {
         String rightType = typeGenerator.generate(coupleType.getRight());
 
 
-        String innerBody = generateLambdaExpression(otherConstructs, conditionalPredicate, predicate, leftType, rightType, expression, identifier, lhsExpr, declarations);
+        String innerBody = generateLambdaExpression(otherConstructs, conditionalPredicate, predicate, coupleType, leftType, rightType, expression, identifier, lhsExpr, declarations);
         String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
@@ -126,7 +129,7 @@ public class LambdaGenerator {
     /*
     * This function generates code for the expression representing the values the variables are mapped to within the lambda expression
     */
-    public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
+    public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, CoupleType coupleType, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
@@ -138,6 +141,7 @@ public class LambdaGenerator {
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "leftType", leftType);
         TemplateHandler.add(template, "rightType", rightType);
+        TemplateHandler.add(template, "relationName", declarationGenerator.generateSetEnumName(coupleType));
         TemplateHandler.add(template, "relation", relationName);
         TemplateHandler.add(template, "element", elementName);
         TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));

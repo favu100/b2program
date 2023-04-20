@@ -368,14 +368,14 @@ let mut <identifier> = <relation_type(leftType, rightType)>::empty();
 <lambda>
 >>
 
-lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType) ::= <<
+lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, predicate, leftType, rightType, relationName) ::= <<
 //lambda_expression TODO: FASTER
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<relation> = <relation>.union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
+<relation> = <relation>.union(&brel![rel_<relationName>, (<element>.clone(), <expression>)]);
 <else>
 if <predicate> {
-    <relation> = <relation>.union(&BRelation::\<<leftType>, <rightType>\>::new(vec![BTuple::new(<element>.clone(), <expression>)]));
+    <relation> = <relation>.union(&brel![rel_<relationName>, (<element>.clone(), <expression>)]);
 }
 <endif>
 >>
@@ -417,7 +417,7 @@ if <if(forall)>!<endif><predicate> {
 
 quantified_expression(identifier, identity, useBigInteger, setType, hasCondition, conditionalPredicate, evaluation, isInteger) ::= <<
 //quantified_expression
-let mut <identifier> = <if(isInteger)><identity>;<else>BSet::\<<setType>\>::new(vec![]);<endif>
+let mut <identifier> = <if(isInteger)><identity>;<else><set_type(setType)>::empty();<endif>
 <if(hasCondition)>
 if <conditionalPredicate> {
     <evaluation>

@@ -411,9 +411,9 @@ function initialize() {
     let activationConfigurationMap = {};
     let timestamps = new Array();
     let operationToActivations = {};
+    let listeners = [];
     let newDelay = 0;
     let thread = 0;
-    let _current_simulation;
 
     async function playSimulation(simulation) {
         <initialMachineVar()> = new <machineName>();
@@ -431,7 +431,7 @@ function initialize() {
         // initialize
         thread = thread + 1;
         let currentThread = thread;
-        _current_simulation = simulation;
+        listeners = simulation["listeners"];
 
 
         for(let config of simulation["activations"]) {
@@ -568,7 +568,7 @@ function initialize() {
 
 
     function endingConditionReached() {
-        return noActivationQueued && _current_simulation["listeners"].size == 0;
+        return noActivationQueued && (listeners == null || listeners.size == 0);
     }
 
     function activateEvents(activation, parametersAsString, parameterPredicates) {
@@ -672,10 +672,10 @@ function initialize() {
     }
 
     function triggerSimulationOnInteraction(opName) {
-        if(_current_simulation["listeners"] == null) {
+        if(listeners == null) {
             return;
         }
-        for(let listener of _current_simulation["listeners"]) {
+        for(let listener of listeners) {
             if(listener["event"] === opName) {
                 let activating;
                 if(typeof listener["activating"] === 'string') {

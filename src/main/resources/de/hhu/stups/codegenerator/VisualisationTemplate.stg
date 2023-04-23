@@ -413,6 +413,7 @@ function initialize() {
     let operationToActivations = {};
     let newDelay = 0;
     let thread = 0;
+    let _current_simulation;
 
     async function playSimulation(simulation) {
         <initialMachineVar()> = new <machineName>();
@@ -430,6 +431,7 @@ function initialize() {
         // initialize
         thread = thread + 1;
         let currentThread = thread;
+        _current_simulation = simulation;
 
 
         for(let config of simulation["activations"]) {
@@ -566,7 +568,7 @@ function initialize() {
 
 
     function endingConditionReached() {
-        return noActivationQueued;
+        return noActivationQueued && _current_simulation["listeners"].size == 0;
     }
 
     function activateEvents(activation, parametersAsString, parameterPredicates) {
@@ -669,6 +671,25 @@ function initialize() {
       configurationToActivation[id].push(activation);
     }
 
+    function triggerSimulationOnInteraction(opName) {
+        if(_current_simulation["listeners"] == null) {
+            return;
+        }
+        for(let listener of _current_simulation["listeners"]) {
+            if(listener["event"] === opName) {
+                let activating;
+                if(typeof listener["activating"] === 'string') {
+                    activating = [listener["activating"]];
+                } else {
+                    activating = listener["activating"];
+                }
+                for(let activation of activating) {
+                    let activationConfiguration = activationConfigurationMap[activation];
+                    activateEvent(activationConfiguration, new Array(), "1=1");
+                }
+            }
+        }
+    }
 
 }
 >>
@@ -760,6 +781,7 @@ function() {
     _current_trace.push({name: "<machineEvent>", params: parametersJSON});
     updateVisuals();
     <parameterNames: {param | _machine_events["<machineEvent>"]["<param>"].setValue("")}; separator="; ">
+    triggerSimulationOnInteraction("<machineEvent>");
   } catch (error) {
     if(! error instanceof SelectError) {
         throw error;

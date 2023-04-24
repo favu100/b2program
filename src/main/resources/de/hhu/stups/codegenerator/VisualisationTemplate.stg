@@ -75,6 +75,7 @@ function initialize() {
 
     var _simulation_view_buttons = document.getElementById("_simulation_view_buttons");
     var _buttonLoadSimulation = document.createElement("button");
+    var _buttonExportTimedTrace = document.createElement("button");
 
 
     function flattenTuple(tuple) {
@@ -291,6 +292,10 @@ function initialize() {
     _buttonLoadSimulation.onclick = loadSimulation;
     _simulation_view_buttons.appendChild(_buttonLoadSimulation);
 
+    _buttonExportTimedTrace.textContent = "Export Timed Trace"
+    _buttonExportTimedTrace.onclick = exportTimedTrace;
+    _simulation_view_buttons.appendChild(_buttonExportTimedTrace);
+
     var _param_div;
     var _param_datalist;
     var _onclick_function;
@@ -405,6 +410,7 @@ function initialize() {
 
     let activationConfigurationsSorted = new Array();
     let noActivationQueued = false;
+    let realTime = 0;
     let time = 0;
     let delay = 0;
     let configurationToActivation = {};
@@ -419,6 +425,7 @@ function initialize() {
         <initialMachineVar()> = new <machineName>();
         activationConfigurationsSorted = new Array();
         noActivationQueued = false;
+        realTime = 0;
         time = 0;
         delay = 0;
         configurationToActivation = {};
@@ -427,6 +434,7 @@ function initialize() {
         operationToActivations = {};
         createHistoryElement("Initialisation", 0);
         updateVisuals();
+        startTimer();
 
         // initialize
         thread = thread + 1;
@@ -460,6 +468,8 @@ function initialize() {
             activateEvent(activation, new Array(), "1=1");
         }
 
+        timestamps.push(0);
+
         while(true) { // Finish at ending condition
             updateRemainingTime();
             executeActivatedEvents(); // Execute activated events
@@ -470,6 +480,12 @@ function initialize() {
                 break;
             }
         }
+    }
+
+    function startTimer() {
+        let timer = setInterval(function() {
+          realTime = realTime + 100;
+        }, 100);
     }
 
 
@@ -517,7 +533,7 @@ function initialize() {
             if(transition) {
                 _machine[activation.getOperation()]();
                 let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-                createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);
+                createHistoryElement(activation.getOperation() + "()", _history_view.querySelector(".active").index + 1);
                 _current_trace = _current_trace.slice(0, index + 1)
                 _current_trace.push({name: activation.getOperation(), params: {}});
                 return true;
@@ -542,7 +558,11 @@ function initialize() {
     }
 
     function updateRemainingTime() {
-        time += delay;
+        if(noActivationQueued) {
+            time = realTime;
+        } else {
+            time += delay;
+        }
         for (let key in configurationToActivation) {
             for (let i = 0; i \< configurationToActivation[key].length; i++) {
                 let activation = configurationToActivation[key][i];
@@ -671,6 +691,42 @@ function initialize() {
       configurationToActivation[id].push(activation);
     }
 
+    function exportTimedTrace() {
+      let transitions = _current_trace;
+      let i = 0;
+      let activations = [];
+      for(let transition of transitions) {
+        let afterTime = i == 0 ? 0 : timestamps[i] - timestamps[i-1];
+        let operation = transition["name"];
+        let id = operation + (operation.startsWith("$") ? "" : "_" + i);
+        let activating = transitions[i+1] == null ? null : (transitions[i+1]["name"] + "_" + (i+1));
+        let activation = {
+            "id": id,
+            "execute": operation,
+            "after": afterTime,
+            "priority": 0,
+            "fixedVariables": transition["parameters"],
+            "activating": activating
+        };
+        activations.push(activation);
+        i++;
+      }
+      var object = {
+        activations : activations,
+        listeners : [],
+        metadata: {
+          fileType: "Timed Trace",
+          creator: "B2Program JS",
+          modelName: "<machineName>"
+        }
+      };
+      const blob = new Blob([JSON.stringify(object, null, '\t')]);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Timed_Trace.json';
+      a.click();
+    }
+
     function triggerSimulationOnInteraction(opName) {
         if(listeners == null) {
             return;
@@ -689,6 +745,7 @@ function initialize() {
                 }
             }
         }
+        timestamps.push(realTime);
     }
 
 }

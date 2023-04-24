@@ -541,11 +541,24 @@ function initialize() {
         } else if(transition.size().intValue() > 0) {
             let fixedVariables = activation.getFixedVariables();
             let parameters = [];
-            for(let key of Object.keys(fixedVariables)) {
-                parameters.push(_machine_events[activation.getOperation()][key].parseValue(fixedVariables[key]));
+            let chosen = false;
+            if(fixedVariables == null || "first" == fixedVariables) {
+                for(let trans of transition) {
+                    parameters = flattenTuple(trans);
+                    break;
+                }
+                chosen = true;
+            } else if("uniform" == fixedVariables) {
+                parameters = flattenTuple(transition.nondeterminism());
+                chosen = true;
+            } else {
+                for(let key of Object.keys(fixedVariables)) {
+                    parameters.push(_machine_events[activation.getOperation()][key].parseValue(fixedVariables[key]));
+                }
+                chosen = false;
             }
             let parameterAsExpression = unflattenTuple(parameters);
-            if(transition.elementOf(parameterAsExpression).booleanValue()) {
+            if(chosen || transition.elementOf(parameterAsExpression).booleanValue()) {
                 _machine[activation.getOperation()](...parameters);
                 let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
                 createHistoryElement(activation.getOperation(), _history_view.querySelector(".active").index + 1);

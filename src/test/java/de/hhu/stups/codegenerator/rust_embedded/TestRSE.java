@@ -22,12 +22,20 @@ import static org.junit.Assert.*;
 
 public class TestRSE {
     final ClassLoader classLoader = this.getClass().getClassLoader();
-    final Path tomlPath = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine/Cargo.toml"));
-    final Path tomlPath_MC = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine_mc/Cargo.toml"));
-    final Path rustSrcPath = tomlPath.getParent().resolve(Paths.get("src/"));
+    //array
+    //final Path tomlPath = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine/Cargo.toml"));
+    //bitvec
+    final Path tomlPath = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine_bitvec/Cargo.toml"));
+    //final Path tomlPath_MC = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine_mc/Cargo.toml"));
+    final Path tomlPath_MC = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().getParent().resolve(Paths.get("btypes_primitives/src/main/rust_embedded/bmachine_bitvec_mc/Cargo.toml"));
+    //final Path rustSrcPath = tomlPath.getParent().resolve(Paths.get("src/")); // arrays
+    final Path rustSrcPath = tomlPath.getParent().resolve(Paths.get("src/")); // bitvec
+    //final Path rustSrcPath_MC = tomlPath_MC.getParent().resolve(Paths.get("src/"));
     final Path rustSrcPath_MC = tomlPath_MC.getParent().resolve(Paths.get("src/"));
     final Runtime runtime = Runtime.getRuntime();
     final Path testFileBasePath = Paths.get(classLoader.getResource("./").toURI()).getParent().getParent().getParent().resolve("resources/test/de/hhu/stups/codegenerator/");
+    //final String cargoChannel = "";
+    final String cargoChannel = "+nightly";
 
     public TestRSE() throws URISyntaxException, IOException {
         Files.createDirectories(rustSrcPath);
@@ -58,7 +66,7 @@ public class TestRSE {
 
     public void compileTestFiles(boolean forModelChecking) throws IOException, InterruptedException {
         Path usedTomlPath = !forModelChecking ? tomlPath : tomlPath_MC;
-        Process process = runtime.exec("cargo build --release --manifest-path " + usedTomlPath);
+        Process process = runtime.exec(String.format("cargo %s build --release --manifest-path %s", cargoChannel, usedTomlPath));
         TestHelper.writeInputToSystem(process.getErrorStream());
         TestHelper.writeInputToOutput(process.getErrorStream(), process.getOutputStream());
         process.waitFor();
@@ -75,7 +83,7 @@ public class TestRSE {
 
         Path usedTomlPath = !modelChecking ? tomlPath : tomlPath_MC;
 
-        Process executeProcess = runtime.exec("cargo run --release --manifest-path " + usedTomlPath + progArgs);
+        Process executeProcess = runtime.exec(String.format("cargo %s run --release --manifest-path %s %s", cargoChannel, usedTomlPath, progArgs));
         executeProcess.waitFor();
 
         String error = TestHelper.streamToString(executeProcess.getErrorStream());

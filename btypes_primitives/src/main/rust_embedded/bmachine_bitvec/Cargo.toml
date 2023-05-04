@@ -1,0 +1,35 @@
+[package]
+name = "bmachine"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "bmachine"
+test = false
+bench = false
+
+[dependencies]
+btypes = { path = "../btypes_bitvec" }
+
+[dependencies.bitvec]
+version = "1"
+default-features = false
+features = []
+
+[profile.release]
+#opt-level = 3
+panic = "abort"
+#lto = 'fat'
+codegen-units = 1
+debug = true
+lto = true
+opt-level = "s"
+
+[profile.dev]
+opt-level = 0
+panic = "abort"
+
+[profile.test]
+panic = "abort"

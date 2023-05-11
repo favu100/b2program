@@ -1,4 +1,4 @@
-MACHINE Counter1000
+MACHINE Counter100000
 
 VARIABLES counter
 

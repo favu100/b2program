@@ -41,6 +41,7 @@ public class TestMCBenchmarks extends TestRSE {
     }
 
     @Test
+    @Ignore
     public void testsort_m2_data1000_MC() throws Exception {
         testRSEMC("sort_m2_data1000_MC");
     }

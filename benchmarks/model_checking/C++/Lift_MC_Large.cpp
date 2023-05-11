@@ -228,7 +228,6 @@ class ModelChecker {
                 Lift_MC_Large state = next();
 
                 std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> nextStates = generateNextStates(state);
-                transitions += nextStates.size();
 
                 for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
@@ -281,7 +280,6 @@ class ModelChecker {
                 Lift_MC_Large state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> nextStates = generateNextStates(state);
-                    transitions += nextStates.size();
 
                     for(auto& nextState : nextStates) {
                         {
@@ -376,7 +374,7 @@ class ModelChecker {
                         return state;
                     }
                 }
-            }
+            };
         }
 
         std::unordered_set<Lift_MC_Large, Lift_MC_Large::Hash, Lift_MC_Large::HashEqual> generateNextStates(const Lift_MC_Large& state) {
@@ -386,33 +384,51 @@ class ModelChecker {
                 copiedState.inc();
                 copiedState.stateAccessedVia = "inc";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_dec(isCaching)) {
                 Lift_MC_Large copiedState = state._copy(guardDependency["dec"]);
                 copiedState.dec();
                 copiedState.stateAccessedVia = "dec";
                 result.insert(copiedState);
+                transitions += 1;
             }
 
             return result;
         }
 
         bool invariantViolated(const Lift_MC_Large& state) {
+            std::unordered_set<string> dependentInvariantsOfState;
+            if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
             if(isCaching) {
-                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
                 if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_1()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_2()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
+                        return true;
                     }
                 }
-                return false;
+            } else {
+                if(!state._check_inv_2()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
+                  return true;
+                }
             }
-            return !(state._check_inv_1() && state._check_inv_2());
+
+            return false;
         }
 
 

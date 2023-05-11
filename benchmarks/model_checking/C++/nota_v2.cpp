@@ -421,6 +421,80 @@ class nota_v2 {
                 }
         };
 
+        class _Struct3 : public BStruct {
+            private:
+                BSet<SID > sid;
+                IN_ERROR_CODES err;
+
+            public:
+                typedef _Struct3 current_type;
+                typedef void value_type;
+                typedef void left_type;
+                typedef void right_type;
+
+                _Struct3(const BSet<SID >& sid, const IN_ERROR_CODES& err) {
+                    this->sid = sid;
+                    this->err = err;
+                }
+
+                BSet<SID > get_sid() {
+                    return this->sid;
+                }
+
+                IN_ERROR_CODES get_err() {
+                    return this->err;
+                }
+
+                _Struct3 override_sid(const BSet<SID >& sid) {
+                    return _Struct3(sid, err);
+                }
+
+                _Struct3 override_err(const IN_ERROR_CODES& err) {
+                    return _Struct3(sid, err);
+                }
+
+                _Struct3() {
+                }
+
+                void operator =(const _Struct3& other) {
+                    this->sid = other.sid;
+                    this->err = other.err;
+                }
+
+                BBoolean equal(const _Struct3& o) const {
+                    return this->sid == o.sid && this->err == o.err;
+                }
+
+                BBoolean unequal(const _Struct3& o) const {
+                    return this->sid != o.sid || this->err != o.err;
+                }
+
+                friend bool operator ==(const _Struct3& p1, const _Struct3& p2) {
+                    return (p1.equal(p2)).booleanValue();
+                }
+
+                friend bool operator !=(const _Struct3& p1, const _Struct3& p2) {
+                    return (p1.unequal(p2)).booleanValue();
+                }
+
+                friend std::ostream& operator<<(std::ostream &strm, const _Struct3& e) {
+                    strm << "(";
+                    strm << "sid : ";
+                    strm << e.sid;
+                    strm << "err : ";
+                    strm << e.err;
+                    strm << ")";
+                    return strm;
+                }
+
+                int hashCode() const {
+                    int result = 1;
+                    result = 31 * result + (sid.hashCode() << 1);
+                    result = 31 * result + (err.hashCode() << 1);
+                    return result;
+                }
+        };
+
         class _Struct1 : public BStruct {
             private:
                 BSet<SID > sid;
@@ -564,80 +638,6 @@ class nota_v2 {
                 int hashCode() const {
                     int result = 1;
                     result = 31 * result + (soc.hashCode() << 1);
-                    result = 31 * result + (err.hashCode() << 1);
-                    return result;
-                }
-        };
-
-        class _Struct3 : public BStruct {
-            private:
-                BSet<SID > sid;
-                IN_ERROR_CODES err;
-
-            public:
-                typedef _Struct3 current_type;
-                typedef void value_type;
-                typedef void left_type;
-                typedef void right_type;
-
-                _Struct3(const BSet<SID >& sid, const IN_ERROR_CODES& err) {
-                    this->sid = sid;
-                    this->err = err;
-                }
-
-                BSet<SID > get_sid() {
-                    return this->sid;
-                }
-
-                IN_ERROR_CODES get_err() {
-                    return this->err;
-                }
-
-                _Struct3 override_sid(const BSet<SID >& sid) {
-                    return _Struct3(sid, err);
-                }
-
-                _Struct3 override_err(const IN_ERROR_CODES& err) {
-                    return _Struct3(sid, err);
-                }
-
-                _Struct3() {
-                }
-
-                void operator =(const _Struct3& other) {
-                    this->sid = other.sid;
-                    this->err = other.err;
-                }
-
-                BBoolean equal(const _Struct3& o) const {
-                    return this->sid == o.sid && this->err == o.err;
-                }
-
-                BBoolean unequal(const _Struct3& o) const {
-                    return this->sid != o.sid || this->err != o.err;
-                }
-
-                friend bool operator ==(const _Struct3& p1, const _Struct3& p2) {
-                    return (p1.equal(p2)).booleanValue();
-                }
-
-                friend bool operator !=(const _Struct3& p1, const _Struct3& p2) {
-                    return (p1.unequal(p2)).booleanValue();
-                }
-
-                friend std::ostream& operator<<(std::ostream &strm, const _Struct3& e) {
-                    strm << "(";
-                    strm << "sid : ";
-                    strm << e.sid;
-                    strm << "err : ";
-                    strm << e.err;
-                    strm << ")";
-                    return strm;
-                }
-
-                int hashCode() const {
-                    int result = 1;
-                    result = 31 * result + (sid.hashCode() << 1);
                     result = 31 * result + (err.hashCode() << 1);
                     return result;
                 }
@@ -1241,7 +1241,6 @@ class nota_v2 {
 
                 }
             }
-
             return (_ic_boolean_14).booleanValue();
         }
 
@@ -1462,7 +1461,6 @@ class ModelChecker {
                 nota_v2 state = next();
 
                 std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(state);
-                transitions += nextStates.size();
 
                 for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
@@ -1515,7 +1513,6 @@ class ModelChecker {
                 nota_v2 state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(state);
-                    transitions += nextStates.size();
 
                     for(auto& nextState : nextStates) {
                         {
@@ -1634,7 +1631,7 @@ class ModelChecker {
                         return state;
                     }
                 }
-            }
+            };
         }
 
         std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> generateNextStates(const nota_v2& state) {
@@ -1647,6 +1644,7 @@ class ModelChecker {
                 copiedState.constructor_interconnectNode(_tmp_1);
                 copiedState.stateAccessedVia = "constructor_interconnectNode";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<nota_v2::RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager(isCaching);
             for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
@@ -1656,6 +1654,7 @@ class ModelChecker {
                 copiedState.constructor_resourceManager(_tmp_1);
                 copiedState.stateAccessedVia = "constructor_resourceManager";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3 = state._tr_constructor_service(isCaching);
             for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
@@ -1666,6 +1665,7 @@ class ModelChecker {
                 copiedState.constructor_service(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "constructor_service";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4 = state._tr_constructor_socket(isCaching);
             for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
@@ -1680,6 +1680,7 @@ class ModelChecker {
                 copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
                 copiedState.stateAccessedVia = "constructor_socket";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5 = state._tr_rm_register(isCaching);
             for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
@@ -1692,6 +1693,7 @@ class ModelChecker {
                 copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
                 copiedState.stateAccessedVia = "rm_register";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6 = state._tr_rm_deregister(isCaching);
             for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
@@ -1704,6 +1706,7 @@ class ModelChecker {
                 copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
                 copiedState.stateAccessedVia = "rm_deregister";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7 = state._tr_rm_getSid(isCaching);
             for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
@@ -1714,6 +1717,7 @@ class ModelChecker {
                 copiedState.rm_getSid(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "rm_getSid";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8 = state._tr_rm_getSid_Not_Found(isCaching);
             for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
@@ -1724,6 +1728,7 @@ class ModelChecker {
                 copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "rm_getSid_Not_Found";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9 = state._tr_in_announceResourceManager(isCaching);
             for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
@@ -1734,6 +1739,7 @@ class ModelChecker {
                 copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "in_announceResourceManager";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10 = state._tr_in_register_success(isCaching);
             for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
@@ -1746,6 +1752,7 @@ class ModelChecker {
                 copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
                 copiedState.stateAccessedVia = "in_register_success";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11 = state._tr_in_register_failed(isCaching);
             for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
@@ -1756,6 +1763,7 @@ class ModelChecker {
                 copiedState.in_register_failed(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "in_register_failed";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12 = state._tr_in_requestTargetSocket_Granted(isCaching);
             for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
@@ -1774,6 +1782,7 @@ class ModelChecker {
                 copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
                 copiedState.stateAccessedVia = "in_requestTargetSocket_Granted";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13 = state._tr_in_requestTargetSocket_NotGranted(isCaching);
             for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
@@ -1790,6 +1799,7 @@ class ModelChecker {
                 copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
                 copiedState.stateAccessedVia = "in_requestTargetSocket_NotGranted";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<nota_v2::SERVICE> _trid_14 = state._tr_svc_register(isCaching);
             for(const nota_v2::SERVICE& param : _trid_14) {
@@ -1799,107 +1809,268 @@ class ModelChecker {
                 copiedState.svc_register(_tmp_1);
                 copiedState.stateAccessedVia = "svc_register";
                 result.insert(copiedState);
+                transitions += 1;
             }
 
             return result;
         }
 
         bool invariantViolated(const nota_v2& state) {
+            std::unordered_set<string> dependentInvariantsOfState;
+            if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
             if(isCaching) {
-                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
                 if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_1()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_2()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_2()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_3()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_3" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_3()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_3" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_4()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_4" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_4()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_4" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_5()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_5" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_5()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_5" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_6()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_6" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_6()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_6" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_7()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_7" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_7()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_7" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_8()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_8" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_8()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_8" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_9()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_9" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_9()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_9" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_10()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_10" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_10()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_10" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_11()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_11" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_11()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_11" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_12()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_12" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_12()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_12" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_13()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_13" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_13()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_13" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_14()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_14" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_14()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_14" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_15()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_15" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_15()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_15" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_16()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_16" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_16()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_16" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_17()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_17" << "\n";
+                        return true;
                     }
                 }
+            } else {
+                if(!state._check_inv_17()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_17" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_18()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_18" << "\n";
+                        return true;
                     }
                 }
-                return false;
+            } else {
+                if(!state._check_inv_18()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_18" << "\n";
+                  return true;
+                }
             }
-            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18());
+
+            return false;
         }
 
 

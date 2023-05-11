@@ -7,17 +7,17 @@ FLAGS=-l cpp -mc true
 OUTPUT ?= runtimes.txt
 
 % :
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(FLAGS) -f $@.mch
 
 
 clean:
-	rm *.java & rm *.cpp & rm *.json
+	rm *.java & rm *.cpp & rm *.json & rm *.rs

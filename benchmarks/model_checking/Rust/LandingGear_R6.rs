@@ -11,6 +11,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::brelation::BRelation;
@@ -329,8 +330,8 @@ impl LandingGear_R6 {
         self._SWITCH_STATE = BSet::new(vec![SWITCH_STATE::switch_open, SWITCH_STATE::switch_closed]);
         self._PLANE_STATE = BSet::new(vec![PLANE_STATE::ground, PLANE_STATE::flight]);
         self._VALVE_STATE = BSet::new(vec![VALVE_STATE::valve_open, VALVE_STATE::valve_closed]);
-        self.gears = BRelation::cartesianProduct(&self._POSITION, &BSet::new(vec![GEAR_STATE::extended])).clone().clone();
-        self.doors = BRelation::cartesianProduct(&self._POSITION, &BSet::new(vec![DOOR_STATE::closed])).clone().clone();
+        self.gears = BRelation::cartesianProduct(&self._POSITION, &BSet::new(vec![GEAR_STATE::extended.clone()])).clone().clone();
+        self.doors = BRelation::cartesianProduct(&self._POSITION, &BSet::new(vec![DOOR_STATE::closed.clone()])).clone().clone();
         self.handle = HANDLE_STATE::down;
         self.valve_extend_gear = VALVE_STATE::valve_closed;
         self.valve_retract_gear = VALVE_STATE::valve_closed;
@@ -530,7 +531,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_open_door_valve(&mut self) -> () {
-        if ((((self.open_EV.equal(&BBoolean::new(false)) && self.close_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) || ((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.shock_absorber.equal(&PLANE_STATE::ground)).not()))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((((self.open_EV.equal(&BBoolean::new(false)) && self.close_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])).not()) || ((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])).not()) && (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.shock_absorber.equal(&PLANE_STATE::ground)).not()))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.open_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -538,7 +539,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_open_door_valve(&mut self) -> () {
-        if (((((self.open_EV.equal(&BBoolean::new(true)) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((self.open_EV.equal(&BBoolean::new(true)) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.open_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -546,7 +547,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_close_door_valve(&mut self) -> () {
-        if (((((((self.close_EV.equal(&BBoolean::new(false)) && self.open_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || (self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed])).not()) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((((self.close_EV.equal(&BBoolean::new(false)) && self.open_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.shock_absorber.equal(&PLANE_STATE::ground))))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()])).not()) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.close_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -554,7 +555,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_close_door_valve(&mut self) -> () {
-        if (((self.close_EV.equal(&BBoolean::new(true)) && (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((self.close_EV.equal(&BBoolean::new(true)) && (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.close_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -562,7 +563,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_retract_gear_valve(&mut self) -> () {
-        if ((((((((self.retract_EV.equal(&BBoolean::new(false)) && self.extend_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && self.shock_absorber.equal(&PLANE_STATE::flight)) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if ((((((((self.retract_EV.equal(&BBoolean::new(false)) && self.extend_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])).not()) && self.shock_absorber.equal(&PLANE_STATE::flight)) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.retract_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -570,7 +571,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_retract_gear_valve(&mut self) -> () {
-        if (((self.retract_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::down) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((self.retract_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::down) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.retract_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -578,7 +579,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stimulate_extend_gear_valve(&mut self) -> () {
-        if (((((((self.extend_EV.equal(&BBoolean::new(false)) && self.retract_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((((self.extend_EV.equal(&BBoolean::new(false)) && self.retract_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])).not()) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.extend_EV = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -586,7 +587,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_extend_gear_valve(&mut self) -> () {
-        if (((self.extend_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::up) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((self.extend_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::up) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) && self.general_EV.equal(&BBoolean::new(true)))).booleanValue() {
             self.extend_EV = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -594,7 +595,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_retracting_first(&mut self, mut gr: POSITION) -> () {
-        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::extended)) && self.valve_retract_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::gear_moving]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::extended)) && self.valve_retract_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::extended.clone(), GEAR_STATE::gear_moving.clone()]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::gear_moving)])).clone().clone();
             self.gear = GEAR_STATE::gear_moving;
@@ -604,7 +605,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_retract_gear_skip(&mut self, mut gr: POSITION) -> () {
-        if ((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if ((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).unequal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.gears = self.gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::retracted)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -612,7 +613,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_retract_gear_last(&mut self, mut gr: POSITION) -> () {
-        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::retracted)])).clone().clone();
             self.gear = GEAR_STATE::retracted;
@@ -622,7 +623,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_extending(&mut self, mut gr: POSITION) -> () {
-        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::retracted)) && self.valve_extend_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::gear_moving, GEAR_STATE::retracted]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.functionCall(&gr).equal(&GEAR_STATE::retracted)) && self.valve_extend_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::gear_moving.clone(), GEAR_STATE::retracted.clone()]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::gear_moving)])).clone().clone();
             self.gear = GEAR_STATE::gear_moving;
@@ -632,7 +633,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_extend_gear_last(&mut self, mut gr: POSITION) -> () {
-        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
             let mut _ld_gears = self.gears.clone();
             self.gears = _ld_gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::extended)])).clone().clone();
             self.gear = GEAR_STATE::extended;
@@ -642,7 +643,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_extend_gear_skip(&mut self, mut gr: POSITION) -> () {
-        if ((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if ((((((self.gears.domain().elementOf(&gr) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).unequal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.gears.functionCall(&gr).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.gears = self.gears._override(&BRelation::new(vec![BTuple::from_refs(&gr, &GEAR_STATE::extended)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -650,7 +651,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_open_door(&mut self, mut gr: POSITION) -> () {
-        if ((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::closed)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::closed, DOOR_STATE::door_moving]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+        if ((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::closed)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::closed.clone(), DOOR_STATE::door_moving.clone()]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::door_moving)])).clone().clone();
             self.door = DOOR_STATE::door_moving;
@@ -660,7 +661,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_open_door_last(&mut self, mut gr: POSITION) -> () {
-        if (((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+        if (((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::open)])).clone().clone();
             self.door = DOOR_STATE::open;
@@ -670,7 +671,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_open_door_skip(&mut self, mut gr: POSITION) -> () {
-        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if ((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).unequal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.doors = self.doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::open)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -678,7 +679,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_start_close_door(&mut self, mut gr: POSITION) -> () {
-        if (((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::open)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::door_moving, DOOR_STATE::open]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+        if (((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::open)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::door_moving.clone(), DOOR_STATE::open.clone()]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended.clone(), GEAR_STATE::retracted.clone()]).elementOf(&self.gear))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::door_moving)])).clone().clone();
             self.door = DOOR_STATE::door_moving;
@@ -688,7 +689,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_close_door(&mut self, mut gr: POSITION) -> () {
-        if ((((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).equal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+        if ((((((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))).implies(|| self.shock_absorber.equal(&PLANE_STATE::ground).booleanValue())) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended.clone(), GEAR_STATE::retracted.clone()]).elementOf(&self.gear))))).booleanValue() {
             let mut _ld_doors = self.doors.clone();
             self.doors = _ld_doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::closed)])).clone().clone();
             self.door = DOOR_STATE::closed;
@@ -698,7 +699,7 @@ impl LandingGear_R6 {
     }
 
     pub fn env_close_door_skip(&mut self, mut gr: POSITION) -> () {
-        if (((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr]))).unequal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+        if (((((((((self.gears.domain().elementOf(&gr) && self.doors.functionCall(&gr).equal(&DOOR_STATE::door_moving)) && self.gears.functionCall(&gr).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![gr.clone()]))).unequal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))).implies(|| self.shock_absorber.equal(&PLANE_STATE::ground).booleanValue())) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
             self.doors = self.doors._override(&BRelation::new(vec![BTuple::from_refs(&gr, &DOOR_STATE::closed)])).clone().clone();
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -732,7 +733,7 @@ impl LandingGear_R6 {
     }
 
     pub fn con_stop_stimulate_general_valve(&mut self) -> () {
-        if (((((((self.general_EV.equal(&BBoolean::new(true)) && self.open_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && (((((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false))) || (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false)))) || (((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false)))))).booleanValue() {
+        if (((((((self.general_EV.equal(&BBoolean::new(true)) && self.open_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && (((((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && self.open_EV.equal(&BBoolean::new(false))) || (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && self.open_EV.equal(&BBoolean::new(false)))) || (((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && self.open_EV.equal(&BBoolean::new(false)))))).booleanValue() {
             self.general_EV = BBoolean::new(false);
             self.handle_move = BBoolean::new(false);
         } else {
@@ -885,7 +886,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_open_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_open_door_valve.is_none() {
-            let mut __tmp__val__ = (((self.open_EV.equal(&BBoolean::new(false)) && self.close_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) || ((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.shock_absorber.equal(&PLANE_STATE::ground)).not()))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (((self.open_EV.equal(&BBoolean::new(false)) && self.close_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])).not()) || ((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])).not()) && (self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.shock_absorber.equal(&PLANE_STATE::ground)).not()))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_open_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -896,7 +897,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_open_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_open_door_valve.is_none() {
-            let mut __tmp__val__ = ((((self.open_EV.equal(&BBoolean::new(true)) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((((self.open_EV.equal(&BBoolean::new(true)) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_open_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -907,7 +908,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_close_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_close_door_valve.is_none() {
-            let mut __tmp__val__ = ((((((self.close_EV.equal(&BBoolean::new(false)) && self.open_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) || (self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed])).not()) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((((((self.close_EV.equal(&BBoolean::new(false)) && self.open_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.shock_absorber.equal(&PLANE_STATE::ground))))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()])).not()) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_close_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -918,7 +919,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_close_door_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_close_door_valve.is_none() {
-            let mut __tmp__val__ = ((self.close_EV.equal(&BBoolean::new(true)) && (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((self.close_EV.equal(&BBoolean::new(true)) && (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) || ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.shock_absorber.equal(&PLANE_STATE::ground))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_close_door_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -929,7 +930,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_retract_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_retract_gear_valve.is_none() {
-            let mut __tmp__val__ = (((((((self.retract_EV.equal(&BBoolean::new(false)) && self.extend_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])).not()) && self.shock_absorber.equal(&PLANE_STATE::flight)) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = (((((((self.retract_EV.equal(&BBoolean::new(false)) && self.extend_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])).not()) && self.shock_absorber.equal(&PLANE_STATE::flight)) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_retract_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -940,7 +941,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_retract_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_retract_gear_valve.is_none() {
-            let mut __tmp__val__ = ((self.retract_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::down) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((self.retract_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::down) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_retract_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -951,7 +952,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stimulate_extend_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stimulate_extend_gear_valve.is_none() {
-            let mut __tmp__val__ = ((((((self.extend_EV.equal(&BBoolean::new(false)) && self.retract_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])).not()) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((((((self.extend_EV.equal(&BBoolean::new(false)) && self.retract_EV.equal(&BBoolean::new(false))) && self.open_EV.equal(&BBoolean::new(true))) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])).not()) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stimulate_extend_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -962,7 +963,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_extend_gear_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_extend_gear_valve.is_none() {
-            let mut __tmp__val__ = ((self.extend_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::up) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+            let mut __tmp__val__ = ((self.extend_EV.equal(&BBoolean::new(true)) && (self.handle.equal(&HANDLE_STATE::up) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) && self.general_EV.equal(&BBoolean::new(true))).booleanValue();
             self._tr_cache_con_stop_stimulate_extend_gear_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -976,7 +977,8 @@ impl LandingGear_R6 {
             let mut _ic_set_18: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::extended)) && self.valve_retract_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::gear_moving]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::extended)) && self.valve_retract_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::extended.clone(), GEAR_STATE::gear_moving.clone()]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_18 = _ic_set_18._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -994,7 +996,8 @@ impl LandingGear_R6 {
             let mut _ic_set_19: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).unequal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_19 = _ic_set_19._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1012,7 +1015,8 @@ impl LandingGear_R6 {
             let mut _ic_set_20: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) && self.handle.equal(&HANDLE_STATE::up)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_20 = _ic_set_20._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1030,7 +1034,8 @@ impl LandingGear_R6 {
             let mut _ic_set_21: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::retracted)) && self.valve_extend_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::gear_moving, GEAR_STATE::retracted]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::retracted)) && self.valve_extend_gear.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![GEAR_STATE::gear_moving.clone(), GEAR_STATE::retracted.clone()]).elementOf(&self.gear)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_21 = _ic_set_21._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1048,7 +1053,8 @@ impl LandingGear_R6 {
             let mut _ic_set_22: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.gear.equal(&GEAR_STATE::gear_moving)) && self.door.equal(&DOOR_STATE::open))).booleanValue() {
                     _ic_set_22 = _ic_set_22._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1066,7 +1072,8 @@ impl LandingGear_R6 {
             let mut _ic_set_23: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![GEAR_STATE::extended]))) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()])) && self.handle.equal(&HANDLE_STATE::down)) && self.gears.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).unequal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.gears.functionCall(&_ic_gr_1).equal(&GEAR_STATE::gear_moving)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_23 = _ic_set_23._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1084,7 +1091,8 @@ impl LandingGear_R6 {
             let mut _ic_set_24: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::closed) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::closed, DOOR_STATE::door_moving]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::closed) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::closed.clone(), DOOR_STATE::door_moving.clone()]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
                     _ic_set_24 = _ic_set_24._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1102,7 +1110,8 @@ impl LandingGear_R6 {
             let mut _ic_set_25: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if ((((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
+                //parameter_combination_predicate
+                if ((((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).equal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::retracted)) || (self.handle.equal(&HANDLE_STATE::up) && self.gear.equal(&GEAR_STATE::extended))))).booleanValue() {
                     _ic_set_25 = _ic_set_25._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1120,7 +1129,8 @@ impl LandingGear_R6 {
             let mut _ic_set_26: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![DOOR_STATE::open]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).unequal(&BSet::new(vec![DOOR_STATE::open.clone()]))) && ((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) || (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_open_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_26 = _ic_set_26._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1138,7 +1148,8 @@ impl LandingGear_R6 {
             let mut _ic_set_27: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if ((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::open) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::door_moving, DOOR_STATE::open]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+                //parameter_combination_predicate
+                if ((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::open) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && self.general_valve.equal(&VALVE_STATE::valve_open)) && BSet::new(vec![DOOR_STATE::door_moving.clone(), DOOR_STATE::open.clone()]).elementOf(&self.door)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended.clone(), GEAR_STATE::retracted.clone()]).elementOf(&self.gear))))).booleanValue() {
                     _ic_set_27 = _ic_set_27._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1156,7 +1167,8 @@ impl LandingGear_R6 {
             let mut _ic_set_28: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if (((((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).equal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended, GEAR_STATE::retracted]).elementOf(&self.gear))))).booleanValue() {
+                //parameter_combination_predicate
+                if (((((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))).implies(|| self.shock_absorber.equal(&PLANE_STATE::ground).booleanValue())) && self.general_valve.equal(&VALVE_STATE::valve_open)) && self.door.equal(&DOOR_STATE::door_moving)) && self.gear.unequal(&GEAR_STATE::gear_moving)) && ((self.handle.equal(&HANDLE_STATE::down) && self.gear.equal(&GEAR_STATE::extended)) || (self.handle.equal(&HANDLE_STATE::up) && BSet::new(vec![GEAR_STATE::extended.clone(), GEAR_STATE::retracted.clone()]).elementOf(&self.gear))))).booleanValue() {
                     _ic_set_28 = _ic_set_28._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1174,7 +1186,8 @@ impl LandingGear_R6 {
             let mut _ic_set_29: BSet<POSITION> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_gr_1 in self.gears.domain().clone().iter().cloned() {
-                if ((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1]))).unequal(&BSet::new(vec![DOOR_STATE::closed]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).implies(&self.shock_absorber.equal(&PLANE_STATE::ground))) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
+                //parameter_combination_predicate
+                if ((((((((self.doors.functionCall(&_ic_gr_1).equal(&DOOR_STATE::door_moving) && self.gears.functionCall(&_ic_gr_1).unequal(&GEAR_STATE::gear_moving)) && self.gears.range().notElementOf(&GEAR_STATE::gear_moving)) && self.doors.relationImage(&self._POSITION.difference(&BSet::new(vec![_ic_gr_1.clone()]))).unequal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && ((self.handle.equal(&HANDLE_STATE::up) && (self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()])) || self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()])))) || (self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))))) && self.valve_close_door.equal(&VALVE_STATE::valve_open)) && (self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))).implies(|| self.shock_absorber.equal(&PLANE_STATE::ground).booleanValue())) && self.general_valve.equal(&VALVE_STATE::valve_open))).booleanValue() {
                     _ic_set_29 = _ic_set_29._union(&BSet::new(vec![_ic_gr_1]));
                 }
 
@@ -1222,7 +1235,7 @@ impl LandingGear_R6 {
     pub fn _tr_con_stop_stimulate_general_valve(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_con_stop_stimulate_general_valve.is_none() {
-            let mut __tmp__val__ = ((((((self.general_EV.equal(&BBoolean::new(true)) && self.open_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && (((((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false))) || (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false)))) || (((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))) && self.open_EV.equal(&BBoolean::new(false))))).booleanValue();
+            let mut __tmp__val__ = ((((((self.general_EV.equal(&BBoolean::new(true)) && self.open_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && self.retract_EV.equal(&BBoolean::new(false))) && self.extend_EV.equal(&BBoolean::new(false))) && self.close_EV.equal(&BBoolean::new(false))) && (((((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && self.open_EV.equal(&BBoolean::new(false))) || (((self.handle.equal(&HANDLE_STATE::down) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && self.open_EV.equal(&BBoolean::new(false)))) || (((self.handle.equal(&HANDLE_STATE::up) && self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))) && self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))) && self.open_EV.equal(&BBoolean::new(false))))).booleanValue();
             self._tr_cache_con_stop_stimulate_general_valve = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -1281,7 +1294,7 @@ impl LandingGear_R6 {
 
     pub fn _check_inv_2(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.general_EV).booleanValue();
+        return (*butils::BOOL).elementOf(&self.general_EV).booleanValue();
     }
 
     pub fn _check_inv_3(&self) -> bool {
@@ -1291,27 +1304,27 @@ impl LandingGear_R6 {
 
     pub fn _check_inv_4(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.handle_move).booleanValue();
+        return (*butils::BOOL).elementOf(&self.handle_move).booleanValue();
     }
 
     pub fn _check_inv_5(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.close_EV).booleanValue();
+        return (*butils::BOOL).elementOf(&self.close_EV).booleanValue();
     }
 
     pub fn _check_inv_6(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.extend_EV).booleanValue();
+        return (*butils::BOOL).elementOf(&self.extend_EV).booleanValue();
     }
 
     pub fn _check_inv_7(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.open_EV).booleanValue();
+        return (*butils::BOOL).elementOf(&self.open_EV).booleanValue();
     }
 
     pub fn _check_inv_8(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.retract_EV).booleanValue();
+        return (*butils::BOOL).elementOf(&self.retract_EV).booleanValue();
     }
 
     pub fn _check_inv_9(&self) -> bool {
@@ -1356,7 +1369,7 @@ impl LandingGear_R6 {
 
     pub fn _check_inv_17(&self) -> bool {
         //invariant
-        return (((self.open_EV.equal(&BBoolean::new(true)) || self.close_EV.equal(&BBoolean::new(true))) || self.retract_EV.equal(&BBoolean::new(true))) || self.extend_EV.equal(&BBoolean::new(true))).implies(&self.general_EV.equal(&BBoolean::new(true))).booleanValue();
+        return (((self.open_EV.equal(&BBoolean::new(true)) || self.close_EV.equal(&BBoolean::new(true))) || self.retract_EV.equal(&BBoolean::new(true))) || self.extend_EV.equal(&BBoolean::new(true))).implies(|| self.general_EV.equal(&BBoolean::new(true)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_18(&self) -> bool {
@@ -1366,37 +1379,37 @@ impl LandingGear_R6 {
 
     pub fn _check_inv_19(&self) -> bool {
         //invariant
-        return self.gears.checkDomain(&self._POSITION).and(&self.gears.checkRange(&self._GEAR_STATE)).and(&self.gears.isFunction()).and(&self.gears.isTotal(&self._POSITION)).booleanValue();
+        return self._POSITION.check_domain_of(&self.gears).and(&self._GEAR_STATE.check_range_of(&self.gears)).and(&self.gears.isFunction()).and(&self._POSITION.check_total_of(&self.gears)).booleanValue();
     }
 
     pub fn _check_inv_20(&self) -> bool {
         //invariant
-        return self.doors.checkDomain(&self._POSITION).and(&self.doors.checkRange(&self._DOOR_STATE)).and(&self.doors.isFunction()).and(&self.doors.isTotal(&self._POSITION)).booleanValue();
+        return self._POSITION.check_domain_of(&self.doors).and(&self._DOOR_STATE.check_range_of(&self.doors)).and(&self.doors.isFunction()).and(&self._POSITION.check_total_of(&self.doors)).booleanValue();
     }
 
     pub fn _check_inv_21(&self) -> bool {
         //invariant
-        return self.door.equal(&DOOR_STATE::closed).equivalent(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed]))).booleanValue();
+        return self.door.equal(&DOOR_STATE::closed).equivalent(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::closed.clone()]))).booleanValue();
     }
 
     pub fn _check_inv_22(&self) -> bool {
         //invariant
-        return self.door.equal(&DOOR_STATE::open).equivalent(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open]))).booleanValue();
+        return self.door.equal(&DOOR_STATE::open).equivalent(&self.doors.range().equal(&BSet::new(vec![DOOR_STATE::open.clone()]))).booleanValue();
     }
 
     pub fn _check_inv_23(&self) -> bool {
         //invariant
-        return self.gear.equal(&GEAR_STATE::extended).equivalent(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended]))).booleanValue();
+        return self.gear.equal(&GEAR_STATE::extended).equivalent(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::extended.clone()]))).booleanValue();
     }
 
     pub fn _check_inv_24(&self) -> bool {
         //invariant
-        return self.gear.equal(&GEAR_STATE::retracted).equivalent(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted]))).booleanValue();
+        return self.gear.equal(&GEAR_STATE::retracted).equivalent(&self.gears.range().equal(&BSet::new(vec![GEAR_STATE::retracted.clone()]))).booleanValue();
     }
 
     pub fn _check_inv_25(&self) -> bool {
         //invariant
-        return self.gear.equal(&GEAR_STATE::gear_moving).implies(&self.door.equal(&DOOR_STATE::open)).booleanValue();
+        return self.gear.equal(&GEAR_STATE::gear_moving).implies(|| self.door.equal(&DOOR_STATE::open).booleanValue()).booleanValue();
     }
 
     fn invalidate_caches(&mut self, to_invalidate: Vec<&'static str>) {
@@ -1848,8 +1861,6 @@ impl LandingGear_R6 {
         return result;
     }
 
-    //model_check_evaluate_state
-
     //model_check_invariants
     pub fn checkInvariants(state: &LandingGear_R6, last_op: &'static str, isCaching: bool) -> bool {
         if isCaching {
@@ -2215,7 +2226,7 @@ impl LandingGear_R6 {
         }
     }
 
-    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
         let mut machine = LandingGear_R6::new();
 
         let mut all_states = HashSet::<LandingGear_R6>::new();
@@ -2233,11 +2244,11 @@ impl LandingGear_R6 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 println!("INVARIANT VIOLATED");
                 stop_threads = true;
             }
-            if next_states.is_empty() {
+            if !no_dead && next_states.is_empty() {
                 print!("DEADLOCK DETECTED");
                 stop_threads = true;
             }
@@ -2255,7 +2266,7 @@ impl LandingGear_R6 {
         Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
-    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
         let threadPool = ThreadPool::new(threads);
 
         let machine = LandingGear_R6::new();
@@ -2284,14 +2295,14 @@ impl LandingGear_R6 {
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+                if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.into_iter()
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if !Self::checkInvariants(&state, last_op, is_caching) {
+                if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                     let _ = tx.send(Err("INVARIANT VIOLATED"));
                 }
                 //println!("Thread {:?} done", thread::current().id());
@@ -2326,7 +2337,7 @@ impl LandingGear_R6 {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() < 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::<usize>().unwrap();
     if threads <= 0 { panic!("Input for number of threads is wrong."); }
@@ -2339,9 +2350,22 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        LandingGear_R6::model_check_single_threaded(mc_type, is_caching);
+        LandingGear_R6::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        LandingGear_R6::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        LandingGear_R6::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }

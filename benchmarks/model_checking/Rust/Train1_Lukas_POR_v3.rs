@@ -11,6 +11,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::brelation::BRelation;
@@ -155,13 +156,13 @@ impl Train1_Lukas_POR_v3 {
         self.fst = BRelation::new(vec![BTuple::from_refs(&ROUTES::R1, &BLOCKS::A), BTuple::from_refs(&ROUTES::R2, &BLOCKS::A), BTuple::from_refs(&ROUTES::R3, &BLOCKS::H), BTuple::from_refs(&ROUTES::R4, &BLOCKS::I), BTuple::from_refs(&ROUTES::R5, &BLOCKS::C), BTuple::from_refs(&ROUTES::R6, &BLOCKS::F), BTuple::from_refs(&ROUTES::R7, &BLOCKS::F), BTuple::from_refs(&ROUTES::R8, &BLOCKS::F)]);
         self.lst = BRelation::new(vec![BTuple::from_refs(&ROUTES::R1, &BLOCKS::C), BTuple::from_refs(&ROUTES::R2, &BLOCKS::F), BTuple::from_refs(&ROUTES::R3, &BLOCKS::F), BTuple::from_refs(&ROUTES::R4, &BLOCKS::F), BTuple::from_refs(&ROUTES::R5, &BLOCKS::A), BTuple::from_refs(&ROUTES::R6, &BLOCKS::A), BTuple::from_refs(&ROUTES::R7, &BLOCKS::H), BTuple::from_refs(&ROUTES::R8, &BLOCKS::I)]);
         self.rtbl = BRelation::new(vec![BTuple::from_refs(&BLOCKS::A, &ROUTES::R1), BTuple::from_refs(&BLOCKS::A, &ROUTES::R2), BTuple::from_refs(&BLOCKS::A, &ROUTES::R5), BTuple::from_refs(&BLOCKS::A, &ROUTES::R6), BTuple::from_refs(&BLOCKS::B, &ROUTES::R1), BTuple::from_refs(&BLOCKS::B, &ROUTES::R2), BTuple::from_refs(&BLOCKS::B, &ROUTES::R5), BTuple::from_refs(&BLOCKS::B, &ROUTES::R6), BTuple::from_refs(&BLOCKS::C, &ROUTES::R1), BTuple::from_refs(&BLOCKS::C, &ROUTES::R5), BTuple::from_refs(&BLOCKS::D, &ROUTES::R2), BTuple::from_refs(&BLOCKS::D, &ROUTES::R6), BTuple::from_refs(&BLOCKS::E, &ROUTES::R2), BTuple::from_refs(&BLOCKS::E, &ROUTES::R3), BTuple::from_refs(&BLOCKS::E, &ROUTES::R4), BTuple::from_refs(&BLOCKS::E, &ROUTES::R6), BTuple::from_refs(&BLOCKS::E, &ROUTES::R7), BTuple::from_refs(&BLOCKS::E, &ROUTES::R8), BTuple::from_refs(&BLOCKS::F, &ROUTES::R2), BTuple::from_refs(&BLOCKS::F, &ROUTES::R3), BTuple::from_refs(&BLOCKS::F, &ROUTES::R4), BTuple::from_refs(&BLOCKS::F, &ROUTES::R6), BTuple::from_refs(&BLOCKS::F, &ROUTES::R7), BTuple::from_refs(&BLOCKS::F, &ROUTES::R8), BTuple::from_refs(&BLOCKS::G, &ROUTES::R3), BTuple::from_refs(&BLOCKS::G, &ROUTES::R4), BTuple::from_refs(&BLOCKS::G, &ROUTES::R4), BTuple::from_refs(&BLOCKS::G, &ROUTES::R7), BTuple::from_refs(&BLOCKS::G, &ROUTES::R8), BTuple::from_refs(&BLOCKS::H, &ROUTES::R3), BTuple::from_refs(&BLOCKS::H, &ROUTES::R7), BTuple::from_refs(&BLOCKS::I, &ROUTES::R4), BTuple::from_refs(&BLOCKS::I, &ROUTES::R8)]);
-        self.resrt = BSet::new(vec![]).clone().clone();
-        self.resbl = BSet::new(vec![]).clone().clone();
-        self.rsrtbl = BRelation::new(vec![]).clone().clone();
-        self.OCC = BSet::new(vec![]).clone().clone();
-        self.TRK = BRelation::new(vec![]).clone().clone();
-        self.frm = BSet::new(vec![]).clone().clone();
-        self.LBT = BSet::new(vec![]).clone().clone();
+        self.resrt = BSet::<ROUTES>::new(vec![]).clone().clone();
+        self.resbl = BSet::<BLOCKS>::new(vec![]).clone().clone();
+        self.rsrtbl = BRelation::<BLOCKS, ROUTES>::new(vec![]).clone().clone();
+        self.OCC = BSet::<BLOCKS>::new(vec![]).clone().clone();
+        self.TRK = BRelation::<BLOCKS, BLOCKS>::new(vec![]).clone().clone();
+        self.frm = BSet::<ROUTES>::new(vec![]).clone().clone();
+        self.LBT = BSet::<BLOCKS>::new(vec![]).clone().clone();
     }
 
     pub fn _get_fst(&self) -> BRelation<ROUTES, BLOCKS> {
@@ -221,9 +222,9 @@ impl Train1_Lukas_POR_v3 {
         let mut _ld_resrt = self.resrt.clone();
         let mut _ld_rsrtbl = self.rsrtbl.clone();
         let mut _ld_resbl = self.resbl.clone();
-        self.resrt = _ld_resrt._union(&BSet::new(vec![r])).clone().clone();
-        self.rsrtbl = _ld_rsrtbl._union(&self.rtbl.rangeRestriction(&BSet::new(vec![r]))).clone().clone();
-        self.resbl = _ld_resbl._union(&self.rtbl.inverse().relationImage(&BSet::new(vec![r]))).clone().clone();
+        self.resrt = _ld_resrt._union(&BSet::new(vec![r.clone()])).clone().clone();
+        self.rsrtbl = _ld_rsrtbl._union(&self.rtbl.rangeRestriction(&BSet::new(vec![r.clone()]))).clone().clone();
+        self.resbl = _ld_resbl._union(&self.rtbl.inverse().relationImage(&BSet::new(vec![r.clone()]))).clone().clone();
 
     }
 
@@ -231,8 +232,8 @@ impl Train1_Lukas_POR_v3 {
         //pre_assert
         let mut _ld_frm = self.frm.clone();
         let mut _ld_resrt = self.resrt.clone();
-        self.resrt = _ld_resrt.difference(&BSet::new(vec![r])).clone().clone();
-        self.frm = _ld_frm.difference(&BSet::new(vec![r])).clone().clone();
+        self.resrt = _ld_resrt.difference(&BSet::new(vec![r.clone()])).clone().clone();
+        self.frm = _ld_frm.difference(&BSet::new(vec![r.clone()])).clone().clone();
 
     }
 
@@ -240,14 +241,14 @@ impl Train1_Lukas_POR_v3 {
         //pre_assert
         let mut _ld_OCC = self.OCC.clone();
         let mut _ld_LBT = self.LBT.clone();
-        self.OCC = _ld_OCC._union(&BSet::new(vec![self.fst.functionCall(&r)])).clone().clone();
-        self.LBT = _ld_LBT._union(&BSet::new(vec![self.fst.functionCall(&r)])).clone().clone();
+        self.OCC = _ld_OCC._union(&BSet::new(vec![self.fst.functionCall(&r).clone()])).clone().clone();
+        self.LBT = _ld_LBT._union(&BSet::new(vec![self.fst.functionCall(&r).clone()])).clone().clone();
 
     }
 
     pub fn FRONT_MOVE_2(&mut self, mut b: BLOCKS) -> () {
         //pre_assert
-        self.OCC = self.OCC._union(&BSet::new(vec![self.TRK.functionCall(&b)])).clone().clone();
+        self.OCC = self.OCC._union(&BSet::new(vec![self.TRK.functionCall(&b).clone()])).clone().clone();
 
     }
 
@@ -257,10 +258,10 @@ impl Train1_Lukas_POR_v3 {
         let mut _ld_resbl = self.resbl.clone();
         let mut _ld_OCC = self.OCC.clone();
         let mut _ld_LBT = self.LBT.clone();
-        self.OCC = _ld_OCC.difference(&BSet::new(vec![b])).clone().clone();
-        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b])).clone().clone();
-        self.resbl = _ld_resbl.difference(&BSet::new(vec![b])).clone().clone();
-        self.LBT = _ld_LBT.difference(&BSet::new(vec![b])).clone().clone();
+        self.OCC = _ld_OCC.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b.clone()])).clone().clone();
+        self.resbl = _ld_resbl.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.LBT = _ld_LBT.difference(&BSet::new(vec![b.clone()])).clone().clone();
 
     }
 
@@ -270,10 +271,10 @@ impl Train1_Lukas_POR_v3 {
         let mut _ld_resbl = self.resbl.clone();
         let mut _ld_OCC = self.OCC.clone();
         let mut _ld_LBT = self.LBT.clone();
-        self.OCC = _ld_OCC.difference(&BSet::new(vec![b])).clone().clone();
-        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b])).clone().clone();
-        self.resbl = _ld_resbl.difference(&BSet::new(vec![b])).clone().clone();
-        self.LBT = _ld_LBT.difference(&BSet::new(vec![b]))._union(&BSet::new(vec![self.TRK.functionCall(&b)])).clone().clone();
+        self.OCC = _ld_OCC.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.rsrtbl = _ld_rsrtbl.domainSubstraction(&BSet::new(vec![b.clone()])).clone().clone();
+        self.resbl = _ld_resbl.difference(&BSet::new(vec![b.clone()])).clone().clone();
+        self.LBT = _ld_LBT.difference(&BSet::new(vec![b.clone()]))._union(&BSet::new(vec![self.TRK.functionCall(&b).clone()])).clone().clone();
 
     }
 
@@ -285,7 +286,7 @@ impl Train1_Lukas_POR_v3 {
 
     pub fn route_formation(&mut self, mut r: ROUTES) -> () {
         //pre_assert
-        self.frm = self.frm._union(&BSet::new(vec![r])).clone().clone();
+        self.frm = self.frm._union(&BSet::new(vec![r.clone()])).clone().clone();
 
     }
 
@@ -295,7 +296,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_0: BSet<ROUTES> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_r_1 in self._ROUTES.difference(&self.resrt).clone().iter().cloned() {
-                if ((self.rtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1])).intersect(&self.resbl).equal(&BSet::new(vec![])) && BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
+                //parameter_combination_predicate
+                if ((self.rtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1.clone()])).intersect(&self.resbl).equal(&BSet::<BLOCKS>::new(vec![])) && BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
                     _ic_set_0 = _ic_set_0._union(&BSet::new(vec![_ic_r_1]));
                 }
 
@@ -313,6 +315,7 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_1: BSet<ROUTES> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_r_1 in self.resrt.difference(&self.rsrtbl.range()).clone().iter().cloned() {
+                //parameter_combination_predicate
                 _ic_set_1 = _ic_set_1._union(&BSet::new(vec![_ic_r_1]));
 
             }
@@ -329,7 +332,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_2: BSet<ROUTES> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_r_1 in self.frm.clone().iter().cloned() {
-                if (((self.resbl.difference(&self.OCC).elementOf(&self.fst.functionCall(&_ic_r_1)) && _ic_r_1.equal(&self.rsrtbl.functionCall(&self.fst.functionCall(&_ic_r_1)))) && BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
+                //parameter_combination_predicate
+                if (((self.resbl.difference(&self.OCC).elementOf(&self.fst.functionCall(&_ic_r_1)) && _ic_r_1.equal(&self.rsrtbl.functionCall(&self.fst.functionCall(&_ic_r_1)))) && BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
                     _ic_set_2 = _ic_set_2._union(&BSet::new(vec![_ic_r_1]));
                 }
 
@@ -347,7 +351,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_3: BSet<BLOCKS> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_b_1 in self.OCC.intersect(&self.TRK.domain()).clone().iter().cloned() {
-                if ((self.OCC.notElementOf(&self.TRK.functionCall(&_ic_b_1)) && BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
+                //parameter_combination_predicate
+                if ((self.OCC.notElementOf(&self.TRK.functionCall(&_ic_b_1)) && BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
                     _ic_set_3 = _ic_set_3._union(&BSet::new(vec![_ic_b_1]));
                 }
 
@@ -365,7 +370,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_4: BSet<BLOCKS> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_b_1 in self.LBT.difference(&self.TRK.domain()).clone().iter().cloned() {
-                if (BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range()))).booleanValue() {
+                //parameter_combination_predicate
+                if (BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range()))).booleanValue() {
                     _ic_set_4 = _ic_set_4._union(&BSet::new(vec![_ic_b_1]));
                 }
 
@@ -383,7 +389,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_5: BSet<BLOCKS> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_b_1 in self.LBT.intersect(&self.TRK.domain()).clone().iter().cloned() {
-                if ((self.OCC.elementOf(&self.TRK.functionCall(&_ic_b_1)) && BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
+                //parameter_combination_predicate
+                if ((self.OCC.elementOf(&self.TRK.functionCall(&_ic_b_1)) && BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
                     _ic_set_5 = _ic_set_5._union(&BSet::new(vec![_ic_b_1]));
                 }
 
@@ -401,7 +408,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_6: BSet<ROUTES> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_r_1 in self.resrt.difference(&self.frm).clone().iter().cloned() {
-                if (BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range()))).booleanValue() {
+                //parameter_combination_predicate
+                if (BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range()))).booleanValue() {
                     _ic_set_6 = _ic_set_6._union(&BSet::new(vec![_ic_r_1]));
                 }
 
@@ -419,7 +427,8 @@ impl Train1_Lukas_POR_v3 {
             let mut _ic_set_7: BSet<ROUTES> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_r_1 in self.resrt.difference(&self.frm).clone().iter().cloned() {
-                if ((self.nxt.functionCall(&_ic_r_1).domainRestriction(&self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1]))).equal(&self.TRK.domainRestriction(&self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1])))) && BSet::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
+                //parameter_combination_predicate
+                if ((self.nxt.functionCall(&_ic_r_1).domainRestriction(&self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1.clone()]))).equal(&self.TRK.domainRestriction(&self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1.clone()])))) && BSet::<ROUTES>::new(vec![]).equal(&self.resrt.difference(&self.rsrtbl.range())))).booleanValue() {
                     _ic_set_7 = _ic_set_7._union(&BSet::new(vec![_ic_r_1]));
                 }
 
@@ -433,7 +442,7 @@ impl Train1_Lukas_POR_v3 {
 
     pub fn _check_inv_1(&self) -> bool {
         //invariant
-        return self.TRK.checkDomain(&self._BLOCKS).and(&self.TRK.checkRange(&self._BLOCKS)).and(&self.TRK.isFunction()).and(&self.TRK.isPartial(&self._BLOCKS)).and(&self.TRK.isInjection()).booleanValue();
+        return self._BLOCKS.check_domain_of(&self.TRK).and(&self._BLOCKS.check_range_of(&self.TRK)).and(&self.TRK.isFunction()).and(&self._BLOCKS.check_partial_of(&self.TRK)).and(&self.TRK.isInjection()).booleanValue();
     }
 
     pub fn _check_inv_2(&self) -> bool {
@@ -442,7 +451,7 @@ impl Train1_Lukas_POR_v3 {
         let mut _ic_boolean_8 = BBoolean::new(true);
         for _ic_r_1 in self.resrt.difference(&self.frm).clone().iter().cloned() {
             {
-                let mut _ic_a_1 = BSet::new(vec![_ic_r_1]);
+                let mut _ic_a_1 = BSet::new(vec![_ic_r_1.clone()]);
                 if !(self.rtbl.rangeRestriction(&_ic_a_1).equal(&self.rsrtbl.rangeRestriction(&_ic_a_1))).booleanValue() {
                     _ic_boolean_8 = BBoolean::new(false);
                     break;
@@ -459,7 +468,7 @@ impl Train1_Lukas_POR_v3 {
         //quantified_predicate
         let mut _ic_boolean_10 = BBoolean::new(true);
         for _ic_x_1 in self.TRK.domain().clone().iter().cloned() {
-            for _ic_y_1 in self.TRK.relationImage(&BSet::new(vec![_ic_x_1])).clone().iter().cloned() {
+            for _ic_y_1 in self.TRK.relationImage(&BSet::new(vec![_ic_x_1.clone()])).clone().iter().cloned() {
                 //quantified_predicate
                 let mut _ic_boolean_9 = BBoolean::new(false);
                 for _ic_r_1 in self._ROUTES.clone().iter().cloned() {
@@ -487,7 +496,7 @@ impl Train1_Lukas_POR_v3 {
         let mut _ic_boolean_11 = BBoolean::new(true);
         for _ic_r_1 in self.frm.clone().iter().cloned() {
             {
-                let mut _ic_a_1 = self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1]));
+                let mut _ic_a_1 = self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1.clone()]));
                 if !(self.nxt.functionCall(&_ic_r_1).domainRestriction(&_ic_a_1).equal(&self.TRK.domainRestriction(&_ic_a_1))).booleanValue() {
                     _ic_boolean_11 = BBoolean::new(false);
                     break;
@@ -514,7 +523,7 @@ impl Train1_Lukas_POR_v3 {
                     let mut _ic_c_1 = self.rsrtbl.functionCall(&_ic_b_1);
                     {
                         let mut _ic_d_1 = self.nxt.functionCall(&_ic_c_1);
-                        if !((_ic_d_1.range().elementOf(&_ic_b_1) && _ic_a_1.equal(&_ic_d_1.inverse().functionCall(&_ic_b_1))).implies(&self.rsrtbl.functionCall(&_ic_a_1).unequal(&_ic_c_1))).booleanValue() {
+                        if !((_ic_d_1.range().elementOf(&_ic_b_1) && _ic_a_1.equal(&_ic_d_1.inverse().functionCall(&_ic_b_1))).implies(|| self.rsrtbl.functionCall(&_ic_a_1).unequal(&_ic_c_1).booleanValue())).booleanValue() {
                             _ic_boolean_12 = BBoolean::new(false);
                             break;
                         }
@@ -529,7 +538,7 @@ impl Train1_Lukas_POR_v3 {
 
     pub fn _check_inv_7(&self) -> bool {
         //invariant
-        return self.rsrtbl.checkDomain(&self.resbl).and(&self.rsrtbl.checkRange(&self.resrt)).and(&self.rsrtbl.isFunction()).and(&self.rsrtbl.isTotal(&self.resbl)).booleanValue();
+        return self.resbl.check_domain_of(&self.rsrtbl).and(&self.resrt.check_range_of(&self.rsrtbl)).and(&self.rsrtbl.isFunction()).and(&self.resbl.check_total_of(&self.rsrtbl)).booleanValue();
     }
 
     pub fn _check_inv_8(&self) -> bool {
@@ -550,10 +559,10 @@ impl Train1_Lukas_POR_v3 {
             {
                 let mut _ic_a_1 = self.nxt.functionCall(&_ic_r_1);
                 {
-                    let mut _ic_b_1 = self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1]));
+                    let mut _ic_b_1 = self.rsrtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1.clone()]));
                     {
                         let mut _ic_c_1 = _ic_b_1.difference(&self.OCC);
-                        if !(((_ic_a_1.relationImage(&self.rtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1])).difference(&_ic_b_1)).intersect(&_ic_c_1).equal(&BSet::new(vec![])) && _ic_a_1.relationImage(&_ic_b_1).subset(&_ic_b_1)) && _ic_a_1.relationImage(&_ic_c_1).subset(&_ic_c_1))).booleanValue() {
+                        if !(((_ic_a_1.relationImage(&self.rtbl.inverse().relationImage(&BSet::new(vec![_ic_r_1.clone()])).difference(&_ic_b_1)).intersect(&_ic_c_1).equal(&BSet::<BLOCKS>::new(vec![])) && _ic_a_1.relationImage(&_ic_b_1).subset(&_ic_b_1)) && _ic_a_1.relationImage(&_ic_c_1).subset(&_ic_c_1))).booleanValue() {
                             _ic_boolean_13 = BBoolean::new(false);
                             break;
                         }
@@ -709,8 +718,6 @@ impl Train1_Lukas_POR_v3 {
         return result;
     }
 
-    //model_check_evaluate_state
-
     //model_check_invariants
     pub fn checkInvariants(state: &Train1_Lukas_POR_v3, last_op: &'static str, isCaching: bool) -> bool {
         if isCaching {
@@ -865,7 +872,7 @@ impl Train1_Lukas_POR_v3 {
         }
     }
 
-    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
         let mut machine = Train1_Lukas_POR_v3::new();
 
         let mut all_states = HashSet::<Train1_Lukas_POR_v3>::new();
@@ -883,11 +890,11 @@ impl Train1_Lukas_POR_v3 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 println!("INVARIANT VIOLATED");
                 stop_threads = true;
             }
-            if next_states.is_empty() {
+            if !no_dead && next_states.is_empty() {
                 print!("DEADLOCK DETECTED");
                 stop_threads = true;
             }
@@ -905,7 +912,7 @@ impl Train1_Lukas_POR_v3 {
         Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
-    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
         let threadPool = ThreadPool::new(threads);
 
         let machine = Train1_Lukas_POR_v3::new();
@@ -934,14 +941,14 @@ impl Train1_Lukas_POR_v3 {
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+                if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.into_iter()
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if !Self::checkInvariants(&state, last_op, is_caching) {
+                if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                     let _ = tx.send(Err("INVARIANT VIOLATED"));
                 }
                 //println!("Thread {:?} done", thread::current().id());
@@ -976,7 +983,7 @@ impl Train1_Lukas_POR_v3 {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() < 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::<usize>().unwrap();
     if threads <= 0 { panic!("Input for number of threads is wrong."); }
@@ -989,9 +996,22 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        Train1_Lukas_POR_v3::model_check_single_threaded(mc_type, is_caching);
+        Train1_Lukas_POR_v3::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        Train1_Lukas_POR_v3::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        Train1_Lukas_POR_v3::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }

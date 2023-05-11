@@ -11,6 +11,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::binteger::BInteger;
@@ -420,7 +421,7 @@ impl CAN_BUS_tlc {
     pub fn T2ReleaseBus(&mut self, mut ppriority: BInteger) -> () {
         //pre_assert
         let mut _ld_BUSwrite = self.BUSwrite.clone();
-        self.BUSwrite = _ld_BUSwrite.domainSubstraction(&BSet::new(vec![ppriority])).clone().clone();
+        self.BUSwrite = _ld_BUSwrite.domainSubstraction(&BSet::new(vec![ppriority.clone()])).clone().clone();
         self.T2_state = T2state::T2_WAIT;
 
     }
@@ -485,7 +486,7 @@ impl CAN_BUS_tlc {
     pub fn T3ReleaseBus(&mut self, mut ppriority: BInteger) -> () {
         //pre_assert
         let mut _ld_BUSwrite = self.BUSwrite.clone();
-        self.BUSwrite = _ld_BUSwrite.domainSubstraction(&BSet::new(vec![ppriority])).clone().clone();
+        self.BUSwrite = _ld_BUSwrite.domainSubstraction(&BSet::new(vec![ppriority.clone()])).clone().clone();
         self.T3_state = T3state::T3_RELEASE;
 
     }
@@ -534,6 +535,7 @@ impl CAN_BUS_tlc {
             let mut _ic_set_1: BSet<BInteger> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_p_1 in BSet::<BInteger>::interval(&BInteger::new(1).negative(), &BInteger::new(3)).clone().iter().cloned() {
+                //parameter_combination_predicate
                 if (self.T1_state.equal(&T1state::T1_CALC)).booleanValue() {
                     _ic_set_1 = _ic_set_1._union(&BSet::new(vec![_ic_p_1]));
                 }
@@ -555,6 +557,7 @@ impl CAN_BUS_tlc {
                 let mut _ic_ppriority_1 = BInteger::new(3);
                 {
                     let mut _ic_pv_1 = self.T1_writevalue;
+                    //parameter_combination_predicate
                     if (self.T1_state.equal(&T1state::T1_SEND)).booleanValue() {
                         _ic_set_2 = _ic_set_2._union(&BSet::new(vec![BTuple::from_refs(&_ic_ppriority_1, &_ic_pv_1)]));
                     }
@@ -575,6 +578,7 @@ impl CAN_BUS_tlc {
             //transition, parameters, no condidtion
             {
                 let mut _ic_pt_1 = BInteger::new(2);
+                //parameter_combination_predicate
                 if (self.T1_state.equal(&T1state::T1_WAIT)).booleanValue() {
                     _ic_set_3 = _ic_set_3._union(&BSet::new(vec![_ic_pt_1]));
                 }
@@ -607,6 +611,7 @@ impl CAN_BUS_tlc {
                 let mut _ic_ppriority_1 = self.BUSpriority;
                 {
                     let mut _ic_pv_1 = self.BUSvalue;
+                    //parameter_combination_predicate
                     if (self.T2_state.equal(&T2state::T2_RCV)).booleanValue() {
                         _ic_set_5 = _ic_set_5._union(&BSet::new(vec![BTuple::from_refs(&_ic_ppriority_1, &_ic_pv_1)]));
                     }
@@ -649,6 +654,7 @@ impl CAN_BUS_tlc {
             //transition, parameters, no condidtion
             {
                 let mut _ic_ppriority_1 = self.T2_readpriority;
+                //parameter_combination_predicate
                 if ((self.BUSwrite.domain().elementOf(&_ic_ppriority_1) && self.T2_state.equal(&T2state::T2_RELEASE))).booleanValue() {
                     _ic_set_8 = _ic_set_8._union(&BSet::new(vec![_ic_ppriority_1]));
                 }
@@ -681,6 +687,7 @@ impl CAN_BUS_tlc {
                 let mut _ic_ppriority_1 = BInteger::new(5);
                 {
                     let mut _ic_pv_1 = self.T2_writevalue;
+                    //parameter_combination_predicate
                     if (self.T2_state.equal(&T2state::T2_SEND)).booleanValue() {
                         _ic_set_10 = _ic_set_10._union(&BSet::new(vec![BTuple::from_refs(&_ic_ppriority_1, &_ic_pv_1)]));
                     }
@@ -701,6 +708,7 @@ impl CAN_BUS_tlc {
             //transition, parameters, no condidtion
             {
                 let mut _ic_pt_1 = BInteger::new(3);
+                //parameter_combination_predicate
                 if (self.T2_state.equal(&T2state::T2_WAIT)).booleanValue() {
                     _ic_set_11 = _ic_set_11._union(&BSet::new(vec![_ic_pt_1]));
                 }
@@ -744,6 +752,7 @@ impl CAN_BUS_tlc {
                 let mut _ic_ppriority_1 = BInteger::new(4);
                 {
                     let mut _ic_pv_1 = BInteger::new(0);
+                    //parameter_combination_predicate
                     if (self.T3_state.equal(&T3state::T3_WRITE)).booleanValue() {
                         _ic_set_14 = _ic_set_14._union(&BSet::new(vec![BTuple::from_refs(&_ic_ppriority_1, &_ic_pv_1)]));
                     }
@@ -766,6 +775,7 @@ impl CAN_BUS_tlc {
                 let mut _ic_ppriority_1 = self.BUSpriority;
                 {
                     let mut _ic_pv_1 = self.BUSvalue;
+                    //parameter_combination_predicate
                     if (self.T3_state.equal(&T3state::T3_READ)).booleanValue() {
                         _ic_set_15 = _ic_set_15._union(&BSet::new(vec![BTuple::from_refs(&_ic_ppriority_1, &_ic_pv_1)]));
                     }
@@ -797,6 +807,7 @@ impl CAN_BUS_tlc {
             //transition, parameters, no condidtion
             {
                 let mut _ic_ppriority_1 = BInteger::new(4);
+                //parameter_combination_predicate
                 if ((self.T3_readpriority.equal(&BInteger::new(5)) && self.T3_state.equal(&T3state::T3_PROC))).booleanValue() {
                     _ic_set_17 = _ic_set_17._union(&BSet::new(vec![_ic_ppriority_1]));
                 }
@@ -838,6 +849,7 @@ impl CAN_BUS_tlc {
             //transition, parameters, no condidtion
             {
                 let mut _ic_pmax_1 = self.BUSwrite.domain()._max();
+                //parameter_combination_predicate
                 if (((self.T1_timer.greater(&BInteger::new(0)) && self.T2_timer.greater(&BInteger::new(0))) && (self.T3_enabled.equal(&BBoolean::new(true)) || self.T3_evaluated.equal(&BBoolean::new(true))))).booleanValue() {
                     _ic_set_20 = _ic_set_20._union(&BSet::new(vec![_ic_pmax_1]));
                 }
@@ -857,12 +869,12 @@ impl CAN_BUS_tlc {
 
     pub fn _check_inv_2(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.T3_evaluated).booleanValue();
+        return (*butils::BOOL).elementOf(&self.T3_evaluated).booleanValue();
     }
 
     pub fn _check_inv_3(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.T3_enabled).booleanValue();
+        return (*butils::BOOL).elementOf(&self.T3_enabled).booleanValue();
     }
 
     pub fn _check_inv_4(&self) -> bool {
@@ -937,12 +949,12 @@ impl CAN_BUS_tlc {
 
     pub fn _check_inv_18(&self) -> bool {
         //invariant
-        return self.BUSwrite.checkDomain(&self.NATSET).and(&self.BUSwrite.checkRangeInteger()).and(&self.BUSwrite.isFunction()).and(&self.BUSwrite.isPartial(&self.NATSET)).booleanValue();
+        return self.NATSET.check_domain_of(&self.BUSwrite).and(&self.BUSwrite.checkRangeInteger()).and(&self.BUSwrite.isFunction()).and(&self.NATSET.check_partial_of(&self.BUSwrite)).booleanValue();
     }
 
     pub fn _check_inv_19(&self) -> bool {
         //invariant
-        return self.BUSwrite.unequal(&BRelation::new(vec![])).booleanValue();
+        return self.BUSwrite.unequal(&BRelation::<BInteger, BInteger>::new(vec![])).booleanValue();
     }
 
     pub fn _check_inv_20(&self) -> bool {
@@ -1235,8 +1247,6 @@ impl CAN_BUS_tlc {
         return result;
     }
 
-    //model_check_evaluate_state
-
     //model_check_invariants
     pub fn checkInvariants(state: &CAN_BUS_tlc, last_op: &'static str, isCaching: bool) -> bool {
         if isCaching {
@@ -1499,7 +1509,7 @@ impl CAN_BUS_tlc {
         }
     }
 
-    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
         let mut machine = CAN_BUS_tlc::new();
 
         let mut all_states = HashSet::<CAN_BUS_tlc>::new();
@@ -1517,11 +1527,11 @@ impl CAN_BUS_tlc {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 println!("INVARIANT VIOLATED");
                 stop_threads = true;
             }
-            if next_states.is_empty() {
+            if !no_dead && next_states.is_empty() {
                 print!("DEADLOCK DETECTED");
                 stop_threads = true;
             }
@@ -1539,7 +1549,7 @@ impl CAN_BUS_tlc {
         Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
-    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
         let threadPool = ThreadPool::new(threads);
 
         let machine = CAN_BUS_tlc::new();
@@ -1568,14 +1578,14 @@ impl CAN_BUS_tlc {
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+                if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.into_iter()
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if !Self::checkInvariants(&state, last_op, is_caching) {
+                if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                     let _ = tx.send(Err("INVARIANT VIOLATED"));
                 }
                 //println!("Thread {:?} done", thread::current().id());
@@ -1610,7 +1620,7 @@ impl CAN_BUS_tlc {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() < 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::<usize>().unwrap();
     if threads <= 0 { panic!("Input for number of threads is wrong."); }
@@ -1623,9 +1633,22 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        CAN_BUS_tlc::model_check_single_threaded(mc_type, is_caching);
+        CAN_BUS_tlc::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        CAN_BUS_tlc::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        CAN_BUS_tlc::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }

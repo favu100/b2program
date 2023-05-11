@@ -11,6 +11,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::binteger::BInteger;
@@ -323,7 +324,7 @@ impl Cruise_finite1_deterministic_MC {
     }
 
     pub fn CCInitialisationDelayFinished(&mut self) -> () {
-        if ((((((self.CCInitialisationInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true))))).booleanValue() {
+        if ((((((self.CCInitialisationInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue()))).booleanValue() {
             self.CCInitialisationInProgress = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -331,7 +332,7 @@ impl Cruise_finite1_deterministic_MC {
     }
 
     pub fn CruiseSpeedChangeFinished(&mut self, mut vtks: BBoolean, mut vtktg: BBoolean) -> () {
-        if ((((((((((((butils::BOOL.elementOf(&vtks) && butils::BOOL.elementOf(&vtktg)) && (((vtks.equal(&BBoolean::new(true)) || vtktg.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true)))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&vtktg.equal(&BBoolean::new(false)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&vtks.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&vtktg.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&vtktg.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&vtks.equal(&BBoolean::new(true)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&vtktg.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&vtktg.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(&vtktg.equal(&BBoolean::new(false)))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((((((((((*butils::BOOL).elementOf(&vtks) && (*butils::BOOL).elementOf(&vtktg)) && (((vtks.equal(&BBoolean::new(true)) || vtktg.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true)))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| vtks.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| vtktg.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| vtktg.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| vtks.equal(&BBoolean::new(true)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))).booleanValue() {
             self.VehicleTryKeepTimeGap = vtktg;
             self.VehicleTryKeepSpeed = vtks;
         } else {
@@ -340,7 +341,7 @@ impl Cruise_finite1_deterministic_MC {
     }
 
     pub fn CruiseSpeedChangeDelayFinished(&mut self) -> () {
-        if ((((((self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true))))).booleanValue() {
+        if ((((((self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue()))).booleanValue() {
             self.CruiseSpeedChangeInProgress = BBoolean::new(true);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -527,7 +528,7 @@ impl Cruise_finite1_deterministic_MC {
     }
 
     pub fn VehicleManageObstacle(&mut self, mut vtks: BBoolean, mut vtktg: BBoolean) -> () {
-        if ((((((((((((butils::BOOL.elementOf(&vtks) && butils::BOOL.elementOf(&vtktg)) && (((vtks.equal(&BBoolean::new(true)) || vtktg.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&vtktg.equal(&BBoolean::new(false)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&vtks.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&vtktg.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&vtktg.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&vtks.equal(&BBoolean::new(true)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&vtktg.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&vtktg.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(&vtktg.equal(&BBoolean::new(false)))) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)))).booleanValue() {
+        if (((((((((((((*butils::BOOL).elementOf(&vtks) && (*butils::BOOL).elementOf(&vtktg)) && (((vtks.equal(&BBoolean::new(true)) || vtktg.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| vtks.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| vtktg.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| vtktg.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| vtks.equal(&BBoolean::new(true)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(|| vtktg.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)))).booleanValue() {
             self.VehicleTryKeepTimeGap = vtktg;
             self.VehicleTryKeepSpeed = vtks;
         } else {
@@ -536,7 +537,7 @@ impl Cruise_finite1_deterministic_MC {
     }
 
     pub fn ObstacleBecomesOld(&mut self) -> () {
-        if ((((((self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true))))).booleanValue() {
+        if ((((((self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue()))).booleanValue() {
             self.ObstacleStatusJustChanged = BBoolean::new(false);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -570,8 +571,9 @@ impl Cruise_finite1_deterministic_MC {
         if !is_caching || self._tr_cache_SetCruiseSpeed.is_none() {
             let mut _ic_set_2: BSet<BTuple<BBoolean, BBoolean>> = BSet::new(vec![]);
             //transition, parameters, no condidtion
-            for _ic_vcks_1 in butils::BOOL.clone().iter().cloned() {
-                for _ic_csam_1 in butils::BOOL.clone().iter().cloned() {
+            for _ic_vcks_1 in (*butils::BOOL).clone().iter().cloned() {
+                for _ic_csam_1 in (*butils::BOOL).clone().iter().cloned() {
+                    //parameter_combination_predicate
                     if (self.CruiseAllowed.equal(&BBoolean::new(true))).booleanValue() {
                         _ic_set_2 = _ic_set_2._union(&BSet::new(vec![BTuple::from_refs(&_ic_vcks_1, &_ic_csam_1)]));
                     }
@@ -590,9 +592,10 @@ impl Cruise_finite1_deterministic_MC {
         if !is_caching || self._tr_cache_CCInitialisationFinished.is_none() {
             let mut _ic_set_3: BSet<BTuple<BBoolean, BBoolean>> = BSet::new(vec![]);
             //transition, parameters, no condidtion
-            for _ic_vtks_1 in butils::BOOL.clone().iter().cloned() {
-                for _ic_vtktg_1 in butils::BOOL.clone().iter().cloned() {
-                    if (((((((((((((_ic_vtks_1.equal(&BBoolean::new(true)) || _ic_vtktg_1.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&_ic_vtks_1.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtktg_1.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtktg_1.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtks_1.equal(&BBoolean::new(true)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && self.CCInitialisationInProgress.equal(&BBoolean::new(true)))).booleanValue() {
+            for _ic_vtks_1 in (*butils::BOOL).clone().iter().cloned() {
+                for _ic_vtktg_1 in (*butils::BOOL).clone().iter().cloned() {
+                    //parameter_combination_predicate
+                    if (((((((((((((_ic_vtks_1.equal(&BBoolean::new(true)) || _ic_vtktg_1.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| _ic_vtks_1.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtktg_1.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtktg_1.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtks_1.equal(&BBoolean::new(true)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && self.CCInitialisationInProgress.equal(&BBoolean::new(true)))).booleanValue() {
                         _ic_set_3 = _ic_set_3._union(&BSet::new(vec![BTuple::from_refs(&_ic_vtks_1, &_ic_vtktg_1)]));
                     }
 
@@ -608,7 +611,7 @@ impl Cruise_finite1_deterministic_MC {
     pub fn _tr_CCInitialisationDelayFinished(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_CCInitialisationDelayFinished.is_none() {
-            let mut __tmp__val__ = (((((self.CCInitialisationInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))).booleanValue();
+            let mut __tmp__val__ = (((((self.CCInitialisationInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())).booleanValue();
             self._tr_cache_CCInitialisationDelayFinished = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -621,9 +624,10 @@ impl Cruise_finite1_deterministic_MC {
         if !is_caching || self._tr_cache_CruiseSpeedChangeFinished.is_none() {
             let mut _ic_set_5: BSet<BTuple<BBoolean, BBoolean>> = BSet::new(vec![]);
             //transition, parameters, no condidtion
-            for _ic_vtks_1 in butils::BOOL.clone().iter().cloned() {
-                for _ic_vtktg_1 in butils::BOOL.clone().iter().cloned() {
-                    if (((((((((((((_ic_vtks_1.equal(&BBoolean::new(true)) || _ic_vtktg_1.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&_ic_vtks_1.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtktg_1.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtktg_1.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtks_1.equal(&BBoolean::new(true)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))).booleanValue() {
+            for _ic_vtks_1 in (*butils::BOOL).clone().iter().cloned() {
+                for _ic_vtktg_1 in (*butils::BOOL).clone().iter().cloned() {
+                    //parameter_combination_predicate
+                    if (((((((((((((_ic_vtks_1.equal(&BBoolean::new(true)) || _ic_vtktg_1.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| _ic_vtks_1.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtktg_1.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtktg_1.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtks_1.equal(&BBoolean::new(true)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))).booleanValue() {
                         _ic_set_5 = _ic_set_5._union(&BSet::new(vec![BTuple::from_refs(&_ic_vtks_1, &_ic_vtktg_1)]));
                     }
 
@@ -639,7 +643,7 @@ impl Cruise_finite1_deterministic_MC {
     pub fn _tr_CruiseSpeedChangeDelayFinished(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_CruiseSpeedChangeDelayFinished.is_none() {
-            let mut __tmp__val__ = (((((self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))).booleanValue();
+            let mut __tmp__val__ = (((((self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.ObstacleStatusJustChanged.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())).booleanValue();
             self._tr_cache_CruiseSpeedChangeDelayFinished = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -806,8 +810,9 @@ impl Cruise_finite1_deterministic_MC {
         if !is_caching || self._tr_cache_ObstacleAppearsWhenCruiseActive.is_none() {
             let mut _ic_set_21: BSet<BTuple<RSset, ODset>> = BSet::new(vec![]);
             //transition, parameters, no condidtion
-            for _ic_ors_1 in self._RSset.difference(&BSet::new(vec![RSset::RSnone])).clone().iter().cloned() {
-                for _ic_od_1 in self._ODset.difference(&BSet::new(vec![ODset::ODnone])).clone().iter().cloned() {
+            for _ic_ors_1 in self._RSset.difference(&BSet::new(vec![RSset::RSnone.clone()])).clone().iter().cloned() {
+                for _ic_od_1 in self._ODset.difference(&BSet::new(vec![ODset::ODnone.clone()])).clone().iter().cloned() {
+                    //parameter_combination_predicate
                     if ((self.ObstaclePresent.equal(&BBoolean::new(false)) && self.CruiseActive.equal(&BBoolean::new(true)))).booleanValue() {
                         _ic_set_21 = _ic_set_21._union(&BSet::new(vec![BTuple::from_refs(&_ic_ors_1, &_ic_od_1)]));
                     }
@@ -826,7 +831,8 @@ impl Cruise_finite1_deterministic_MC {
         if !is_caching || self._tr_cache_ObstacleAppearsWhenCruiseInactive.is_none() {
             let mut _ic_set_22: BSet<RSset> = BSet::new(vec![]);
             //transition, parameters, no condidtion
-            for _ic_ors_1 in self._RSset.difference(&BSet::new(vec![RSset::RSnone])).clone().iter().cloned() {
+            for _ic_ors_1 in self._RSset.difference(&BSet::new(vec![RSset::RSnone.clone()])).clone().iter().cloned() {
+                //parameter_combination_predicate
                 if ((self.ObstaclePresent.equal(&BBoolean::new(false)) && self.CruiseActive.equal(&BBoolean::new(false)))).booleanValue() {
                     _ic_set_22 = _ic_set_22._union(&BSet::new(vec![_ic_ors_1]));
                 }
@@ -855,9 +861,10 @@ impl Cruise_finite1_deterministic_MC {
         if !is_caching || self._tr_cache_VehicleManageObstacle.is_none() {
             let mut _ic_set_24: BSet<BTuple<BBoolean, BBoolean>> = BSet::new(vec![]);
             //transition, parameters, no condidtion
-            for _ic_vtks_1 in butils::BOOL.clone().iter().cloned() {
-                for _ic_vtktg_1 in butils::BOOL.clone().iter().cloned() {
-                    if (((((((((((((_ic_vtks_1.equal(&BBoolean::new(true)) || _ic_vtktg_1.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&_ic_vtks_1.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtktg_1.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtktg_1.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&_ic_vtks_1.equal(&BBoolean::new(true)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(&_ic_vtktg_1.equal(&BBoolean::new(false)))) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)))).booleanValue() {
+            for _ic_vtks_1 in (*butils::BOOL).clone().iter().cloned() {
+                for _ic_vtktg_1 in (*butils::BOOL).clone().iter().cloned() {
+                    //parameter_combination_predicate
+                    if (((((((((((((_ic_vtks_1.equal(&BBoolean::new(true)) || _ic_vtktg_1.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true))) && self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| _ic_vtks_1.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtktg_1.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtktg_1.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| _ic_vtks_1.equal(&BBoolean::new(true)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(|| _ic_vtktg_1.equal(&BBoolean::new(false)).booleanValue())) && self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)))).booleanValue() {
                         _ic_set_24 = _ic_set_24._union(&BSet::new(vec![BTuple::from_refs(&_ic_vtks_1, &_ic_vtktg_1)]));
                     }
 
@@ -873,7 +880,7 @@ impl Cruise_finite1_deterministic_MC {
     pub fn _tr_ObstacleBecomesOld(&mut self, is_caching: bool) -> bool {
         //transition
         if !is_caching || self._tr_cache_ObstacleBecomesOld.is_none() {
-            let mut __tmp__val__ = (((((self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)))) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)))).booleanValue();
+            let mut __tmp__val__ = (((((self.ObstacleStatusJustChanged.equal(&BBoolean::new(true)) && (((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || self.CCInitialisationInProgress.equal(&BBoolean::new(true))) || self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(true)))) && self.ObstacleDistance.equal(&ODset::ODnone).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && ((self.ObstacleDistance.equal(&ODset::ODveryclose) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue())) && (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue())).booleanValue();
             self._tr_cache_ObstacleBecomesOld = Option::Some(__tmp__val__);
             return __tmp__val__;
         } else {
@@ -883,42 +890,42 @@ impl Cruise_finite1_deterministic_MC {
 
     pub fn _check_inv_1(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.CruiseAllowed).booleanValue();
+        return (*butils::BOOL).elementOf(&self.CruiseAllowed).booleanValue();
     }
 
     pub fn _check_inv_2(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.CruiseActive).booleanValue();
+        return (*butils::BOOL).elementOf(&self.CruiseActive).booleanValue();
     }
 
     pub fn _check_inv_3(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.VehicleAtCruiseSpeed).booleanValue();
+        return (*butils::BOOL).elementOf(&self.VehicleAtCruiseSpeed).booleanValue();
     }
 
     pub fn _check_inv_4(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.VehicleCanKeepSpeed).booleanValue();
+        return (*butils::BOOL).elementOf(&self.VehicleCanKeepSpeed).booleanValue();
     }
 
     pub fn _check_inv_5(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.VehicleTryKeepSpeed).booleanValue();
+        return (*butils::BOOL).elementOf(&self.VehicleTryKeepSpeed).booleanValue();
     }
 
     pub fn _check_inv_6(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.SpeedAboveMax).booleanValue();
+        return (*butils::BOOL).elementOf(&self.SpeedAboveMax).booleanValue();
     }
 
     pub fn _check_inv_7(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.VehicleTryKeepTimeGap).booleanValue();
+        return (*butils::BOOL).elementOf(&self.VehicleTryKeepTimeGap).booleanValue();
     }
 
     pub fn _check_inv_8(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.CruiseSpeedAtMax).booleanValue();
+        return (*butils::BOOL).elementOf(&self.CruiseSpeedAtMax).booleanValue();
     }
 
     pub fn _check_inv_9(&self) -> bool {
@@ -933,7 +940,7 @@ impl Cruise_finite1_deterministic_MC {
 
     pub fn _check_inv_11(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.ObstaclePresent).booleanValue();
+        return (*butils::BOOL).elementOf(&self.ObstaclePresent).booleanValue();
     }
 
     pub fn _check_inv_12(&self) -> bool {
@@ -948,32 +955,32 @@ impl Cruise_finite1_deterministic_MC {
 
     pub fn _check_inv_14(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.ObstacleStatusJustChanged).booleanValue();
+        return (*butils::BOOL).elementOf(&self.ObstacleStatusJustChanged).booleanValue();
     }
 
     pub fn _check_inv_15(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.CCInitialisationInProgress).booleanValue();
+        return (*butils::BOOL).elementOf(&self.CCInitialisationInProgress).booleanValue();
     }
 
     pub fn _check_inv_16(&self) -> bool {
         //invariant
-        return butils::BOOL.elementOf(&self.CruiseSpeedChangeInProgress).booleanValue();
+        return (*butils::BOOL).elementOf(&self.CruiseSpeedChangeInProgress).booleanValue();
     }
 
     pub fn _check_inv_17(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.VehicleAtCruiseSpeed.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.VehicleAtCruiseSpeed.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_18(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.VehicleCanKeepSpeed.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.VehicleCanKeepSpeed.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_19(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_20(&self) -> bool {
@@ -983,42 +990,42 @@ impl Cruise_finite1_deterministic_MC {
 
     pub fn _check_inv_21(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_22(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.CruiseSpeedAtMax.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.CruiseSpeedAtMax.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_23(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.ObstacleDistance.equal(&ODset::ODnone)).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.ObstacleDistance.equal(&ODset::ODnone).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_24(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.ObstacleStatusJustChanged.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_25(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.CCInitialisationInProgress.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.CCInitialisationInProgress.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_26(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(false)).implies(&self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(false)).implies(|| self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_27(&self) -> bool {
         //invariant
-        return self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false))).booleanValue();
+        return self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_28(&self) -> bool {
         //invariant
-        return self.ObstaclePresent.equal(&BBoolean::new(false)).implies(&self.ObstacleDistance.equal(&ODset::ODnone)).booleanValue();
+        return self.ObstaclePresent.equal(&BBoolean::new(false)).implies(|| self.ObstacleDistance.equal(&ODset::ODnone).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_29(&self) -> bool {
@@ -1028,52 +1035,52 @@ impl Cruise_finite1_deterministic_MC {
 
     pub fn _check_inv_30(&self) -> bool {
         //invariant
-        return (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false))).booleanValue();
+        return (self.ObstacleRelativeSpeed.equal(&RSset::RSequal) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_31(&self) -> bool {
         //invariant
-        return (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false))).booleanValue();
+        return (self.ObstacleRelativeSpeed.equal(&RSset::RSneg) && self.ObstacleDistance.equal(&ODset::ODnone)).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_32(&self) -> bool {
         //invariant
-        return (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false))).booleanValue();
+        return (self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_33(&self) -> bool {
         //invariant
-        return self.CruiseAllowed.equal(&BBoolean::new(false)).implies(&self.CruiseActive.equal(&BBoolean::new(false))).booleanValue();
+        return self.CruiseAllowed.equal(&BBoolean::new(false)).implies(|| self.CruiseActive.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_34(&self) -> bool {
         //invariant
-        return self.SpeedAboveMax.equal(&BBoolean::new(true)).implies(&self.VehicleAtCruiseSpeed.equal(&BBoolean::new(false))).booleanValue();
+        return self.SpeedAboveMax.equal(&BBoolean::new(true)).implies(|| self.VehicleAtCruiseSpeed.equal(&BBoolean::new(false)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_35(&self) -> bool {
         //invariant
-        return self.CruiseActive.equal(&BBoolean::new(true)).implies(&((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).not())).booleanValue();
+        return self.CruiseActive.equal(&BBoolean::new(true)).implies(|| ((self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)) || self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))) || ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false))).not()).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_36(&self) -> bool {
         //invariant
-        return ((self.ObstacleDistance.equal(&ODset::ODnone) && self.CruiseActive.equal(&BBoolean::new(true))) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true))).booleanValue();
+        return ((self.ObstacleDistance.equal(&ODset::ODnone) && self.CruiseActive.equal(&BBoolean::new(true))) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_37(&self) -> bool {
         //invariant
-        return ((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))).booleanValue();
+        return ((self.ObstacleDistance.equal(&ODset::ODclose) && self.ObstacleRelativeSpeed.unequal(&RSset::RSpos)) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_38(&self) -> bool {
         //invariant
-        return (self.ObstacleDistance.equal(&ODset::ODveryclose) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(&self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true))).booleanValue();
+        return (self.ObstacleDistance.equal(&ODset::ODveryclose) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(|| self.VehicleTryKeepTimeGap.equal(&BBoolean::new(true)).booleanValue()).booleanValue();
     }
 
     pub fn _check_inv_39(&self) -> bool {
         //invariant
-        return (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CruiseActive.equal(&BBoolean::new(true))) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(&self.VehicleTryKeepSpeed.equal(&BBoolean::new(true))).booleanValue();
+        return (((self.ObstacleRelativeSpeed.equal(&RSset::RSpos) && self.ObstacleDistance.unequal(&ODset::ODveryclose)) && self.CruiseActive.equal(&BBoolean::new(true))) && ((self.ObstacleStatusJustChanged.equal(&BBoolean::new(false)) && self.CCInitialisationInProgress.equal(&BBoolean::new(false))) && self.CruiseSpeedChangeInProgress.equal(&BBoolean::new(false)))).implies(|| self.VehicleTryKeepSpeed.equal(&BBoolean::new(true)).booleanValue()).booleanValue();
     }
 
     fn invalidate_caches(&mut self, to_invalidate: Vec<&'static str>) {
@@ -1390,8 +1397,6 @@ impl Cruise_finite1_deterministic_MC {
         transitions.fetch_add(evaluated_transitions, Ordering::AcqRel);
         return result;
     }
-
-    //model_check_evaluate_state
 
     //model_check_invariants
     pub fn checkInvariants(state: &Cruise_finite1_deterministic_MC, last_op: &'static str, isCaching: bool) -> bool {
@@ -1808,7 +1813,7 @@ impl Cruise_finite1_deterministic_MC {
         }
     }
 
-    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
         let mut machine = Cruise_finite1_deterministic_MC::new();
 
         let mut all_states = HashSet::<Cruise_finite1_deterministic_MC>::new();
@@ -1826,11 +1831,11 @@ impl Cruise_finite1_deterministic_MC {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 println!("INVARIANT VIOLATED");
                 stop_threads = true;
             }
-            if next_states.is_empty() {
+            if !no_dead && next_states.is_empty() {
                 print!("DEADLOCK DETECTED");
                 stop_threads = true;
             }
@@ -1848,7 +1853,7 @@ impl Cruise_finite1_deterministic_MC {
         Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
-    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
         let threadPool = ThreadPool::new(threads);
 
         let machine = Cruise_finite1_deterministic_MC::new();
@@ -1877,14 +1882,14 @@ impl Cruise_finite1_deterministic_MC {
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+                if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.into_iter()
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if !Self::checkInvariants(&state, last_op, is_caching) {
+                if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                     let _ = tx.send(Err("INVARIANT VIOLATED"));
                 }
                 //println!("Thread {:?} done", thread::current().id());
@@ -1919,7 +1924,7 @@ impl Cruise_finite1_deterministic_MC {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() < 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::<usize>().unwrap();
     if threads <= 0 { panic!("Input for number of threads is wrong."); }
@@ -1932,9 +1937,22 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        Cruise_finite1_deterministic_MC::model_check_single_threaded(mc_type, is_caching);
+        Cruise_finite1_deterministic_MC::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        Cruise_finite1_deterministic_MC::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        Cruise_finite1_deterministic_MC::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }

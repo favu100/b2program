@@ -11,6 +11,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::binteger::BInteger;
 use btypes::bboolean::BBoolean;
@@ -140,8 +141,6 @@ impl Lift_MC_Large {
         return result;
     }
 
-    //model_check_evaluate_state
-
     //model_check_invariants
     pub fn checkInvariants(state: &Lift_MC_Large, last_op: &'static str, isCaching: bool) -> bool {
         if isCaching {
@@ -202,7 +201,7 @@ impl Lift_MC_Large {
         }
     }
 
-    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
         let mut machine = Lift_MC_Large::new();
 
         let mut all_states = HashSet::<Lift_MC_Large>::new();
@@ -220,11 +219,11 @@ impl Lift_MC_Large {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 println!("INVARIANT VIOLATED");
                 stop_threads = true;
             }
-            if next_states.is_empty() {
+            if !no_dead && next_states.is_empty() {
                 print!("DEADLOCK DETECTED");
                 stop_threads = true;
             }
@@ -242,7 +241,7 @@ impl Lift_MC_Large {
         Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
-    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
         let threadPool = ThreadPool::new(threads);
 
         let machine = Lift_MC_Large::new();
@@ -271,14 +270,14 @@ impl Lift_MC_Large {
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+                if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.into_iter()
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if !Self::checkInvariants(&state, last_op, is_caching) {
+                if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                     let _ = tx.send(Err("INVARIANT VIOLATED"));
                 }
                 //println!("Thread {:?} done", thread::current().id());
@@ -313,7 +312,7 @@ impl Lift_MC_Large {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() < 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::<usize>().unwrap();
     if threads <= 0 { panic!("Input for number of threads is wrong."); }
@@ -326,9 +325,22 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        Lift_MC_Large::model_check_single_threaded(mc_type, is_caching);
+        Lift_MC_Large::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        Lift_MC_Large::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        Lift_MC_Large::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }

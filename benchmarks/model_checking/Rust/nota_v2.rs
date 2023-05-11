@@ -11,6 +11,7 @@ use std::time::{Duration};
 use std::fmt;
 use rand::{thread_rng, Rng};
 use btypes::butils;
+use btypes::bobject;
 use btypes::bboolean::{IntoBool, BBooleanT};
 use btypes::bboolean::BBoolean;
 use btypes::binteger::BInteger;
@@ -75,57 +76,6 @@ impl _Struct5 {
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct _Struct1 {
-    sid: BSet<SID>,
-    err: RM_ERROR_CODES,
-}
-
-impl fmt::Display for _Struct1 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "sid: {},err: {}", self.sid ,self.err)
-    }
-}
-
-impl BObject for _Struct1 {}
-impl BStruct for _Struct1 {}
-
-impl _Struct1 {
-    pub fn new(mut sid: BSet<SID>, mut err: RM_ERROR_CODES) -> _Struct1 {
-        let mut m: _Struct1 = Default::default();
-        m.sid = sid;m.err = err;
-        return m;
-    }
-
-    pub fn get_sid(&self) -> BSet<SID> {
-        return self.sid.clone();
-    }
-
-    pub fn get_err(&self) -> RM_ERROR_CODES {
-        return self.err.clone();
-    }
-
-    pub fn override_sid(&self, sid: BSet<SID>) -> _Struct1 {
-        return _Struct1::new(sid.clone(), self.err.clone());
-    }
-
-
-    pub fn override_err(&self, err: RM_ERROR_CODES) -> _Struct1 {
-        return _Struct1::new(self.sid.clone(), err.clone());
-    }
-
-
-    pub fn equal(
-    &self, other: &_Struct1) -> BBoolean {
-        return BBoolean::new(self.sid == other.sid && self.err == other.err);
-    }
-
-    pub fn unequal(&self, other: &_Struct1) -> BBoolean {
-        return BBoolean::new(self.sid != other.sid || self.err != other.err);
-    }
-
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct _Struct3 {
     sid: BSet<SID>,
     err: IN_ERROR_CODES,
@@ -171,6 +121,57 @@ impl _Struct3 {
     }
 
     pub fn unequal(&self, other: &_Struct3) -> BBoolean {
+        return BBoolean::new(self.sid != other.sid || self.err != other.err);
+    }
+
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct _Struct1 {
+    sid: BSet<SID>,
+    err: RM_ERROR_CODES,
+}
+
+impl fmt::Display for _Struct1 {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "sid: {},err: {}", self.sid ,self.err)
+    }
+}
+
+impl BObject for _Struct1 {}
+impl BStruct for _Struct1 {}
+
+impl _Struct1 {
+    pub fn new(mut sid: BSet<SID>, mut err: RM_ERROR_CODES) -> _Struct1 {
+        let mut m: _Struct1 = Default::default();
+        m.sid = sid;m.err = err;
+        return m;
+    }
+
+    pub fn get_sid(&self) -> BSet<SID> {
+        return self.sid.clone();
+    }
+
+    pub fn get_err(&self) -> RM_ERROR_CODES {
+        return self.err.clone();
+    }
+
+    pub fn override_sid(&self, sid: BSet<SID>) -> _Struct1 {
+        return _Struct1::new(sid.clone(), self.err.clone());
+    }
+
+
+    pub fn override_err(&self, err: RM_ERROR_CODES) -> _Struct1 {
+        return _Struct1::new(self.sid.clone(), err.clone());
+    }
+
+
+    pub fn equal(
+    &self, other: &_Struct1) -> BBoolean {
+        return BBoolean::new(self.sid == other.sid && self.err == other.err);
+    }
+
+    pub fn unequal(&self, other: &_Struct1) -> BBoolean {
         return BBoolean::new(self.sid != other.sid || self.err != other.err);
     }
 
@@ -441,22 +442,22 @@ impl nota_v2 {
         self._SID = BSet::new(vec![SID::SID1, SID::SID2]);
         self._RM_ERROR_CODES = BSet::new(vec![RM_ERROR_CODES::RM_SERVICE_FOUND, RM_ERROR_CODES::RM_SERVICE_NOT_FOUND]);
         self._IN_ERROR_CODES = BSet::new(vec![IN_ERROR_CODES::IN_REGISTRATION_OK, IN_ERROR_CODES::IN_REGISTRATION_FAILED, IN_ERROR_CODES::IN_DEREGISTRATION_OK, IN_ERROR_CODES::IN_DEREGISTRATION_FAILED, IN_ERROR_CODES::IN_NO_SOCKET_CONNECTION, IN_ERROR_CODES::IN_SOCKET_CONNECTION_OK, IN_ERROR_CODES::IN_NO_AVAILABLE_SERVICE, IN_ERROR_CODES::IN_SERVICE_AVAILABLE, IN_ERROR_CODES::IN_TARGET_SOCKET_GRANTED, IN_ERROR_CODES::IN_TARGET_SOCKET_NOT_GRANTED]);
-        self.interconnectNodes = BSet::new(vec![]).clone().clone();
-        self.sockets = BSet::new(vec![]).clone().clone();
-        self.services = BSet::new(vec![]).clone().clone();
-        self.resourceManagers = BSet::new(vec![]).clone().clone();
-        self.sids = BSet::new(vec![]).clone().clone();
-        self.rm_services = BRelation::new(vec![]).clone().clone();
-        self.rm_sids = BRelation::new(vec![]).clone().clone();
-        self.in_localServices = BRelation::new(vec![]).clone().clone();
-        self.in_sockets = BRelation::new(vec![]).clone().clone();
-        self.in_resourceManager = BRelation::new(vec![]).clone().clone();
-        self.soc_to = BRelation::new(vec![]).clone().clone();
-        self.soc_from = BRelation::new(vec![]).clone().clone();
-        self.svc_serviceID = BRelation::new(vec![]).clone().clone();
-        self.svc_sockets = BRelation::new(vec![]).clone().clone();
-        self.svc_ICNode = BRelation::new(vec![]).clone().clone();
-        self.svc_registered = BRelation::new(vec![]).clone().clone();
+        self.interconnectNodes = BSet::<INTERCONNECTNODE>::new(vec![]).clone().clone();
+        self.sockets = BSet::<SOCKET>::new(vec![]).clone().clone();
+        self.services = BSet::<SERVICE>::new(vec![]).clone().clone();
+        self.resourceManagers = BSet::<RESOURCEMANAGER>::new(vec![]).clone().clone();
+        self.sids = BSet::<SID>::new(vec![]).clone().clone();
+        self.rm_services = BRelation::<RESOURCEMANAGER, BSet<SERVICE>>::new(vec![]).clone().clone();
+        self.rm_sids = BRelation::<SERVICE, SID>::new(vec![]).clone().clone();
+        self.in_localServices = BRelation::<SID, INTERCONNECTNODE>::new(vec![]).clone().clone();
+        self.in_sockets = BRelation::<SOCKET, INTERCONNECTNODE>::new(vec![]).clone().clone();
+        self.in_resourceManager = BRelation::<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>::new(vec![]).clone().clone();
+        self.soc_to = BRelation::<SOCKET, SID>::new(vec![]).clone().clone();
+        self.soc_from = BRelation::<SOCKET, SID>::new(vec![]).clone().clone();
+        self.svc_serviceID = BRelation::<SERVICE, SID>::new(vec![]).clone().clone();
+        self.svc_sockets = BRelation::<SERVICE, BSet<SOCKET>>::new(vec![]).clone().clone();
+        self.svc_ICNode = BRelation::<SERVICE, INTERCONNECTNODE>::new(vec![]).clone().clone();
+        self.svc_registered = BRelation::<SERVICE, BBoolean>::new(vec![]).clone().clone();
     }
 
     pub fn _get_interconnectNodes(&self) -> BSet<INTERCONNECTNODE> {
@@ -555,8 +556,8 @@ impl nota_v2 {
         let mut oid: Option<INTERCONNECTNODE> = Option::None;
         if (self._INTERCONNECTNODE.difference(&self.interconnectNodes).elementOf(&newic)).booleanValue() {
             let mut _ld_interconnectNodes = self.interconnectNodes.clone();
-            self.interconnectNodes = _ld_interconnectNodes._union(&BSet::new(vec![newic])).clone().clone();
-            self.in_resourceManager = self.in_resourceManager._override(&BRelation::<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>::new(vec![BTuple::new(newic,BSet::new(vec![]))]));
+            self.interconnectNodes = _ld_interconnectNodes._union(&BSet::new(vec![newic.clone()])).clone().clone();
+            self.in_resourceManager = self.in_resourceManager._override(&BRelation::<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>::new(vec![BTuple::new(newic,BSet::<RESOURCEMANAGER>::new(vec![]))]));
             oid = Option::Some(newic);
         } else {
             panic!("ERROR: called SELECT-function with incompatible parameters!");
@@ -568,8 +569,8 @@ impl nota_v2 {
         let mut oid: Option<RESOURCEMANAGER> = Option::None;
         //pre_assert
         let mut _ld_resourceManagers = self.resourceManagers.clone();
-        self.resourceManagers = _ld_resourceManagers._union(&BSet::new(vec![newrm])).clone().clone();
-        self.rm_services = self.rm_services._override(&BRelation::<RESOURCEMANAGER, BSet<SERVICE>>::new(vec![BTuple::new(newrm,BSet::new(vec![]))]));
+        self.resourceManagers = _ld_resourceManagers._union(&BSet::new(vec![newrm.clone()])).clone().clone();
+        self.rm_services = self.rm_services._override(&BRelation::<RESOURCEMANAGER, BSet<SERVICE>>::new(vec![BTuple::new(newrm,BSet::<SERVICE>::new(vec![]))]));
         oid = Option::Some(newrm);
 
         return oid.unwrap();
@@ -579,11 +580,11 @@ impl nota_v2 {
         let mut oid: Option<SERVICE> = Option::None;
         //pre_assert
         let mut _ld_services = self.services.clone();
-        self.services = _ld_services._union(&BSet::new(vec![newsvc])).clone().clone();
+        self.services = _ld_services._union(&BSet::new(vec![newsvc.clone()])).clone().clone();
         self.svc_registered = self.svc_registered._override(&BRelation::<SERVICE, BBoolean>::new(vec![BTuple::new(newsvc,BBoolean::new(false))]));
-        self.svc_sockets = self.svc_sockets._override(&BRelation::<SERVICE, BSet<SOCKET>>::new(vec![BTuple::new(newsvc,BSet::new(vec![]))]));
+        self.svc_sockets = self.svc_sockets._override(&BRelation::<SERVICE, BSet<SOCKET>>::new(vec![BTuple::new(newsvc,BSet::<SOCKET>::new(vec![]))]));
         self.svc_ICNode = self.svc_ICNode._override(&BRelation::<SERVICE, INTERCONNECTNODE>::new(vec![BTuple::new(newsvc,ii)]));
-        self.svc_serviceID = BRelation::new(vec![]).clone().clone();
+        self.svc_serviceID = BRelation::<SERVICE, SID>::new(vec![]).clone().clone();
         oid = Option::Some(newsvc);
 
         return oid.unwrap();
@@ -593,7 +594,7 @@ impl nota_v2 {
         let mut oid: Option<SOCKET> = Option::None;
         //pre_assert
         let mut _ld_sockets = self.sockets.clone();
-        self.sockets = _ld_sockets._union(&BSet::new(vec![newsoc])).clone().clone();
+        self.sockets = _ld_sockets._union(&BSet::new(vec![newsoc.clone()])).clone().clone();
         oid = Option::Some(newsoc);
         self.in_sockets = self.in_sockets._override(&BRelation::<SOCKET, INTERCONNECTNODE>::new(vec![BTuple::new(newsoc,ii)]));
         self.soc_to = self.soc_to._override(&BRelation::<SOCKET, SID>::new(vec![BTuple::new(newsoc,srcsid)]));
@@ -617,7 +618,7 @@ impl nota_v2 {
         let mut err: Option<RM_ERROR_CODES> = Option::None;
         //pre_assert
         err = Option::Some(RM_ERROR_CODES::RM_SERVICE_FOUND);
-        sid = Option::Some(BSet::new(vec![self.rm_sids.functionCall(&ss)]).clone()).clone();
+        sid = Option::Some(BSet::new(vec![self.rm_sids.functionCall(&ss).clone()]).clone()).clone();
 
         return _Struct1::new(sid.unwrap(), err.unwrap());
     }
@@ -634,7 +635,7 @@ impl nota_v2 {
 
     pub fn in_announceResourceManager(&mut self, mut _self: INTERCONNECTNODE, mut rm: RESOURCEMANAGER) -> () {
         //pre_assert
-        self.in_resourceManager = self.in_resourceManager._override(&BRelation::<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>::new(vec![BTuple::new(_self,self.in_resourceManager.functionCall(&_self)._union(&BSet::new(vec![rm])))]));
+        self.in_resourceManager = self.in_resourceManager._override(&BRelation::<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>::new(vec![BTuple::new(_self,self.in_resourceManager.functionCall(&_self)._union(&BSet::new(vec![rm.clone()])))]));
 
     }
 
@@ -645,10 +646,10 @@ impl nota_v2 {
         let mut _ld_sids = self.sids.clone();
 
         let mut _ld_in_localServices = self.in_localServices.clone();
-        self.sids = _ld_sids._union(&BSet::new(vec![si])).clone().clone();
+        self.sids = _ld_sids._union(&BSet::new(vec![si.clone()])).clone().clone();
         self.in_localServices = _ld_in_localServices._union(&BRelation::new(vec![BTuple::from_refs(&si, &_self)])).clone().clone();
         err = Option::Some(IN_ERROR_CODES::IN_REGISTRATION_OK);
-        sid = Option::Some(BSet::new(vec![si]).clone()).clone();
+        sid = Option::Some(BSet::new(vec![si.clone()]).clone()).clone();
 
         return _Struct3::new(sid.unwrap(), err.unwrap());
     }
@@ -669,8 +670,8 @@ impl nota_v2 {
         //pre_assert
         let mut _ld_sockets = self.sockets.clone();
         let mut _ld_in_sockets = self.in_sockets.clone();
-        self.sockets = _ld_sockets._union(&BSet::new(vec![newsoc])).clone().clone();
-        soc = Option::Some(BSet::new(vec![newsoc]).clone()).clone();
+        self.sockets = _ld_sockets._union(&BSet::new(vec![newsoc.clone()])).clone().clone();
+        soc = Option::Some(BSet::new(vec![newsoc.clone()]).clone()).clone();
         err = Option::Some(IN_ERROR_CODES::IN_TARGET_SOCKET_GRANTED);
         self.in_sockets = _ld_in_sockets._union(&BRelation::new(vec![BTuple::from_refs(&newsoc, &_self)])).clone().clone();
         self.soc_to = self.soc_to._override(&BRelation::<SOCKET, SID>::new(vec![BTuple::new(newsoc,srcsid)]));
@@ -701,6 +702,7 @@ impl nota_v2 {
             let mut _ic_set_0: BSet<INTERCONNECTNODE> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_newic_1 in self._INTERCONNECTNODE.difference(&self.interconnectNodes).clone().iter().cloned() {
+                //parameter_combination_predicate
                 _ic_set_0 = _ic_set_0._union(&BSet::new(vec![_ic_newic_1]));
 
             }
@@ -717,7 +719,8 @@ impl nota_v2 {
             let mut _ic_set_1: BSet<RESOURCEMANAGER> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_newrm_1 in self._RESOURCEMANAGER.difference(&self.resourceManagers).clone().iter().cloned() {
-                if ((self.rm_services.domain().notElementOf(&_ic_newrm_1) && self.resourceManagers.equal(&BSet::new(vec![])))).booleanValue() {
+                //parameter_combination_predicate
+                if ((self.rm_services.domain().notElementOf(&_ic_newrm_1) && self.resourceManagers.equal(&BSet::<RESOURCEMANAGER>::new(vec![])))).booleanValue() {
                     _ic_set_1 = _ic_set_1._union(&BSet::new(vec![_ic_newrm_1]));
                 }
 
@@ -736,6 +739,7 @@ impl nota_v2 {
             //transition, parameters, no condidtion
             for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_newsvc_1 in self._SERVICE.difference(&self.services).clone().iter().cloned() {
+                    //parameter_combination_predicate
                     _ic_set_2 = _ic_set_2._union(&BSet::new(vec![BTuple::from_refs(&_ic_ii_1, &_ic_newsvc_1)]));
 
                 }
@@ -756,6 +760,7 @@ impl nota_v2 {
                 for _ic_srcsid_1 in self.sids.clone().iter().cloned() {
                     for _ic_targsid_1 in self.sids.clone().iter().cloned() {
                         for _ic_newsoc_1 in self._SOCKET.difference(&self.sockets).clone().iter().cloned() {
+                            //parameter_combination_predicate
                             _ic_set_3 = _ic_set_3._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&_ic_ii_1, &_ic_srcsid_1), &_ic_targsid_1), &_ic_newsoc_1)]));
 
                         }
@@ -777,6 +782,7 @@ impl nota_v2 {
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
+                        //parameter_combination_predicate
                         _ic_set_4 = _ic_set_4._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ss_1), &_ic_ii_1)]));
 
                     }
@@ -797,6 +803,7 @@ impl nota_v2 {
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     for _ic_ii_1 in self.interconnectNodes.clone().iter().cloned() {
+                        //parameter_combination_predicate
                         _ic_set_5 = _ic_set_5._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ss_1), &_ic_ii_1)]));
 
                     }
@@ -816,6 +823,7 @@ impl nota_v2 {
             //transition, parameters, no condidtion
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
+                    //parameter_combination_predicate
                     if (self.rm_sids.domain().elementOf(&_ic_ss_1)).booleanValue() {
                         _ic_set_6 = _ic_set_6._union(&BSet::new(vec![BTuple::from_refs(&_ic_self_1, &_ic_ss_1)]));
                     }
@@ -836,6 +844,7 @@ impl nota_v2 {
             //transition, parameters, no condidtion
             for _ic_self_1 in self.resourceManagers.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
+                    //parameter_combination_predicate
                     _ic_set_7 = _ic_set_7._union(&BSet::new(vec![BTuple::from_refs(&_ic_self_1, &_ic_ss_1)]));
 
                 }
@@ -854,7 +863,8 @@ impl nota_v2 {
             //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_rm_1 in self.resourceManagers.clone().iter().cloned() {
-                    if (self.in_resourceManager.functionCall(&_ic_self_1).equal(&BSet::new(vec![]))).booleanValue() {
+                    //parameter_combination_predicate
+                    if (self.in_resourceManager.functionCall(&_ic_self_1).equal(&BSet::<RESOURCEMANAGER>::new(vec![]))).booleanValue() {
                         _ic_set_8 = _ic_set_8._union(&BSet::new(vec![BTuple::from_refs(&_ic_self_1, &_ic_rm_1)]));
                     }
 
@@ -875,6 +885,7 @@ impl nota_v2 {
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
                     for _ic_si_1 in self._SID.difference(&self.sids).clone().iter().cloned() {
+                        //parameter_combination_predicate
                         if (self.in_localServices.domain().elementOf(&_ic_si_1).not()).booleanValue() {
                             _ic_set_9 = _ic_set_9._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ss_1), &_ic_si_1)]));
                         }
@@ -896,6 +907,7 @@ impl nota_v2 {
             //transition, parameters, no condidtion
             for _ic_self_1 in self.interconnectNodes.clone().iter().cloned() {
                 for _ic_ss_1 in self.services.clone().iter().cloned() {
+                    //parameter_combination_predicate
                     _ic_set_10 = _ic_set_10._union(&BSet::new(vec![BTuple::from_refs(&_ic_self_1, &_ic_ss_1)]));
 
                 }
@@ -918,6 +930,7 @@ impl nota_v2 {
                         for _ic_srcsid_1 in self.sids.clone().iter().cloned() {
                             for _ic_targsid_1 in self.sids.clone().iter().cloned() {
                                 for _ic_newsoc_1 in self._SOCKET.difference(&self.sockets).clone().iter().cloned() {
+                                    //parameter_combination_predicate
                                     if ((_ic_self_1.unequal(&_ic_ii_1) && self.in_sockets.functionCall(&_ic_srcsoc_1).equal(&_ic_ii_1))).booleanValue() {
                                         _ic_set_11 = _ic_set_11._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ii_1), &_ic_srcsoc_1), &_ic_srcsid_1), &_ic_targsid_1), &_ic_newsoc_1)]));
                                     }
@@ -945,6 +958,7 @@ impl nota_v2 {
                     for _ic_srcsoc_1 in self.sockets.clone().iter().cloned() {
                         for _ic_srcsid_1 in self.sids.clone().iter().cloned() {
                             for _ic_targsid_1 in self.sids.clone().iter().cloned() {
+                                //parameter_combination_predicate
                                 if ((_ic_self_1.unequal(&_ic_ii_1) && self.in_sockets.functionCall(&_ic_srcsoc_1).equal(&_ic_ii_1))).booleanValue() {
                                     _ic_set_12 = _ic_set_12._union(&BSet::new(vec![BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&BTuple::from_refs(&_ic_self_1, &_ic_ii_1), &_ic_srcsoc_1), &_ic_srcsid_1), &_ic_targsid_1)]));
                                 }
@@ -967,6 +981,7 @@ impl nota_v2 {
             let mut _ic_set_13: BSet<SERVICE> = BSet::new(vec![]);
             //transition, parameters, no condidtion
             for _ic_self_1 in self.services.clone().iter().cloned() {
+                //parameter_combination_predicate
                 if (self.svc_registered.functionCall(&_ic_self_1).equal(&BBoolean::new(false))).booleanValue() {
                     _ic_set_13 = _ic_set_13._union(&BSet::new(vec![_ic_self_1]));
                 }
@@ -1006,7 +1021,7 @@ impl nota_v2 {
 
     pub fn _check_inv_6(&self) -> bool {
         //invariant
-        return self.rm_services.checkDomain(&self.resourceManagers).and(&self.rm_services.checkRange(&self.services.pow())).and(&self.rm_services.isFunction()).and(&self.rm_services.isTotal(&self.resourceManagers)).booleanValue();
+        return self.resourceManagers.check_domain_of(&self.rm_services).and(&self.services.pow().check_range_of(&self.rm_services)).and(&self.rm_services.isFunction()).and(&self.resourceManagers.check_total_of(&self.rm_services)).booleanValue();
     }
 
     pub fn _check_inv_7(&self) -> bool {
@@ -1015,7 +1030,7 @@ impl nota_v2 {
         let mut _ic_boolean_14 = BBoolean::new(true);
         for _ic_a1_1 in self.rm_services.domain().clone().iter().cloned() {
             for _ic_a2_1 in self.rm_services.domain().clone().iter().cloned() {
-                if !(_ic_a1_1.unequal(&_ic_a2_1).implies(&self.rm_services.functionCall(&_ic_a1_1).intersect(&self.rm_services.functionCall(&_ic_a2_1)).equal(&BSet::new(vec![])))).booleanValue() {
+                if !(_ic_a1_1.unequal(&_ic_a2_1).implies(|| self.rm_services.functionCall(&_ic_a1_1).intersect(&self.rm_services.functionCall(&_ic_a2_1)).equal(&BSet::<SERVICE>::new(vec![])).booleanValue())).booleanValue() {
                     _ic_boolean_14 = BBoolean::new(false);
                     break;
                 }
@@ -1028,57 +1043,57 @@ impl nota_v2 {
 
     pub fn _check_inv_8(&self) -> bool {
         //invariant
-        return self.rm_sids.checkDomain(&self.services).and(&self.rm_sids.checkRange(&self.sids)).and(&self.rm_sids.isFunction()).and(&self.rm_sids.isPartial(&self.services)).and(&self.rm_sids.isInjection()).booleanValue();
+        return self.services.check_domain_of(&self.rm_sids).and(&self.sids.check_range_of(&self.rm_sids)).and(&self.rm_sids.isFunction()).and(&self.services.check_partial_of(&self.rm_sids)).and(&self.rm_sids.isInjection()).booleanValue();
     }
 
     pub fn _check_inv_9(&self) -> bool {
         //invariant
-        return self.in_localServices.checkDomain(&self.sids).and(&self.in_localServices.checkRange(&self.interconnectNodes)).and(&self.in_localServices.isFunction()).and(&self.in_localServices.isTotal(&self.sids)).booleanValue();
+        return self.sids.check_domain_of(&self.in_localServices).and(&self.interconnectNodes.check_range_of(&self.in_localServices)).and(&self.in_localServices.isFunction()).and(&self.sids.check_total_of(&self.in_localServices)).booleanValue();
     }
 
     pub fn _check_inv_10(&self) -> bool {
         //invariant
-        return self.in_sockets.checkDomain(&self.sockets).and(&self.in_sockets.checkRange(&self.interconnectNodes)).and(&self.in_sockets.isFunction()).and(&self.in_sockets.isTotal(&self.sockets)).booleanValue();
+        return self.sockets.check_domain_of(&self.in_sockets).and(&self.interconnectNodes.check_range_of(&self.in_sockets)).and(&self.in_sockets.isFunction()).and(&self.sockets.check_total_of(&self.in_sockets)).booleanValue();
     }
 
     pub fn _check_inv_11(&self) -> bool {
         //invariant
-        return self.in_resourceManager.checkDomain(&self.interconnectNodes).and(&self.in_resourceManager.checkRange(&self.resourceManagers.pow())).and(&self.in_resourceManager.isFunction()).and(&self.in_resourceManager.isTotal(&self.interconnectNodes)).booleanValue();
+        return self.interconnectNodes.check_domain_of(&self.in_resourceManager).and(&self.resourceManagers.pow().check_range_of(&self.in_resourceManager)).and(&self.in_resourceManager.isFunction()).and(&self.interconnectNodes.check_total_of(&self.in_resourceManager)).booleanValue();
     }
 
     pub fn _check_inv_12(&self) -> bool {
         //invariant
-        return self.soc_to.checkDomain(&self.sockets).and(&self.soc_to.checkRange(&self.sids)).and(&self.soc_to.isFunction()).and(&self.soc_to.isTotal(&self.sockets)).booleanValue();
+        return self.sockets.check_domain_of(&self.soc_to).and(&self.sids.check_range_of(&self.soc_to)).and(&self.soc_to.isFunction()).and(&self.sockets.check_total_of(&self.soc_to)).booleanValue();
     }
 
     pub fn _check_inv_13(&self) -> bool {
         //invariant
-        return self.soc_from.checkDomain(&self.sockets).and(&self.soc_from.checkRange(&self.sids)).and(&self.soc_from.isFunction()).and(&self.soc_from.isTotal(&self.sockets)).booleanValue();
+        return self.sockets.check_domain_of(&self.soc_from).and(&self.sids.check_range_of(&self.soc_from)).and(&self.soc_from.isFunction()).and(&self.sockets.check_total_of(&self.soc_from)).booleanValue();
     }
 
     pub fn _check_inv_14(&self) -> bool {
         //invariant
-        return self.svc_serviceID.checkDomain(&self.services).and(&self.svc_serviceID.checkRange(&self.sids)).and(&self.svc_serviceID.isFunction()).and(&self.svc_serviceID.isPartial(&self.services)).booleanValue();
+        return self.services.check_domain_of(&self.svc_serviceID).and(&self.sids.check_range_of(&self.svc_serviceID)).and(&self.svc_serviceID.isFunction()).and(&self.services.check_partial_of(&self.svc_serviceID)).booleanValue();
     }
 
     pub fn _check_inv_15(&self) -> bool {
         //invariant
-        return self.svc_sockets.checkDomain(&self.services).and(&self.svc_sockets.checkRange(&self.sockets.pow())).and(&self.svc_sockets.isFunction()).and(&self.svc_sockets.isTotal(&self.services)).booleanValue();
+        return self.services.check_domain_of(&self.svc_sockets).and(&self.sockets.pow().check_range_of(&self.svc_sockets)).and(&self.svc_sockets.isFunction()).and(&self.services.check_total_of(&self.svc_sockets)).booleanValue();
     }
 
     pub fn _check_inv_16(&self) -> bool {
         //invariant
-        return self.svc_ICNode.checkDomain(&self.services).and(&self.svc_ICNode.checkRange(&self.interconnectNodes)).and(&self.svc_ICNode.isFunction()).and(&self.svc_ICNode.isTotal(&self.services)).booleanValue();
+        return self.services.check_domain_of(&self.svc_ICNode).and(&self.interconnectNodes.check_range_of(&self.svc_ICNode)).and(&self.svc_ICNode.isFunction()).and(&self.services.check_total_of(&self.svc_ICNode)).booleanValue();
     }
 
     pub fn _check_inv_17(&self) -> bool {
         //invariant
-        return self.svc_registered.checkDomain(&self.services).and(&self.svc_registered.checkRange(&butils::BOOL)).and(&self.svc_registered.isFunction()).and(&self.svc_registered.isTotal(&self.services)).booleanValue();
+        return self.services.check_domain_of(&self.svc_registered).and(&(*butils::BOOL).check_range_of(&self.svc_registered)).and(&self.svc_registered.isFunction()).and(&self.services.check_total_of(&self.svc_registered)).booleanValue();
     }
 
     pub fn _check_inv_18(&self) -> bool {
         //invariant
-        return self.resourceManagers.equal(&BSet::new(vec![])).not().implies(&self.resourceManagers.card().equal(&BInteger::new(1))).booleanValue();
+        return self.resourceManagers.equal(&BSet::<RESOURCEMANAGER>::new(vec![])).not().implies(|| self.resourceManagers.card().equal(&BInteger::new(1)).booleanValue()).booleanValue();
     }
 
     fn invalidate_caches(&mut self, to_invalidate: Vec<&'static str>) {
@@ -1368,8 +1383,6 @@ impl nota_v2 {
         return result;
     }
 
-    //model_check_evaluate_state
-
     //model_check_invariants
     pub fn checkInvariants(state: &nota_v2, last_op: &'static str, isCaching: bool) -> bool {
         if isCaching {
@@ -1590,7 +1603,7 @@ impl nota_v2 {
         }
     }
 
-    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool) {
+    fn model_check_single_threaded(mc_type: MC_TYPE, is_caching: bool, no_dead: bool, no_inv: bool) {
         let mut machine = nota_v2::new();
 
         let mut all_states = HashSet::<nota_v2>::new();
@@ -1608,11 +1621,11 @@ impl nota_v2 {
 
             let next_states = Self::generateNextStates(&mut state, is_caching, Arc::clone(&num_transitions));
 
-            if !Self::checkInvariants(&state, last_op, is_caching) {
+            if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                 println!("INVARIANT VIOLATED");
                 stop_threads = true;
             }
-            if next_states.is_empty() {
+            if !no_dead && next_states.is_empty() {
                 print!("DEADLOCK DETECTED");
                 stop_threads = true;
             }
@@ -1630,7 +1643,7 @@ impl nota_v2 {
         Self::print_result(all_states.len(), num_transitions.load(Ordering::Acquire), stop_threads);
     }
 
-    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool) {
+    fn modelCheckMultiThreaded(mc_type: MC_TYPE, threads: usize, is_caching: bool, no_dead: bool, no_inv: bool) {
         let threadPool = ThreadPool::new(threads);
 
         let machine = nota_v2::new();
@@ -1659,14 +1672,14 @@ impl nota_v2 {
             //println!("Thread {:?} spawning a thread", thread::current().id());
             threadPool.execute(move|| {
                 let next_states = Self::generateNextStates(&mut state, is_caching, transitions);
-                if next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
+                if !no_dead && next_states.is_empty() { let _ = tx.send(Err("DEADLOCK DETECTED")); }
 
                 //println!("Thread {:?} executing", thread::current().id());
                 next_states.into_iter()
                            .filter(|(next_state, _)| states.insert((*next_state).clone()))
                            .for_each(|(next_state, last_op)| states_to_process.lock().unwrap().push_back((next_state, last_op)));
 
-                if !Self::checkInvariants(&state, last_op, is_caching) {
+                if !no_inv && !Self::checkInvariants(&state, last_op, is_caching) {
                     let _ = tx.send(Err("INVARIANT VIOLATED"));
                 }
                 //println!("Thread {:?} done", thread::current().id());
@@ -1701,7 +1714,7 @@ impl nota_v2 {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 4 { panic!("Number of arguments errorneous"); }
+    if args.len() < 4 { panic!("Number of arguments errorneous"); }
 
     let threads = args.get(2).unwrap().parse::<usize>().unwrap();
     if threads <= 0 { panic!("Input for number of threads is wrong."); }
@@ -1714,9 +1727,22 @@ fn main() {
         _    => panic!("Input for strategy is wrong.")
     };
 
+    let mut no_dead = false;
+    let mut no_inv = false;
+
+    if args.len() > 4 {
+        for arg in args.iter().skip(4) {
+            match arg.as_str() {
+                "-nodead" => no_dead = true,
+                "-noinv" => no_inv = true,
+                _ => {}
+            }
+        }
+    }
+
     if threads == 1 {
-        nota_v2::model_check_single_threaded(mc_type, is_caching);
+        nota_v2::model_check_single_threaded(mc_type, is_caching, no_dead, no_inv);
     } else {
-        nota_v2::modelCheckMultiThreaded(mc_type, threads, is_caching);
+        nota_v2::modelCheckMultiThreaded(mc_type, threads, is_caching, no_dead, no_inv);
     }
 }

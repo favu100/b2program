@@ -24,10 +24,20 @@ episodes = <episodes>
 
 i = 0
 
-% TODO: Implement mapping of action id to action name
+# TODO: Implement mapping of action id to action name
 action_names = {
     <actionMapping; separator=", \t\n">
 }
+
+<getters; separator="\n\n">
+
+def append_transition(obs, transitionList, operation):
+    transitionList.append({
+        "name": operation,
+        "destState": {
+            <variableMapping; separator="\n">
+        }
+    })
 
 for ep in range(episodes):
     i = i + 1
@@ -40,7 +50,7 @@ for ep in range(episodes):
         action, _states = model.predict(obs)
         obs, rewards, done, info = env.step(action)
         env.render()
-        actionName = action_names(action)
+        actionName = action_names.get(action)
         <if(hasSetupConstants)>
            if j == 1:
                 append_transition(obs, transitionList, "$setup_constants")
@@ -56,16 +66,6 @@ for ep in range(episodes):
         <endif>
         write_trace(transitionList, i)
 env.close()
-
-def append_transition(obs, transitionList, operation):
-    transitionList.append({
-        "name": operation,
-        "destState": {
-            <variableMapping; separator="\n">
-        }
-    })
-
-<getters; separator="\n\n">
 >>
 
 
@@ -79,7 +79,7 @@ variable_map(variable) ::= <<
 
 variable_getter(variable) ::= <<
 def get_<variable>(obs):
-    % TODO: Implement mapping of state to variable
+    # TODO: Implement mapping of state to variable
 >>
 
 action_map(id) ::= <<

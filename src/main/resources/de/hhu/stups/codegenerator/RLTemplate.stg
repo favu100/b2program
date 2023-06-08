@@ -17,7 +17,7 @@ def write_trace(transitionList, i):
 env = gym.make('<name>')
 env.reset()
 
-% Load pre-trained model
+# Load pre-trained model
 model = <learningTechnique>.load("<modelPath>")
 
 episodes = <episodes>

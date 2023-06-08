@@ -58,13 +58,15 @@ for ep in range(episodes):
 env.close()
 
 
-<getters>
+<getters; separator="\n\n">
 >>
 
 transition_append(isSetupConstants, isInitialisation, variables) ::= <<
 transitionList.append({
-    "name": <if(isSetupConstants)>"$setup_constants"<elsif(isInitialisation)>"$initialise_machine"<else>actionName<endif>,
-    "destState": {<variables>}
+    "name": <if(isSetupConstants)>"$setup_constants"<else><if(isInitialisation)>"$initialise_machine"<else>actionName<endif><endif>,
+    "destState": {
+        <variables; separator="\n">
+    }
 })
 >>
 

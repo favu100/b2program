@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
+import de.hhu.stups.codegenerator.blackbox.traces.TraceGenerator;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.MachineReferenceGenerator;
@@ -31,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.hhu.stups.codegenerator.GeneratorMode.RL;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
@@ -229,6 +231,16 @@ public class CodeGenerator {
 		return paths;
 	}
 
+	public void generateBlackBoxTraceGenerator(Path path, String name, String modelPath, String learningTechnique, int episodes) {
+		paths.clear();
+
+		BProject project = parseProject(path);
+		TraceGenerator traceGenerator = new TraceGenerator(name, modelPath, learningTechnique, episodes);
+		String traceGeneratorCode = traceGenerator.generate(project.getMainMachine());
+		Path codePath = Paths.get(path.toString().replace(".mch", "")).toAbsolutePath();
+		writeToFile(codePath, RL, false, null, false, null, traceGeneratorCode);
+	}
+
 	/*
 	 * This function generates code for a targeted programming language with creating the belonging file
 	 */
@@ -282,19 +294,26 @@ public class CodeGenerator {
 	 * This function writes code for a targeted programming language with creating the belonging file
 	 */
 	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code) {
-
-
 		String fileName = path.getFileName().toString().replace(".mch", "");
-		Path newPath;
-		if(mode == GeneratorMode.CPP && isIncludedMachine) {
+		Path newPath = null;
+		Path jsonPath = null;
+
+		if (mode == GeneratorMode.CPP && isIncludedMachine) {
 			newPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".hpp");
+		} else if(mode == GeneratorMode.RL) {
+			newPath = Paths.get(path.getParent().toString(), fileName + ".py");
 		} else {
 			newPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + "." + mode.name().toLowerCase());
 		}
-		Path jsonPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".json");
+
+		if(mode != GeneratorMode.RL) {
+			jsonPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".json");
+		}
+
 		try {
 			if(forModelChecking) {
 				ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);
+				assert jsonPath != null;
 				try (final Writer writer = Files.newBufferedWriter(jsonPath)) {
 					final JsonWriter jsonWriter = new JsonWriter(writer);
 					jsonWriter.setHtmlSafe(false);

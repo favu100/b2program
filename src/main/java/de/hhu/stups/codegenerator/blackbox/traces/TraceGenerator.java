@@ -73,7 +73,7 @@ public class TraceGenerator {
 
     private String generateState() {
         ST template = group.getInstanceOf("state");
-        TemplateHandler.add(template, "state", variables.stream()
+        TemplateHandler.add(template, "variables", variables.stream()
                 .map(this::generateVariableMap)
                 .collect(Collectors.toList()));
         return template.render();

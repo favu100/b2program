@@ -1,0 +1,86 @@
+trace_generator(name, modelPath, learningTechnique, episodes, hasSetupConstants, actionMapping, setup, initialization, action, getters) ::= <<
+import gym
+import json
+from stable_baselines3 import <learningTechnique>
+
+
+def write_trace(transitionList, i):
+    trace = {
+        "description": "",
+        "transitionList": transitionList
+    }
+    jsonString = json.dumps(trace, indent=4)
+    f = open("Trace_{0}.prob2trace".format(i), "w")
+    f.write(jsonString)
+    f.close()
+
+env = gym.make('<name>')
+env.reset()
+
+% Load pre-trained model
+model = <learningTechnique>.load("<modelPath>")
+
+episodes = <episodes>
+
+i = 0
+
+% TODO: Implement mapping of action id to action name
+action_names = {
+    <actionMapping; separator=", \t\n">
+}
+
+for ep in range(episodes):
+    i = i + 1
+    obs = env.reset()
+    done = False
+    transitionList = []
+    j = 0
+    while not done:
+        j = j + 1
+        action, _states = model.predict(obs)
+        obs, rewards, done, info = env.step(action)
+        env.render()
+        actionName = action_names(action)
+       <if(hasSetupConstants)>
+           if j == 1:
+               <setup>
+           elsif j == 2:
+               <initialization>
+           else:
+               <action>
+       <else>
+       if j == 1:
+           <initialization>
+       else:
+           <action>
+       <endif>
+        write_trace(transitionList, i)
+env.close()
+
+
+<getters>
+>>
+
+transition_append(isSetupConstants, isInitialisation, actionName, variables) ::= <<
+transitionList.append({
+    "name": <if(isSetupConstants)>"$setup_constants"<elsif(isInitialisation)>"$initialise_machine"<else>actionName<endif>,
+    "destState": {<variables>}
+})
+>>
+
+state(variables) ::= <<
+<variables; separator=",\n">
+>>
+
+variable_map(variable) ::= <<
+"<variable>": get_<variable>(obs)
+>>
+
+variable_getter(variable) ::= <<
+def get_<variable>(obs):
+    % TODO: Implement mapping of state to variable
+>>
+
+action_map(id) ::= <<
+<id>: ""
+>>

@@ -41,19 +41,19 @@ for ep in range(episodes):
         obs, rewards, done, info = env.step(action)
         env.render()
         actionName = action_names(action)
-       <if(hasSetupConstants)>
+        <if(hasSetupConstants)>
            if j == 1:
                <setup>
            elsif j == 2:
                <initialization>
            else:
                <action>
-       <else>
-       if j == 1:
-           <initialization>
-       else:
-           <action>
-       <endif>
+        <else>
+        if j == 1:
+            <initialization>
+        else:
+            <action>
+        <endif>
         write_trace(transitionList, i)
 env.close()
 

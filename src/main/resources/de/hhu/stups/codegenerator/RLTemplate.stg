@@ -61,7 +61,7 @@ env.close()
 <getters>
 >>
 
-transition_append(isSetupConstants, isInitialisation, actionName, variables) ::= <<
+transition_append(isSetupConstants, isInitialisation, variables) ::= <<
 transitionList.append({
     "name": <if(isSetupConstants)>"$setup_constants"<elsif(isInitialisation)>"$initialise_machine"<else>actionName<endif>,
     "destState": {<variables>}

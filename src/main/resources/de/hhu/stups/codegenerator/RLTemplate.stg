@@ -1,4 +1,4 @@
-trace_generator(name, modelPath, learningTechnique, episodes, hasSetupConstants, actionMapping, setup, initialization, action, getters) ::= <<
+trace_generator(name, modelPath, learningTechnique, episodes, hasSetupConstants, actionMapping, variableMapping, getters) ::= <<
 import gym
 import json
 from stable_baselines3 import <learningTechnique>
@@ -43,32 +43,31 @@ for ep in range(episodes):
         actionName = action_names(action)
         <if(hasSetupConstants)>
            if j == 1:
-               <setup>
+                append_transition(obs, transitionList, "$setup_constants")
            elsif j == 2:
-               <initialization>
+                append_transition(obs, transitionList, "$initialise_machine")
            else:
-               <action>
+                append_transition(obs, transitionList, actionName)
         <else>
         if j == 1:
-            <initialization>
+            append_transition(obs, transitionList, "$initialise_machine")
         else:
-            <action>
+            append_transition(obs, transitionList, actionName)
         <endif>
         write_trace(transitionList, i)
 env.close()
 
+def append_transition(obs, transitionList, operation):
+    transitionList.append({
+        "name": operation,
+        "destState": {
+            <variableMapping; separator="\n">
+        }
+    })
 
 <getters; separator="\n\n">
 >>
 
-transition_append(isSetupConstants, isInitialisation, variables) ::= <<
-transitionList.append({
-    "name": <if(isSetupConstants)>"$setup_constants"<else><if(isInitialisation)>"$initialise_machine"<else>actionName<endif><endif>,
-    "destState": {
-        <variables; separator="\n">
-    }
-})
->>
 
 state(variables) ::= <<
 <variables; separator=",\n">

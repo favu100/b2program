@@ -53,21 +53,11 @@ public class TraceGenerator {
         TemplateHandler.add(template, "actionMapping", IntStream.range(0, operationNames.size())
                 .mapToObj(this::generateActionMap)
                 .collect(Collectors.toList()));
-        TemplateHandler.add(template, "setup", generateTransitionAppend(true, false));
-        TemplateHandler.add(template, "initialization", generateTransitionAppend(false, true));
-        TemplateHandler.add(template, "action", generateTransitionAppend(false, false));
+        TemplateHandler.add(template, "variableMapping", generateState());
         TemplateHandler.add(template, "getters", variables.stream()
                 .map(this::generateVariableGetter)
                 .collect(Collectors.toList()));
 
-        return template.render();
-    }
-
-    private String generateTransitionAppend(boolean isSetupConstants, boolean isInitialisation) {
-        ST template = group.getInstanceOf("transition_append");
-        TemplateHandler.add(template, "isSetupConstants", isSetupConstants);
-        TemplateHandler.add(template, "isInitialisation", isInitialisation);
-        TemplateHandler.add(template, "variables", generateState());
         return template.render();
     }
 

@@ -1146,7 +1146,7 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 model_check_invariants(machine, invariantViolated) ::= <<
 bool invariantViolated(const <machine>& state) {
     std::unordered_set\<string> dependentInvariantsOfState;
-    if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
+    if(isCaching) dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
     <invariantViolated; separator="\n">
     return false;
 }

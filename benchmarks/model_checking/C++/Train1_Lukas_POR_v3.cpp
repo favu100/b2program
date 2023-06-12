@@ -988,7 +988,7 @@ class ModelChecker {
 
         bool invariantViolated(const Train1_Lukas_POR_v3& state) {
             std::unordered_set<string> dependentInvariantsOfState;
-            if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
+            if(isCaching) dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
             if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {

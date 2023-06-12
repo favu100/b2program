@@ -1558,7 +1558,7 @@ class ModelChecker {
 
         bool invariantViolated(const Cruise_finite1_deterministic_MC& state) {
             std::unordered_set<string> dependentInvariantsOfState;
-            if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
+            if(isCaching) dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
             if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {

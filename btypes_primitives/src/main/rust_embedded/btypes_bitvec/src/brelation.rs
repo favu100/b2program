@@ -2,7 +2,7 @@
 
 use core::convert::TryInto;
 use core::marker::PhantomData;
-use core::ops::{BitAnd, BitOrAssign};
+use core::ops::{BitAnd, BitOr, BitOrAssign};
 use bitvec::mem;
 use bitvec::array::BitArray;
 use bitvec::prelude::Lsb0;
@@ -12,8 +12,8 @@ use crate::bset::{BSet, PowSetItem, Set, SetItem};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, PartialOrd, Ord)]
 pub struct BRelation<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize, const REL_SIZE: usize>
-where [usize; mem::elts::<usize>(LS*RS)]: Sized {
-    rel: BitArray<[usize; mem::elts::<usize>(LS*RS)], Lsb0>, // indexing: rel[l_idx*RS + r_idx]
+where [usize; mem::elts::<usize>(RS)]: Sized {
+    rel: [BitArray<[usize; mem::elts::<usize>(RS)], Lsb0>; LS], // indexing: rel[l_idx][r_idx]
     _p: core::marker::PhantomData<L>,
     _p2: core::marker::PhantomData<R>,
 }
@@ -21,9 +21,9 @@ where [usize; mem::elts::<usize>(LS*RS)]: Sized {
 impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> Default for BRelation<L, LS, R, RS, REL_SIZE>
 where L: SetItem<LS>,
       R: SetItem<RS>,
-      [usize; mem::elts::<usize>(LS*RS)]: Sized {
+      [usize; mem::elts::<usize>(RS)]: Sized {
     fn default() -> Self {
-        BRelation { rel: BitArray::ZERO, _p: PhantomData, _p2: PhantomData }
+        BRelation { rel: [BitArray::ZERO; LS], _p: PhantomData, _p2: PhantomData }
     }
 }
 
@@ -55,25 +55,23 @@ pub trait RelLeftItem<const LEFT_SIZE: usize, RightItem: SetItem<RIGHT_SIZE>, co
 impl<L, const LS: usize, R, const RS: usize, const SIZE: usize, const REL_SIZE: usize> SetItem<SIZE> for BRelation<L, LS, R, RS, REL_SIZE>
 where L: SetItem<LS> + RelLeftItem<LS, R, RS, SIZE, REL_SIZE>,
       R: SetItem<RS>,
-      [usize; mem::elts::<usize>(LS*RS)]: Sized {
+      [usize; mem::elts::<usize>(RS)]: Sized {
     fn as_idx(&self) -> usize {
         let mut rel_arr: [[bool; RS]; LS] = [[false; RS]; LS];
         for l_idx in 0..LS {
-            let left_idx = l_idx * RS;
             for r_idx in 0..RS {
-                rel_arr[l_idx][r_idx] = self.rel[left_idx + r_idx];
+                rel_arr[l_idx][r_idx] = self.rel[l_idx][r_idx];
             }
         }
         return L::rel_to_idx(rel_arr);
     }
 
     fn from_idx(idx: usize) -> Self {
-        let mut res = BitArray::<[usize; mem::elts::<usize>(LS*RS)], Lsb0>::ZERO;
+        let mut res = [BitArray::<[usize; mem::elts::<usize>(RS)], Lsb0>::ZERO; LS];
         let rel_arr: [[bool; RS]; LS] = L::idx_to_rel(idx);
         for l_idx in 0..LS {
-            let left_idx = l_idx * RS;
             for r_idx in 0..RS {
-                res.set(left_idx + r_idx, rel_arr[l_idx][r_idx]);
+                res[l_idx].set(r_idx, rel_arr[l_idx][r_idx]);
             }
         }
         return BRelation { rel: res, _p: PhantomData, _p2: PhantomData };
@@ -133,17 +131,18 @@ pub trait TBRelation {
 }
 
 impl<L: SetItem<LS>, const LS: usize, R: SetItem<RS>, const RS: usize, const REL_SIZE: usize> TBRelation for BRelation<L, LS, R, RS, REL_SIZE>
-where [usize; mem::elts::<usize>(LS*RS)]: Sized {}
+where [usize; mem::elts::<usize>(RS)]: Sized {}
 
 impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L, LS, R, RS, REL_SIZE>
     where L: SetItem<LS>,
           R: SetItem<RS>,
           [usize; mem::elts::<usize>(LS)]: Sized,
           [usize; mem::elts::<usize>(RS)]: Sized,
-          [usize; mem::elts::<usize>(LS*RS)]: Sized {
+//          [usize; mem::elts::<usize>(LS*RS)]: Sized
+    {
     
     pub const fn empty() -> Self {
-        BRelation { rel: BitArray::ZERO, _p: PhantomData, _p2: PhantomData }
+        BRelation { rel: [BitArray::ZERO; LS], _p: PhantomData, _p2: PhantomData }
     }
     
     pub const fn copy(&self) -> Self {
@@ -151,9 +150,8 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     }
 
     pub fn slice_as_array(&self, left_idx: usize) -> [bool; RS] {
-        let l_idx = left_idx*RS;
         let mut result = [false; RS];
-        for i in 0..RS { result[i] = self.rel[l_idx+i]; }
+        for i in 0..RS { result[i] = self.rel[left_idx][i]; }
         return result;
     }
 
@@ -163,21 +161,21 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let mut result = self.copy();
         let left_idx = left_item.as_idx();
         let right_idx = right_item.as_idx();
-        result.rel[left_idx*RS .. (left_idx*RS + RS-1)].fill(false);
-        result.rel.set(left_idx*RS + right_idx, true);
+        result.rel[left_idx].fill(false);
+        result.rel[left_idx].set(right_idx, true);
         return result;
     }
 
     pub fn add_tuple(&mut self, left_item: &L, right_item: &R) {
         //println!("adding tuple ({:?},{:?}), idx = [{}][{}]", left_item, right_item, left_item.as_idx(), right_item.as_idx());
-        self.rel.set(left_item.as_idx()*RS + right_item.as_idx(), true);
+        self.rel[left_item.as_idx()].set(right_item.as_idx(), true);
     }
 
     //b2program has this name hardcoded...
     pub fn functionCall(&self, key: &L) -> R {
-        let l_idx = key.as_idx()*RS;
+        let l_idx = key.as_idx();
         for i in 0..RS {
-            if self.rel[l_idx+i] { return R::from_idx(i) }
+            if self.rel[l_idx][i] { return R::from_idx(i) }
         }
         panic!("ERROR: key {:?} not found in set!", key);
     }
@@ -192,14 +190,14 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     }
 */
     pub fn card(&self) -> BInteger {
-        return self.rel[0 .. RS*LS].count_ones().try_into().unwrap();
+        return self.rel.iter().fold(0, |val, vec| val + vec.count_ones()).try_into().unwrap();
     }
 
     //this name is also hard-coded...
     //checks if self.domain is a subset of the given set
     pub fn checkDomain(&self, domain: &BSet<L, LS>) -> bool {
         for left_idx in 0..LS {
-            if !domain.contains_idx(left_idx) && self.rel[left_idx * RS..(left_idx + 1) * RS].any() {
+            if !domain.contains_idx(left_idx) && self.rel[left_idx].any() {
                 return false;
             }
         }
@@ -211,7 +209,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn isTotal(&self, domain: &BSet<L, LS>) -> bool {
         for left_idx in 0..LS {
             // self.domain.contains(left_idx) <=> domain.contains(left_idx)
-            if domain.contains_idx(left_idx) != self.rel[left_idx * RS..(left_idx + 1) * RS].any() {
+            if domain.contains_idx(left_idx) != self.rel[left_idx].any() {
                 return false;
             }
         }
@@ -223,8 +221,8 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn checkRange(&self, range: &BSet<R, RS>) -> bool {
         let range_arr = range.as_bitarray();
         for left_idx in 0..LS {
-            let current_range = &self.rel[left_idx * RS..(left_idx + 1) * RS];
-            if (range_arr & current_range) != current_range {
+            let current_range = &self.rel[left_idx];
+            if !range_arr.bitor(current_range).eq(current_range) {
                 return false;
             }
         }
@@ -235,7 +233,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     //checks if for each L there is at most one R
     pub fn isFunction(&self) -> bool {
         for left_idx in 0..LS {
-            if self.rel[left_idx*RS .. (left_idx+1)*RS].count_ones() > 1 { return false; }
+            if self.rel[left_idx].count_ones() > 1 { return false; }
         }
         return true;
     }
@@ -244,7 +242,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn isInjection(&self) -> bool {
         let mut checked = BitArray::<[usize; mem::elts::<usize>(RS)], Lsb0>::ZERO; //stores all the R's that were already 'used'
         for i in 0..LS {
-            let current_slice = &self.rel[i*RS .. (i+1)*RS];
+            let current_slice = &self.rel[i];
             if checked.bitand(current_slice).any() { return false; } // one R of current slice is already in checked -> no injection
             checked |= current_slice;
         }
@@ -254,18 +252,32 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn domain(&self) -> BSet<L, LS> {
         let mut result = BitArray::<[usize; mem::elts::<usize>(LS)], Lsb0>::ZERO;
         for i in 0..LS {
-            result.set(i, self.rel[i*RS .. (i+1)*RS].any());
+            result.set(i, self.rel[i].any());
         }
         return BSet::<L, LS>::from_bitarray(result);
     }
 
+    /*
     pub fn range(&self) -> BSet<R, RS> {
         let mut result = BitArray::<[usize; mem::elts::<usize>(RS)], Lsb0>::ZERO;
         for left_idx in 0..LS {
-            result |= &self.rel[left_idx*RS .. (left_idx+1)*RS];
+            for right_idx in 0..RS {
+                result.set(right_idx, self.rel[left_idx*RS + right_idx]);
+            }
         }
         return BSet::<R, RS>::from_bitarray(result);
     }
+     */
+
+
+    pub fn range(&self) -> BSet<R, RS> {
+        let mut result = BitArray::<[usize; mem::elts::<usize>(RS)], Lsb0>::ZERO;
+        for left_idx in 0..LS {
+            result |= &self.rel[left_idx];
+        }
+        return BSet::<R, RS>::from_bitarray(result);
+    }
+
 
     pub fn cartesian_product<TL, TR>(left_set: &TL, right_set: &TR) -> Self
         where TL: Set<LS, ItemType = L>,
@@ -274,8 +286,8 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let mut bit_mask = BitArray::<[usize; mem::elts::<usize>(RS)], Lsb0>::ZERO;
         let mut result = Self::empty();
         for l_idx in 0..LS {
-            bit_mask.fill(left_set.contains_idx(l_idx));
-            result.rel[l_idx*RS .. (l_idx+1)*RS].copy_from_bitslice(&(right_arr & bit_mask));
+            bit_mask.fill(left_set.contains_idx(l_idx)); // avoids branching
+            result.rel[l_idx].copy_from_bitslice(&(right_arr & bit_mask));
         }
         return result;
     }
@@ -285,7 +297,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let mut result = BRelation::<R, RS, L, LS, REL_SIZE>::empty();
         for left_idx in 0..LS {
             for right_idx in 0..RS {
-                result.rel.set(right_idx*LS + left_idx, self.rel[left_idx*RS + right_idx]);
+                result.rel[right_idx].set(left_idx, self.rel[left_idx][right_idx]);
             }
         }
         return result;
@@ -294,7 +306,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn domainRestriction(&self, domain_set: &BSet<L, LS>) -> Self {
         let mut result = self.copy();
         for left_idx in 0..LS {
-            if !domain_set.contains_idx(left_idx) { result.rel[left_idx*RS .. (left_idx+1)*RS].fill(false); }
+            if !domain_set.contains_idx(left_idx) { result.rel[left_idx].fill(false); }
         }
         return result;
     }
@@ -302,7 +314,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn domainSubstraction(&self, domain_set: &BSet<L, LS>) -> Self {
         let mut result = self.copy();
         for left_idx in 0..LS {
-            if domain_set.contains_idx(left_idx) { result.rel[left_idx*RS .. (left_idx+1)*RS].fill(false); }
+            if domain_set.contains_idx(left_idx) { result.rel[left_idx].fill(false); }
         }
         return result;
     }
@@ -312,7 +324,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let range_arr = range_set.as_bitarray();
         for left_idx in 0..LS {
             //retain only elements that are in self *and* in range_set
-            result.rel[left_idx*RS .. (left_idx+1)*RS] &= range_arr;
+            result.rel[left_idx] &= range_arr;
         }
         return result;
     }
@@ -322,7 +334,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let not_range_arr = !range_set.as_bitarray();
         for left_idx in 0..LS {
             //retain only elements that are in self *but not* in range_set
-            result.rel[left_idx*RS .. (left_idx+1)*RS] &= not_range_arr;
+            result.rel[left_idx] &= not_range_arr;
         }
         return result;
     }
@@ -331,7 +343,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         let mut result_arr = BitArray::<[usize; mem::elts::<usize>(RS)], Lsb0>::ZERO;
         for left_idx in 0..LS {
             if result_domain.contains_idx(left_idx) {
-                result_arr.bitor_assign(&self.rel[left_idx*RS .. (left_idx+1)*RS]);
+                result_arr.bitor_assign(&self.rel[left_idx]);
             }
         }
         return BSet::<R, RS>::from_bitarray(result_arr);
@@ -339,19 +351,25 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
 
     pub fn intersect(&self, other: &Self) -> Self {
         let mut result = self.copy();
-        result.rel &= other.rel;
+        for l_idx in 0..LS {
+            result.rel[l_idx] &= other.rel[l_idx];
+        }
         return result;
     }
 
     pub fn difference(&self, other: &Self) -> Self {
         let mut result = self.copy();
-        result.rel &= !other.rel;
+        for l_idx in 0..LS {
+            result.rel[l_idx] &= !other.rel[l_idx];
+        }
         return result;
     }
 
     pub fn union(&self, other: &Self) -> Self {
         let mut result = self.copy();
-        result.rel |= other.rel;
+        for l_idx in 0..LS {
+            result.rel[l_idx] |= other.rel[l_idx];
+        }
         return result;
     }
 
@@ -364,16 +382,19 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     }
 
     pub fn elementOf(&self, (k, v): &(L, R)) -> BBoolean {
-        return self.rel[k.as_idx()*RS + v.as_idx()];
+        return self.rel[k.as_idx()][v.as_idx()];
     }
 
     pub fn noElementOf(&self, (k, v): &(L, R)) -> BBoolean {
-        return !self.rel[k.as_idx()*RS + v.as_idx()];
+        return !self.rel[k.as_idx()][v.as_idx()];
     }
 
     //subset or equal
     pub fn subset(&self, other: &Self) -> BBoolean {
-        return (other.rel & self.rel) == self.rel;
+        for l_idx in 0..LS {
+            if (other.rel[l_idx] & self.rel[l_idx]) != self.rel[l_idx] { return false }
+        }
+        return true;
     }
 
     pub fn notSubset(&self, other: &Self) -> BBoolean {
@@ -383,8 +404,8 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
     pub fn _override(&self, other: &Self) -> Self {
         let mut result = self.copy();
         for left_idx in 0..LS {
-            let other_slice = &other.rel[left_idx*RS .. (left_idx+1)*RS];
-            if other_slice.any() { result.rel[left_idx*RS .. (left_idx+1)*RS].copy_from_bitslice(other_slice); }
+            let other_slice = &other.rel[left_idx];
+            if other_slice.any() { result.rel[left_idx].copy_from_bitslice(other_slice); }
         }
         return result;
     }
@@ -398,12 +419,9 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
           [usize; mem::elts::<usize>(LS*NEW_RS)]: Sized {
         let mut result = BRelation::<L, LS, NewR, NEW_RS, NEW_TOTAL>::empty();
         for left_idx in 0..LS {
-            let l_idx = left_idx*NEW_RS;
-            //let mut foo: BitArray<[usize; mem::elts::<usize>(NEW_RS)], Lsb0> = BitArray::ZERO;
             for r_idx in 0..RS {
-                if self.rel[l_idx+r_idx] { result.rel[l_idx .. l_idx+NEW_RS] |= &arg.rel[r_idx*NEW_RS .. (r_idx+1)*NEW_RS]; }
+                if self.rel[left_idx][r_idx] { result.rel[left_idx] |= &arg.rel[r_idx]; }
             }
-            //result.rel[l_idx .. l_idx+NEW_RS].copy_from_bitslice(&foo);
         }
         return result;
     }
@@ -422,7 +440,7 @@ impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> BRelation<L,
         for left_idx in 0..LS {
             let result_set: [bool; RS] = self.slice_as_array(left_idx);
             if !result_set.contains(&true) { continue; } // dont create mappings to empty set
-            result.rel.set(left_idx*LS + NewR::from_arr(result_set).as_idx(), true);
+            result.rel[left_idx].set(NewR::from_arr(result_set).as_idx(), true);
         }
         return result;
     }
@@ -458,7 +476,7 @@ where L: SetItem<LS>,
     pub fn identity(set: &BSet<L, LS>) -> Self {
         let mut result = Self::empty();
         for i in 0..LS {
-            if set.contains_idx(i) { result.rel.set(i*(LS+1), true); }
+            if set.contains_idx(i) { result.rel[i].set(i, true); }
         }
         return result;
     }
@@ -539,7 +557,7 @@ where L: SetItem<LS> + BInt,
         let mut result = self.copy();
         for i in (*n+1)..=self.size() {
             let i_as_l = L::from(i);
-            result.rel.set(i_as_l.as_idx()*RS + self.functionCall(&i_as_l).as_idx(), false);
+            result.rel[i_as_l.as_idx()].set(self.functionCall(&i_as_l).as_idx(), false);
         }
         return result;
     }

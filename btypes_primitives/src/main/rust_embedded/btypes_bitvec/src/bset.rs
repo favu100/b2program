@@ -367,11 +367,6 @@ where [usize; mem::elts::<usize>(SIZE)]: Sized  {
     }
 }
 
-/*
-EINT: SetItem<4> + PowSetItem<16, 4>
-BSet<EINT, 4>: Set<4> + SetItem<16>
-BSet<BSet<Enit, 4>, 16>: Set<16>
-*/
 
 pub trait NestedSet<const OUTER_SIZE: usize, const INNER_SIZE: usize>
 where Self: Set<OUTER_SIZE>,
@@ -440,11 +435,11 @@ impl<I: SetItem<SIZE>, const SIZE: usize> Iterator for BSetIter<I, SIZE> {
 macro_rules! bset {
     ($set_type:ty$(, $e:expr )* ) => {
         {
-            let mut __temp_gen_arr__ = [false; <$set_type>::VARIANTS];
+            let mut __temp_gen_arr__ = BSet::<$set_type, { <$set_type>::VARIANTS }>::empty();
             $(
-                __temp_gen_arr__[($e).as_idx()] = true;
+                __temp_gen_arr__.add_idx(($e).as_idx());
             )*
-            BSet::<$set_type, { <$set_type>::VARIANTS }>::from_arr(__temp_gen_arr__)
+            __temp_gen_arr__
         }
     };
 }

@@ -185,6 +185,16 @@ public class TestMachines extends TestJs {
         testJs("train_1");
     }
 
+    @Test
+    public void Train1BeebookDeterministic_MC_POR() throws Exception {
+        testJSMC("Train_1_beebook_deterministic_MC_POR");
+    }
+
+    @Test
+    public void Train1BeebookDeterministic_MC_POR_v2() throws Exception {
+        testJSMC("Train_1_beebook_deterministic_MC_POR_v2");
+    }
+
     @Ignore
     @Test
     public void testEarley2() throws Exception {
@@ -207,6 +217,31 @@ public class TestMachines extends TestJs {
     @Test
     public void testrether_mch1() throws Exception {
         testJs("rether_mch1");
+    }
+
+    @Test
+    public void testsort_m2_data1000_MC() throws Exception {
+        testJSMC("sort_m2_data1000_MC");
+    }
+
+    @Test
+    public void testNota2() throws Exception {
+        testJSMC("nota_v2");
+    }
+
+    @Test
+    public void testCruiseControllerDeterministic_MC() throws Exception {
+        testJSMC("Cruise_finite1_deterministic_MC");
+    }
+
+    @Test
+    public void testLift_MC_Large() throws Exception {
+        testJSMC("Lift_MC_Large");
+    }
+
+    @Test
+    public void testQueensWithEvents_4() throws Exception {
+        testJSMC("QueensWithEvents_4");
     }
 
 }

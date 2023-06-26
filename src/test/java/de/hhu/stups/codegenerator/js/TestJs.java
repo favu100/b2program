@@ -68,6 +68,21 @@ public class TestJs {
 			}
 			Files.copy(immutableDirectory.resolve("dist/immutable.es.js"), machineDirectory.resolve("immutable/dist/immutable.es.js"), REPLACE_EXISTING);
 		}
+
+		Path modelcheckingDirectory = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("modelchecking").toURI());
+		if (Files.exists(modelcheckingDirectory)) {
+			if (Files.notExists(machineDirectory.resolve("modelchecking"))) {
+				Files.copy(modelcheckingDirectory, machineDirectory.resolve("modelchecking"), REPLACE_EXISTING);
+			}
+			File[] modelcheckingJS = modelcheckingDirectory.toFile().listFiles((directory, name) -> name.toLowerCase().endsWith(".js"));
+			if (modelcheckingJS == null) {
+				throw new CodeGenerationException("Model Checking Sources must be provided in resources/test/modelchecking.");
+			}
+			for (File file : modelcheckingJS) {
+				Files.copy(file.toPath(), machineDirectory.resolve("modelchecking/" + file.getName()), REPLACE_EXISTING);
+			}
+		}
 	}
 
 	/**

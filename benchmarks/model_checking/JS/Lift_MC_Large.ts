@@ -3,6 +3,7 @@ import {BInteger} from './btypes/BInteger.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import {BUtils} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
+import {LinkedList} from  "./modelchecking/LinkedList.js";
 
 
 
@@ -93,9 +94,7 @@ export default class Lift_MC_Large {
     public _copy(): Lift_MC_Large {
       const _instance = new Lift_MC_Large();
       for (const key of Object.keys(this)) {
-        _instance[key] = typeof this[key] === 'object' && this[key] !== null
-          ? this[key]._copy?.() ?? this[key]
-          : this[key];
+        _instance[key] = this[key];
       }
       return _instance;
     }
@@ -109,7 +108,7 @@ export class ModelChecker {
     private isCaching: boolean;
     private isDebug: boolean;
 
-    private unvisitedStates: Lift_MC_Large[] = new Array();
+    private unvisitedStates: LinkedList<Lift_MC_Large> = new LinkedList<Lift_MC_Large>;
     private states: immutable.Set<Lift_MC_Large> = new immutable.Set();
     private transitions: number = 0;
 
@@ -136,7 +135,7 @@ export class ModelChecker {
     modelCheckSingleThreaded(): void {
         let machine: Lift_MC_Large = new Lift_MC_Large();
         this.states = this.states.add(machine);
-        this.unvisitedStates.push(machine);
+        this.unvisitedStates.pushBack(machine);
 
         if(this.isCaching) {
             this.initCache(machine);
@@ -150,7 +149,7 @@ export class ModelChecker {
             for(let nextState of nextStates) {
                 if(!this.states.has(nextState)) {
                     this.states = this.states.add(nextState);
-                    this.unvisitedStates.push(nextState);
+                    this.unvisitedStates.pushBack(nextState);
                     if(this.states.size % 50000 == 0 && this.isDebug) {
                         console.log("VISITED STATES: " + this.states.size);
                         console.log("EVALUATED TRANSITIONS: " + this.transitions);
@@ -185,14 +184,14 @@ export class ModelChecker {
     next(): Lift_MC_Large {
         switch(this.type) {
             case Type.BFS:
-                return this.unvisitedStates.shift();
+                return this.unvisitedStates.popFront();
             case Type.DFS:
-                return this.unvisitedStates.pop();
+                return this.unvisitedStates.popBack();
             case Type.MIXED:
                 if(this.unvisitedStates.length % 2 == 0) {
-                    return this.unvisitedStates.shift();
+                    return this.unvisitedStates.popFront();
                 } else {
-                    return this.unvisitedStates.pop();
+                    return this.unvisitedStates.popBack();
                 }
             default:
                 break;

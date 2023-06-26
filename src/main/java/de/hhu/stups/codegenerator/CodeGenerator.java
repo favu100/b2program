@@ -231,11 +231,11 @@ public class CodeGenerator {
 		return paths;
 	}
 
-	public void generateBlackBoxTraceGenerator(Path path, String name, String modelPath, String learningTechnique, int episodes) {
+	public void generateBlackBoxTraceGenerator(Path path, String name, String modelPath, String learningTechnique, int episodes, String minint, String maxint, String deferredSetSize) {
 		paths.clear();
 
 		BProject project = parseProject(path);
-		TraceGenerator traceGenerator = new TraceGenerator(name, modelPath, learningTechnique, episodes);
+		TraceGenerator traceGenerator = new TraceGenerator(name, modelPath, learningTechnique, episodes, minint, maxint, deferredSetSize);
 		String traceGeneratorCode = traceGenerator.generate(project.getMainMachine());
 		Path codePath = Paths.get(path.toString().replace(".mch", "")).toAbsolutePath();
 		writeToFile(codePath, RL, false, null, false, null, traceGeneratorCode);

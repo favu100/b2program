@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.blackbox.traces;
 
 import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
@@ -9,6 +10,7 @@ import de.prob.parser.ast.nodes.OperationNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -32,7 +34,7 @@ public class TraceGenerator {
 
     private List<String> variables;
 
-    public TraceGenerator(final String name, final String modelPath, final String learningTechnique, final int episodes) {
+    public TraceGenerator(final String name, final String modelPath, final String learningTechnique, final int episodes, final String minint, final String maxint, final String deferredSetSize) {
         this.group = CodeGeneratorUtils.getGroup(GeneratorMode.RL);
         this.name = name;
         this.modelPath = modelPath;
@@ -54,10 +56,23 @@ public class TraceGenerator {
                 .mapToObj(this::generateActionMap)
                 .collect(Collectors.toList()));
         TemplateHandler.add(template, "variableMapping", generateState());
+        TemplateHandler.add(template, "variablePredicate", generatePredicates());
         TemplateHandler.add(template, "getters", variables.stream()
                 .map(this::generateVariableGetter)
                 .collect(Collectors.toList()));
+        TemplateHandler.add(template, "generateTraces", false);
+        return template.render();
+    }
 
+    private List<String> generatePredicates() {
+        return variables.stream()
+                .map(this::generatePredicate)
+                .collect(Collectors.toList());
+    }
+
+    private String generatePredicate(String variable) {
+        ST template = group.getInstanceOf("variable_pred");
+        TemplateHandler.add(template, "variable", variable);
         return template.render();
     }
 

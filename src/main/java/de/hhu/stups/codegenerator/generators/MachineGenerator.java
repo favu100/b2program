@@ -32,6 +32,7 @@ import de.prob.parser.ast.nodes.predicate.CastPredicateExpressionNode;
 import de.prob.parser.ast.nodes.predicate.IdentifierPredicateNode;
 import de.prob.parser.ast.nodes.predicate.IfPredicateNode;
 import de.prob.parser.ast.nodes.predicate.LetPredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
@@ -323,9 +324,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			gettableNodes.add(enumeratedSet.getSetDeclarationNode());
 		});
 		TemplateHandler.add(machine, "getters", generateGetters(gettableNodes));
-		TemplateHandler.add(machine, "transitions", transitionGenerator.generateTransitions(node.getOperations()));
+		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "transitionCachesDeclaration", transitionGenerator.generateTransitionCaches(node.getOperations()));
-		TemplateHandler.add(machine, "invariant", invariantGenerator.generateInvariants(node.getInvariant()));
+		TemplateHandler.add(machine, "invariant", generateInvariants(node.getInvariant()));
 		TemplateHandler.add(machine, "copy", this.generateCopy(node));
 		TemplateHandler.add(machine, "hash_equal", modelCheckingGenerator.generateHashEqualToString());
 		TemplateHandler.add(machine, "modelcheck", modelCheckingGenerator.generate(node, forModelChecking, isIncludedMachine, forVisualisation));
@@ -340,6 +341,14 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "choicePointOperationTriggeredResets", backtrackingGenerator.getChoicePointOperationTriggeredResets());
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
+	}
+
+	public List<String> generateTransitions(List<OperationNode> operations) {
+		return transitionGenerator.generateTransitions(operations);
+	}
+
+	public List<String> generateInvariants(PredicateNode invariantNode) {
+		return invariantGenerator.generateInvariants(invariantNode);
 	}
 
 	/*

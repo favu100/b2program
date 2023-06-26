@@ -49,7 +49,10 @@ public class TestBlackBox {
 				.getResource("de/hhu/stups/codegenerator/blackbox/" + machine + ".mch").toURI());
 
 		CodeGenerator codeGenerator = new CodeGenerator();
-		codeGenerator.generateBlackBoxTraceGenerator(mchPath, name, modelPath, learningTechnique, episodes);
+		codeGenerator.generateBlackBoxTraceGenerator(mchPath, name, modelPath, learningTechnique, episodes,
+				String.valueOf(Integer.MIN_VALUE),
+				String.valueOf(Integer.MAX_VALUE),
+				"10");
 	}
 
 

@@ -1,8 +1,9 @@
-trace_generator(name, modelPath, learningTechnique, episodes, hasSetupConstants, actionMapping, variableMapping, getters) ::= <<
+trace_generator(name, modelPath, learningTechnique, episodes, hasSetupConstants, actionMapping, variableMapping, variablePredicate, getters, transitions, invariant, generateTraces) ::= <<
 import gym
 import json
 from stable_baselines3 import <learningTechnique>
 
+<if(generateTraces)>
 
 def write_trace(transitionList, i):
     trace = {
@@ -24,15 +25,18 @@ def write_timed_trace(transitionList, i):
     f.write(jsonString)
     f.close()
 
+episodes = <episodes>
+
+i = 0
+
+<endif>
+
 env = gym.make('<name>')
 env.reset()
 
 # Load pre-trained model
 model = <learningTechnique>.load("<modelPath>")
 
-episodes = <episodes>
-
-i = 0
 
 # TODO: Implement mapping of action id to action name
 action_names = {
@@ -41,10 +45,12 @@ action_names = {
 
 <getters; separator="\n\n">
 
+<if(generateTraces)>
+
 def append_transition(obs, transition_list, operation):
     transition_list.append({
         "name": operation,
-        "destState": {
+        "destState": {} if "$setup_constants" == operation else {
             <variableMapping; separator="\n">
         }
     })
@@ -56,12 +62,14 @@ def append_timed_transition(is_initialisation, done, index, obs, transition_list
         "execute": operation,
         "after": delta if not is_initialisation else 0,
         "activating": "activation_" + str(index + 1) if not done else [],
-        "fixedVariables": {
+        "fixedVariables": {} if "$setup_constants" == operation else {
             <variableMapping; separator="\n">
         }
     })
 
+<endif>
 
+<if(generateTraces)>
 for ep in range(episodes):
     i = i + 1
     obs = env.reset()
@@ -73,29 +81,51 @@ for ep in range(episodes):
     while not done:
         j = j + 1
         action, _states = model.predict(obs)
-        obs, rewards, done, info = env.step(action)
+        obs, rewards, done, info = env.step(int(action))
         env.render()
         actionName = action_names.get(int(action))
+
         <if(hasSetupConstants)>
-           if j == 1:
-                append_transition(obs, transition_list, "$setup_constants")
-                append_timed_transition(True, done, j, obs, timed_transition_list, "$setup_constants", delta)
-           elsif j == 2:
-                append_transition(obs, transition_list, "$initialise_machine")
-                append_timed_transition(True, done, j, obs, timed_transition_list, "$initialise_machine", delta)
-           else:
-                append_transition(obs, transition_list, actionName)
-                append_timed_transition(False, done, j, obs, timed_transition_list, actionName, delta)
+        if j == 1:
+           append_transition(obs, transition_list, "$setup_constants")
+           append_timed_transition(True, done, j, obs, timed_transition_list, "$setup_constants", delta)
+        elif j == 2:
+           append_transition(obs, transition_list, "$initialise_machine")
+           append_timed_transition(True, done, j, obs, timed_transition_list, "$initialise_machine", delta)
+        else:
+           append_transition(obs, transition_list, actionName)
+           append_timed_transition(False, done, j, obs, timed_transition_list, actionName, delta)
         <else>
         if j == 1:
-            append_transition(obs, transition_list, "$initialise_machine")
-            append_timed_transition(True, done, j, obs, timed_transition_list, "$initialise_machine", delta)
+           append_transition(obs, transition_list, "$initialise_machine")
+           append_timed_transition(True, done, j, obs, timed_transition_list, "$initialise_machine", delta)
         else:
-            append_transition(obs, transition_list, actionName)
-            append_timed_transition(False, done, j, obs, timed_transition_list, actionName, delta)
+           append_transition(obs, transition_list, actionName)
+           append_timed_transition(False, done, j, obs, timed_transition_list, actionName, delta)
         <endif>
         write_trace(transition_list, i)
         write_timed_trace(timed_transition_list, i)
+<else>
+obs = env.reset()
+done = False
+j = 0
+delta = 500
+while not done:
+    j = j + 1
+    action, _states = model.predict(obs)
+    obs, rewards, done, info = env.step(int(action))
+    env.render()
+    actionName = action_names.get(int(action))
+    if j == 1:
+        print("$initialise_machine")
+    else:
+        print(actionName)
+
+    print(delta)
+    print(<variablePredicate; separator=" + \" & \" + ">)
+
+<endif>
+
 env.close()
 >>
 
@@ -106,6 +136,10 @@ state(variables) ::= <<
 
 variable_map(variable) ::= <<
 "<variable>": get_<variable>(obs)
+>>
+
+variable_pred(variable) ::= <<
+"<variable> = {0}".format(get_<variable>(obs))
 >>
 
 variable_getter(variable) ::= <<

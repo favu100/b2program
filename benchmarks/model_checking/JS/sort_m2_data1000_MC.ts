@@ -34,7 +34,7 @@ export default class sort_m2_data1000_MC {
     private l: BInteger;
     private g: BRelation<BInteger, BInteger>;
 
-    constructor() {
+    static {
         sort_m2_data1000_MC.n = new BInteger(1000);
         let _ic_set_0: BRelation<BInteger, BInteger> = new BRelation<BInteger, BInteger>();
         for(let _ic_i_1 of BSet.interval(new BInteger(1), sort_m2_data1000_MC.n)) {
@@ -42,6 +42,9 @@ export default class sort_m2_data1000_MC {
 
         }
         sort_m2_data1000_MC.f = _ic_set_0;
+    }
+
+    constructor() {
         this.g = sort_m2_data1000_MC.f;
         this.k = new BInteger(1);
         this.l = new BInteger(1);
@@ -145,7 +148,7 @@ export default class sort_m2_data1000_MC {
     equals(o: any): boolean {
         let o1: sort_m2_data1000_MC = this;
         let o2: sort_m2_data1000_MC = o as sort_m2_data1000_MC;
-        return o1._get_n().equals(o2._get_n()) && o1._get_f().equals(o2._get_f()) && o1._get_j().equals(o2._get_j()) && o1._get_k().equals(o2._get_k()) && o1._get_l().equals(o2._get_l()) && o1._get_g().equals(o2._get_g());
+        return o1._get_j().equals(o2._get_j()) && o1._get_k().equals(o2._get_k()) && o1._get_l().equals(o2._get_l()) && o1._get_g().equals(o2._get_g());
     }
 
 

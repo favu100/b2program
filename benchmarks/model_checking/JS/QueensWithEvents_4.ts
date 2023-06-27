@@ -32,10 +32,13 @@ export default class QueensWithEvents_4 {
 
     private queens: BRelation<BInteger, BInteger>;
 
-    constructor() {
+    static {
         QueensWithEvents_4.n = new BInteger(4);
         QueensWithEvents_4.interval = BSet.interval(new BInteger(1), QueensWithEvents_4.n);
         QueensWithEvents_4.allFields = BRelation.cartesianProduct(QueensWithEvents_4.interval, QueensWithEvents_4.interval).pow();
+    }
+
+    constructor() {
         this.queens = new BRelation<BInteger, BInteger>();
     }
 
@@ -119,7 +122,7 @@ export default class QueensWithEvents_4 {
     equals(o: any): boolean {
         let o1: QueensWithEvents_4 = this;
         let o2: QueensWithEvents_4 = o as QueensWithEvents_4;
-        return o1._get_n().equals(o2._get_n()) && o1._get_interval().equals(o2._get_interval()) && o1._get_allFields().equals(o2._get_allFields()) && o1._get_queens().equals(o2._get_queens());
+        return o1._get_queens().equals(o2._get_queens());
     }
 
 

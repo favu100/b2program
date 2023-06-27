@@ -148,7 +148,11 @@ machine_equal(machine, predicates) ::= <<
 public boolean equals(Object o) {
     <machine> o1 = this;
     <machine> o2 = (<machine>) o;
+    <if(predicates)>
     return <predicates; separator= " && ">;
+    <else>
+    return true;
+    <endif>
 }
 >>
 

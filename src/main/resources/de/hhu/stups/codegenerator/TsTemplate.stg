@@ -92,7 +92,11 @@ machine_equal(machine, predicates) ::= <<
 equals(o: any): boolean {
     let o1: <machine> = this;
     let o2: <machine> = o as <machine>;
+    <if(predicates)>
     return <predicates; separator= " && ">;
+    <else>
+    return true;
+    <endif>
 }
 >>
 
@@ -223,9 +227,16 @@ new <struct>(<parameters; separator=", ">)
 >>
 
 initialization(properties, values, body) ::= <<
-constructor() {
+<if(properties)>
+<if(values)>
+static {
     <properties; separator="\n">
     <values>
+}
+<endif>
+<endif>
+
+constructor() {
     <body>
 }
 >>
@@ -457,11 +468,12 @@ invariant(invariantFunction, iterationConstruct, predicate) ::= <<
 }
 >>
 
-copy_constructor(machine, parameters, properties, assignments) ::= <<
+copy_constructor() ::= <<
 >>
 
-copy_assignment(variable) ::= <<
+copy_assignment() ::= <<
 >>
+
 
 copy(machine, parameters) ::= <<
 public _copy(): <machine> {

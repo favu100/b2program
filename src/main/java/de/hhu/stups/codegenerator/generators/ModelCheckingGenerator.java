@@ -330,11 +330,6 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("machine_equal");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
         List<String> predicates = new ArrayList<>();
-        for(String var : modelCheckingInfo.getConstants()) {
-            ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
-            TemplateHandler.add(predicateTemplate, "var", var);
-            predicates.add(predicateTemplate.render());
-        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
             TemplateHandler.add(predicateTemplate, "var", var);
@@ -348,11 +343,6 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("machine_unequal");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
         List<String> predicates = new ArrayList<>();
-        for(String var : modelCheckingInfo.getConstants()) {
-            ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
-            TemplateHandler.add(predicateTemplate, "var", var);
-            predicates.add(predicateTemplate.render());
-        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
             TemplateHandler.add(predicateTemplate, "var", var);

@@ -130,7 +130,11 @@ class <machine> {
 
 machine_unequal(machine, predicates) ::= <<
 friend bool operator !=(const <machine>& o1, const <machine>& o2) {
+    <if(predicates)>
     return <predicates; separator=" || ">;
+    <else>
+    return false;
+    <endif>
 }
 >>
 
@@ -140,7 +144,11 @@ o1.<var>() != o2.<var>()
 
 machine_equal(machine, predicates) ::= <<
 friend bool operator ==(const <machine>& o1, const <machine>& o2) {
+    <if(predicates)>
     return <predicates; separator= " && ">;
+    <else>
+    return true;
+    <endif>
 }
 >>
 

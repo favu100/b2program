@@ -475,7 +475,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     /*
-    * This function maps a iteration construct node to code.
+    * This function maps an iteration construct node to code.
     */
     public void addGeneration(String node, List<DeclarationNode> declarations, String result) {
         this.addIteration(node, result);

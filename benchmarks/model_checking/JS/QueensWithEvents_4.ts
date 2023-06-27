@@ -38,8 +38,12 @@ export default class QueensWithEvents_4 {
         QueensWithEvents_4.allFields = BRelation.cartesianProduct(QueensWithEvents_4.interval, QueensWithEvents_4.interval).pow();
     }
 
-    constructor() {
-        this.queens = new BRelation<BInteger, BInteger>();
+    constructor(copy? : QueensWithEvents_4) {
+        if(copy) {
+            this.queens = copy.queens;
+        } else {
+            this.queens = new BRelation<BInteger, BInteger>();
+        }
     }
 
 
@@ -151,11 +155,7 @@ export default class QueensWithEvents_4 {
 
 
     public _copy(): QueensWithEvents_4 {
-      const _instance = new QueensWithEvents_4();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new QueensWithEvents_4(this);
     }
 
 

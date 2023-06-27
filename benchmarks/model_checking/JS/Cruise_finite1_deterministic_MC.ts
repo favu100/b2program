@@ -132,22 +132,40 @@ export default class Cruise_finite1_deterministic_MC {
     private CruiseSpeedChangeInProgress: BBoolean;
     private NumberOfSetCruise: BInteger;
 
-    constructor() {
-        this.CruiseAllowed = new BBoolean(true);
-        this.CruiseActive = new BBoolean(false);
-        this.VehicleAtCruiseSpeed = new BBoolean(false);
-        this.VehicleCanKeepSpeed = new BBoolean(false);
-        this.VehicleTryKeepSpeed = new BBoolean(false);
-        this.SpeedAboveMax = new BBoolean(false);
-        this.VehicleTryKeepTimeGap = new BBoolean(false);
-        this.NumberOfSetCruise = new BInteger(0);
-        this.CruiseSpeedAtMax = new BBoolean(false);
-        this.ObstacleDistance = new ODset(enum_ODset.ODnone);
-        this.ObstacleStatusJustChanged = new BBoolean(false);
-        this.CCInitialisationInProgress = new BBoolean(false);
-        this.CruiseSpeedChangeInProgress = new BBoolean(false);
-        this.ObstaclePresent = new BBoolean(false);
-        this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSnone);
+    constructor(copy? : Cruise_finite1_deterministic_MC) {
+        if(copy) {
+            this.CruiseAllowed = copy.CruiseAllowed;
+            this.CruiseActive = copy.CruiseActive;
+            this.VehicleAtCruiseSpeed = copy.VehicleAtCruiseSpeed;
+            this.VehicleCanKeepSpeed = copy.VehicleCanKeepSpeed;
+            this.VehicleTryKeepSpeed = copy.VehicleTryKeepSpeed;
+            this.SpeedAboveMax = copy.SpeedAboveMax;
+            this.VehicleTryKeepTimeGap = copy.VehicleTryKeepTimeGap;
+            this.CruiseSpeedAtMax = copy.CruiseSpeedAtMax;
+            this.ObstaclePresent = copy.ObstaclePresent;
+            this.ObstacleDistance = copy.ObstacleDistance;
+            this.ObstacleRelativeSpeed = copy.ObstacleRelativeSpeed;
+            this.ObstacleStatusJustChanged = copy.ObstacleStatusJustChanged;
+            this.CCInitialisationInProgress = copy.CCInitialisationInProgress;
+            this.CruiseSpeedChangeInProgress = copy.CruiseSpeedChangeInProgress;
+            this.NumberOfSetCruise = copy.NumberOfSetCruise;
+        } else {
+            this.CruiseAllowed = new BBoolean(true);
+            this.CruiseActive = new BBoolean(false);
+            this.VehicleAtCruiseSpeed = new BBoolean(false);
+            this.VehicleCanKeepSpeed = new BBoolean(false);
+            this.VehicleTryKeepSpeed = new BBoolean(false);
+            this.SpeedAboveMax = new BBoolean(false);
+            this.VehicleTryKeepTimeGap = new BBoolean(false);
+            this.NumberOfSetCruise = new BInteger(0);
+            this.CruiseSpeedAtMax = new BBoolean(false);
+            this.ObstacleDistance = new ODset(enum_ODset.ODnone);
+            this.ObstacleStatusJustChanged = new BBoolean(false);
+            this.CCInitialisationInProgress = new BBoolean(false);
+            this.CruiseSpeedChangeInProgress = new BBoolean(false);
+            this.ObstaclePresent = new BBoolean(false);
+            this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSnone);
+        }
     }
 
 
@@ -800,11 +818,7 @@ export default class Cruise_finite1_deterministic_MC {
 
 
     public _copy(): Cruise_finite1_deterministic_MC {
-      const _instance = new Cruise_finite1_deterministic_MC();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new Cruise_finite1_deterministic_MC(this);
     }
 
 

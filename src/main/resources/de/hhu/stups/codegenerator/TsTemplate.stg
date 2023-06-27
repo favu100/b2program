@@ -226,7 +226,7 @@ record(struct, parameters) ::= <<
 new <struct>(<parameters; separator=", ">)
 >>
 
-initialization(properties, values, body) ::= <<
+initialization(machine, properties, values, copy, body, forVisualization, forModelChecking) ::= <<
 <if(properties)>
 <if(values)>
 static {
@@ -236,9 +236,19 @@ static {
 <endif>
 <endif>
 
+<if(forVisualization || forModelChecking)>
+constructor(copy? : <machine>) {
+    if(copy) {
+        <copy; separator="\n">
+    } else {
+        <body>
+    }
+}
+<else>
 constructor() {
     <body>
 }
+<endif>
 >>
 
 method() ::= <<
@@ -471,17 +481,14 @@ invariant(invariantFunction, iterationConstruct, predicate) ::= <<
 copy_constructor() ::= <<
 >>
 
-copy_assignment() ::= <<
+copy_assignment(variable) ::= <<
+this.<variable> = copy.<variable>;
 >>
 
 
-copy(machine, parameters) ::= <<
+copy(machine) ::= <<
 public _copy(): <machine> {
-  const _instance = new <machine>();
-  for (const key of Object.keys(this)) {
-    _instance[key] = this[key];
-  }
-  return _instance;
+  return new <machine>(this);
 }
 >>
 

@@ -243,25 +243,46 @@ export default class CAN_BUS_tlc {
         CAN_BUS_tlc.NATSET = BSet.interval(new BInteger(0), new BInteger(5));
     }
 
-    constructor() {
-        this.T2v = new BInteger(0);
-        this.T3_evaluated = new BBoolean(true);
-        this.T3_enabled = new BBoolean(true);
-        this.T1_state = new T1state(enum_T1state.T1_EN);
-        this.T2_state = new T2state(enum_T2state.T2_EN);
-        this.T3_state = new T3state(enum_T3state.T3_READY);
-        this.T1_writevalue = new BInteger(0);
-        this.T2_writevalue = new BInteger(0);
-        this.T2_readvalue = new BInteger(0);
-        this.T2_readpriority = new BInteger(0);
-        this.T3_readvalue = new BInteger(0);
-        this.T3_readpriority = new BInteger(0);
-        this.T1_timer = new BInteger(2);
-        this.T2_timer = new BInteger(3);
-        this.BUSwrite = new BRelation<BInteger, BInteger>(new BTuple(new BInteger(0), new BInteger(0)));
-        this.BUSvalue = new BInteger(0);
-        this.BUSpriority = new BInteger(0);
-        this.T2_mode = new T2mode(enum_T2mode.T2MODE_SENSE);
+    constructor(copy? : CAN_BUS_tlc) {
+        if(copy) {
+            this.BUSpriority = copy.BUSpriority;
+            this.BUSvalue = copy.BUSvalue;
+            this.BUSwrite = copy.BUSwrite;
+            this.T1_state = copy.T1_state;
+            this.T1_timer = copy.T1_timer;
+            this.T1_writevalue = copy.T1_writevalue;
+            this.T2_mode = copy.T2_mode;
+            this.T2_readpriority = copy.T2_readpriority;
+            this.T2_readvalue = copy.T2_readvalue;
+            this.T2_state = copy.T2_state;
+            this.T2_timer = copy.T2_timer;
+            this.T2_writevalue = copy.T2_writevalue;
+            this.T2v = copy.T2v;
+            this.T3_enabled = copy.T3_enabled;
+            this.T3_evaluated = copy.T3_evaluated;
+            this.T3_readpriority = copy.T3_readpriority;
+            this.T3_readvalue = copy.T3_readvalue;
+            this.T3_state = copy.T3_state;
+        } else {
+            this.T2v = new BInteger(0);
+            this.T3_evaluated = new BBoolean(true);
+            this.T3_enabled = new BBoolean(true);
+            this.T1_state = new T1state(enum_T1state.T1_EN);
+            this.T2_state = new T2state(enum_T2state.T2_EN);
+            this.T3_state = new T3state(enum_T3state.T3_READY);
+            this.T1_writevalue = new BInteger(0);
+            this.T2_writevalue = new BInteger(0);
+            this.T2_readvalue = new BInteger(0);
+            this.T2_readpriority = new BInteger(0);
+            this.T3_readvalue = new BInteger(0);
+            this.T3_readpriority = new BInteger(0);
+            this.T1_timer = new BInteger(2);
+            this.T2_timer = new BInteger(3);
+            this.BUSwrite = new BRelation<BInteger, BInteger>(new BTuple(new BInteger(0), new BInteger(0)));
+            this.BUSvalue = new BInteger(0);
+            this.BUSpriority = new BInteger(0);
+            this.T2_mode = new T2mode(enum_T2mode.T2MODE_SENSE);
+        }
     }
 
 
@@ -829,11 +850,7 @@ export default class CAN_BUS_tlc {
 
 
     public _copy(): CAN_BUS_tlc {
-      const _instance = new CAN_BUS_tlc();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new CAN_BUS_tlc(this);
     }
 
 

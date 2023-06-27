@@ -44,11 +44,18 @@ export default class sort_m2_data1000_MC {
         sort_m2_data1000_MC.f = _ic_set_0;
     }
 
-    constructor() {
-        this.g = sort_m2_data1000_MC.f;
-        this.k = new BInteger(1);
-        this.l = new BInteger(1);
-        this.j = new BInteger(1);
+    constructor(copy? : sort_m2_data1000_MC) {
+        if(copy) {
+            this.j = copy.j;
+            this.k = copy.k;
+            this.l = copy.l;
+            this.g = copy.g;
+        } else {
+            this.g = sort_m2_data1000_MC.f;
+            this.k = new BInteger(1);
+            this.l = new BInteger(1);
+            this.j = new BInteger(1);
+        }
     }
 
 
@@ -183,11 +190,7 @@ export default class sort_m2_data1000_MC {
 
 
     public _copy(): sort_m2_data1000_MC {
-      const _instance = new sort_m2_data1000_MC();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new sort_m2_data1000_MC(this);
     }
 
 

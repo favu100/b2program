@@ -383,6 +383,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
 			parameters.addAll(node.getVariables());
+
 			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
 			TemplateHandler.add(template, "assignments", parameters.stream()
 					.map(this::generateCopyAssignment)
@@ -392,7 +393,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return "";
 	}
 
-	private String generateCopyAssignment(DeclarationNode declaration) {
+	public String generateCopyAssignment(DeclarationNode declaration) {
 		ST template = currentGroup.getInstanceOf("copy_assignment");
 		TemplateHandler.add(template, "variable", nameHandler.handleIdentifier(declaration.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
 		return template.render();

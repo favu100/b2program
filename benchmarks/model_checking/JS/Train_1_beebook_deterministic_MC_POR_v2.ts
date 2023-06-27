@@ -178,14 +178,24 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         Train_1_beebook_deterministic_MC_POR_v2.rtbl = _ic_set_0;
     }
 
-    constructor() {
-        this.resrt = new BSet<ROUTES>();
-        this.resbl = new BSet<BLOCKS>();
-        this.rsrtbl = new BRelation<BLOCKS, ROUTES>();
-        this.OCC = new BSet<BLOCKS>();
-        this.TRK = new BRelation<BLOCKS, BLOCKS>();
-        this.frm = new BSet<ROUTES>();
-        this.LBT = new BSet<BLOCKS>();
+    constructor(copy? : Train_1_beebook_deterministic_MC_POR_v2) {
+        if(copy) {
+            this.LBT = copy.LBT;
+            this.TRK = copy.TRK;
+            this.frm = copy.frm;
+            this.OCC = copy.OCC;
+            this.resbl = copy.resbl;
+            this.resrt = copy.resrt;
+            this.rsrtbl = copy.rsrtbl;
+        } else {
+            this.resrt = new BSet<ROUTES>();
+            this.resbl = new BSet<BLOCKS>();
+            this.rsrtbl = new BRelation<BLOCKS, ROUTES>();
+            this.OCC = new BSet<BLOCKS>();
+            this.TRK = new BRelation<BLOCKS, BLOCKS>();
+            this.frm = new BSet<ROUTES>();
+            this.LBT = new BSet<BLOCKS>();
+        }
     }
 
 
@@ -559,11 +569,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
 
     public _copy(): Train_1_beebook_deterministic_MC_POR_v2 {
-      const _instance = new Train_1_beebook_deterministic_MC_POR_v2();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new Train_1_beebook_deterministic_MC_POR_v2(this);
     }
 
 

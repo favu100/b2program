@@ -27,8 +27,12 @@ export default class Lift_MC_Large {
 
     private level: BInteger;
 
-    constructor() {
-        this.level = new BInteger(0);
+    constructor(copy? : Lift_MC_Large) {
+        if(copy) {
+            this.level = copy.level;
+        } else {
+            this.level = new BInteger(0);
+        }
     }
 
 
@@ -94,11 +98,7 @@ export default class Lift_MC_Large {
 
 
     public _copy(): Lift_MC_Large {
-      const _instance = new Lift_MC_Large();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new Lift_MC_Large(this);
     }
 
 

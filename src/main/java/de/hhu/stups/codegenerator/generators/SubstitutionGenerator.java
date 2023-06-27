@@ -130,6 +130,13 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "stateCount", machineGenerator.getCurrentStateCount());
         if (body.trim().length() > 0) TemplateHandler.add(initialization, "body", body);
 
+
+        TemplateHandler.add(initialization, "copy", node.getVariables().stream()
+                .map(machineGenerator::generateCopyAssignment)
+                .collect(Collectors.toList()));
+        TemplateHandler.add(initialization, "forVisualization", machineGenerator.isForVisualisation());
+        TemplateHandler.add(initialization, "forModelChecking", machineGenerator.isForModelChecking());
+
         return initialization.render();
     }
 

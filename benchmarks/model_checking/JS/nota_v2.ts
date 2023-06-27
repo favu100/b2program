@@ -540,23 +540,42 @@ export default class nota_v2 {
     private svc_ICNode: BRelation<SERVICE, INTERCONNECTNODE>;
     private svc_registered: BRelation<SERVICE, BBoolean>;
 
-    constructor() {
-        this.interconnectNodes = new BSet<INTERCONNECTNODE>();
-        this.sockets = new BSet<SOCKET>();
-        this.services = new BSet<SERVICE>();
-        this.resourceManagers = new BSet<RESOURCEMANAGER>();
-        this.sids = new BSet<SID>();
-        this.rm_services = new BRelation<RESOURCEMANAGER, BSet<SERVICE>>();
-        this.rm_sids = new BRelation<SERVICE, SID>();
-        this.in_localServices = new BRelation<SID, INTERCONNECTNODE>();
-        this.in_sockets = new BRelation<SOCKET, INTERCONNECTNODE>();
-        this.in_resourceManager = new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>();
-        this.soc_to = new BRelation<SOCKET, SID>();
-        this.soc_from = new BRelation<SOCKET, SID>();
-        this.svc_serviceID = new BRelation<SERVICE, SID>();
-        this.svc_sockets = new BRelation<SERVICE, BSet<SOCKET>>();
-        this.svc_ICNode = new BRelation<SERVICE, INTERCONNECTNODE>();
-        this.svc_registered = new BRelation<SERVICE, BBoolean>();
+    constructor(copy? : nota_v2) {
+        if(copy) {
+            this.interconnectNodes = copy.interconnectNodes;
+            this.sockets = copy.sockets;
+            this.services = copy.services;
+            this.resourceManagers = copy.resourceManagers;
+            this.sids = copy.sids;
+            this.rm_services = copy.rm_services;
+            this.rm_sids = copy.rm_sids;
+            this.in_localServices = copy.in_localServices;
+            this.in_sockets = copy.in_sockets;
+            this.in_resourceManager = copy.in_resourceManager;
+            this.soc_to = copy.soc_to;
+            this.soc_from = copy.soc_from;
+            this.svc_serviceID = copy.svc_serviceID;
+            this.svc_sockets = copy.svc_sockets;
+            this.svc_ICNode = copy.svc_ICNode;
+            this.svc_registered = copy.svc_registered;
+        } else {
+            this.interconnectNodes = new BSet<INTERCONNECTNODE>();
+            this.sockets = new BSet<SOCKET>();
+            this.services = new BSet<SERVICE>();
+            this.resourceManagers = new BSet<RESOURCEMANAGER>();
+            this.sids = new BSet<SID>();
+            this.rm_services = new BRelation<RESOURCEMANAGER, BSet<SERVICE>>();
+            this.rm_sids = new BRelation<SERVICE, SID>();
+            this.in_localServices = new BRelation<SID, INTERCONNECTNODE>();
+            this.in_sockets = new BRelation<SOCKET, INTERCONNECTNODE>();
+            this.in_resourceManager = new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>();
+            this.soc_to = new BRelation<SOCKET, SID>();
+            this.soc_from = new BRelation<SOCKET, SID>();
+            this.svc_serviceID = new BRelation<SERVICE, SID>();
+            this.svc_sockets = new BRelation<SERVICE, BSet<SOCKET>>();
+            this.svc_ICNode = new BRelation<SERVICE, INTERCONNECTNODE>();
+            this.svc_registered = new BRelation<SERVICE, BBoolean>();
+        }
     }
 
 
@@ -1108,11 +1127,7 @@ export default class nota_v2 {
 
 
     public _copy(): nota_v2 {
-      const _instance = new nota_v2();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new nota_v2(this);
     }
 
 

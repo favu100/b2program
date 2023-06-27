@@ -345,25 +345,46 @@ export default class LandingGear_R6 {
     private door: DOOR_STATE;
     private gear: GEAR_STATE;
 
-    constructor() {
-        this.gears = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet<GEAR_STATE>(new GEAR_STATE(enum_GEAR_STATE.extended)));
-        this.doors = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet<DOOR_STATE>(new DOOR_STATE(enum_DOOR_STATE.closed)));
-        this.handle = new HANDLE_STATE(enum_HANDLE_STATE.down);
-        this.valve_extend_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.valve_retract_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.valve_open_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.valve_close_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.open_EV = new BBoolean(false);
-        this.close_EV = new BBoolean(false);
-        this.retract_EV = new BBoolean(false);
-        this.extend_EV = new BBoolean(false);
-        this.shock_absorber = new PLANE_STATE(enum_PLANE_STATE.ground);
-        this.general_EV = new BBoolean(false);
-        this.general_valve = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.analogical_switch = new SWITCH_STATE(enum_SWITCH_STATE.switch_open);
-        this.handle_move = new BBoolean(false);
-        this.gear = new GEAR_STATE(enum_GEAR_STATE.extended);
-        this.door = new DOOR_STATE(enum_DOOR_STATE.closed);
+    constructor(copy? : LandingGear_R6) {
+        if(copy) {
+            this.analogical_switch = copy.analogical_switch;
+            this.general_EV = copy.general_EV;
+            this.general_valve = copy.general_valve;
+            this.handle_move = copy.handle_move;
+            this.close_EV = copy.close_EV;
+            this.extend_EV = copy.extend_EV;
+            this.open_EV = copy.open_EV;
+            this.retract_EV = copy.retract_EV;
+            this.shock_absorber = copy.shock_absorber;
+            this.valve_close_door = copy.valve_close_door;
+            this.valve_extend_gear = copy.valve_extend_gear;
+            this.valve_open_door = copy.valve_open_door;
+            this.valve_retract_gear = copy.valve_retract_gear;
+            this.doors = copy.doors;
+            this.gears = copy.gears;
+            this.handle = copy.handle;
+            this.door = copy.door;
+            this.gear = copy.gear;
+        } else {
+            this.gears = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet<GEAR_STATE>(new GEAR_STATE(enum_GEAR_STATE.extended)));
+            this.doors = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet<DOOR_STATE>(new DOOR_STATE(enum_DOOR_STATE.closed)));
+            this.handle = new HANDLE_STATE(enum_HANDLE_STATE.down);
+            this.valve_extend_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.valve_retract_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.valve_open_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.valve_close_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.open_EV = new BBoolean(false);
+            this.close_EV = new BBoolean(false);
+            this.retract_EV = new BBoolean(false);
+            this.extend_EV = new BBoolean(false);
+            this.shock_absorber = new PLANE_STATE(enum_PLANE_STATE.ground);
+            this.general_EV = new BBoolean(false);
+            this.general_valve = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.analogical_switch = new SWITCH_STATE(enum_SWITCH_STATE.switch_open);
+            this.handle_move = new BBoolean(false);
+            this.gear = new GEAR_STATE(enum_GEAR_STATE.extended);
+            this.door = new DOOR_STATE(enum_DOOR_STATE.closed);
+        }
     }
 
 
@@ -1078,11 +1099,7 @@ export default class LandingGear_R6 {
 
 
     public _copy(): LandingGear_R6 {
-      const _instance = new LandingGear_R6();
-      for (const key of Object.keys(this)) {
-        _instance[key] = this[key];
-      }
-      return _instance;
+      return new LandingGear_R6(this);
     }
 
 

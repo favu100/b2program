@@ -194,6 +194,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         this.resrt = _ld_resrt.union(new BSet<ROUTES>(r));
         this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.rangeRestriction(new BSet<ROUTES>(r)));
         this.resbl = _ld_resbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(r)));
+
     }
 
      route_freeing(r: ROUTES): void {
@@ -202,6 +203,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         let _ld_frm: BSet<ROUTES> = this.frm;
         this.resrt = _ld_resrt.difference(new BSet<ROUTES>(r));
         this.frm = _ld_frm.difference(new BSet<ROUTES>(r));
+
     }
 
      FRONT_MOVE_1(r: ROUTES): void {
@@ -209,10 +211,12 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
         this.OCC = _ld_OCC.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
         this.LBT = _ld_LBT.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
+
     }
 
      FRONT_MOVE_2(b: BLOCKS): void {
         this.OCC = this.OCC.union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
+
     }
 
      BACK_MOVE_1(b: BLOCKS): void {
@@ -224,6 +228,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
         this.resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
         this.LBT = _ld_LBT.difference(new BSet<BLOCKS>(b));
+
     }
 
      BACK_MOVE_2(b: BLOCKS): void {
@@ -235,14 +240,17 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
         this.resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
         this.LBT = _ld_LBT.difference(new BSet<BLOCKS>(b)).union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
+
     }
 
      point_positionning(r: ROUTES): void {
         this.TRK = this.TRK.domainSubstraction(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r).domain()).rangeSubstraction(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r).range()).union(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r));
+
     }
 
      route_formation(r: ROUTES): void {
         this.frm = this.frm.union(new BSet<ROUTES>(r));
+
     }
 
     _get_fst(): BRelation<ROUTES, BLOCKS> {

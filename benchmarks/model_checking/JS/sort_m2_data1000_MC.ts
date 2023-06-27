@@ -50,37 +50,32 @@ export default class sort_m2_data1000_MC {
 
 
      progress(): void {
-        if((new BBoolean(this.k.unequal(sort_m2_data1000_MC.n).booleanValue() && this.j.equal(sort_m2_data1000_MC.n).booleanValue())).booleanValue()) {
-            let _ld_l: BInteger = this.l;
-            let _ld_g: BRelation<BInteger, BInteger> = this.g;
-            let _ld_k: BInteger = this.k;
-            this.g = _ld_g.override(new BRelation<BInteger, BInteger>(new BTuple(_ld_k, _ld_g.functionCall(_ld_l))).override(new BRelation<BInteger, BInteger>(new BTuple(_ld_l, _ld_g.functionCall(_ld_k)))));
-            this.k = _ld_k.plus(new BInteger(1));
-            this.j = _ld_k.plus(new BInteger(1));
-            this.l = _ld_k.plus(new BInteger(1));
-        } 
+        let _ld_l: BInteger = this.l;
+        let _ld_g: BRelation<BInteger, BInteger> = this.g;
+        let _ld_k: BInteger = this.k;
+        this.g = _ld_g.override(new BRelation<BInteger, BInteger>(new BTuple(_ld_k, _ld_g.functionCall(_ld_l))).override(new BRelation<BInteger, BInteger>(new BTuple(_ld_l, _ld_g.functionCall(_ld_k)))));
+        this.k = _ld_k.plus(new BInteger(1));
+        this.j = _ld_k.plus(new BInteger(1));
+        this.l = _ld_k.plus(new BInteger(1));
+
     }
 
      prog1(): void {
-        if((new BBoolean(new BBoolean(this.k.unequal(sort_m2_data1000_MC.n).booleanValue() && this.j.unequal(sort_m2_data1000_MC.n).booleanValue()).booleanValue() && this.g.functionCall(this.l).lessEqual(this.g.functionCall(this.j.plus(new BInteger(1)))).booleanValue())).booleanValue()) {
-            let _ld_j: BInteger = this.j;
-            let _ld_l: BInteger = this.l;
-            this.l = _ld_l;
-            this.j = _ld_j.plus(new BInteger(1));
-        } 
+        let _ld_j: BInteger = this.j;
+        let _ld_l: BInteger = this.l;
+        this.l = _ld_l;
+        this.j = _ld_j.plus(new BInteger(1));
+
     }
 
      prog2(): void {
-        if((new BBoolean(new BBoolean(this.k.unequal(sort_m2_data1000_MC.n).booleanValue() && this.j.unequal(sort_m2_data1000_MC.n).booleanValue()).booleanValue() && this.g.functionCall(this.l).greater(this.g.functionCall(this.j.plus(new BInteger(1)))).booleanValue())).booleanValue()) {
-            let _ld_j: BInteger = this.j;
-            this.j = _ld_j.plus(new BInteger(1));
-            this.l = _ld_j.plus(new BInteger(1));
-        } 
+        let _ld_j: BInteger = this.j;
+        this.j = _ld_j.plus(new BInteger(1));
+        this.l = _ld_j.plus(new BInteger(1));
+
     }
 
      final_evt(): void {
-        if((this.k.equal(sort_m2_data1000_MC.n)).booleanValue()) {
-        } 
     }
 
     _get_n(): BInteger {

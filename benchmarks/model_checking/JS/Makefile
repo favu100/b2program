@@ -21,11 +21,6 @@ COMPILE_FLAGS=--target ES6 --moduleResolution node
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@ $(STRATEGY) $(CACHING)
 
 clean:
 	rm *.js

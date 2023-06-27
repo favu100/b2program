@@ -706,15 +706,27 @@ unary(operator, obj, args) ::= <<
 <obj>.<operator>(<args; separator=", ">)
 >>
 
-pre_assert(then) ::= <<
-<then>
->>
-
-select(iterationConstruct, predicate, then, forVisualisation) ::= <<
+pre_assert(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<if(isModelChecking && !isTopLevel)>
 <iterationConstruct; separator="\n">
 if((<predicate>).booleanValue()) {
     <then>
-} <if(forVisualisation)> else {
+} else {
+    throw new PreconditionOrAssertionViolation("Precondition or Assertion Error occured.");
+}
+<else>
+<then>
+<endif>
+>>
+
+select(isModelChecking, isTopLevel, iterationConstruct, predicate, then) ::= <<
+<if(isModelChecking && isTopLevel)>
+<then>
+<else>
+<iterationConstruct; separator="\n">
+if((<predicate>).booleanValue()) {
+    <then>
+} else {
     throw new SelectError("Parameters are invalid!");
 }<endif>
 >>

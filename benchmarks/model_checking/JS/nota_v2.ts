@@ -515,13 +515,13 @@ export default class nota_v2 {
 
 
 
-    private static _INTERCONNECTNODE: BSet<INTERCONNECTNODE> = new BSet(new INTERCONNECTNODE(enum_INTERCONNECTNODE.node1), new INTERCONNECTNODE(enum_INTERCONNECTNODE.node2));
-    private static _SOCKET: BSet<SOCKET> = new BSet(new SOCKET(enum_SOCKET.socket1), new SOCKET(enum_SOCKET.socket2));
-    private static _SERVICE: BSet<SERVICE> = new BSet(new SERVICE(enum_SERVICE.service1), new SERVICE(enum_SERVICE.service2));
-    private static _RESOURCEMANAGER: BSet<RESOURCEMANAGER> = new BSet(new RESOURCEMANAGER(enum_RESOURCEMANAGER.resource1), new RESOURCEMANAGER(enum_RESOURCEMANAGER.resource2));
-    private static _SID: BSet<SID> = new BSet(new SID(enum_SID.SID1), new SID(enum_SID.SID2));
-    private static _RM_ERROR_CODES: BSet<RM_ERROR_CODES> = new BSet(new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_FOUND), new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_NOT_FOUND));
-    private static _IN_ERROR_CODES: BSet<IN_ERROR_CODES> = new BSet(new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_REGISTRATION_OK), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_REGISTRATION_FAILED), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_DEREGISTRATION_OK), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_DEREGISTRATION_FAILED), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_NO_SOCKET_CONNECTION), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_SOCKET_CONNECTION_OK), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_NO_AVAILABLE_SERVICE), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_SERVICE_AVAILABLE), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_TARGET_SOCKET_GRANTED), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_TARGET_SOCKET_NOT_GRANTED));
+    private static _INTERCONNECTNODE: BSet<INTERCONNECTNODE> = new BSet<INTERCONNECTNODE>(new INTERCONNECTNODE(enum_INTERCONNECTNODE.node1), new INTERCONNECTNODE(enum_INTERCONNECTNODE.node2));
+    private static _SOCKET: BSet<SOCKET> = new BSet<SOCKET>(new SOCKET(enum_SOCKET.socket1), new SOCKET(enum_SOCKET.socket2));
+    private static _SERVICE: BSet<SERVICE> = new BSet<SERVICE>(new SERVICE(enum_SERVICE.service1), new SERVICE(enum_SERVICE.service2));
+    private static _RESOURCEMANAGER: BSet<RESOURCEMANAGER> = new BSet<RESOURCEMANAGER>(new RESOURCEMANAGER(enum_RESOURCEMANAGER.resource1), new RESOURCEMANAGER(enum_RESOURCEMANAGER.resource2));
+    private static _SID: BSet<SID> = new BSet<SID>(new SID(enum_SID.SID1), new SID(enum_SID.SID2));
+    private static _RM_ERROR_CODES: BSet<RM_ERROR_CODES> = new BSet<RM_ERROR_CODES>(new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_FOUND), new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_NOT_FOUND));
+    private static _IN_ERROR_CODES: BSet<IN_ERROR_CODES> = new BSet<IN_ERROR_CODES>(new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_REGISTRATION_OK), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_REGISTRATION_FAILED), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_DEREGISTRATION_OK), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_DEREGISTRATION_FAILED), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_NO_SOCKET_CONNECTION), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_SOCKET_CONNECTION_OK), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_NO_AVAILABLE_SERVICE), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_SERVICE_AVAILABLE), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_TARGET_SOCKET_GRANTED), new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_TARGET_SOCKET_NOT_GRANTED));
 
     private interconnectNodes: BSet<INTERCONNECTNODE>;
     private sockets: BSet<SOCKET>;
@@ -541,11 +541,11 @@ export default class nota_v2 {
     private svc_registered: BRelation<SERVICE, BBoolean>;
 
     constructor() {
-        this.interconnectNodes = new BSet();
-        this.sockets = new BSet();
-        this.services = new BSet();
-        this.resourceManagers = new BSet();
-        this.sids = new BSet();
+        this.interconnectNodes = new BSet<INTERCONNECTNODE>();
+        this.sockets = new BSet<SOCKET>();
+        this.services = new BSet<SERVICE>();
+        this.resourceManagers = new BSet<RESOURCEMANAGER>();
+        this.sids = new BSet<SID>();
         this.rm_services = new BRelation<RESOURCEMANAGER, BSet<SERVICE>>();
         this.rm_sids = new BRelation<SERVICE, SID>();
         this.in_localServices = new BRelation<SID, INTERCONNECTNODE>();
@@ -562,45 +562,47 @@ export default class nota_v2 {
 
      constructor_interconnectNode(newic: INTERCONNECTNODE): INTERCONNECTNODE {
         let oid: INTERCONNECTNODE = null;
-        if((nota_v2._INTERCONNECTNODE.difference(this.interconnectNodes).elementOf(newic)).booleanValue()) {
-            let _ld_interconnectNodes: BSet<INTERCONNECTNODE> = this.interconnectNodes;
+        let _ld_interconnectNodes: BSet<INTERCONNECTNODE> = this.interconnectNodes;
 
-            this.interconnectNodes = _ld_interconnectNodes.union(new BSet(newic));
-            this.in_resourceManager = this.in_resourceManager.override(new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(new BTuple<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(newic,new BSet())));
-            oid = newic;
-        } 
+        this.interconnectNodes = _ld_interconnectNodes.union(new BSet<INTERCONNECTNODE>(newic));
+        this.in_resourceManager = this.in_resourceManager.override(new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(new BTuple<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(newic,new BSet<RESOURCEMANAGER>())));
+        oid = newic;
+
         return oid;
     }
 
      constructor_resourceManager(newrm: RESOURCEMANAGER): RESOURCEMANAGER {
         let oid: RESOURCEMANAGER = null;
         let _ld_resourceManagers: BSet<RESOURCEMANAGER> = this.resourceManagers;
-        this.resourceManagers = _ld_resourceManagers.union(new BSet(newrm));
-        this.rm_services = this.rm_services.override(new BRelation<RESOURCEMANAGER, BSet<SERVICE>>(new BTuple<RESOURCEMANAGER, BSet<SERVICE>>(newrm,new BSet())));
+        this.resourceManagers = _ld_resourceManagers.union(new BSet<RESOURCEMANAGER>(newrm));
+        this.rm_services = this.rm_services.override(new BRelation<RESOURCEMANAGER, BSet<SERVICE>>(new BTuple<RESOURCEMANAGER, BSet<SERVICE>>(newrm,new BSet<SERVICE>())));
         oid = newrm;
+
         return oid;
     }
 
      constructor_service(ii: INTERCONNECTNODE, newsvc: SERVICE): SERVICE {
         let oid: SERVICE = null;
         let _ld_services: BSet<SERVICE> = this.services;
-        this.services = _ld_services.union(new BSet(newsvc));
+        this.services = _ld_services.union(new BSet<SERVICE>(newsvc));
         this.svc_registered = this.svc_registered.override(new BRelation<SERVICE, BBoolean>(new BTuple<SERVICE, BBoolean>(newsvc,new BBoolean(false))));
-        this.svc_sockets = this.svc_sockets.override(new BRelation<SERVICE, BSet<SOCKET>>(new BTuple<SERVICE, BSet<SOCKET>>(newsvc,new BSet())));
+        this.svc_sockets = this.svc_sockets.override(new BRelation<SERVICE, BSet<SOCKET>>(new BTuple<SERVICE, BSet<SOCKET>>(newsvc,new BSet<SOCKET>())));
         this.svc_ICNode = this.svc_ICNode.override(new BRelation<SERVICE, INTERCONNECTNODE>(new BTuple<SERVICE, INTERCONNECTNODE>(newsvc,ii)));
         this.svc_serviceID = new BRelation<SERVICE, SID>();
         oid = newsvc;
+
         return oid;
     }
 
      constructor_socket(ii: INTERCONNECTNODE, srcsid: SID, targsid: SID, newsoc: SOCKET): SOCKET {
         let oid: SOCKET = null;
         let _ld_sockets: BSet<SOCKET> = this.sockets;
-        this.sockets = _ld_sockets.union(new BSet(newsoc));
+        this.sockets = _ld_sockets.union(new BSet<SOCKET>(newsoc));
         oid = newsoc;
         this.in_sockets = this.in_sockets.override(new BRelation<SOCKET, INTERCONNECTNODE>(new BTuple<SOCKET, INTERCONNECTNODE>(newsoc,ii)));
         this.soc_to = this.soc_to.override(new BRelation<SOCKET, SID>(new BTuple<SOCKET, SID>(newsoc,srcsid)));
         this.soc_from = this.soc_from.override(new BRelation<SOCKET, SID>(new BTuple<SOCKET, SID>(newsoc,targsid)));
+
         return oid;
     }
 
@@ -614,7 +616,8 @@ export default class nota_v2 {
         let sid: BSet<SID> = null;
         let err: RM_ERROR_CODES = null;
         err = new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_FOUND);
-        sid = new BSet(this.rm_sids.functionCall(ss));
+        sid = new BSet<SID>(this.rm_sids.functionCall(ss));
+
         return new _Struct1(sid, err);
     }
 
@@ -623,11 +626,13 @@ export default class nota_v2 {
         let err: RM_ERROR_CODES = null;
         sid = nota_v2._SID.difference(nota_v2._SID);
         err = new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_NOT_FOUND);
+
         return new _Struct1(sid, err);
     }
 
      in_announceResourceManager(self: INTERCONNECTNODE, rm: RESOURCEMANAGER): void {
-        this.in_resourceManager = this.in_resourceManager.override(new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(new BTuple<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(self,this.in_resourceManager.functionCall(self).union(new BSet(rm)))));
+        this.in_resourceManager = this.in_resourceManager.override(new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(new BTuple<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(self,this.in_resourceManager.functionCall(self).union(new BSet<RESOURCEMANAGER>(rm)))));
+
     }
 
      in_register_success(self: INTERCONNECTNODE, ss: SERVICE, si: SID): _Struct3 {
@@ -635,10 +640,11 @@ export default class nota_v2 {
         let err: IN_ERROR_CODES = null;
         let _ld_in_localServices: BRelation<SID, INTERCONNECTNODE> = this.in_localServices;
         let _ld_sids: BSet<SID> = this.sids;
-        this.sids = _ld_sids.union(new BSet(si));
+        this.sids = _ld_sids.union(new BSet<SID>(si));
         this.in_localServices = _ld_in_localServices.union(new BRelation<SID, INTERCONNECTNODE>(new BTuple(si, self)));
         err = new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_REGISTRATION_OK);
-        sid = new BSet(si);
+        sid = new BSet<SID>(si);
+
         return new _Struct3(sid, err);
     }
 
@@ -647,6 +653,7 @@ export default class nota_v2 {
         let err: IN_ERROR_CODES = null;
         sid = nota_v2._SID.difference(nota_v2._SID);
         err = new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_REGISTRATION_FAILED);
+
         return new _Struct3(sid, err);
     }
 
@@ -655,12 +662,13 @@ export default class nota_v2 {
         let err: IN_ERROR_CODES = null;
         let _ld_in_sockets: BRelation<SOCKET, INTERCONNECTNODE> = this.in_sockets;
         let _ld_sockets: BSet<SOCKET> = this.sockets;
-        this.sockets = _ld_sockets.union(new BSet(newsoc));
-        soc = new BSet(newsoc);
+        this.sockets = _ld_sockets.union(new BSet<SOCKET>(newsoc));
+        soc = new BSet<SOCKET>(newsoc);
         err = new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_TARGET_SOCKET_GRANTED);
         this.in_sockets = _ld_in_sockets.union(new BRelation<SOCKET, INTERCONNECTNODE>(new BTuple(newsoc, self)));
         this.soc_to = this.soc_to.override(new BRelation<SOCKET, SID>(new BTuple<SOCKET, SID>(newsoc,srcsid)));
         this.soc_from = this.soc_from.override(new BRelation<SOCKET, SID>(new BTuple<SOCKET, SID>(newsoc,targsid)));
+
         return new _Struct5(soc, err);
     }
 
@@ -669,11 +677,13 @@ export default class nota_v2 {
         let err: IN_ERROR_CODES = null;
         soc = nota_v2._SOCKET.difference(nota_v2._SOCKET);
         err = new IN_ERROR_CODES(enum_IN_ERROR_CODES.IN_TARGET_SOCKET_NOT_GRANTED);
+
         return new _Struct5(soc, err);
     }
 
      svc_register(self: SERVICE): void {
         this.svc_registered = this.svc_registered.override(new BRelation<SERVICE, BBoolean>(new BTuple<SERVICE, BBoolean>(self,new BBoolean(true))));
+
     }
 
     _get_interconnectNodes(): BSet<INTERCONNECTNODE> {
@@ -780,7 +790,7 @@ export default class nota_v2 {
     _tr_constructor_resourceManager(): BSet<RESOURCEMANAGER> {
         let _ic_set_1: BSet<RESOURCEMANAGER> = new BSet<RESOURCEMANAGER>();
         for(let _ic_newrm_1 of nota_v2._RESOURCEMANAGER.difference(this.resourceManagers)) {
-            if((new BBoolean(this.rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && this.resourceManagers.equal(new BSet()).booleanValue())).booleanValue()) {
+            if((new BBoolean(this.rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && this.resourceManagers.equal(new BSet<RESOURCEMANAGER>()).booleanValue())).booleanValue()) {
                 _ic_set_1 = _ic_set_1.union(new BSet<RESOURCEMANAGER>(_ic_newrm_1));
             }
 
@@ -868,7 +878,7 @@ export default class nota_v2 {
         let _ic_set_8: BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>> = new BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>();
         for(let _ic_self_1 of this.interconnectNodes) {
             for(let _ic_rm_1 of this.resourceManagers) {
-                if((this.in_resourceManager.functionCall(_ic_self_1).equal(new BSet())).booleanValue()) {
+                if((this.in_resourceManager.functionCall(_ic_self_1).equal(new BSet<RESOURCEMANAGER>())).booleanValue()) {
                     _ic_set_8 = _ic_set_8.union(new BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>(new BTuple(_ic_self_1, _ic_rm_1)));
                 }
 
@@ -982,7 +992,7 @@ export default class nota_v2 {
         let _ic_boolean_14: BBoolean = new BBoolean(true);
         for(let _ic_a1_1 of this.rm_services.domain()) {
             for(let _ic_a2_1 of this.rm_services.domain()) {
-                if(!(new BBoolean(!_ic_a1_1.unequal(_ic_a2_1).booleanValue() || this.rm_services.functionCall(_ic_a1_1).intersect(this.rm_services.functionCall(_ic_a2_1)).equal(new BSet()).booleanValue())).booleanValue()) {
+                if(!(new BBoolean(!_ic_a1_1.unequal(_ic_a2_1).booleanValue() || this.rm_services.functionCall(_ic_a1_1).intersect(this.rm_services.functionCall(_ic_a2_1)).equal(new BSet<SERVICE>()).booleanValue())).booleanValue()) {
                     _ic_boolean_14 = new BBoolean(false);
                     break;
                 }
@@ -1033,7 +1043,7 @@ export default class nota_v2 {
     }
 
     _check_inv_18() {
-        return new BBoolean(!this.resourceManagers.equal(new BSet()).not().booleanValue() || this.resourceManagers.card().equal(new BInteger(1)).booleanValue()).booleanValue();
+        return new BBoolean(!this.resourceManagers.equal(new BSet<RESOURCEMANAGER>()).not().booleanValue() || this.resourceManagers.card().equal(new BInteger(1)).booleanValue()).booleanValue();
     }
 
     equals(o: any): boolean {

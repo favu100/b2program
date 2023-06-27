@@ -41,51 +41,8 @@ export default class QueensWithEvents_4 {
 
 
      Solve(solution: BRelation<BInteger, BInteger>): void {
-        let _ic_boolean_1: BBoolean = new BBoolean(true);
-        for(let _ic_x_1 of QueensWithEvents_4.interval) {
-            for(let _ic_y_1 of QueensWithEvents_4.interval) {
-                let _ic_boolean_0: BBoolean = new BBoolean(true);
-                for(let _ic_z_1 of QueensWithEvents_4.interval) {
-                    if(!(new BBoolean(!solution.elementOf(new BTuple(_ic_x_1, _ic_z_1)).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue())).booleanValue()) {
-                        _ic_boolean_0 = new BBoolean(false);
-                        break;
-                    }
+        this.queens = solution;
 
-                }
-                if(new BBoolean(solution.domain().equal(QueensWithEvents_4.interval).booleanValue() && solution.range().equal(QueensWithEvents_4.interval).booleanValue()).booleanValue()) {
-                    if(!(new BBoolean(!solution.elementOf(new BTuple(_ic_x_1, _ic_y_1)).booleanValue() || _ic_boolean_0.booleanValue())).booleanValue()) {
-                        _ic_boolean_1 = new BBoolean(false);
-                        break;
-                    }
-                }
-
-            }
-        }
-        let _ic_boolean_2: BBoolean = new BBoolean(true);
-        for(let _ic_q1_1 of QueensWithEvents_4.interval) {
-            for(let _ic_q2_1 of QueensWithEvents_4.interval.difference(new BSet(new BInteger(1)))) {
-                if(new BBoolean(new BBoolean(solution.domain().equal(QueensWithEvents_4.interval).booleanValue() && solution.range().equal(QueensWithEvents_4.interval).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue()) {
-                    if(!(new BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || new BBoolean(solution.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(solution.functionCall(_ic_q2_1)).booleanValue() && solution.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(solution.functionCall(_ic_q2_1)).booleanValue()).booleanValue())).booleanValue()) {
-                        _ic_boolean_2 = new BBoolean(false);
-                        break;
-                    }
-                }
-
-            }
-        }
-        let _ic_boolean_3: BBoolean = new BBoolean(true);
-        for(let _ic_x_1 of this.queens.domain()) {
-            if(new BBoolean(new BBoolean(new BBoolean(solution.domain().equal(QueensWithEvents_4.interval).booleanValue() && solution.range().equal(QueensWithEvents_4.interval).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue()) {
-                if(!(solution.functionCall(_ic_x_1).equal(this.queens.functionCall(_ic_x_1))).booleanValue()) {
-                    _ic_boolean_3 = new BBoolean(false);
-                    break;
-                }
-            }
-
-        }
-        if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(QueensWithEvents_4.allFields.elementOf(solution).booleanValue() && solution.domain().equal(QueensWithEvents_4.interval).booleanValue()).booleanValue() && solution.range().equal(QueensWithEvents_4.interval).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue())).booleanValue()) {
-            this.queens = solution;
-        } 
     }
 
     _get_n(): BInteger {
@@ -128,7 +85,7 @@ export default class QueensWithEvents_4 {
                 }
             }let _ic_boolean_6: BBoolean = new BBoolean(true);
             for(let _ic_q1_1 of QueensWithEvents_4.interval) {
-                for(let _ic_q2_1 of QueensWithEvents_4.interval.difference(new BSet(new BInteger(1)))) {
+                for(let _ic_q2_1 of QueensWithEvents_4.interval.difference(new BSet<BInteger>(new BInteger(1)))) {
                     if(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(QueensWithEvents_4.interval).booleanValue() && _ic_solution_1.range().equal(QueensWithEvents_4.interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue()) {
                         if(!(new BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || new BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue()).booleanValue())).booleanValue()) {
                             _ic_boolean_6 = new BBoolean(false);

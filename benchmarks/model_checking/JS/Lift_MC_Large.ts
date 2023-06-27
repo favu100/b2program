@@ -34,10 +34,12 @@ export default class Lift_MC_Large {
 
      inc(): void {
         this.level = this.level.plus(new BInteger(1));
+
     }
 
      dec(): void {
         this.level = this.level.minus(new BInteger(1));
+
     }
 
     _get_level(): BInteger {

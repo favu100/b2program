@@ -130,7 +130,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
             }
         }
-
         rtbl = _ic_set_0;
     }
 
@@ -383,7 +382,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
             }
 
         }
-
         return _ic_boolean_9.booleanValue();
     }
 
@@ -399,7 +397,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                     }
 
                 }
-
                 if(!(_ic_boolean_10).booleanValue()) {
                     _ic_boolean_11 = new BBoolean(false);
                     break;
@@ -407,7 +404,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
             }
         }
-
         return _ic_boolean_11.booleanValue();
     }
 
@@ -423,7 +419,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
             }
 
         }
-
         return _ic_boolean_12.booleanValue();
     }
 
@@ -448,7 +443,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
             }
         }
-
         return _ic_boolean_13.booleanValue();
     }
 
@@ -482,7 +476,6 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
             }
 
         }
-
         return _ic_boolean_14.booleanValue();
     }
 
@@ -583,7 +576,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
 
         private void modelCheckSingleThreaded() {
             Train_1_beebook_deterministic_MC_POR_v2 machine = new Train_1_beebook_deterministic_MC_POR_v2();
-            states.add(machine); // TODO: store hashes instead of machine?
+            states.add(machine);
             unvisitedStates.add(machine);
 
             if(isCaching) {
@@ -1021,70 +1014,79 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
         }
 
         private boolean invariantViolated(final Train_1_beebook_deterministic_MC_POR_v2 state) {
-            if(isCaching) {
-                if(state.dependentInvariant.contains("_check_inv_1")) {
-                    if(!state._check_inv_1()) {
-                        return true;
-                    }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_1")) {
+                if(!state._check_inv_1()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
+                    return true;
                 }
-                if(state.dependentInvariant.contains("_check_inv_2")) {
-                    if(!state._check_inv_2()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_3")) {
-                    if(!state._check_inv_3()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_4")) {
-                    if(!state._check_inv_4()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_5")) {
-                    if(!state._check_inv_5()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_6")) {
-                    if(!state._check_inv_6()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_7")) {
-                    if(!state._check_inv_7()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_8")) {
-                    if(!state._check_inv_8()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_9")) {
-                    if(!state._check_inv_9()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_10")) {
-                    if(!state._check_inv_10()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_11")) {
-                    if(!state._check_inv_11()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_12")) {
-                    if(!state._check_inv_12()) {
-                        return true;
-                    }
-                }
-                return false;
             }
-            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12());
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_2")) {
+                if(!state._check_inv_2()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_3")) {
+                if(!state._check_inv_3()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_4")) {
+                if(!state._check_inv_4()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_5")) {
+                if(!state._check_inv_5()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_6")) {
+                if(!state._check_inv_6()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_7")) {
+                if(!state._check_inv_7()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_8")) {
+                if(!state._check_inv_8()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_9")) {
+                if(!state._check_inv_9()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_10")) {
+                if(!state._check_inv_10()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_11")) {
+                if(!state._check_inv_11()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_12")) {
+                if(!state._check_inv_12()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void addCachedInfos(final String operation, final Train_1_beebook_deterministic_MC_POR_v2 state, final Train_1_beebook_deterministic_MC_POR_v2 copiedState) {
@@ -1135,7 +1137,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) {
+        if(args.length > 0) { 
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -1148,7 +1150,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 return;
             }
         }
-        if(args.length > 1) {
+        if(args.length > 1) { 
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -1160,7 +1162,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 return;
             }
         }
-        if(args.length > 2) {
+        if(args.length > 2) { 
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -1168,7 +1170,7 @@ public class Train_1_beebook_deterministic_MC_POR_v2 {
                 return;
             }
         }
-        if(args.length > 3) {
+        if(args.length > 3) { 
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

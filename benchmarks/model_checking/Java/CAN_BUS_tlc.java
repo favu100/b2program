@@ -59,9 +59,9 @@ public class CAN_BUS_tlc {
 
 
     public enum T1state implements BObject {
-        T1_EN,
-        T1_CALC,
-        T1_SEND,
+        T1_EN, 
+        T1_CALC, 
+        T1_SEND, 
         T1_WAIT;
 
         public BBoolean equal(T1state o) {
@@ -74,8 +74,8 @@ public class CAN_BUS_tlc {
     }
 
     public enum T2mode implements BObject {
-        T2MODE_SENSE,
-        T2MODE_TRANSMIT,
+        T2MODE_SENSE, 
+        T2MODE_TRANSMIT, 
         T2MODE_RELEASE;
 
         public BBoolean equal(T2mode o) {
@@ -88,12 +88,12 @@ public class CAN_BUS_tlc {
     }
 
     public enum T2state implements BObject {
-        T2_EN,
-        T2_RCV,
-        T2_PROC,
-        T2_CALC,
-        T2_SEND,
-        T2_WAIT,
+        T2_EN, 
+        T2_RCV, 
+        T2_PROC, 
+        T2_CALC, 
+        T2_SEND, 
+        T2_WAIT, 
         T2_RELEASE;
 
         public BBoolean equal(T2state o) {
@@ -106,11 +106,11 @@ public class CAN_BUS_tlc {
     }
 
     public enum T3state implements BObject {
-        T3_READY,
-        T3_WRITE,
-        T3_RELEASE,
-        T3_READ,
-        T3_PROC,
+        T3_READY, 
+        T3_WRITE, 
+        T3_RELEASE, 
+        T3_READ, 
+        T3_PROC, 
         T3_WAIT;
 
         public BBoolean equal(T3state o) {
@@ -805,7 +805,7 @@ public class CAN_BUS_tlc {
 
         private void modelCheckSingleThreaded() {
             CAN_BUS_tlc machine = new CAN_BUS_tlc();
-            states.add(machine); // TODO: store hashes instead of machine?
+            states.add(machine);
             unvisitedStates.add(machine);
 
             if(isCaching) {
@@ -1694,110 +1694,127 @@ public class CAN_BUS_tlc {
         }
 
         private boolean invariantViolated(final CAN_BUS_tlc state) {
-            if(isCaching) {
-                if(state.dependentInvariant.contains("_check_inv_1")) {
-                    if(!state._check_inv_1()) {
-                        return true;
-                    }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_1")) {
+                if(!state._check_inv_1()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
+                    return true;
                 }
-                if(state.dependentInvariant.contains("_check_inv_2")) {
-                    if(!state._check_inv_2()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_3")) {
-                    if(!state._check_inv_3()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_4")) {
-                    if(!state._check_inv_4()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_5")) {
-                    if(!state._check_inv_5()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_6")) {
-                    if(!state._check_inv_6()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_7")) {
-                    if(!state._check_inv_7()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_8")) {
-                    if(!state._check_inv_8()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_9")) {
-                    if(!state._check_inv_9()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_10")) {
-                    if(!state._check_inv_10()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_11")) {
-                    if(!state._check_inv_11()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_12")) {
-                    if(!state._check_inv_12()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_13")) {
-                    if(!state._check_inv_13()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_14")) {
-                    if(!state._check_inv_14()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_15")) {
-                    if(!state._check_inv_15()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_16")) {
-                    if(!state._check_inv_16()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_17")) {
-                    if(!state._check_inv_17()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_18")) {
-                    if(!state._check_inv_18()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_19")) {
-                    if(!state._check_inv_19()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_20")) {
-                    if(!state._check_inv_20()) {
-                        return true;
-                    }
-                }
-                return false;
             }
-            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20());
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_2")) {
+                if(!state._check_inv_2()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_3")) {
+                if(!state._check_inv_3()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_4")) {
+                if(!state._check_inv_4()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_5")) {
+                if(!state._check_inv_5()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_6")) {
+                if(!state._check_inv_6()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_7")) {
+                if(!state._check_inv_7()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_8")) {
+                if(!state._check_inv_8()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_9")) {
+                if(!state._check_inv_9()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_10")) {
+                if(!state._check_inv_10()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_11")) {
+                if(!state._check_inv_11()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_12")) {
+                if(!state._check_inv_12()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_13")) {
+                if(!state._check_inv_13()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_14")) {
+                if(!state._check_inv_14()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_15")) {
+                if(!state._check_inv_15()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_15");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_16")) {
+                if(!state._check_inv_16()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_16");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_17")) {
+                if(!state._check_inv_17()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_17");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_18")) {
+                if(!state._check_inv_18()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_18");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_19")) {
+                if(!state._check_inv_19()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_19");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_20")) {
+                if(!state._check_inv_20()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_20");
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void addCachedInfos(final String operation, final CAN_BUS_tlc state, final CAN_BUS_tlc copiedState) {
@@ -1809,8 +1826,8 @@ public class CAN_BUS_tlc {
         }
 
         private void printResult(final int states, final int transitions) {
-            if (invariantViolated.get() || deadlockDetected.get()) {
-                if (deadlockDetected.get()) {
+            if(invariantViolated.get() || deadlockDetected.get()) {
+                if(deadlockDetected.get()) {
                     System.out.println("DEADLOCK DETECTED");
                 } else {
                     System.out.println("INVARIANT VIOLATED");
@@ -1818,10 +1835,10 @@ public class CAN_BUS_tlc {
 
                 System.out.println("COUNTER EXAMPLE TRACE: ");
                 StringBuilder sb = new StringBuilder();
-                while (counterExampleState != null) {
+                while(counterExampleState != null) {
                     sb.insert(0, counterExampleState);
                     sb.insert(0, "\n");
-                    if (counterExampleState.stateAccessedVia != null) {
+                    if(counterExampleState.stateAccessedVia != null) {
                         sb.insert(0, counterExampleState.stateAccessedVia);
                     }
                     sb.insert(0, "\n\n");
@@ -1837,268 +1854,6 @@ public class CAN_BUS_tlc {
         }
     }
 
-    private static CAN_BUS_tlc next(LinkedList<CAN_BUS_tlc> collection, Object lock, Type type) {
-        synchronized(lock) {
-            return switch(type) {
-                case BFS -> collection.removeFirst();
-                case DFS -> collection.removeLast();
-                case MIXED -> collection.size() % 2 == 0 ? collection.removeFirst() : collection.removeLast();
-            };
-        }
-    }
-
-    private static void modelCheckSingleThreaded(Type type, boolean isCaching) {
-        Object lock = new Object();
-        Object guardLock = new Object();
-
-        CAN_BUS_tlc machine = new CAN_BUS_tlc();
-
-
-        AtomicBoolean invariantViolated = new AtomicBoolean(false);
-        AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-        AtomicBoolean stopThreads = new AtomicBoolean(false);
-
-        Set<CAN_BUS_tlc> states = new HashSet<>();
-        states.add(machine);
-        AtomicInteger numberStates = new AtomicInteger(1);
-
-        LinkedList<CAN_BUS_tlc> collection = new LinkedList<>();
-        collection.add(machine);
-
-        Map<String, Set<String>> invariantDependency = new HashMap<>();
-        Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<CAN_BUS_tlc, Set<String>> dependentInvariant = new HashMap<>();
-        Map<CAN_BUS_tlc, Set<String>> dependentGuard = new HashMap<>();
-        Map<CAN_BUS_tlc, PersistentHashMap> guardCache = new HashMap<>();
-        Map<CAN_BUS_tlc, CAN_BUS_tlc> parents = new HashMap<>();
-        Map<CAN_BUS_tlc, String> stateAccessedVia = new HashMap<>();
-        if(isCaching) {
-            invariantDependency.put("T1Wait", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
-            invariantDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_check_inv_7", "_check_inv_4")));
-            invariantDependency.put("T1SendResult", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_4")));
-            invariantDependency.put("T2ReadBus", new HashSet<>(Arrays.asList("_check_inv_17", "_check_inv_5", "_check_inv_9")));
-            invariantDependency.put("T2Reset", new HashSet<>(Arrays.asList("_check_inv_1", "_check_inv_5", "_check_inv_8", "_check_inv_12")));
-            invariantDependency.put("T2Complete", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_12")));
-            invariantDependency.put("T2Evaluate", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_11")));
-            invariantDependency.put("T3Evaluate", new HashSet<>(Arrays.asList("_check_inv_6")));
-            invariantDependency.put("T3ReleaseBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20")));
-            invariantDependency.put("T1Evaluate", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
-            invariantDependency.put("T3Initiate", new HashSet<>(Arrays.asList("_check_inv_3", "_check_inv_6")));
-            invariantDependency.put("T3ReEnableWait", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_6")));
-            invariantDependency.put("T3writebus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20")));
-            invariantDependency.put("Update", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_10", "_check_inv_14", "_check_inv_13", "_check_inv_11")));
-            invariantDependency.put("T2ReleaseBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5")));
-            invariantDependency.put("T2Wait", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_11")));
-            invariantDependency.put("T3Poll", new HashSet<>(Arrays.asList("_check_inv_6")));
-            invariantDependency.put("T2Calculate", new HashSet<>(Arrays.asList("_check_inv_1", "_check_inv_5")));
-            invariantDependency.put("T3Read", new HashSet<>(Arrays.asList("_check_inv_16", "_check_inv_15", "_check_inv_6")));
-            invariantDependency.put("T3Wait", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_6")));
-            invariantDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5")));
-            guardDependency.put("T1Wait", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T1SendResult", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T2ReleaseBus", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T2ReadBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Reset", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Complete", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Evaluate", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T3Evaluate", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3ReleaseBus", new HashSet<>(Arrays.asList("_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T1Evaluate", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T3Initiate", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3ReEnableWait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3writebus", new HashSet<>(Arrays.asList("_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("Update", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T3Read", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T3Evaluate", "_tr_T3Initiate")));
-            guardDependency.put("T2ReleaseBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Wait", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T3Poll", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T2Calculate", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T3Read", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3Wait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            dependentInvariant.put(machine, new HashSet<>());
-        }
-        List<CAN_BUS_tlc> counterExampleState = new ArrayList<>();
-        parents.put(machine, null);
-
-        AtomicInteger transitions = new AtomicInteger(0);
-
-        while(!collection.isEmpty() && !stopThreads.get()) {
-            CAN_BUS_tlc state = next(collection, lock, type);
-
-            Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-            nextStates.forEach(nextState -> {
-                if(!states.contains(nextState)) {
-                    numberStates.getAndIncrement();
-                    states.add(nextState);
-                    collection.add(nextState);
-                    if(numberStates.get() % 50000 == 0) {
-                        System.out.println("VISITED STATES: " + numberStates.get());
-                        System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                        System.out.println("-------------------");
-                    }
-                }
-            });
-
-            if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                invariantViolated.set(true);
-                stopThreads.set(true);
-                counterExampleState.add(state);
-            }
-
-            if(nextStates.isEmpty()) {
-                deadlockDetected.set(true);
-                stopThreads.set(true);
-            }
-
-        }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
-    }
-
-
-    private static void modelCheckMultiThreaded(Type type, int threads, boolean isCaching) {
-        Object lock = new Object();
-        Object guardLock = new Object();
-        Object waitLock = new Object();
-        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads);
-
-        CAN_BUS_tlc machine = new CAN_BUS_tlc();
-
-
-        AtomicBoolean invariantViolated = new AtomicBoolean(false);
-        AtomicBoolean deadlockDetected = new AtomicBoolean(false);
-        AtomicBoolean stopThreads = new AtomicBoolean(false);
-        AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-        Set<CAN_BUS_tlc> states = new HashSet<>();
-        states.add(machine);
-        AtomicInteger numberStates = new AtomicInteger(1);
-
-        LinkedList<CAN_BUS_tlc> collection = new LinkedList<>();
-        collection.add(machine);
-
-        Map<String, Set<String>> invariantDependency = new HashMap<>();
-        Map<String, Set<String>> guardDependency = new HashMap<>();
-        Map<CAN_BUS_tlc, Set<String>> dependentInvariant = new HashMap<>();
-        Map<CAN_BUS_tlc, Set<String>> dependentGuard = new HashMap<>();
-        Map<CAN_BUS_tlc, PersistentHashMap> guardCache = new HashMap<>();
-        Map<CAN_BUS_tlc, CAN_BUS_tlc> parents = new HashMap<>();
-        Map<CAN_BUS_tlc, String> stateAccessedVia = new HashMap<>();
-        if(isCaching) {
-            invariantDependency.put("T1Wait", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
-            invariantDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_check_inv_7", "_check_inv_4")));
-            invariantDependency.put("T1SendResult", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_4")));
-            invariantDependency.put("T2ReadBus", new HashSet<>(Arrays.asList("_check_inv_17", "_check_inv_5", "_check_inv_9")));
-            invariantDependency.put("T2Reset", new HashSet<>(Arrays.asList("_check_inv_1", "_check_inv_5", "_check_inv_8", "_check_inv_12")));
-            invariantDependency.put("T2Complete", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_12")));
-            invariantDependency.put("T2Evaluate", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_11")));
-            invariantDependency.put("T3Evaluate", new HashSet<>(Arrays.asList("_check_inv_6")));
-            invariantDependency.put("T3ReleaseBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20")));
-            invariantDependency.put("T1Evaluate", new HashSet<>(Arrays.asList("_check_inv_10", "_check_inv_4")));
-            invariantDependency.put("T3Initiate", new HashSet<>(Arrays.asList("_check_inv_3", "_check_inv_6")));
-            invariantDependency.put("T3ReEnableWait", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_3", "_check_inv_6")));
-            invariantDependency.put("T3writebus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_6", "_check_inv_20")));
-            invariantDependency.put("Update", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_10", "_check_inv_14", "_check_inv_13", "_check_inv_11")));
-            invariantDependency.put("T2ReleaseBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5")));
-            invariantDependency.put("T2Wait", new HashSet<>(Arrays.asList("_check_inv_5", "_check_inv_11")));
-            invariantDependency.put("T3Poll", new HashSet<>(Arrays.asList("_check_inv_6")));
-            invariantDependency.put("T2Calculate", new HashSet<>(Arrays.asList("_check_inv_1", "_check_inv_5")));
-            invariantDependency.put("T3Read", new HashSet<>(Arrays.asList("_check_inv_16", "_check_inv_15", "_check_inv_6")));
-            invariantDependency.put("T3Wait", new HashSet<>(Arrays.asList("_check_inv_2", "_check_inv_6")));
-            invariantDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_check_inv_18", "_check_inv_19", "_check_inv_20", "_check_inv_5")));
-            guardDependency.put("T1Wait", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T1Calculate", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T1SendResult", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T2ReleaseBus", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T2ReadBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Reset", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Complete", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Evaluate", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T3Evaluate", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3ReleaseBus", new HashSet<>(Arrays.asList("_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T1Evaluate", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_Update", "_tr_T1SendResult", "_tr_T1Calculate", "_tr_T1Wait")));
-            guardDependency.put("T3Initiate", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3ReEnableWait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3writebus", new HashSet<>(Arrays.asList("_tr_T2ReleaseBus", "_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("Update", new HashSet<>(Arrays.asList("_tr_T1Evaluate", "_tr_T3Read", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T3Evaluate", "_tr_T3Initiate")));
-            guardDependency.put("T2ReleaseBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T2Wait", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T3Poll", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T2Calculate", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            guardDependency.put("T3Read", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T3Wait", new HashSet<>(Arrays.asList("_tr_T3writebus", "_tr_T3Read", "_tr_T3ReleaseBus", "_tr_T3Poll", "_tr_Update", "_tr_T3ReEnableWait", "_tr_T3Evaluate", "_tr_T3Wait", "_tr_T3Initiate")));
-            guardDependency.put("T2WriteBus", new HashSet<>(Arrays.asList("_tr_T2Reset", "_tr_T2ReleaseBus", "_tr_T2Complete", "_tr_T2Calculate", "_tr_T2Evaluate", "_tr_Update", "_tr_T2ReadBus", "_tr_T2WriteBus", "_tr_T2Wait")));
-            dependentInvariant.put(machine, new HashSet<>());
-        }
-        List<CAN_BUS_tlc> counterExampleState = new ArrayList<>();
-        parents.put(machine, null);
-        stateAccessedVia.put(machine, null);
-
-        AtomicInteger transitions = new AtomicInteger(0);
-
-        while(!collection.isEmpty() && !stopThreads.get()) {
-            possibleQueueChanges.incrementAndGet();
-            CAN_BUS_tlc state = next(collection, lock, type);
-            Runnable task = () -> {
-                Set<CAN_BUS_tlc> nextStates = generateNextStates(guardLock, state, isCaching, invariantDependency, dependentInvariant, guardDependency, dependentGuard, guardCache, parents, stateAccessedVia, transitions);
-
-                nextStates.forEach(nextState -> {
-                    synchronized(lock) {
-                        if(!states.contains(nextState)) {
-                            numberStates.getAndIncrement();
-                            states.add(nextState);
-                            collection.add(nextState);
-                            //if(numberStates.get() % 50000 == 0) {
-                            //    System.out.println("VISITED STATES: " + numberStates.get());
-                            //    System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
-                            //    System.out.println("-------------------");
-                            //}
-                        }
-                    }
-                });
-
-                synchronized (lock) {
-                    int running = possibleQueueChanges.decrementAndGet();
-                    if (!collection.isEmpty() || running == 0) {
-                        synchronized (waitLock) {
-                            waitLock.notify();
-                        }
-                    }
-                }
-
-                if(nextStates.isEmpty()) {
-                    deadlockDetected.set(true);
-                    stopThreads.set(true);
-                }
-
-                if(!checkInvariants(guardLock, state, isCaching, dependentInvariant)) {
-                    invariantViolated.set(true);
-                    stopThreads.set(true);
-                    counterExampleState.add(state);
-                }
-
-
-            };
-            threadPool.submit(task);
-            synchronized(waitLock) {
-                if (collection.isEmpty() && possibleQueueChanges.get() > 0) {
-                    try {
-                        waitLock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }
-        threadPool.shutdown();
-        try {
-            threadPool.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        printResult(numberStates.get(), transitions.get(), deadlockDetected.get(), invariantViolated.get(), counterExampleState, parents, stateAccessedVia);
-    }
-
 
     public static void main(String[] args) {
         if(args.length > 4) {
@@ -2110,7 +1865,7 @@ public class CAN_BUS_tlc {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) {
+        if(args.length > 0) { 
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -2123,7 +1878,7 @@ public class CAN_BUS_tlc {
                 return;
             }
         }
-        if(args.length > 1) {
+        if(args.length > 1) { 
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -2135,7 +1890,7 @@ public class CAN_BUS_tlc {
                 return;
             }
         }
-        if(args.length > 2) {
+        if(args.length > 2) { 
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -2143,7 +1898,7 @@ public class CAN_BUS_tlc {
                 return;
             }
         }
-        if(args.length > 3) {
+        if(args.length > 3) { 
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

@@ -848,7 +848,7 @@ public class Cruise_finite1_deterministic_MC {
 
         private void modelCheckSingleThreaded() {
             Cruise_finite1_deterministic_MC machine = new Cruise_finite1_deterministic_MC();
-            states.add(machine); // TODO: store hashes instead of machine?
+            states.add(machine);
             unvisitedStates.add(machine);
 
             if(isCaching) {
@@ -2167,7 +2167,7 @@ public class Cruise_finite1_deterministic_MC {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) {
+        if(args.length > 0) { 
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -2180,7 +2180,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 1) {
+        if(args.length > 1) { 
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -2192,7 +2192,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 2) {
+        if(args.length > 2) { 
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -2200,7 +2200,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 3) {
+        if(args.length > 3) { 
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

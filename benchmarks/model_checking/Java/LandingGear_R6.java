@@ -57,8 +57,8 @@ public class LandingGear_R6 {
 
 
     public enum DOOR_STATE implements BObject {
-        open,
-        closed,
+        open, 
+        closed, 
         door_moving;
 
         public BBoolean equal(DOOR_STATE o) {
@@ -71,8 +71,8 @@ public class LandingGear_R6 {
     }
 
     public enum GEAR_STATE implements BObject {
-        retracted,
-        extended,
+        retracted, 
+        extended, 
         gear_moving;
 
         public BBoolean equal(GEAR_STATE o) {
@@ -85,7 +85,7 @@ public class LandingGear_R6 {
     }
 
     public enum HANDLE_STATE implements BObject {
-        up,
+        up, 
         down;
 
         public BBoolean equal(HANDLE_STATE o) {
@@ -98,8 +98,8 @@ public class LandingGear_R6 {
     }
 
     public enum POSITION implements BObject {
-        fr,
-        lt,
+        fr, 
+        lt, 
         rt;
 
         public BBoolean equal(POSITION o) {
@@ -112,7 +112,7 @@ public class LandingGear_R6 {
     }
 
     public enum SWITCH_STATE implements BObject {
-        switch_open,
+        switch_open, 
         switch_closed;
 
         public BBoolean equal(SWITCH_STATE o) {
@@ -125,7 +125,7 @@ public class LandingGear_R6 {
     }
 
     public enum PLANE_STATE implements BObject {
-        ground,
+        ground, 
         flight;
 
         public BBoolean equal(PLANE_STATE o) {
@@ -138,7 +138,7 @@ public class LandingGear_R6 {
     }
 
     public enum VALVE_STATE implements BObject {
-        valve_open,
+        valve_open, 
         valve_closed;
 
         public BBoolean equal(VALVE_STATE o) {
@@ -978,7 +978,7 @@ public class LandingGear_R6 {
 
         private void modelCheckSingleThreaded() {
             LandingGear_R6 machine = new LandingGear_R6();
-            states.add(machine); // TODO: store hashes instead of machine?
+            states.add(machine);
             unvisitedStates.add(machine);
 
             if(isCaching) {
@@ -2422,135 +2422,157 @@ public class LandingGear_R6 {
         }
 
         private boolean invariantViolated(final LandingGear_R6 state) {
-            if(isCaching) {
-                if(state.dependentInvariant.contains("_check_inv_1")) {
-                    if(!state._check_inv_1()) {
-                        return true;
-                    }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_1")) {
+                if(!state._check_inv_1()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
+                    return true;
                 }
-                if(state.dependentInvariant.contains("_check_inv_2")) {
-                    if(!state._check_inv_2()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_3")) {
-                    if(!state._check_inv_3()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_4")) {
-                    if(!state._check_inv_4()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_5")) {
-                    if(!state._check_inv_5()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_6")) {
-                    if(!state._check_inv_6()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_7")) {
-                    if(!state._check_inv_7()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_8")) {
-                    if(!state._check_inv_8()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_9")) {
-                    if(!state._check_inv_9()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_10")) {
-                    if(!state._check_inv_10()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_11")) {
-                    if(!state._check_inv_11()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_12")) {
-                    if(!state._check_inv_12()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_13")) {
-                    if(!state._check_inv_13()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_14")) {
-                    if(!state._check_inv_14()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_15")) {
-                    if(!state._check_inv_15()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_16")) {
-                    if(!state._check_inv_16()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_17")) {
-                    if(!state._check_inv_17()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_18")) {
-                    if(!state._check_inv_18()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_19")) {
-                    if(!state._check_inv_19()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_20")) {
-                    if(!state._check_inv_20()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_21")) {
-                    if(!state._check_inv_21()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_22")) {
-                    if(!state._check_inv_22()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_23")) {
-                    if(!state._check_inv_23()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_24")) {
-                    if(!state._check_inv_24()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_25")) {
-                    if(!state._check_inv_25()) {
-                        return true;
-                    }
-                }
-                return false;
             }
-            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20() && state._check_inv_21() && state._check_inv_22() && state._check_inv_23() && state._check_inv_24() && state._check_inv_25());
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_2")) {
+                if(!state._check_inv_2()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_3")) {
+                if(!state._check_inv_3()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_4")) {
+                if(!state._check_inv_4()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_5")) {
+                if(!state._check_inv_5()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_6")) {
+                if(!state._check_inv_6()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_7")) {
+                if(!state._check_inv_7()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_8")) {
+                if(!state._check_inv_8()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_9")) {
+                if(!state._check_inv_9()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_10")) {
+                if(!state._check_inv_10()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_11")) {
+                if(!state._check_inv_11()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_12")) {
+                if(!state._check_inv_12()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_13")) {
+                if(!state._check_inv_13()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_14")) {
+                if(!state._check_inv_14()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_15")) {
+                if(!state._check_inv_15()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_15");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_16")) {
+                if(!state._check_inv_16()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_16");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_17")) {
+                if(!state._check_inv_17()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_17");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_18")) {
+                if(!state._check_inv_18()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_18");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_19")) {
+                if(!state._check_inv_19()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_19");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_20")) {
+                if(!state._check_inv_20()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_20");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_21")) {
+                if(!state._check_inv_21()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_21");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_22")) {
+                if(!state._check_inv_22()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_22");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_23")) {
+                if(!state._check_inv_23()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_23");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_24")) {
+                if(!state._check_inv_24()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_24");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_25")) {
+                if(!state._check_inv_25()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_25");
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void addCachedInfos(final String operation, final LandingGear_R6 state, final LandingGear_R6 copiedState) {

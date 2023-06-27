@@ -72,7 +72,6 @@ public class sort_m2_data1000_MC {
             _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple<>(_ic_i_1, new BInteger(15000).minus(_ic_i_1))));
 
         }
-
         f = _ic_set_0;
     }
 
@@ -271,7 +270,7 @@ public class sort_m2_data1000_MC {
 
         private void modelCheckSingleThreaded() {
             sort_m2_data1000_MC machine = new sort_m2_data1000_MC();
-            states.add(machine); // TODO: store hashes instead of machine?
+            states.add(machine);
             unvisitedStates.add(machine);
 
             if(isCaching) {
@@ -545,40 +544,43 @@ public class sort_m2_data1000_MC {
         }
 
         private boolean invariantViolated(final sort_m2_data1000_MC state) {
-            if(isCaching) {
-                if(state.dependentInvariant.contains("_check_inv_1")) {
-                    if(!state._check_inv_1()) {
-                        return true;
-                    }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_1")) {
+                if(!state._check_inv_1()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
+                    return true;
                 }
-                if(state.dependentInvariant.contains("_check_inv_2")) {
-                    if(!state._check_inv_2()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_3")) {
-                    if(!state._check_inv_3()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_4")) {
-                    if(!state._check_inv_4()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_5")) {
-                    if(!state._check_inv_5()) {
-                        return true;
-                    }
-                }
-                if(state.dependentInvariant.contains("_check_inv_6")) {
-                    if(!state._check_inv_6()) {
-                        return true;
-                    }
-                }
-                return false;
             }
-            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6());
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_2")) {
+                if(!state._check_inv_2()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_3")) {
+                if(!state._check_inv_3()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_4")) {
+                if(!state._check_inv_4()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_5")) {
+                if(!state._check_inv_5()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
+                    return true;
+                }
+            }
+            if(!isCaching || state.dependentInvariant.contains("_check_inv_6")) {
+                if(!state._check_inv_6()) {
+                    System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void addCachedInfos(final String operation, final sort_m2_data1000_MC state, final sort_m2_data1000_MC copiedState) {

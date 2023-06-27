@@ -176,7 +176,7 @@ public class Lift_MC_Large {
 
         private void modelCheckSingleThreaded() {
             Lift_MC_Large machine = new Lift_MC_Large();
-            states.add(machine); // TODO: store hashes instead of machine?
+            states.add(machine);
             unvisitedStates.add(machine);
 
             if(isCaching) {

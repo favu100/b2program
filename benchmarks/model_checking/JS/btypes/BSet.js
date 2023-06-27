@@ -181,16 +181,16 @@ export class BSet {
         return this.set.size === 0;
     }
     equals(other) {
-        return this.equal(other).booleanValue();
+        if (!(other instanceof BSet)) {
+            return false;
+        }
+        return this.set.equals(other.set);
     }
     equal(other) {
-        if (!(other instanceof BSet)) {
-            return new BBoolean(false);
-        }
-        return this.subset(other).and(other.subset(this));
+        return new BBoolean(this.equals(other));
     }
     unequal(other) {
-        return this.equal(other).not();
+        return new BBoolean(!this.equals(other));
     }
     nondeterminism() {
         let values = [];

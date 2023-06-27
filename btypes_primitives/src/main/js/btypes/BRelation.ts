@@ -244,7 +244,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let resultSet = immutable.Set(this.map.keys());
 		for(let domainElement of this.map.keys()) {
 			let range = <immutable.Set<T>> this.map.get(domainElement)
-			if(range.size === 0) {
+			if(range === null || range.size === 0) {
 				resultSet = resultSet.remove(domainElement);
 			}
 		}

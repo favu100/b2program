@@ -1,10 +1,10 @@
-import {BBoolean} from "https://www3.hhu.de/stups/models/visb/btypes/BBoolean.js";
-import {BInteger} from "https://www3.hhu.de/stups/models/visb/btypes/BInteger.js";
-import {BObject} from "https://www3.hhu.de/stups/models/visb/btypes/BObject.js";
-import {BRelation} from "https://www3.hhu.de/stups/models/visb/btypes/BRelation.js";
-import {BString} from "https://www3.hhu.de/stups/models/visb/btypes/BString.js";
-import {BStruct} from "https://www3.hhu.de/stups/models/visb/btypes/BStruct.js";
-import * as immutable from "https://www3.hhu.de/stups/models/visb/immutable/dist/immutable.es.js";
+import {BBoolean} from "./BBoolean.js";
+import {BInteger} from "./BInteger.js";
+import {BObject} from "./BObject.js";
+import {BRelation} from "./BRelation.js";
+import {BString} from "./BString.js";
+import {BStruct} from "./BStruct.js";
+import * as immutable from "../immutable/dist/immutable.es.js";
 
 export class BSet<T extends BObject> implements BObject{
 
@@ -215,18 +215,18 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	equals(other: any): boolean {
-		return this.equal(other).booleanValue();
+        if (!(other instanceof BSet)) {
+            return false;
+        }
+        return this.set.equals(other.set);
 	}
 
 	equal(other: any): BBoolean {
-		if (!(other instanceof BSet)) {
-			return new BBoolean(false);
-		}
-		return this.subset(other).and(other.subset(this));
+	    return new BBoolean(this.equals(other));
 	}
 
 	unequal(other: any): BBoolean {
-		return this.equal(other).not();
+		return new BBoolean(!this.equals(other));
 	}
 
 	nondeterminism(): T {

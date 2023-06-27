@@ -205,7 +205,7 @@ export class BRelation {
         let resultSet = immutable.Set(this.map.keys());
         for (let domainElement of this.map.keys()) {
             let range = this.map.get(domainElement);
-            if (range.size === 0) {
+            if (range === null || range.size === 0) {
                 resultSet = resultSet.remove(domainElement);
             }
         }

@@ -1,12 +1,12 @@
-import {BTuple} from "https://www3.hhu.de/stups/models/visb/btypes/BTuple.js";
-import {BSet} from "https://www3.hhu.de/stups/models/visb/btypes/BSet.js";
-import {BInteger} from "https://www3.hhu.de/stups/models/visb/btypes/BInteger.js";
-import {BBoolean} from "https://www3.hhu.de/stups/models/visb/btypes/BBoolean.js";
-import {BString} from "https://www3.hhu.de/stups/models/visb/btypes/BString.js";
-import {BStruct} from "https://www3.hhu.de/stups/models/visb/btypes/BStruct.js";
-import {BObject} from "https://www3.hhu.de/stups/models/visb/btypes/BObject.js";
+import {BTuple} from "./BTuple.js";
+import {BSet} from "./BSet.js";
+import {BInteger} from "./BInteger.js";
+import {BBoolean} from "./BBoolean.js";
+import {BString} from "./BString.js";
+import {BStruct} from "./BStruct.js";
+import {BObject} from "./BObject.js";
 
-import * as immutable from "https://www3.hhu.de/stups/models/visb/immutable/dist/immutable.es.js";
+import * as immutable from "../immutable/dist/immutable.es.js";
 
 export class BRelation<S extends BObject,T extends BObject> implements BObject, Iterable<BTuple<S,T>> {
 
@@ -244,7 +244,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let resultSet = immutable.Set(this.map.keys());
 		for(let domainElement of this.map.keys()) {
 			let range = <immutable.Set<T>> this.map.get(domainElement)
-			if(range.size === 0) {
+			if(range === null || range.size === 0) {
 				resultSet = resultSet.remove(domainElement);
 			}
 		}

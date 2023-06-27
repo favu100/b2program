@@ -215,18 +215,18 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	equals(other: any): boolean {
-		return this.equal(other).booleanValue();
+        if (!(other instanceof BSet)) {
+            return false;
+        }
+        return this.set.equals(other.set);
 	}
 
 	equal(other: any): BBoolean {
-		if (!(other instanceof BSet)) {
-			return new BBoolean(false);
-		}
-		return this.subset(other).and(other.subset(this));
+	    return new BBoolean(this.equals(other));
 	}
 
 	unequal(other: any): BBoolean {
-		return this.equal(other).not();
+		return new BBoolean(!this.equals(other));
 	}
 
 	nondeterminism(): T {

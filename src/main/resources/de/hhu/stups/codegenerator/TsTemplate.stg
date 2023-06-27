@@ -253,7 +253,7 @@ private static <identifier>: BSet\<<type>\> = <set_enumeration("", type, "", enu
 >>
 
 set_enumeration(leftType, type, rightType, enums, isRelation) ::= <<
-<if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet<endif>(<enums; separator=", ">)
+<if(isRelation)>new BRelation\<<leftType>, <rightType>\><else>new BSet\<<type>\><endif>(<enums; separator=", ">)
 >>
 
 seq_enumeration(type, elements) ::= <<

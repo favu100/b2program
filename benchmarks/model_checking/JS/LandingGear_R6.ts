@@ -1168,7 +1168,7 @@ export class ModelChecker {
         while(!(this.unvisitedStates.length === 0)) {
             let state: LandingGear_R6 = this.next();
 
-            let nextStates: Set<LandingGear_R6> = this.generateNextStates(state);
+            let nextStates: immutable.Set<LandingGear_R6> = this.generateNextStates(state);
 
             for(let nextState of nextStates) {
                 if(!this.states.has(nextState)) {

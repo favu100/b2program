@@ -151,8 +151,8 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     private static nxt: BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>;
     private static rtbl: BRelation<BLOCKS, ROUTES>;
 
-    private static _BLOCKS: BSet<BLOCKS> = new BSet(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.N));
-    private static _ROUTES: BSet<ROUTES> = new BSet(new ROUTES(enum_ROUTES.R1), new ROUTES(enum_ROUTES.R2), new ROUTES(enum_ROUTES.R3), new ROUTES(enum_ROUTES.R4), new ROUTES(enum_ROUTES.R5), new ROUTES(enum_ROUTES.R6), new ROUTES(enum_ROUTES.R7), new ROUTES(enum_ROUTES.R8), new ROUTES(enum_ROUTES.R9), new ROUTES(enum_ROUTES.R10));
+    private static _BLOCKS: BSet<BLOCKS> = new BSet<BLOCKS>(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.N));
+    private static _ROUTES: BSet<ROUTES> = new BSet<ROUTES>(new ROUTES(enum_ROUTES.R1), new ROUTES(enum_ROUTES.R2), new ROUTES(enum_ROUTES.R3), new ROUTES(enum_ROUTES.R4), new ROUTES(enum_ROUTES.R5), new ROUTES(enum_ROUTES.R6), new ROUTES(enum_ROUTES.R7), new ROUTES(enum_ROUTES.R8), new ROUTES(enum_ROUTES.R9), new ROUTES(enum_ROUTES.R10));
 
     private LBT: BSet<BLOCKS>;
     private TRK: BRelation<BLOCKS, BLOCKS>;
@@ -176,13 +176,13 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
             }
         }
         Train_1_beebook_deterministic_MC_POR_v2.rtbl = _ic_set_0;
-        this.resrt = new BSet();
-        this.resbl = new BSet();
+        this.resrt = new BSet<ROUTES>();
+        this.resbl = new BSet<BLOCKS>();
         this.rsrtbl = new BRelation<BLOCKS, ROUTES>();
-        this.OCC = new BSet();
+        this.OCC = new BSet<BLOCKS>();
         this.TRK = new BRelation<BLOCKS, BLOCKS>();
-        this.frm = new BSet();
-        this.LBT = new BSet();
+        this.frm = new BSet<ROUTES>();
+        this.LBT = new BSet<BLOCKS>();
     }
 
 
@@ -191,28 +191,28 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
-        this.resrt = _ld_resrt.union(new BSet(r));
-        this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.rangeRestriction(new BSet(r)));
-        this.resbl = _ld_resbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet(r)));
+        this.resrt = _ld_resrt.union(new BSet<ROUTES>(r));
+        this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.rangeRestriction(new BSet<ROUTES>(r)));
+        this.resbl = _ld_resbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(r)));
     }
 
      route_freeing(r: ROUTES): void {
         let _ld_resrt: BSet<ROUTES> = this.resrt;
 
         let _ld_frm: BSet<ROUTES> = this.frm;
-        this.resrt = _ld_resrt.difference(new BSet(r));
-        this.frm = _ld_frm.difference(new BSet(r));
+        this.resrt = _ld_resrt.difference(new BSet<ROUTES>(r));
+        this.frm = _ld_frm.difference(new BSet<ROUTES>(r));
     }
 
      FRONT_MOVE_1(r: ROUTES): void {
         let _ld_OCC: BSet<BLOCKS> = this.OCC;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.union(new BSet(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
-        this.LBT = _ld_LBT.union(new BSet(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
+        this.OCC = _ld_OCC.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
+        this.LBT = _ld_LBT.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
     }
 
      FRONT_MOVE_2(b: BLOCKS): void {
-        this.OCC = this.OCC.union(new BSet(this.TRK.functionCall(b)));
+        this.OCC = this.OCC.union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
     }
 
      BACK_MOVE_1(b: BLOCKS): void {
@@ -220,10 +220,10 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.difference(new BSet(b));
-        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet(b));
-        this.resbl = _ld_resbl.difference(new BSet(b));
-        this.LBT = _ld_LBT.difference(new BSet(b));
+        this.OCC = _ld_OCC.difference(new BSet<BLOCKS>(b));
+        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
+        this.resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
+        this.LBT = _ld_LBT.difference(new BSet<BLOCKS>(b));
     }
 
      BACK_MOVE_2(b: BLOCKS): void {
@@ -231,10 +231,10 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.difference(new BSet(b));
-        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet(b));
-        this.resbl = _ld_resbl.difference(new BSet(b));
-        this.LBT = _ld_LBT.difference(new BSet(b)).union(new BSet(this.TRK.functionCall(b)));
+        this.OCC = _ld_OCC.difference(new BSet<BLOCKS>(b));
+        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
+        this.resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
+        this.LBT = _ld_LBT.difference(new BSet<BLOCKS>(b)).union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
     }
 
      point_positionning(r: ROUTES): void {
@@ -242,7 +242,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
      route_formation(r: ROUTES): void {
-        this.frm = this.frm.union(new BSet(r));
+        this.frm = this.frm.union(new BSet<ROUTES>(r));
     }
 
     _get_fst(): BRelation<ROUTES, BLOCKS> {
@@ -300,7 +300,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _tr_route_reservation(): BSet<ROUTES> {
         let _ic_set_1: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES.difference(this.resrt)) {
-            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet(_ic_r_1)).intersect(this.resbl).equal(new BSet()).booleanValue() && new BSet().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).intersect(this.resbl).equal(new BSet<BLOCKS>()).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
                 _ic_set_1 = _ic_set_1.union(new BSet<ROUTES>(_ic_r_1));
             }
 
@@ -320,7 +320,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _tr_FRONT_MOVE_1(): BSet<ROUTES> {
         let _ic_set_3: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.frm) {
-            if((new BBoolean(new BBoolean(this.resbl.difference(this.OCC).elementOf(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(this.rsrtbl.functionCall(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(_ic_r_1))).booleanValue()).booleanValue() && new BSet().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(this.resbl.difference(this.OCC).elementOf(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(this.rsrtbl.functionCall(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(_ic_r_1))).booleanValue()).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
                 _ic_set_3 = _ic_set_3.union(new BSet<ROUTES>(_ic_r_1));
             }
 
@@ -342,7 +342,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _tr_BACK_MOVE_1(): BSet<BLOCKS> {
         let _ic_set_5: BSet<BLOCKS> = new BSet<BLOCKS>();
         for(let _ic_b_1 of this.LBT.difference(this.TRK.domain())) {
-            if((new BSet().equal(this.resrt.difference(this.rsrtbl.range()))).booleanValue()) {
+            if((new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range()))).booleanValue()) {
                 _ic_set_5 = _ic_set_5.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
@@ -353,7 +353,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _tr_BACK_MOVE_2(): BSet<BLOCKS> {
         let _ic_set_6: BSet<BLOCKS> = new BSet<BLOCKS>();
         for(let _ic_b_1 of this.LBT.intersect(this.TRK.domain())) {
-            if((new BBoolean(this.OCC.elementOf(this.TRK.functionCall(_ic_b_1)).booleanValue() && new BSet().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+            if((new BBoolean(this.OCC.elementOf(this.TRK.functionCall(_ic_b_1)).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
                 _ic_set_6 = _ic_set_6.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
@@ -364,7 +364,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _tr_point_positionning(): BSet<ROUTES> {
         let _ic_set_7: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.resrt.difference(this.frm)) {
-            if((new BSet().equal(this.resrt.difference(this.rsrtbl.range()))).booleanValue()) {
+            if((new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range()))).booleanValue()) {
                 _ic_set_7 = _ic_set_7.union(new BSet<ROUTES>(_ic_r_1));
             }
 
@@ -375,7 +375,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _tr_route_formation(): BSet<ROUTES> {
         let _ic_set_8: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.resrt.difference(this.frm)) {
-            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).domainRestriction(this.rsrtbl.inverse().relationImage(new BSet(_ic_r_1))).equal(this.TRK.domainRestriction(this.rsrtbl.inverse().relationImage(new BSet(_ic_r_1)))).booleanValue() && new BSet().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(this.TRK.domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
                 _ic_set_8 = _ic_set_8.union(new BSet<ROUTES>(_ic_r_1));
             }
 
@@ -390,7 +390,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _check_inv_2() {
         let _ic_boolean_9: BBoolean = new BBoolean(true);
         for(let _ic_r_1 of this.resrt.difference(this.frm)) {
-            for(let _ic_a_1 of Array.of(new BSet(_ic_r_1))) {
+            for(let _ic_a_1 of Array.of(new BSet<ROUTES>(_ic_r_1))) {
                 if(!(Train_1_beebook_deterministic_MC_POR_v2.rtbl.rangeRestriction(_ic_a_1).equal(this.rsrtbl.rangeRestriction(_ic_a_1))).booleanValue()) {
                     _ic_boolean_9 = new BBoolean(false);
                     break;
@@ -405,7 +405,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _check_inv_3() {
         let _ic_boolean_11: BBoolean = new BBoolean(true);
         for(let _ic_x_1 of this.TRK.domain()) {
-            for(let _ic_y_1 of this.TRK.relationImage(new BSet(_ic_x_1))) {
+            for(let _ic_y_1 of this.TRK.relationImage(new BSet<BLOCKS>(_ic_x_1))) {
                 let _ic_boolean_10: BBoolean = new BBoolean(false);
                 for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES) {
                     if((Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).elementOf(new BTuple(_ic_x_1, _ic_y_1))).booleanValue()) {
@@ -427,7 +427,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     _check_inv_4() {
         let _ic_boolean_12: BBoolean = new BBoolean(true);
         for(let _ic_r_1 of this.frm) {
-            for(let _ic_a_1 of Array.of(this.rsrtbl.inverse().relationImage(new BSet(_ic_r_1)))) {
+            for(let _ic_a_1 of Array.of(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
                 if(!(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).domainRestriction(_ic_a_1).equal(this.TRK.domainRestriction(_ic_a_1))).booleanValue()) {
                     _ic_boolean_12 = new BBoolean(false);
                     break;
@@ -479,9 +479,9 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         let _ic_boolean_14: BBoolean = new BBoolean(true);
         for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES) {
             for(let _ic_a_1 of Array.of(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1))) {
-                for(let _ic_b_1 of Array.of(this.rsrtbl.inverse().relationImage(new BSet(_ic_r_1)))) {
+                for(let _ic_b_1 of Array.of(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
                     for(let _ic_c_1 of Array.of(_ic_b_1.difference(this.OCC))) {
-                        if(!(new BBoolean(new BBoolean(_ic_a_1.relationImage(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet(_ic_r_1)).difference(_ic_b_1)).intersect(_ic_c_1).equal(new BSet()).booleanValue() && _ic_a_1.relationImage(_ic_b_1).subset(_ic_b_1).booleanValue()).booleanValue() && _ic_a_1.relationImage(_ic_c_1).subset(_ic_c_1).booleanValue())).booleanValue()) {
+                        if(!(new BBoolean(new BBoolean(_ic_a_1.relationImage(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(_ic_b_1)).intersect(_ic_c_1).equal(new BSet<BLOCKS>()).booleanValue() && _ic_a_1.relationImage(_ic_b_1).subset(_ic_b_1).booleanValue()).booleanValue() && _ic_a_1.relationImage(_ic_c_1).subset(_ic_c_1).booleanValue())).booleanValue()) {
                             _ic_boolean_14 = new BBoolean(false);
                             break;
                         }

@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    scheduler_deterministic_exec exec = new scheduler_deterministic_exec();
+    exec.simulate();
+}

@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    Train_1_beebook_deterministic_exec exec = new Train_1_beebook_deterministic_exec();
+    exec.simulate();
+}

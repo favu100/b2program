@@ -1,0 +1,2 @@
+let exec: scheduler_deterministic_exec = new scheduler_deterministic_exec();
+exec.simulate();

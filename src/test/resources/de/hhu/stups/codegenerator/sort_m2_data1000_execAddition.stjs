@@ -1,0 +1,2 @@
+let exec: sort_m2_data1000_exec = new sort_m2_data1000_exec();
+exec.simulate();

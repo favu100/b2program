@@ -1,0 +1,2 @@
+let exec: Cruise_finite1_deterministic_exec = new Cruise_finite1_deterministic_exec();
+exec.simulate();

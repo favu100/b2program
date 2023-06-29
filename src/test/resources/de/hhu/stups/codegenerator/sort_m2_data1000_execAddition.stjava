@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    sort_m2_data1000_exec exec = new sort_m2_data1000_exec();
+    exec.simulate();
+}

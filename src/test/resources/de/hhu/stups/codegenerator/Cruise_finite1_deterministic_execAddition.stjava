@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    Cruise_finite1_deterministic_exec exec = new Cruise_finite1_deterministic_exec();
+    exec.simulate();
+}

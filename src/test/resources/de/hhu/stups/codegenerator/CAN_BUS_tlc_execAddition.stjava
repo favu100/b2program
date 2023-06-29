@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    CAN_BUS_tlc_exec exec = new CAN_BUS_tlc_exec();
+    exec.simulate();
+}

@@ -1,0 +1,2 @@
+let exec: Train_1_beebook_deterministic_exec = new Train_1_beebook_deterministic_exec();
+exec.simulate();

@@ -47,8 +47,7 @@ public class TrafficLightExec {
 
     public static void main(String[] args) {
         TrafficLightExec traffic = new TrafficLightExec();
-        traffic.simulate();;
-        System.out.println(traffic.getCounter());
+        traffic.simulate();
     }
 
 }

@@ -8,7 +8,7 @@ PROBCLI=./probcli.sh
 OUTPUT ?= runtimes.txt
 
 % :
-	timeout 20m /usr/bin/time -f "%C %E %M" -ao $(OUTPUT) $(PROBCLI) $@.mch -init -execute 1 -noass -noinv -nogoal -p COMPRESSION TRUE
+	timeout 60m /usr/bin/time -f "%C %E %M" -ao $(OUTPUT) $(PROBCLI) $@.mch -init -execute 1 -noass -noinv -nogoal -p COMPRESSION TRUE
 
 clean:
 	rm *.prob

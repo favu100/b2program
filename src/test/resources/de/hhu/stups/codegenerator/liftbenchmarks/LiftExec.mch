@@ -4,13 +4,13 @@ INCLUDES Lift
 
 VARIABLES  counter
 
-INVARIANT  counter : 0..3000
+INVARIANT  counter : 0..10000000
 
 INITIALISATION counter := 0
 
 OPERATIONS
 
-	simulate = WHILE counter < 3000 DO
+	simulate = WHILE counter < 10000000 DO
 		    VAR i IN
 		       i := 0;
 		       WHILE i < 100 DO
@@ -31,7 +31,7 @@ OPERATIONS
 		    END;
 	            counter := counter + 1
 		  INVARIANT 1 = 1
-		  VARIANT 3000 - counter
+		  VARIANT 10000000 - counter
 	          END;
 
 	out <-- getCounter =

@@ -6,5 +6,12 @@ all: CAN_BUS_tlc_exec Cruise_finite1_deterministic_exec LiftExec scheduler_deter
 
 OUTPUT ?= runtimes.txt
 
-% :
-	timeout 20m /usr/bin/time -f "%C %E %M" -ao $(OUTPUT) node --jitless $@.js
+%.js : %.ts
+	tsc $(COMPILE_FLAGS) $<
+
+% : %.js
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@.js
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@.js
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@.js
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@.js
+	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) node $@.js

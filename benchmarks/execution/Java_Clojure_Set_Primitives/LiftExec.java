@@ -54,7 +54,6 @@ public class LiftExec {
     public static void main(String[] args) {
         LiftExec lift = new LiftExec();
         lift.simulate();
-        System.out.println(lift.getCounter());
     }
 
 }

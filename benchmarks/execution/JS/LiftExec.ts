@@ -50,3 +50,7 @@ export default class LiftExec {
 
 }
 
+let exec: LiftExec = new LiftExec();
+exec.simulate();
+
+

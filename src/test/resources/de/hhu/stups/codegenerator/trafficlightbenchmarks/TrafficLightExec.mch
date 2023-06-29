@@ -4,13 +4,13 @@ INCLUDES TrafficLight
 
 VARIABLES  counter
 
-INVARIANT  counter : 0..500000
+INVARIANT  counter : 0..300000000
 
 INITIALISATION counter := 0
 
 OPERATIONS
 
-	simulate = WHILE counter < 500000 DO
+	simulate = WHILE counter < 300000000 DO
 	            cars_ry;
 	            cars_g;
 	            cars_y;
@@ -19,7 +19,7 @@ OPERATIONS
 	            peds_r;
 	            counter := counter + 1
 		       INVARIANT 1 = 1
-		       VARIANT 500000 - counter
+		       VARIANT 300000000 - counter
 	           END;
 
 	out <-- getCounter =

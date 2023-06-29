@@ -1,0 +1,6 @@
+int main() {
+    LiftExec lift;
+    lift.simulate();
+    cout << lift.getCounter();
+    return 0;
+}

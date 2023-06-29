@@ -44,3 +44,5 @@ export default class TrafficLightExec {
 
 }
 
+let exec: TrafficLightExec = new TrafficLightExec();
+exec.simulate();

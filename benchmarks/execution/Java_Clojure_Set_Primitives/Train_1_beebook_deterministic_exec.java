@@ -1,9 +1,16 @@
 import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class Train_1_beebook_deterministic_exec {
+
+
 
 
     private Train_1_beebook_deterministic _Train_1_beebook_deterministic = new Train_1_beebook_deterministic();
@@ -115,6 +122,11 @@ public class Train_1_beebook_deterministic_exec {
             counter = counter.plus(new BInteger(1));
         }
     }
+
+    public BInteger _get_counter() {
+        return counter;
+    }
+
 
     public static void main(String[] args) {
         Train_1_beebook_deterministic_exec exec = new Train_1_beebook_deterministic_exec();

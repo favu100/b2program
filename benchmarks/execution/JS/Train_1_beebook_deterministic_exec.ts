@@ -7,6 +7,7 @@ import {enum_ROUTES} from "./Train_1_beebook_deterministic.js"
 import {ROUTES} from "./Train_1_beebook_deterministic.js"
 import Train_1_beebook_deterministic from './Train_1_beebook_deterministic.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 
 
@@ -21,6 +22,7 @@ export default class Train_1_beebook_deterministic_exec {
     constructor() {
         this.counter = new BInteger(0);
     }
+
 
      simulate(): void {
         while((this.counter.less(new BInteger(10000))).booleanValue()) {
@@ -129,5 +131,5 @@ export default class Train_1_beebook_deterministic_exec {
 
 }
 
-let _exec = new Train_1_beebook_deterministic_exec()
-_exec.simulate()
+let exec: Train_1_beebook_deterministic_exec = new Train_1_beebook_deterministic_exec();
+exec.simulate();

@@ -2,6 +2,7 @@ import {BInteger} from './btypes/BInteger.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import {BSet} from './btypes/BSet.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 
 
@@ -15,10 +16,11 @@ export default class Sieve {
     private limit: BInteger;
 
     constructor() {
-        this.numbers = BSet.interval(new BInteger(2), new BInteger(2000000));
+        this.numbers = BSet.interval(new BInteger(2), new BInteger(1000000));
         this.cur = new BInteger(2);
-        this.limit = new BInteger(2000000);
+        this.limit = new BInteger(1000000);
     }
+
 
      ComputeNumberOfPrimes(): BInteger {
         let res: BInteger = null;
@@ -27,9 +29,9 @@ export default class Sieve {
                 let n: BInteger = null;
                 let set: BSet<BInteger> = null;
                 n = this.cur;
-                set = new BSet();
+                set = new BSet<BInteger>();
                 while((n.lessEqual(this.limit.divide(this.cur))).booleanValue()) {
-                    set = set.union(new BSet(this.cur.multiply(n)));
+                    set = set.union(new BSet<BInteger>(this.cur.multiply(n)));
                     n = n.plus(new BInteger(1));
                 }
                 this.numbers = this.numbers.difference(set);
@@ -55,5 +57,5 @@ export default class Sieve {
 
 }
 
-let sieve = new Sieve()
-console.log(sieve.ComputeNumberOfPrimes())
+let sieve: Sieve = new Sieve();
+console.log(sieve.ComputeNumberOfPrimes().toString());

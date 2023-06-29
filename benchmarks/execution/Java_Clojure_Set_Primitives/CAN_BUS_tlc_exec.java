@@ -1,8 +1,15 @@
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class CAN_BUS_tlc_exec {
+
+
 
 
     private CAN_BUS_tlc _CAN_BUS_tlc = new CAN_BUS_tlc();
@@ -4521,7 +4528,7 @@ public class CAN_BUS_tlc_exec {
         this._CAN_BUS_tlc.T1Wait(new BInteger(2));
         this._CAN_BUS_tlc.T3Wait();
         this._CAN_BUS_tlc.Update(new BInteger(4));
-        while((counter.less(new BInteger(300000))).booleanValue()) {
+        while((counter.less(new BInteger(10000))).booleanValue()) {
             this._CAN_BUS_tlc.T3Evaluate();
             this._CAN_BUS_tlc.T3Read(new BInteger(4),new BInteger(0));
             this._CAN_BUS_tlc.T3Poll();
@@ -4575,6 +4582,11 @@ public class CAN_BUS_tlc_exec {
             counter = counter.plus(new BInteger(1));
         }
     }
+
+    public BInteger _get_counter() {
+        return counter;
+    }
+
 
     public static void main(String[] args) {
         CAN_BUS_tlc_exec exec = new CAN_BUS_tlc_exec();

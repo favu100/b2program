@@ -1,8 +1,15 @@
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class TrafficLightExec {
+
+
 
 
     private TrafficLight _TrafficLight = new TrafficLight();
@@ -16,7 +23,7 @@ public class TrafficLightExec {
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(300000000))).booleanValue()) {
+        while((counter.less(new BInteger(500000))).booleanValue()) {
             this._TrafficLight.cars_ry();
             this._TrafficLight.cars_g();
             this._TrafficLight.cars_y();
@@ -33,9 +40,15 @@ public class TrafficLightExec {
         return out;
     }
 
+    public BInteger _get_counter() {
+        return counter;
+    }
+
+
     public static void main(String[] args) {
-        TrafficLightExec exec = new TrafficLightExec();
-        exec.simulate();
+        TrafficLightExec traffic = new TrafficLightExec();
+        traffic.simulate();;
+        System.out.println(traffic.getCounter());
     }
 
 }

@@ -76,16 +76,50 @@ public class TestMachines extends TestJs {
         testJs("phonebook6");
     }
 
-    @Ignore
     @Test
     public void testSieve() throws Exception {
-        testJs("Sieve", "Sieve", "SieveAddition.stjs", true);
+        testJs("Sieve", "Sieve", "SieveAddition.stjs", false);
     }
 
     @Ignore
     @Test
     public void testSieveParallel() throws Exception {
         testJs("SieveParallel", "SieveParallel", "SieveParallelAddition.stjs", true);
+    }
+
+    @Test
+    public void testSortExec() throws Exception {
+        testJs("sort_m2_data1000_exec", "sort_m2_data1000_exec", "sort_m2_data1000_execAddition.stjs", false);
+    }
+
+    @Test
+    public void testSchedulerExec() throws Exception {
+        testJs("scheduler_deterministic_exec", "scheduler_deterministic_exec", "scheduler_deterministic_execAddition.stjs", false);
+    }
+
+    @Test
+    public void testTrainExec() throws Exception {
+        testJs("Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_execAddition.stjs", false);
+    }
+
+    @Test
+    public void testCruiseExec() throws Exception {
+        testJs("Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_execAddition.stjs", false);
+    }
+
+    @Test
+    public void testCANBUSExec() throws Exception {
+        testJs("CAN_BUS_tlc_exec", "CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.stjs", false);
+    }
+
+    @Test
+    public void testLiftExec() throws Exception {
+        testJs("LiftExec", "LiftExec", "LiftExecAddition.stjs", false);
+    }
+
+    @Test
+    public void testTrafficLightExec() throws Exception {
+        testJs("TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stjs", false);
     }
 
     @Test

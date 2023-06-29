@@ -4,6 +4,7 @@ import {BRelation} from './btypes/BRelation.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 export enum enum_BLOCKS {
     A,
@@ -45,7 +46,7 @@ export class BLOCKS implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -106,7 +107,7 @@ export class ROUTES implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -136,8 +137,8 @@ export default class Train_1_beebook_deterministic {
     private static nxt: BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>;
     private static rtbl: BRelation<BLOCKS, ROUTES>;
 
-    private static _BLOCKS: BSet<BLOCKS> = new BSet(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.N));
-    private static _ROUTES: BSet<ROUTES> = new BSet(new ROUTES(enum_ROUTES.R1), new ROUTES(enum_ROUTES.R2), new ROUTES(enum_ROUTES.R3), new ROUTES(enum_ROUTES.R4), new ROUTES(enum_ROUTES.R5), new ROUTES(enum_ROUTES.R6), new ROUTES(enum_ROUTES.R7), new ROUTES(enum_ROUTES.R8), new ROUTES(enum_ROUTES.R9), new ROUTES(enum_ROUTES.R10));
+    private static _BLOCKS: BSet<BLOCKS> = new BSet<BLOCKS>(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.N));
+    private static _ROUTES: BSet<ROUTES> = new BSet<ROUTES>(new ROUTES(enum_ROUTES.R1), new ROUTES(enum_ROUTES.R2), new ROUTES(enum_ROUTES.R3), new ROUTES(enum_ROUTES.R4), new ROUTES(enum_ROUTES.R5), new ROUTES(enum_ROUTES.R6), new ROUTES(enum_ROUTES.R7), new ROUTES(enum_ROUTES.R8), new ROUTES(enum_ROUTES.R9), new ROUTES(enum_ROUTES.R10));
 
     private LBT: BSet<BLOCKS>;
     private TRK: BRelation<BLOCKS, BLOCKS>;
@@ -147,10 +148,10 @@ export default class Train_1_beebook_deterministic {
     private resrt: BSet<ROUTES>;
     private rsrtbl: BRelation<BLOCKS, ROUTES>;
 
-    constructor() {
+    static {
+        Train_1_beebook_deterministic.nxt = new BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>(new BTuple(new ROUTES(enum_ROUTES.R1), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C)))), new BTuple(new ROUTES(enum_ROUTES.R2), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R3), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R4), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R5), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R6), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R7), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R8), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R9), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))), new BTuple(new ROUTES(enum_ROUTES.R10), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))));
         Train_1_beebook_deterministic.fst = new BRelation<ROUTES, BLOCKS>(new BTuple(new ROUTES(enum_ROUTES.R1), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R2), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R3), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R4), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R5), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R6), new BLOCKS(enum_BLOCKS.C)), new BTuple(new ROUTES(enum_ROUTES.R7), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R8), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R9), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R10), new BLOCKS(enum_BLOCKS.N)));
         Train_1_beebook_deterministic.lst = new BRelation<ROUTES, BLOCKS>(new BTuple(new ROUTES(enum_ROUTES.R1), new BLOCKS(enum_BLOCKS.C)), new BTuple(new ROUTES(enum_ROUTES.R2), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R3), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R4), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R5), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R6), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R7), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R8), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R9), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R10), new BLOCKS(enum_BLOCKS.M)));
-        Train_1_beebook_deterministic.nxt = new BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>(new BTuple(new ROUTES(enum_ROUTES.R1), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C)))), new BTuple(new ROUTES(enum_ROUTES.R2), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R3), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R4), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R5), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R6), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R7), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R8), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R9), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))), new BTuple(new ROUTES(enum_ROUTES.R10), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))));
         let _ic_set_0: BRelation<BLOCKS, ROUTES> = new BRelation<BLOCKS, ROUTES>();
         for(let _ic_b_1 of Train_1_beebook_deterministic._BLOCKS) {
             for(let _ic_r_1 of Train_1_beebook_deterministic._ROUTES) {
@@ -161,42 +162,50 @@ export default class Train_1_beebook_deterministic {
             }
         }
         Train_1_beebook_deterministic.rtbl = _ic_set_0;
-        this.resrt = new BSet();
-        this.resbl = new BSet();
-        this.rsrtbl = new BRelation<BLOCKS, ROUTES>();
-        this.OCC = new BSet();
-        this.TRK = new BRelation<BLOCKS, BLOCKS>();
-        this.frm = new BSet();
-        this.LBT = new BSet();
     }
+
+    constructor() {
+        this.resrt = new BSet<ROUTES>();
+        this.resbl = new BSet<BLOCKS>();
+        this.rsrtbl = new BRelation<BLOCKS, ROUTES>();
+        this.OCC = new BSet<BLOCKS>();
+        this.TRK = new BRelation<BLOCKS, BLOCKS>();
+        this.frm = new BSet<ROUTES>();
+        this.LBT = new BSet<BLOCKS>();
+    }
+
 
      route_reservation(r: ROUTES): void {
         let _ld_resrt: BSet<ROUTES> = this.resrt;
 
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
-        this.resrt = _ld_resrt.union(new BSet(r));
-        this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic.rtbl.rangeRestriction(new BSet(r)));
-        this.resbl = _ld_resbl.union(Train_1_beebook_deterministic.rtbl.inverse().relationImage(new BSet(r)));
+        this.resrt = _ld_resrt.union(new BSet<ROUTES>(r));
+        this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic.rtbl.rangeRestriction(new BSet<ROUTES>(r)));
+        this.resbl = _ld_resbl.union(Train_1_beebook_deterministic.rtbl.inverse().relationImage(new BSet<ROUTES>(r)));
+
     }
 
      route_freeing(r: ROUTES): void {
         let _ld_resrt: BSet<ROUTES> = this.resrt;
 
         let _ld_frm: BSet<ROUTES> = this.frm;
-        this.resrt = _ld_resrt.difference(new BSet(r));
-        this.frm = _ld_frm.difference(new BSet(r));
+        this.resrt = _ld_resrt.difference(new BSet<ROUTES>(r));
+        this.frm = _ld_frm.difference(new BSet<ROUTES>(r));
+
     }
 
      FRONT_MOVE_1(r: ROUTES): void {
         let _ld_OCC: BSet<BLOCKS> = this.OCC;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.union(new BSet(Train_1_beebook_deterministic.fst.functionCall(r)));
-        this.LBT = _ld_LBT.union(new BSet(Train_1_beebook_deterministic.fst.functionCall(r)));
+        this.OCC = _ld_OCC.union(new BSet<BLOCKS>(Train_1_beebook_deterministic.fst.functionCall(r)));
+        this.LBT = _ld_LBT.union(new BSet<BLOCKS>(Train_1_beebook_deterministic.fst.functionCall(r)));
+
     }
 
      FRONT_MOVE_2(b: BLOCKS): void {
-        this.OCC = this.OCC.union(new BSet(this.TRK.functionCall(b)));
+        this.OCC = this.OCC.union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
+
     }
 
      BACK_MOVE_1(b: BLOCKS): void {
@@ -204,10 +213,11 @@ export default class Train_1_beebook_deterministic {
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.difference(new BSet(b));
-        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet(b));
-        this.resbl = _ld_resbl.difference(new BSet(b));
-        this.LBT = _ld_LBT.difference(new BSet(b));
+        this.OCC = _ld_OCC.difference(new BSet<BLOCKS>(b));
+        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
+        this.resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
+        this.LBT = _ld_LBT.difference(new BSet<BLOCKS>(b));
+
     }
 
      BACK_MOVE_2(b: BLOCKS): void {
@@ -215,18 +225,21 @@ export default class Train_1_beebook_deterministic {
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.difference(new BSet(b));
-        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet(b));
-        this.resbl = _ld_resbl.difference(new BSet(b));
-        this.LBT = _ld_LBT.difference(new BSet(b)).union(new BSet(this.TRK.functionCall(b)));
+        this.OCC = _ld_OCC.difference(new BSet<BLOCKS>(b));
+        this.rsrtbl = _ld_rsrtbl.domainSubstraction(new BSet<BLOCKS>(b));
+        this.resbl = _ld_resbl.difference(new BSet<BLOCKS>(b));
+        this.LBT = _ld_LBT.difference(new BSet<BLOCKS>(b)).union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
+
     }
 
      point_positionning(r: ROUTES): void {
         this.TRK = this.TRK.domainSubstraction(Train_1_beebook_deterministic.nxt.functionCall(r).domain()).rangeSubstraction(Train_1_beebook_deterministic.nxt.functionCall(r).range()).union(Train_1_beebook_deterministic.nxt.functionCall(r));
+
     }
 
      route_formation(r: ROUTES): void {
-        this.frm = this.frm.union(new BSet(r));
+        this.frm = this.frm.union(new BSet<ROUTES>(r));
+
     }
 
     _get_fst(): BRelation<ROUTES, BLOCKS> {

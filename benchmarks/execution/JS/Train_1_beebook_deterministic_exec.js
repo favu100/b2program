@@ -112,5 +112,5 @@ export default class Train_1_beebook_deterministic_exec {
         return this.counter;
     }
 }
-let _exec = new Train_1_beebook_deterministic_exec();
-_exec.simulate();
+let exec = new Train_1_beebook_deterministic_exec();
+exec.simulate();

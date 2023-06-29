@@ -9,6 +9,11 @@ export default class Lift {
     dec() {
         this.floor = this.floor.minus(new BInteger(1));
     }
+    getFloor() {
+        let out = null;
+        out = this.floor;
+        return out;
+    }
     _get_floor() {
         return this.floor;
     }

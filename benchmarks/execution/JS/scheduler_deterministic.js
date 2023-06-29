@@ -1,5 +1,6 @@
 import { BBoolean } from './btypes/BBoolean.js';
 import { BSet } from './btypes/BSet.js';
+import { SelectError } from "./btypes/BUtils.js";
 export var enum_PID;
 (function (enum_PID) {
     enum_PID[enum_PID["process1"] = 0] = "process1";
@@ -23,7 +24,7 @@ export class PID {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_PID[this.value].toString();
@@ -42,10 +43,16 @@ export default class scheduler_deterministic {
         if ((new BBoolean(new BBoolean(scheduler_deterministic._PID.elementOf(pp).booleanValue() && this.active.notElementOf(pp).booleanValue()).booleanValue() && this._ready.union(this.waiting).notElementOf(pp).booleanValue())).booleanValue()) {
             this.waiting = this.waiting.union(new BSet(pp));
         }
+        else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
     del(pp) {
         if ((this.waiting.elementOf(pp)).booleanValue()) {
             this.waiting = this.waiting.difference(new BSet(pp));
+        }
+        else {
+            throw new SelectError("Parameters are invalid!");
         }
     }
     ready(rr) {
@@ -58,6 +65,9 @@ export default class scheduler_deterministic {
                 this._ready = this._ready.union(new BSet(rr));
             }
         }
+        else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
     swap(pp) {
         if ((this.active.unequal(new BSet())).booleanValue()) {
@@ -69,6 +79,9 @@ export default class scheduler_deterministic {
                 this.active = new BSet(pp);
                 this._ready = this._ready.difference(new BSet(pp));
             }
+        }
+        else {
+            throw new SelectError("Parameters are invalid!");
         }
     }
     _get_active() {

@@ -1,5 +1,6 @@
 import { BBoolean } from './btypes/BBoolean.js';
 import { BSet } from './btypes/BSet.js';
+import { SelectError } from "./btypes/BUtils.js";
 export var enum_colors;
 (function (enum_colors) {
     enum_colors[enum_colors["red"] = 0] = "red";
@@ -24,7 +25,7 @@ export class colors {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_colors[this.value].toString();
@@ -43,31 +44,59 @@ export default class TrafficLight {
         if ((new BBoolean(this.tl_cars.equal(new colors(enum_colors.red)).booleanValue() && this.tl_peds.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
             this.tl_cars = new colors(enum_colors.redyellow);
         }
+        else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
     cars_y() {
         if ((new BBoolean(this.tl_cars.equal(new colors(enum_colors.green)).booleanValue() && this.tl_peds.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
             this.tl_cars = new colors(enum_colors.yellow);
+        }
+        else {
+            throw new SelectError("Parameters are invalid!");
         }
     }
     cars_g() {
         if ((new BBoolean(this.tl_cars.equal(new colors(enum_colors.redyellow)).booleanValue() && this.tl_peds.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
             this.tl_cars = new colors(enum_colors.green);
         }
+        else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
     cars_r() {
         if ((new BBoolean(this.tl_cars.equal(new colors(enum_colors.yellow)).booleanValue() && this.tl_peds.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
             this.tl_cars = new colors(enum_colors.red);
+        }
+        else {
+            throw new SelectError("Parameters are invalid!");
         }
     }
     peds_r() {
         if ((new BBoolean(this.tl_peds.equal(new colors(enum_colors.green)).booleanValue() && this.tl_cars.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
             this.tl_peds = new colors(enum_colors.red);
         }
+        else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
     peds_g() {
         if ((new BBoolean(this.tl_peds.equal(new colors(enum_colors.red)).booleanValue() && this.tl_cars.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
             this.tl_peds = new colors(enum_colors.green);
         }
+        else {
+            throw new SelectError("Parameters are invalid!");
+        }
+    }
+    getCars() {
+        let out = null;
+        out = this.tl_cars;
+        return out;
+    }
+    getPeds() {
+        let out = null;
+        out = this.tl_peds;
+        return out;
     }
     _get_tl_cars() {
         return this.tl_cars;

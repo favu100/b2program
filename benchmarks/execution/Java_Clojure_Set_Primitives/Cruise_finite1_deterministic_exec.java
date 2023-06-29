@@ -1,9 +1,16 @@
 import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class Cruise_finite1_deterministic_exec {
+
+
 
 
     private Cruise_finite1_deterministic _Cruise_finite1_deterministic = new Cruise_finite1_deterministic();
@@ -17,7 +24,7 @@ public class Cruise_finite1_deterministic_exec {
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(100000))).booleanValue()) {
+        while((counter.less(new BInteger(100))).booleanValue()) {
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
@@ -1382,6 +1389,101 @@ public class Cruise_finite1_deterministic_exec {
             counter = counter.plus(new BInteger(1));
         }
     }
+
+    public BBoolean getCruiseAllowed() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_CruiseAllowed();
+        return out;
+    }
+
+    public BBoolean getCruiseActive() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_CruiseActive();
+        return out;
+    }
+
+    public BBoolean getVehicleAtCruiseSpeed() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed();
+        return out;
+    }
+
+    public BBoolean getVehicleCanKeepSpeed() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_VehicleCanKeepSpeed();
+        return out;
+    }
+
+    public BBoolean getVehicleTryKeepSpeed() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_VehicleTryKeepSpeed();
+        return out;
+    }
+
+    public BBoolean getSpeedAboveMax() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_SpeedAboveMax();
+        return out;
+    }
+
+    public BBoolean getVehicleTryKeepTimeGap() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap();
+        return out;
+    }
+
+    public BInteger getNumberOfSetCruise() {
+        BInteger out = null;
+        out = _Cruise_finite1_deterministic._get_NumberOfSetCruise();
+        return out;
+    }
+
+    public BBoolean getCruiseSpeedAtMax() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_CruiseSpeedAtMax();
+        return out;
+    }
+
+    public Cruise_finite1_deterministic.ODset getObstacleDistance() {
+        Cruise_finite1_deterministic.ODset out = null;
+        out = _Cruise_finite1_deterministic._get_ObstacleDistance();
+        return out;
+    }
+
+    public BBoolean getObstacleStatusJustChanged() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_ObstacleStatusJustChanged();
+        return out;
+    }
+
+    public BBoolean getCCInitialisationInProgress() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_CCInitialisationInProgress();
+        return out;
+    }
+
+    public BBoolean getCruiseSpeedChangeInProgress() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress();
+        return out;
+    }
+
+    public BBoolean getObstaclePresent() {
+        BBoolean out = null;
+        out = _Cruise_finite1_deterministic._get_ObstaclePresent();
+        return out;
+    }
+
+    public Cruise_finite1_deterministic.RSset getObstacleRelativeSpeed() {
+        Cruise_finite1_deterministic.RSset out = null;
+        out = _Cruise_finite1_deterministic._get_ObstacleRelativeSpeed();
+        return out;
+    }
+
+    public BInteger _get_counter() {
+        return counter;
+    }
+
 
     public static void main(String[] args) {
         Cruise_finite1_deterministic_exec exec = new Cruise_finite1_deterministic_exec();

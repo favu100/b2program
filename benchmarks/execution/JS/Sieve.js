@@ -3,9 +3,9 @@ import { BBoolean } from './btypes/BBoolean.js';
 import { BSet } from './btypes/BSet.js';
 export default class Sieve {
     constructor() {
-        this.numbers = BSet.interval(new BInteger(2), new BInteger(2000000));
+        this.numbers = BSet.interval(new BInteger(2), new BInteger(1000000));
         this.cur = new BInteger(2);
-        this.limit = new BInteger(2000000);
+        this.limit = new BInteger(1000000);
     }
     ComputeNumberOfPrimes() {
         let res = null;
@@ -37,4 +37,4 @@ export default class Sieve {
     }
 }
 let sieve = new Sieve();
-console.log(sieve.ComputeNumberOfPrimes());
+console.log(sieve.ComputeNumberOfPrimes().toString());

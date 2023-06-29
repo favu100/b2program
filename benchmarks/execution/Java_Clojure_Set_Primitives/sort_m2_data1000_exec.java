@@ -1,8 +1,15 @@
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
+import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class sort_m2_data1000_exec {
+
+
 
 
     private sort_m2_data1000 _sort_m2_data1000 = new sort_m2_data1000();
@@ -18,9 +25,8 @@ public class sort_m2_data1000_exec {
     }
 
     public void simulate() {
-        while((sorted.less(new BInteger(500))).booleanValue()) {
-            counter = new BInteger(0);
-            while((counter.less(new BInteger(999).minus(new BInteger(2).multiply(sorted)))).booleanValue()) {
+        while((sorted.less(new BInteger(1000))).booleanValue()) {
+            while((counter.less(new BInteger(1000).minus(sorted))).booleanValue()) {
                 this._sort_m2_data1000.prog2();
                 counter = counter.plus(new BInteger(1));
             }
@@ -32,17 +38,17 @@ public class sort_m2_data1000_exec {
             this._sort_m2_data1000.progress();
             sorted = sorted.plus(new BInteger(1));
         }
-        while((sorted.less(new BInteger(999))).booleanValue()) {
-            counter = new BInteger(0);
-            while((counter.less(new BInteger(999).minus(sorted))).booleanValue()) {
-                this._sort_m2_data1000.prog1();
-                counter = counter.plus(new BInteger(1));
-            }
-            this._sort_m2_data1000.progress();
-            sorted = sorted.plus(new BInteger(1));
-        }
         this._sort_m2_data1000.final_evt();
     }
+
+    public BInteger _get_counter() {
+        return counter;
+    }
+
+    public BInteger _get_sorted() {
+        return sorted;
+    }
+
 
     public static void main(String[] args) {
         sort_m2_data1000_exec exec = new sort_m2_data1000_exec();

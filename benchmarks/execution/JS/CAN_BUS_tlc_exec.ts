@@ -2,6 +2,7 @@ import {BInteger} from './btypes/BInteger.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import CAN_BUS_tlc from './CAN_BUS_tlc.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 
 
@@ -16,6 +17,7 @@ export default class CAN_BUS_tlc_exec {
     constructor() {
         this.counter = new BInteger(0);
     }
+
 
      simulate(): void {
         this._CAN_BUS_tlc.Update(new BInteger(0));
@@ -4523,7 +4525,7 @@ export default class CAN_BUS_tlc_exec {
         this._CAN_BUS_tlc.T1Wait(new BInteger(2));
         this._CAN_BUS_tlc.T3Wait();
         this._CAN_BUS_tlc.Update(new BInteger(4));
-        while((this.counter.less(new BInteger(300000))).booleanValue()) {
+        while((this.counter.less(new BInteger(10000))).booleanValue()) {
             this._CAN_BUS_tlc.T3Evaluate();
             this._CAN_BUS_tlc.T3Read(new BInteger(4),new BInteger(0));
             this._CAN_BUS_tlc.T3Poll();
@@ -4585,5 +4587,5 @@ export default class CAN_BUS_tlc_exec {
 
 }
 
-let _exec = new CAN_BUS_tlc_exec();
-_exec.simulate();
+let exec: CAN_BUS_tlc_exec = new CAN_BUS_tlc_exec();
+exec.simulate();

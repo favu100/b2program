@@ -2,6 +2,7 @@ import {BInteger} from './btypes/BInteger.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import Lift from './Lift.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 
 
@@ -17,8 +18,9 @@ export default class LiftExec {
         this.counter = new BInteger(0);
     }
 
+
      simulate(): void {
-        while((this.counter.less(new BInteger(10000000))).booleanValue()) {
+        while((this.counter.less(new BInteger(1500000))).booleanValue()) {
             let i: BInteger = null;
             i = new BInteger(0);
             while((i.less(new BInteger(100))).booleanValue()) {
@@ -35,6 +37,12 @@ export default class LiftExec {
         }
     }
 
+     getCounter(): BInteger {
+        let out: BInteger = null;
+        out = this.counter;
+        return out;
+    }
+
     _get_counter(): BInteger {
         return this.counter;
     }
@@ -42,6 +50,3 @@ export default class LiftExec {
 
 }
 
-let lift = new LiftExec()
-lift.simulate()
-console.log(lift._get_counter())

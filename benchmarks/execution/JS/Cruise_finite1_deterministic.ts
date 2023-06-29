@@ -3,6 +3,7 @@ import {BBoolean} from './btypes/BBoolean.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 export enum enum_RSset {
     RSnone,
@@ -34,7 +35,7 @@ export class RSset implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -78,7 +79,7 @@ export class ODset implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -97,8 +98,8 @@ export default class Cruise_finite1_deterministic {
 
 
 
-    private static _RSset: BSet<RSset> = new BSet(new RSset(enum_RSset.RSnone), new RSset(enum_RSset.RSpos), new RSset(enum_RSset.RSneg), new RSset(enum_RSset.RSequal));
-    private static _ODset: BSet<ODset> = new BSet(new ODset(enum_ODset.ODnone), new ODset(enum_ODset.ODclose), new ODset(enum_ODset.ODveryclose));
+    private static _RSset: BSet<RSset> = new BSet<RSset>(new RSset(enum_RSset.RSnone), new RSset(enum_RSset.RSpos), new RSset(enum_RSset.RSneg), new RSset(enum_RSset.RSequal));
+    private static _ODset: BSet<ODset> = new BSet<ODset>(new ODset(enum_ODset.ODnone), new ODset(enum_ODset.ODclose), new ODset(enum_ODset.ODveryclose));
 
     private CruiseAllowed: BBoolean;
     private CruiseActive: BBoolean;
@@ -134,6 +135,7 @@ export default class Cruise_finite1_deterministic {
         this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSnone);
     }
 
+
      CruiseBecomesNotAllowed(): void {
         if((this.CruiseAllowed.equal(new BBoolean(true))).booleanValue()) {
             this.CruiseAllowed = new BBoolean(false);
@@ -148,13 +150,17 @@ export default class Cruise_finite1_deterministic {
             this.ObstacleStatusJustChanged = new BBoolean(false);
             this.CCInitialisationInProgress = new BBoolean(false);
             this.CruiseSpeedChangeInProgress = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      CruiseBecomesAllowed(): void {
         if((this.CruiseAllowed.equal(new BBoolean(false))).booleanValue()) {
             this.CruiseAllowed = new BBoolean(true);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      SetCruiseSpeed(vcks: BBoolean, csam: BBoolean): void {
@@ -178,20 +184,28 @@ export default class Cruise_finite1_deterministic {
             if((_ld_NumberOfSetCruise.less(new BInteger(1))).booleanValue()) {
                 this.NumberOfSetCruise = _ld_NumberOfSetCruise.plus(new BInteger(1));
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
+
     }
 
      CCInitialisationFinished(vtks: BBoolean, vtktg: BBoolean): void {
         if((this.CCInitialisationInProgress.equal(new BBoolean(true))).booleanValue()) {
             this.VehicleTryKeepTimeGap = vtktg;
             this.VehicleTryKeepSpeed = vtks;
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
+
     }
 
      CCInitialisationDelayFinished(): void {
         if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue() && new BBoolean(new BBoolean(new BBoolean(this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue())).booleanValue()) {
             this.CCInitialisationInProgress = new BBoolean(true);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      CruiseSpeedChangeFinished(vtks: BBoolean, vtktg: BBoolean): void {
@@ -199,14 +213,20 @@ export default class Cruise_finite1_deterministic {
             if((this.CruiseSpeedChangeInProgress.equal(new BBoolean(true))).booleanValue()) {
                 this.VehicleTryKeepTimeGap = vtktg;
                 this.VehicleTryKeepSpeed = vtks;
-            } 
-        } 
+            } else {
+                throw new SelectError("Parameters are invalid!");
+            }
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      CruiseSpeedChangeDelayFinished(): void {
         if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue() && new BBoolean(new BBoolean(new BBoolean(this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue())).booleanValue()) {
             this.CruiseSpeedChangeInProgress = new BBoolean(true);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      CruiseOff(): void {
@@ -222,38 +242,50 @@ export default class Cruise_finite1_deterministic {
             this.ObstacleStatusJustChanged = new BBoolean(false);
             this.CCInitialisationInProgress = new BBoolean(false);
             this.CruiseSpeedChangeInProgress = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ExternalForcesBecomesExtreme(): void {
         if((this.VehicleCanKeepSpeed.equal(new BBoolean(true))).booleanValue()) {
             this.VehicleCanKeepSpeed = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ExternalForcesBecomesNormal(): void {
         if((new BBoolean(this.CruiseActive.equal(new BBoolean(true)).booleanValue() && this.VehicleCanKeepSpeed.equal(new BBoolean(false)).booleanValue())).booleanValue()) {
             this.VehicleCanKeepSpeed = new BBoolean(true);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      VehicleLeavesCruiseSpeed(): void {
         if((new BBoolean(new BBoolean(this.VehicleAtCruiseSpeed.equal(new BBoolean(true)).booleanValue() && new BBoolean(this.VehicleCanKeepSpeed.equal(new BBoolean(false)).booleanValue() && this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(false)).booleanValue())).booleanValue()) {
             this.VehicleAtCruiseSpeed = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      VehicleReachesCruiseSpeed(): void {
         if((new BBoolean(new BBoolean(this.CruiseActive.equal(new BBoolean(true)).booleanValue() && this.VehicleAtCruiseSpeed.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.SpeedAboveMax.equal(new BBoolean(false)).booleanValue())).booleanValue()) {
             this.VehicleAtCruiseSpeed = new BBoolean(true);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      VehicleExceedsMaxCruiseSpeed(): void {
         if((new BBoolean(this.SpeedAboveMax.equal(new BBoolean(false)).booleanValue() && new BBoolean(new BBoolean(this.CruiseActive.equal(new BBoolean(false)).booleanValue() || this.VehicleCanKeepSpeed.equal(new BBoolean(false)).booleanValue()).booleanValue() || new BBoolean(new BBoolean(this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).not().booleanValue()).booleanValue())).booleanValue()) {
             this.SpeedAboveMax = new BBoolean(true);
             this.VehicleAtCruiseSpeed = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      VehicleFallsBelowMaxCruiseSpeed(): void {
@@ -262,14 +294,18 @@ export default class Cruise_finite1_deterministic {
             if((new BBoolean(this.CruiseActive.equal(new BBoolean(true)).booleanValue() && this.CruiseSpeedAtMax.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
                 this.VehicleAtCruiseSpeed = new BBoolean(true);
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleDistanceBecomesVeryClose(): void {
         if((new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue())).booleanValue()) {
             this.ObstacleDistance = new ODset(enum_ODset.ODveryclose);
             this.ObstacleStatusJustChanged = new BBoolean(true);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleDistanceBecomesClose(): void {
@@ -279,7 +315,9 @@ export default class Cruise_finite1_deterministic {
             if((this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos))).booleanValue()) {
                 this.VehicleTryKeepTimeGap = new BBoolean(false);
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleDistanceBecomesBig(): void {
@@ -287,7 +325,9 @@ export default class Cruise_finite1_deterministic {
             this.ObstacleStatusJustChanged = new BBoolean(true);
             this.ObstacleDistance = new ODset(enum_ODset.ODnone);
             this.VehicleTryKeepTimeGap = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleStartsTravelFaster(): void {
@@ -299,7 +339,9 @@ export default class Cruise_finite1_deterministic {
             if((this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose))).booleanValue()) {
                 this.VehicleTryKeepTimeGap = new BBoolean(false);
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleStopsTravelFaster(): void {
@@ -308,7 +350,9 @@ export default class Cruise_finite1_deterministic {
             if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
                 this.ObstacleStatusJustChanged = new BBoolean(true);
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleStartsTravelSlower(): void {
@@ -317,7 +361,9 @@ export default class Cruise_finite1_deterministic {
             if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
                 this.ObstacleStatusJustChanged = new BBoolean(true);
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleStopsTravelSlower(): void {
@@ -326,7 +372,9 @@ export default class Cruise_finite1_deterministic {
             if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
                 this.ObstacleStatusJustChanged = new BBoolean(true);
             } 
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleAppearsWhenCruiseActive(ors: RSset, od: ODset): void {
@@ -335,7 +383,10 @@ export default class Cruise_finite1_deterministic {
             this.ObstacleStatusJustChanged = new BBoolean(true);
             this.ObstacleRelativeSpeed = ors;
             this.ObstacleDistance = od;
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
+
     }
 
      ObstacleAppearsWhenCruiseInactive(ors: RSset): void {
@@ -343,7 +394,10 @@ export default class Cruise_finite1_deterministic {
             this.ObstaclePresent = new BBoolean(true);
             this.ObstacleRelativeSpeed = ors;
             this.ObstacleDistance = new ODset(enum_ODset.ODnone);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
+
     }
 
      ObstacleDisappears(): void {
@@ -355,7 +409,9 @@ export default class Cruise_finite1_deterministic {
             } 
             this.ObstacleDistance = new ODset(enum_ODset.ODnone);
             this.VehicleTryKeepTimeGap = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      VehicleManageObstacle(vtks: BBoolean, vtktg: BBoolean): void {
@@ -363,14 +419,20 @@ export default class Cruise_finite1_deterministic {
             if((this.ObstacleStatusJustChanged.equal(new BBoolean(true))).booleanValue()) {
                 this.VehicleTryKeepTimeGap = vtktg;
                 this.VehicleTryKeepSpeed = vtks;
-            } 
-        } 
+            } else {
+                throw new SelectError("Parameters are invalid!");
+            }
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
      ObstacleBecomesOld(): void {
         if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue() && new BBoolean(new BBoolean(new BBoolean(this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepTimeGap.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue())).booleanValue()) {
             this.ObstacleStatusJustChanged = new BBoolean(false);
-        } 
+        } else {
+            throw new SelectError("Parameters are invalid!");
+        }
     }
 
     _get_CruiseAllowed(): BBoolean {

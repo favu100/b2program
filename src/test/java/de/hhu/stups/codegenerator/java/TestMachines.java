@@ -62,13 +62,38 @@ public class TestMachines extends TestJava {
     }
 
     @Test
-    public void testTrafficLight() throws Exception {
-        testJava("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
+    public void testSortExec() throws Exception {
+        testJava("sort_m2_data1000_exec", "sort_m2_data1000_exec", "sort_m2_data1000_execAddition.stjava", false);
+    }
+
+    @Test
+    public void testSchedulerExec() throws Exception {
+        testJava("scheduler_deterministic_exec", "scheduler_deterministic_exec", "scheduler_deterministic_execAddition.stjava", false);
+    }
+
+    @Test
+    public void testTrainExec() throws Exception {
+        testJava("Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_execAddition.stjava", false);
+    }
+
+    @Test
+    public void testCruiseExec() throws Exception {
+        testJava("Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_execAddition.stjava", false);
+    }
+
+    @Test
+    public void testCANBUSExec() throws Exception {
+        testJava("CAN_BUS_tlc_exec", "CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.stjava", false);
     }
 
     @Test
     public void testTrafficLightMC() throws Exception {
         testJavaMC("TrafficLight_MC");
+    }
+
+    @Test
+    public void testTrafficLight() throws Exception {
+        testJava("TrafficLight", "TrafficLight", "TrafficLightAddition.stjava", true);
     }
 
     @Test
@@ -136,10 +161,6 @@ public class TestMachines extends TestJava {
         testJavaMC("scheduler_deterministic_MC");
     }
 
-    @Test
-    public void testSchedulerDeterministicExec() throws Exception {
-        testJava("scheduler_deterministic_exec");
-    }
 
     @Test
     public void testCanBusTLC() throws Exception {

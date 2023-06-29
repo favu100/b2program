@@ -2,9 +2,14 @@ import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
 
+
 public class Sieve {
+
 
 
 
@@ -16,9 +21,9 @@ public class Sieve {
     private BInteger limit;
 
     public Sieve() {
-        numbers = BSet.interval(new BInteger(2),new BInteger(2000000));
+        numbers = BSet.interval(new BInteger(2), new BInteger(10000));
         cur = new BInteger(2);
-        limit = new BInteger(2000000);
+        limit = new BInteger(10000);
     }
 
     public BInteger ComputeNumberOfPrimes() {
@@ -35,16 +40,29 @@ public class Sieve {
                 }
                 numbers = numbers.difference(set);
             } 
+
             cur = cur.plus(new BInteger(1));
         }
         res = numbers.card();
         return res;
     }
 
-    public static void main(String[] args) {
-        Sieve sieve = new Sieve();
-        sieve.ComputeNumberOfPrimes();
+    public BSet<BInteger> _get_numbers() {
+        return numbers;
     }
 
+    public BInteger _get_cur() {
+        return cur;
+    }
+
+    public BInteger _get_limit() {
+        return limit;
+    }
+
+
+    public static void main(String[] args) {
+        Sieve sieve = new Sieve();
+        System.out.println(sieve.ComputeNumberOfPrimes());
+    }
 
 }

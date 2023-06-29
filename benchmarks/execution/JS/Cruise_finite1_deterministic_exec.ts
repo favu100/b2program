@@ -7,6 +7,7 @@ import {enum_RSset} from "./Cruise_finite1_deterministic.js"
 import {RSset} from "./Cruise_finite1_deterministic.js"
 import Cruise_finite1_deterministic from './Cruise_finite1_deterministic.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 
 
@@ -22,8 +23,9 @@ export default class Cruise_finite1_deterministic_exec {
         this.counter = new BInteger(0);
     }
 
+
      simulate(): void {
-        while((this.counter.less(new BInteger(100000))).booleanValue()) {
+        while((this.counter.less(new BInteger(100))).booleanValue()) {
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
@@ -1389,6 +1391,96 @@ export default class Cruise_finite1_deterministic_exec {
         }
     }
 
+     getCruiseAllowed(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseAllowed();
+        return out;
+    }
+
+     getCruiseActive(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseActive();
+        return out;
+    }
+
+     getVehicleAtCruiseSpeed(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed();
+        return out;
+    }
+
+     getVehicleCanKeepSpeed(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleCanKeepSpeed();
+        return out;
+    }
+
+     getVehicleTryKeepSpeed(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleTryKeepSpeed();
+        return out;
+    }
+
+     getSpeedAboveMax(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_SpeedAboveMax();
+        return out;
+    }
+
+     getVehicleTryKeepTimeGap(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap();
+        return out;
+    }
+
+     getNumberOfSetCruise(): BInteger {
+        let out: BInteger = null;
+        out = this._Cruise_finite1_deterministic._get_NumberOfSetCruise();
+        return out;
+    }
+
+     getCruiseSpeedAtMax(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseSpeedAtMax();
+        return out;
+    }
+
+     getObstacleDistance(): ODset {
+        let out: ODset = null;
+        out = this._Cruise_finite1_deterministic._get_ObstacleDistance();
+        return out;
+    }
+
+     getObstacleStatusJustChanged(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_ObstacleStatusJustChanged();
+        return out;
+    }
+
+     getCCInitialisationInProgress(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_CCInitialisationInProgress();
+        return out;
+    }
+
+     getCruiseSpeedChangeInProgress(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress();
+        return out;
+    }
+
+     getObstaclePresent(): BBoolean {
+        let out: BBoolean = null;
+        out = this._Cruise_finite1_deterministic._get_ObstaclePresent();
+        return out;
+    }
+
+     getObstacleRelativeSpeed(): RSset {
+        let out: RSset = null;
+        out = this._Cruise_finite1_deterministic._get_ObstacleRelativeSpeed();
+        return out;
+    }
+
     _get_counter(): BInteger {
         return this.counter;
     }
@@ -1396,5 +1488,5 @@ export default class Cruise_finite1_deterministic_exec {
 
 }
 
-let _exec = new Cruise_finite1_deterministic_exec()
-_exec.simulate()
+let exec: Cruise_finite1_deterministic_exec = new Cruise_finite1_deterministic_exec();
+exec.simulate();

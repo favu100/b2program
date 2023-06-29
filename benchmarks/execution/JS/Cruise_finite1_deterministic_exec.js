@@ -11,7 +11,7 @@ export default class Cruise_finite1_deterministic_exec {
         this.counter = new BInteger(0);
     }
     simulate() {
-        while ((this.counter.less(new BInteger(100000))).booleanValue()) {
+        while ((this.counter.less(new BInteger(100))).booleanValue()) {
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
@@ -1376,9 +1376,84 @@ export default class Cruise_finite1_deterministic_exec {
             this.counter = this.counter.plus(new BInteger(1));
         }
     }
+    getCruiseAllowed() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseAllowed();
+        return out;
+    }
+    getCruiseActive() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseActive();
+        return out;
+    }
+    getVehicleAtCruiseSpeed() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed();
+        return out;
+    }
+    getVehicleCanKeepSpeed() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleCanKeepSpeed();
+        return out;
+    }
+    getVehicleTryKeepSpeed() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleTryKeepSpeed();
+        return out;
+    }
+    getSpeedAboveMax() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_SpeedAboveMax();
+        return out;
+    }
+    getVehicleTryKeepTimeGap() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap();
+        return out;
+    }
+    getNumberOfSetCruise() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_NumberOfSetCruise();
+        return out;
+    }
+    getCruiseSpeedAtMax() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseSpeedAtMax();
+        return out;
+    }
+    getObstacleDistance() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_ObstacleDistance();
+        return out;
+    }
+    getObstacleStatusJustChanged() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_ObstacleStatusJustChanged();
+        return out;
+    }
+    getCCInitialisationInProgress() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_CCInitialisationInProgress();
+        return out;
+    }
+    getCruiseSpeedChangeInProgress() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress();
+        return out;
+    }
+    getObstaclePresent() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_ObstaclePresent();
+        return out;
+    }
+    getObstacleRelativeSpeed() {
+        let out = null;
+        out = this._Cruise_finite1_deterministic._get_ObstacleRelativeSpeed();
+        return out;
+    }
     _get_counter() {
         return this.counter;
     }
 }
-let _exec = new Cruise_finite1_deterministic_exec();
-_exec.simulate();
+let exec = new Cruise_finite1_deterministic_exec();
+exec.simulate();

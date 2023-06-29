@@ -8,7 +8,7 @@ machine(forModelChecking, forVisualisation, imports, includedMachines, machine, 
 <enum_imports; separator="\n">
 <includedMachines; separator="\n">
 import {BUtils} from "./btypes/BUtils.js";
-<if(forVisualisation)>import {SelectError} from "./btypes/BUtils.js";<endif>
+import {SelectError} from "./btypes/BUtils.js";
 <if(forModelChecking)>
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";

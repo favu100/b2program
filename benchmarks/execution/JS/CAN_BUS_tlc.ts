@@ -5,6 +5,7 @@ import {BRelation} from './btypes/BRelation.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 
 export enum enum_T1state {
     T1_EN,
@@ -36,7 +37,7 @@ export class T1state implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -80,7 +81,7 @@ export class T2mode implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -127,7 +128,7 @@ export class T2state implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -177,7 +178,7 @@ export class T3state implements BObject{
     }
 
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
 
     toString() {
@@ -200,10 +201,10 @@ export default class CAN_BUS_tlc {
 
     private static NATSET: BSet<BInteger>;
 
-    private static _T1state: BSet<T1state> = new BSet(new T1state(enum_T1state.T1_EN), new T1state(enum_T1state.T1_CALC), new T1state(enum_T1state.T1_SEND), new T1state(enum_T1state.T1_WAIT));
-    private static _T2mode: BSet<T2mode> = new BSet(new T2mode(enum_T2mode.T2MODE_SENSE), new T2mode(enum_T2mode.T2MODE_TRANSMIT), new T2mode(enum_T2mode.T2MODE_RELEASE));
-    private static _T2state: BSet<T2state> = new BSet(new T2state(enum_T2state.T2_EN), new T2state(enum_T2state.T2_RCV), new T2state(enum_T2state.T2_PROC), new T2state(enum_T2state.T2_CALC), new T2state(enum_T2state.T2_SEND), new T2state(enum_T2state.T2_WAIT), new T2state(enum_T2state.T2_RELEASE));
-    private static _T3state: BSet<T3state> = new BSet(new T3state(enum_T3state.T3_READY), new T3state(enum_T3state.T3_WRITE), new T3state(enum_T3state.T3_RELEASE), new T3state(enum_T3state.T3_READ), new T3state(enum_T3state.T3_PROC), new T3state(enum_T3state.T3_WAIT));
+    private static _T1state: BSet<T1state> = new BSet<T1state>(new T1state(enum_T1state.T1_EN), new T1state(enum_T1state.T1_CALC), new T1state(enum_T1state.T1_SEND), new T1state(enum_T1state.T1_WAIT));
+    private static _T2mode: BSet<T2mode> = new BSet<T2mode>(new T2mode(enum_T2mode.T2MODE_SENSE), new T2mode(enum_T2mode.T2MODE_TRANSMIT), new T2mode(enum_T2mode.T2MODE_RELEASE));
+    private static _T2state: BSet<T2state> = new BSet<T2state>(new T2state(enum_T2state.T2_EN), new T2state(enum_T2state.T2_RCV), new T2state(enum_T2state.T2_PROC), new T2state(enum_T2state.T2_CALC), new T2state(enum_T2state.T2_SEND), new T2state(enum_T2state.T2_WAIT), new T2state(enum_T2state.T2_RELEASE));
+    private static _T3state: BSet<T3state> = new BSet<T3state>(new T3state(enum_T3state.T3_READY), new T3state(enum_T3state.T3_WRITE), new T3state(enum_T3state.T3_RELEASE), new T3state(enum_T3state.T3_READ), new T3state(enum_T3state.T3_PROC), new T3state(enum_T3state.T3_WAIT));
 
     private BUSpriority: BInteger;
     private BUSvalue: BInteger;
@@ -224,8 +225,11 @@ export default class CAN_BUS_tlc {
     private T3_readvalue: BInteger;
     private T3_state: T3state;
 
-    constructor() {
+    static {
         CAN_BUS_tlc.NATSET = BSet.interval(new BInteger(0), new BInteger(5));
+    }
+
+    constructor() {
         this.T2v = new BInteger(0);
         this.T3_evaluated = new BBoolean(true);
         this.T3_enabled = new BBoolean(true);
@@ -246,36 +250,43 @@ export default class CAN_BUS_tlc {
         this.T2_mode = new T2mode(enum_T2mode.T2MODE_SENSE);
     }
 
+
      T1Evaluate(): void {
         this.T1_timer = new BInteger(0);
         this.T1_state = new T1state(enum_T1state.T1_CALC);
+
     }
 
      T1Calculate(p: BInteger): void {
         this.T1_writevalue = p;
         this.T1_state = new T1state(enum_T1state.T1_SEND);
+
     }
 
      T1SendResult(ppriority: BInteger, pv: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple(ppriority, pv)));
         this.T1_state = new T1state(enum_T1state.T1_WAIT);
+
     }
 
      T1Wait(pt: BInteger): void {
         this.T1_timer = pt;
         this.T1_state = new T1state(enum_T1state.T1_EN);
+
     }
 
      T2Evaluate(): void {
         this.T2_timer = new BInteger(0);
         this.T2_state = new T2state(enum_T2state.T2_RCV);
+
     }
 
      T2ReadBus(ppriority: BInteger, pv: BInteger): void {
         this.T2_readvalue = pv;
         this.T2_readpriority = ppriority;
         this.T2_state = new T2state(enum_T2state.T2_PROC);
+
     }
 
      T2Reset(): void {
@@ -284,75 +295,89 @@ export default class CAN_BUS_tlc {
         this.T2v = new BInteger(0);
         this.T2_state = new T2state(enum_T2state.T2_SEND);
         this.T2_mode = new T2mode(enum_T2mode.T2MODE_TRANSMIT);
+
     }
 
      T2Complete(): void {
         this.T2_state = new T2state(enum_T2state.T2_RELEASE);
         this.T2_mode = new T2mode(enum_T2mode.T2MODE_SENSE);
+
     }
 
      T2ReleaseBus(ppriority: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
-        this.BUSwrite = _ld_BUSwrite.domainSubstraction(new BSet(ppriority));
+        this.BUSwrite = _ld_BUSwrite.domainSubstraction(new BSet<BInteger>(ppriority));
         this.T2_state = new T2state(enum_T2state.T2_WAIT);
+
     }
 
      T2Calculate(): void {
         this.T2v = this.T2_readvalue;
         this.T2_state = new T2state(enum_T2state.T2_WAIT);
+
     }
 
      T2WriteBus(ppriority: BInteger, pv: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple(ppriority, pv)));
         this.T2_state = new T2state(enum_T2state.T2_WAIT);
+
     }
 
      T2Wait(pt: BInteger): void {
         this.T2_timer = pt;
         this.T2_state = new T2state(enum_T2state.T2_EN);
+
     }
 
      T3Initiate(): void {
         this.T3_state = new T3state(enum_T3state.T3_WRITE);
         this.T3_enabled = new BBoolean(false);
+
     }
 
      T3Evaluate(): void {
         this.T3_state = new T3state(enum_T3state.T3_READ);
+
     }
 
      T3writebus(ppriority: BInteger, pv: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple(ppriority, pv)));
         this.T3_state = new T3state(enum_T3state.T3_WAIT);
+
     }
 
      T3Read(ppriority: BInteger, pv: BInteger): void {
         this.T3_readvalue = pv;
         this.T3_readpriority = ppriority;
         this.T3_state = new T3state(enum_T3state.T3_PROC);
+
     }
 
      T3Poll(): void {
         this.T3_state = new T3state(enum_T3state.T3_WAIT);
+
     }
 
      T3ReleaseBus(ppriority: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
-        this.BUSwrite = _ld_BUSwrite.domainSubstraction(new BSet(ppriority));
+        this.BUSwrite = _ld_BUSwrite.domainSubstraction(new BSet<BInteger>(ppriority));
         this.T3_state = new T3state(enum_T3state.T3_RELEASE);
+
     }
 
      T3Wait(): void {
         this.T3_state = new T3state(enum_T3state.T3_READY);
         this.T3_evaluated = new BBoolean(true);
+
     }
 
      T3ReEnableWait(): void {
         this.T3_state = new T3state(enum_T3state.T3_READY);
         this.T3_evaluated = new BBoolean(true);
         this.T3_enabled = new BBoolean(true);
+
     }
 
      Update(pmax: BInteger): void {
@@ -363,6 +388,7 @@ export default class CAN_BUS_tlc {
         this.T1_timer = _ld_T1_timer.minus(new BInteger(1));
         this.T2_timer = _ld_T2_timer.minus(new BInteger(1));
         this.T3_evaluated = new BBoolean(false);
+
     }
 
     _get_NATSET(): BSet<BInteger> {

@@ -27,7 +27,7 @@ export class T1state {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_T1state[this.value].toString();
@@ -60,7 +60,7 @@ export class T2mode {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_T2mode[this.value].toString();
@@ -96,7 +96,7 @@ export class T2state {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_T2state[this.value].toString();
@@ -135,7 +135,7 @@ export class T3state {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_T3state[this.value].toString();
@@ -149,7 +149,6 @@ export class T3state {
 }
 export default class CAN_BUS_tlc {
     constructor() {
-        CAN_BUS_tlc.NATSET = BSet.interval(new BInteger(0), new BInteger(5));
         this.T2v = new BInteger(0);
         this.T3_evaluated = new BBoolean(true);
         this.T3_enabled = new BBoolean(true);
@@ -341,3 +340,6 @@ CAN_BUS_tlc._T1state = new BSet(new T1state(enum_T1state.T1_EN), new T1state(enu
 CAN_BUS_tlc._T2mode = new BSet(new T2mode(enum_T2mode.T2MODE_SENSE), new T2mode(enum_T2mode.T2MODE_TRANSMIT), new T2mode(enum_T2mode.T2MODE_RELEASE));
 CAN_BUS_tlc._T2state = new BSet(new T2state(enum_T2state.T2_EN), new T2state(enum_T2state.T2_RCV), new T2state(enum_T2state.T2_PROC), new T2state(enum_T2state.T2_CALC), new T2state(enum_T2state.T2_SEND), new T2state(enum_T2state.T2_WAIT), new T2state(enum_T2state.T2_RELEASE));
 CAN_BUS_tlc._T3state = new BSet(new T3state(enum_T3state.T3_READY), new T3state(enum_T3state.T3_WRITE), new T3state(enum_T3state.T3_RELEASE), new T3state(enum_T3state.T3_READ), new T3state(enum_T3state.T3_PROC), new T3state(enum_T3state.T3_WAIT));
+(() => {
+    CAN_BUS_tlc.NATSET = BSet.interval(new BInteger(0), new BInteger(5));
+})();

@@ -4,13 +4,18 @@ import de.hhu.stups.btypes.BTuple;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 import java.util.Objects;
+import java.util.Arrays;
+import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
+import de.hhu.stups.btypes.StateNotReachableError;
 import de.hhu.stups.btypes.BUtils;
+
 
 public class sort_m2_data1000 {
 
 
-    private final BRelation<BInteger, BInteger> f;
-    private final BInteger n;
+
+    private static BInteger n;
+    private static BRelation<BInteger, BInteger> f;
 
 
 
@@ -20,14 +25,17 @@ public class sort_m2_data1000 {
     private BInteger l;
     private BRelation<BInteger, BInteger> g;
 
-    public sort_m2_data1000() {
+    static {
+        n = new BInteger(1000);
         BRelation<BInteger, BInteger> _ic_set_0 = new BRelation<BInteger, BInteger>();
-        for(BInteger _ic_i : BSet.interval(new BInteger(1),new BInteger(1000))) {
-            _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple<>(_ic_i, new BInteger(1500).minus(_ic_i))));
+        for(BInteger _ic_i_1 : BSet.interval(new BInteger(1), n)) {
+            _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple<>(_ic_i_1, new BInteger(15000).minus(_ic_i_1))));
 
         }
         f = _ic_set_0;
-        n = new BInteger(1000);
+    }
+
+    public sort_m2_data1000() {
         g = f;
         k = new BInteger(1);
         l = new BInteger(1);
@@ -43,7 +51,10 @@ public class sort_m2_data1000 {
             k = _ld_k.plus(new BInteger(1));
             j = _ld_k.plus(new BInteger(1));
             l = _ld_k.plus(new BInteger(1));
+        } else {
+            throw new StateNotReachableError("State is not reachable.");
         }
+
     }
 
     public void prog1() {
@@ -52,7 +63,10 @@ public class sort_m2_data1000 {
             BInteger _ld_l = l;
             l = _ld_l;
             j = _ld_j.plus(new BInteger(1));
+        } else {
+            throw new StateNotReachableError("State is not reachable.");
         }
+
     }
 
     public void prog2() {
@@ -60,12 +74,42 @@ public class sort_m2_data1000 {
             BInteger _ld_j = j;
             j = _ld_j.plus(new BInteger(1));
             l = _ld_j.plus(new BInteger(1));
+        } else {
+            throw new StateNotReachableError("State is not reachable.");
         }
+
     }
 
     public void final_evt() {
         if((k.equal(n)).booleanValue()) {
+        } else {
+            throw new StateNotReachableError("State is not reachable.");
         }
+
+    }
+
+    public BInteger _get_n() {
+        return n;
+    }
+
+    public BRelation<BInteger, BInteger> _get_f() {
+        return f;
+    }
+
+    public BInteger _get_j() {
+        return j;
+    }
+
+    public BInteger _get_k() {
+        return k;
+    }
+
+    public BInteger _get_l() {
+        return l;
+    }
+
+    public BRelation<BInteger, BInteger> _get_g() {
+        return g;
     }
 
 

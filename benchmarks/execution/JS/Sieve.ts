@@ -16,9 +16,9 @@ export default class Sieve {
     private limit: BInteger;
 
     constructor() {
-        this.numbers = BSet.interval(new BInteger(2), new BInteger(1000000));
+        this.numbers = BSet.interval(new BInteger(2), new BInteger(2000000));
         this.cur = new BInteger(2);
-        this.limit = new BInteger(1000000);
+        this.limit = new BInteger(2000000);
     }
 
 

@@ -22,13 +22,23 @@ export default class sort_m2_data1000_exec {
 
 
      simulate(): void {
-        while((this.sorted.less(new BInteger(1000))).booleanValue()) {
-            while((this.counter.less(new BInteger(1000).minus(this.sorted))).booleanValue()) {
+        while((this.sorted.less(new BInteger(500))).booleanValue()) {
+            this.counter = new BInteger(0);
+            while((this.counter.less(new BInteger(999).minus(new BInteger(2).multiply(this.sorted)))).booleanValue()) {
                 this._sort_m2_data1000.prog2();
                 this.counter = this.counter.plus(new BInteger(1));
             }
             this.counter = new BInteger(0);
             while((this.counter.less(this.sorted)).booleanValue()) {
+                this._sort_m2_data1000.prog1();
+                this.counter = this.counter.plus(new BInteger(1));
+            }
+            this._sort_m2_data1000.progress();
+            this.sorted = this.sorted.plus(new BInteger(1));
+        }
+        while((this.sorted.less(new BInteger(999))).booleanValue()) {
+            this.counter = new BInteger(0);
+            while((this.counter.less(new BInteger(999).minus(this.sorted))).booleanValue()) {
                 this._sort_m2_data1000.prog1();
                 this.counter = this.counter.plus(new BInteger(1));
             }

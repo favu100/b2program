@@ -4528,7 +4528,7 @@ public class CAN_BUS_tlc_exec {
         this._CAN_BUS_tlc.T1Wait(new BInteger(2));
         this._CAN_BUS_tlc.T3Wait();
         this._CAN_BUS_tlc.Update(new BInteger(4));
-        while((counter.less(new BInteger(10000))).booleanValue()) {
+        while((counter.less(new BInteger(300000))).booleanValue()) {
             this._CAN_BUS_tlc.T3Evaluate();
             this._CAN_BUS_tlc.T3Read(new BInteger(4),new BInteger(0));
             this._CAN_BUS_tlc.T3Poll();

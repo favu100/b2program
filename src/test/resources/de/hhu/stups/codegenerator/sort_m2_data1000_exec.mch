@@ -11,12 +11,13 @@ INITIALISATION
 
 OPERATIONS
 	simulate = BEGIN
-		WHILE sorted < 1000 DO
-			WHILE counter < 1000 - sorted DO
+		WHILE sorted < 500 DO
+			counter := 0;
+			WHILE counter < 999 - 2*sorted DO
 				prog2;
 				counter := counter + 1
 			INVARIANT 1 = 1
-			VARIANT 1000 - sorted - counter
+			VARIANT 999 - 2*sorted - counter
 			END;
 			counter := 0;
 			WHILE counter < sorted DO
@@ -28,7 +29,20 @@ OPERATIONS
 			progress;
 			sorted := sorted + 1
 		INVARIANT 1=1
-        	VARIANT 1000 - sorted
+        	VARIANT 500 - sorted
+		END;
+		WHILE sorted < 999 DO
+			counter := 0;
+			WHILE counter < 999 - sorted DO
+				prog1;
+				counter := counter + 1
+			INVARIANT 1 = 1
+			VARIANT 999 - sorted - counter
+			END;
+			progress;
+			sorted := sorted + 1
+		INVARIANT 1 = 1
+		VARIANT 999 - sorted
 		END;
 		final_evt
 	END

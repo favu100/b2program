@@ -20,7 +20,7 @@ export default class LiftExec {
 
 
      simulate(): void {
-        while((this.counter.less(new BInteger(1500000))).booleanValue()) {
+        while((this.counter.less(new BInteger(10000000))).booleanValue()) {
             let i: BInteger = null;
             i = new BInteger(0);
             while((i.less(new BInteger(100))).booleanValue()) {

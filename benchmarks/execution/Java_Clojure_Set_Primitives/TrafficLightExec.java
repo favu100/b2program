@@ -23,7 +23,7 @@ public class TrafficLightExec {
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(500000))).booleanValue()) {
+        while((counter.less(new BInteger(300000000))).booleanValue()) {
             this._TrafficLight.cars_ry();
             this._TrafficLight.cars_g();
             this._TrafficLight.cars_y();

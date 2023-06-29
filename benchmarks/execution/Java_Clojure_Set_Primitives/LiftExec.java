@@ -23,7 +23,7 @@ public class LiftExec {
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(3000))).booleanValue()) {
+        while((counter.less(new BInteger(10000000))).booleanValue()) {
             BInteger i = null;
             i = new BInteger(0);
             while((i.less(new BInteger(100))).booleanValue()) {

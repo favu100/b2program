@@ -24,7 +24,7 @@ public class scheduler_deterministic_exec {
     }
 
     public void simulate() {
-        while((counter.less(new BInteger(200000))).booleanValue()) {
+        while((counter.less(new BInteger(300000))).booleanValue()) {
             this._scheduler_deterministic._new(scheduler_deterministic.PID.process1);
             this._scheduler_deterministic._new(scheduler_deterministic.PID.process2);
             this._scheduler_deterministic._new(scheduler_deterministic.PID.process3);

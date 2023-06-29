@@ -23,7 +23,7 @@ export default class scheduler_deterministic_exec {
 
 
      simulate(): void {
-        while((this.counter.less(new BInteger(200000))).booleanValue()) {
+        while((this.counter.less(new BInteger(300000))).booleanValue()) {
             this._scheduler_deterministic._new(new PID(enum_PID.process1));
             this._scheduler_deterministic._new(new PID(enum_PID.process2));
             this._scheduler_deterministic._new(new PID(enum_PID.process3));

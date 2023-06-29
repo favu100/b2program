@@ -6,7 +6,7 @@ export default class LiftExec {
         this.counter = new BInteger(0);
     }
     simulate() {
-        while ((this.counter.less(new BInteger(1500000))).booleanValue()) {
+        while ((this.counter.less(new BInteger(10000000))).booleanValue()) {
             let i = null;
             i = new BInteger(0);
             while ((i.less(new BInteger(100))).booleanValue()) {

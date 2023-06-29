@@ -25,7 +25,7 @@ export default class Cruise_finite1_deterministic_exec {
 
 
      simulate(): void {
-        while((this.counter.less(new BInteger(100))).booleanValue()) {
+        while((this.counter.less(new BInteger(100000))).booleanValue()) {
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesNotAllowed();
             this._Cruise_finite1_deterministic.CruiseBecomesAllowed();

@@ -6,7 +6,7 @@ export default class TrafficLightExec {
         this.counter = new BInteger(0);
     }
     simulate() {
-        while ((this.counter.less(new BInteger(15000000))).booleanValue()) {
+        while ((this.counter.less(new BInteger(300000000))).booleanValue()) {
             this._TrafficLight.cars_ry();
             this._TrafficLight.cars_g();
             this._TrafficLight.cars_y();

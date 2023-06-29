@@ -10,7 +10,7 @@ INITIALISATION counter := 0
 
 OPERATIONS
 	simulate =
-	      WHILE counter < 100 DO
+	      WHILE counter < 100000 DO
             CruiseBecomesAllowed;
             CruiseBecomesNotAllowed;
             CruiseBecomesAllowed;
@@ -1374,7 +1374,7 @@ OPERATIONS
             CruiseBecomesNotAllowed;
 	        counter := counter + 1
 	INVARIANT 1 = 1
-    VARIANT 100 - counter
+    VARIANT 100000 - counter
 	END;
 
 	out <-- getCruiseAllowed = BEGIN

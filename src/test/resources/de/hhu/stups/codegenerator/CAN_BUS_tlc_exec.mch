@@ -4524,7 +4524,7 @@ OPERATIONS
             T3Wait;
             Update(4);
 
-            WHILE counter < 10000 DO
+            WHILE counter < 300000 DO
                 T3Evaluate;
                 T3Read(4, 0);
                 T3Poll;
@@ -4580,7 +4580,7 @@ OPERATIONS
                 Update(4);
                 counter := counter + 1
             INVARIANT 1 = 1
-            VARIANT 10000 - counter
+            VARIANT 300000 - counter
             END
 
 	      END

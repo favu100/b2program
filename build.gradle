@@ -80,71 +80,80 @@ sourceSets.test.runtimeClasspath += files(sourceSets.main.java.srcDirs)
 
 
 tasks.withType(JavaExec) {
-    if(project.hasProperty('language') && project.hasProperty('big_integer') && project.hasProperty('file')) {
-        def arguments = ['l', language]
+    if(project.hasProperty('language') && project.hasProperty('file')) {
+        def arguments = []
+        arguments.add('-l')
+        arguments.add(language)
 
-        arguments.add('bi')
+        arguments.add('-bi')
         if(project.hasProperty('big_integer')) {
             arguments.add(big_integer)
         } else {
             arguments.add(false)
         }
 
-        arguments.add('min')
+        arguments.add('-min')
         if(project.hasProperty('minint')) {
             arguments.add(minint)
         } else {
             arguments.add(-2147483648)
         }
 
-        arguments.add('max')
+        arguments.add('-max')
         if(project.hasProperty('maxint')) {
             arguments.add(maxint)
         } else {
             arguments.add(2147483647)
         }
 
-        arguments.add('dss')
+        arguments.add('-dss')
         if(project.hasProperty('deferred_set_size')) {
             arguments.add(deferred_set_size)
         } else {
             arguments.add(10)
         }
 
-        arguments.add('cs')
+        arguments.add('-cs')
         if(project.hasProperty('useConstraintSolving')) {
             arguments.add(useConstraintSolving)
         } else {
             arguments.add(false)
         }
 
-        arguments.add('mc')
+        arguments.add('-mc')
         if(project.hasProperty('forModelchecking')) {
             arguments.add(forModelchecking)
         } else {
             arguments.add(false)
         }
 
-        arguments.add('file')
+        arguments.add('-f')
         arguments.add(file)
 
-        arguments.add('v')
+        arguments.add('-v')
         if(project.hasProperty('visualisation')) {
             arguments.add(visualisation)
         } else {
             arguments.add('')
         }
 
-        arguments.add('sim')
+        arguments.add('-sim')
         if(project.hasProperty('simulation')) {
             arguments.add(simulation)
         } else {
             arguments.add('')
         }
 
-        arguments.add('a')
+        arguments.add('-a')
         if(project.hasProperty('addition')) {
             arguments.add(addition)
+        } else {
+            arguments.add("")
+        }
+
+        arguments.add('-sl')
+        if(project.hasProperty('serverLink')) {
+            arguments.add(serverLink)
         } else {
             arguments.add("")
         }

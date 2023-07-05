@@ -155,7 +155,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.useBigInteger = useBigInteger;
 		this.serverLink = serverLink;
 		this.boundedVariablesDepth = new HashMap<>();
-		if(addition != null) {
+		if(addition != null && !addition.toFile().isDirectory()) {
 			try {
 				this.addition = new String(Files.readAllBytes(addition));
 			} catch (IOException e) {

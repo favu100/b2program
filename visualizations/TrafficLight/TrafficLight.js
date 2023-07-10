@@ -1,6 +1,7 @@
 import { BBoolean } from './btypes/BBoolean.js';
 import { BSet } from './btypes/BSet.js';
 import { SelectError } from "./btypes/BUtils.js";
+import * as immutable from "./immutable/dist/immutable.es.js";
 export var enum_colors;
 (function (enum_colors) {
     enum_colors[enum_colors["red"] = 0] = "red";
@@ -25,7 +26,7 @@ export class colors {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_colors[this.value].toString();
@@ -35,18 +36,25 @@ export class colors {
     static get_yellow() { return new colors(enum_colors.yellow); }
     static get_green() { return new colors(enum_colors.green); }
 }
+export var Type;
+(function (Type) {
+    Type[Type["BFS"] = 0] = "BFS";
+    Type[Type["DFS"] = 1] = "DFS";
+    Type[Type["MIXED"] = 2] = "MIXED";
+})(Type || (Type = {}));
 export default class TrafficLight {
-    constructor() {
-        this.tl_cars = new colors(enum_colors.red);
-        this.tl_peds = new colors(enum_colors.red);
-    }
-    _copy() {
-        var _a, _b, _c;
-        let _instance = Object.create(TrafficLight.prototype);
-        for (let key of Object.keys(this)) {
-            _instance[key] = (_c = (_b = (_a = this[key])._copy) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : this[key];
+    constructor(copy) {
+        this.dependentGuard = immutable.Set();
+        this.guardCache = immutable.Map();
+        this.dependentInvariant = immutable.Set();
+        if (copy) {
+            this.tl_cars = copy.tl_cars;
+            this.tl_peds = copy.tl_peds;
         }
-        return _instance;
+        else {
+            this.tl_cars = new colors(enum_colors.red);
+            this.tl_peds = new colors(enum_colors.red);
+        }
     }
     cars_ry() {
         if ((new BBoolean(this.tl_cars.equal(new colors(enum_colors.red)).booleanValue() && this.tl_peds.equal(new colors(enum_colors.red)).booleanValue())).booleanValue()) {
@@ -131,6 +139,34 @@ export default class TrafficLight {
     }
     _check_inv_3() {
         return new BBoolean(this.tl_peds.equal(new colors(enum_colors.red)).booleanValue() || this.tl_cars.equal(new colors(enum_colors.red)).booleanValue()).booleanValue();
+    }
+    equals(o) {
+        let o1 = this;
+        let o2 = o;
+        return o1._get_tl_cars().equals(o2._get_tl_cars()) && o1._get_tl_peds().equals(o2._get_tl_peds());
+    }
+    hashCode() {
+        return this._hashCode_1();
+    }
+    _hashCode_1() {
+        let result = 1;
+        result = (1543 * result) ^ ((this._get_tl_cars()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_tl_peds()).hashCode() << 1);
+        return result;
+    }
+    _hashCode_2() {
+        let result = 1;
+        result = (6151 * result) ^ ((this._get_tl_cars()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_tl_peds()).hashCode() << 1);
+        return result;
+    }
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_tl_cars: " + (this._get_tl_cars()).toString(), "_get_tl_peds: " + (this._get_tl_peds()).toString());
+    }
+    */
+    _copy() {
+        return new TrafficLight(this);
     }
 }
 TrafficLight._colors = new BSet(new colors(enum_colors.red), new colors(enum_colors.redyellow), new colors(enum_colors.yellow), new colors(enum_colors.green));

@@ -9,7 +9,11 @@
 <body>
   <div>
     <h1>Visualization <br></h1>
-    <object id="traffic_light" data="traffic_light.svg" type="image/svg+xml"></object>
+    <object id="traffic_light" data="traffic_light.svg" type="image/svg+xml"></object><br><br><br>
+    <label id="descriptionHeader" style="font-size:25px">Description:</label><br>
+    <label id="descriptionText" style="font-size:20px"></label>
+    <textarea id="taDescription" hidden="hidden" style="font-size:20px"></textarea><br><br>
+    <button id="btEditDescription">Edit</button>
   </div>
   <div>
       <h1>Operations View <br></h1>
@@ -30,6 +34,12 @@
     <br>
     <h1>Scenario View <br></h1>
     <div id="_scenario_view">
+    </div>
+    <h1>Simulation View <br></h1>
+    <div id="_simulation_view_buttons">
+        <input id="_load_simulation" type="file" style="display:none;"></input>
+    </div><br>
+    <div id="_simulation_view">
     </div>
   </div>
   <div id="_state_view">

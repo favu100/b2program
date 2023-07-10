@@ -1,0 +1,13 @@
+{
+ "activations": [
+  {"id":"$initialise_machine", "execute":"$initialise_machine",
+   "activating":"choose"},
+  {"id":"choose", "chooseActivation":{"cars_ry": "0.8", "peds_g": "0.2"}},
+  {"id":"cars_ry", "execute":"cars_ry", "after":5000, "activating":"cars_g"},
+  {"id":"cars_g", "execute":"cars_g", "after":500, "activating":"cars_y"},
+  {"id":"cars_y", "execute":"cars_y", "after":5000, "activating":"cars_r"},
+  {"id":"cars_r", "execute":"cars_r", "after":500, "activating":"choose"},
+  {"id":"peds_g", "execute":"peds_g", "after":5000, "activating":"peds_r"},
+  {"id":"peds_r", "execute":"peds_r", "after":5000, "activating":"choose"}
+ ]
+}

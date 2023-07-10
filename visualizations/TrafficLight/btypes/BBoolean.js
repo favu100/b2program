@@ -44,6 +44,6 @@ export class BBoolean {
         return this.value.toString();
     }
     hashCode() {
-        return this.value ? 1 : 0;
+        return (31 * 1) ^ (this.value == true ? 1 : 0 << 1);
     }
 }

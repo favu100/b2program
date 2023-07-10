@@ -255,7 +255,7 @@ method() ::= <<
 >>
 
 operation(returnType, operationName, parameters, locals, body, return) ::= <<
- <operationName>(<parameters; separator=", ">): <returnType> {
+<operationName>(<parameters; separator=", ">): <returnType> {
     <locals; separator="\n">
     <body>
     <return>

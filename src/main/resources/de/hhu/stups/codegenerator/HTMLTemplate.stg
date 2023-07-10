@@ -43,7 +43,7 @@ html(machineName, svgName, btypeImports) ::= <<
     \<h1>Simulation View \<br>\</h1>
     \<div id="_simulation_view_buttons">
         \<input id="_load_simulation" type="file" style="display:none;">\</input>
-    \</div>
+    \</div>\<br>
     \<div id="_simulation_view">
     \</div>
   \</div>

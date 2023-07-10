@@ -364,511 +364,6 @@ function initialize() {
     var _svg_events = {};
     _param_div = document.createElement("div");
     _param_div.classList.add("param");
-    _machine_events["cars_r"] = document.createElement("button");
-    _operations_view.appendChild(_param_div);
-
-
-    _machine_events["cars_r"].style.gridColumn="-1";
-    _machine_events["cars_r"].innerHTML = "cars_r";
-    _machine_events["cars_r"].parameterNames = [];
-    _machine_events["cars_r"].onclick = function() {
-      var parameters = {};
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["cars_r"] == null ?? true) {
-          transition = _machine["_tr_cars_r"]();
-          _transition_list[index]["cars_r"] = transition;
-      } else {
-          transition = _transition_list[index]["cars_r"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event cars_r is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.cars_r(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("cars_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "cars_r", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("cars_r");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["cars_r"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["cars_r"].disabled = true;
-            }
-            createOptionList("cars_r", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _operations_view.appendChild(_machine_events["cars_r"]);
-
-    _svg_events["cars_red"] = document.getElementById("traffic_light").contentDocument.getElementById("cars_red");
-    _svg_events["cars_red"].onclick = function() {
-      var parameters = {
-    };
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["cars_r"] == null ?? true) {
-          transition = _machine["_tr_cars_r"]();
-          _transition_list[index]["cars_r"] = transition;
-      } else {
-          transition = _transition_list[index]["cars_r"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event cars_r is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.cars_r(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("cars_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "cars_r", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("cars_r");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["cars_r"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["cars_r"].disabled = true;
-            }
-            createOptionList("cars_r", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _param_div = document.createElement("div");
-    _param_div.classList.add("param");
-    _machine_events["cars_g"] = document.createElement("button");
-    _operations_view.appendChild(_param_div);
-
-
-    _machine_events["cars_g"].style.gridColumn="-1";
-    _machine_events["cars_g"].innerHTML = "cars_g";
-    _machine_events["cars_g"].parameterNames = [];
-    _machine_events["cars_g"].onclick = function() {
-      var parameters = {};
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["cars_g"] == null ?? true) {
-          transition = _machine["_tr_cars_g"]();
-          _transition_list[index]["cars_g"] = transition;
-      } else {
-          transition = _transition_list[index]["cars_g"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event cars_g is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.cars_g(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("cars_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "cars_g", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("cars_g");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["cars_g"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["cars_g"].disabled = true;
-            }
-            createOptionList("cars_g", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _operations_view.appendChild(_machine_events["cars_g"]);
-
-    _svg_events["cars_green"] = document.getElementById("traffic_light").contentDocument.getElementById("cars_green");
-    _svg_events["cars_green"].onclick = function() {
-      var parameters = {
-    };
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["cars_g"] == null ?? true) {
-          transition = _machine["_tr_cars_g"]();
-          _transition_list[index]["cars_g"] = transition;
-      } else {
-          transition = _transition_list[index]["cars_g"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event cars_g is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.cars_g(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("cars_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "cars_g", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("cars_g");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["cars_g"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["cars_g"].disabled = true;
-            }
-            createOptionList("cars_g", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _param_div = document.createElement("div");
-    _param_div.classList.add("param");
-    _machine_events["peds_r"] = document.createElement("button");
-    _operations_view.appendChild(_param_div);
-
-
-    _machine_events["peds_r"].style.gridColumn="-1";
-    _machine_events["peds_r"].innerHTML = "peds_r";
-    _machine_events["peds_r"].parameterNames = [];
-    _machine_events["peds_r"].onclick = function() {
-      var parameters = {};
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["peds_r"] == null ?? true) {
-          transition = _machine["_tr_peds_r"]();
-          _transition_list[index]["peds_r"] = transition;
-      } else {
-          transition = _transition_list[index]["peds_r"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event peds_r is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.peds_r(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("peds_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "peds_r", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("peds_r");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["peds_r"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["peds_r"].disabled = true;
-            }
-            createOptionList("peds_r", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _operations_view.appendChild(_machine_events["peds_r"]);
-
-    _svg_events["peds_red"] = document.getElementById("traffic_light").contentDocument.getElementById("peds_red");
-    _svg_events["peds_red"].onclick = function() {
-      var parameters = {
-    };
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["peds_r"] == null ?? true) {
-          transition = _machine["_tr_peds_r"]();
-          _transition_list[index]["peds_r"] = transition;
-      } else {
-          transition = _transition_list[index]["peds_r"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event peds_r is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.peds_r(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("peds_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "peds_r", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("peds_r");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["peds_r"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["peds_r"].disabled = true;
-            }
-            createOptionList("peds_r", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _param_div = document.createElement("div");
-    _param_div.classList.add("param");
-    _machine_events["cars_ry"] = document.createElement("button");
-    _operations_view.appendChild(_param_div);
-
-
-    _machine_events["cars_ry"].style.gridColumn="-1";
-    _machine_events["cars_ry"].innerHTML = "cars_ry";
-    _machine_events["cars_ry"].parameterNames = [];
-    _machine_events["cars_ry"].onclick = function() {
-      var parameters = {};
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["cars_ry"] == null ?? true) {
-          transition = _machine["_tr_cars_ry"]();
-          _transition_list[index]["cars_ry"] = transition;
-      } else {
-          transition = _transition_list[index]["cars_ry"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event cars_ry is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.cars_ry(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("cars_ry(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "cars_ry", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("cars_ry");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["cars_ry"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["cars_ry"].disabled = true;
-            }
-            createOptionList("cars_ry", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _operations_view.appendChild(_machine_events["cars_ry"]);
-
-    _svg_events["cars_yellow_1"] = document.getElementById("traffic_light").contentDocument.getElementById("cars_yellow_1");
-    _svg_events["cars_yellow_1"].onclick = function() {
-      var parameters = {
-    };
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["cars_ry"] == null ?? true) {
-          transition = _machine["_tr_cars_ry"]();
-          _transition_list[index]["cars_ry"] = transition;
-      } else {
-          transition = _transition_list[index]["cars_ry"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event cars_ry is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.cars_ry(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("cars_ry(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "cars_ry", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("cars_ry");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["cars_ry"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["cars_ry"].disabled = true;
-            }
-            createOptionList("cars_ry", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _param_div = document.createElement("div");
-    _param_div.classList.add("param");
-    _machine_events["peds_g"] = document.createElement("button");
-    _operations_view.appendChild(_param_div);
-
-
-    _machine_events["peds_g"].style.gridColumn="-1";
-    _machine_events["peds_g"].innerHTML = "peds_g";
-    _machine_events["peds_g"].parameterNames = [];
-    _machine_events["peds_g"].onclick = function() {
-      var parameters = {};
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["peds_g"] == null ?? true) {
-          transition = _machine["_tr_peds_g"]();
-          _transition_list[index]["peds_g"] = transition;
-      } else {
-          transition = _transition_list[index]["peds_g"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event peds_g is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.peds_g(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("peds_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "peds_g", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("peds_g");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["peds_g"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["peds_g"].disabled = true;
-            }
-            createOptionList("peds_g", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _operations_view.appendChild(_machine_events["peds_g"]);
-
-    _svg_events["peds_green"] = document.getElementById("traffic_light").contentDocument.getElementById("peds_green");
-    _svg_events["peds_green"].onclick = function() {
-      var parameters = {
-    };
-      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
-      var transition;
-      if(_transition_list[index]?.["peds_g"] == null ?? true) {
-          transition = _machine["_tr_peds_g"]();
-          _transition_list[index]["peds_g"] = transition;
-      } else {
-          transition = _transition_list[index]["peds_g"];
-      }
-      if(!(transition instanceof BSet)) {
-        if(!transition) {
-            alert("Event peds_g is not enabled!");
-            return;
-        }
-      }
-      try {
-        var parameters = [];
-        var returnValue = _machine.peds_g(...parameters);
-        _description_list = _description_list.slice(0, index + 1);
-        _description_list.push("");
-        createHistoryElement("peds_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
-        let parametersJSON = {};
-        _current_trace = _current_trace.slice(0, index + 1)
-        _current_trace.push({name: "peds_g", params: parametersJSON});
-        updateVisuals();
-        triggerSimulationOnInteraction("peds_g");
-      } catch (error) {
-        if(! error instanceof SelectError) {
-            throw error;
-        }
-        if(transition instanceof BSet) {
-            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
-            transition = transition.difference(new BSet(parameterTuple));
-            _transition_list[index]["peds_g"] = transition;
-            if(transition.size().intValue() == 0) {
-                _machine_events["peds_g"].disabled = true;
-            }
-            createOptionList("peds_g", transition);
-        }
-        alert(error.message);
-      }
-    }
-
-    _param_div = document.createElement("div");
-    _param_div.classList.add("param");
     _machine_events["cars_y"] = document.createElement("button");
     _operations_view.appendChild(_param_div);
 
@@ -881,7 +376,7 @@ function initialize() {
       let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
       var transition;
       if(_transition_list[index]?.["cars_y"] == null ?? true) {
-          transition = _machine["_tr_cars_y"]();
+          transition = _machine._tr_cars_y();
           _transition_list[index]["cars_y"] = transition;
       } else {
           transition = _transition_list[index]["cars_y"];
@@ -929,7 +424,7 @@ function initialize() {
       let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
       var transition;
       if(_transition_list[index]?.["cars_y"] == null ?? true) {
-          transition = _machine["_tr_cars_y"]();
+          transition = _machine._tr_cars_y();
           _transition_list[index]["cars_y"] = transition;
       } else {
           transition = _transition_list[index]["cars_y"];
@@ -963,6 +458,511 @@ function initialize() {
                 _machine_events["cars_y"].disabled = true;
             }
             createOptionList("cars_y", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _param_div = document.createElement("div");
+    _param_div.classList.add("param");
+    _machine_events["peds_r"] = document.createElement("button");
+    _operations_view.appendChild(_param_div);
+
+
+    _machine_events["peds_r"].style.gridColumn="-1";
+    _machine_events["peds_r"].innerHTML = "peds_r";
+    _machine_events["peds_r"].parameterNames = [];
+    _machine_events["peds_r"].onclick = function() {
+      var parameters = {};
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["peds_r"] == null ?? true) {
+          transition = _machine._tr_peds_r();
+          _transition_list[index]["peds_r"] = transition;
+      } else {
+          transition = _transition_list[index]["peds_r"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event peds_r is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.peds_r(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("peds_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "peds_r", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("peds_r");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["peds_r"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["peds_r"].disabled = true;
+            }
+            createOptionList("peds_r", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _operations_view.appendChild(_machine_events["peds_r"]);
+
+    _svg_events["peds_red"] = document.getElementById("traffic_light").contentDocument.getElementById("peds_red");
+    _svg_events["peds_red"].onclick = function() {
+      var parameters = {
+    };
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["peds_r"] == null ?? true) {
+          transition = _machine._tr_peds_r();
+          _transition_list[index]["peds_r"] = transition;
+      } else {
+          transition = _transition_list[index]["peds_r"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event peds_r is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.peds_r(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("peds_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "peds_r", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("peds_r");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["peds_r"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["peds_r"].disabled = true;
+            }
+            createOptionList("peds_r", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _param_div = document.createElement("div");
+    _param_div.classList.add("param");
+    _machine_events["peds_g"] = document.createElement("button");
+    _operations_view.appendChild(_param_div);
+
+
+    _machine_events["peds_g"].style.gridColumn="-1";
+    _machine_events["peds_g"].innerHTML = "peds_g";
+    _machine_events["peds_g"].parameterNames = [];
+    _machine_events["peds_g"].onclick = function() {
+      var parameters = {};
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["peds_g"] == null ?? true) {
+          transition = _machine._tr_peds_g();
+          _transition_list[index]["peds_g"] = transition;
+      } else {
+          transition = _transition_list[index]["peds_g"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event peds_g is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.peds_g(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("peds_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "peds_g", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("peds_g");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["peds_g"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["peds_g"].disabled = true;
+            }
+            createOptionList("peds_g", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _operations_view.appendChild(_machine_events["peds_g"]);
+
+    _svg_events["peds_green"] = document.getElementById("traffic_light").contentDocument.getElementById("peds_green");
+    _svg_events["peds_green"].onclick = function() {
+      var parameters = {
+    };
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["peds_g"] == null ?? true) {
+          transition = _machine._tr_peds_g();
+          _transition_list[index]["peds_g"] = transition;
+      } else {
+          transition = _transition_list[index]["peds_g"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event peds_g is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.peds_g(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("peds_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "peds_g", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("peds_g");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["peds_g"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["peds_g"].disabled = true;
+            }
+            createOptionList("peds_g", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _param_div = document.createElement("div");
+    _param_div.classList.add("param");
+    _machine_events["cars_ry"] = document.createElement("button");
+    _operations_view.appendChild(_param_div);
+
+
+    _machine_events["cars_ry"].style.gridColumn="-1";
+    _machine_events["cars_ry"].innerHTML = "cars_ry";
+    _machine_events["cars_ry"].parameterNames = [];
+    _machine_events["cars_ry"].onclick = function() {
+      var parameters = {};
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["cars_ry"] == null ?? true) {
+          transition = _machine._tr_cars_ry();
+          _transition_list[index]["cars_ry"] = transition;
+      } else {
+          transition = _transition_list[index]["cars_ry"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event cars_ry is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.cars_ry(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("cars_ry(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "cars_ry", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("cars_ry");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["cars_ry"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["cars_ry"].disabled = true;
+            }
+            createOptionList("cars_ry", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _operations_view.appendChild(_machine_events["cars_ry"]);
+
+    _svg_events["cars_yellow_1"] = document.getElementById("traffic_light").contentDocument.getElementById("cars_yellow_1");
+    _svg_events["cars_yellow_1"].onclick = function() {
+      var parameters = {
+    };
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["cars_ry"] == null ?? true) {
+          transition = _machine._tr_cars_ry();
+          _transition_list[index]["cars_ry"] = transition;
+      } else {
+          transition = _transition_list[index]["cars_ry"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event cars_ry is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.cars_ry(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("cars_ry(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "cars_ry", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("cars_ry");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["cars_ry"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["cars_ry"].disabled = true;
+            }
+            createOptionList("cars_ry", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _param_div = document.createElement("div");
+    _param_div.classList.add("param");
+    _machine_events["cars_g"] = document.createElement("button");
+    _operations_view.appendChild(_param_div);
+
+
+    _machine_events["cars_g"].style.gridColumn="-1";
+    _machine_events["cars_g"].innerHTML = "cars_g";
+    _machine_events["cars_g"].parameterNames = [];
+    _machine_events["cars_g"].onclick = function() {
+      var parameters = {};
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["cars_g"] == null ?? true) {
+          transition = _machine._tr_cars_g();
+          _transition_list[index]["cars_g"] = transition;
+      } else {
+          transition = _transition_list[index]["cars_g"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event cars_g is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.cars_g(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("cars_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "cars_g", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("cars_g");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["cars_g"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["cars_g"].disabled = true;
+            }
+            createOptionList("cars_g", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _operations_view.appendChild(_machine_events["cars_g"]);
+
+    _svg_events["cars_green"] = document.getElementById("traffic_light").contentDocument.getElementById("cars_green");
+    _svg_events["cars_green"].onclick = function() {
+      var parameters = {
+    };
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["cars_g"] == null ?? true) {
+          transition = _machine._tr_cars_g();
+          _transition_list[index]["cars_g"] = transition;
+      } else {
+          transition = _transition_list[index]["cars_g"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event cars_g is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.cars_g(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("cars_g(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "cars_g", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("cars_g");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["cars_g"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["cars_g"].disabled = true;
+            }
+            createOptionList("cars_g", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _param_div = document.createElement("div");
+    _param_div.classList.add("param");
+    _machine_events["cars_r"] = document.createElement("button");
+    _operations_view.appendChild(_param_div);
+
+
+    _machine_events["cars_r"].style.gridColumn="-1";
+    _machine_events["cars_r"].innerHTML = "cars_r";
+    _machine_events["cars_r"].parameterNames = [];
+    _machine_events["cars_r"].onclick = function() {
+      var parameters = {};
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["cars_r"] == null ?? true) {
+          transition = _machine._tr_cars_r();
+          _transition_list[index]["cars_r"] = transition;
+      } else {
+          transition = _transition_list[index]["cars_r"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event cars_r is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.cars_r(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("cars_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "cars_r", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("cars_r");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["cars_r"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["cars_r"].disabled = true;
+            }
+            createOptionList("cars_r", transition);
+        }
+        alert(error.message);
+      }
+    }
+
+    _operations_view.appendChild(_machine_events["cars_r"]);
+
+    _svg_events["cars_red"] = document.getElementById("traffic_light").contentDocument.getElementById("cars_red");
+    _svg_events["cars_red"].onclick = function() {
+      var parameters = {
+    };
+      let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
+      var transition;
+      if(_transition_list[index]?.["cars_r"] == null ?? true) {
+          transition = _machine._tr_cars_r();
+          _transition_list[index]["cars_r"] = transition;
+      } else {
+          transition = _transition_list[index]["cars_r"];
+      }
+      if(!(transition instanceof BSet)) {
+        if(!transition) {
+            alert("Event cars_r is not enabled!");
+            return;
+        }
+      }
+      try {
+        var parameters = [];
+        var returnValue = _machine.cars_r(...parameters);
+        _description_list = _description_list.slice(0, index + 1);
+        _description_list.push("");
+        createHistoryElement("cars_r(" + parameters.join(", ") + ")" + (returnValue? " -> (" + returnValue.toString() + ")": ""), _history_view.querySelector(".active").index + 1);
+        let parametersJSON = {};
+        _current_trace = _current_trace.slice(0, index + 1)
+        _current_trace.push({name: "cars_r", params: parametersJSON});
+        updateVisuals();
+        triggerSimulationOnInteraction("cars_r");
+      } catch (error) {
+        if(! error instanceof SelectError) {
+            throw error;
+        }
+        if(transition instanceof BSet) {
+            var parameterTuple = [].reduce((a, e) => new BTuple(a, e));
+            transition = transition.difference(new BSet(parameterTuple));
+            _transition_list[index]["cars_r"] = transition;
+            if(transition.size().intValue() == 0) {
+                _machine_events["cars_r"].disabled = true;
+            }
+            createOptionList("cars_r", transition);
         }
         alert(error.message);
       }

@@ -805,7 +805,7 @@ function() {
   let index = [..._history_view.children].indexOf(_history_view.querySelector(".active"));
   var transition;
   if(_transition_list[index]?.["<machineEvent>"] == null ?? true) {
-      transition = <initialMachineVar()>["_tr_<machineEvent>"]();
+      transition = <initialMachineVar()>._tr_<machineEvent>();
       _transition_list[index]["<machineEvent>"] = transition;
   } else {
       transition = _transition_list[index]["<machineEvent>"];

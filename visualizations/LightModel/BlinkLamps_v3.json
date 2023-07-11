@@ -1,0 +1,264 @@
+{
+  "machineName": "BlinkLamps_v3",
+  "variables": [
+    "_get_active_blinkers",
+    "_get_remaining_blinks",
+    "_get_onCycle",
+    "_get_blinkLeft",
+    "_get_blinkRight"
+  ],
+  "operationFunctions": [
+    {
+      "opName": "SET_AllBlinkersOff",
+      "parameterTypes": []
+    },
+    {
+      "opName": "SET_AllBlinkersOn",
+      "parameterTypes": []
+    },
+    {
+      "opName": "SET_BlinkersOn",
+      "parameterTypes": [
+        "BlinkLamps_v3$DIRECTIONS",
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "SET_RemainingBlinks",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "TIME_BlinkerOn",
+      "parameterTypes": []
+    },
+    {
+      "opName": "TIME_BlinkerOff",
+      "parameterTypes": []
+    },
+    {
+      "opName": "TIME_Nothing",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BBoolean"
+      ]
+    }
+  ],
+  "transitionEvaluationFunctions": {
+    "SET_RemainingBlinks": "_tr_SET_RemainingBlinks",
+    "SET_BlinkersOn": "_tr_SET_BlinkersOn",
+    "TIME_Nothing": "_tr_TIME_Nothing",
+    "TIME_BlinkerOn": "_tr_TIME_BlinkerOn",
+    "SET_AllBlinkersOn": "_tr_SET_AllBlinkersOn",
+    "SET_AllBlinkersOff": "_tr_SET_AllBlinkersOff",
+    "TIME_BlinkerOff": "_tr_TIME_BlinkerOff"
+  },
+  "invariants": [
+    "_check_inv_1",
+    "_check_inv_2",
+    "_check_inv_3",
+    "_check_inv_4",
+    "_check_inv_5",
+    "_check_inv_6",
+    "_check_inv_7",
+    "_check_inv_8",
+    "_check_inv_9",
+    "_check_inv_10",
+    "_check_inv_11"
+  ],
+  "invariantDependency": {
+    "SET_RemainingBlinks": [
+      "_check_inv_2",
+      "_check_inv_6"
+    ],
+    "SET_BlinkersOn": [
+      "_check_inv_2",
+      "_check_inv_3",
+      "_check_inv_1",
+      "_check_inv_6",
+      "_check_inv_10",
+      "_check_inv_7",
+      "_check_inv_4",
+      "_check_inv_8",
+      "_check_inv_9",
+      "_check_inv_11"
+    ],
+    "TIME_Nothing": [
+      "_check_inv_10",
+      "_check_inv_5",
+      "_check_inv_11"
+    ],
+    "TIME_BlinkerOn": [
+      "_check_inv_2",
+      "_check_inv_3",
+      "_check_inv_6",
+      "_check_inv_10",
+      "_check_inv_7",
+      "_check_inv_4",
+      "_check_inv_5",
+      "_check_inv_8",
+      "_check_inv_9",
+      "_check_inv_11"
+    ],
+    "SET_AllBlinkersOn": [
+      "_check_inv_2",
+      "_check_inv_3",
+      "_check_inv_1",
+      "_check_inv_6",
+      "_check_inv_10",
+      "_check_inv_7",
+      "_check_inv_4",
+      "_check_inv_8",
+      "_check_inv_9",
+      "_check_inv_11"
+    ],
+    "SET_AllBlinkersOff": [
+      "_check_inv_2",
+      "_check_inv_3",
+      "_check_inv_1",
+      "_check_inv_6",
+      "_check_inv_10",
+      "_check_inv_7",
+      "_check_inv_4",
+      "_check_inv_8",
+      "_check_inv_9",
+      "_check_inv_11"
+    ],
+    "TIME_BlinkerOff": [
+      "_check_inv_3",
+      "_check_inv_1",
+      "_check_inv_6",
+      "_check_inv_10",
+      "_check_inv_7",
+      "_check_inv_4",
+      "_check_inv_5",
+      "_check_inv_8",
+      "_check_inv_9",
+      "_check_inv_11"
+    ]
+  },
+  "guardDependency": {
+    "SET_RemainingBlinks": [
+      "_tr_SET_RemainingBlinks",
+      "_tr_TIME_BlinkerOn"
+    ],
+    "SET_BlinkersOn": [
+      "_tr_SET_RemainingBlinks",
+      "_tr_TIME_Nothing",
+      "_tr_TIME_BlinkerOff",
+      "_tr_TIME_BlinkerOn"
+    ],
+    "TIME_Nothing": [],
+    "TIME_BlinkerOn": [
+      "_tr_SET_RemainingBlinks",
+      "_tr_TIME_Nothing",
+      "_tr_TIME_BlinkerOff",
+      "_tr_TIME_BlinkerOn"
+    ],
+    "SET_AllBlinkersOn": [
+      "_tr_SET_RemainingBlinks",
+      "_tr_TIME_Nothing",
+      "_tr_TIME_BlinkerOff",
+      "_tr_TIME_BlinkerOn"
+    ],
+    "SET_AllBlinkersOff": [
+      "_tr_SET_RemainingBlinks",
+      "_tr_TIME_Nothing",
+      "_tr_TIME_BlinkerOff",
+      "_tr_TIME_BlinkerOn"
+    ],
+    "TIME_BlinkerOff": [
+      "_tr_TIME_Nothing",
+      "_tr_TIME_BlinkerOff",
+      "_tr_TIME_BlinkerOn"
+    ]
+  },
+  "guardsRead": {
+    "_tr_SET_RemainingBlinks": [
+      "remaining_blinks"
+    ],
+    "_tr_TIME_Nothing": [
+      "blinkRight",
+      "active_blinkers",
+      "blinkLeft"
+    ],
+    "_tr_SET_AllBlinkersOff": [],
+    "_tr_SET_AllBlinkersOn": [],
+    "_tr_TIME_BlinkerOff": [
+      "blinkRight",
+      "blinkLeft"
+    ],
+    "_tr_TIME_BlinkerOn": [
+      "blinkRight",
+      "remaining_blinks",
+      "blinkLeft"
+    ],
+    "_tr_SET_BlinkersOn": []
+  },
+  "operationsRead": {
+    "SET_RemainingBlinks": [
+      "remaining_blinks"
+    ],
+    "SET_BlinkersOn": [
+      "onCycle"
+    ],
+    "TIME_Nothing": [
+      "blinkRight",
+      "active_blinkers",
+      "blinkLeft"
+    ],
+    "TIME_BlinkerOn": [
+      "blinkRight",
+      "remaining_blinks",
+      "active_blinkers",
+      "blinkLeft"
+    ],
+    "SET_AllBlinkersOn": [
+      "onCycle"
+    ],
+    "SET_AllBlinkersOff": [],
+    "TIME_BlinkerOff": [
+      "blinkRight",
+      "remaining_blinks",
+      "blinkLeft"
+    ]
+  },
+  "operationsWrite": {
+    "SET_RemainingBlinks": [
+      "remaining_blinks"
+    ],
+    "SET_BlinkersOn": [
+      "blinkRight",
+      "remaining_blinks",
+      "active_blinkers",
+      "blinkLeft"
+    ],
+    "TIME_Nothing": [
+      "onCycle"
+    ],
+    "TIME_BlinkerOn": [
+      "blinkRight",
+      "onCycle",
+      "remaining_blinks",
+      "blinkLeft"
+    ],
+    "SET_AllBlinkersOn": [
+      "blinkRight",
+      "remaining_blinks",
+      "active_blinkers",
+      "blinkLeft"
+    ],
+    "SET_AllBlinkersOff": [
+      "blinkRight",
+      "remaining_blinks",
+      "active_blinkers",
+      "blinkLeft"
+    ],
+    "TIME_BlinkerOff": [
+      "blinkRight",
+      "onCycle",
+      "active_blinkers",
+      "blinkLeft"
+    ]
+  }
+}

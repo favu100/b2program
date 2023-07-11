@@ -1,0 +1,140 @@
+{
+  "machineName": "GenericTimersMC",
+  "variables": [
+    "_get_curDeadlines"
+  ],
+  "operationFunctions": [
+    {
+      "opName": "AbsoluteSetDeadline",
+      "parameterTypes": [
+        "GenericTimersMC$TIMERS",
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "AddDeadline",
+      "parameterTypes": [
+        "GenericTimersMC$TIMERS",
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "IncreaseTime",
+      "parameterTypes": [
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "IncreaseTimeUntilDeadline",
+      "parameterTypes": [
+        "GenericTimersMC$TIMERS",
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    },
+    {
+      "opName": "IncreaseTimeUntilCyclicDeadline",
+      "parameterTypes": [
+        "GenericTimersMC$TIMERS",
+        "de.hhu.stups.btypes.BInteger",
+        "de.hhu.stups.btypes.BInteger"
+      ]
+    }
+  ],
+  "transitionEvaluationFunctions": {
+    "AddDeadline": "_tr_AddDeadline",
+    "IncreaseTimeUntilDeadline": "_tr_IncreaseTimeUntilDeadline",
+    "IncreaseTimeUntilCyclicDeadline": "_tr_IncreaseTimeUntilCyclicDeadline",
+    "IncreaseTime": "_tr_IncreaseTime",
+    "AbsoluteSetDeadline": "_tr_AbsoluteSetDeadline"
+  },
+  "invariants": [
+    "_check_inv_1"
+  ],
+  "invariantDependency": {
+    "AddDeadline": [
+      "_check_inv_1"
+    ],
+    "IncreaseTimeUntilDeadline": [
+      "_check_inv_1"
+    ],
+    "IncreaseTimeUntilCyclicDeadline": [
+      "_check_inv_1"
+    ],
+    "IncreaseTime": [
+      "_check_inv_1"
+    ],
+    "AbsoluteSetDeadline": [
+      "_check_inv_1"
+    ]
+  },
+  "guardDependency": {
+    "AddDeadline": [
+      "_tr_IncreaseTime",
+      "_tr_IncreaseTimeUntilDeadline",
+      "_tr_IncreaseTimeUntilCyclicDeadline"
+    ],
+    "IncreaseTimeUntilDeadline": [
+      "_tr_IncreaseTime",
+      "_tr_IncreaseTimeUntilDeadline",
+      "_tr_IncreaseTimeUntilCyclicDeadline"
+    ],
+    "IncreaseTimeUntilCyclicDeadline": [
+      "_tr_IncreaseTime",
+      "_tr_IncreaseTimeUntilDeadline",
+      "_tr_IncreaseTimeUntilCyclicDeadline"
+    ],
+    "IncreaseTime": [
+      "_tr_IncreaseTime",
+      "_tr_IncreaseTimeUntilDeadline",
+      "_tr_IncreaseTimeUntilCyclicDeadline"
+    ],
+    "AbsoluteSetDeadline": [
+      "_tr_IncreaseTime",
+      "_tr_IncreaseTimeUntilDeadline",
+      "_tr_IncreaseTimeUntilCyclicDeadline"
+    ]
+  },
+  "guardsRead": {
+    "_tr_IncreaseTime": [
+      "curDeadlines"
+    ],
+    "_tr_AbsoluteSetDeadline": [],
+    "_tr_AddDeadline": [],
+    "_tr_IncreaseTimeUntilDeadline": [
+      "curDeadlines"
+    ],
+    "_tr_IncreaseTimeUntilCyclicDeadline": [
+      "curDeadlines"
+    ]
+  },
+  "operationsRead": {
+    "AddDeadline": [],
+    "IncreaseTimeUntilDeadline": [
+      "curDeadlines"
+    ],
+    "IncreaseTimeUntilCyclicDeadline": [
+      "curDeadlines"
+    ],
+    "IncreaseTime": [
+      "curDeadlines"
+    ],
+    "AbsoluteSetDeadline": []
+  },
+  "operationsWrite": {
+    "AddDeadline": [
+      "curDeadlines"
+    ],
+    "IncreaseTimeUntilDeadline": [
+      "curDeadlines"
+    ],
+    "IncreaseTimeUntilCyclicDeadline": [
+      "curDeadlines"
+    ],
+    "IncreaseTime": [
+      "curDeadlines"
+    ],
+    "AbsoluteSetDeadline": [
+      "curDeadlines"
+    ]
+  }
+}

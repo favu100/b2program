@@ -4,6 +4,7 @@ import { BBoolean } from './btypes/BBoolean.js';
 import { BRelation } from './btypes/BRelation.js';
 import { BSet } from './btypes/BSet.js';
 import { SelectError } from "./btypes/BUtils.js";
+import * as immutable from "./immutable/dist/immutable.es.js";
 export var enum_DIRECTIONS;
 (function (enum_DIRECTIONS) {
     enum_DIRECTIONS[enum_DIRECTIONS["left_blink"] = 0] = "left_blink";
@@ -27,7 +28,7 @@ export class DIRECTIONS {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_DIRECTIONS[this.value].toString();
@@ -36,27 +37,31 @@ export class DIRECTIONS {
     static get_right_blink() { return new DIRECTIONS(enum_DIRECTIONS.right_blink); }
     static get_neutral_blink() { return new DIRECTIONS(enum_DIRECTIONS.neutral_blink); }
 }
+export var Type;
+(function (Type) {
+    Type[Type["BFS"] = 0] = "BFS";
+    Type[Type["DFS"] = 1] = "DFS";
+    Type[Type["MIXED"] = 2] = "MIXED";
+})(Type || (Type = {}));
 export default class BlinkLamps_v3 {
-    constructor() {
-        BlinkLamps_v3.BLINK_DIRECTION = new BSet(new DIRECTIONS(enum_DIRECTIONS.left_blink), new DIRECTIONS(enum_DIRECTIONS.right_blink));
-        BlinkLamps_v3.LAMP_STATUS = new BSet(new BInteger(0), new BInteger(100));
-        BlinkLamps_v3.lamp_on = new BInteger(100);
-        BlinkLamps_v3.lamp_off = new BInteger(0);
-        BlinkLamps_v3.BLINK_CYCLE_COUNTER = BSet.interval(new BInteger(1).negative(), new BInteger(3));
-        BlinkLamps_v3.cycleMaxLampStatus = new BRelation(new BTuple(new BBoolean(false), BlinkLamps_v3.lamp_off), new BTuple(new BBoolean(true), BlinkLamps_v3.lamp_on));
-        this.active_blinkers = new BSet();
-        this.blinkLeft = BlinkLamps_v3.lamp_off;
-        this.blinkRight = BlinkLamps_v3.lamp_off;
-        this.remaining_blinks = new BInteger(0);
-        this.onCycle = new BBoolean(false);
-    }
-    _copy() {
-        var _a, _b, _c;
-        let _instance = Object.create(BlinkLamps_v3.prototype);
-        for (let key of Object.keys(this)) {
-            _instance[key] = (_c = (_b = (_a = this[key])._copy) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : this[key];
+    constructor(copy) {
+        this.dependentGuard = immutable.Set();
+        this.guardCache = immutable.Map();
+        this.dependentInvariant = immutable.Set();
+        if (copy) {
+            this.active_blinkers = copy.active_blinkers;
+            this.remaining_blinks = copy.remaining_blinks;
+            this.onCycle = copy.onCycle;
+            this.blinkLeft = copy.blinkLeft;
+            this.blinkRight = copy.blinkRight;
         }
-        return _instance;
+        else {
+            this.active_blinkers = new BSet();
+            this.blinkLeft = BlinkLamps_v3.lamp_off;
+            this.blinkRight = BlinkLamps_v3.lamp_off;
+            this.remaining_blinks = new BInteger(0);
+            this.onCycle = new BBoolean(false);
+        }
     }
     SET_AllBlinkersOff() {
         this.active_blinkers = new BSet();
@@ -160,5 +165,47 @@ export default class BlinkLamps_v3 {
     _get__DIRECTIONS() {
         return BlinkLamps_v3._DIRECTIONS;
     }
+    equals(o) {
+        let o1 = this;
+        let o2 = o;
+        return o1._get_active_blinkers().equals(o2._get_active_blinkers()) && o1._get_remaining_blinks().equals(o2._get_remaining_blinks()) && o1._get_onCycle().equals(o2._get_onCycle()) && o1._get_blinkLeft().equals(o2._get_blinkLeft()) && o1._get_blinkRight().equals(o2._get_blinkRight());
+    }
+    hashCode() {
+        return this._hashCode_1();
+    }
+    _hashCode_1() {
+        let result = 1;
+        result = (1543 * result) ^ ((this._get_active_blinkers()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_remaining_blinks()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_onCycle()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_blinkLeft()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_blinkRight()).hashCode() << 1);
+        return result;
+    }
+    _hashCode_2() {
+        let result = 1;
+        result = (6151 * result) ^ ((this._get_active_blinkers()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_remaining_blinks()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_onCycle()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_blinkLeft()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_blinkRight()).hashCode() << 1);
+        return result;
+    }
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_active_blinkers: " + (this._get_active_blinkers()).toString(), "_get_remaining_blinks: " + (this._get_remaining_blinks()).toString(), "_get_onCycle: " + (this._get_onCycle()).toString(), "_get_blinkLeft: " + (this._get_blinkLeft()).toString(), "_get_blinkRight: " + (this._get_blinkRight()).toString());
+    }
+    */
+    _copy() {
+        return new BlinkLamps_v3(this);
+    }
 }
 BlinkLamps_v3._DIRECTIONS = new BSet(new DIRECTIONS(enum_DIRECTIONS.left_blink), new DIRECTIONS(enum_DIRECTIONS.right_blink), new DIRECTIONS(enum_DIRECTIONS.neutral_blink));
+(() => {
+    BlinkLamps_v3.BLINK_DIRECTION = new BSet(new DIRECTIONS(enum_DIRECTIONS.left_blink), new DIRECTIONS(enum_DIRECTIONS.right_blink));
+    BlinkLamps_v3.LAMP_STATUS = new BSet(new BInteger(0), new BInteger(100));
+    BlinkLamps_v3.lamp_off = new BInteger(0);
+    BlinkLamps_v3.lamp_on = new BInteger(100);
+    BlinkLamps_v3.BLINK_CYCLE_COUNTER = BSet.interval(new BInteger(1).negative(), new BInteger(3));
+    BlinkLamps_v3.cycleMaxLampStatus = new BRelation(new BTuple(new BBoolean(false), BlinkLamps_v3.lamp_off), new BTuple(new BBoolean(true), BlinkLamps_v3.lamp_on));
+})();

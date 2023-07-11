@@ -535,6 +535,10 @@ copy_assignment(variable) ::= <<
 this.<variable> = <variable>;
 >>
 
+copy_machine(machine) ::= <<
+this.<machine> = <machine>._copy();
+>>
+
 copy(machine, parameters) ::= <<
 public <machine> _copy() {
     return new <machine>(<parameters; separator=", ">);

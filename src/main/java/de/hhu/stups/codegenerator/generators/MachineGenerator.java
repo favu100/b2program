@@ -399,6 +399,12 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return template.render();
 	}
 
+	public String generateCopyMachine(MachineReferenceNode node) {
+		ST template = currentGroup.getInstanceOf("copy_machine");
+		TemplateHandler.add(template, "machine", nameHandler.handleIdentifier(node.getMachineName(), NameHandler.IdentifierHandlingEnum.MACHINES));
+		return template.render();
+	}
+
 	private String generateCopy(MachineNode node) {
 		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
 			ST template = currentGroup.getInstanceOf("copy");

@@ -3,6 +3,7 @@ import { BBoolean } from './btypes/BBoolean.js';
 import { BRelation } from './btypes/BRelation.js';
 import { BSet } from './btypes/BSet.js';
 import { SelectError } from "./btypes/BUtils.js";
+import * as immutable from "./immutable/dist/immutable.es.js";
 export var enum_TIMERS;
 (function (enum_TIMERS) {
     enum_TIMERS[enum_TIMERS["blink_deadline"] = 0] = "blink_deadline";
@@ -25,7 +26,7 @@ export class TIMERS {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_TIMERS[this.value].toString();
@@ -33,17 +34,23 @@ export class TIMERS {
     static get_blink_deadline() { return new TIMERS(enum_TIMERS.blink_deadline); }
     static get_tip_deadline() { return new TIMERS(enum_TIMERS.tip_deadline); }
 }
+export var Type;
+(function (Type) {
+    Type[Type["BFS"] = 0] = "BFS";
+    Type[Type["DFS"] = 1] = "DFS";
+    Type[Type["MIXED"] = 2] = "MIXED";
+})(Type || (Type = {}));
 export default class GenericTimersMC {
-    constructor() {
-        this.curDeadlines = new BRelation();
-    }
-    _copy() {
-        var _a, _b, _c;
-        let _instance = Object.create(GenericTimersMC.prototype);
-        for (let key of Object.keys(this)) {
-            _instance[key] = (_c = (_b = (_a = this[key])._copy) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : this[key];
+    constructor(copy) {
+        this.dependentGuard = immutable.Set();
+        this.guardCache = immutable.Map();
+        this.dependentInvariant = immutable.Set();
+        if (copy) {
+            this.curDeadlines = copy.curDeadlines;
         }
-        return _instance;
+        else {
+            this.curDeadlines = new BRelation();
+        }
     }
     AbsoluteSetDeadline(timer, deadline) {
         this.curDeadlines = this.curDeadlines.override(new BRelation(new BTuple(timer, deadline)));
@@ -92,6 +99,32 @@ export default class GenericTimersMC {
     }
     _get__TIMERS() {
         return GenericTimersMC._TIMERS;
+    }
+    equals(o) {
+        let o1 = this;
+        let o2 = o;
+        return o1._get_curDeadlines().equals(o2._get_curDeadlines());
+    }
+    hashCode() {
+        return this._hashCode_1();
+    }
+    _hashCode_1() {
+        let result = 1;
+        result = (1543 * result) ^ ((this._get_curDeadlines()).hashCode() << 1);
+        return result;
+    }
+    _hashCode_2() {
+        let result = 1;
+        result = (6151 * result) ^ ((this._get_curDeadlines()).hashCode() << 1);
+        return result;
+    }
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_curDeadlines: " + (this._get_curDeadlines()).toString());
+    }
+    */
+    _copy() {
+        return new GenericTimersMC(this);
     }
 }
 GenericTimersMC._TIMERS = new BSet(new TIMERS(enum_TIMERS.blink_deadline), new TIMERS(enum_TIMERS.tip_deadline));

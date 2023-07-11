@@ -538,6 +538,10 @@ copy_assignment(variable) ::= <<
 this-><variable> = <variable>;
 >>
 
+copy_machine(machine) ::= <<
+this-><machine> = <machine>->_copy();
+>>
+
 copy(machine, parameters, operations) ::= <<
 static constexpr unsigned int strHash(const char *s, int off = 0) {
     return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];

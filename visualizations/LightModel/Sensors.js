@@ -1,6 +1,7 @@
 import { BBoolean } from './btypes/BBoolean.js';
 import { BSet } from './btypes/BSet.js';
 import { SelectError } from "./btypes/BUtils.js";
+import * as immutable from "./immutable/dist/immutable.es.js";
 export var enum_SWITCH_STATUS;
 (function (enum_SWITCH_STATUS) {
     enum_SWITCH_STATUS[enum_SWITCH_STATUS["switch_on"] = 0] = "switch_on";
@@ -23,7 +24,7 @@ export class SWITCH_STATUS {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_SWITCH_STATUS[this.value].toString();
@@ -56,7 +57,7 @@ export class PITMAN_POSITION {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_PITMAN_POSITION[this.value].toString();
@@ -90,7 +91,7 @@ export class KEY_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_KEY_STATE[this.value].toString();
@@ -99,22 +100,29 @@ export class KEY_STATE {
     static get_KeyInserted() { return new KEY_STATE(enum_KEY_STATE.KeyInserted); }
     static get_KeyInsertedOnPosition() { return new KEY_STATE(enum_KEY_STATE.KeyInsertedOnPosition); }
 }
+export var Type;
+(function (Type) {
+    Type[Type["BFS"] = 0] = "BFS";
+    Type[Type["DFS"] = 1] = "DFS";
+    Type[Type["MIXED"] = 2] = "MIXED";
+})(Type || (Type = {}));
 export default class Sensors {
-    constructor() {
-        Sensors.PITMAN_DIRECTION_BLINKING = new BSet(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward7), new PITMAN_POSITION(enum_PITMAN_POSITION.Upward7));
-        Sensors.PITMAN_TIP_BLINKING = new BSet(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward5), new PITMAN_POSITION(enum_PITMAN_POSITION.Upward5));
-        this.hazardWarningSwitchOn = new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off);
-        this.pitmanArmUpDown = new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral);
-        this.keyState = new KEY_STATE(enum_KEY_STATE.KeyInsertedOnPosition);
-        this.engineOn = new BBoolean(false);
-    }
-    _copy() {
-        var _a, _b, _c;
-        let _instance = Object.create(Sensors.prototype);
-        for (let key of Object.keys(this)) {
-            _instance[key] = (_c = (_b = (_a = this[key])._copy) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : this[key];
+    constructor(copy) {
+        this.dependentGuard = immutable.Set();
+        this.guardCache = immutable.Map();
+        this.dependentInvariant = immutable.Set();
+        if (copy) {
+            this.hazardWarningSwitchOn = copy.hazardWarningSwitchOn;
+            this.pitmanArmUpDown = copy.pitmanArmUpDown;
+            this.keyState = copy.keyState;
+            this.engineOn = copy.engineOn;
         }
-        return _instance;
+        else {
+            this.hazardWarningSwitchOn = new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off);
+            this.pitmanArmUpDown = new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral);
+            this.keyState = new KEY_STATE(enum_KEY_STATE.KeyInsertedOnPosition);
+            this.engineOn = new BBoolean(false);
+        }
     }
     SET_EngineOn() {
         if ((new BBoolean(this.engineOn.equal(new BBoolean(false)).booleanValue() && this.keyState.equal(new KEY_STATE(enum_KEY_STATE.KeyInsertedOnPosition)).booleanValue())).booleanValue()) {
@@ -191,7 +199,43 @@ export default class Sensors {
     _get__KEY_STATE() {
         return Sensors._KEY_STATE;
     }
+    equals(o) {
+        let o1 = this;
+        let o2 = o;
+        return o1._get_hazardWarningSwitchOn().equals(o2._get_hazardWarningSwitchOn()) && o1._get_pitmanArmUpDown().equals(o2._get_pitmanArmUpDown()) && o1._get_keyState().equals(o2._get_keyState()) && o1._get_engineOn().equals(o2._get_engineOn());
+    }
+    hashCode() {
+        return this._hashCode_1();
+    }
+    _hashCode_1() {
+        let result = 1;
+        result = (1543 * result) ^ ((this._get_hazardWarningSwitchOn()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_pitmanArmUpDown()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_keyState()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_engineOn()).hashCode() << 1);
+        return result;
+    }
+    _hashCode_2() {
+        let result = 1;
+        result = (6151 * result) ^ ((this._get_hazardWarningSwitchOn()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_pitmanArmUpDown()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_keyState()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_engineOn()).hashCode() << 1);
+        return result;
+    }
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_hazardWarningSwitchOn: " + (this._get_hazardWarningSwitchOn()).toString(), "_get_pitmanArmUpDown: " + (this._get_pitmanArmUpDown()).toString(), "_get_keyState: " + (this._get_keyState()).toString(), "_get_engineOn: " + (this._get_engineOn()).toString());
+    }
+    */
+    _copy() {
+        return new Sensors(this);
+    }
 }
 Sensors._SWITCH_STATUS = new BSet(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_on), new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off));
 Sensors._PITMAN_POSITION = new BSet(new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral), new PITMAN_POSITION(enum_PITMAN_POSITION.Downward5), new PITMAN_POSITION(enum_PITMAN_POSITION.Downward7), new PITMAN_POSITION(enum_PITMAN_POSITION.Upward5), new PITMAN_POSITION(enum_PITMAN_POSITION.Upward7));
 Sensors._KEY_STATE = new BSet(new KEY_STATE(enum_KEY_STATE.NoKeyInserted), new KEY_STATE(enum_KEY_STATE.KeyInserted), new KEY_STATE(enum_KEY_STATE.KeyInsertedOnPosition));
+(() => {
+    Sensors.PITMAN_DIRECTION_BLINKING = new BSet(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward7), new PITMAN_POSITION(enum_PITMAN_POSITION.Upward7));
+    Sensors.PITMAN_TIP_BLINKING = new BSet(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward5), new PITMAN_POSITION(enum_PITMAN_POSITION.Upward5));
+})();

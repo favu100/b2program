@@ -1,105 +1,143 @@
-import { BBoolean } from './BBoolean.js';
-export class BInteger {
-    constructor(value) {
+import {BBoolean} from './BBoolean.js';
+import {BObject} from "./BObject.js";
+
+export class BInteger implements BObject{
+
+    value: number;
+
+    constructor(value: number) {
         this.value = value;
     }
-    equals(obj) {
+
+    equals(obj: any): boolean {
         if (obj instanceof BInteger) {
             return this.compareTo(obj) === 0;
         }
         return false;
     }
-    static build(value) {
+
+    static build(value: number): BInteger {
         return new BInteger(value);
     }
-    compareTo(o) {
+
+    compareTo(o: BInteger): number {
         return this.value - o.value;
     }
-    lessEqual(o) {
+
+    lessEqual(o: BInteger): BBoolean {
         return new BBoolean(this.compareTo(o) <= 0);
     }
-    greaterEqual(o) {
+
+
+    greaterEqual(o: BInteger): BBoolean {
         return new BBoolean(this.compareTo(o) >= 0);
     }
-    less(o) {
+
+    less(o: BInteger): BBoolean {
         return new BBoolean(this.compareTo(o) < 0);
     }
-    greater(o) {
+
+    greater(o: BInteger): BBoolean {
         return new BBoolean(this.compareTo(o) > 0);
     }
-    equal(o) {
+
+    equal(o: BInteger): BBoolean {
         return new BBoolean(this.compareTo(o) === 0);
     }
-    unequal(o) {
+
+    unequal(o: BInteger): BBoolean {
         return new BBoolean(this.compareTo(o) != 0);
     }
-    intValue() {
+    
+    intValue(): number {
         return this.value;
     }
-    plus(o) {
+
+    plus(o: BInteger): BInteger {
         return new BInteger(this.value + o.value);
     }
-    toString() {
+
+    toString(): string {
         return this.value.toString();
     }
-    minus(o) {
+
+    minus(o: BInteger): BInteger {
         return new BInteger(this.value - o.value);
     }
-    multiply(o) {
+
+    multiply(o: BInteger): BInteger {
         return new BInteger(this.value * o.value);
     }
-    power(o) {
+
+    power(o: BInteger): BInteger {
         return new BInteger(this.value ^ o.value);
     }
-    divide(o) {
+
+    divide(o: BInteger): BInteger {
         return new BInteger(~~(this.value / o.value));
     }
-    modulo(o) {
+
+    modulo(o: BInteger): BInteger {
         return new BInteger(this.value % o.value);
     }
-    succ() {
+
+    succ(): BInteger  {
         return new BInteger(this.value + 1);
     }
-    pred() {
+
+    pred(): BInteger  {
         return new BInteger(this.value - 1);
     }
-    leftShift() {
+
+    leftShift(): BInteger  {
         return new BInteger(this.value << 1);
     }
-    rightShift() {
+
+    rightShift(): BInteger  {
         return new BInteger(this.value >> 1);
     }
-    isCase(o) {
+
+    isCase(o: BInteger): boolean {
         return this.equals(o);
     }
-    negative() {
+
+    negative(): BInteger  {
         return new BInteger(-this.value);
     }
-    positive() {
+
+    positive(): BInteger  {
         return this;
     }
-    getValue() {
+
+    getValue(): number {
         return this.value;
     }
-    isInteger() {
+
+    isInteger(): BBoolean {
         return new BBoolean(true);
     }
-    isNotInteger() {
+
+    isNotInteger(): BBoolean {
         return new BBoolean(false);
     }
-    isNatural() {
+
+    isNatural(): BBoolean {
         return this.greaterEqual(new BInteger(0));
     }
-    isNotNatural() {
+
+    isNotNatural(): BBoolean {
         return this.isNatural().not();
     }
-    isNatural1() {
+
+    isNatural1(): BBoolean {
         return this.greater(new BInteger(0));
     }
-    isNotNatural1() {
+
+    isNotNatural1(): BBoolean {
         return this.isNatural1().not();
     }
-    hashCode() {
+
+    hashCode(): number {
         const prime = 31;
         let result = 1;
         result = prime * result + this.value;

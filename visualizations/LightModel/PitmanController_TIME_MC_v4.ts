@@ -17,10 +17,25 @@ import BlinkLamps_v3 from './BlinkLamps_v3.js';
 import Sensors from './Sensors.js';
 import {BUtils} from "./btypes/BUtils.js";
 import {SelectError} from "./btypes/BUtils.js";
+import * as immutable from "./immutable/dist/immutable.es.js";
+import {LinkedList} from  "./modelchecking/LinkedList.js";
 
 
+
+
+export enum Type {
+    BFS,
+    DFS,
+    MIXED
+}
 
 export default class PitmanController_TIME_MC_v4 {
+
+    parent: PitmanController_TIME_MC_v4;
+    dependentGuard: immutable.Set<string> = immutable.Set();
+    guardCache: immutable.Map = immutable.Map();
+    dependentInvariant: immutable.Set<string> = immutable.Set();
+    stateAccessedVia: string;
 
     _BlinkLamps_v3: BlinkLamps_v3 = new BlinkLamps_v3();
     _Sensors: Sensors = new Sensors();
@@ -30,120 +45,122 @@ export default class PitmanController_TIME_MC_v4 {
 
 
 
-    constructor() {
+    static {
         PitmanController_TIME_MC_v4.pitman_direction = new BRelation<PITMAN_POSITION, DIRECTIONS>(new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral), new DIRECTIONS(enum_DIRECTIONS.neutral_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward5), new DIRECTIONS(enum_DIRECTIONS.left_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward7), new DIRECTIONS(enum_DIRECTIONS.left_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Upward5), new DIRECTIONS(enum_DIRECTIONS.right_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Upward7), new DIRECTIONS(enum_DIRECTIONS.right_blink)));
-        this._GenericTimersMC.AbsoluteSetDeadline(new TIMERS(enum_TIMERS.blink_deadline),new BInteger(500));
     }
 
-    public _copy(): PitmanController_TIME_MC_v4 {
-        let _instance = Object.create(PitmanController_TIME_MC_v4.prototype);
-        for(let key of Object.keys(this)) {
-            _instance[key] = this[key]._copy?.() ?? this[key];
+    constructor(copy? : PitmanController_TIME_MC_v4) {
+        if(copy) {
+            this._BlinkLamps_v3 = copy._BlinkLamps_v3._copy();
+            this._Sensors = copy._Sensors._copy();
+            this._GenericTimersMC = copy._GenericTimersMC._copy();
+        } else {
+            this._GenericTimersMC.AbsoluteSetDeadline(new TIMERS(enum_TIMERS.blink_deadline),new BInteger(500));
         }
-        return _instance;
     }
 
-     ENV_Pitman_Tip_blinking_start(newPos: PITMAN_POSITION): void {
+
+
+    ENV_Pitman_Tip_blinking_start(newPos: PITMAN_POSITION): void {
         if((new BBoolean(this._Sensors._get_PITMAN_TIP_BLINKING().elementOf(newPos).booleanValue() && newPos.unequal(this._Sensors._get_pitmanArmUpDown()).booleanValue())).booleanValue()) {
             this._Sensors.SET_Pitman_Tip_blinking_short(newPos);
             if((new BBoolean(this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue() && this._Sensors._get_engineOn().equal(new BBoolean(true)).booleanValue())).booleanValue()) {
                 this._BlinkLamps_v3.SET_BlinkersOn(PitmanController_TIME_MC_v4.pitman_direction.functionCall(newPos),new BInteger(3));
             } 
             this._GenericTimersMC.AddDeadline(new TIMERS(enum_TIMERS.tip_deadline),new BInteger(500));
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
 
-     RTIME_Tip_blinking_Timeout(delta: BInteger): void {
+    RTIME_Tip_blinking_Timeout(delta: BInteger): void {
         if((BSet.interval(new BInteger(0), new BInteger(500)).elementOf(delta)).booleanValue()) {
-            if((new BBoolean(new BBoolean(this._Sensors._get_PITMAN_TIP_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._BlinkLamps_v3._get_remaining_blinks().greater(new BInteger(1)).booleanValue()).booleanValue() && this._BlinkLamps_v3._get_active_blinkers().equal(new BSet(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown()))).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(this._Sensors._get_PITMAN_TIP_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._BlinkLamps_v3._get_remaining_blinks().greater(new BInteger(1)).booleanValue()).booleanValue() && this._BlinkLamps_v3._get_active_blinkers().equal(new BSet<DIRECTIONS>(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown()))).booleanValue())).booleanValue()) {
                 this._BlinkLamps_v3.SET_RemainingBlinks(new BInteger(1).negative());
             } 
             this._GenericTimersMC.IncreaseTimeUntilDeadline(new TIMERS(enum_TIMERS.tip_deadline),delta);
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
 
-     RTIME_BlinkerOn(delta: BInteger): void {
+    RTIME_BlinkerOn(delta: BInteger): void {
         if((BSet.interval(new BInteger(0), new BInteger(500)).elementOf(delta)).booleanValue()) {
             this._BlinkLamps_v3.TIME_BlinkerOn();
             this._GenericTimersMC.IncreaseTimeUntilCyclicDeadline(new TIMERS(enum_TIMERS.blink_deadline),delta,new BInteger(500));
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
 
-     RTIME_BlinkerOff(delta: BInteger): void {
+    RTIME_BlinkerOff(delta: BInteger): void {
         if((BSet.interval(new BInteger(0), new BInteger(500)).elementOf(delta)).booleanValue()) {
             this._BlinkLamps_v3.TIME_BlinkerOff();
             this._GenericTimersMC.IncreaseTimeUntilCyclicDeadline(new TIMERS(enum_TIMERS.blink_deadline),delta,new BInteger(500));
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
 
-     RTIME_Nothing(delta: BInteger, newOnCycle: BBoolean): void {
+    RTIME_Nothing(delta: BInteger, newOnCycle: BBoolean): void {
         if((new BBoolean(BSet.interval(new BInteger(0), new BInteger(500)).elementOf(delta).booleanValue() && BUtils.BOOL.elementOf(newOnCycle).booleanValue())).booleanValue()) {
             this._BlinkLamps_v3.TIME_Nothing(newOnCycle);
             this._GenericTimersMC.IncreaseTimeUntilCyclicDeadline(new TIMERS(enum_TIMERS.blink_deadline),delta,new BInteger(100));
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
 
-     RTIME_Passes(delta: BInteger): void {
-        if((new BSet(new BInteger(100)).elementOf(delta)).booleanValue()) {
+    RTIME_Passes(delta: BInteger): void {
+        if((new BSet<BInteger>(new BInteger(100)).elementOf(delta)).booleanValue()) {
             this._GenericTimersMC.IncreaseTime(delta);
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
 
-     ENV_Turn_EngineOn(): void {
+    ENV_Turn_EngineOn(): void {
         this._Sensors.SET_EngineOn();
         if((new BBoolean(this._Sensors._get_PITMAN_DIRECTION_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue())).booleanValue()) {
             this._BlinkLamps_v3.SET_BlinkersOn(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown()),new BInteger(1).negative());
         } 
     }
 
-     ENV_Turn_EngineOff(): void {
+    ENV_Turn_EngineOff(): void {
         this._Sensors.SET_EngineOff();
         if((this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off))).booleanValue()) {
             this._BlinkLamps_v3.SET_AllBlinkersOff();
         } 
     }
 
-     ENV_Pitman_DirectionBlinking(newPos: PITMAN_POSITION): void {
+    ENV_Pitman_DirectionBlinking(newPos: PITMAN_POSITION): void {
         if((new BBoolean(this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue() && this._Sensors._get_engineOn().equal(new BBoolean(true)).booleanValue())).booleanValue()) {
             this._BlinkLamps_v3.SET_BlinkersOn(PitmanController_TIME_MC_v4.pitman_direction.functionCall(newPos),new BInteger(1).negative());
         } 
         this._Sensors.SET_Pitman_DirectionBlinking(newPos);
+
     }
 
-     ENV_Pitman_Reset_to_Neutral(): void {
+    ENV_Pitman_Reset_to_Neutral(): void {
         this._Sensors.SET_Pitman_Reset_to_Neutral();
         if((new BBoolean(this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue() && this._BlinkLamps_v3._get_remaining_blinks().equal(new BInteger(1).negative()).booleanValue())).booleanValue()) {
             this._BlinkLamps_v3.SET_AllBlinkersOff();
         } 
     }
 
-     ENV_Hazard_blinking(newSwitchPos: SWITCH_STATUS): void {
+    ENV_Hazard_blinking(newSwitchPos: SWITCH_STATUS): void {
         if((new BBoolean(this._Sensors._get__SWITCH_STATUS().elementOf(newSwitchPos).booleanValue() && newSwitchPos.unequal(this._Sensors._get_hazardWarningSwitchOn()).booleanValue())).booleanValue()) {
             if((newSwitchPos.equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_on))).booleanValue()) {
                 this._BlinkLamps_v3.SET_AllBlinkersOn();
             } else if((newSwitchPos.equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off))).booleanValue()) {
                 if((new BBoolean(this._Sensors._get_pitmanArmUpDown().equal(new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral)).booleanValue() || this._Sensors._get_engineOn().equal(new BBoolean(false)).booleanValue())).booleanValue()) {
                     this._BlinkLamps_v3.SET_AllBlinkersOff();
-                } else if((this._Sensors._get_PITMAN_DIRECTION_BLINKING().notElementOf(this._Sensors._get_pitmanArmUpDown())).booleanValue()) {
-                    this._BlinkLamps_v3.SET_AllBlinkersOff();
                 } else {
                     this._BlinkLamps_v3.SET_BlinkersOn(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown()),this._BlinkLamps_v3._get_remaining_blinks());
                 }
             }
             this._Sensors.SET_Hazard_blinking(newSwitchPos);
-        }  else {
+        } else {
             throw new SelectError("Parameters are invalid!");
         }
     }
@@ -203,7 +220,7 @@ export default class PitmanController_TIME_MC_v4 {
 
     _tr_RTIME_Passes(): BSet<BInteger> {
         let _ic_set_5: BSet<BInteger> = new BSet<BInteger>();
-        for(let _ic_delta_1 of new BSet(new BInteger(100))) {
+        for(let _ic_delta_1 of new BSet<BInteger>(new BInteger(100))) {
             _ic_set_5 = _ic_set_5.union(new BSet<BInteger>(_ic_delta_1));
 
         }
@@ -246,16 +263,59 @@ export default class PitmanController_TIME_MC_v4 {
 
     _check_inv_1() {
         return new BBoolean(!this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_on)).booleanValue() || this._BlinkLamps_v3._get_active_blinkers().equal(this._BlinkLamps_v3._get_BLINK_DIRECTION()).booleanValue()).booleanValue();
-    }_check_inv_2() {
-        return new BBoolean(!new BBoolean(this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue() && this._BlinkLamps_v3._get_remaining_blinks().equal(new BInteger(1).negative()).booleanValue()).booleanValue() || this._BlinkLamps_v3._get_active_blinkers().equal(new BSet(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown()))).booleanValue()).booleanValue();
-    }_check_inv_3() {
-        return new BBoolean(!new BBoolean(this._Sensors._get_PITMAN_DIRECTION_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._Sensors._get_engineOn().equal(new BBoolean(true)).booleanValue()).booleanValue() || new BSet(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown())).subset(this._BlinkLamps_v3._get_active_blinkers()).booleanValue()).booleanValue();
-    }_check_inv_4() {
-        return new BBoolean(!new BBoolean(this._Sensors._get_engineOn().equal(new BBoolean(false)).booleanValue() && this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue()).booleanValue() || this._BlinkLamps_v3._get_active_blinkers().equal(new BSet()).booleanValue()).booleanValue();
-    }_check_inv_5() {
+    }
+
+    _check_inv_2() {
+        return new BBoolean(!new BBoolean(this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue() && this._BlinkLamps_v3._get_remaining_blinks().equal(new BInteger(1).negative()).booleanValue()).booleanValue() || this._BlinkLamps_v3._get_active_blinkers().equal(new BSet<DIRECTIONS>(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown()))).booleanValue()).booleanValue();
+    }
+
+    _check_inv_3() {
+        return new BBoolean(!new BBoolean(this._Sensors._get_PITMAN_DIRECTION_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._Sensors._get_engineOn().equal(new BBoolean(true)).booleanValue()).booleanValue() || new BSet<DIRECTIONS>(PitmanController_TIME_MC_v4.pitman_direction.functionCall(this._Sensors._get_pitmanArmUpDown())).subset(this._BlinkLamps_v3._get_active_blinkers()).booleanValue()).booleanValue();
+    }
+
+    _check_inv_4() {
+        return new BBoolean(!new BBoolean(this._Sensors._get_engineOn().equal(new BBoolean(false)).booleanValue() && this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off)).booleanValue()).booleanValue() || this._BlinkLamps_v3._get_active_blinkers().equal(new BSet<DIRECTIONS>()).booleanValue()).booleanValue();
+    }
+
+    _check_inv_5() {
         return new BBoolean(!this._Sensors._get_hazardWarningSwitchOn().equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_on)).booleanValue() || this._BlinkLamps_v3._get_remaining_blinks().equal(new BInteger(1).negative()).booleanValue()).booleanValue();
-    }_check_inv_6() {
+    }
+
+    _check_inv_6() {
         return new BBoolean(!new BBoolean(this._Sensors._get_PITMAN_DIRECTION_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._Sensors._get_engineOn().equal(new BBoolean(true)).booleanValue()).booleanValue() || this._BlinkLamps_v3._get_remaining_blinks().equal(new BInteger(1).negative()).booleanValue()).booleanValue();
+    }
+
+    equals(o: any): boolean {
+        let o1: PitmanController_TIME_MC_v4 = this;
+        let o2: PitmanController_TIME_MC_v4 = o as PitmanController_TIME_MC_v4;
+        return true;
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return "";
+    }
+    */
+
+
+    public _copy(): PitmanController_TIME_MC_v4 {
+      return new PitmanController_TIME_MC_v4(this);
     }
 
 

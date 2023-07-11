@@ -1,0 +1,165 @@
+{
+  "machineName": "Sensors",
+  "variables": [
+    "_get_hazardWarningSwitchOn",
+    "_get_pitmanArmUpDown",
+    "_get_keyState",
+    "_get_engineOn"
+  ],
+  "operationFunctions": [
+    {
+      "opName": "SET_EngineOn",
+      "parameterTypes": []
+    },
+    {
+      "opName": "SET_EngineOff",
+      "parameterTypes": []
+    },
+    {
+      "opName": "SET_Pitman_DirectionBlinking",
+      "parameterTypes": [
+        "Sensors$PITMAN_POSITION"
+      ]
+    },
+    {
+      "opName": "SET_Pitman_Reset_to_Neutral",
+      "parameterTypes": []
+    },
+    {
+      "opName": "SET_Pitman_Tip_blinking_short",
+      "parameterTypes": [
+        "Sensors$PITMAN_POSITION"
+      ]
+    },
+    {
+      "opName": "SET_Hazard_blinking",
+      "parameterTypes": [
+        "Sensors$SWITCH_STATUS"
+      ]
+    }
+  ],
+  "transitionEvaluationFunctions": {
+    "SET_Pitman_Reset_to_Neutral": "_tr_SET_Pitman_Reset_to_Neutral",
+    "SET_Pitman_Tip_blinking_short": "_tr_SET_Pitman_Tip_blinking_short",
+    "SET_EngineOff": "_tr_SET_EngineOff",
+    "SET_EngineOn": "_tr_SET_EngineOn",
+    "SET_Hazard_blinking": "_tr_SET_Hazard_blinking",
+    "SET_Pitman_DirectionBlinking": "_tr_SET_Pitman_DirectionBlinking"
+  },
+  "invariants": [
+    "_check_inv_1",
+    "_check_inv_2",
+    "_check_inv_3",
+    "_check_inv_4"
+  ],
+  "invariantDependency": {
+    "SET_Pitman_Reset_to_Neutral": [
+      "_check_inv_2"
+    ],
+    "SET_Pitman_Tip_blinking_short": [
+      "_check_inv_2"
+    ],
+    "SET_EngineOff": [
+      "_check_inv_4"
+    ],
+    "SET_EngineOn": [
+      "_check_inv_4"
+    ],
+    "SET_Hazard_blinking": [
+      "_check_inv_1"
+    ],
+    "SET_Pitman_DirectionBlinking": [
+      "_check_inv_2"
+    ]
+  },
+  "guardDependency": {
+    "SET_Pitman_Reset_to_Neutral": [
+      "_tr_SET_Pitman_DirectionBlinking",
+      "_tr_SET_Pitman_Tip_blinking_short",
+      "_tr_SET_Pitman_Reset_to_Neutral"
+    ],
+    "SET_Pitman_Tip_blinking_short": [
+      "_tr_SET_Pitman_DirectionBlinking",
+      "_tr_SET_Pitman_Tip_blinking_short",
+      "_tr_SET_Pitman_Reset_to_Neutral"
+    ],
+    "SET_EngineOff": [
+      "_tr_SET_EngineOff",
+      "_tr_SET_EngineOn"
+    ],
+    "SET_EngineOn": [
+      "_tr_SET_EngineOff",
+      "_tr_SET_EngineOn"
+    ],
+    "SET_Hazard_blinking": [
+      "_tr_SET_Hazard_blinking"
+    ],
+    "SET_Pitman_DirectionBlinking": [
+      "_tr_SET_Pitman_DirectionBlinking",
+      "_tr_SET_Pitman_Tip_blinking_short",
+      "_tr_SET_Pitman_Reset_to_Neutral"
+    ]
+  },
+  "guardsRead": {
+    "_tr_SET_EngineOff": [
+      "engineOn"
+    ],
+    "_tr_SET_EngineOn": [
+      "engineOn",
+      "keyState"
+    ],
+    "_tr_SET_Pitman_DirectionBlinking": [
+      "pitmanArmUpDown"
+    ],
+    "_tr_SET_Hazard_blinking": [
+      "hazardWarningSwitchOn"
+    ],
+    "_tr_SET_Pitman_Tip_blinking_short": [
+      "pitmanArmUpDown"
+    ],
+    "_tr_SET_Pitman_Reset_to_Neutral": [
+      "pitmanArmUpDown"
+    ]
+  },
+  "operationsRead": {
+    "SET_Pitman_Reset_to_Neutral": [
+      "pitmanArmUpDown"
+    ],
+    "SET_Pitman_Tip_blinking_short": [
+      "pitmanArmUpDown"
+    ],
+    "SET_EngineOff": [
+      "engineOn"
+    ],
+    "SET_EngineOn": [
+      "engineOn",
+      "keyState"
+    ],
+    "SET_Hazard_blinking": [
+      "hazardWarningSwitchOn"
+    ],
+    "SET_Pitman_DirectionBlinking": [
+      "pitmanArmUpDown"
+    ]
+  },
+  "operationsWrite": {
+    "SET_Pitman_Reset_to_Neutral": [
+      "pitmanArmUpDown"
+    ],
+    "SET_Pitman_Tip_blinking_short": [
+      "pitmanArmUpDown"
+    ],
+    "SET_EngineOff": [
+      "engineOn"
+    ],
+    "SET_EngineOn": [
+      "engineOn"
+    ],
+    "SET_Hazard_blinking": [
+      "hazardWarningSwitchOn"
+    ],
+    "SET_Pitman_DirectionBlinking": [
+      "pitmanArmUpDown"
+    ]
+  }
+}

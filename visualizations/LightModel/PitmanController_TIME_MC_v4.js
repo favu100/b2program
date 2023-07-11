@@ -16,21 +16,29 @@ import BlinkLamps_v3 from './BlinkLamps_v3.js';
 import Sensors from './Sensors.js';
 import { BUtils } from "./btypes/BUtils.js";
 import { SelectError } from "./btypes/BUtils.js";
+import * as immutable from "./immutable/dist/immutable.es.js";
+export var Type;
+(function (Type) {
+    Type[Type["BFS"] = 0] = "BFS";
+    Type[Type["DFS"] = 1] = "DFS";
+    Type[Type["MIXED"] = 2] = "MIXED";
+})(Type || (Type = {}));
 export default class PitmanController_TIME_MC_v4 {
-    constructor() {
+    constructor(copy) {
+        this.dependentGuard = immutable.Set();
+        this.guardCache = immutable.Map();
+        this.dependentInvariant = immutable.Set();
         this._BlinkLamps_v3 = new BlinkLamps_v3();
         this._Sensors = new Sensors();
         this._GenericTimersMC = new GenericTimersMC();
-        PitmanController_TIME_MC_v4.pitman_direction = new BRelation(new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral), new DIRECTIONS(enum_DIRECTIONS.neutral_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward5), new DIRECTIONS(enum_DIRECTIONS.left_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward7), new DIRECTIONS(enum_DIRECTIONS.left_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Upward5), new DIRECTIONS(enum_DIRECTIONS.right_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Upward7), new DIRECTIONS(enum_DIRECTIONS.right_blink)));
-        this._GenericTimersMC.AbsoluteSetDeadline(new TIMERS(enum_TIMERS.blink_deadline), new BInteger(500));
-    }
-    _copy() {
-        var _a, _b, _c;
-        let _instance = Object.create(PitmanController_TIME_MC_v4.prototype);
-        for (let key of Object.keys(this)) {
-            _instance[key] = (_c = (_b = (_a = this[key])._copy) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : this[key];
+        if (copy) {
+            this._BlinkLamps_v3 = copy._BlinkLamps_v3._copy();
+            this._Sensors = copy._Sensors._copy();
+            this._GenericTimersMC = copy._GenericTimersMC._copy();
         }
-        return _instance;
+        else {
+            this._GenericTimersMC.AbsoluteSetDeadline(new TIMERS(enum_TIMERS.blink_deadline), new BInteger(500));
+        }
     }
     ENV_Pitman_Tip_blinking_start(newPos) {
         if ((new BBoolean(this._Sensors._get_PITMAN_TIP_BLINKING().elementOf(newPos).booleanValue() && newPos.unequal(this._Sensors._get_pitmanArmUpDown()).booleanValue())).booleanValue()) {
@@ -121,9 +129,6 @@ export default class PitmanController_TIME_MC_v4 {
             }
             else if ((newSwitchPos.equal(new SWITCH_STATUS(enum_SWITCH_STATUS.switch_off))).booleanValue()) {
                 if ((new BBoolean(this._Sensors._get_pitmanArmUpDown().equal(new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral)).booleanValue() || this._Sensors._get_engineOn().equal(new BBoolean(false)).booleanValue())).booleanValue()) {
-                    this._BlinkLamps_v3.SET_AllBlinkersOff();
-                }
-                else if ((this._Sensors._get_PITMAN_DIRECTION_BLINKING().notElementOf(this._Sensors._get_pitmanArmUpDown())).booleanValue()) {
                     this._BlinkLamps_v3.SET_AllBlinkersOff();
                 }
                 else {
@@ -230,4 +235,31 @@ export default class PitmanController_TIME_MC_v4 {
     _check_inv_6() {
         return new BBoolean(!new BBoolean(this._Sensors._get_PITMAN_DIRECTION_BLINKING().elementOf(this._Sensors._get_pitmanArmUpDown()).booleanValue() && this._Sensors._get_engineOn().equal(new BBoolean(true)).booleanValue()).booleanValue() || this._BlinkLamps_v3._get_remaining_blinks().equal(new BInteger(1).negative()).booleanValue()).booleanValue();
     }
+    equals(o) {
+        let o1 = this;
+        let o2 = o;
+        return true;
+    }
+    hashCode() {
+        return this._hashCode_1();
+    }
+    _hashCode_1() {
+        let result = 1;
+        return result;
+    }
+    _hashCode_2() {
+        let result = 1;
+        return result;
+    }
+    /* TODO
+    toString(): string {
+        return "";
+    }
+    */
+    _copy() {
+        return new PitmanController_TIME_MC_v4(this);
+    }
 }
+(() => {
+    PitmanController_TIME_MC_v4.pitman_direction = new BRelation(new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Neutral), new DIRECTIONS(enum_DIRECTIONS.neutral_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward5), new DIRECTIONS(enum_DIRECTIONS.left_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Downward7), new DIRECTIONS(enum_DIRECTIONS.left_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Upward5), new DIRECTIONS(enum_DIRECTIONS.right_blink)), new BTuple(new PITMAN_POSITION(enum_PITMAN_POSITION.Upward7), new DIRECTIONS(enum_DIRECTIONS.right_blink)));
+})();

@@ -148,6 +148,7 @@ public class DeclarationGenerator {
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(referenceName, NameHandler.IdentifierHandlingEnum.MACHINES));
         return declaration.render();
     }
+
     private String generateIncludeInitialization(MachineReferenceNode reference) {
         ST declaration = currentGroup.getInstanceOf("include_initialization");
         String machine = reference.getMachineName();

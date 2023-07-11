@@ -110,5 +110,44 @@
     "ENV_Pitman_Reset_to_Neutral": [],
     "RTIME_Tip_blinking_Timeout": [],
     "ENV_Hazard_blinking": []
+  },
+  "guardsRead": {
+    "_tr_ENV_Turn_EngineOn": [],
+    "_tr_RTIME_Nothing": [],
+    "_tr_RTIME_BlinkerOn": [],
+    "_tr_ENV_Pitman_DirectionBlinking": [],
+    "_tr_ENV_Hazard_blinking": [],
+    "_tr_RTIME_Tip_blinking_Timeout": [],
+    "_tr_RTIME_BlinkerOff": [],
+    "_tr_RTIME_Passes": [],
+    "_tr_ENV_Turn_EngineOff": [],
+    "_tr_ENV_Pitman_Tip_blinking_start": [],
+    "_tr_ENV_Pitman_Reset_to_Neutral": []
+  },
+  "operationsRead": {
+    "RTIME_BlinkerOn": [],
+    "ENV_Turn_EngineOff": [],
+    "ENV_Pitman_Tip_blinking_start": [],
+    "ENV_Turn_EngineOn": [],
+    "RTIME_BlinkerOff": [],
+    "RTIME_Passes": [],
+    "RTIME_Nothing": [],
+    "ENV_Pitman_DirectionBlinking": [],
+    "ENV_Pitman_Reset_to_Neutral": [],
+    "RTIME_Tip_blinking_Timeout": [],
+    "ENV_Hazard_blinking": []
+  },
+  "operationsWrite": {
+    "RTIME_BlinkerOn": [],
+    "ENV_Turn_EngineOff": [],
+    "ENV_Pitman_Tip_blinking_start": [],
+    "ENV_Turn_EngineOn": [],
+    "RTIME_BlinkerOff": [],
+    "RTIME_Passes": [],
+    "RTIME_Nothing": [],
+    "ENV_Pitman_DirectionBlinking": [],
+    "ENV_Pitman_Reset_to_Neutral": [],
+    "RTIME_Tip_blinking_Timeout": [],
+    "ENV_Hazard_blinking": []
   }
 }

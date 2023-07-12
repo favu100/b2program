@@ -89,7 +89,7 @@ public class TestJs {
 	 * Tests if the machine can successfully be transpiled to JS.
 	 */
 	public void testJs(String machine) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machine, null, null, false, false);
+		List<Path> tsFilePaths = compileMachine(machine, null, null, false, false, null);
 
 		Set<File> jsFiles = tsFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
@@ -99,7 +99,7 @@ public class TestJs {
 	}
 
 	public void testJSMC(String machine) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machine, null, null, false, true);
+		List<Path> tsFilePaths = compileMachine(machine, null, null, false, true, null);
 
 		Set<File> jsFiles = tsFilePaths.stream()
 				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
@@ -109,11 +109,11 @@ public class TestJs {
 	}
 
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
-		testJs(machinePath, machineName, addition, null, execute, false);
+		testJs(machinePath, machineName, addition, null, execute, false, null);
 	}
 
 
-	private List<Path> compileMachine(String machinePath, String addition, String visualisation, boolean forVisualisation, boolean forModelChecking) throws Exception {
+	private List<Path> compileMachine(String machinePath, String addition, String visualisation, boolean forVisualisation, boolean forModelChecking, String serverLink) throws Exception {
 		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
 		provideBTypesAndImmutables(mchPath);
@@ -151,11 +151,15 @@ public class TestJs {
 		return tsFilePaths;
 	}
 
+	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute, boolean forVisualisation) throws Exception {
+		testJs(machinePath, machineName, addition, visualisation, execute, forVisualisation, null);
+	}
+
 	/**
 	 * Tests if the machine can be successfully transpiled to JS and be executed with node.
 	 */
-	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute, boolean forVisualisation) throws Exception {
-		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation, forVisualisation, false);
+	public void testJs(String machinePath, String machineName, String addition, String visualisation, boolean execute, boolean forVisualisation, String serverLink) throws Exception {
+		List<Path> tsFilePaths = compileMachine(machinePath, addition, visualisation, forVisualisation, false, serverLink);
 		Path mainPath = tsFilePaths.get(tsFilePaths.size() - 1);
 
 		if(!execute) {

@@ -43,4 +43,25 @@ public class TestVisualisation extends TestJs {
     public void testTravelAgency() throws Exception {
         testJs("visualisation/TravelAgency", "TravelAgency", null, null, false, true);
     }
+
+    @Test
+    public void testTrafficLightforServer() throws Exception {
+        testJs("visualisation/TrafficLight", "TrafficLight", "TrafficLightAddition.stjs", "traffic_light.json", false, true, "https://favu100.github.io/b2program/visualizations/TrafficLight");
+    }
+
+    @Test
+    public void testLightmodelforServer() throws Exception {
+        testJs("visualisation/PitmanController_TIME_MC_v4", "PitmanController_TIME_MC_v4", null, "blinking_visb_v4.json", false, true, "https://favu100.github.io/b2program/visualizations/LightModel");
+    }
+
+    @Test
+    public void testLandingGearforServer() throws Exception {
+        testJs("landing_gear/LandingGear_R6", "LandingGear_R6", null, "LandingGear.json", false, true, "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit");
+    }
+
+    @Test
+    public void testLandingGear2forServer() throws Exception {
+        testJs("landing_gear/LandingGear_R6", "LandingGear_R6", null, "LandingGear_GearsDoors.json", false, true, "https://favu100.github.io/b2program/LandingGear/GearsDoors");
+    }
+
 }

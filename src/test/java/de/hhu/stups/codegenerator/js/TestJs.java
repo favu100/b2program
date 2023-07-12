@@ -132,7 +132,7 @@ public class TestJs {
 						false,
 						forVisualisation,
 						visualisation,
-						null);
+						serverLink);
 
 		Process compileProcess = Runtime.getRuntime().exec("tsc --target ES6 --moduleResolution node " +
 				String.join(" ", tsFilePaths.stream()

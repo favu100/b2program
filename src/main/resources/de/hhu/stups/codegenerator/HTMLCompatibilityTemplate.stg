@@ -1,5 +1,5 @@
 html_compatibility(replacements) ::= <<
-const {readFile, writeFile, promises: fsPromises} = require('fs');
+import { readFile, writeFile, promises as fsPromises } from 'fs';
 <replacements; separator="\n">
 >>
 
@@ -53,6 +53,8 @@ replaced = replaced.replaceAll('./btypes/BString.js', '<serverLink>/btypes/BStri
 replaced = replaced.replaceAll('./btypes/BStruct.js', '<serverLink>/btypes/BStruct.js');
 replaced = replaced.replaceAll('./btypes/BTuple.js', '<serverLink>/btypes/BTuple.js');
 replaced = replaced.replaceAll('./btypes/BUtils.js', '<serverLink>/btypes/BUtils.js');
+replaced = replaced.replaceAll('./simulation/Activation.js', '<serverLink>/simulation/Activation.js');
+replaced = replaced.replaceAll('./simulation/ActivationKind.js', '<serverLink>/simulation/ActivationKind.js');
 replaced = replaced.replaceAll('./immutable/dist/immutable.es.js', '<serverLink>/immutable/dist/immutable.es.js');
 <endif>
 >>

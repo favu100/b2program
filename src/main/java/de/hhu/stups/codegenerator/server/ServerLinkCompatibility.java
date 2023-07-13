@@ -59,6 +59,15 @@ public class ServerLinkCompatibility {
             }
             result.add(generateCompatibilitySingle(machineFile, replacements));
         }
+        if(machineGenerator.isForVisualisation()) {
+            String machineFile = "./" + machineGenerator.getNameHandler().handle(project.getMainMachine().getName()) + "-visualisation.js";
+            List<String> replacements = new ArrayList<>();
+            replacements.add(generateBTypeReplacement(false));
+            for(MachineNode machine : project.getMachines()) {
+                replacements.add(generateMachineReplacement(machineGenerator.getNameHandler().handle(machine.getName()) + ".js"));
+            }
+            result.add(generateCompatibilitySingle(machineFile, replacements));
+        }
         return result;
     }
 

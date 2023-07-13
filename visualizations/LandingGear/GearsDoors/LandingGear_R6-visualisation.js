@@ -35,6 +35,7 @@ function checkLoaded() {
 }
 
 function initialize() {
+    window.setTimeout(checkLoaded, 1000);
     var _machine = new LandingGear_R6();
     var _state_list = [];
     var _transition_list = [];

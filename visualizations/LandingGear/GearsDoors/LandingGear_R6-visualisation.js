@@ -16,9 +16,9 @@ import {BString} from "https://favu100.github.io/b2program/visualizations/Landin
 import {Activation} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/simulation/Activation.js";
 import {ActivationKind} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/simulation/ActivationKind.js";
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  checkLoaded();
-});
+window.onload = function() {
+    initialize();
+}
 
 function checkLoaded() {
     const iframe = document.getElementById("physical");
@@ -35,7 +35,6 @@ function checkLoaded() {
 }
 
 function initialize() {
-    window.setTimeout(function(){}, 1000);
     var _machine = new LandingGear_R6();
     var _state_list = [];
     var _transition_list = [];

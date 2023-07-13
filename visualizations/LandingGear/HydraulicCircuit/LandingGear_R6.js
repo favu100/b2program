@@ -1,9 +1,10 @@
-import { BTuple } from './btypes/BTuple.js';
-import { BBoolean } from './btypes/BBoolean.js';
-import { BRelation } from './btypes/BRelation.js';
-import { BSet } from './btypes/BSet.js';
-import { BUtils } from "./btypes/BUtils.js";
-import { SelectError } from "./btypes/BUtils.js";
+import { BTuple } from 'https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BTuple.js';
+import { BBoolean } from 'https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BBoolean.js';
+import { BRelation } from 'https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BRelation.js';
+import { BSet } from 'https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BSet.js';
+import { BUtils } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BUtils.js";
+import { SelectError } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BUtils.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/immutable/dist/immutable.es.js";
 export var enum_DOOR_STATE;
 (function (enum_DOOR_STATE) {
     enum_DOOR_STATE[enum_DOOR_STATE["open"] = 0] = "open";
@@ -27,7 +28,7 @@ export class DOOR_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_DOOR_STATE[this.value].toString();
@@ -59,7 +60,7 @@ export class GEAR_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_GEAR_STATE[this.value].toString();
@@ -90,7 +91,7 @@ export class HANDLE_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_HANDLE_STATE[this.value].toString();
@@ -121,7 +122,7 @@ export class POSITION {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_POSITION[this.value].toString();
@@ -152,7 +153,7 @@ export class SWITCH_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_SWITCH_STATE[this.value].toString();
@@ -182,7 +183,7 @@ export class PLANE_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_PLANE_STATE[this.value].toString();
@@ -212,7 +213,7 @@ export class VALVE_STATE {
         return this.value === o.value;
     }
     hashCode() {
-        return 0;
+        return (31 * 1) ^ (this.value << 1);
     }
     toString() {
         return enum_VALVE_STATE[this.value].toString();
@@ -220,34 +221,57 @@ export class VALVE_STATE {
     static get_valve_open() { return new VALVE_STATE(enum_VALVE_STATE.valve_open); }
     static get_valve_closed() { return new VALVE_STATE(enum_VALVE_STATE.valve_closed); }
 }
+export var Type;
+(function (Type) {
+    Type[Type["BFS"] = 0] = "BFS";
+    Type[Type["DFS"] = 1] = "DFS";
+    Type[Type["MIXED"] = 2] = "MIXED";
+})(Type || (Type = {}));
 export default class LandingGear_R6 {
-    constructor() {
-        this.gears = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet(new GEAR_STATE(enum_GEAR_STATE.extended)));
-        this.doors = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet(new DOOR_STATE(enum_DOOR_STATE.closed)));
-        this.handle = new HANDLE_STATE(enum_HANDLE_STATE.down);
-        this.valve_extend_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.valve_retract_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.valve_open_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.valve_close_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.open_EV = new BBoolean(false);
-        this.close_EV = new BBoolean(false);
-        this.retract_EV = new BBoolean(false);
-        this.extend_EV = new BBoolean(false);
-        this.shock_absorber = new PLANE_STATE(enum_PLANE_STATE.ground);
-        this.general_EV = new BBoolean(false);
-        this.general_valve = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
-        this.analogical_switch = new SWITCH_STATE(enum_SWITCH_STATE.switch_open);
-        this.handle_move = new BBoolean(false);
-        this.gear = new GEAR_STATE(enum_GEAR_STATE.extended);
-        this.door = new DOOR_STATE(enum_DOOR_STATE.closed);
-    }
-    _copy() {
-        var _a, _b, _c;
-        let _instance = Object.create(LandingGear_R6.prototype);
-        for (let key of Object.keys(this)) {
-            _instance[key] = (_c = (_b = (_a = this[key])._copy) === null || _b === void 0 ? void 0 : _b.call(_a)) !== null && _c !== void 0 ? _c : this[key];
+    constructor(copy) {
+        this.dependentGuard = immutable.Set();
+        this.guardCache = immutable.Map();
+        this.dependentInvariant = immutable.Set();
+        if (copy) {
+            this.analogical_switch = copy.analogical_switch;
+            this.general_EV = copy.general_EV;
+            this.general_valve = copy.general_valve;
+            this.handle_move = copy.handle_move;
+            this.close_EV = copy.close_EV;
+            this.extend_EV = copy.extend_EV;
+            this.open_EV = copy.open_EV;
+            this.retract_EV = copy.retract_EV;
+            this.shock_absorber = copy.shock_absorber;
+            this.valve_close_door = copy.valve_close_door;
+            this.valve_extend_gear = copy.valve_extend_gear;
+            this.valve_open_door = copy.valve_open_door;
+            this.valve_retract_gear = copy.valve_retract_gear;
+            this.doors = copy.doors;
+            this.gears = copy.gears;
+            this.handle = copy.handle;
+            this.door = copy.door;
+            this.gear = copy.gear;
         }
-        return _instance;
+        else {
+            this.gears = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet(new GEAR_STATE(enum_GEAR_STATE.extended)));
+            this.doors = BRelation.cartesianProduct(LandingGear_R6._POSITION, new BSet(new DOOR_STATE(enum_DOOR_STATE.closed)));
+            this.handle = new HANDLE_STATE(enum_HANDLE_STATE.down);
+            this.valve_extend_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.valve_retract_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.valve_open_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.valve_close_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.open_EV = new BBoolean(false);
+            this.close_EV = new BBoolean(false);
+            this.retract_EV = new BBoolean(false);
+            this.extend_EV = new BBoolean(false);
+            this.shock_absorber = new PLANE_STATE(enum_PLANE_STATE.ground);
+            this.general_EV = new BBoolean(false);
+            this.general_valve = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
+            this.analogical_switch = new SWITCH_STATE(enum_SWITCH_STATE.switch_open);
+            this.handle_move = new BBoolean(false);
+            this.gear = new GEAR_STATE(enum_GEAR_STATE.extended);
+            this.door = new DOOR_STATE(enum_DOOR_STATE.closed);
+        }
     }
     begin_flying() {
         if ((this.shock_absorber.equal(new PLANE_STATE(enum_PLANE_STATE.ground))).booleanValue()) {
@@ -907,6 +931,66 @@ export default class LandingGear_R6 {
     }
     _check_inv_25() {
         return new BBoolean(!this.gear.equal(new GEAR_STATE(enum_GEAR_STATE.gear_moving)).booleanValue() || this.door.equal(new DOOR_STATE(enum_DOOR_STATE.open)).booleanValue()).booleanValue();
+    }
+    equals(o) {
+        let o1 = this;
+        let o2 = o;
+        return o1._get_analogical_switch().equals(o2._get_analogical_switch()) && o1._get_general_EV().equals(o2._get_general_EV()) && o1._get_general_valve().equals(o2._get_general_valve()) && o1._get_handle_move().equals(o2._get_handle_move()) && o1._get_close_EV().equals(o2._get_close_EV()) && o1._get_extend_EV().equals(o2._get_extend_EV()) && o1._get_open_EV().equals(o2._get_open_EV()) && o1._get_retract_EV().equals(o2._get_retract_EV()) && o1._get_shock_absorber().equals(o2._get_shock_absorber()) && o1._get_valve_close_door().equals(o2._get_valve_close_door()) && o1._get_valve_extend_gear().equals(o2._get_valve_extend_gear()) && o1._get_valve_open_door().equals(o2._get_valve_open_door()) && o1._get_valve_retract_gear().equals(o2._get_valve_retract_gear()) && o1._get_doors().equals(o2._get_doors()) && o1._get_gears().equals(o2._get_gears()) && o1._get_handle().equals(o2._get_handle()) && o1._get_door().equals(o2._get_door()) && o1._get_gear().equals(o2._get_gear());
+    }
+    hashCode() {
+        return this._hashCode_1();
+    }
+    _hashCode_1() {
+        let result = 1;
+        result = (1543 * result) ^ ((this._get_analogical_switch()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_general_EV()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_general_valve()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_handle_move()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_close_EV()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_extend_EV()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_open_EV()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_retract_EV()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_shock_absorber()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_valve_close_door()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_valve_extend_gear()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_valve_open_door()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_valve_retract_gear()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_doors()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_gears()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_handle()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_door()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_gear()).hashCode() << 1);
+        return result;
+    }
+    _hashCode_2() {
+        let result = 1;
+        result = (6151 * result) ^ ((this._get_analogical_switch()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_general_EV()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_general_valve()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_handle_move()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_close_EV()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_extend_EV()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_open_EV()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_retract_EV()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_shock_absorber()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_valve_close_door()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_valve_extend_gear()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_valve_open_door()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_valve_retract_gear()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_doors()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_gears()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_handle()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_door()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_gear()).hashCode() << 1);
+        return result;
+    }
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_analogical_switch: " + (this._get_analogical_switch()).toString(), "_get_general_EV: " + (this._get_general_EV()).toString(), "_get_general_valve: " + (this._get_general_valve()).toString(), "_get_handle_move: " + (this._get_handle_move()).toString(), "_get_close_EV: " + (this._get_close_EV()).toString(), "_get_extend_EV: " + (this._get_extend_EV()).toString(), "_get_open_EV: " + (this._get_open_EV()).toString(), "_get_retract_EV: " + (this._get_retract_EV()).toString(), "_get_shock_absorber: " + (this._get_shock_absorber()).toString(), "_get_valve_close_door: " + (this._get_valve_close_door()).toString(), "_get_valve_extend_gear: " + (this._get_valve_extend_gear()).toString(), "_get_valve_open_door: " + (this._get_valve_open_door()).toString(), "_get_valve_retract_gear: " + (this._get_valve_retract_gear()).toString(), "_get_doors: " + (this._get_doors()).toString(), "_get_gears: " + (this._get_gears()).toString(), "_get_handle: " + (this._get_handle()).toString(), "_get_door: " + (this._get_door()).toString(), "_get_gear: " + (this._get_gear()).toString());
+    }
+    */
+    _copy() {
+        return new LandingGear_R6(this);
     }
 }
 LandingGear_R6._DOOR_STATE = new BSet(new DOOR_STATE(enum_DOOR_STATE.open), new DOOR_STATE(enum_DOOR_STATE.closed), new DOOR_STATE(enum_DOOR_STATE.door_moving));

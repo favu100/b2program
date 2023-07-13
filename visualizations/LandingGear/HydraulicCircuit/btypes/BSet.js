@@ -1,9 +1,9 @@
-import { BBoolean } from "./BBoolean.js";
-import { BInteger } from "./BInteger.js";
-import { BRelation } from "./BRelation.js";
-import { BString } from "./BString.js";
-import { BStruct } from "./BStruct.js";
-import * as immutable from "../immutable/dist/immutable.es.js";
+import { BBoolean } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BBoolean.js";
+import { BInteger } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BInteger.js";
+import { BRelation } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BRelation.js";
+import { BString } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BString.js";
+import { BStruct } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BStruct.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/immutable/dist/immutable.es.js";
 export class BSet {
     constructor(...args) {
         if (args.length == 1 && args[0] instanceof immutable.Set) {

@@ -5,13 +5,13 @@
 		  "repeat": ["fr", "lt", "rt"],
 		  "id":"door_%0",
 		  "attr":"xlink:href",
-		  "value":"IF doors(%0) = open THEN \"img/door_open.png\" ELSIF doors(%0) = closed \"img/door_closed.png\" ELSE \"img/door_door_moving.png\" END"
+		  "value":"{open |-> \"img/door_open.png\", closed |-> \"img/door_closed.png\", door_moving |-> \"img/door_door_moving.png\"}(doors(%0))"
 	  },
     {
 		  "repeat": ["fr", "lt", "rt"],
 		  "id":"gear_%0",
 		  "attr":"xlink:href",
-		  "value":"IF gears(%0) = extended THEN \"img/gear_extended.png\" ELSIF gears(%0) = retracted \"img/gear_retracted.png\" ELSE \"img/gear_gear_moving.png\" END"
+		  "value": "{extended |-> \"img/gear_extended.png\", retracted |-> \"img/gear_retracted.png\", gear_moving |-> \"img/gear_gear_moving.png\"}(gears(%0))"
 	  }
   ],
   "events": []

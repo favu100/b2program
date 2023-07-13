@@ -1,10 +1,10 @@
-import { BTuple } from "./BTuple.js";
-import { BSet } from "./BSet.js";
-import { BInteger } from "./BInteger.js";
-import { BBoolean } from "./BBoolean.js";
-import { BString } from "./BString.js";
-import { BStruct } from "./BStruct.js";
-import * as immutable from "../immutable/dist/immutable.es.js";
+import { BTuple } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BTuple.js";
+import { BSet } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BSet.js";
+import { BInteger } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BInteger.js";
+import { BBoolean } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BBoolean.js";
+import { BString } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BString.js";
+import { BStruct } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BStruct.js";
+import * as immutable from "https://favu100.github.io/b2program/LandingGear/GearsDoors/immutable/dist/immutable.es.js";
 export class BRelation {
     constructor(...args) {
         if (args.length === 0) {

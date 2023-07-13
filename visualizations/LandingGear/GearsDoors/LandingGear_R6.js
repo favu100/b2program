@@ -1,10 +1,10 @@
-import { BTuple } from 'https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BTuple.js';
-import { BBoolean } from 'https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BBoolean.js';
-import { BRelation } from 'https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BRelation.js';
-import { BSet } from 'https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BSet.js';
-import { BUtils } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BUtils.js";
-import { SelectError } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BUtils.js";
-import * as immutable from "https://favu100.github.io/b2program/LandingGear/GearsDoors/immutable/dist/immutable.es.js";
+import { BTuple } from 'https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BTuple.js';
+import { BBoolean } from 'https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BBoolean.js';
+import { BRelation } from 'https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BRelation.js';
+import { BSet } from 'https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BSet.js';
+import { BUtils } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BUtils.js";
+import { SelectError } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BUtils.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/immutable/dist/immutable.es.js";
 export var enum_DOOR_STATE;
 (function (enum_DOOR_STATE) {
     enum_DOOR_STATE[enum_DOOR_STATE["open"] = 0] = "open";

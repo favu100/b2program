@@ -61,7 +61,7 @@ public class TestVisualisation extends TestJs {
 
     @Test
     public void testLandingGear2forServer() throws Exception {
-        testJs("landing_gear/LandingGear_R6", "LandingGear_R6", null, "LandingGear_GearsDoors.json", false, true, "https://favu100.github.io/b2program/LandingGear/GearsDoors");
+        testJs("landing_gear/LandingGear_R6", "LandingGear_R6", null, "LandingGear_GearsDoors.json", false, true, "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors");
     }
 
 }

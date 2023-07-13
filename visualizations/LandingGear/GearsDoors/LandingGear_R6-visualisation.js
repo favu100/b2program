@@ -1,20 +1,20 @@
-import LandingGear_R6 from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js";
-import {SelectError} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BUtils.js";
-import {enum_DOOR_STATE} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js"
-import {DOOR_STATE} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js"
-import {enum_GEAR_STATE} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js"
-import {GEAR_STATE} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js"
-import {enum_POSITION} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js"
-import {POSITION} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/LandingGear_R6.js"
-import {BTuple} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BTuple.js";
-import {BSet} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BSet.js";
-import {BRelation} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BRelation.js";
-import {BBoolean} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BBoolean.js";
-import {BObject} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BObject.js";
-import {BString} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BString.js";
+import LandingGear_R6 from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js";
+import {SelectError} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BUtils.js";
+import {enum_DOOR_STATE} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js"
+import {DOOR_STATE} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js"
+import {enum_GEAR_STATE} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js"
+import {GEAR_STATE} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js"
+import {enum_POSITION} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js"
+import {POSITION} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/LandingGear_R6.js"
+import {BTuple} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BTuple.js";
+import {BSet} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BSet.js";
+import {BRelation} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BRelation.js";
+import {BBoolean} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BBoolean.js";
+import {BObject} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BObject.js";
+import {BString} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BString.js";
 
-import {Activation} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/simulation/Activation.js";
-import {ActivationKind} from "https://favu100.github.io/b2program/LandingGear/GearsDoors/simulation/ActivationKind.js";
+import {Activation} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/simulation/Activation.js";
+import {ActivationKind} from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/simulation/ActivationKind.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
   checkLoaded();

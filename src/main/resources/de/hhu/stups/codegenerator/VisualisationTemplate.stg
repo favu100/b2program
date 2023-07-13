@@ -31,6 +31,7 @@ function checkLoaded() {
 }
 
 function initialize() {
+    window.setTimeout(function(){}, 1000);
     var <initialMachineVar()> = new <machineName>();
     var _state_list = [];
     var _transition_list = [];

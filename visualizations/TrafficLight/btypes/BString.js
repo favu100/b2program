@@ -1,4 +1,4 @@
-import { BBoolean } from "./BBoolean.js";
+import { BBoolean } from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BBoolean.js";
 export class BString {
     constructor(value) {
         this.value = value;

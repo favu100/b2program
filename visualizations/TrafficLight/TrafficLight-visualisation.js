@@ -1,15 +1,15 @@
-import TrafficLight from "./TrafficLight.js";
-import {SelectError} from "./btypes/BUtils.js";
-import {enum_colors} from "./TrafficLight.js"
-import {colors} from "./TrafficLight.js"
-import {BTuple} from "./btypes/BTuple.js";
-import {BSet} from "./btypes/BSet.js";
-import {BBoolean} from "./btypes/BBoolean.js";
-import {BObject} from "./btypes/BObject.js";
-import {BString} from "./btypes/BString.js";
+import TrafficLight from "https://favu100.github.io/b2program/visualizations/TrafficLight/TrafficLight.js";
+import {SelectError} from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BUtils.js";
+import {enum_colors} from "https://favu100.github.io/b2program/visualizations/TrafficLight/TrafficLight.js"
+import {colors} from "https://favu100.github.io/b2program/visualizations/TrafficLight/TrafficLight.js"
+import {BTuple} from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BTuple.js";
+import {BSet} from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BSet.js";
+import {BBoolean} from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BBoolean.js";
+import {BObject} from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BObject.js";
+import {BString} from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BString.js";
 
-import {Activation} from "./simulation/Activation.js";
-import {ActivationKind} from "./simulation/ActivationKind.js";
+import {Activation} from "https://favu100.github.io/b2program/visualizations/TrafficLight/simulation/Activation.js";
+import {ActivationKind} from "https://favu100.github.io/b2program/visualizations/TrafficLight/simulation/ActivationKind.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
   checkLoaded();

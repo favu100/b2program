@@ -1,7 +1,7 @@
-import { BBoolean } from './btypes/BBoolean.js';
-import { BSet } from './btypes/BSet.js';
-import { SelectError } from "./btypes/BUtils.js";
-import * as immutable from "./immutable/dist/immutable.es.js";
+import { BBoolean } from 'https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BBoolean.js';
+import { BSet } from 'https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BSet.js';
+import { SelectError } from "https://favu100.github.io/b2program/visualizations/TrafficLight/btypes/BUtils.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/TrafficLight/immutable/dist/immutable.es.js";
 export var enum_colors;
 (function (enum_colors) {
     enum_colors[enum_colors["red"] = 0] = "red";

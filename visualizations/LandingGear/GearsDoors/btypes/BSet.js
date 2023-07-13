@@ -1,9 +1,9 @@
-import { BBoolean } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BBoolean.js";
-import { BInteger } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BInteger.js";
-import { BRelation } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BRelation.js";
-import { BString } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BString.js";
-import { BStruct } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BStruct.js";
-import * as immutable from "https://favu100.github.io/b2program/LandingGear/GearsDoors/immutable/dist/immutable.es.js";
+import { BBoolean } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BBoolean.js";
+import { BInteger } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BInteger.js";
+import { BRelation } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BRelation.js";
+import { BString } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BString.js";
+import { BStruct } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BStruct.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/immutable/dist/immutable.es.js";
 export class BSet {
     constructor(...args) {
         if (args.length == 1 && args[0] instanceof immutable.Set) {
@@ -22,7 +22,7 @@ export class BSet {
     }
     toString() {
         let sb = "{";
-        this.set.forEach(element => {
+        this.set.forEach((element) => {
             if (sb.length > 1) {
                 sb += ", ";
             }
@@ -51,7 +51,7 @@ export class BSet {
                 return new BRelation(result);
             }
             else {
-                throw new Error("Generalized Union is only possible on immutable.Sets of immutable.Sets or Relations");
+                throw new Error("Generalized Union is only possible on Sets of Sets or Relations.");
             }
         }
         let result = BSet.immutableSetUnion(this.set, other.set);
@@ -116,7 +116,7 @@ export class BSet {
                 return new BRelation(result);
             }
             else {
-                throw new Error("Generalized Intersection is only possible on immutable.Sets of immutable.Sets or Relations");
+                throw new Error("Generalized Intersection is only possible on Sets of Sets or Relations");
             }
         }
         let new_set = BSet.immutableSetDifference(this.set, BSet.immutableSetDifference(this.set, other.set));
@@ -181,16 +181,16 @@ export class BSet {
         return this.set.size === 0;
     }
     equals(other) {
-        return this.equal(other).booleanValue();
+        if (!(other instanceof BSet)) {
+            return false;
+        }
+        return this.set.equals(other.set);
     }
     equal(other) {
-        if (!(other instanceof BSet)) {
-            return new BBoolean(false);
-        }
-        return this.subset(other).and(other.subset(this));
+        return new BBoolean(this.equals(other));
     }
     unequal(other) {
-        return this.equal(other).not();
+        return new BBoolean(!this.equals(other));
     }
     nondeterminism() {
         let values = [];

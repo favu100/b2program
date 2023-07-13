@@ -1,4 +1,4 @@
-import { BBoolean } from "https://favu100.github.io/b2program/LandingGear/GearsDoors/btypes/BBoolean.js";
+import { BBoolean } from "https://favu100.github.io/b2program/visualizations/LandingGear/GearsDoors/btypes/BBoolean.js";
 export class BString {
     constructor(value) {
         this.value = value;
@@ -11,6 +11,12 @@ export class BString {
             return false;
         }
         return this.value === o.value;
+    }
+    equal(o) {
+        return new BBoolean(this.equals(o));
+    }
+    unequal(o) {
+        return new BBoolean(!this.equals(o));
     }
     length() {
         return this.value.length;

@@ -12,26 +12,11 @@ import {SelectError} from "./btypes/BUtils.js";
 import {Activation} from "./simulation/Activation.js";
 import {ActivationKind} from "./simulation/ActivationKind.js";
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  checkLoaded();
-});
-
-function checkLoaded() {
-    const iframe = document.getElementById("<svgName>");
-    if (iframe == null) {
-        window.setTimeout(checkLoaded, 100);
-    } else {
-        var iframeDoc = iframe.contentDocument;
-        if (iframeDoc != null && iframeDoc.readyState == 'complete') {
-            initialize();
-        } else {
-            window.setTimeout(checkLoaded, 100);
-        }
-    }
+window.onload = function() {
+    initialize();
 }
 
 function initialize() {
-    window.setTimeout(function(){}, 1000);
     var <initialMachineVar()> = new <machineName>();
     var _state_list = [];
     var _transition_list = [];

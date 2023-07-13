@@ -21,22 +21,8 @@ import {BString} from "https://favu100.github.io/b2program/visualizations/LightM
 import {Activation} from "https://favu100.github.io/b2program/visualizations/LightModel/simulation/Activation.js";
 import {ActivationKind} from "https://favu100.github.io/b2program/visualizations/LightModel/simulation/ActivationKind.js";
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  checkLoaded();
-});
-
-function checkLoaded() {
-    const iframe = document.getElementById("LichtUebersicht_v4");
-    if (iframe == null) {
-        window.setTimeout(checkLoaded, 100);
-    } else {
-        var iframeDoc = iframe.contentDocument;
-        if (iframeDoc != null && iframeDoc.readyState == 'complete') {
-            initialize();
-        } else {
-            window.setTimeout(checkLoaded, 100);
-        }
-    }
+window.onload = function() {
+    initialize();
 }
 
 function initialize() {

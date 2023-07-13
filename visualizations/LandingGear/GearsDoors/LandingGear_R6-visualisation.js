@@ -20,20 +20,6 @@ window.onload = function() {
     initialize();
 }
 
-function checkLoaded() {
-    const iframe = document.getElementById("physical");
-    if (iframe == null) {
-        window.setTimeout(checkLoaded, 100);
-    } else {
-        var iframeDoc = iframe.contentDocument;
-        if (iframeDoc != null && iframeDoc.readyState == 'complete') {
-            initialize();
-        } else {
-            window.setTimeout(checkLoaded, 100);
-        }
-    }
-}
-
 function initialize() {
     var _machine = new LandingGear_R6();
     var _state_list = [];

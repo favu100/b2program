@@ -1,9 +1,9 @@
-import { BTuple } from './btypes/BTuple.js';
-import { BBoolean } from './btypes/BBoolean.js';
-import { BRelation } from './btypes/BRelation.js';
-import { BSet } from './btypes/BSet.js';
-import { SelectError } from "./btypes/BUtils.js";
-import * as immutable from "./immutable/dist/immutable.es.js";
+import { BTuple } from 'https://favu100.github.io/b2program/visualizations/LightModel/btypes/BTuple.js';
+import { BBoolean } from 'https://favu100.github.io/b2program/visualizations/LightModel/btypes/BBoolean.js';
+import { BRelation } from 'https://favu100.github.io/b2program/visualizations/LightModel/btypes/BRelation.js';
+import { BSet } from 'https://favu100.github.io/b2program/visualizations/LightModel/btypes/BSet.js';
+import { SelectError } from "https://favu100.github.io/b2program/visualizations/LightModel/btypes/BUtils.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/LightModel/immutable/dist/immutable.es.js";
 export var enum_TIMERS;
 (function (enum_TIMERS) {
     enum_TIMERS[enum_TIMERS["blink_deadline"] = 0] = "blink_deadline";

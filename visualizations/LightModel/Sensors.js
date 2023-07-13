@@ -1,7 +1,7 @@
-import { BBoolean } from './btypes/BBoolean.js';
-import { BSet } from './btypes/BSet.js';
-import { SelectError } from "./btypes/BUtils.js";
-import * as immutable from "./immutable/dist/immutable.es.js";
+import { BBoolean } from 'https://favu100.github.io/b2program/visualizations/LightModel/btypes/BBoolean.js';
+import { BSet } from 'https://favu100.github.io/b2program/visualizations/LightModel/btypes/BSet.js';
+import { SelectError } from "https://favu100.github.io/b2program/visualizations/LightModel/btypes/BUtils.js";
+import * as immutable from "https://favu100.github.io/b2program/visualizations/LightModel/immutable/dist/immutable.es.js";
 export var enum_SWITCH_STATUS;
 (function (enum_SWITCH_STATUS) {
     enum_SWITCH_STATUS[enum_SWITCH_STATUS["switch_on"] = 0] = "switch_on";

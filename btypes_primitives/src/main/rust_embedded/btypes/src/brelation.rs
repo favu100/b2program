@@ -56,29 +56,6 @@ where L: SetItem<LS> + RelLeftItem<LS, R, RS, SIZE, REL_SIZE>,
         return BRelation { rel: L::idx_to_rel(idx), _p: PhantomData, _p2: PhantomData };
     }
 }
-/*
-impl<L, const LS: usize, R, const RS: usize, const REL_SIZE: usize> Set<REL_SIZE> for BRelation<L, LS, R, RS, REL_SIZE>
-    where L: SetItem<LS> + RelLeftItem<LS, R, RS, REL_SIZE>,
-          R: SetItem<RS>{
-    type ItemType = L::RelEnum;
-
-    fn as_arr(&self) -> [bool; REL_SIZE] {
-        todo!()
-    }
-
-    fn from_arr(arr: [bool; REL_SIZE]) -> Self {
-        todo!()
-    }
-
-    fn contains_idx(&self, idx: usize) -> bool {
-        todo!()
-    }
-
-    fn subset_of(&self, other: &Self) -> bool {
-        todo!()
-    }
-}
-*/
 
 pub trait RelPowAble<const REL_VARIANTS: usize, const REL_SIZE: usize>: SetItem<REL_VARIANTS> {
     fn pow(&self) -> BSet<Self, REL_VARIANTS>;

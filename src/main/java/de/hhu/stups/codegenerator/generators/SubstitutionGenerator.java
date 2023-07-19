@@ -25,6 +25,7 @@ import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.SetType;
 import org.antlr.v4.runtime.misc.OrderedHashSet;
 import org.stringtemplate.v4.ST;

@@ -2,7 +2,7 @@ MACHINE Lift_MC
 
 VARIABLES  c_floor
 
-INVARIANT  c_floor >= 0 & c_floor <= 100
+INVARIANT  c_floor : 0..100
 
 INITIALISATION c_floor := 0
 

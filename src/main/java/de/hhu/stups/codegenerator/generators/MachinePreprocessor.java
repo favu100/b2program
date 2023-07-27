@@ -45,14 +45,26 @@ import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
+    private boolean inEnumeration;
+
+    public MachinePreprocessor() {
+        this.inEnumeration = false;
+    }
+
     public void visitMachineNode(MachineNode machineNode) {
         // TODO: Process other constructs
-        machineNode.setProperties(visitPredicateNode(machineNode.getProperties()));
+        if(machineNode.getProperties() != null) {
+            machineNode.setProperties(visitPredicateNode(machineNode.getProperties()));
+        }
+        if(machineNode.getInvariant() != null) {
+            machineNode.setInvariant(visitPredicateNode(machineNode.getInvariant()));
+        }
     }
 
     public PredicateNode visitPredicateNode(PredicateNode predicateNode) {
@@ -186,6 +198,11 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                         expressions.add(newRhs);
                         return new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, expressions);
                     }
+                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.INTERVAL) {
+                    List<PredicateNode> predicates = new ArrayList<>();
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                    return new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
                 }
             }
         }

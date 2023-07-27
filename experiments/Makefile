@@ -40,10 +40,10 @@ $(JAR): ../build/libs/$(JAR)
 	@echo "Copying B2Program JAR"
 	cp ../build/libs/$(JAR) .
 
-$(JAVAFILE): $(JAR) $(BFILE)
+$(JAVAFILE): $(JAR) $(BFILE) Makefile
 	@echo "Generating Java Model Checker file $(JAVAFILE) from B file $(BFILE)"
 	#java -jar $(JAR) java $(BIGINT) -2147483648 2147483647 10 false true $(BFILE)
-	java -jar $(JAR) -l java -bi $(BIGINT) -min -2147483648 --max 2147483647 -dss 10 -cs false -a main -f $(BFILE)
+	java -jar $(JAR) -l java -bi $(BIGINT) -min -2147483648 --max 2147483647 -dss 10 -cs false -mc true -f $(BFILE)
 
 CACHING=false
 THREADS=1

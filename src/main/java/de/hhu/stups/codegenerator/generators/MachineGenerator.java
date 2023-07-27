@@ -67,6 +67,8 @@ import java.util.stream.Collectors;
 
 public class MachineGenerator implements AbstractVisitor<String, Void> {
 
+	private final MachinePreprocessor machinePreprocessor;
+
 	private final TypeGenerator typeGenerator;
 
 	private final ImportGenerator importGenerator;
@@ -162,6 +164,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 				e.printStackTrace();
 			}
 		}
+		this.machinePreprocessor = new MachinePreprocessor();
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);
@@ -243,6 +246,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	* This function generates code for the whole machine with the given AST node.
 	*/
 	public String generateMachine(MachineNode node, GeneratorMode mode) {
+		machinePreprocessor.visitMachineNode(node);
 		initialize(node);
 		recordStructAnalyzer.visitMachineNode(node);
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());

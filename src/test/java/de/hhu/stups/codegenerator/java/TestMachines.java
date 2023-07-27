@@ -418,4 +418,15 @@ public class TestMachines extends TestJava {
     }
 
 
+    @Test
+    public void testGenerated1000MC() throws Exception {
+        testJavaMC("Generated1000");
+    }
+
+    @Test
+    public void testGenerated126_small_mc() throws Exception {
+        testJavaMC("Generated126_small_mc");
+    }
+
+
 }

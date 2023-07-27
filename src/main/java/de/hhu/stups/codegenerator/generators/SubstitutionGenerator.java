@@ -206,6 +206,7 @@ public class SubstitutionGenerator {
         if(equalProperties.isEmpty()) {
             return "";
         }
+
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
         if(infiniteSetGenerator.checkExpressionInfinite(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
             return "";

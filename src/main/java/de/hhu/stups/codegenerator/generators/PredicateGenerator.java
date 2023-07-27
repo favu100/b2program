@@ -291,7 +291,7 @@ public class PredicateGenerator {
     }
 
     /*
-     * This function extracts all relevant conjuncts in the PROPERTIES clause to assign a value to a constant
+     * This function extracts all relevant equal conjuncts in the PROPERTIES clause to assign a value to a constant
      */
     public List<PredicateNode> extractEqualProperties(MachineNode node, DeclarationNode constant) {
         return extractProperties(node).stream()

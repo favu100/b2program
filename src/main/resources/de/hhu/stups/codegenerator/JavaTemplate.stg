@@ -525,23 +525,23 @@ public boolean <invariantFunction>() {
 }
 >>
 
-copy_constructor(machine, parameters, assignments) ::= <<
-public <machine>(<parameters; separator=", ">) {
+copy_constructor(machine, assignments) ::= <<
+public <machine>(<machine> copy) {
     <assignments; separator="\n">
 }
 >>
 
 copy_assignment(variable) ::= <<
-this.<variable> = <variable>;
+this.<variable> = copy.<variable>;
 >>
 
 copy_machine(machine) ::= <<
 this.<machine> = <machine>._copy();
 >>
 
-copy(machine, parameters) ::= <<
+copy(machine) ::= <<
 public <machine> _copy() {
-    return new <machine>(<parameters; separator=", ">);
+    return new <machine>(this);
 }
 >>
 

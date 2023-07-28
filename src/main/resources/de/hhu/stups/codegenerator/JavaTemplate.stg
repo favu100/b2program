@@ -1455,8 +1455,9 @@ private void modelCheckSingleThreaded() {
             if(!states.contains(nextState)) {
                 states.add(nextState);
                 unvisitedStates.add(nextState);
-                if(states.size() % 50000 == 0 && isDebug) {
+                if(isDebug && states.size() % 50000 == 0) {
                     System.out.println("VISITED STATES: " + states.size());
+                    System.out.println("OPEN STATES: " + unvisitedStates.size());
                     System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
                     System.out.println("-------------------");
                 }
@@ -1502,8 +1503,9 @@ private void modelCheckMultiThreaded() {
                     synchronized (unvisitedStates) {
                         unvisitedStates.add(nextState);
                     }
-                    if(states.size() % 50000 == 0 && isDebug) {
+                    if(isDebug && states.size() % 50000 == 0) {
                         System.out.println("VISITED STATES: " + states.size());
+                        System.out.println("OPEN STATES: " + unvisitedStates.size());
                         System.out.println("EVALUATED TRANSITIONS: " + transitions.get());
                         System.out.println("-------------------");
                     }

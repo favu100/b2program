@@ -1611,8 +1611,11 @@ public static void main(String[] args) {
     }
 
     System.out.println("Starting Model Checking, Search: "+type+", Threads: "+threads+", Caching: "+isCaching);
+    long start = java.lang.System.currentTimeMillis();
     ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();
+    long stop = java.lang.System.currentTimeMillis();
+    System.out.println("Model Checking Time: "+ (stop-start) + " ms");
 }
 >>
 

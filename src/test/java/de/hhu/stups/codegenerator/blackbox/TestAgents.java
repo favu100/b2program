@@ -14,4 +14,9 @@ public class TestAgents extends TestBlackBox {
         testBlackBox("HighwayEnvironment", "highway-fast-v0", "highway_dqn/highway_dqn/DQNFast3/rl_model_500000_steps", "DQN", 100);
     }
 
+    @Test
+    public void testHighwayEnvironment2() throws Exception {
+        testBlackBox("HighwayEnvironment2", "highway-fast-v0", "highway_dqn/highway_dqn/DQNFast3/rl_model_500000_steps", "DQN", 100);
+    }
+
 }

@@ -77,7 +77,7 @@ for ep in range(episodes):
     transition_list = []
     timed_transition_list = []
     j = 0
-    delta = 500
+    delta = 1000
     while not done:
         j = j + 1
         action, _states = model.predict(obs)
@@ -109,13 +109,20 @@ for ep in range(episodes):
 obs = env.reset()
 done = False
 j = 0
-delta = 500
+delta = 1000
 while not done:
+    input_read = input("")
+    input_list = input_read.split(",")
+
     j = j + 1
     action, _states = model.predict(obs)
+
     obs, rewards, done, info = env.step(int(action))
-    env.render()
-    actionName = action_names.get(int(action))
+    corrected_action = action
+
+    #TODO: Implement correction by safety shield
+
+    actionName = action_names.get(int(corrected_action))
     if j == 1:
         print("$initialise_machine")
     else:
@@ -123,6 +130,7 @@ while not done:
 
     print(delta)
     print(<variablePredicate; separator=" + \" & \" + ">)
+    print("true" if done else "false")
 
 <endif>
 

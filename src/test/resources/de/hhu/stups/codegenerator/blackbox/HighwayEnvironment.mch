@@ -15,21 +15,31 @@ VARIABLES
     VehiclesX,
     VehiclesY,
     VehiclesVx,
-    VehiclesVy
+    VehiclesVy,
+    VehiclesAx,
+    VehiclesAy,
+    Reward
 
 INVARIANT
     Crash : BOOL &
     VehiclesX : Vehicles --> REAL &
     VehiclesY : Vehicles --> REAL &
     VehiclesVx : Vehicles --> REAL &
-    VehiclesVy : Vehicles --> REAL
+    VehiclesVy : Vehicles --> REAL &
+    VehiclesAx : Vehicles --> REAL &
+    VehiclesAy : Vehicles --> REAL &
+    Reward : REAL
 
 INITIALISATION
   Crash := FALSE ||
   VehiclesX : (VehiclesX : Vehicles --> REAL) ||
   VehiclesY : (VehiclesY : Vehicles --> REAL) ||
   VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL)
+  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
+  Reward : (Reward : REAL)
+
 
 OPERATIONS
   IDLE = BEGIN
@@ -37,7 +47,10 @@ OPERATIONS
   VehiclesX : (VehiclesX : Vehicles --> REAL) ||
   VehiclesY : (VehiclesY : Vehicles --> REAL) ||
   VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL)
+  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
+  Reward : (Reward : REAL)
   END;
 
   LANE_LEFT = BEGIN
@@ -45,7 +58,10 @@ OPERATIONS
   VehiclesX : (VehiclesX : Vehicles --> REAL) ||
   VehiclesY : (VehiclesY : Vehicles --> REAL) ||
   VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL)
+  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
+  Reward : (Reward : REAL)
   END;
 
   LANE_RIGHT = BEGIN
@@ -53,7 +69,10 @@ OPERATIONS
   VehiclesX : (VehiclesX : Vehicles --> REAL) ||
   VehiclesY : (VehiclesY : Vehicles --> REAL) ||
   VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL)
+  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
+  Reward : (Reward : REAL)
   END;
 
   FASTER = BEGIN
@@ -61,7 +80,10 @@ OPERATIONS
   VehiclesX : (VehiclesX : Vehicles --> REAL) ||
   VehiclesY : (VehiclesY : Vehicles --> REAL) ||
   VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL)
+  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
+  Reward : (Reward : REAL)
   END;
 
   SLOWER = BEGIN
@@ -69,7 +91,10 @@ OPERATIONS
   VehiclesX : (VehiclesX : Vehicles --> REAL) ||
   VehiclesY : (VehiclesY : Vehicles --> REAL) ||
   VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL)
+  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
+  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
+  Reward : (Reward : REAL)
   END
 
 END

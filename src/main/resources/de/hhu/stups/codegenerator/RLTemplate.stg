@@ -109,13 +109,21 @@ for ep in range(episodes):
         write_timed_trace(timed_transition_list, i)
 <else>
 obs = env.reset()
+rewards = 0.0
+info = None
 done = False
-j = 0
 delta = 1000
+
+input("")
+print("")
+input("")
+print("$initialise_machine")
+print(0)
+print(<variablePredicate; separator=" + \" & \" + ">)
+print("false")
 while not done:
     input_read = input("")
 
-    j = j + 1
     action, _states = model.predict(obs)
 
     print(action_names.get(int(action)))
@@ -125,11 +133,8 @@ while not done:
     obs, rewards, done, info = env.step(int(corrected_action))
 
     actionName = action_names.get(int(corrected_action))
-    if j == 1:
-        print("$initialise_machine")
-    else:
-        print(actionName)
 
+    print(actionName)
     print(delta)
     print(<variablePredicate; separator=" + \" & \" + ">)
     print("true" if done else "false")

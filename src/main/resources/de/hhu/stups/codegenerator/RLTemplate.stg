@@ -43,6 +43,8 @@ action_names = {
     <actionMapping; separator=", \t\n">
 }
 
+action_names_inv = {val: key for key, val in action_names.items()}
+
 <getters; separator="\n\n">
 
 <if(generateTraces)>
@@ -112,15 +114,15 @@ j = 0
 delta = 1000
 while not done:
     input_read = input("")
-    input_list = input_read.split(",")
 
     j = j + 1
     action, _states = model.predict(obs)
 
-    obs, rewards, done, info = env.step(int(action))
-    corrected_action = action
+    print(action_names.get(int(action)))
+    corrected_action = input("")
+    corrected_action = action_names_inv.get(corrected_action)
 
-    #TODO: Implement correction by safety shield
+    obs, rewards, done, info = env.step(int(corrected_action))
 
     actionName = action_names.get(int(corrected_action))
     if j == 1:

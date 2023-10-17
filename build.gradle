@@ -11,15 +11,10 @@ project.group = 'de.hhu.stups'
 mainClassName = 'de.hhu.stups.codegenerator.CodeGenerator'
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
         name "snapshots"
         url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
-    maven {
-        name "release"
-        url "https://oss.sonatype.org/content/repositories/releases/"
     }
 }
 

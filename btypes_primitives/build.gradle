@@ -5,17 +5,11 @@ apply plugin: 'idea'
 project.archivesBaseName = "${rootProject.name}-btypes"
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
         name "snapshots"
         url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
-    maven {
-        name "release"
-        url "https://oss.sonatype.org/content/repositories/releases/"
-    }
-
 }
 
 dependencies {

@@ -19,7 +19,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     implementation group: 'org.antlr', name: 'ST4', version: '4.3.3'
     implementation group: "de.hhu.stups", name: "antlr-parser", version: "0.1.0-SNAPSHOT"
 

@@ -21,15 +21,13 @@ repositories {
         name "release"
         url "https://oss.sonatype.org/content/repositories/releases/"
     }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     implementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     antlr 'org.antlr:antlr4:4.7.1'
     implementation group: 'org.antlr', name: 'ST4', version: '4.3.3'
-    // antlr parser dependency
-    implementation 'com.github.hhu-stups:antlr-parser:-SNAPSHOT' // https://github.com/hhu-stups/antlr-parser'
+    implementation group: "de.hhu.stups", name: "antlr-parser", version: "0.1.0-SNAPSHOT"
 
     implementation group: 'org.clojure', name: 'clojure', version: '1.6.0'
 

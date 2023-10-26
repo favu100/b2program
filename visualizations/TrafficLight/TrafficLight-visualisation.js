@@ -42,7 +42,7 @@ function initialize() {
     _machine_vars["tl_cars"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_var_tl_cars";
-    _var_label.innerHTML = "TrafficLight.tl_cars";
+    _var_label.innerHTML = "tl_cars";
     _state_view_vars.appendChild(_var_label);
     _state_view_vars.appendChild(_var_div);
     _var_div = document.createElement("div");
@@ -51,7 +51,7 @@ function initialize() {
     _machine_vars["tl_peds"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_var_tl_peds";
-    _var_label.innerHTML = "TrafficLight.tl_peds";
+    _var_label.innerHTML = "tl_peds";
     _state_view_vars.appendChild(_var_label);
     _state_view_vars.appendChild(_var_div);
     _var_div = document.createElement("div");
@@ -60,7 +60,7 @@ function initialize() {
     _machine_vars["colors"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_var_colors";
-    _var_label.innerHTML = "TrafficLight.colors";
+    _var_label.innerHTML = "colors";
     _state_view_sets.appendChild(_var_label);
     _state_view_sets.appendChild(_var_div);
     _var_div = document.createElement("div");
@@ -69,7 +69,7 @@ function initialize() {
     _machine_vars["_check_inv_1"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_check_inv_1";
-    _var_label.innerHTML = "tl_cars:colors";
+    _var_label.innerHTML = "tl_cars : colors";
     _state_view_invariant.appendChild(_var_label);
     _state_view_invariant.appendChild(_var_div);
     _var_div = document.createElement("div");
@@ -78,7 +78,7 @@ function initialize() {
     _machine_vars["_check_inv_2"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_check_inv_2";
-    _var_label.innerHTML = "tl_peds:{red,green}";
+    _var_label.innerHTML = "tl_peds : {red, green}";
     _state_view_invariant.appendChild(_var_label);
     _state_view_invariant.appendChild(_var_div);
     _var_div = document.createElement("div");
@@ -87,7 +87,7 @@ function initialize() {
     _machine_vars["_check_inv_3"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_check_inv_3";
-    _var_label.innerHTML = "tl_peds=redortl_cars=red";
+    _var_label.innerHTML = "tl_peds=red or tl_cars=red";
     _state_view_invariant.appendChild(_var_label);
     _state_view_invariant.appendChild(_var_div);
 

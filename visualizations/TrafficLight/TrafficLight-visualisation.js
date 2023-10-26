@@ -87,7 +87,7 @@ function initialize() {
     _machine_vars["_check_inv_3"] = _var_div;
     _var_label = document.createElement("label");
     _var_label.htmlFor = "_check_inv_3";
-    _var_label.innerHTML = "tl_peds=red or tl_cars=red";
+    _var_label.innerHTML = "tl_peds = red or tl_cars = red";
     _state_view_invariant.appendChild(_var_label);
     _state_view_invariant.appendChild(_var_div);
 

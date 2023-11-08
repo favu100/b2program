@@ -4,6 +4,7 @@ import {BRelation} from './btypes/BRelation.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -388,211 +389,212 @@ export default class LandingGear_R6 {
     }
 
 
-     begin_flying(): void {
+
+    begin_flying(): void {
         this.shock_absorber = new PLANE_STATE(enum_PLANE_STATE.flight);
 
     }
 
-     land_plane(): void {
+    land_plane(): void {
         this.shock_absorber = new PLANE_STATE(enum_PLANE_STATE.ground);
 
     }
 
-     open_valve_door_open(): void {
+    open_valve_door_open(): void {
         this.valve_open_door = new VALVE_STATE(enum_VALVE_STATE.valve_open);
 
     }
 
-     close_valve_door_open(): void {
+    close_valve_door_open(): void {
         this.valve_open_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
 
     }
 
-     open_valve_door_close(): void {
+    open_valve_door_close(): void {
         this.valve_close_door = new VALVE_STATE(enum_VALVE_STATE.valve_open);
 
     }
 
-     close_valve_door_close(): void {
+    close_valve_door_close(): void {
         this.valve_close_door = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
 
     }
 
-     open_valve_retract_gear(): void {
+    open_valve_retract_gear(): void {
         this.valve_retract_gear = new VALVE_STATE(enum_VALVE_STATE.valve_open);
 
     }
 
-     close_valve_retract_gear(): void {
+    close_valve_retract_gear(): void {
         this.valve_retract_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
 
     }
 
-     open_valve_extend_gear(): void {
+    open_valve_extend_gear(): void {
         this.valve_extend_gear = new VALVE_STATE(enum_VALVE_STATE.valve_open);
 
     }
 
-     close_valve_extend_gear(): void {
+    close_valve_extend_gear(): void {
         this.valve_extend_gear = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
 
     }
 
-     con_stimulate_open_door_valve(): void {
+    con_stimulate_open_door_valve(): void {
         this.open_EV = new BBoolean(true);
 
     }
 
-     con_stop_stimulate_open_door_valve(): void {
+    con_stop_stimulate_open_door_valve(): void {
         this.open_EV = new BBoolean(false);
 
     }
 
-     con_stimulate_close_door_valve(): void {
+    con_stimulate_close_door_valve(): void {
         this.close_EV = new BBoolean(true);
 
     }
 
-     con_stop_stimulate_close_door_valve(): void {
+    con_stop_stimulate_close_door_valve(): void {
         this.close_EV = new BBoolean(false);
 
     }
 
-     con_stimulate_retract_gear_valve(): void {
+    con_stimulate_retract_gear_valve(): void {
         this.retract_EV = new BBoolean(true);
 
     }
 
-     con_stop_stimulate_retract_gear_valve(): void {
+    con_stop_stimulate_retract_gear_valve(): void {
         this.retract_EV = new BBoolean(false);
 
     }
 
-     con_stimulate_extend_gear_valve(): void {
+    con_stimulate_extend_gear_valve(): void {
         this.extend_EV = new BBoolean(true);
 
     }
 
-     con_stop_stimulate_extend_gear_valve(): void {
+    con_stop_stimulate_extend_gear_valve(): void {
         this.extend_EV = new BBoolean(false);
 
     }
 
-     env_start_retracting_first(gr: POSITION): void {
+    env_start_retracting_first(gr: POSITION): void {
         let _ld_gears: BRelation<POSITION, GEAR_STATE> = this.gears;
         this.gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple(gr, new GEAR_STATE(enum_GEAR_STATE.gear_moving))));
         this.gear = new GEAR_STATE(enum_GEAR_STATE.gear_moving);
 
     }
 
-     env_retract_gear_skip(gr: POSITION): void {
+    env_retract_gear_skip(gr: POSITION): void {
         this.gears = this.gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple(gr, new GEAR_STATE(enum_GEAR_STATE.retracted))));
 
     }
 
-     env_retract_gear_last(gr: POSITION): void {
+    env_retract_gear_last(gr: POSITION): void {
         let _ld_gears: BRelation<POSITION, GEAR_STATE> = this.gears;
         this.gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple(gr, new GEAR_STATE(enum_GEAR_STATE.retracted))));
         this.gear = new GEAR_STATE(enum_GEAR_STATE.retracted);
 
     }
 
-     env_start_extending(gr: POSITION): void {
+    env_start_extending(gr: POSITION): void {
         let _ld_gears: BRelation<POSITION, GEAR_STATE> = this.gears;
         this.gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple(gr, new GEAR_STATE(enum_GEAR_STATE.gear_moving))));
         this.gear = new GEAR_STATE(enum_GEAR_STATE.gear_moving);
 
     }
 
-     env_extend_gear_last(gr: POSITION): void {
+    env_extend_gear_last(gr: POSITION): void {
         let _ld_gears: BRelation<POSITION, GEAR_STATE> = this.gears;
         this.gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple(gr, new GEAR_STATE(enum_GEAR_STATE.extended))));
         this.gear = new GEAR_STATE(enum_GEAR_STATE.extended);
 
     }
 
-     env_extend_gear_skip(gr: POSITION): void {
+    env_extend_gear_skip(gr: POSITION): void {
         this.gears = this.gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple(gr, new GEAR_STATE(enum_GEAR_STATE.extended))));
 
     }
 
-     env_start_open_door(gr: POSITION): void {
+    env_start_open_door(gr: POSITION): void {
         let _ld_doors: BRelation<POSITION, DOOR_STATE> = this.doors;
         this.doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple(gr, new DOOR_STATE(enum_DOOR_STATE.door_moving))));
         this.door = new DOOR_STATE(enum_DOOR_STATE.door_moving);
 
     }
 
-     env_open_door_last(gr: POSITION): void {
+    env_open_door_last(gr: POSITION): void {
         let _ld_doors: BRelation<POSITION, DOOR_STATE> = this.doors;
         this.doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple(gr, new DOOR_STATE(enum_DOOR_STATE.open))));
         this.door = new DOOR_STATE(enum_DOOR_STATE.open);
 
     }
 
-     env_open_door_skip(gr: POSITION): void {
+    env_open_door_skip(gr: POSITION): void {
         this.doors = this.doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple(gr, new DOOR_STATE(enum_DOOR_STATE.open))));
 
     }
 
-     env_start_close_door(gr: POSITION): void {
+    env_start_close_door(gr: POSITION): void {
         let _ld_doors: BRelation<POSITION, DOOR_STATE> = this.doors;
         this.doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple(gr, new DOOR_STATE(enum_DOOR_STATE.door_moving))));
         this.door = new DOOR_STATE(enum_DOOR_STATE.door_moving);
 
     }
 
-     env_close_door(gr: POSITION): void {
+    env_close_door(gr: POSITION): void {
         let _ld_doors: BRelation<POSITION, DOOR_STATE> = this.doors;
         this.doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple(gr, new DOOR_STATE(enum_DOOR_STATE.closed))));
         this.door = new DOOR_STATE(enum_DOOR_STATE.closed);
 
     }
 
-     env_close_door_skip(gr: POSITION): void {
+    env_close_door_skip(gr: POSITION): void {
         this.doors = this.doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple(gr, new DOOR_STATE(enum_DOOR_STATE.closed))));
 
     }
 
-     toggle_handle_up(): void {
+    toggle_handle_up(): void {
         this.handle = new HANDLE_STATE(enum_HANDLE_STATE.up);
         this.handle_move = new BBoolean(true);
 
     }
 
-     toggle_handle_down(): void {
+    toggle_handle_down(): void {
         this.handle = new HANDLE_STATE(enum_HANDLE_STATE.down);
         this.handle_move = new BBoolean(true);
 
     }
 
-     con_stimulate_general_valve(): void {
+    con_stimulate_general_valve(): void {
         this.general_EV = new BBoolean(true);
 
     }
 
-     con_stop_stimulate_general_valve(): void {
+    con_stop_stimulate_general_valve(): void {
         this.general_EV = new BBoolean(false);
         this.handle_move = new BBoolean(false);
 
     }
 
-     evn_open_general_valve(): void {
+    evn_open_general_valve(): void {
         this.general_valve = new VALVE_STATE(enum_VALVE_STATE.valve_open);
 
     }
 
-     evn_close_general_valve(): void {
+    evn_close_general_valve(): void {
         this.general_valve = new VALVE_STATE(enum_VALVE_STATE.valve_closed);
 
     }
 
-     env_close_analogical_switch(): void {
+    env_close_analogical_switch(): void {
         this.analogical_switch = new SWITCH_STATE(enum_SWITCH_STATE.switch_closed);
 
     }
 
-     env_open_analogical_switch(): void {
+    env_open_analogical_switch(): void {
         this.analogical_switch = new SWITCH_STATE(enum_SWITCH_STATE.switch_open);
 
     }
@@ -1284,7 +1286,7 @@ export class ModelChecker {
             let _trid_1: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_begin_flying");
-                dependentGuardsBoolean = "_tr_begin_flying" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_begin_flying");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1305,7 +1307,7 @@ export class ModelChecker {
             let _trid_2: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_land_plane");
-                dependentGuardsBoolean = "_tr_land_plane" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_land_plane");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1326,7 +1328,7 @@ export class ModelChecker {
             let _trid_3: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_open_valve_door_open");
-                dependentGuardsBoolean = "_tr_open_valve_door_open" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_open_valve_door_open");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1347,7 +1349,7 @@ export class ModelChecker {
             let _trid_4: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_close_valve_door_open");
-                dependentGuardsBoolean = "_tr_close_valve_door_open" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_close_valve_door_open");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1368,7 +1370,7 @@ export class ModelChecker {
             let _trid_5: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_open_valve_door_close");
-                dependentGuardsBoolean = "_tr_open_valve_door_close" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_open_valve_door_close");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1389,7 +1391,7 @@ export class ModelChecker {
             let _trid_6: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_close_valve_door_close");
-                dependentGuardsBoolean = "_tr_close_valve_door_close" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_close_valve_door_close");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1410,7 +1412,7 @@ export class ModelChecker {
             let _trid_7: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_open_valve_retract_gear");
-                dependentGuardsBoolean = "_tr_open_valve_retract_gear" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_open_valve_retract_gear");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1431,7 +1433,7 @@ export class ModelChecker {
             let _trid_8: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_close_valve_retract_gear");
-                dependentGuardsBoolean = "_tr_close_valve_retract_gear" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_close_valve_retract_gear");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1452,7 +1454,7 @@ export class ModelChecker {
             let _trid_9: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_open_valve_extend_gear");
-                dependentGuardsBoolean = "_tr_open_valve_extend_gear" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_open_valve_extend_gear");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1473,7 +1475,7 @@ export class ModelChecker {
             let _trid_10: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_close_valve_extend_gear");
-                dependentGuardsBoolean = "_tr_close_valve_extend_gear" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_close_valve_extend_gear");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1494,7 +1496,7 @@ export class ModelChecker {
             let _trid_11: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stimulate_open_door_valve");
-                dependentGuardsBoolean = "_tr_con_stimulate_open_door_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stimulate_open_door_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1515,7 +1517,7 @@ export class ModelChecker {
             let _trid_12: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stop_stimulate_open_door_valve");
-                dependentGuardsBoolean = "_tr_con_stop_stimulate_open_door_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stop_stimulate_open_door_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1536,7 +1538,7 @@ export class ModelChecker {
             let _trid_13: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stimulate_close_door_valve");
-                dependentGuardsBoolean = "_tr_con_stimulate_close_door_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stimulate_close_door_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1557,7 +1559,7 @@ export class ModelChecker {
             let _trid_14: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stop_stimulate_close_door_valve");
-                dependentGuardsBoolean = "_tr_con_stop_stimulate_close_door_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stop_stimulate_close_door_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1578,7 +1580,7 @@ export class ModelChecker {
             let _trid_15: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stimulate_retract_gear_valve");
-                dependentGuardsBoolean = "_tr_con_stimulate_retract_gear_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stimulate_retract_gear_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1599,7 +1601,7 @@ export class ModelChecker {
             let _trid_16: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stop_stimulate_retract_gear_valve");
-                dependentGuardsBoolean = "_tr_con_stop_stimulate_retract_gear_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stop_stimulate_retract_gear_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1620,7 +1622,7 @@ export class ModelChecker {
             let _trid_17: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stimulate_extend_gear_valve");
-                dependentGuardsBoolean = "_tr_con_stimulate_extend_gear_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stimulate_extend_gear_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1641,7 +1643,7 @@ export class ModelChecker {
             let _trid_18: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stop_stimulate_extend_gear_valve");
-                dependentGuardsBoolean = "_tr_con_stop_stimulate_extend_gear_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stop_stimulate_extend_gear_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1662,7 +1664,7 @@ export class ModelChecker {
             let _trid_19: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_start_retracting_first");
-                dependentGuardsBoolean = "_tr_env_start_retracting_first" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_start_retracting_first");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1684,7 +1686,7 @@ export class ModelChecker {
             let _trid_20: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_retract_gear_skip");
-                dependentGuardsBoolean = "_tr_env_retract_gear_skip" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_retract_gear_skip");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1706,7 +1708,7 @@ export class ModelChecker {
             let _trid_21: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_retract_gear_last");
-                dependentGuardsBoolean = "_tr_env_retract_gear_last" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_retract_gear_last");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1728,7 +1730,7 @@ export class ModelChecker {
             let _trid_22: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_start_extending");
-                dependentGuardsBoolean = "_tr_env_start_extending" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_start_extending");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1750,7 +1752,7 @@ export class ModelChecker {
             let _trid_23: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_extend_gear_last");
-                dependentGuardsBoolean = "_tr_env_extend_gear_last" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_extend_gear_last");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1772,7 +1774,7 @@ export class ModelChecker {
             let _trid_24: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_extend_gear_skip");
-                dependentGuardsBoolean = "_tr_env_extend_gear_skip" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_extend_gear_skip");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1794,7 +1796,7 @@ export class ModelChecker {
             let _trid_25: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_start_open_door");
-                dependentGuardsBoolean = "_tr_env_start_open_door" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_start_open_door");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1816,7 +1818,7 @@ export class ModelChecker {
             let _trid_26: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_open_door_last");
-                dependentGuardsBoolean = "_tr_env_open_door_last" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_open_door_last");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1838,7 +1840,7 @@ export class ModelChecker {
             let _trid_27: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_open_door_skip");
-                dependentGuardsBoolean = "_tr_env_open_door_skip" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_open_door_skip");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1860,7 +1862,7 @@ export class ModelChecker {
             let _trid_28: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_start_close_door");
-                dependentGuardsBoolean = "_tr_env_start_close_door" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_start_close_door");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1882,7 +1884,7 @@ export class ModelChecker {
             let _trid_29: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_close_door");
-                dependentGuardsBoolean = "_tr_env_close_door" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_close_door");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1904,7 +1906,7 @@ export class ModelChecker {
             let _trid_30: BSet<POSITION>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_close_door_skip");
-                dependentGuardsBoolean = "_tr_env_close_door_skip" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_close_door_skip");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1926,7 +1928,7 @@ export class ModelChecker {
             let _trid_31: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_toggle_handle_up");
-                dependentGuardsBoolean = "_tr_toggle_handle_up" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_toggle_handle_up");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1947,7 +1949,7 @@ export class ModelChecker {
             let _trid_32: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_toggle_handle_down");
-                dependentGuardsBoolean = "_tr_toggle_handle_down" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_toggle_handle_down");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1968,7 +1970,7 @@ export class ModelChecker {
             let _trid_33: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stimulate_general_valve");
-                dependentGuardsBoolean = "_tr_con_stimulate_general_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stimulate_general_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1989,7 +1991,7 @@ export class ModelChecker {
             let _trid_34: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_con_stop_stimulate_general_valve");
-                dependentGuardsBoolean = "_tr_con_stop_stimulate_general_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_con_stop_stimulate_general_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -2010,7 +2012,7 @@ export class ModelChecker {
             let _trid_35: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_evn_open_general_valve");
-                dependentGuardsBoolean = "_tr_evn_open_general_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_evn_open_general_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -2031,7 +2033,7 @@ export class ModelChecker {
             let _trid_36: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_evn_close_general_valve");
-                dependentGuardsBoolean = "_tr_evn_close_general_valve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_evn_close_general_valve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -2052,7 +2054,7 @@ export class ModelChecker {
             let _trid_37: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_close_analogical_switch");
-                dependentGuardsBoolean = "_tr_env_close_analogical_switch" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_close_analogical_switch");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -2073,7 +2075,7 @@ export class ModelChecker {
             let _trid_38: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_env_open_analogical_switch");
-                dependentGuardsBoolean = "_tr_env_open_analogical_switch" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_env_open_analogical_switch");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -2440,151 +2442,151 @@ export class ModelChecker {
     }
 
     invViolated(state: LandingGear_R6): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_2" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_2")) {
             if(!state._check_inv_2()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_3" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_3")) {
             if(!state._check_inv_3()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_4" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_4")) {
             if(!state._check_inv_4()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_5" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_5")) {
             if(!state._check_inv_5()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_6" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_6")) {
             if(!state._check_inv_6()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_7" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_7")) {
             if(!state._check_inv_7()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_8" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_8")) {
             if(!state._check_inv_8()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_9" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_9")) {
             if(!state._check_inv_9()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_10" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_10")) {
             if(!state._check_inv_10()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_11" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_11")) {
             if(!state._check_inv_11()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_12" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_12")) {
             if(!state._check_inv_12()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_13" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_13")) {
             if(!state._check_inv_13()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_14" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_14")) {
             if(!state._check_inv_14()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_15" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_15")) {
             if(!state._check_inv_15()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_15");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_16" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_16")) {
             if(!state._check_inv_16()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_16");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_17" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_17")) {
             if(!state._check_inv_17()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_17");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_18" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_18")) {
             if(!state._check_inv_18()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_18");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_19" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_19")) {
             if(!state._check_inv_19()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_19");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_20" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_20")) {
             if(!state._check_inv_20()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_20");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_21" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_21")) {
             if(!state._check_inv_21()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_21");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_22" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_22")) {
             if(!state._check_inv_22()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_22");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_23" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_23")) {
             if(!state._check_inv_23()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_23");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_24" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_24")) {
             if(!state._check_inv_24()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_24");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_25" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_25")) {
             if(!state._check_inv_25()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_25");
                 return true;

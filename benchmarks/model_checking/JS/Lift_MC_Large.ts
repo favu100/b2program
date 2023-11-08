@@ -2,6 +2,7 @@ import {BTuple} from './btypes/BTuple.js';
 import {BInteger} from './btypes/BInteger.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -36,12 +37,13 @@ export default class Lift_MC_Large {
     }
 
 
-     inc(): void {
+
+    inc(): void {
         this.level = this.level.plus(new BInteger(1));
 
     }
 
-     dec(): void {
+    dec(): void {
         this.level = this.level.minus(new BInteger(1));
 
     }
@@ -211,7 +213,7 @@ export class ModelChecker {
             let _trid_1: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_inc");
-                dependentGuardsBoolean = "_tr_inc" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_inc");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -232,7 +234,7 @@ export class ModelChecker {
             let _trid_2: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_dec");
-                dependentGuardsBoolean = "_tr_dec" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_dec");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -275,13 +277,13 @@ export class ModelChecker {
     }
 
     invViolated(state: Lift_MC_Large): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_2" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_2")) {
             if(!state._check_inv_2()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
                 return true;

@@ -10,7 +10,7 @@ build:
 CPPC ?= clang++
 CPPFLAGS ?= -std=c++14 -O1 -flto
 STRATEGY=mixed
-THREADS=6
+THREADS=1
 CACHING=true
 OUTPUT=runtimes.txt
 
@@ -18,11 +18,6 @@ OUTPUT=runtimes.txt
 	$(CPPC) $(CPPFLAGS) -o $@ $<
 
 % : %.exec
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)

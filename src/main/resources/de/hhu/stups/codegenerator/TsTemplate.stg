@@ -1030,7 +1030,7 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 let <transitionIdentifier>: BSet\<<tupleType>\>;
 if(!(state.dependentGuard.size === 0)) {
     cachedValue = parentsGuard.get("<evalTransitions>");
-    dependentGuardsBoolean = "<evalTransitions>" in state.dependentGuard;
+    dependentGuardsBoolean = state.dependentGuard.has("<evalTransitions>");
 }
 
 if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1053,7 +1053,7 @@ for(let param of <transitionIdentifier>) {
 let <transitionIdentifier>: boolean;
 if(!(state.dependentGuard.size === 0)) {
     cachedValue = parentsGuard.get("<evalTransitions>");
-    dependentGuardsBoolean = "<evalTransitions>" in state.dependentGuard;
+    dependentGuardsBoolean = state.dependentGuard.has("<evalTransitions>");
 }
 
 if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1116,7 +1116,7 @@ invViolated(state: <machine>): boolean {
 >>
 
 model_check_invariant(invariant) ::= <<
-if(!(this.isCaching) || "<invariant>" in state.dependentInvariant) {
+if(!(this.isCaching) || state.dependentInvariant.has("<invariant>")) {
     if(!state.<invariant>()) {
         console.log("INVARIANT CONJUNCT VIOLATED: <invariant>");
         return true;

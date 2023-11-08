@@ -4,6 +4,7 @@ import {BRelation} from './btypes/BRelation.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import {BSet} from './btypes/BSet.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -47,7 +48,8 @@ export default class QueensWithEvents_4 {
     }
 
 
-     Solve(solution: BRelation<BInteger, BInteger>): void {
+
+    Solve(solution: BRelation<BInteger, BInteger>): void {
         this.queens = solution;
 
     }
@@ -266,7 +268,7 @@ export class ModelChecker {
             let _trid_1: BSet<BRelation<BInteger, BInteger>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_Solve");
-                dependentGuardsBoolean = "_tr_Solve" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_Solve");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -305,7 +307,7 @@ export class ModelChecker {
     }
 
     invViolated(state: QueensWithEvents_4): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;

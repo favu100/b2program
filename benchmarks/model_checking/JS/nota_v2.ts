@@ -6,6 +6,7 @@ import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BStruct} from './btypes/BStruct.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -579,7 +580,8 @@ export default class nota_v2 {
     }
 
 
-     constructor_interconnectNode(newic: INTERCONNECTNODE): INTERCONNECTNODE {
+
+    constructor_interconnectNode(newic: INTERCONNECTNODE): INTERCONNECTNODE {
         let oid: INTERCONNECTNODE = null;
         let _ld_interconnectNodes: BSet<INTERCONNECTNODE> = this.interconnectNodes;
 
@@ -590,7 +592,7 @@ export default class nota_v2 {
         return oid;
     }
 
-     constructor_resourceManager(newrm: RESOURCEMANAGER): RESOURCEMANAGER {
+    constructor_resourceManager(newrm: RESOURCEMANAGER): RESOURCEMANAGER {
         let oid: RESOURCEMANAGER = null;
         let _ld_resourceManagers: BSet<RESOURCEMANAGER> = this.resourceManagers;
         this.resourceManagers = _ld_resourceManagers.union(new BSet<RESOURCEMANAGER>(newrm));
@@ -600,7 +602,7 @@ export default class nota_v2 {
         return oid;
     }
 
-     constructor_service(ii: INTERCONNECTNODE, newsvc: SERVICE): SERVICE {
+    constructor_service(ii: INTERCONNECTNODE, newsvc: SERVICE): SERVICE {
         let oid: SERVICE = null;
         let _ld_services: BSet<SERVICE> = this.services;
         this.services = _ld_services.union(new BSet<SERVICE>(newsvc));
@@ -613,7 +615,7 @@ export default class nota_v2 {
         return oid;
     }
 
-     constructor_socket(ii: INTERCONNECTNODE, srcsid: SID, targsid: SID, newsoc: SOCKET): SOCKET {
+    constructor_socket(ii: INTERCONNECTNODE, srcsid: SID, targsid: SID, newsoc: SOCKET): SOCKET {
         let oid: SOCKET = null;
         let _ld_sockets: BSet<SOCKET> = this.sockets;
         this.sockets = _ld_sockets.union(new BSet<SOCKET>(newsoc));
@@ -625,13 +627,13 @@ export default class nota_v2 {
         return oid;
     }
 
-     rm_register(self: RESOURCEMANAGER, ss: SERVICE, ii: INTERCONNECTNODE): void {
+    rm_register(self: RESOURCEMANAGER, ss: SERVICE, ii: INTERCONNECTNODE): void {
     }
 
-     rm_deregister(self: RESOURCEMANAGER, ss: SERVICE, ii: INTERCONNECTNODE): void {
+    rm_deregister(self: RESOURCEMANAGER, ss: SERVICE, ii: INTERCONNECTNODE): void {
     }
 
-     rm_getSid(self: RESOURCEMANAGER, ss: SERVICE): _Struct1 {
+    rm_getSid(self: RESOURCEMANAGER, ss: SERVICE): _Struct1 {
         let sid: BSet<SID> = null;
         let err: RM_ERROR_CODES = null;
         err = new RM_ERROR_CODES(enum_RM_ERROR_CODES.RM_SERVICE_FOUND);
@@ -640,7 +642,7 @@ export default class nota_v2 {
         return new _Struct1(sid, err);
     }
 
-     rm_getSid_Not_Found(self: RESOURCEMANAGER, ss: SERVICE): _Struct1 {
+    rm_getSid_Not_Found(self: RESOURCEMANAGER, ss: SERVICE): _Struct1 {
         let sid: BSet<SID> = null;
         let err: RM_ERROR_CODES = null;
         sid = nota_v2._SID.difference(nota_v2._SID);
@@ -649,12 +651,12 @@ export default class nota_v2 {
         return new _Struct1(sid, err);
     }
 
-     in_announceResourceManager(self: INTERCONNECTNODE, rm: RESOURCEMANAGER): void {
+    in_announceResourceManager(self: INTERCONNECTNODE, rm: RESOURCEMANAGER): void {
         this.in_resourceManager = this.in_resourceManager.override(new BRelation<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(new BTuple<INTERCONNECTNODE, BSet<RESOURCEMANAGER>>(self,this.in_resourceManager.functionCall(self).union(new BSet<RESOURCEMANAGER>(rm)))));
 
     }
 
-     in_register_success(self: INTERCONNECTNODE, ss: SERVICE, si: SID): _Struct3 {
+    in_register_success(self: INTERCONNECTNODE, ss: SERVICE, si: SID): _Struct3 {
         let sid: BSet<SID> = null;
         let err: IN_ERROR_CODES = null;
         let _ld_in_localServices: BRelation<SID, INTERCONNECTNODE> = this.in_localServices;
@@ -667,7 +669,7 @@ export default class nota_v2 {
         return new _Struct3(sid, err);
     }
 
-     in_register_failed(self: INTERCONNECTNODE, ss: SERVICE): _Struct3 {
+    in_register_failed(self: INTERCONNECTNODE, ss: SERVICE): _Struct3 {
         let sid: BSet<SID> = null;
         let err: IN_ERROR_CODES = null;
         sid = nota_v2._SID.difference(nota_v2._SID);
@@ -676,7 +678,7 @@ export default class nota_v2 {
         return new _Struct3(sid, err);
     }
 
-     in_requestTargetSocket_Granted(self: INTERCONNECTNODE, ii: INTERCONNECTNODE, srcsoc: SOCKET, srcsid: SID, targsid: SID, newsoc: SOCKET): _Struct5 {
+    in_requestTargetSocket_Granted(self: INTERCONNECTNODE, ii: INTERCONNECTNODE, srcsoc: SOCKET, srcsid: SID, targsid: SID, newsoc: SOCKET): _Struct5 {
         let soc: BSet<SOCKET> = null;
         let err: IN_ERROR_CODES = null;
         let _ld_in_sockets: BRelation<SOCKET, INTERCONNECTNODE> = this.in_sockets;
@@ -691,7 +693,7 @@ export default class nota_v2 {
         return new _Struct5(soc, err);
     }
 
-     in_requestTargetSocket_NotGranted(self: INTERCONNECTNODE, ii: INTERCONNECTNODE, srcsoc: SOCKET, srcsid: SID, targsid: SID): _Struct5 {
+    in_requestTargetSocket_NotGranted(self: INTERCONNECTNODE, ii: INTERCONNECTNODE, srcsoc: SOCKET, srcsid: SID, targsid: SID): _Struct5 {
         let soc: BSet<SOCKET> = null;
         let err: IN_ERROR_CODES = null;
         soc = nota_v2._SOCKET.difference(nota_v2._SOCKET);
@@ -700,7 +702,7 @@ export default class nota_v2 {
         return new _Struct5(soc, err);
     }
 
-     svc_register(self: SERVICE): void {
+    svc_register(self: SERVICE): void {
         this.svc_registered = this.svc_registered.override(new BRelation<SERVICE, BBoolean>(new BTuple<SERVICE, BBoolean>(self,new BBoolean(true))));
 
     }
@@ -1264,7 +1266,7 @@ export class ModelChecker {
             let _trid_1: BSet<INTERCONNECTNODE>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_constructor_interconnectNode");
-                dependentGuardsBoolean = "_tr_constructor_interconnectNode" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_constructor_interconnectNode");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1286,7 +1288,7 @@ export class ModelChecker {
             let _trid_2: BSet<RESOURCEMANAGER>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_constructor_resourceManager");
-                dependentGuardsBoolean = "_tr_constructor_resourceManager" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_constructor_resourceManager");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1308,7 +1310,7 @@ export class ModelChecker {
             let _trid_3: BSet<BTuple<INTERCONNECTNODE, SERVICE>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_constructor_service");
-                dependentGuardsBoolean = "_tr_constructor_service" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_constructor_service");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1331,7 +1333,7 @@ export class ModelChecker {
             let _trid_4: BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_constructor_socket");
-                dependentGuardsBoolean = "_tr_constructor_socket" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_constructor_socket");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1358,7 +1360,7 @@ export class ModelChecker {
             let _trid_5: BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_rm_register");
-                dependentGuardsBoolean = "_tr_rm_register" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_rm_register");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1383,7 +1385,7 @@ export class ModelChecker {
             let _trid_6: BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_rm_deregister");
-                dependentGuardsBoolean = "_tr_rm_deregister" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_rm_deregister");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1408,7 +1410,7 @@ export class ModelChecker {
             let _trid_7: BSet<BTuple<RESOURCEMANAGER, SERVICE>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_rm_getSid");
-                dependentGuardsBoolean = "_tr_rm_getSid" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_rm_getSid");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1431,7 +1433,7 @@ export class ModelChecker {
             let _trid_8: BSet<BTuple<RESOURCEMANAGER, SERVICE>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_rm_getSid_Not_Found");
-                dependentGuardsBoolean = "_tr_rm_getSid_Not_Found" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_rm_getSid_Not_Found");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1454,7 +1456,7 @@ export class ModelChecker {
             let _trid_9: BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_in_announceResourceManager");
-                dependentGuardsBoolean = "_tr_in_announceResourceManager" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_in_announceResourceManager");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1477,7 +1479,7 @@ export class ModelChecker {
             let _trid_10: BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_in_register_success");
-                dependentGuardsBoolean = "_tr_in_register_success" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_in_register_success");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1502,7 +1504,7 @@ export class ModelChecker {
             let _trid_11: BSet<BTuple<INTERCONNECTNODE, SERVICE>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_in_register_failed");
-                dependentGuardsBoolean = "_tr_in_register_failed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_in_register_failed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1525,7 +1527,7 @@ export class ModelChecker {
             let _trid_12: BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_in_requestTargetSocket_Granted");
-                dependentGuardsBoolean = "_tr_in_requestTargetSocket_Granted" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_in_requestTargetSocket_Granted");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1556,7 +1558,7 @@ export class ModelChecker {
             let _trid_13: BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_in_requestTargetSocket_NotGranted");
-                dependentGuardsBoolean = "_tr_in_requestTargetSocket_NotGranted" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_in_requestTargetSocket_NotGranted");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1585,7 +1587,7 @@ export class ModelChecker {
             let _trid_14: BSet<SERVICE>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_svc_register");
-                dependentGuardsBoolean = "_tr_svc_register" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_svc_register");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1802,109 +1804,109 @@ export class ModelChecker {
     }
 
     invViolated(state: nota_v2): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_2" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_2")) {
             if(!state._check_inv_2()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_3" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_3")) {
             if(!state._check_inv_3()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_4" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_4")) {
             if(!state._check_inv_4()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_5" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_5")) {
             if(!state._check_inv_5()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_6" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_6")) {
             if(!state._check_inv_6()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_7" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_7")) {
             if(!state._check_inv_7()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_8" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_8")) {
             if(!state._check_inv_8()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_9" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_9")) {
             if(!state._check_inv_9()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_10" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_10")) {
             if(!state._check_inv_10()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_11" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_11")) {
             if(!state._check_inv_11()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_12" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_12")) {
             if(!state._check_inv_12()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_13" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_13")) {
             if(!state._check_inv_13()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_14" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_14")) {
             if(!state._check_inv_14()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_15" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_15")) {
             if(!state._check_inv_15()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_15");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_16" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_16")) {
             if(!state._check_inv_16()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_16");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_17" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_17")) {
             if(!state._check_inv_17()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_17");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_18" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_18")) {
             if(!state._check_inv_18()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_18");
                 return true;

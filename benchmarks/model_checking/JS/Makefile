@@ -9,7 +9,7 @@ build:
 
 OUTPUT ?= runtimes.txt
 STRATEGY=mixed
-CACHING=false
+CACHING=true
 COMPILE_FLAGS=--target ES6 --moduleResolution node
 
 %.js : %.ts

@@ -4,6 +4,7 @@ import {BRelation} from './btypes/BRelation.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -199,7 +200,8 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
 
-     route_reservation(r: ROUTES): void {
+
+    route_reservation(r: ROUTES): void {
         let _ld_resrt: BSet<ROUTES> = this.resrt;
 
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
@@ -210,7 +212,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
     }
 
-     route_freeing(r: ROUTES): void {
+    route_freeing(r: ROUTES): void {
         let _ld_resrt: BSet<ROUTES> = this.resrt;
 
         let _ld_frm: BSet<ROUTES> = this.frm;
@@ -219,7 +221,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
     }
 
-     FRONT_MOVE_1(r: ROUTES): void {
+    FRONT_MOVE_1(r: ROUTES): void {
         let _ld_OCC: BSet<BLOCKS> = this.OCC;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
         this.OCC = _ld_OCC.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
@@ -227,12 +229,12 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
     }
 
-     FRONT_MOVE_2(b: BLOCKS): void {
+    FRONT_MOVE_2(b: BLOCKS): void {
         this.OCC = this.OCC.union(new BSet<BLOCKS>(this.TRK.functionCall(b)));
 
     }
 
-     BACK_MOVE_1(b: BLOCKS): void {
+    BACK_MOVE_1(b: BLOCKS): void {
         let _ld_OCC: BSet<BLOCKS> = this.OCC;
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
@@ -244,7 +246,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
     }
 
-     BACK_MOVE_2(b: BLOCKS): void {
+    BACK_MOVE_2(b: BLOCKS): void {
         let _ld_OCC: BSet<BLOCKS> = this.OCC;
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
@@ -256,12 +258,12 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
 
     }
 
-     point_positionning(r: ROUTES): void {
+    point_positionning(r: ROUTES): void {
         this.TRK = this.TRK.domainSubstraction(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r).domain()).rangeSubstraction(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r).range()).union(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r));
 
     }
 
-     route_formation(r: ROUTES): void {
+    route_formation(r: ROUTES): void {
         this.frm = this.frm.union(new BSet<ROUTES>(r));
 
     }
@@ -694,7 +696,7 @@ export class ModelChecker {
             let _trid_1: BSet<ROUTES>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_route_reservation");
-                dependentGuardsBoolean = "_tr_route_reservation" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_route_reservation");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -716,7 +718,7 @@ export class ModelChecker {
             let _trid_2: BSet<ROUTES>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_route_freeing");
-                dependentGuardsBoolean = "_tr_route_freeing" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_route_freeing");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -738,7 +740,7 @@ export class ModelChecker {
             let _trid_3: BSet<ROUTES>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_FRONT_MOVE_1");
-                dependentGuardsBoolean = "_tr_FRONT_MOVE_1" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_FRONT_MOVE_1");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -760,7 +762,7 @@ export class ModelChecker {
             let _trid_4: BSet<BLOCKS>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_FRONT_MOVE_2");
-                dependentGuardsBoolean = "_tr_FRONT_MOVE_2" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_FRONT_MOVE_2");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -782,7 +784,7 @@ export class ModelChecker {
             let _trid_5: BSet<BLOCKS>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_BACK_MOVE_1");
-                dependentGuardsBoolean = "_tr_BACK_MOVE_1" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_BACK_MOVE_1");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -804,7 +806,7 @@ export class ModelChecker {
             let _trid_6: BSet<BLOCKS>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_BACK_MOVE_2");
-                dependentGuardsBoolean = "_tr_BACK_MOVE_2" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_BACK_MOVE_2");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -826,7 +828,7 @@ export class ModelChecker {
             let _trid_7: BSet<ROUTES>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_point_positionning");
-                dependentGuardsBoolean = "_tr_point_positionning" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_point_positionning");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -848,7 +850,7 @@ export class ModelChecker {
             let _trid_8: BSet<ROUTES>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_route_formation");
-                dependentGuardsBoolean = "_tr_route_formation" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_route_formation");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -964,73 +966,73 @@ export class ModelChecker {
     }
 
     invViolated(state: Train_1_beebook_deterministic_MC_POR_v2): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_2" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_2")) {
             if(!state._check_inv_2()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_3" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_3")) {
             if(!state._check_inv_3()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_4" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_4")) {
             if(!state._check_inv_4()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_5" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_5")) {
             if(!state._check_inv_5()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_6" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_6")) {
             if(!state._check_inv_6()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_7" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_7")) {
             if(!state._check_inv_7()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_8" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_8")) {
             if(!state._check_inv_8()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_9" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_9")) {
             if(!state._check_inv_9()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_10" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_10")) {
             if(!state._check_inv_10()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_11" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_11")) {
             if(!state._check_inv_11()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_12" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_12")) {
             if(!state._check_inv_12()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
                 return true;

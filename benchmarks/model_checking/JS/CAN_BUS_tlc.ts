@@ -5,6 +5,7 @@ import {BRelation} from './btypes/BRelation.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -286,45 +287,46 @@ export default class CAN_BUS_tlc {
     }
 
 
-     T1Evaluate(): void {
+
+    T1Evaluate(): void {
         this.T1_timer = new BInteger(0);
         this.T1_state = new T1state(enum_T1state.T1_CALC);
 
     }
 
-     T1Calculate(p: BInteger): void {
+    T1Calculate(p: BInteger): void {
         this.T1_writevalue = p;
         this.T1_state = new T1state(enum_T1state.T1_SEND);
 
     }
 
-     T1SendResult(ppriority: BInteger, pv: BInteger): void {
+    T1SendResult(ppriority: BInteger, pv: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple(ppriority, pv)));
         this.T1_state = new T1state(enum_T1state.T1_WAIT);
 
     }
 
-     T1Wait(pt: BInteger): void {
+    T1Wait(pt: BInteger): void {
         this.T1_timer = pt;
         this.T1_state = new T1state(enum_T1state.T1_EN);
 
     }
 
-     T2Evaluate(): void {
+    T2Evaluate(): void {
         this.T2_timer = new BInteger(0);
         this.T2_state = new T2state(enum_T2state.T2_RCV);
 
     }
 
-     T2ReadBus(ppriority: BInteger, pv: BInteger): void {
+    T2ReadBus(ppriority: BInteger, pv: BInteger): void {
         this.T2_readvalue = pv;
         this.T2_readpriority = ppriority;
         this.T2_state = new T2state(enum_T2state.T2_PROC);
 
     }
 
-     T2Reset(): void {
+    T2Reset(): void {
         let _ld_T2v: BInteger = this.T2v;
         this.T2_writevalue = _ld_T2v;
         this.T2v = new BInteger(0);
@@ -333,89 +335,89 @@ export default class CAN_BUS_tlc {
 
     }
 
-     T2Complete(): void {
+    T2Complete(): void {
         this.T2_state = new T2state(enum_T2state.T2_RELEASE);
         this.T2_mode = new T2mode(enum_T2mode.T2MODE_SENSE);
 
     }
 
-     T2ReleaseBus(ppriority: BInteger): void {
+    T2ReleaseBus(ppriority: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.domainSubstraction(new BSet<BInteger>(ppriority));
         this.T2_state = new T2state(enum_T2state.T2_WAIT);
 
     }
 
-     T2Calculate(): void {
+    T2Calculate(): void {
         this.T2v = this.T2_readvalue;
         this.T2_state = new T2state(enum_T2state.T2_WAIT);
 
     }
 
-     T2WriteBus(ppriority: BInteger, pv: BInteger): void {
+    T2WriteBus(ppriority: BInteger, pv: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple(ppriority, pv)));
         this.T2_state = new T2state(enum_T2state.T2_WAIT);
 
     }
 
-     T2Wait(pt: BInteger): void {
+    T2Wait(pt: BInteger): void {
         this.T2_timer = pt;
         this.T2_state = new T2state(enum_T2state.T2_EN);
 
     }
 
-     T3Initiate(): void {
+    T3Initiate(): void {
         this.T3_state = new T3state(enum_T3state.T3_WRITE);
         this.T3_enabled = new BBoolean(false);
 
     }
 
-     T3Evaluate(): void {
+    T3Evaluate(): void {
         this.T3_state = new T3state(enum_T3state.T3_READ);
 
     }
 
-     T3writebus(ppriority: BInteger, pv: BInteger): void {
+    T3writebus(ppriority: BInteger, pv: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple(ppriority, pv)));
         this.T3_state = new T3state(enum_T3state.T3_WAIT);
 
     }
 
-     T3Read(ppriority: BInteger, pv: BInteger): void {
+    T3Read(ppriority: BInteger, pv: BInteger): void {
         this.T3_readvalue = pv;
         this.T3_readpriority = ppriority;
         this.T3_state = new T3state(enum_T3state.T3_PROC);
 
     }
 
-     T3Poll(): void {
+    T3Poll(): void {
         this.T3_state = new T3state(enum_T3state.T3_WAIT);
 
     }
 
-     T3ReleaseBus(ppriority: BInteger): void {
+    T3ReleaseBus(ppriority: BInteger): void {
         let _ld_BUSwrite: BRelation<BInteger, BInteger> = this.BUSwrite;
         this.BUSwrite = _ld_BUSwrite.domainSubstraction(new BSet<BInteger>(ppriority));
         this.T3_state = new T3state(enum_T3state.T3_RELEASE);
 
     }
 
-     T3Wait(): void {
+    T3Wait(): void {
         this.T3_state = new T3state(enum_T3state.T3_READY);
         this.T3_evaluated = new BBoolean(true);
 
     }
 
-     T3ReEnableWait(): void {
+    T3ReEnableWait(): void {
         this.T3_state = new T3state(enum_T3state.T3_READY);
         this.T3_evaluated = new BBoolean(true);
         this.T3_enabled = new BBoolean(true);
 
     }
 
-     Update(pmax: BInteger): void {
+    Update(pmax: BInteger): void {
         let _ld_T2_timer: BInteger = this.T2_timer;
         let _ld_T1_timer: BInteger = this.T1_timer;
         this.BUSvalue = this.BUSwrite.functionCall(pmax);
@@ -1001,7 +1003,7 @@ export class ModelChecker {
             let _trid_1: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T1Evaluate");
-                dependentGuardsBoolean = "_tr_T1Evaluate" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T1Evaluate");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1022,7 +1024,7 @@ export class ModelChecker {
             let _trid_2: BSet<BInteger>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T1Calculate");
-                dependentGuardsBoolean = "_tr_T1Calculate" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T1Calculate");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1044,7 +1046,7 @@ export class ModelChecker {
             let _trid_3: BSet<BTuple<BInteger, BInteger>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T1SendResult");
-                dependentGuardsBoolean = "_tr_T1SendResult" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T1SendResult");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1067,7 +1069,7 @@ export class ModelChecker {
             let _trid_4: BSet<BInteger>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T1Wait");
-                dependentGuardsBoolean = "_tr_T1Wait" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T1Wait");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1089,7 +1091,7 @@ export class ModelChecker {
             let _trid_5: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2Evaluate");
-                dependentGuardsBoolean = "_tr_T2Evaluate" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2Evaluate");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1110,7 +1112,7 @@ export class ModelChecker {
             let _trid_6: BSet<BTuple<BInteger, BInteger>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2ReadBus");
-                dependentGuardsBoolean = "_tr_T2ReadBus" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2ReadBus");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1133,7 +1135,7 @@ export class ModelChecker {
             let _trid_7: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2Reset");
-                dependentGuardsBoolean = "_tr_T2Reset" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2Reset");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1154,7 +1156,7 @@ export class ModelChecker {
             let _trid_8: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2Complete");
-                dependentGuardsBoolean = "_tr_T2Complete" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2Complete");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1175,7 +1177,7 @@ export class ModelChecker {
             let _trid_9: BSet<BInteger>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2ReleaseBus");
-                dependentGuardsBoolean = "_tr_T2ReleaseBus" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2ReleaseBus");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1197,7 +1199,7 @@ export class ModelChecker {
             let _trid_10: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2Calculate");
-                dependentGuardsBoolean = "_tr_T2Calculate" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2Calculate");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1218,7 +1220,7 @@ export class ModelChecker {
             let _trid_11: BSet<BTuple<BInteger, BInteger>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2WriteBus");
-                dependentGuardsBoolean = "_tr_T2WriteBus" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2WriteBus");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1241,7 +1243,7 @@ export class ModelChecker {
             let _trid_12: BSet<BInteger>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T2Wait");
-                dependentGuardsBoolean = "_tr_T2Wait" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T2Wait");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1263,7 +1265,7 @@ export class ModelChecker {
             let _trid_13: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3Initiate");
-                dependentGuardsBoolean = "_tr_T3Initiate" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3Initiate");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1284,7 +1286,7 @@ export class ModelChecker {
             let _trid_14: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3Evaluate");
-                dependentGuardsBoolean = "_tr_T3Evaluate" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3Evaluate");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1305,7 +1307,7 @@ export class ModelChecker {
             let _trid_15: BSet<BTuple<BInteger, BInteger>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3writebus");
-                dependentGuardsBoolean = "_tr_T3writebus" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3writebus");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1328,7 +1330,7 @@ export class ModelChecker {
             let _trid_16: BSet<BTuple<BInteger, BInteger>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3Read");
-                dependentGuardsBoolean = "_tr_T3Read" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3Read");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1351,7 +1353,7 @@ export class ModelChecker {
             let _trid_17: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3Poll");
-                dependentGuardsBoolean = "_tr_T3Poll" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3Poll");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1372,7 +1374,7 @@ export class ModelChecker {
             let _trid_18: BSet<BInteger>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3ReleaseBus");
-                dependentGuardsBoolean = "_tr_T3ReleaseBus" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3ReleaseBus");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1394,7 +1396,7 @@ export class ModelChecker {
             let _trid_19: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3Wait");
-                dependentGuardsBoolean = "_tr_T3Wait" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3Wait");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1415,7 +1417,7 @@ export class ModelChecker {
             let _trid_20: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_T3ReEnableWait");
-                dependentGuardsBoolean = "_tr_T3ReEnableWait" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_T3ReEnableWait");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1436,7 +1438,7 @@ export class ModelChecker {
             let _trid_21: BSet<BInteger>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_Update");
-                dependentGuardsBoolean = "_tr_Update" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_Update");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1670,121 +1672,121 @@ export class ModelChecker {
     }
 
     invViolated(state: CAN_BUS_tlc): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_2" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_2")) {
             if(!state._check_inv_2()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_3" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_3")) {
             if(!state._check_inv_3()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_4" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_4")) {
             if(!state._check_inv_4()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_5" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_5")) {
             if(!state._check_inv_5()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_6" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_6")) {
             if(!state._check_inv_6()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_7" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_7")) {
             if(!state._check_inv_7()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_8" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_8")) {
             if(!state._check_inv_8()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_9" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_9")) {
             if(!state._check_inv_9()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_10" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_10")) {
             if(!state._check_inv_10()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_11" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_11")) {
             if(!state._check_inv_11()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_12" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_12")) {
             if(!state._check_inv_12()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_13" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_13")) {
             if(!state._check_inv_13()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_14" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_14")) {
             if(!state._check_inv_14()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_15" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_15")) {
             if(!state._check_inv_15()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_15");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_16" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_16")) {
             if(!state._check_inv_16()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_16");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_17" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_17")) {
             if(!state._check_inv_17()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_17");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_18" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_18")) {
             if(!state._check_inv_18()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_18");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_19" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_19")) {
             if(!state._check_inv_19()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_19");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_20" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_20")) {
             if(!state._check_inv_20()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_20");
                 return true;

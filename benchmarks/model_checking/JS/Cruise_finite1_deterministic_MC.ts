@@ -4,6 +4,7 @@ import {BBoolean} from './btypes/BBoolean.js';
 import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
+import {SelectError} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
 
@@ -169,7 +170,8 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
 
-     CruiseBecomesNotAllowed(): void {
+
+    CruiseBecomesNotAllowed(): void {
         this.CruiseAllowed = new BBoolean(false);
         this.CruiseActive = new BBoolean(false);
         this.VehicleCanKeepSpeed = new BBoolean(false);
@@ -185,12 +187,12 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     CruiseBecomesAllowed(): void {
+    CruiseBecomesAllowed(): void {
         this.CruiseAllowed = new BBoolean(true);
 
     }
 
-     SetCruiseSpeed(vcks: BBoolean, csam: BBoolean): void {
+    SetCruiseSpeed(vcks: BBoolean, csam: BBoolean): void {
         let _ld_CruiseActive: BBoolean = this.CruiseActive;
         let _ld_NumberOfSetCruise: BInteger = this.NumberOfSetCruise;
         this.CruiseActive = new BBoolean(true);
@@ -213,29 +215,29 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     CCInitialisationFinished(vtks: BBoolean, vtktg: BBoolean): void {
+    CCInitialisationFinished(vtks: BBoolean, vtktg: BBoolean): void {
         this.VehicleTryKeepTimeGap = vtktg;
         this.VehicleTryKeepSpeed = vtks;
 
     }
 
-     CCInitialisationDelayFinished(): void {
+    CCInitialisationDelayFinished(): void {
         this.CCInitialisationInProgress = new BBoolean(true);
 
     }
 
-     CruiseSpeedChangeFinished(vtks: BBoolean, vtktg: BBoolean): void {
+    CruiseSpeedChangeFinished(vtks: BBoolean, vtktg: BBoolean): void {
         this.VehicleTryKeepTimeGap = vtktg;
         this.VehicleTryKeepSpeed = vtks;
 
     }
 
-     CruiseSpeedChangeDelayFinished(): void {
+    CruiseSpeedChangeDelayFinished(): void {
         this.CruiseSpeedChangeInProgress = new BBoolean(true);
 
     }
 
-     CruiseOff(): void {
+    CruiseOff(): void {
         this.CruiseActive = new BBoolean(false);
         this.VehicleCanKeepSpeed = new BBoolean(false);
         this.VehicleTryKeepSpeed = new BBoolean(false);
@@ -250,33 +252,33 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ExternalForcesBecomesExtreme(): void {
+    ExternalForcesBecomesExtreme(): void {
         this.VehicleCanKeepSpeed = new BBoolean(false);
 
     }
 
-     ExternalForcesBecomesNormal(): void {
+    ExternalForcesBecomesNormal(): void {
         this.VehicleCanKeepSpeed = new BBoolean(true);
 
     }
 
-     VehicleLeavesCruiseSpeed(): void {
+    VehicleLeavesCruiseSpeed(): void {
         this.VehicleAtCruiseSpeed = new BBoolean(false);
 
     }
 
-     VehicleReachesCruiseSpeed(): void {
+    VehicleReachesCruiseSpeed(): void {
         this.VehicleAtCruiseSpeed = new BBoolean(true);
 
     }
 
-     VehicleExceedsMaxCruiseSpeed(): void {
+    VehicleExceedsMaxCruiseSpeed(): void {
         this.SpeedAboveMax = new BBoolean(true);
         this.VehicleAtCruiseSpeed = new BBoolean(false);
 
     }
 
-     VehicleFallsBelowMaxCruiseSpeed(): void {
+    VehicleFallsBelowMaxCruiseSpeed(): void {
         this.SpeedAboveMax = new BBoolean(false);
         if((new BBoolean(this.CruiseActive.equal(new BBoolean(true)).booleanValue() && this.CruiseSpeedAtMax.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
             this.VehicleAtCruiseSpeed = new BBoolean(true);
@@ -284,13 +286,13 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleDistanceBecomesVeryClose(): void {
+    ObstacleDistanceBecomesVeryClose(): void {
         this.ObstacleDistance = new ODset(enum_ODset.ODveryclose);
         this.ObstacleStatusJustChanged = new BBoolean(true);
 
     }
 
-     ObstacleDistanceBecomesClose(): void {
+    ObstacleDistanceBecomesClose(): void {
         this.ObstacleDistance = new ODset(enum_ODset.ODclose);
         this.ObstacleStatusJustChanged = new BBoolean(true);
         if((this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos))).booleanValue()) {
@@ -299,14 +301,14 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleDistanceBecomesBig(): void {
+    ObstacleDistanceBecomesBig(): void {
         this.ObstacleStatusJustChanged = new BBoolean(true);
         this.ObstacleDistance = new ODset(enum_ODset.ODnone);
         this.VehicleTryKeepTimeGap = new BBoolean(false);
 
     }
 
-     ObstacleStartsTravelFaster(): void {
+    ObstacleStartsTravelFaster(): void {
         this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSpos);
         if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
             this.ObstacleStatusJustChanged = new BBoolean(true);
@@ -317,7 +319,7 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleStopsTravelFaster(): void {
+    ObstacleStopsTravelFaster(): void {
         this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSequal);
         if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
             this.ObstacleStatusJustChanged = new BBoolean(true);
@@ -325,7 +327,7 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleStartsTravelSlower(): void {
+    ObstacleStartsTravelSlower(): void {
         this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSneg);
         if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
             this.ObstacleStatusJustChanged = new BBoolean(true);
@@ -333,7 +335,7 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleStopsTravelSlower(): void {
+    ObstacleStopsTravelSlower(): void {
         this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSequal);
         if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
             this.ObstacleStatusJustChanged = new BBoolean(true);
@@ -341,7 +343,7 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleAppearsWhenCruiseActive(ors: RSset, od: ODset): void {
+    ObstacleAppearsWhenCruiseActive(ors: RSset, od: ODset): void {
         this.ObstaclePresent = new BBoolean(true);
         this.ObstacleStatusJustChanged = new BBoolean(true);
         this.ObstacleRelativeSpeed = ors;
@@ -349,14 +351,14 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     ObstacleAppearsWhenCruiseInactive(ors: RSset): void {
+    ObstacleAppearsWhenCruiseInactive(ors: RSset): void {
         this.ObstaclePresent = new BBoolean(true);
         this.ObstacleRelativeSpeed = ors;
         this.ObstacleDistance = new ODset(enum_ODset.ODnone);
 
     }
 
-     ObstacleDisappears(): void {
+    ObstacleDisappears(): void {
         this.ObstaclePresent = new BBoolean(false);
         this.ObstacleRelativeSpeed = new RSset(enum_RSset.RSnone);
         if((this.CruiseActive.equal(new BBoolean(true))).booleanValue()) {
@@ -367,13 +369,13 @@ export default class Cruise_finite1_deterministic_MC {
 
     }
 
-     VehicleManageObstacle(vtks: BBoolean, vtktg: BBoolean): void {
+    VehicleManageObstacle(vtks: BBoolean, vtktg: BBoolean): void {
         this.VehicleTryKeepTimeGap = vtktg;
         this.VehicleTryKeepSpeed = vtks;
 
     }
 
-     ObstacleBecomesOld(): void {
+    ObstacleBecomesOld(): void {
         this.ObstacleStatusJustChanged = new BBoolean(false);
 
     }
@@ -639,7 +641,7 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _check_inv_10() {
-        return BSet.interval(new BInteger(0), new BInteger(1)).elementOf(this.NumberOfSetCruise).booleanValue();
+        return new BBoolean(this.NumberOfSetCruise.greaterEqual(new BInteger(0)).booleanValue() && this.NumberOfSetCruise.lessEqual(new BInteger(1)).booleanValue()).booleanValue();
     }
 
     _check_inv_11() {
@@ -979,7 +981,7 @@ export class ModelChecker {
             let _trid_1: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CruiseBecomesNotAllowed");
-                dependentGuardsBoolean = "_tr_CruiseBecomesNotAllowed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CruiseBecomesNotAllowed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1000,7 +1002,7 @@ export class ModelChecker {
             let _trid_2: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CruiseBecomesAllowed");
-                dependentGuardsBoolean = "_tr_CruiseBecomesAllowed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CruiseBecomesAllowed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1021,7 +1023,7 @@ export class ModelChecker {
             let _trid_3: BSet<BTuple<BBoolean, BBoolean>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_SetCruiseSpeed");
-                dependentGuardsBoolean = "_tr_SetCruiseSpeed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_SetCruiseSpeed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1044,7 +1046,7 @@ export class ModelChecker {
             let _trid_4: BSet<BTuple<BBoolean, BBoolean>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CCInitialisationFinished");
-                dependentGuardsBoolean = "_tr_CCInitialisationFinished" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CCInitialisationFinished");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1067,7 +1069,7 @@ export class ModelChecker {
             let _trid_5: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CCInitialisationDelayFinished");
-                dependentGuardsBoolean = "_tr_CCInitialisationDelayFinished" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CCInitialisationDelayFinished");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1088,7 +1090,7 @@ export class ModelChecker {
             let _trid_6: BSet<BTuple<BBoolean, BBoolean>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CruiseSpeedChangeFinished");
-                dependentGuardsBoolean = "_tr_CruiseSpeedChangeFinished" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CruiseSpeedChangeFinished");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1111,7 +1113,7 @@ export class ModelChecker {
             let _trid_7: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CruiseSpeedChangeDelayFinished");
-                dependentGuardsBoolean = "_tr_CruiseSpeedChangeDelayFinished" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CruiseSpeedChangeDelayFinished");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1132,7 +1134,7 @@ export class ModelChecker {
             let _trid_8: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_CruiseOff");
-                dependentGuardsBoolean = "_tr_CruiseOff" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_CruiseOff");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1153,7 +1155,7 @@ export class ModelChecker {
             let _trid_9: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ExternalForcesBecomesExtreme");
-                dependentGuardsBoolean = "_tr_ExternalForcesBecomesExtreme" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ExternalForcesBecomesExtreme");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1174,7 +1176,7 @@ export class ModelChecker {
             let _trid_10: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ExternalForcesBecomesNormal");
-                dependentGuardsBoolean = "_tr_ExternalForcesBecomesNormal" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ExternalForcesBecomesNormal");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1195,7 +1197,7 @@ export class ModelChecker {
             let _trid_11: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_VehicleLeavesCruiseSpeed");
-                dependentGuardsBoolean = "_tr_VehicleLeavesCruiseSpeed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_VehicleLeavesCruiseSpeed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1216,7 +1218,7 @@ export class ModelChecker {
             let _trid_12: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_VehicleReachesCruiseSpeed");
-                dependentGuardsBoolean = "_tr_VehicleReachesCruiseSpeed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_VehicleReachesCruiseSpeed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1237,7 +1239,7 @@ export class ModelChecker {
             let _trid_13: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_VehicleExceedsMaxCruiseSpeed");
-                dependentGuardsBoolean = "_tr_VehicleExceedsMaxCruiseSpeed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_VehicleExceedsMaxCruiseSpeed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1258,7 +1260,7 @@ export class ModelChecker {
             let _trid_14: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_VehicleFallsBelowMaxCruiseSpeed");
-                dependentGuardsBoolean = "_tr_VehicleFallsBelowMaxCruiseSpeed" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_VehicleFallsBelowMaxCruiseSpeed");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1279,7 +1281,7 @@ export class ModelChecker {
             let _trid_15: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleDistanceBecomesVeryClose");
-                dependentGuardsBoolean = "_tr_ObstacleDistanceBecomesVeryClose" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleDistanceBecomesVeryClose");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1300,7 +1302,7 @@ export class ModelChecker {
             let _trid_16: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleDistanceBecomesClose");
-                dependentGuardsBoolean = "_tr_ObstacleDistanceBecomesClose" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleDistanceBecomesClose");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1321,7 +1323,7 @@ export class ModelChecker {
             let _trid_17: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleDistanceBecomesBig");
-                dependentGuardsBoolean = "_tr_ObstacleDistanceBecomesBig" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleDistanceBecomesBig");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1342,7 +1344,7 @@ export class ModelChecker {
             let _trid_18: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleStartsTravelFaster");
-                dependentGuardsBoolean = "_tr_ObstacleStartsTravelFaster" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleStartsTravelFaster");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1363,7 +1365,7 @@ export class ModelChecker {
             let _trid_19: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleStopsTravelFaster");
-                dependentGuardsBoolean = "_tr_ObstacleStopsTravelFaster" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleStopsTravelFaster");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1384,7 +1386,7 @@ export class ModelChecker {
             let _trid_20: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleStartsTravelSlower");
-                dependentGuardsBoolean = "_tr_ObstacleStartsTravelSlower" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleStartsTravelSlower");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1405,7 +1407,7 @@ export class ModelChecker {
             let _trid_21: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleStopsTravelSlower");
-                dependentGuardsBoolean = "_tr_ObstacleStopsTravelSlower" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleStopsTravelSlower");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1426,7 +1428,7 @@ export class ModelChecker {
             let _trid_22: BSet<BTuple<RSset, ODset>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleAppearsWhenCruiseActive");
-                dependentGuardsBoolean = "_tr_ObstacleAppearsWhenCruiseActive" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleAppearsWhenCruiseActive");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1449,7 +1451,7 @@ export class ModelChecker {
             let _trid_23: BSet<RSset>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleAppearsWhenCruiseInactive");
-                dependentGuardsBoolean = "_tr_ObstacleAppearsWhenCruiseInactive" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleAppearsWhenCruiseInactive");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1471,7 +1473,7 @@ export class ModelChecker {
             let _trid_24: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleDisappears");
-                dependentGuardsBoolean = "_tr_ObstacleDisappears" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleDisappears");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1492,7 +1494,7 @@ export class ModelChecker {
             let _trid_25: BSet<BTuple<BBoolean, BBoolean>>;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_VehicleManageObstacle");
-                dependentGuardsBoolean = "_tr_VehicleManageObstacle" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_VehicleManageObstacle");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1515,7 +1517,7 @@ export class ModelChecker {
             let _trid_26: boolean;
             if(!(state.dependentGuard.size === 0)) {
                 cachedValue = parentsGuard.get("_tr_ObstacleBecomesOld");
-                dependentGuardsBoolean = "_tr_ObstacleBecomesOld" in state.dependentGuard;
+                dependentGuardsBoolean = state.dependentGuard.has("_tr_ObstacleBecomesOld");
             }
 
             if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
@@ -1773,235 +1775,235 @@ export class ModelChecker {
     }
 
     invViolated(state: Cruise_finite1_deterministic_MC): boolean {
-        if(!(this.isCaching) || "_check_inv_1" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_1")) {
             if(!state._check_inv_1()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_1");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_2" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_2")) {
             if(!state._check_inv_2()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_2");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_3" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_3")) {
             if(!state._check_inv_3()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_3");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_4" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_4")) {
             if(!state._check_inv_4()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_4");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_5" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_5")) {
             if(!state._check_inv_5()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_5");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_6" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_6")) {
             if(!state._check_inv_6()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_7" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_7")) {
             if(!state._check_inv_7()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_8" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_8")) {
             if(!state._check_inv_8()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_8");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_9" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_9")) {
             if(!state._check_inv_9()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_9");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_10" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_10")) {
             if(!state._check_inv_10()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_10");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_11" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_11")) {
             if(!state._check_inv_11()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_11");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_12" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_12")) {
             if(!state._check_inv_12()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_13" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_13")) {
             if(!state._check_inv_13()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_14" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_14")) {
             if(!state._check_inv_14()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_15" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_15")) {
             if(!state._check_inv_15()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_15");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_16" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_16")) {
             if(!state._check_inv_16()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_16");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_17" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_17")) {
             if(!state._check_inv_17()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_17");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_18" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_18")) {
             if(!state._check_inv_18()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_18");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_19" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_19")) {
             if(!state._check_inv_19()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_19");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_20" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_20")) {
             if(!state._check_inv_20()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_20");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_21" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_21")) {
             if(!state._check_inv_21()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_21");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_22" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_22")) {
             if(!state._check_inv_22()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_22");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_23" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_23")) {
             if(!state._check_inv_23()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_23");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_24" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_24")) {
             if(!state._check_inv_24()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_24");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_25" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_25")) {
             if(!state._check_inv_25()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_25");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_26" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_26")) {
             if(!state._check_inv_26()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_26");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_27" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_27")) {
             if(!state._check_inv_27()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_27");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_28" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_28")) {
             if(!state._check_inv_28()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_28");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_29" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_29")) {
             if(!state._check_inv_29()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_29");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_30" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_30")) {
             if(!state._check_inv_30()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_30");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_31" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_31")) {
             if(!state._check_inv_31()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_31");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_32" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_32")) {
             if(!state._check_inv_32()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_32");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_33" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_33")) {
             if(!state._check_inv_33()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_33");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_34" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_34")) {
             if(!state._check_inv_34()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_34");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_35" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_35")) {
             if(!state._check_inv_35()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_35");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_36" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_36")) {
             if(!state._check_inv_36()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_36");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_37" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_37")) {
             if(!state._check_inv_37()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_37");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_38" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_38")) {
             if(!state._check_inv_38()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_38");
                 return true;
             }
         }
-        if(!(this.isCaching) || "_check_inv_39" in state.dependentInvariant) {
+        if(!(this.isCaching) || state.dependentInvariant.has("_check_inv_39")) {
             if(!state._check_inv_39()) {
                 console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_39");
                 return true;

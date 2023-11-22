@@ -2274,8 +2274,11 @@ function initialize() {
         _file_input.onchange = async _ => {
             let files = Array.from(_file_input.files);
             let file = files[0];
-            let response = await fetch(file.name);
-            let data = await response.text();
+            let reader = new FileReader();
+            reader.onload = function (e) {
+	      let data = e.target.result;
+            };
+            reader.readAsText(file);
             let trace = JSON.parse(data);
             createScenarioElement(file.name, trace);
 

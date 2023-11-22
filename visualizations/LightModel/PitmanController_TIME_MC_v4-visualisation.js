@@ -2275,8 +2275,9 @@ function initialize() {
             let files = Array.from(_file_input.files);
             let file = files[0];
             let reader = new FileReader();
+	    let data = ""
             reader.onload = function (e) {
-	      let data = e.target.result;
+              data = e.target.result;
             };
             reader.readAsText(file);
             let trace = JSON.parse(data);

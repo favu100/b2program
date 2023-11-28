@@ -1,7 +1,10 @@
 trace_generator(name, modelPath, learningTechnique, episodes, hasSetupConstants, actionMapping, variableMapping, variablePredicate, getters, transitions, invariant, generateTraces) ::= <<
-import gym
+import gymnasium as gym
 import json
+import copy
 from stable_baselines3 import <learningTechnique>
+import warnings
+warnings.filterwarnings("ignore")
 
 <if(generateTraces)>
 
@@ -108,36 +111,52 @@ for ep in range(episodes):
         write_trace(transition_list, i)
         write_timed_trace(timed_transition_list, i)
 <else>
-obs = env.reset()
-rewards = 0.0
-info = None
-done = False
-delta = 1000
+while True:
+    obs = env.reset()[0]
+    rewards = 0.0
+    info = None
+    done = False
+    finished = False
+    delta = 1000
 
-input("")
-print("")
-input("")
-print("$initialise_machine")
-print(0)
-print(<variablePredicate; separator=" + \" & \" + ">)
-print("false")
-while not done:
-    input_read = input("")
-
-    action, _states = model.predict(obs)
-
-    print(action_names.get(int(action)))
-    corrected_action = input("")
-    corrected_action = action_names_inv.get(corrected_action)
-
-    obs, rewards, done, info = env.step(int(corrected_action))
-
-    actionName = action_names.get(int(corrected_action))
-
-    print(actionName)
-    print(delta)
+    finished = (int(input("")) == 1)
+    input("")
+    print("$initialise_machine")
+    print(0)
     print(<variablePredicate; separator=" + \" & \" + ">)
-    print("true" if done else "false")
+    print("false")
+
+    while not done and not finished:
+        finished = int(input("")) == 1
+        if finished:
+            break
+
+        action, _states = model.predict(obs)
+        new_action = action
+
+        enabled_operations = input("")
+        operations_list = enabled_operations.split(",")
+
+        if not action_names.get(action) in operations_list:
+            current_reward = -1.0
+            for forward_action in range(env.action_space.n):
+                if action == forward_action:
+                    continue
+                if not action_names.get(forward_action) in operations_list:
+                    continue
+                env_copy = copy.deepcopy(env)
+                _obs, action_reward, _done, _truncated, _info = env_copy.step(forward_action)
+                if action_reward > current_reward:
+                    current_reward = action_reward
+                    new_action = forward_action
+
+        obs, rewards, done, truncated, info = env.step(int(new_action))
+        actionName = action_names.get(int(new_action))
+
+        print(actionName)
+        print(delta)
+        print(<variablePredicate; separator=" + \" & \" + ">)
+        print("true" if done else "false")
 
 <endif>
 

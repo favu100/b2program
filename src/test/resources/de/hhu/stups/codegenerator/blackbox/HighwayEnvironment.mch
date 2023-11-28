@@ -12,6 +12,7 @@ PROPERTIES
 
 VARIABLES
     Crash,
+    PresentVehicles,
     VehiclesX,
     VehiclesY,
     VehiclesVx,
@@ -22,6 +23,7 @@ VARIABLES
 
 INVARIANT
     Crash : BOOL &
+    PresentVehicles : POW(Vehicles) &
     VehiclesX : Vehicles --> REAL &
     VehiclesY : Vehicles --> REAL &
     VehiclesVx : Vehicles --> REAL &
@@ -31,70 +33,76 @@ INVARIANT
     Reward : REAL
 
 INITIALISATION
-  Crash := FALSE ||
-  VehiclesX : (VehiclesX : Vehicles --> REAL) ||
-  VehiclesY : (VehiclesY : Vehicles --> REAL) ||
-  VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
-  Reward : (Reward : REAL)
+    Crash :: BOOL ||
+    PresentVehicles :: POW(Vehicles) ||
+    VehiclesX :: Vehicles --> REAL ||
+    VehiclesY :: Vehicles --> REAL ||
+    VehiclesVx :: Vehicles --> REAL ||
+    VehiclesVy :: Vehicles --> REAL ||
+    VehiclesAx :: Vehicles --> REAL ||
+    VehiclesAy :: Vehicles --> REAL ||
+    Reward :: REAL
 
 
 OPERATIONS
   IDLE = BEGIN
-  Crash :: BOOL ||
-  VehiclesX : (VehiclesX : Vehicles --> REAL) ||
-  VehiclesY : (VehiclesY : Vehicles --> REAL) ||
-  VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
-  Reward : (Reward : REAL)
+    Crash :: BOOL ||
+    PresentVehicles :: POW(Vehicles) ||
+    VehiclesX :: Vehicles --> REAL ||
+    VehiclesY :: Vehicles --> REAL ||
+    VehiclesVx :: Vehicles --> REAL ||
+    VehiclesVy :: Vehicles --> REAL ||
+    VehiclesAx :: Vehicles --> REAL ||
+    VehiclesAy :: Vehicles --> REAL ||
+    Reward :: REAL
   END;
 
   LANE_LEFT = BEGIN
-  Crash :: BOOL ||
-  VehiclesX : (VehiclesX : Vehicles --> REAL) ||
-  VehiclesY : (VehiclesY : Vehicles --> REAL) ||
-  VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
-  Reward : (Reward : REAL)
+    Crash :: BOOL ||
+    PresentVehicles :: POW(Vehicles) ||
+    VehiclesX :: Vehicles --> REAL ||
+    VehiclesY :: Vehicles --> REAL ||
+    VehiclesVx :: Vehicles --> REAL ||
+    VehiclesVy :: Vehicles --> REAL ||
+    VehiclesAx :: Vehicles --> REAL ||
+    VehiclesAy :: Vehicles --> REAL ||
+    Reward :: REAL
   END;
 
   LANE_RIGHT = BEGIN
-  Crash :: BOOL ||
-  VehiclesX : (VehiclesX : Vehicles --> REAL) ||
-  VehiclesY : (VehiclesY : Vehicles --> REAL) ||
-  VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
-  Reward : (Reward : REAL)
+    Crash :: BOOL ||
+    PresentVehicles :: POW(Vehicles) ||
+    VehiclesX :: Vehicles --> REAL ||
+    VehiclesY :: Vehicles --> REAL ||
+    VehiclesVx :: Vehicles --> REAL ||
+    VehiclesVy :: Vehicles --> REAL ||
+    VehiclesAx :: Vehicles --> REAL ||
+    VehiclesAy :: Vehicles --> REAL ||
+    Reward :: REAL
   END;
 
   FASTER = BEGIN
-  Crash :: BOOL ||
-  VehiclesX : (VehiclesX : Vehicles --> REAL) ||
-  VehiclesY : (VehiclesY : Vehicles --> REAL) ||
-  VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
-  Reward : (Reward : REAL)
+    Crash :: BOOL ||
+    PresentVehicles :: POW(Vehicles) ||
+    VehiclesX :: Vehicles --> REAL ||
+    VehiclesY :: Vehicles --> REAL ||
+    VehiclesVx :: Vehicles --> REAL ||
+    VehiclesVy :: Vehicles --> REAL ||
+    VehiclesAx :: Vehicles --> REAL ||
+    VehiclesAy :: Vehicles --> REAL ||
+    Reward :: REAL
   END;
 
   SLOWER = BEGIN
-  Crash :: BOOL ||
-  VehiclesX : (VehiclesX : Vehicles --> REAL) ||
-  VehiclesY : (VehiclesY : Vehicles --> REAL) ||
-  VehiclesVx : (VehiclesVx : Vehicles --> REAL) ||
-  VehiclesVy : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAx : (VehiclesVy : Vehicles --> REAL) ||
-  VehiclesAy : (VehiclesVy : Vehicles --> REAL) ||
-  Reward : (Reward : REAL)
+    Crash :: BOOL ||
+    PresentVehicles :: POW(Vehicles) ||
+    VehiclesX :: Vehicles --> REAL ||
+    VehiclesY :: Vehicles --> REAL ||
+    VehiclesVx :: Vehicles --> REAL ||
+    VehiclesVy :: Vehicles --> REAL ||
+    VehiclesAx :: Vehicles --> REAL ||
+    VehiclesAy :: Vehicles --> REAL ||
+    Reward :: REAL
   END
 
 END

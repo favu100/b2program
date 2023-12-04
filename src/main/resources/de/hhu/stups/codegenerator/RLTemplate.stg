@@ -131,24 +131,21 @@ while True:
         if finished:
             break
 
-        action, _states = model.predict(obs)
-        new_action = action
+
 
         enabled_operations = input("")
         operations_list = enabled_operations.split(",")
 
-        if not action_names.get(action) in operations_list:
-            current_reward = -1.0
-            for forward_action in range(env.action_space.n):
-                if action == forward_action:
-                    continue
-                if not action_names.get(forward_action) in operations_list:
-                    continue
-                env_copy = copy.deepcopy(env)
-                _obs, action_reward, _done, _truncated, _info = env_copy.step(forward_action)
-                if action_reward > current_reward:
-                    current_reward = action_reward
-                    new_action = forward_action
+        obs_tensor, _ = model.policy.obs_to_tensor(obs)
+        predictions = model.policy.q_net(obs_tensor)
+        action_order = (-predictions).argsort(dim=1)
+
+        new_action = action
+
+        for action in action_order[0]:
+            if action_names.get(int(action)) in operations_list:
+                new_action = action
+                break
 
         obs, rewards, done, truncated, info = env.step(int(new_action))
         actionName = action_names.get(int(new_action))

@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration) ::= <<
+machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration, machineString) ::= <<
 #include \<iostream>
 #include \<string>
 <if(forModelChecking)>
@@ -99,6 +99,10 @@ class <machine> {
         <operations; separator="\n\n">
 
         <getters; separator="\n\n">
+
+        <if(!forModelChecking)>
+        <machineString; separator="\n\n">
+        <endif>
 
         <if(forModelChecking)>
 
@@ -1014,7 +1018,7 @@ operation_call_without_assignment(machineInstance, function, args, this) ::= <<
 skip() ::= <<
 >>
 
-enum-import() ::= <<
+enum_import() ::= <<
 >>
 
 modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<

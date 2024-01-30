@@ -1,0 +1,769 @@
+{
+  "machineName": "CAN_BUS_tlc",
+  "variables": [
+    "_get_BUSpriority",
+    "_get_BUSvalue",
+    "_get_BUSwrite",
+    "_get_T1_state",
+    "_get_T1_timer",
+    "_get_T1_writevalue",
+    "_get_T2_mode",
+    "_get_T2_readpriority",
+    "_get_T2_readvalue",
+    "_get_T2_state",
+    "_get_T2_timer",
+    "_get_T2_writevalue",
+    "_get_T2v",
+    "_get_T3_enabled",
+    "_get_T3_evaluated",
+    "_get_T3_readpriority",
+    "_get_T3_readvalue",
+    "_get_T3_state"
+  ],
+  "operationFunctions": [
+    {
+      "opName": "T1Evaluate",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T1Calculate",
+      "parameterTypes": [
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T1SendResult",
+      "parameterTypes": [
+        "BInteger",
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T1Wait",
+      "parameterTypes": [
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T2Evaluate",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T2ReadBus",
+      "parameterTypes": [
+        "BInteger",
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T2Reset",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T2Complete",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T2ReleaseBus",
+      "parameterTypes": [
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T2Calculate",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T2WriteBus",
+      "parameterTypes": [
+        "BInteger",
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T2Wait",
+      "parameterTypes": [
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T3Initiate",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T3Evaluate",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T3writebus",
+      "parameterTypes": [
+        "BInteger",
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T3Read",
+      "parameterTypes": [
+        "BInteger",
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T3Poll",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T3ReleaseBus",
+      "parameterTypes": [
+        "BInteger"
+      ]
+    },
+    {
+      "opName": "T3Wait",
+      "parameterTypes": []
+    },
+    {
+      "opName": "T3ReEnableWait",
+      "parameterTypes": []
+    },
+    {
+      "opName": "Update",
+      "parameterTypes": [
+        "BInteger"
+      ]
+    }
+  ],
+  "transitionEvaluationFunctions": {
+    "T1Wait": "_tr_T1Wait",
+    "T1Calculate": "_tr_T1Calculate",
+    "T1SendResult": "_tr_T1SendResult",
+    "T2ReadBus": "_tr_T2ReadBus",
+    "T2Reset": "_tr_T2Reset",
+    "T2Complete": "_tr_T2Complete",
+    "T2Evaluate": "_tr_T2Evaluate",
+    "T3Evaluate": "_tr_T3Evaluate",
+    "T3ReleaseBus": "_tr_T3ReleaseBus",
+    "T1Evaluate": "_tr_T1Evaluate",
+    "T3Initiate": "_tr_T3Initiate",
+    "T3ReEnableWait": "_tr_T3ReEnableWait",
+    "T3writebus": "_tr_T3writebus",
+    "Update": "_tr_Update",
+    "T2ReleaseBus": "_tr_T2ReleaseBus",
+    "T2Wait": "_tr_T2Wait",
+    "T3Poll": "_tr_T3Poll",
+    "T2Calculate": "_tr_T2Calculate",
+    "T3Read": "_tr_T3Read",
+    "T3Wait": "_tr_T3Wait",
+    "T2WriteBus": "_tr_T2WriteBus"
+  },
+  "invariants": [
+    "_check_inv_1",
+    "_check_inv_2",
+    "_check_inv_3",
+    "_check_inv_4",
+    "_check_inv_5",
+    "_check_inv_6",
+    "_check_inv_7",
+    "_check_inv_8",
+    "_check_inv_9",
+    "_check_inv_10",
+    "_check_inv_11",
+    "_check_inv_12",
+    "_check_inv_13",
+    "_check_inv_14",
+    "_check_inv_15",
+    "_check_inv_16",
+    "_check_inv_17",
+    "_check_inv_18",
+    "_check_inv_19",
+    "_check_inv_20"
+  ],
+  "invariantDependency": {
+    "T1Wait": [
+      "_check_inv_10",
+      "_check_inv_4"
+    ],
+    "T1Calculate": [
+      "_check_inv_7",
+      "_check_inv_4"
+    ],
+    "T1SendResult": [
+      "_check_inv_18",
+      "_check_inv_19",
+      "_check_inv_20",
+      "_check_inv_4"
+    ],
+    "T2ReadBus": [
+      "_check_inv_17",
+      "_check_inv_5",
+      "_check_inv_9"
+    ],
+    "T2Reset": [
+      "_check_inv_1",
+      "_check_inv_5",
+      "_check_inv_8",
+      "_check_inv_12"
+    ],
+    "T2Complete": [
+      "_check_inv_5",
+      "_check_inv_12"
+    ],
+    "T2Evaluate": [
+      "_check_inv_5",
+      "_check_inv_11"
+    ],
+    "T3Evaluate": [
+      "_check_inv_6"
+    ],
+    "T3ReleaseBus": [
+      "_check_inv_18",
+      "_check_inv_19",
+      "_check_inv_6",
+      "_check_inv_20"
+    ],
+    "T1Evaluate": [
+      "_check_inv_10",
+      "_check_inv_4"
+    ],
+    "T3Initiate": [
+      "_check_inv_3",
+      "_check_inv_6"
+    ],
+    "T3ReEnableWait": [
+      "_check_inv_2",
+      "_check_inv_3",
+      "_check_inv_6"
+    ],
+    "T3writebus": [
+      "_check_inv_18",
+      "_check_inv_19",
+      "_check_inv_6",
+      "_check_inv_20"
+    ],
+    "Update": [
+      "_check_inv_2",
+      "_check_inv_10",
+      "_check_inv_14",
+      "_check_inv_13",
+      "_check_inv_11"
+    ],
+    "T2ReleaseBus": [
+      "_check_inv_18",
+      "_check_inv_19",
+      "_check_inv_20",
+      "_check_inv_5"
+    ],
+    "T2Wait": [
+      "_check_inv_5",
+      "_check_inv_11"
+    ],
+    "T3Poll": [
+      "_check_inv_6"
+    ],
+    "T2Calculate": [
+      "_check_inv_1",
+      "_check_inv_5"
+    ],
+    "T3Read": [
+      "_check_inv_16",
+      "_check_inv_15",
+      "_check_inv_6"
+    ],
+    "T3Wait": [
+      "_check_inv_2",
+      "_check_inv_6"
+    ],
+    "T2WriteBus": [
+      "_check_inv_18",
+      "_check_inv_19",
+      "_check_inv_20",
+      "_check_inv_5"
+    ]
+  },
+  "guardDependency": {
+    "T1Wait": [
+      "_tr_T1Evaluate",
+      "_tr_Update",
+      "_tr_T1SendResult",
+      "_tr_T1Calculate",
+      "_tr_T1Wait"
+    ],
+    "T1Calculate": [
+      "_tr_T1Evaluate",
+      "_tr_T1SendResult",
+      "_tr_T1Calculate",
+      "_tr_T1Wait"
+    ],
+    "T1SendResult": [
+      "_tr_T1Evaluate",
+      "_tr_T2ReleaseBus",
+      "_tr_Update",
+      "_tr_T1SendResult",
+      "_tr_T1Calculate",
+      "_tr_T1Wait"
+    ],
+    "T2ReadBus": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T2Reset": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T2Complete": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T2Evaluate": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_Update",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T3Evaluate": [
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T3ReleaseBus": [
+      "_tr_T2ReleaseBus",
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_Update",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T1Evaluate": [
+      "_tr_T1Evaluate",
+      "_tr_Update",
+      "_tr_T1SendResult",
+      "_tr_T1Calculate",
+      "_tr_T1Wait"
+    ],
+    "T3Initiate": [
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_Update",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T3ReEnableWait": [
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_Update",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T3writebus": [
+      "_tr_T2ReleaseBus",
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_Update",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "Update": [
+      "_tr_T1Evaluate",
+      "_tr_T3Read",
+      "_tr_T2Evaluate",
+      "_tr_Update",
+      "_tr_T2ReadBus",
+      "_tr_T3Evaluate",
+      "_tr_T3Initiate"
+    ],
+    "T2ReleaseBus": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_Update",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T2Wait": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_Update",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T3Poll": [
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T2Calculate": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ],
+    "T3Read": [
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T3Wait": [
+      "_tr_T3writebus",
+      "_tr_T3Read",
+      "_tr_T3ReleaseBus",
+      "_tr_T3Poll",
+      "_tr_Update",
+      "_tr_T3ReEnableWait",
+      "_tr_T3Evaluate",
+      "_tr_T3Wait",
+      "_tr_T3Initiate"
+    ],
+    "T2WriteBus": [
+      "_tr_T2Reset",
+      "_tr_T2ReleaseBus",
+      "_tr_T2Complete",
+      "_tr_T2Calculate",
+      "_tr_T2Evaluate",
+      "_tr_Update",
+      "_tr_T2ReadBus",
+      "_tr_T2WriteBus",
+      "_tr_T2Wait"
+    ]
+  },
+  "guardsRead": {
+    "_tr_T1Evaluate": [
+      "T1_state",
+      "T1_timer"
+    ],
+    "_tr_T2Complete": [
+      "T2_state",
+      "T2_readpriority",
+      "T2_mode"
+    ],
+    "_tr_T2Calculate": [
+      "T2_state",
+      "T2_readpriority"
+    ],
+    "_tr_T2Evaluate": [
+      "T2_state",
+      "T2_timer"
+    ],
+    "_tr_T3Poll": [
+      "T3_readpriority",
+      "T3_state"
+    ],
+    "_tr_T3ReEnableWait": [
+      "T3_state"
+    ],
+    "_tr_T2ReadBus": [
+      "T2_state",
+      "BUSpriority",
+      "BUSvalue"
+    ],
+    "_tr_T2WriteBus": [
+      "T2_state",
+      "T2_writevalue"
+    ],
+    "_tr_T2Wait": [
+      "T2_state"
+    ],
+    "_tr_T2Reset": [
+      "T2_state",
+      "T2_readpriority"
+    ],
+    "_tr_T2ReleaseBus": [
+      "T2_state",
+      "T2_readpriority",
+      "BUSwrite"
+    ],
+    "_tr_T3writebus": [
+      "T3_state"
+    ],
+    "_tr_T3Read": [
+      "BUSpriority",
+      "T3_state",
+      "BUSvalue"
+    ],
+    "_tr_T3ReleaseBus": [
+      "T3_readpriority",
+      "T3_state"
+    ],
+    "_tr_Update": [
+      "T3_evaluated",
+      "T1_timer",
+      "T3_enabled",
+      "BUSwrite",
+      "T2_timer"
+    ],
+    "_tr_T1SendResult": [
+      "T1_state",
+      "T1_writevalue"
+    ],
+    "_tr_T3Evaluate": [
+      "T3_evaluated",
+      "T3_state",
+      "T3_enabled"
+    ],
+    "_tr_T1Calculate": [
+      "T1_state"
+    ],
+    "_tr_T3Wait": [
+      "T3_state"
+    ],
+    "_tr_T1Wait": [
+      "T1_state"
+    ],
+    "_tr_T3Initiate": [
+      "T3_evaluated",
+      "T3_state",
+      "T3_enabled"
+    ]
+  },
+  "operationsRead": {
+    "T1Wait": [
+      "T1_state"
+    ],
+    "T1Calculate": [
+      "T1_state"
+    ],
+    "T1SendResult": [
+      "T1_state",
+      "T1_writevalue",
+      "BUSwrite"
+    ],
+    "T2ReadBus": [
+      "T2_state",
+      "BUSpriority",
+      "BUSvalue"
+    ],
+    "T2Reset": [
+      "T2_state",
+      "T2_readpriority",
+      "T2v"
+    ],
+    "T2Complete": [
+      "T2_state",
+      "T2_readpriority",
+      "T2_mode"
+    ],
+    "T2Evaluate": [
+      "T2_state",
+      "T2_timer"
+    ],
+    "T3Evaluate": [
+      "T3_evaluated",
+      "T3_state",
+      "T3_enabled"
+    ],
+    "T3ReleaseBus": [
+      "T3_readpriority",
+      "T3_state",
+      "BUSwrite"
+    ],
+    "T1Evaluate": [
+      "T1_state",
+      "T1_timer"
+    ],
+    "T3Initiate": [
+      "T3_evaluated",
+      "T3_state",
+      "T3_enabled"
+    ],
+    "T3ReEnableWait": [
+      "T3_state"
+    ],
+    "T3writebus": [
+      "T3_state",
+      "BUSwrite"
+    ],
+    "Update": [
+      "T3_evaluated",
+      "T1_timer",
+      "T3_enabled",
+      "BUSwrite",
+      "T2_timer"
+    ],
+    "T2ReleaseBus": [
+      "T2_state",
+      "T2_readpriority",
+      "BUSwrite"
+    ],
+    "T2Wait": [
+      "T2_state"
+    ],
+    "T3Poll": [
+      "T3_readpriority",
+      "T3_state"
+    ],
+    "T2Calculate": [
+      "T2_state",
+      "T2_readpriority",
+      "T2_readvalue"
+    ],
+    "T3Read": [
+      "BUSpriority",
+      "T3_state",
+      "BUSvalue"
+    ],
+    "T3Wait": [
+      "T3_state"
+    ],
+    "T2WriteBus": [
+      "T2_state",
+      "T2_writevalue",
+      "BUSwrite"
+    ]
+  },
+  "operationsWrite": {
+    "T1Wait": [
+      "T1_state",
+      "T1_timer"
+    ],
+    "T1Calculate": [
+      "T1_state",
+      "T1_writevalue"
+    ],
+    "T1SendResult": [
+      "T1_state",
+      "BUSwrite"
+    ],
+    "T2ReadBus": [
+      "T2_state",
+      "T2_readpriority",
+      "T2_readvalue"
+    ],
+    "T2Reset": [
+      "T2_state",
+      "T2_writevalue",
+      "T2v",
+      "T2_mode"
+    ],
+    "T2Complete": [
+      "T2_state",
+      "T2_mode"
+    ],
+    "T2Evaluate": [
+      "T2_state",
+      "T2_timer"
+    ],
+    "T3Evaluate": [
+      "T3_state"
+    ],
+    "T3ReleaseBus": [
+      "T3_state",
+      "BUSwrite"
+    ],
+    "T1Evaluate": [
+      "T1_state",
+      "T1_timer"
+    ],
+    "T3Initiate": [
+      "T3_state",
+      "T3_enabled"
+    ],
+    "T3ReEnableWait": [
+      "T3_evaluated",
+      "T3_state",
+      "T3_enabled"
+    ],
+    "T3writebus": [
+      "T3_state",
+      "BUSwrite"
+    ],
+    "Update": [
+      "T3_evaluated",
+      "BUSpriority",
+      "T1_timer",
+      "T2_timer",
+      "BUSvalue"
+    ],
+    "T2ReleaseBus": [
+      "T2_state",
+      "BUSwrite"
+    ],
+    "T2Wait": [
+      "T2_state",
+      "T2_timer"
+    ],
+    "T3Poll": [
+      "T3_state"
+    ],
+    "T2Calculate": [
+      "T2_state",
+      "T2v"
+    ],
+    "T3Read": [
+      "T3_readpriority",
+      "T3_readvalue",
+      "T3_state"
+    ],
+    "T3Wait": [
+      "T3_evaluated",
+      "T3_state"
+    ],
+    "T2WriteBus": [
+      "T2_state",
+      "BUSwrite"
+    ]
+  }
+}

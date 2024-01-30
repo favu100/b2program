@@ -264,6 +264,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		if (mode == GeneratorMode.PL) {
 			TemplateHandler.add(machine, "props", modelCheckingGenerator.generateModelCheckingProBProp(node));
 		}
+		TemplateHandler.add(machine, "machineString", modelCheckingGenerator.generateToString());
 		generateBody(node, machine);
 		return machine.render();
 	}

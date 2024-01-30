@@ -1,9 +1,11 @@
 #include <iostream>
 #include <string>
 #include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/StateNotReachableError.hpp>
+#include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
 #include <btypes_primitives/BSet.hpp>
-#include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BInteger.hpp>
 
 #ifndef Sieve_H
 #define Sieve_H
@@ -24,9 +26,7 @@ class Sieve {
         BSet<BInteger > numbers;
         BInteger cur;
         BInteger limit;
-
     public:
-
         Sieve() {
             numbers = (BSet<BInteger>::interval((BInteger(2)),(BInteger(2000000))));
             cur = (BInteger(2));
@@ -51,6 +51,25 @@ class Sieve {
             }
             res = numbers.card();
             return res;
+        }
+
+        BSet<BInteger > _get_numbers() const {
+            return numbers;
+        }
+
+        BInteger _get_cur() const {
+            return cur;
+        }
+
+        BInteger _get_limit() const {
+            return limit;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const Sieve &machine) {
+          strm << "_get_numbers: " << machine._get_numbers() << "\n";
+          strm << "_get_cur: " << machine._get_cur() << "\n";
+          strm << "_get_limit: " << machine._get_limit() << "\n";
+          return strm;
         }
 
 };

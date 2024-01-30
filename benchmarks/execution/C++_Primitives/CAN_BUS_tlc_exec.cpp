@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
 #include <btypes_primitives/BUtils.hpp>
-#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/StateNotReachableError.hpp>
+#include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BInteger.hpp>
 #include "CAN_BUS_tlc.hpp"
 
 #ifndef CAN_BUS_tlc_exec_H
@@ -14,6 +16,8 @@ class CAN_BUS_tlc_exec {
 
     public:
 
+
+
     private:
 
 
@@ -21,9 +25,7 @@ class CAN_BUS_tlc_exec {
 
 
         BInteger counter;
-
     public:
-
         CAN_BUS_tlc_exec() {
             counter = (BInteger(0));
         }
@@ -4589,11 +4591,22 @@ class CAN_BUS_tlc_exec {
             }
         }
 
+        BInteger _get_counter() const {
+            return counter;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const CAN_BUS_tlc_exec &machine) {
+          strm << "_CAN_BUS_tlc: " << machine._CAN_BUS_tlc << "\n";
+          strm << "_get_counter: " << machine._get_counter() << "\n";
+          return strm;
+        }
+
 };
 
 int main() {
     CAN_BUS_tlc_exec exec;
     exec.simulate();
+    cout << exec << "\n";
     return 0;
 }
 

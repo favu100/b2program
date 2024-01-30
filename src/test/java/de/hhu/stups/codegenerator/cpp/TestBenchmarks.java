@@ -369,4 +369,39 @@ public class TestBenchmarks extends TestCpp {
 		testCpp("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stCpp", true);
 	}
 
+	@Test
+	public void testCAN_BUS_tlc_exec() throws Exception {
+		testCpp("CAN_BUS_tlc_exec", "CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.stCpp", false);
+	}
+
+	@Test
+	public void testCruise_finite1_deterministic_exec() throws Exception {
+		testCpp("Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_execAddition.stCpp", false);
+	}
+
+	@Test
+	public void testLiftExec() throws Exception {
+		testCpp("LiftExec", "LiftExec", "LiftExecAddition.stCpp", false);
+	}
+
+	@Test
+	public void testTrafficLightExec() throws Exception {
+		testCpp("TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stCpp", false);
+	}
+
+	@Test
+	public void testTrain1BeebookDeterministicExec() throws Exception {
+		testCpp("Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_execAddition.stCpp", false);
+	}
+
+	@Test
+	public void testSchedulerDeterministicExec() throws Exception {
+		testCpp("scheduler_deterministic_exec", "scheduler_deterministic_exec", "scheduler_deterministic_execAddition.stCpp", false);
+	}
+
+	@Test
+	public void testSortExec() throws Exception {
+		testCpp("sort_m2_data1000_exec", "sort_m2_data1000_exec", "sort_m2_data1000_execAddition.stCpp", false);
+	}
+
 }

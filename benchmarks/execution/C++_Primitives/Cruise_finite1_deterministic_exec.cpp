@@ -1,9 +1,11 @@
 #include <iostream>
 #include <string>
 #include <btypes_primitives/BUtils.hpp>
-#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/StateNotReachableError.hpp>
+#include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
 #include <btypes_primitives/BBoolean.hpp>
 #include <btypes_primitives/BObject.hpp>
+#include <btypes_primitives/BInteger.hpp>
 #include "Cruise_finite1_deterministic.hpp"
 
 #ifndef Cruise_finite1_deterministic_exec_H
@@ -15,6 +17,8 @@ class Cruise_finite1_deterministic_exec {
 
     public:
 
+
+
     private:
 
 
@@ -22,9 +26,7 @@ class Cruise_finite1_deterministic_exec {
 
 
         BInteger counter;
-
     public:
-
         Cruise_finite1_deterministic_exec() {
             counter = (BInteger(0));
         }
@@ -1396,11 +1398,112 @@ class Cruise_finite1_deterministic_exec {
             }
         }
 
+        BBoolean getCruiseAllowed() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_CruiseAllowed();
+            return out;
+        }
+
+        BBoolean getCruiseActive() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_CruiseActive();
+            return out;
+        }
+
+        BBoolean getVehicleAtCruiseSpeed() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_VehicleAtCruiseSpeed();
+            return out;
+        }
+
+        BBoolean getVehicleCanKeepSpeed() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_VehicleCanKeepSpeed();
+            return out;
+        }
+
+        BBoolean getVehicleTryKeepSpeed() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_VehicleTryKeepSpeed();
+            return out;
+        }
+
+        BBoolean getSpeedAboveMax() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_SpeedAboveMax();
+            return out;
+        }
+
+        BBoolean getVehicleTryKeepTimeGap() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_VehicleTryKeepTimeGap();
+            return out;
+        }
+
+        BInteger getNumberOfSetCruise() {
+            BInteger out;
+            out = _Cruise_finite1_deterministic._get_NumberOfSetCruise();
+            return out;
+        }
+
+        BBoolean getCruiseSpeedAtMax() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_CruiseSpeedAtMax();
+            return out;
+        }
+
+        Cruise_finite1_deterministic::ODset getObstacleDistance() {
+            Cruise_finite1_deterministic::ODset out;
+            out = _Cruise_finite1_deterministic._get_ObstacleDistance();
+            return out;
+        }
+
+        BBoolean getObstacleStatusJustChanged() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_ObstacleStatusJustChanged();
+            return out;
+        }
+
+        BBoolean getCCInitialisationInProgress() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_CCInitialisationInProgress();
+            return out;
+        }
+
+        BBoolean getCruiseSpeedChangeInProgress() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_CruiseSpeedChangeInProgress();
+            return out;
+        }
+
+        BBoolean getObstaclePresent() {
+            BBoolean out;
+            out = _Cruise_finite1_deterministic._get_ObstaclePresent();
+            return out;
+        }
+
+        Cruise_finite1_deterministic::RSset getObstacleRelativeSpeed() {
+            Cruise_finite1_deterministic::RSset out;
+            out = _Cruise_finite1_deterministic._get_ObstacleRelativeSpeed();
+            return out;
+        }
+
+        BInteger _get_counter() const {
+            return counter;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const Cruise_finite1_deterministic_exec &machine) {
+          strm << "_Cruise_finite1_deterministic: " << machine._Cruise_finite1_deterministic << "\n";
+          strm << "_get_counter: " << machine._get_counter() << "\n";
+          return strm;
+        }
+
 };
 
 int main() {
     Cruise_finite1_deterministic_exec exec;
     exec.simulate();
+    cout << exec << "\n";
     return 0;
 }
 

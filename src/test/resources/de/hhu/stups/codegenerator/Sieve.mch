@@ -2,7 +2,7 @@ MACHINE Sieve
 VARIABLES numbers,cur, limit
 INVARIANT
  numbers <: INTEGER & cur:NATURAL1 & limit:NATURAL1
-INITIALISATION numbers := 2..1000000; cur := 2; limit := 1000000
+INITIALISATION numbers := 2..2000000; cur := 2; limit := 2000000
 OPERATIONS
   res <-- ComputeNumberOfPrimes =
     BEGIN

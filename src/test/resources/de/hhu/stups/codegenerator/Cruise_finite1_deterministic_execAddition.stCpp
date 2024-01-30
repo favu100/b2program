@@ -1,0 +1,6 @@
+int main() {
+    Cruise_finite1_deterministic_exec exec;
+    exec.simulate();
+    cout << exec << "\n";
+    return 0;
+}

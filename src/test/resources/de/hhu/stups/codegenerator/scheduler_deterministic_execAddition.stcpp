@@ -1,0 +1,6 @@
+int main() {
+    scheduler_deterministic_exec exec;
+    exec.simulate();
+    cout << exec << "\n";
+    return 0;
+}

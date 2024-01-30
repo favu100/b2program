@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
 #include <btypes_primitives/BUtils.hpp>
-#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/StateNotReachableError.hpp>
+#include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BInteger.hpp>
 #include "TrafficLight.hpp"
 
 #ifndef TrafficLightExec_H
@@ -14,6 +16,8 @@ class TrafficLightExec {
 
     public:
 
+
+
     private:
 
 
@@ -21,9 +25,7 @@ class TrafficLightExec {
 
 
         BInteger counter;
-
     public:
-
         TrafficLightExec() {
             counter = (BInteger(0));
         }
@@ -39,11 +41,29 @@ class TrafficLightExec {
                 counter = counter.plus((BInteger(1)));
             }
         }
+
+        BInteger getCounter() {
+            BInteger out;
+            out = counter;
+            return out;
+        }
+
+        BInteger _get_counter() const {
+            return counter;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const TrafficLightExec &machine) {
+          strm << "_TrafficLight: " << machine._TrafficLight << "\n";
+          strm << "_get_counter: " << machine._get_counter() << "\n";
+          return strm;
+        }
+
 };
 
 int main() {
     TrafficLightExec exec;
     exec.simulate();
+    cout << exec << "\n";
     return 0;
 }
 

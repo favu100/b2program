@@ -1,9 +1,10 @@
 #include <iostream>
 #include <string>
 #include <btypes_primitives/BUtils.hpp>
-#include <btypes_primitives/BInteger.hpp>
+#include <btypes_primitives/StateNotReachableError.hpp>
+#include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
 #include <btypes_primitives/BBoolean.hpp>
-#include <btypes_primitives/BTuple.hpp>
+#include <btypes_primitives/BInteger.hpp>
 #include "Lift.hpp"
 
 #ifndef LiftExec_H
@@ -15,6 +16,8 @@ class LiftExec {
 
     public:
 
+
+
     private:
 
 
@@ -22,14 +25,9 @@ class LiftExec {
 
 
         BInteger counter;
-
-        BTuple<BInteger, BInteger> tuple;
-
     public:
-
         LiftExec() {
             counter = (BInteger(0));
-            tuple = (BTuple<BInteger, BInteger>(counter, counter));
         }
 
         void simulate() {
@@ -49,11 +47,29 @@ class LiftExec {
                 counter = counter.plus((BInteger(1)));
             }
         }
+
+        BInteger getCounter() {
+            BInteger out;
+            out = counter;
+            return out;
+        }
+
+        BInteger _get_counter() const {
+            return counter;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const LiftExec &machine) {
+          strm << "_Lift: " << machine._Lift << "\n";
+          strm << "_get_counter: " << machine._get_counter() << "\n";
+          return strm;
+        }
+
 };
 
 int main() {
-    LiftExec exec;
-    exec.simulate();
+    LiftExec lift;
+    lift.simulate();
+    cout << lift << "\n";
     return 0;
 }
 

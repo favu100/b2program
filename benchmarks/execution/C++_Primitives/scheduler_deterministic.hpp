@@ -1,9 +1,11 @@
 #include <iostream>
 #include <string>
 #include <btypes_primitives/BUtils.hpp>
+#include <btypes_primitives/StateNotReachableError.hpp>
+#include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
 #include <btypes_primitives/BSet.hpp>
-#include <btypes_primitives/BObject.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BObject.hpp>
 
 #ifndef scheduler_deterministic_H
 #define scheduler_deterministic_H
@@ -13,7 +15,6 @@ using namespace std;
 class scheduler_deterministic {
 
     public:
-
 
         class PID : public BObject {
             public:
@@ -66,9 +67,10 @@ class scheduler_deterministic {
                 }
 
                 int hashCode() const {
-                    return static_cast<int>(value);
+                    return (31 * 1) ^ (static_cast<int>(value) << 1);
                 }
         };
+
 
     private:
 
@@ -79,9 +81,7 @@ class scheduler_deterministic {
         BSet<PID > active;
         BSet<PID > _ready;
         BSet<PID > waiting;
-
     public:
-
         scheduler_deterministic() {
             active = (BSet<PID >());
             _ready = (BSet<PID >());
@@ -91,13 +91,19 @@ class scheduler_deterministic {
         void _new(const PID& pp) {
             if(((BBoolean((BBoolean(_PID.elementOf(pp).booleanValue() && active.notElementOf(pp).booleanValue())).booleanValue() && _ready._union(waiting).notElementOf(pp).booleanValue()))).booleanValue()) {
                 waiting = waiting._union((BSet<PID >(pp)));
+            } else {
+                throw StateNotReachableError();
             }
+
         }
 
         void del(const PID& pp) {
             if((waiting.elementOf(pp)).booleanValue()) {
                 waiting = waiting.difference((BSet<PID >(pp)));
+            } else {
+                throw StateNotReachableError();
             }
+
         }
 
         void ready(const PID& rr) {
@@ -108,7 +114,10 @@ class scheduler_deterministic {
                 } else {
                     _ready = _ready._union((BSet<PID >(rr)));
                 }
+            } else {
+                throw StateNotReachableError();
             }
+
         }
 
         void swap(const PID& pp) {
@@ -120,7 +129,34 @@ class scheduler_deterministic {
                     active = (BSet<PID >(pp));
                     _ready = _ready.difference((BSet<PID >(pp)));
                 }
+            } else {
+                throw StateNotReachableError();
             }
+
+
+        }
+
+        BSet<PID > _get_active() const {
+            return active;
+        }
+
+        BSet<PID > _get__ready() const {
+            return _ready;
+        }
+
+        BSet<PID > _get_waiting() const {
+            return waiting;
+        }
+
+        BSet<PID > _get__PID() const {
+            return _PID;
+        }
+
+        friend std::ostream& operator<<(std::ostream &strm, const scheduler_deterministic &machine) {
+          strm << "_get_active: " << machine._get_active() << "\n";
+          strm << "_get__ready: " << machine._get__ready() << "\n";
+          strm << "_get_waiting: " << machine._get_waiting() << "\n";
+          return strm;
         }
 
 };

@@ -1170,7 +1170,7 @@ bool invariantViolated(const <machine>& state) {
 
 model_check_invariant(invariant) ::= <<
 if(isCaching) {
-    if(dependentInvariantsOfState.find("<invariant>") == dependentInvariantsOfState.end()) {
+    if(dependentInvariantsOfState.find("<invariant>") != dependentInvariantsOfState.end()) {
         if(!state.<invariant>()) {
             cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
             return true;

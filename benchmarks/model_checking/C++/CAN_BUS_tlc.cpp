@@ -1165,14 +1165,13 @@ class ModelChecker {
                 CAN_BUS_tlc state = next();
 
                 std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(state);
-                transitions += nextStates.size();
 
                 for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(isDebug && states.size() % 50000 == 0) {
+                        if(states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -1218,7 +1217,6 @@ class ModelChecker {
                 CAN_BUS_tlc state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(state);
-                    transitions += nextStates.size();
 
                     for(auto& nextState : nextStates) {
                         {
@@ -1351,7 +1349,7 @@ class ModelChecker {
                         return state;
                     }
                 }
-            }
+            };
         }
 
         std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> generateNextStates(const CAN_BUS_tlc& state) {
@@ -1361,6 +1359,7 @@ class ModelChecker {
                 copiedState.T1Evaluate();
                 copiedState.stateAccessedVia = "T1Evaluate";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BInteger> _trid_2 = state._tr_T1Calculate(isCaching);
             for(const BInteger& param : _trid_2) {
@@ -1370,6 +1369,7 @@ class ModelChecker {
                 copiedState.T1Calculate(_tmp_1);
                 copiedState.stateAccessedVia = "T1Calculate";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BInteger, BInteger >> _trid_3 = state._tr_T1SendResult(isCaching);
             for(const BTuple<BInteger, BInteger >& param : _trid_3) {
@@ -1380,6 +1380,7 @@ class ModelChecker {
                 copiedState.T1SendResult(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "T1SendResult";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BInteger> _trid_4 = state._tr_T1Wait(isCaching);
             for(const BInteger& param : _trid_4) {
@@ -1389,12 +1390,14 @@ class ModelChecker {
                 copiedState.T1Wait(_tmp_1);
                 copiedState.stateAccessedVia = "T1Wait";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T2Evaluate(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Evaluate"]);
                 copiedState.T2Evaluate();
                 copiedState.stateAccessedVia = "T2Evaluate";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BInteger, BInteger >> _trid_6 = state._tr_T2ReadBus(isCaching);
             for(const BTuple<BInteger, BInteger >& param : _trid_6) {
@@ -1405,18 +1408,21 @@ class ModelChecker {
                 copiedState.T2ReadBus(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "T2ReadBus";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T2Reset(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Reset"]);
                 copiedState.T2Reset();
                 copiedState.stateAccessedVia = "T2Reset";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T2Complete(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Complete"]);
                 copiedState.T2Complete();
                 copiedState.stateAccessedVia = "T2Complete";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus(isCaching);
             for(const BInteger& param : _trid_9) {
@@ -1426,12 +1432,14 @@ class ModelChecker {
                 copiedState.T2ReleaseBus(_tmp_1);
                 copiedState.stateAccessedVia = "T2ReleaseBus";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T2Calculate(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T2Calculate"]);
                 copiedState.T2Calculate();
                 copiedState.stateAccessedVia = "T2Calculate";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BInteger, BInteger >> _trid_11 = state._tr_T2WriteBus(isCaching);
             for(const BTuple<BInteger, BInteger >& param : _trid_11) {
@@ -1442,6 +1450,7 @@ class ModelChecker {
                 copiedState.T2WriteBus(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "T2WriteBus";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BInteger> _trid_12 = state._tr_T2Wait(isCaching);
             for(const BInteger& param : _trid_12) {
@@ -1451,18 +1460,21 @@ class ModelChecker {
                 copiedState.T2Wait(_tmp_1);
                 copiedState.stateAccessedVia = "T2Wait";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T3Initiate(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Initiate"]);
                 copiedState.T3Initiate();
                 copiedState.stateAccessedVia = "T3Initiate";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T3Evaluate(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Evaluate"]);
                 copiedState.T3Evaluate();
                 copiedState.stateAccessedVia = "T3Evaluate";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BInteger, BInteger >> _trid_15 = state._tr_T3writebus(isCaching);
             for(const BTuple<BInteger, BInteger >& param : _trid_15) {
@@ -1473,6 +1485,7 @@ class ModelChecker {
                 copiedState.T3writebus(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "T3writebus";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BTuple<BInteger, BInteger >> _trid_16 = state._tr_T3Read(isCaching);
             for(const BTuple<BInteger, BInteger >& param : _trid_16) {
@@ -1483,12 +1496,14 @@ class ModelChecker {
                 copiedState.T3Read(_tmp_2, _tmp_1);
                 copiedState.stateAccessedVia = "T3Read";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T3Poll(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Poll"]);
                 copiedState.T3Poll();
                 copiedState.stateAccessedVia = "T3Poll";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus(isCaching);
             for(const BInteger& param : _trid_18) {
@@ -1498,18 +1513,21 @@ class ModelChecker {
                 copiedState.T3ReleaseBus(_tmp_1);
                 copiedState.stateAccessedVia = "T3ReleaseBus";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T3Wait(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T3Wait"]);
                 copiedState.T3Wait();
                 copiedState.stateAccessedVia = "T3Wait";
                 result.insert(copiedState);
+                transitions += 1;
             }
             if(state._tr_T3ReEnableWait(isCaching)) {
                 CAN_BUS_tlc copiedState = state._copy(guardDependency["T3ReEnableWait"]);
                 copiedState.T3ReEnableWait();
                 copiedState.stateAccessedVia = "T3ReEnableWait";
                 result.insert(copiedState);
+                transitions += 1;
             }
             BSet<BInteger> _trid_21 = state._tr_Update(isCaching);
             for(const BInteger& param : _trid_21) {
@@ -1519,117 +1537,296 @@ class ModelChecker {
                 copiedState.Update(_tmp_1);
                 copiedState.stateAccessedVia = "Update";
                 result.insert(copiedState);
+                transitions += 1;
             }
 
             return result;
         }
 
         bool invariantViolated(const CAN_BUS_tlc& state) {
+            std::unordered_set<string> dependentInvariantsOfState;
+            if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
             if(isCaching) {
-                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
-                if(dependentInvariantsOfState.find("_check_inv_1") != dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                        return true;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_2") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_2()) {
-                        return false;
-                    }
+            } else {
+                if(!state._check_inv_1()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                  return true;
                 }
-                if(dependentInvariantsOfState.find("_check_inv_3") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_3()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_4") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_4()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_5") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_5()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_6") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_6()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_7") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_7()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_8") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_8()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_9") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_9()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_10") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_10()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_11") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_11()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_12") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_12()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_13") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_13()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_14") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_14()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_15") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_15()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_16") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_16()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_17") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_17()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_18") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_18()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_19") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_19()) {
-                        return false;
-                    }
-                }
-                if(dependentInvariantsOfState.find("_check_inv_20") != dependentInvariantsOfState.end()) {
-                    if(!state._check_inv_20()) {
-                        return false;
-                    }
-                }
-                return false;
             }
-            return !(state._check_inv_1() && state._check_inv_2() && state._check_inv_3() && state._check_inv_4() && state._check_inv_5() && state._check_inv_6() && state._check_inv_7() && state._check_inv_8() && state._check_inv_9() && state._check_inv_10() && state._check_inv_11() && state._check_inv_12() && state._check_inv_13() && state._check_inv_14() && state._check_inv_15() && state._check_inv_16() && state._check_inv_17() && state._check_inv_18() && state._check_inv_19() && state._check_inv_20());
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_2()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_2()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_3()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_3" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_3()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_3" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_4()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_4" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_4()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_4" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_5()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_5" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_5()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_5" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_6()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_6" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_6()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_6" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_7()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_7" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_7()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_7" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_8()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_8" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_8()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_8" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_9()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_9" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_9()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_9" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_10()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_10" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_10()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_10" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_11()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_11" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_11()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_11" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_12()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_12" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_12()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_12" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_13()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_13" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_13()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_13" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_14()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_14" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_14()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_14" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_15()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_15" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_15()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_15" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_16()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_16" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_16()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_16" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_17()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_17" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_17()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_17" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_18()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_18" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_18()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_18" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_19()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_19" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_19()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_19" << "\n";
+                  return true;
+                }
+            }
+
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
+                    if(!state._check_inv_20()) {
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_20" << "\n";
+                        return true;
+                    }
+                }
+            } else {
+                if(!state._check_inv_20()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_20" << "\n";
+                  return true;
+                }
+            }
+
+            return false;
         }
 
 
@@ -1710,7 +1907,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = false;
+    bool isDebug = true;
     // TODO
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);

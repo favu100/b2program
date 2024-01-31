@@ -108,49 +108,45 @@ class QueensWithEvents_8 {
                 BSet<BRelation<BInteger, BInteger >> _ic_set_4 = BSet<BRelation<BInteger, BInteger >>();
                 for(const BRelation<BInteger, BInteger >& _ic_solution_1 : allFields) {
                     BBoolean _ic_boolean_5 = BBoolean(true);
-                    if(((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()))).booleanValue()) {
-                        for(const BInteger& _ic_x_1 : interval) {
-                            for(const BInteger& _ic_y_1 : interval) {
-                                BBoolean _ic_boolean_4 = BBoolean(true);
-                                for(const BInteger& _ic_z_1 : interval) {
-                                    if(!((BBoolean(!_ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_z_1))).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue()))).booleanValue()) {
-                                        _ic_boolean_4 = BBoolean(false);
-                                        break;
-                                    }
-
+                    for(const BInteger& _ic_x_1 : interval) {
+                        for(const BInteger& _ic_y_1 : interval) {
+                            BBoolean _ic_boolean_4 = BBoolean(true);
+                            for(const BInteger& _ic_z_1 : interval) {
+                                if(!((BBoolean(!_ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_z_1))).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue()))).booleanValue()) {
+                                    _ic_boolean_4 = BBoolean(false);
+                                    break;
                                 }
 
+                            }
+                            if(((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()))).booleanValue()) {
                                 if(!((BBoolean(!_ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_y_1))).booleanValue() || _ic_boolean_4.booleanValue()))).booleanValue()) {
                                     _ic_boolean_5 = BBoolean(false);
                                     break;
                                 }
-
                             }
+
                         }
-                    }
-                    BBoolean _ic_boolean_6 = BBoolean(true);
-                    if(((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue()))).booleanValue()) {
-                        for(const BInteger& _ic_q1_1 : interval) {
-                            for(const BInteger& _ic_q2_1 : interval.difference((BSet<BInteger >((BInteger(1)))))) {
+                    }BBoolean _ic_boolean_6 = BBoolean(true);
+                    for(const BInteger& _ic_q1_1 : interval) {
+                        for(const BInteger& _ic_q2_1 : interval.difference((BSet<BInteger >((BInteger(1)))))) {
+                            if(((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue()))).booleanValue()) {
                                 if(!((BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || (BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue())).booleanValue()))).booleanValue()) {
                                     _ic_boolean_6 = BBoolean(false);
                                     break;
                                 }
-
                             }
+
                         }
-                    }
-                    BBoolean _ic_boolean_7 = BBoolean(true);
-                    if(((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue()))).booleanValue()) {
-                        for(const BInteger& _ic_x_1 : queens.domain()) {
+                    }BBoolean _ic_boolean_7 = BBoolean(true);
+                    for(const BInteger& _ic_x_1 : queens.domain()) {
+                        if(((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue()))).booleanValue()) {
                             if(!(_ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1))).booleanValue()) {
                                 _ic_boolean_7 = BBoolean(false);
                                 break;
                             }
-
                         }
-                    }
 
+                    }
                     if(((BBoolean((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue())).booleanValue() && _ic_boolean_7.booleanValue()))).booleanValue()) {
                         _ic_set_4 = _ic_set_4._union(BSet<BRelation<BInteger, BInteger >>(_ic_solution_1));
                     }
@@ -281,7 +277,6 @@ class ModelChecker {
                 QueensWithEvents_8 state = next();
 
                 std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> nextStates = generateNextStates(state);
-                transitions += nextStates.size();
 
                 for(auto& nextState : nextStates) {
                     if(states.find(nextState) == states.end()) {
@@ -334,7 +329,6 @@ class ModelChecker {
                 QueensWithEvents_8 state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> nextStates = generateNextStates(state);
-                    transitions += nextStates.size();
 
                     for(auto& nextState : nextStates) {
                         {
@@ -427,7 +421,7 @@ class ModelChecker {
                         return state;
                     }
                 }
-            }
+            };
         }
 
         std::unordered_set<QueensWithEvents_8, QueensWithEvents_8::Hash, QueensWithEvents_8::HashEqual> generateNextStates(const QueensWithEvents_8& state) {
@@ -440,22 +434,31 @@ class ModelChecker {
                 copiedState.Solve(_tmp_1);
                 copiedState.stateAccessedVia = "Solve";
                 result.insert(copiedState);
+                transitions += 1;
             }
 
             return result;
         }
 
         bool invariantViolated(const QueensWithEvents_8& state) {
+            std::unordered_set<string> dependentInvariantsOfState;
             if(isCaching) {
-                std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+                dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+            }
+            if(isCaching) {
                 if(dependentInvariantsOfState.find("_check_inv_1") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
-                        return false;
+                        cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                        return true;
                     }
                 }
-                return false;
+            } else {
+                if(!state._check_inv_1()) {
+                  cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
+                  return true;
+                }
             }
-            return !(state._check_inv_1());
+            return false;
         }
 
 

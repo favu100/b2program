@@ -172,15 +172,11 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 
 	relationImage(domain: BSet<S> ): BSet<T> {
 		let resultSet = immutable.Set();
-		for (let this_domain_elem of this.map.keys()){
-			for(let other_domain_elem of domain.set) {
-				if(other_domain_elem.equals(this_domain_elem)) {
-					let thisRangeSet: immutable.Set<T> = <immutable.Set<T>> this.map.get(this_domain_elem);
-					if(thisRangeSet != null) {
-						resultSet = BSet.immutableSetUnion(resultSet, thisRangeSet);
-					}
-				}
-			}
+		for (let domainElement of domain){
+            let thisRangeSet: immutable.Set<T> = <immutable.Set<T>> this.map.get(domainElement);
+            if(thisRangeSet != null) {
+                resultSet = BSet.immutableSetUnion(resultSet, thisRangeSet);
+            }
 		}
 		return new BSet<T>(resultSet);
 	}
@@ -359,21 +355,13 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	
 	override(arg: BRelation<S,T>): BRelation<S,T> {
 		let otherMap = arg.map;
-
 		let otherDomain = immutable.Set(otherMap.keys());
-
 		let resultMap = this.map;
-		outer_loop:
-		for(let domainElement of otherDomain) {
-			for(let thisDomainElement of resultMap.keys()) {
-				if(thisDomainElement.equals(domainElement)) {
-					let range: immutable.Set<T> = <immutable.Set<T>> otherMap.get(domainElement);
-					resultMap = resultMap.set(thisDomainElement, range);
-					continue outer_loop;
-				}
-			}
-			resultMap = resultMap.set(domainElement, <immutable.Set<T>> otherMap.get(domainElement));
-		}
+
+        for(let domainElement of otherDomain) {
+            let range = otherMap.get(<S>domainElement);
+            resultMap = resultMap.set(domainElement, <immutable.Set<T>> range);
+        }
 
 		return new BRelation<S, T>(resultMap);
 	}

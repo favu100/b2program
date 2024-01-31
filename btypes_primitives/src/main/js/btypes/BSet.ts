@@ -416,11 +416,11 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	static interval(a: BInteger, b: BInteger): BSet<BInteger> {
-		if (b.less(a).booleanValue()) {
-			return new BSet();
-		}
-		const range = [...Array(b.minus(a).intValue() +1).keys()].map(e => new BInteger(e).plus(a));
-		return new BSet(immutable.Set(range));
+        if (b.less(a).booleanValue()) {
+            return new BSet();
+        }
+        const range = [...Array(b.minus(a).intValue() +1).keys()].map(e => new BInteger(e).plus(a));
+        return new BSet(immutable.Set(range));
 	}
 
 	hashCode(): number {

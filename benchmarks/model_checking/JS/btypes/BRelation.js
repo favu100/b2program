@@ -146,14 +146,10 @@ export class BRelation {
     }
     relationImage(domain) {
         let resultSet = immutable.Set();
-        for (let this_domain_elem of this.map.keys()) {
-            for (let other_domain_elem of domain.set) {
-                if (other_domain_elem.equals(this_domain_elem)) {
-                    let thisRangeSet = this.map.get(this_domain_elem);
-                    if (thisRangeSet != null) {
-                        resultSet = BSet.immutableSetUnion(resultSet, thisRangeSet);
-                    }
-                }
+        for (let domainElement of domain) {
+            let thisRangeSet = this.map.get(domainElement);
+            if (thisRangeSet != null) {
+                resultSet = BSet.immutableSetUnion(resultSet, thisRangeSet);
             }
         }
         return new BSet(resultSet);
@@ -310,15 +306,9 @@ export class BRelation {
         let otherMap = arg.map;
         let otherDomain = immutable.Set(otherMap.keys());
         let resultMap = this.map;
-        outer_loop: for (let domainElement of otherDomain) {
-            for (let thisDomainElement of resultMap.keys()) {
-                if (thisDomainElement.equals(domainElement)) {
-                    let range = otherMap.get(domainElement);
-                    resultMap = resultMap.set(thisDomainElement, range);
-                    continue outer_loop;
-                }
-            }
-            resultMap = resultMap.set(domainElement, otherMap.get(domainElement));
+        for (let domainElement of otherDomain) {
+            let range = otherMap.get(domainElement);
+            resultMap = resultMap.set(domainElement, range);
         }
         return new BRelation(resultMap);
     }

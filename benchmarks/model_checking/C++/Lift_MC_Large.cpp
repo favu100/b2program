@@ -400,12 +400,12 @@ class ModelChecker {
         bool invariantViolated(const Lift_MC_Large& state) {
             if(isCaching) {
                 std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
-                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_1") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_2") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_2()) {
                         return false;
                     }

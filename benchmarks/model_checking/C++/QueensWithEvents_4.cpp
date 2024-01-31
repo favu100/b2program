@@ -448,7 +448,7 @@ class ModelChecker {
         bool invariantViolated(const QueensWithEvents_4& state) {
             if(isCaching) {
                 std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
-                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_1") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
                         return false;
                     }

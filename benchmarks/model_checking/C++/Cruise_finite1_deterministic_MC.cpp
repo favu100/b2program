@@ -1535,197 +1535,197 @@ class ModelChecker {
         bool invariantViolated(const Cruise_finite1_deterministic_MC& state) {
             if(isCaching) {
                 std::unordered_set<string> dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
-                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_1") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_2") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_2()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_3") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_3()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_4") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_4()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_5") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_5()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_6") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_6()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_7") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_7()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_8") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_8()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_9") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_9()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_10") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_10()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_11") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_11()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_12") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_12()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_13") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_13()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_14") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_14()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_15") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_15()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_16") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_16()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_17") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_17()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_18") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_18()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_19") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_19()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_20") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_20()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_21") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_21") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_21()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_22") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_22") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_22()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_23") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_23") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_23()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_24") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_24") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_24()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_25") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_25") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_25()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_26") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_26") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_26()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_27") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_27") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_27()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_28") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_28") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_28()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_29") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_29") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_29()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_30") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_30") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_30()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_31") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_31") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_31()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_32") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_32") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_32()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_33") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_33") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_33()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_34") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_34") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_34()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_35") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_35") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_35()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_36") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_36") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_36()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_37") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_37") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_37()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_38") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_38") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_38()) {
                         return false;
                     }
                 }
-                if(dependentInvariantsOfState.find("_check_inv_39") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_39") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_39()) {
                         return false;
                     }

@@ -1545,9 +1545,11 @@ class ModelChecker {
 
         bool invariantViolated(const CAN_BUS_tlc& state) {
             std::unordered_set<string> dependentInvariantsOfState;
-            if(isCaching) dependentInvariantsOfState = dependentInvariant[state];
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_1") == dependentInvariantsOfState.end()) {
+                dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
+            }
+            if(isCaching) {
+                if(dependentInvariantsOfState.find("_check_inv_1") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_1()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_1" << "\n";
                         return true;
@@ -1559,9 +1561,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_2") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_2") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_2()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_2" << "\n";
                         return true;
@@ -1573,9 +1574,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_3") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_3") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_3()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_3" << "\n";
                         return true;
@@ -1587,9 +1587,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_4") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_4") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_4()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_4" << "\n";
                         return true;
@@ -1601,9 +1600,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_5") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_5") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_5()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_5" << "\n";
                         return true;
@@ -1615,9 +1613,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_6") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_6") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_6()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_6" << "\n";
                         return true;
@@ -1629,9 +1626,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_7") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_7") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_7()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_7" << "\n";
                         return true;
@@ -1643,9 +1639,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_8") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_8") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_8()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_8" << "\n";
                         return true;
@@ -1657,9 +1652,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_9") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_9") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_9()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_9" << "\n";
                         return true;
@@ -1671,9 +1665,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_10") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_10") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_10()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_10" << "\n";
                         return true;
@@ -1685,9 +1678,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_11") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_11") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_11()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_11" << "\n";
                         return true;
@@ -1699,9 +1691,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_12") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_12") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_12()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_12" << "\n";
                         return true;
@@ -1713,9 +1704,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_13") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_13") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_13()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_13" << "\n";
                         return true;
@@ -1727,9 +1717,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_14") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_14") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_14()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_14" << "\n";
                         return true;
@@ -1741,9 +1730,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_15") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_15") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_15()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_15" << "\n";
                         return true;
@@ -1755,9 +1743,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_16") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_16") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_16()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_16" << "\n";
                         return true;
@@ -1769,9 +1756,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_17") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_17") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_17()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_17" << "\n";
                         return true;
@@ -1783,9 +1769,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_18") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_18") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_18()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_18" << "\n";
                         return true;
@@ -1797,9 +1782,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_19") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_19") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_19()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_19" << "\n";
                         return true;
@@ -1811,9 +1795,8 @@ class ModelChecker {
                   return true;
                 }
             }
-
             if(isCaching) {
-                if(dependentInvariantsOfState.find("_check_inv_20") == dependentInvariantsOfState.end()) {
+                if(dependentInvariantsOfState.find("_check_inv_20") != dependentInvariantsOfState.end()) {
                     if(!state._check_inv_20()) {
                         cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_20" << "\n";
                         return true;
@@ -1825,7 +1808,6 @@ class ModelChecker {
                   return true;
                 }
             }
-
             return false;
         }
 

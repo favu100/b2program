@@ -11,17 +11,12 @@ OUTPUT ?= runtimes.txt
 DEPENDENCIES ?= :btypes.jar
 STRATEGY=mixed
 THREADS=1
-CACHING=false
+CACHING=true
 
 %.class : %.java
 	javac -cp .$(DEPENDENCIES) $<
 
 % : %.class
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)
 	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) java -cp .$(DEPENDENCIES) $@ $(STRATEGY) $(THREADS) $(CACHING)

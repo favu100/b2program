@@ -128,4 +128,11 @@ public class BBoolean implements BObject {
 		return new BBoolean(this.value != other.value);
 	}
 
+	public BBoolean isBoolean() {
+		return new BBoolean(true);
+	}
+
+	public BBoolean isNotBoolean() {
+		return new BBoolean(false);
+	}
 }

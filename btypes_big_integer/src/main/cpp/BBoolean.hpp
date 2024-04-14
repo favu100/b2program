@@ -88,6 +88,14 @@ class BBoolean : public BObject {
             return value != other.value;
         }
 
+        BBoolean isBoolean() const {
+            return BBoolean(true);
+        }
+
+        BBoolean isNotBoolean() const {
+            return BBoolean(false);
+        }
+
         friend bool operator !=(const BBoolean& o1, const BBoolean& o2) {
             return o1.value != o2.value;
         }

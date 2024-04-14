@@ -28,7 +28,8 @@ public class SetWithPredicateGenerator {
                     PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_NON_INCLUSION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
+                    ExpressionOperatorNode.ExpressionOperator.BOOL);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
@@ -149,6 +150,7 @@ public class SetWithPredicateGenerator {
         return operatorName;
     }
 
+
     /*
     * This function generates code an operation name for a predicate with NATURAL on the right-hand side
     */
@@ -257,6 +259,39 @@ public class SetWithPredicateGenerator {
         return operatorName;
     }
 
+    private String generateBoolean(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isBoolean";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotBoolean";
+                break;
+            case INCLUSION:
+                operatorName = "subsetOfBoolean";
+                break;
+            case NON_INCLUSION:
+                operatorName = "notSubsetOfBoolean";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "strictSubsetOfBoolean";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "notStrictSubsetOfBoolean";
+                break;
+            case EQUAL:
+                operatorName = "equalBoolean";
+                break;
+            case NOT_EQUAL:
+                operatorName = "unequalBoolean";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     /*
     * This function generates code an operation name for a predicate with a struct on the right-hand side
     */
@@ -340,6 +375,9 @@ public class SetWithPredicateGenerator {
             case STRING:
                 operatorName = generateInfiniteString(operator);
                 break;
+            case BOOL:
+                operatorName = generateBoolean(operator);
+                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
@@ -372,6 +410,9 @@ public class SetWithPredicateGenerator {
                 break;
             case STRING:
                 operatorName = "checkDomainString";
+                break;
+            case BOOL:
+                operatorName = "checkDomainBoolean";
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
@@ -415,6 +456,9 @@ public class SetWithPredicateGenerator {
             case STRING:
                 operatorName = "checkRangeString";
                 break;
+            case BOOL:
+                operatorName = "checkRangeBoolean";
+                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
@@ -449,6 +493,9 @@ public class SetWithPredicateGenerator {
             case STRING:
                 operatorName = "isTotalString";
                 break;
+            case BOOL:
+                operatorName = "isTotalBoolean";
+                break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");
         }
@@ -472,6 +519,9 @@ public class SetWithPredicateGenerator {
                 break;
             case STRING:
                 operatorName = "isPartialString";
+                break;
+            case BOOL:
+                operatorName = "isPartialBoolean";
                 break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");
@@ -536,6 +586,9 @@ public class SetWithPredicateGenerator {
             case STRING:
                 operatorName = "isSurjectionString";
                 break;
+            case BOOL:
+                operatorName = "isSurjectionBoolean";
+                break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");
         }
@@ -559,6 +612,9 @@ public class SetWithPredicateGenerator {
                 break;
             case STRING:
                 operatorName = "isBijectionString";
+                break;
+            case BOOL:
+                operatorName ="isBijectionBoolean";
                 break;
             default:
                 throw new RuntimeException("Argument of relation expressions are not supported");

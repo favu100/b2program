@@ -419,8 +419,13 @@ export class BSet<T extends BObject> implements BObject{
         if (b.less(a).booleanValue()) {
             return new BSet();
         }
-        const range = [...Array(b.minus(a).intValue() +1).keys()].map(e => new BInteger(e).plus(a));
-        return new BSet(immutable.Set(range));
+
+        let persistentSet =  immutable.Set();
+        for(let i = a; i.lessEqual(b).booleanValue(); i = i.plus(new BInteger(1))) {
+            persistentSet = persistentSet.add(i);
+        }
+
+        return new BSet(persistentSet);
 	}
 
 	hashCode(): number {

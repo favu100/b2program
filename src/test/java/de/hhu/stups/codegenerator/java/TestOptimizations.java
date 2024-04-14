@@ -35,5 +35,23 @@ public class TestOptimizations extends TestJava {
         testJava("NotInteger", "NotInteger", "NotIntegerAddition.stjava", true);
     }
 
+    @Test
+    public void testString() throws Exception {
+        testJava("Stringg", "Stringg", "StringAddition.stjava", true);
+    }
 
+    @Test
+    public void testNotString() throws Exception {
+        testJava("NotString", "NotString", "NotStringAddition.stjava", true);
+    }
+
+    @Test
+    public void testBoolean() throws Exception {
+        testJava("Booleann", "Booleann", "BooleanAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotBoolean() throws Exception {
+        testJava("NotBoolean", "NotBoolean", "NotBooleanAddition.stjava", true);
+    }
 }

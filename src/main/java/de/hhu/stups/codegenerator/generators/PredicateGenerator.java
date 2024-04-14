@@ -52,7 +52,7 @@ public class PredicateGenerator {
 
     private final IterationConstructHandler iterationConstructHandler;
 
-    private final InfiniteSetGenerator infiniteSetGenerator;
+    private final SetWithPredicateGenerator infiniteSetGenerator;
 
     private final RelationSetGenerator relationSetGenerator;
 
@@ -60,7 +60,7 @@ public class PredicateGenerator {
 
     public PredicateGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                               final ImportGenerator importGenerator, final IterationConstructHandler iterationConstructHandler,
-                              final InfiniteSetGenerator infiniteSetGenerator) {
+                              final SetWithPredicateGenerator infiniteSetGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -88,7 +88,7 @@ public class PredicateGenerator {
     */
     public String visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node) {
         importGenerator.addImport(node.getType());
-        if(infiniteSetGenerator.checkInfinite(node)) {
+        if(infiniteSetGenerator.checkSetWithPredicate(node)) {
             return infiniteSetGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {

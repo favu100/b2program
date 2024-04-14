@@ -101,7 +101,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final DeferredSetAnalyzer deferredSetAnalyzer;
 
-	private final InfiniteSetGenerator infiniteSetGenerator;
+	private final SetWithPredicateGenerator infiniteSetGenerator;
 
 	private final ModelCheckingGenerator modelCheckingGenerator;
 
@@ -172,7 +172,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.backtrackingGenerator = new BacktrackingGenerator(currentGroup);
 		this.iterationConstructHandler = new IterationConstructHandler(currentGroup, this, nameHandler, typeGenerator, importGenerator, backtrackingGenerator, useConstraintSolving);
 		this.deferredSetAnalyzer = new DeferredSetAnalyzer(Integer.parseInt(deferredSetSize));
-		this.infiniteSetGenerator = new InfiniteSetGenerator(currentGroup, this, nameHandler);
+		this.infiniteSetGenerator = new SetWithPredicateGenerator(currentGroup, this, nameHandler);
 		this.identifierGenerator = new IdentifierGenerator(currentGroup, this, nameHandler, parallelConstructHandler, declarationGenerator);
 		this.recordStructGenerator = new RecordStructGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler);
 		this.declarationGenerator = new DeclarationGenerator(currentGroup, this, typeGenerator, importGenerator, nameHandler, deferredSetAnalyzer);

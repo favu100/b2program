@@ -58,9 +58,9 @@ public class RelationSetGenerator {
 
     private final NameHandler nameHandler;
 
-    private final InfiniteSetGenerator infiniteSetGenerator;
+    private final SetWithPredicateGenerator infiniteSetGenerator;
 
-    public RelationSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler, InfiniteSetGenerator infiniteSetGenerator) {
+    public RelationSetGenerator(STGroup group, MachineGenerator machineGenerator, NameHandler nameHandler, SetWithPredicateGenerator infiniteSetGenerator) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -128,7 +128,7 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode domain = relation.getExpressionNodes().get(0);
-        if(infiniteSetGenerator.isInfiniteExpression(domain)) {
+        if(infiniteSetGenerator.isSetWithPredicateExpression(domain)) {
             return infiniteSetGenerator.generateInfiniteDomainChecking(node, operator, domain);
         }
 
@@ -147,7 +147,7 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode range = relation.getExpressionNodes().get(1);
-        if(infiniteSetGenerator.isInfiniteExpression(range)) {
+        if(infiniteSetGenerator.isSetWithPredicateExpression(range)) {
             return infiniteSetGenerator.generateInfiniteRangeChecking(node, operator, range);
         }
 
@@ -167,7 +167,7 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode domain = relation.getExpressionNodes().get(0);
-        if(infiniteSetGenerator.isInfiniteExpression(domain)) {
+        if(infiniteSetGenerator.isSetWithPredicateExpression(domain)) {
             return infiniteSetGenerator.generateInfiniteTotalPartial(node, operator, domain);
         }
 
@@ -194,7 +194,7 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode range = relation.getExpressionNodes().get(1);
-        if(infiniteSetGenerator.isInfiniteExpression(range)) {
+        if(infiniteSetGenerator.isSetWithPredicateExpression(range)) {
             return infiniteSetGenerator.generateInfiniteSurjectionInjectionBijection(node, operator, range);
         }
         ST template;

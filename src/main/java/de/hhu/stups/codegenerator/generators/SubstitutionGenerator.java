@@ -67,7 +67,7 @@ public class SubstitutionGenerator {
 
     private final BacktrackingGenerator backtrackingGenerator;
 
-    private final InfiniteSetGenerator infiniteSetGenerator;
+    private final SetWithPredicateGenerator infiniteSetGenerator;
 
     private int currentLocalScope;
 
@@ -84,7 +84,7 @@ public class SubstitutionGenerator {
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
                                  final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator,
-                                 final InfiniteSetGenerator infiniteSetGenerator, final BacktrackingGenerator backtrackingGenerator, final boolean forVisualisation) {
+                                 final SetWithPredicateGenerator setWithPredicateGenerator, final BacktrackingGenerator backtrackingGenerator, final boolean forVisualisation) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -99,7 +99,7 @@ public class SubstitutionGenerator {
         this.declarationGenerator = declarationGenerator;
         this.lambdaFunctionGenerator = lambdaFunctionGenerator;
         this.backtrackingGenerator = backtrackingGenerator;
-        this.infiniteSetGenerator = infiniteSetGenerator;
+        this.infiniteSetGenerator = setWithPredicateGenerator;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -208,7 +208,7 @@ public class SubstitutionGenerator {
         }
 
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
-        if(infiniteSetGenerator.checkExpressionInfinite(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
+        if(infiniteSetGenerator.checkSetExpressionWithPredicate(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
             return "";
         }
 

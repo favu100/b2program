@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Stringg string = new Stringg();
+    string.op();
+    System.out.println(string.getRes());
+}

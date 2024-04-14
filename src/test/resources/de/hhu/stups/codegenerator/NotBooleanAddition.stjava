@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotBoolean bool = new NotBoolean();
+    bool.op();
+    System.out.println(bool.getRes());
+}

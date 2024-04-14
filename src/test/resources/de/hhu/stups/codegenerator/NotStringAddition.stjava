@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotString string = new NotString();
+    string.op();
+    System.out.println(string.getRes());
+}

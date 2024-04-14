@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Natural1 natural = new Natural1();
+    natural.op();
+    System.out.println(natural.getRes());
+}

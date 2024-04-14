@@ -8,6 +8,7 @@ INITIALISATION x := 1
 
 OPERATIONS
 
-	op1 = SELECT x : NATURAL1 THEN x := 2 END
+	op = SELECT x : NATURAL1 THEN x := 2 END;
+	out <-- getRes = out := x
 
 END

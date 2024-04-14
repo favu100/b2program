@@ -8,6 +8,7 @@ INITIALISATION x := 0
 
 OPERATIONS
 
-	op1 = SELECT x : INTEGER THEN x := 1 END
+	op = SELECT x : INTEGER THEN x := 1 END;
+	out <-- getRes = out := x
 
 END

@@ -1,4 +1,4 @@
-MACHINE Natural
+MACHINE NotInteger
 
 VARIABLES  x
 
@@ -8,7 +8,7 @@ INITIALISATION x := 0
 
 OPERATIONS
 
-	op = SELECT x : NATURAL THEN x := 1 END;
+	op = IF x /: INTEGER THEN x := 0 ELSE x := 1 END;
 	out <-- getRes = out := x
 
 END

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotInteger integer = new NotInteger();
+    integer.op();
+    System.out.println(integer.getRes());
+}

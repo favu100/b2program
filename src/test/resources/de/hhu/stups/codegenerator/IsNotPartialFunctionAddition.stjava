@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotPartialFunction partial = new IsNotPartialFunction();
+    partial.op();
+    System.out.println(partial.getRes());
+}

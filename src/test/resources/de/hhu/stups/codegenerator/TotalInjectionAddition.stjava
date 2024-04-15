@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    TotalInjection total = new TotalInjection();
+    total.op();
+    System.out.println(total.getRes());
+}

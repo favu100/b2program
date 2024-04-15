@@ -180,4 +180,124 @@ public class TestOptimizations extends TestJava {
         testJava("PartialBijectionEmptySet", "PartialBijectionEmptySet", "PartialBijectionEmptySetEmptySetAddition.stjava", true);
     }
 
+    @Test
+    public void testPartialFunction() throws Exception {
+        testJava("PartialFunction", "PartialFunction", "PartialFunctionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotPartialFunction() throws Exception {
+        testJava("IsNotPartialFunction", "IsNotPartialFunction", "IsNotPartialFunctionAddition.stjava", true);
+    }
+
+    @Test
+    public void testTotalFunction() throws Exception {
+        testJava("TotalFunction", "TotalFunction", "TotalFunctionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotTotalFunction() throws Exception {
+        testJava("IsNotTotalFunction", "IsNotTotalFunction", "IsNotTotalFunctionAddition.stjava", true);
+    }
+
+    @Test
+    public void testPartialSurjection() throws Exception {
+        testJava("PartialSurjection", "PartialSurjection", "PartialSurjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotPartialSurjection() throws Exception {
+        testJava("IsNotPartialSurjection", "IsNotPartialSurjection", "IsNotPartialSurjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testTotalSurjection() throws Exception {
+        testJava("TotalSurjection", "TotalSurjection", "TotalSurjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotTotalSurjection() throws Exception {
+        testJava("IsNotTotalSurjection", "IsNotTotalSurjection", "IsNotTotalSurjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testTotalInjection() throws Exception {
+        testJava("TotalInjection", "TotalInjection", "TotalInjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotTotalInjection() throws Exception {
+        testJava("IsNotTotalInjection", "IsNotTotalInjection", "IsNotTotalInjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testPartialInjection() throws Exception {
+        testJava("PartialInjection", "PartialInjection", "PartialInjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotPartialInjection() throws Exception {
+        testJava("IsNotPartialInjection", "IsNotPartialInjection", "IsNotPartialInjectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testPartialBijection() throws Exception {
+        testJava("PartialBijection", "PartialBijection", "PartialBijectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotPartialBijection() throws Exception {
+        testJava("IsNotPartialBijection", "IsNotPartialBijection", "IsNotPartialBijectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testTotalBijection() throws Exception {
+        testJava("TotalBijection", "TotalBijection", "TotalBijectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotTotalBijection() throws Exception {
+        testJava("IsNotTotalBijection", "IsNotTotalBijection", "IsNotTotalBijectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testRelation() throws Exception {
+        testJava("Relation", "Relation", "RelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotRelation() throws Exception {
+        testJava("IsNotRelation", "IsNotRelation", "IsNotRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testTotalRelation() throws Exception {
+        testJava("TotalRelation", "TotalRelation", "TotalRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotTotalRelation() throws Exception {
+        testJava("IsNotTotalRelation", "IsNotTotalRelation", "IsNotTotalRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testSurjectiveRelation() throws Exception {
+        testJava("SurjectionRelation", "SurjectionRelation", "SurjectionRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotSurjectiveRelation() throws Exception {
+        testJava("IsNotSurjectionRelation", "IsNotSurjectionRelation", "IsNotSurjectionRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testTotalSurjectiveRelation() throws Exception {
+        testJava("TotalSurjectionRelation", "TotalSurjectionRelation", "TotalSurjectionRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotTotalSurjectiveRelation() throws Exception {
+        testJava("IsNotTotalSurjectionRelation", "IsNotTotalSurjectionRelation", "IsNotTotalSurjectionRelationAddition.stjava", true);
+    }
+
 }

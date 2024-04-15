@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Relation relation = new Relation();
+    relation.op();
+    System.out.println(relation.getRes());
+}

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotPartialSurjection surjection = new IsNotPartialSurjection();
+    surjection.op();
+    System.out.println(surjection.getRes());
+}

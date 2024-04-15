@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotTotalInjection total = new IsNotTotalInjection();
+    total.op();
+    System.out.println(total.getRes());
+}

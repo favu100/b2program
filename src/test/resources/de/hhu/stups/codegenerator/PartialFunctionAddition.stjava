@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    PartialFunction partial = new PartialFunction();
+    partial.op();
+    System.out.println(partial.getRes());
+}

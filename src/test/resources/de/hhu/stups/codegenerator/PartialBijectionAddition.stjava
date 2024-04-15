@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    PartialBijection partial = new PartialBijection();
+    partial.op();
+    System.out.println(partial.getRes());
+}

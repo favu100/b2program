@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotPartialInjection partial = new IsNotPartialInjection();
+    partial.op();
+    System.out.println(partial.getRes());
+}

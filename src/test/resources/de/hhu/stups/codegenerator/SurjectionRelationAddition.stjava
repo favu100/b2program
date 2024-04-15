@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SurjectionRelation relation = new SurjectionRelation();
+    relation.op();
+    System.out.println(relation.getRes());
+}

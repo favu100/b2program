@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    TotalBijection total = new TotalBijection();
+    total.op();
+    System.out.println(total.getRes());
+}

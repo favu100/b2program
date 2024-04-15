@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotTotalBijection total = new IsNotTotalBijection();
+    total.op();
+    System.out.println(total.getRes());
+}

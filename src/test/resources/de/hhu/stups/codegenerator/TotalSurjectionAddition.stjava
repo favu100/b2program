@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    TotalSurjection total = new TotalSurjection();
+    total.op();
+    System.out.println(total.getRes());
+}

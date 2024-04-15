@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Pow1ElementOf pow = new Pow1ElementOf();
+    pow.calculate();
+    System.out.println(pow.getRes());
+}

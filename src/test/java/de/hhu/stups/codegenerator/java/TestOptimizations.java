@@ -105,4 +105,49 @@ public class TestOptimizations extends TestJava {
         testJava("IsNotInDifference", "IsNotInDifference", "IsNotInDifferenceAddition.stjava", true);
     }
 
+    @Test
+    public void testPowEmptySet() throws Exception {
+        testJava("PowEmptySet", "PowEmptySet", "PowEmptySetAddition.stjava", true);
+    }
+
+    @Test
+    public void testPowElementOf() throws Exception {
+        testJava("PowElementOf", "PowElementOf", "PowElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testPowNotElementOf() throws Exception {
+        testJava("PowNotElementOf", "PowNotElementOf", "PowNotElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testPow1ElementOf() throws Exception {
+        testJava("Pow1ElementOf", "Pow1ElementOf", "Pow1ElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testPow1NotElementOf() throws Exception {
+        testJava("Pow1NotElementOf", "Pow1NotElementOf", "Pow1NotElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testFinElementOf() throws Exception {
+        testJava("FinElementOf", "FinElementOf", "FinElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testFinNotElementOf() throws Exception {
+        testJava("FinNotElementOf", "FinNotElementOf", "FinNotElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testFin1ElementOf() throws Exception {
+        testJava("Fin1ElementOf", "Fin1ElementOf", "Fin1ElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testFin1NotElementOf() throws Exception {
+        testJava("Fin1NotElementOf", "Fin1NotElementOf", "Fin1NotElementOfAddition.stjava", true);
+    }
+
 }

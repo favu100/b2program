@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    Fin1NotElementOf fin = new Fin1NotElementOf();
+    fin.calculate();
+    System.out.println(fin.getRes());
+}

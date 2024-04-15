@@ -44,6 +44,28 @@ isbn="978-3-031-15008-1"
 }
 ```
 
+- B2Program Validation Documents Journal Paper:
+```
+@article{b2program_js_journal,
+	abstract = {Especially in industrial applications of formal modeling, validation is as important as verification. Thus, it is important to integrate the stakeholders'and the domain experts'feedback as early as possible. In this work, we propose two approaches to enable this: (1) a static export of an animation trace into a single HTML file, and (2) a dynamic export of a classical B model as an interactive HTML document, both based on domain-specific visualizations. For the second approach, we extend the high-level code generator B2Program by JavaScript and integrate VisB visualizations alongside SimB simulations with timing, probabilistic and interactive elements. An important aspect of this work is to ease communication between modelers and domain experts. This is achieved by implementing features to run simulations, sharing animated traces with descriptions and giving feedback to each other. This work also evaluates the performance of the generated JavaScript code compared with existing approaches with Java and C++ code generation as well as the animator, constraint solver, and model checker ProB.},
+	author = {Vu, Fabian and Happe, Christopher and Leuschel, Michael},
+	da = {2024/04/01},
+	date-added = {2024-04-15 22:43:55 +0200},
+	date-modified = {2024-04-15 22:43:55 +0200},
+	doi = {10.1007/s10009-024-00739-0},
+	id = {Vu2024},
+	isbn = {1433-2787},
+	journal = {International Journal on Software Tools for Technology Transfer},
+	number = {2},
+	pages = {147--168},
+	title = {Generating interactive documents for domain-specific validation of formal models},
+	ty = {JOUR},
+	url = {https://doi.org/10.1007/s10009-024-00739-0},
+	volume = {26},
+	year = {2024},
+	Bdsk-Url-1 = {https://doi.org/10.1007/s10009-024-00739-0}}
+```
+
 - B2Program Model Checking Code Generation Paper:
 
 ```

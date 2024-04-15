@@ -170,4 +170,14 @@ public class TestOptimizations extends TestJava {
         testJava("NotNat1", "NotNat1", "NotNat1Addition.stjava", true);
     }
 
+    @Test
+    public void testPartialFunctionEmptySet() throws Exception {
+        testJava("PartialFunctionEmptySet", "PartialFunctionEmptySet", "PartialFunctionEmptySetAddition.stjava", true);
+    }
+
+    @Test
+    public void testPartialBijectionEmptySet() throws Exception {
+        testJava("PartialBijectionEmptySet", "PartialBijectionEmptySet", "PartialBijectionEmptySetEmptySetAddition.stjava", true);
+    }
+
 }

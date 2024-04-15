@@ -36,6 +36,16 @@ public class TestOptimizations extends TestJava {
     }
 
     @Test
+    public void testInt() throws Exception {
+        testJava("Int", "Int", "IntAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotInt() throws Exception {
+        testJava("NotInt", "NotInt", "NotIntAddition.stjava", true);
+    }
+
+    @Test
     public void testString() throws Exception {
         testJava("Stringg", "Stringg", "StringAddition.stjava", true);
     }
@@ -53,5 +63,15 @@ public class TestOptimizations extends TestJava {
     @Test
     public void testNotBoolean() throws Exception {
         testJava("NotBoolean", "NotBoolean", "NotBooleanAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInInterval() throws Exception {
+        testJava("IsInInterval", "IsInInterval", "IsInInterval.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInInterval() throws Exception {
+        testJava("IsNotInInterval", "IsNotInInterval", "IsNotInInterval.stjava", true);
     }
 }

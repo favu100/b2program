@@ -14,6 +14,7 @@ import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +30,13 @@ public class SetWithPredicateGenerator {
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
-                    ExpressionOperatorNode.ExpressionOperator.BOOL);
+                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
+
+    private static final List<ExpressionOperatorNode.ExpressionOperator> STATIC_SET_EXPRESSIONS =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.UNION, ExpressionOperatorNode.ExpressionOperator.SET_SUBTRACTION, ExpressionOperatorNode.ExpressionOperator.INTERSECTION);
 
     private final STGroup currentGroup;
 
@@ -362,6 +366,8 @@ public class SetWithPredicateGenerator {
                 return generateInfiniteStruct(template, operator);
             }
         }
+
+        TemplateHandler.add(template, "rhsArguments", extractRhsArguments(rhs, rhsOperator));
         switch(rhsOperator) {
             case INTEGER:
                 operatorName = generateInfiniteInteger(operator);
@@ -378,11 +384,55 @@ public class SetWithPredicateGenerator {
             case BOOL:
                 operatorName = generateBoolean(operator);
                 break;
+            case INTERVAL:
+                operatorName = generateInterval(operator);
+                break;
+
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();
+    }
+
+    private String generateInterval(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInInterval";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInInterval";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private List<String> extractRhsArguments(ExprNode rhs, ExpressionOperatorNode.ExpressionOperator operator) {
+        return ((ExpressionOperatorNode) rhs).getExpressionNodes().stream()
+                .map(expr -> machineGenerator.visitExprNode(expr, null))
+                .collect(Collectors.toList());
     }
 
     /*

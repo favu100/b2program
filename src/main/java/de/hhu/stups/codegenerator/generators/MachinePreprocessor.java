@@ -3,6 +3,7 @@ package de.hhu.stups.codegenerator.generators;
 import de.prob.parser.ast.SourceCodePosition;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.Node;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -40,15 +41,18 @@ import de.prob.parser.ast.nodes.substitution.LetSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.ListSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.OperationCallSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
+import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     private boolean inEnumeration;
@@ -59,12 +63,17 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     public void visitMachineNode(MachineNode machineNode) {
         // TODO: Process other constructs
-        if(machineNode.getProperties() != null) {
+        /*if(machineNode.getProperties() != null) {
             machineNode.setProperties(visitPredicateNode(machineNode.getProperties()));
         }
         if(machineNode.getInvariant() != null) {
             machineNode.setInvariant(visitPredicateNode(machineNode.getInvariant()));
         }
+        machineNode.getOperations().forEach(this::visitOperationNode);*/
+    }
+
+    public void visitOperationNode(OperationNode operationNode) {
+        operationNode.setSubstitution((SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null));
     }
 
     public PredicateNode visitPredicateNode(PredicateNode predicateNode) {
@@ -75,10 +84,12 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         }
         return predicateNode;
     }
-    
+
     @Override
     public Node visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
-        return node;
+       return new ExpressionOperatorNode(node.getSourceCodePosition(), node.getExpressionNodes().stream()
+                .map(expr -> (ExprNode) visitExprNode(expr, null))
+                .collect(Collectors.toList()), node.getOperator());
     }
 
     @Override
@@ -190,7 +201,25 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             if(rhs instanceof ExpressionOperatorNode) {
                 ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
                 ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
-                if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
+                if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.NAT) {
+                    ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                            new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(0))),
+                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                    ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                    return visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
+                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.NAT1) {
+                    ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                            new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(1))),
+                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                    ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                    return visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
+                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.INT) {
+                    ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MININT),
+                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                    ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                    return visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
+                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
                     if(rhsAsExpression.getExpressionNodes().size() == 1) {
                         newRhs = rhsAsExpression.getExpressionNodes().get(0);
                         List<ExprNode> expressions = new ArrayList<>();
@@ -241,7 +270,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitIfOrSelectSubstitutionsNode(IfOrSelectSubstitutionsNode node, Void expected) {
-        return node;
+        return new IfOrSelectSubstitutionsNode(node.getSourceCodePosition(), node.getOperator(),
+                node.getConditions().stream().map(this::visitPredicateNode).collect(Collectors.toList()),
+                node.getSubstitutions().stream().map(subs -> (SubstitutionNode) this.visitSubstitutionNode(subs, null)).collect(Collectors.toList()),
+                node.getElseSubstitution() == null ? null : (SubstitutionNode) visitSubstitutionNode(node.getElseSubstitution(), null));
     }
 
     @Override

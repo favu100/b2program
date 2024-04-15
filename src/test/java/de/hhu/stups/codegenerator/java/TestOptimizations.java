@@ -150,4 +150,24 @@ public class TestOptimizations extends TestJava {
         testJava("Fin1NotElementOf", "Fin1NotElementOf", "Fin1NotElementOfAddition.stjava", true);
     }
 
+    @Test
+    public void testNat() throws Exception {
+        testJava("Nat", "Nat", "NatAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotNat() throws Exception {
+        testJava("NotNat", "NotNat", "NotNatAddition.stjava", true);
+    }
+
+    @Test
+    public void testNat1() throws Exception {
+        testJava("Nat1", "Nat1", "Nat1Addition.stjava", true);
+    }
+
+    @Test
+    public void testNotNat1() throws Exception {
+        testJava("NotNat1", "NotNat1", "NotNat1Addition.stjava", true);
+    }
+
 }

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotNat nat = new NotNat();
+    nat.op();
+    System.out.println(nat.getRes());
+}

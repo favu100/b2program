@@ -317,6 +317,33 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
                 ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
                 switch(rhsOperator) {
+                    case NAT: {
+                        ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                                new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(0))),
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                        ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, newExpression)));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case NAT1: {
+                        ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                                new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(1))),
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                        ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, newExpression)));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case INT: {
+                        ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MININT),
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                        ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, newExpression)));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
                     case INTERVAL: {
                         List<PredicateNode> predicates = new ArrayList<>();
                         predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));

@@ -215,11 +215,4 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 		return isNatural1().not();
 	}
 
-	public BBoolean isInInterval(BInteger m, BInteger n) {
-		return this.greaterEqual(m).and(this.lessEqual(n));
-	}
-
-	public BBoolean isNotInInterval(BInteger m, BInteger n) {
-		return this.less(m).or(this.greater(n));
-	}
 }

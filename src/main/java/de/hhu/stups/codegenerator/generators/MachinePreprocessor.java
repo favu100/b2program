@@ -44,6 +44,7 @@ import de.prob.parser.ast.nodes.substitution.SkipSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
+import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 
 import java.math.BigInteger;
@@ -52,7 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Deprecated
 public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     private boolean inEnumeration;
@@ -61,19 +61,23 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         this.inEnumeration = false;
     }
 
-    public void visitMachineNode(MachineNode machineNode) {
+    public MachineNode visitMachineNode(MachineNode machineNode) {
         // TODO: Process other constructs
-        /*if(machineNode.getProperties() != null) {
+        if(machineNode.getProperties() != null) {
             machineNode.setProperties(visitPredicateNode(machineNode.getProperties()));
         }
         if(machineNode.getInvariant() != null) {
             machineNode.setInvariant(visitPredicateNode(machineNode.getInvariant()));
         }
-        machineNode.getOperations().forEach(this::visitOperationNode);*/
+        machineNode.setOperations(machineNode.getOperations().stream()
+                .map(this::visitOperationNode)
+                .collect(Collectors.toList()));
+        return machineNode;
     }
 
-    public void visitOperationNode(OperationNode operationNode) {
-        operationNode.setSubstitution((SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null));
+    public OperationNode visitOperationNode(OperationNode operationNode) {
+        SubstitutionNode substitution = (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null);
+        return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), substitution, operationNode.getParams());
     }
 
     public PredicateNode visitPredicateNode(PredicateNode predicateNode) {
@@ -201,37 +205,72 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             if(rhs instanceof ExpressionOperatorNode) {
                 ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
                 ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
-                if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.NAT) {
-                    ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
-                            new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(0))),
-                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
-                    ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
-                    return visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
-                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.NAT1) {
-                    ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
-                            new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(1))),
-                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
-                    ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
-                    return visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
-                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.INT) {
-                    ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
-                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MININT),
-                            new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
-                    ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
-                    return visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
-                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
-                    if(rhsAsExpression.getExpressionNodes().size() == 1) {
-                        newRhs = rhsAsExpression.getExpressionNodes().get(0);
-                        List<ExprNode> expressions = new ArrayList<>();
-                        expressions.add(lhs);
-                        expressions.add(newRhs);
-                        return new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, expressions);
+                switch(rhsOperator) {
+                    case NAT: {
+                        ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                                new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(0))),
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                        ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
                     }
-                } else if(rhsOperator == ExpressionOperatorNode.ExpressionOperator.INTERVAL) {
-                    List<PredicateNode> predicates = new ArrayList<>();
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
-                    return new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
+                    case NAT1: {
+                        ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                                new NumberNode(sourceCodePosition, new BigInteger(String.valueOf(1))),
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                        ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case INT: {
+                        ExprNode newExpression = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MININT),
+                                new ExpressionOperatorNode(sourceCodePosition, ExpressionOperatorNode.ExpressionOperator.MAXINT)
+                        ), ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, newExpression)));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case SET_ENUMERATION: {
+                        if (rhsAsExpression.getExpressionNodes().size() == 1) {
+                            newRhs = rhsAsExpression.getExpressionNodes().get(0);
+                            List<ExprNode> expressions = new ArrayList<>();
+                            expressions.add(lhs);
+                            expressions.add(newRhs);
+                            PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, expressions);
+                            predicateNode.setType(BoolType.getInstance());
+                            return predicateNode;
+                        }
+                    }
+                    case INTERVAL: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                }
+            }
+        } else if(operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING) {
+            ExprNode lhs = node.getExpressionNodes().get(0);
+            ExprNode rhs = node.getExpressionNodes().get(1);
+
+            ExprNode newRhs = rhs;
+            if(rhs instanceof ExpressionOperatorNode) {
+                ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
+                ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
+                switch(rhsOperator) {
+                    case INTERVAL: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
                 }
             }
         }

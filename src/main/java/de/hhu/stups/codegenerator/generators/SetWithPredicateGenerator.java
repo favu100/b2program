@@ -30,7 +30,7 @@ public class SetWithPredicateGenerator {
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
-                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+                    ExpressionOperatorNode.ExpressionOperator.BOOL);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
@@ -46,10 +46,14 @@ public class SetWithPredicateGenerator {
 
     private PredicateGenerator predicateGenerator;
 
-    public SetWithPredicateGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler) {
+    private final TypeGenerator typeGenerator;
+
+    public SetWithPredicateGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler,
+                                     final TypeGenerator typeGenerator) {
         this.currentGroup = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
+        this.typeGenerator = typeGenerator;
     }
 
     /*
@@ -367,6 +371,8 @@ public class SetWithPredicateGenerator {
             }
         }
 
+        TemplateHandler.add(template, "static", STATIC_SET_EXPRESSIONS.contains(rhsOperator));
+        TemplateHandler.add(template, "type", typeGenerator.generate(rhs.getType()));
         TemplateHandler.add(template, "rhsArguments", extractRhsArguments(rhs, rhsOperator));
         switch(rhsOperator) {
             case INTEGER:
@@ -384,10 +390,15 @@ public class SetWithPredicateGenerator {
             case BOOL:
                 operatorName = generateBoolean(operator);
                 break;
-            case INTERVAL:
-                operatorName = generateInterval(operator);
+            case UNION:
+                operatorName = generateUnion(operator);
                 break;
-
+            case INTERSECTION:
+                operatorName = generateIntersection(operator);
+                break;
+            case SET_SUBTRACTION:
+                operatorName = generateSetSubstraction(operator);
+                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
@@ -395,14 +406,82 @@ public class SetWithPredicateGenerator {
         return template.render();
     }
 
-    private String generateInterval(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+    private String generateUnion(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         String operatorName;
         switch(operator) {
             case ELEMENT_OF:
-                operatorName = "isInInterval";
+                operatorName = "isInUnion";
                 break;
             case NOT_BELONGING:
-                operatorName = "isNotInInterval";
+                operatorName = "isNotInUnion";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateIntersection(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInIntersection";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInIntersection";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateSetSubstraction(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInSetSubstraction";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInSetSubstraction";
                 break;
             // TODO
             case INCLUSION:

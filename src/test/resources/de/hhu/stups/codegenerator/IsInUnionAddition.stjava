@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInUnion union = new IsInUnion();
+    union.op();
+    System.out.println(union.getRes());
+}

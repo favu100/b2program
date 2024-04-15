@@ -248,7 +248,31 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                         List<PredicateNode> predicates = new ArrayList<>();
                         predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                         predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS_EQUAL, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
-                        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case UNION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case INTERSECTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case SET_SUBTRACTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
                         predicateNode.setType(BoolType.getInstance());
                         return predicateNode;
                     }
@@ -267,7 +291,31 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                         List<PredicateNode> predicates = new ArrayList<>();
                         predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.LESS, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                         predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
-                        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case UNION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case INTERSECTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case SET_SUBTRACTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                        predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
                         predicateNode.setType(BoolType.getInstance());
                         return predicateNode;
                     }

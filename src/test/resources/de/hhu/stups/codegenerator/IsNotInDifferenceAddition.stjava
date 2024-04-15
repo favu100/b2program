@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotInDifference difference = new IsNotInDifference();
+    difference.op();
+    System.out.println(difference.getRes());
+}

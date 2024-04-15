@@ -35,8 +35,7 @@ public class SetWithPredicateGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
 
-    private static final List<ExpressionOperatorNode.ExpressionOperator> STATIC_SET_EXPRESSIONS =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.UNION, ExpressionOperatorNode.ExpressionOperator.SET_SUBTRACTION, ExpressionOperatorNode.ExpressionOperator.INTERSECTION);
+    private static List<ExpressionOperatorNode.ExpressionOperator> STATIC_SET_EXPRESSIONS;
 
     private final STGroup currentGroup;
 
@@ -390,122 +389,11 @@ public class SetWithPredicateGenerator {
             case BOOL:
                 operatorName = generateBoolean(operator);
                 break;
-            case UNION:
-                operatorName = generateUnion(operator);
-                break;
-            case INTERSECTION:
-                operatorName = generateIntersection(operator);
-                break;
-            case SET_SUBTRACTION:
-                operatorName = generateSetSubstraction(operator);
-                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();
-    }
-
-    private String generateUnion(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
-        String operatorName;
-        switch(operator) {
-            case ELEMENT_OF:
-                operatorName = "isInUnion";
-                break;
-            case NOT_BELONGING:
-                operatorName = "isNotInUnion";
-                break;
-            // TODO
-            case INCLUSION:
-                operatorName = "";
-                break;
-            case NON_INCLUSION:
-                operatorName = "";
-                break;
-            case STRICT_INCLUSION:
-                operatorName = "";
-                break;
-            case STRICT_NON_INCLUSION:
-                operatorName = "";
-                break;
-            case EQUAL:
-                operatorName = "";
-                break;
-            case NOT_EQUAL:
-                operatorName = "";
-                break;
-            default:
-                throw new RuntimeException("Given node is not implemented: " + operator);
-        }
-        return operatorName;
-    }
-
-    private String generateIntersection(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
-        String operatorName;
-        switch(operator) {
-            case ELEMENT_OF:
-                operatorName = "isInIntersection";
-                break;
-            case NOT_BELONGING:
-                operatorName = "isNotInIntersection";
-                break;
-            // TODO
-            case INCLUSION:
-                operatorName = "";
-                break;
-            case NON_INCLUSION:
-                operatorName = "";
-                break;
-            case STRICT_INCLUSION:
-                operatorName = "";
-                break;
-            case STRICT_NON_INCLUSION:
-                operatorName = "";
-                break;
-            case EQUAL:
-                operatorName = "";
-                break;
-            case NOT_EQUAL:
-                operatorName = "";
-                break;
-            default:
-                throw new RuntimeException("Given node is not implemented: " + operator);
-        }
-        return operatorName;
-    }
-
-    private String generateSetSubstraction(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
-        String operatorName;
-        switch(operator) {
-            case ELEMENT_OF:
-                operatorName = "isInSetSubstraction";
-                break;
-            case NOT_BELONGING:
-                operatorName = "isNotInSetSubstraction";
-                break;
-            // TODO
-            case INCLUSION:
-                operatorName = "";
-                break;
-            case NON_INCLUSION:
-                operatorName = "";
-                break;
-            case STRICT_INCLUSION:
-                operatorName = "";
-                break;
-            case STRICT_NON_INCLUSION:
-                operatorName = "";
-                break;
-            case EQUAL:
-                operatorName = "";
-                break;
-            case NOT_EQUAL:
-                operatorName = "";
-                break;
-            default:
-                throw new RuntimeException("Given node is not implemented: " + operator);
-        }
-        return operatorName;
     }
 
     private List<String> extractRhsArguments(ExprNode rhs, ExpressionOperatorNode.ExpressionOperator operator) {

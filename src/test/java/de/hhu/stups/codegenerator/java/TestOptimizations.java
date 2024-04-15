@@ -67,11 +67,42 @@ public class TestOptimizations extends TestJava {
 
     @Test
     public void testIsInInterval() throws Exception {
-        testJava("IsInInterval", "IsInInterval", "IsInInterval.stjava", true);
+        testJava("IsInInterval", "IsInInterval", "IsInIntervalAddition.stjava", true);
     }
 
     @Test
     public void testIsNotInInterval() throws Exception {
-        testJava("IsNotInInterval", "IsNotInInterval", "IsNotInInterval.stjava", true);
+        testJava("IsNotInInterval", "IsNotInInterval", "IsNotInIntervalAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInUnion() throws Exception {
+        testJava("IsInUnion", "IsInUnion", "IsInUnionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInUnion() throws Exception {
+        testJava("IsNotInUnion", "IsNotInUnion", "IsNotInUnionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInIntersection() throws Exception {
+        testJava("IsInIntersection", "IsInIntersection", "IsInIntersectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInIntersection() throws Exception {
+        testJava("IsNotInIntersection", "IsNotInIntersection", "IsNotInIntersectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInDifference() throws Exception {
+        testJava("IsInDifference", "IsInDifference", "IsInDifferenceAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInDifference() throws Exception {
+        testJava("IsNotInDifference", "IsNotInDifference", "IsNotInDifferenceAddition.stjava", true);
+    }
+
 }

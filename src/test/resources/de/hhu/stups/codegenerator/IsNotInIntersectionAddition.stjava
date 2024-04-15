@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotInIntersection intersection = new IsNotInIntersection();
+    intersection.op();
+    System.out.println(intersection.getRes());
+}

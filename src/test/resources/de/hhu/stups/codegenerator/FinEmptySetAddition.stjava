@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    FinEmptySet fin = new FinEmptySet();
+    fin.calculate();
+    System.out.println(fin.getRes());
+}

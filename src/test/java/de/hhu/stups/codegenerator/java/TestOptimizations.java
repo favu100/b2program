@@ -111,6 +111,21 @@ public class TestOptimizations extends TestJava {
     }
 
     @Test
+    public void testPowEmptySet2() throws Exception {
+        testJava("PowEmptySet2", "PowEmptySet2", "PowEmptySet2Addition.stjava", true);
+    }
+
+    @Test
+    public void testFinEmptySet() throws Exception {
+        testJava("FinEmptySet", "FinEmptySet", "FinEmptySetAddition.stjava", true);
+    }
+
+    @Test
+    public void testFinEmptySet2() throws Exception {
+        testJava("FinEmptySet2", "FinEmptySet2", "FinEmptySet2Addition.stjava", true);
+    }
+
+    @Test
     public void testPowElementOf() throws Exception {
         testJava("PowElementOf", "PowElementOf", "PowElementOfAddition.stjava", true);
     }
@@ -177,7 +192,7 @@ public class TestOptimizations extends TestJava {
 
     @Test
     public void testPartialBijectionEmptySet() throws Exception {
-        testJava("PartialBijectionEmptySet", "PartialBijectionEmptySet", "PartialBijectionEmptySetEmptySetAddition.stjava", true);
+        testJava("PartialBijectionEmptySet", "PartialBijectionEmptySet", "PartialBijectionEmptySetAddition.stjava", true);
     }
 
     @Test
@@ -268,6 +283,11 @@ public class TestOptimizations extends TestJava {
     @Test
     public void testIsNotRelation() throws Exception {
         testJava("IsNotRelation", "IsNotRelation", "IsNotRelationAddition.stjava", true);
+    }
+
+    @Test
+    public void testRelationEmptySet() throws Exception {
+        testJava("RelationEmptySet", "RelationEmptySet", "RelationEmptySetAddition.stjava", true);
     }
 
     @Test

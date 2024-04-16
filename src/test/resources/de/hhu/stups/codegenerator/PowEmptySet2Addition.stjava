@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    PowEmptySet2 pow = new PowEmptySet2();
+    pow.calculate();
+    System.out.println(pow.getRes());
+}

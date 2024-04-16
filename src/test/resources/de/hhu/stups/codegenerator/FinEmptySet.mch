@@ -1,4 +1,4 @@
-MACHINE PowEmptySet
+MACHINE FinEmptySet
 
 VARIABLES  f
 
@@ -8,7 +8,7 @@ INITIALISATION f := {{1,2}}
 
 OPERATIONS
 
-	calculate = BEGIN f := POW({}) END;
+	calculate = BEGIN f := FIN({}) END;
 	out <-- getRes = out := card(f)
 
 END

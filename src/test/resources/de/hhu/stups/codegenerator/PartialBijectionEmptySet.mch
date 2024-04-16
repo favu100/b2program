@@ -1,4 +1,4 @@
-MACHINE PartialSurjectionEmptySet
+MACHINE PartialBijectionEmptySet
 
 VARIABLES  x
 

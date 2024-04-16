@@ -348,9 +348,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                         ExpressionOperatorNode mapletProjection = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(projection2, projection1), ExpressionOperatorNode.ExpressionOperator.COUPLE);
 
-                        System.out.println(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(mapletProjection, rhsAsExpression.getExpressionNodes().get(0))));
                         PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(mapletProjection, rhsAsExpression.getExpressionNodes().get(0))));
-                        System.out.println(predicateNode);
                         predicateNode.setType(BoolType.getInstance());
                         return predicateNode;
                     }

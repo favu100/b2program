@@ -339,4 +339,14 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInInverse() throws Exception {
         testJava("IsNotInInverse", "IsNotInInverse", "IsNotInInverseAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInCartesianProduct() throws Exception {
+        testJava("IsInCartesianProduct", "IsInCartesianProduct", "IsInCartesianProductAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInCartesianProduct() throws Exception {
+        testJava("IsNotInCartesianProduct", "IsNotInCartesianProduct", "IsNotInCartesianProductAddition.stjava", true);
+    }
 }

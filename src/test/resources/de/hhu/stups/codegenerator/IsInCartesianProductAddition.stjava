@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInCartesianProduct cartesian = new IsInCartesianProduct();
+    cartesian.op();
+    System.out.println(cartesian.getRes());
+}

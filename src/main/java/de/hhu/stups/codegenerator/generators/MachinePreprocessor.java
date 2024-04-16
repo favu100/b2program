@@ -371,6 +371,82 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                         predicateNode.setType(BoolType.getInstance());
                         return predicateNode;
                     }
+                    case RANGE_SUBTRACTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection2, rhsAsExpression.getExpressionNodes().get(1)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case RANGE_RESTRICTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(projection2, rhsAsExpression.getExpressionNodes().get(1)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case DOMAIN_SUBTRACTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection1, rhsAsExpression.getExpressionNodes().get(0)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case DOMAIN_RESTRICTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(projection1, rhsAsExpression.getExpressionNodes().get(0)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
                     default:
                         break;
                 }
@@ -509,6 +585,82 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                         predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection1, rhsAsExpression.getExpressionNodes().get(0)))));
                         predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection2, rhsAsExpression.getExpressionNodes().get(1)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case RANGE_SUBTRACTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(projection2, rhsAsExpression.getExpressionNodes().get(1)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case RANGE_RESTRICTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection2, rhsAsExpression.getExpressionNodes().get(1)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case DOMAIN_SUBTRACTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(projection1, rhsAsExpression.getExpressionNodes().get(0)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1)))));
+
+                        PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
+                        predicateNode.setType(BoolType.getInstance());
+                        return predicateNode;
+                    }
+                    case DOMAIN_RESTRICTION: {
+                        List<PredicateNode> predicates = new ArrayList<>();
+
+                        BType leftType = ((CoupleType) lhs.getType()).getLeft();
+                        BType rightType = ((CoupleType) lhs.getType()).getRight();
+
+                        ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
+                        ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                        ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+                        ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
+
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection1, rhsAsExpression.getExpressionNodes().get(0)))));
+                        predicates.add(visitPredicateNode(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1)))));
 
                         PredicateNode predicateNode = visitPredicateNode(new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates));
                         predicateNode.setType(BoolType.getInstance());

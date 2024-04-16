@@ -320,4 +320,23 @@ public class TestOptimizations extends TestJava {
         testJava("IsNotTotalSurjectionRelation", "IsNotTotalSurjectionRelation", "IsNotTotalSurjectionRelationAddition.stjava", true);
     }
 
+    @Test
+    public void testIsInIdentity() throws Exception {
+        testJava("IsInIdentity", "IsInIdentity", "IsInIdentityAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInIdentity() throws Exception {
+        testJava("IsNotInIdentity", "IsNotInIdentity", "IsNotInIdentityAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInInverse() throws Exception {
+        testJava("IsInInverse", "IsInInverse", "IsInInverseAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInInverse() throws Exception {
+        testJava("IsNotInInverse", "IsNotInInverse", "IsNotInInverseAddition.stjava", true);
+    }
 }

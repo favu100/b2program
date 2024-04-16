@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotInInverse inverse = new IsNotInInverse();
+    inverse.op();
+    System.out.println(inverse.getRes());
+}

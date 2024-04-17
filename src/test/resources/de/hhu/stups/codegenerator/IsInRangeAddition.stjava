@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInRange range = new IsInRange();
+    range.op();
+    System.out.println(range.getRes());
+}

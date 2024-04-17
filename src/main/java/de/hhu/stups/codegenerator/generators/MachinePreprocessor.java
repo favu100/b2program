@@ -1,6 +1,5 @@
 package de.hhu.stups.codegenerator.generators;
 
-import de.prob.parser.antlr.Antlr4BParser;
 import de.prob.parser.antlr.MachineASTCreator;
 import de.prob.parser.ast.SourceCodePosition;
 import de.prob.parser.ast.nodes.MachineNode;

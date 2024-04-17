@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInDomain domain = new IsInDomain();
+    domain.op();
+    System.out.println(domain.getRes());
+}

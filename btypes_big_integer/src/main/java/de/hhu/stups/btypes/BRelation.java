@@ -1294,6 +1294,29 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return new BBoolean(false);
 	}
 
+	public BBoolean isInDomain(S element) {
+		return new BBoolean(this.map.containsKey(element));
+	}
+
+	public BBoolean isNotInDomain(S element) {
+		return isInDomain(element).not();
+	}
+
+	public BBoolean isInRange(T element) {
+		PersistentHashSet keys = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+		for (Object key : keys) {
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, key);
+			if(range != null && range.contains(element)) {
+				return new BBoolean(true);
+			}
+		}
+		return new BBoolean(false);
+	}
+
+	public BBoolean isNotInRange(T element) {
+		return isInRange(element).not();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<BTuple<S,T>> iterator() {

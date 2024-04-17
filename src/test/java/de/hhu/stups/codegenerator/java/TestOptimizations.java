@@ -396,7 +396,27 @@ public class TestOptimizations extends TestJava {
     }
 
     @Test
-    public void testNotInParallelProduct() throws Exception {
+    public void testIsNotInParallelProduct() throws Exception {
         testJava("IsNotInParallelProduct", "IsNotInParallelProduct", "IsNotInParallelProductAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInDomain() throws Exception {
+        testJava("IsInDomain", "IsInDomain", "IsInDomainAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInDomain() throws Exception {
+        testJava("IsNotInDomain", "IsNotInDomain", "IsNotInDomainAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInRange() throws Exception {
+        testJava("IsInRange", "IsInRange", "IsInRangeAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInRange() throws Exception {
+        testJava("IsNotInRange", "IsNotInRange", "IsNotInRangeAddition.stjava", true);
     }
 }

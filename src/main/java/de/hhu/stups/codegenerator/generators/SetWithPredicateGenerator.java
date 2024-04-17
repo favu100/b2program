@@ -30,12 +30,12 @@ public class SetWithPredicateGenerator {
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
-                    ExpressionOperatorNode.ExpressionOperator.BOOL);
+                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
 
-    private static List<ExpressionOperatorNode.ExpressionOperator> STATIC_SET_EXPRESSIONS;
+    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
 
     private final STGroup currentGroup;
 
@@ -299,6 +299,74 @@ public class SetWithPredicateGenerator {
         return operatorName;
     }
 
+    private String generateDomain(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInDomain";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInDomain";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateRange(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInRange";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInRange";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     /*
     * This function generates code an operation name for a predicate with a struct on the right-hand side
     */
@@ -370,8 +438,9 @@ public class SetWithPredicateGenerator {
             }
         }
 
-        TemplateHandler.add(template, "type", typeGenerator.generate(rhs.getType()));
-        TemplateHandler.add(template, "rhsArguments", extractRhsArguments(rhs, rhsOperator));
+        TemplateHandler.add(template, "swap", SWAP_SET_EXPRESSIONS.contains(rhsOperator));
+        TemplateHandler.add(template, "rhsArguments", extractRhsArguments(rhs));
+
         switch(rhsOperator) {
             case INTEGER:
                 operatorName = generateInfiniteInteger(operator);
@@ -388,6 +457,12 @@ public class SetWithPredicateGenerator {
             case BOOL:
                 operatorName = generateBoolean(operator);
                 break;
+            case DOMAIN:
+                operatorName = generateDomain(operator);
+                break;
+            case RANGE:
+                operatorName = generateRange(operator);
+                break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);
         }
@@ -395,10 +470,10 @@ public class SetWithPredicateGenerator {
         return template.render();
     }
 
-    private List<String> extractRhsArguments(ExprNode rhs, ExpressionOperatorNode.ExpressionOperator operator) {
+    private List<String> extractRhsArguments(ExprNode rhs) {
         return ((ExpressionOperatorNode) rhs).getExpressionNodes().stream()
-                .map(expr -> machineGenerator.visitExprNode(expr, null))
-                .collect(Collectors.toList());
+            .map(expr -> machineGenerator.visitExprNode(expr, null))
+            .collect(Collectors.toList());
     }
 
     /*

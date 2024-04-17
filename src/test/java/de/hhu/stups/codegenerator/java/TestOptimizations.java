@@ -349,4 +349,44 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInCartesianProduct() throws Exception {
         testJava("IsNotInCartesianProduct", "IsNotInCartesianProduct", "IsNotInCartesianProductAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInRangeSubstraction() throws Exception {
+        testJava("IsInRangeSubstraction", "IsInRangeSubstraction", "IsInRangeSubstractionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInRangeSubstraction() throws Exception {
+        testJava("IsNotInRangeSubstraction", "IsNotInRangeSubstraction", "IsNotInRangeSubstractionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInRangeRestriction() throws Exception {
+        testJava("IsInRangeRestriction", "IsInRangeRestriction", "IsInRangeRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInRangeRestriction() throws Exception {
+        testJava("IsNotInRangeRestriction", "IsNotInRangeRestriction", "IsNotInRangeRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInDomainRestriction() throws Exception {
+        testJava("IsInDomainRestriction", "IsInDomainRestriction", "IsInDomainRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInDomainRestriction() throws Exception {
+        testJava("IsNotInDomainRestriction", "IsNotInDomainRestriction", "IsNotInDomainRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInDomainSubstraction() throws Exception {
+        testJava("IsInDomainSubstraction", "IsInDomainSubstraction", "IsInDomainSubstractionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInDomainSubstraction() throws Exception {
+        testJava("IsNotInDomainSubstraction", "IsNotInDomainSubstraction", "IsNotInDomainSubstractionAddition.stjava", true);
+    }
 }

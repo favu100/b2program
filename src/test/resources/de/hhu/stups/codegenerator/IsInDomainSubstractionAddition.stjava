@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInDomainSubstraction machine = new IsInDomainSubstraction();
+    machine.op();
+    System.out.println(machine.getRes());
+}

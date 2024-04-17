@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInRangeRestriction machine = new IsInRangeRestriction();
+    machine.op();
+    System.out.println(machine.getRes());
+}

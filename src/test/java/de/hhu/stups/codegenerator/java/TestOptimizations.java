@@ -401,6 +401,16 @@ public class TestOptimizations extends TestJava {
     }
 
     @Test
+    public void testIsInDirectProduct() throws Exception {
+        testJava("IsInDirectProduct", "IsInDirectProduct", "IsInDirectProductAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInDirectProduct() throws Exception {
+        testJava("IsNotInDirectProduct", "IsNotInDirectProduct", "IsNotInDirectProductAddition.stjava", true);
+    }
+
+    @Test
     public void testIsInDomain() throws Exception {
         testJava("IsInDomain", "IsInDomain", "IsInDomainAddition.stjava", true);
     }

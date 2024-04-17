@@ -370,7 +370,6 @@ public class SetWithPredicateGenerator {
             }
         }
 
-        TemplateHandler.add(template, "static", STATIC_SET_EXPRESSIONS.contains(rhsOperator));
         TemplateHandler.add(template, "type", typeGenerator.generate(rhs.getType()));
         TemplateHandler.add(template, "rhsArguments", extractRhsArguments(rhs, rhsOperator));
         switch(rhsOperator) {

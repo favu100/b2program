@@ -389,4 +389,14 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInDomainSubstraction() throws Exception {
         testJava("IsNotInDomainSubstraction", "IsNotInDomainSubstraction", "IsNotInDomainSubstractionAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInParallelProduct() throws Exception {
+        testJava("IsInParallelProduct", "IsInParallelProduct", "IsInParallelProductAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotInParallelProduct() throws Exception {
+        testJava("IsNotInParallelProduct", "IsNotInParallelProduct", "IsNotInParallelProductAddition.stjava", true);
+    }
 }

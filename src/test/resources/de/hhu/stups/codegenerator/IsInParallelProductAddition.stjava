@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInParallelProduct machine = new IsInParallelProduct();
+    machine.op();
+    System.out.println(machine.getRes());
+}

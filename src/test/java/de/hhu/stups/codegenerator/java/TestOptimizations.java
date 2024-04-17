@@ -419,4 +419,14 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInRange() throws Exception {
         testJava("IsNotInRange", "IsNotInRange", "IsNotInRangeAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInRelationalImage() throws Exception {
+        testJava("IsInRelationalImage", "IsInRelationalImage", "IsInRelationalImageAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInRelationalImage() throws Exception {
+        testJava("IsNotInRelationalImage", "IsNotInRelationalImage", "IsNotInRelationalImageAddition.stjava", true);
+    }
 }

@@ -30,12 +30,12 @@ public class SetWithPredicateGenerator {
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
-                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
+                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
 
-    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
+    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE);
 
     private final STGroup currentGroup;
 
@@ -367,6 +367,40 @@ public class SetWithPredicateGenerator {
         return operatorName;
     }
 
+    private String generateRelationalImage(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInRelationalImage";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInRelationalImage";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     /*
     * This function generates code an operation name for a predicate with a struct on the right-hand side
     */
@@ -422,12 +456,20 @@ public class SetWithPredicateGenerator {
         TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
-        TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
+
+
+
         String operatorName;
         if(rhs instanceof StructNode) {
+            TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
             return generateInfiniteStruct(template, operator);
         }
+
+        List<String> rhsArguments = extractRhsArguments(rhs);
         ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) rhs).getOperator();
+        boolean swap = SWAP_SET_EXPRESSIONS.contains(rhsOperator);
+        TemplateHandler.add(template, "arg", swap ? rhsArguments.get(0) : machineGenerator.visitExprNode(lhs, null));
+
         if (rhsOperator == ExpressionOperatorNode.ExpressionOperator.POW) {
             operator = PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION;
             ExprNode innerRhs = ((ExpressionOperatorNode) rhs).getExpressionNodes().get(0);
@@ -438,8 +480,10 @@ public class SetWithPredicateGenerator {
             }
         }
 
+        rhsArguments.set(0, machineGenerator.visitExprNode(lhs, null));
+
         TemplateHandler.add(template, "swap", SWAP_SET_EXPRESSIONS.contains(rhsOperator));
-        TemplateHandler.add(template, "rhsArguments", extractRhsArguments(rhs));
+        TemplateHandler.add(template, "rhsArguments", rhsArguments);
 
         switch(rhsOperator) {
             case INTEGER:
@@ -462,6 +506,9 @@ public class SetWithPredicateGenerator {
                 break;
             case RANGE:
                 operatorName = generateRange(operator);
+                break;
+            case RELATIONAL_IMAGE:
+                operatorName = generateRelationalImage(operator);
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);

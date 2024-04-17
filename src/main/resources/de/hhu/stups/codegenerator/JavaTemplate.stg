@@ -1124,12 +1124,8 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>new BInteger("<number>")<else>new BInteger(<number>)<endif>
 >>
 
-infinite_predicate(swap, arg, operator, rhsArguments) ::= <<
-<if(swap)>
-<rhsArguments>.<operator>(<arg>)
-<else>
-<arg>.<operator>(<rhsArguments>)
-<endif>
+infinite_predicate(arg, operator, rhsArguments) ::= <<
+<arg>.<operator>(<rhsArguments; separator=", ">)
 >>
 
 relation_predicate(predicates, checkElementOf) ::= <<

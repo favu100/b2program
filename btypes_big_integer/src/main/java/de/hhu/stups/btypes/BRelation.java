@@ -1317,6 +1317,21 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return isInRange(element).not();
 	}
 
+	public BBoolean isInRelationalImage(T element, BSet<S> set) {
+		for (S key : set) {
+			PersistentHashSet image = (PersistentHashSet) GET.invoke(this.map, key);
+			if(image != null && image.contains(element)) {
+				return new BBoolean(true);
+			}
+		}
+		return new BBoolean(false);
+	}
+
+	public BBoolean isNotInRelationalImage(T element, BSet<S> set) {
+		return isNotInRelationalImage(element, set).not();
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<BTuple<S,T>> iterator() {

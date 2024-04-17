@@ -1,4 +1,4 @@
-MACHINE IsInDomain
+MACHINE IsInRelationalImage
 
 VARIABLES  x
 
@@ -8,7 +8,7 @@ INITIALISATION x := 1
 
 OPERATIONS
 
-	op = SELECT x : dom({1|->1, 3|->1}) THEN x := 2 END;
+	op = SELECT x : ({1|->1, 3|->1})[{3}] THEN x := 2 END;
 	out <-- getRes = out := x
 
 END

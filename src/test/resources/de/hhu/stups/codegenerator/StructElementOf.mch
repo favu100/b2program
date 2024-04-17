@@ -8,6 +8,7 @@ INITIALISATION x := rec(a:1, b:2, c:3)
 
 OPERATIONS
 
-	op1 = SELECT x : struct(a: INT, b: INT, c: INT) THEN x := rec(a:1, b:2, c:4) END
+	op = SELECT x : struct(a: INT, b: INT, c: INT) THEN x := rec(a:1, b:2, c:4) END;
+    out <-- getRes = out := x
 
 END

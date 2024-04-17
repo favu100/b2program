@@ -429,4 +429,14 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInRelationalImage() throws Exception {
         testJava("IsNotInRelationalImage", "IsNotInRelationalImage", "IsNotInRelationalImageAddition.stjava", true);
     }
+
+    @Test
+    public void testStructElementOf() throws Exception {
+        testJava("StructElementOf", "StructElementOf", "StructElementOfAddition.stjava", true);
+    }
+
+    @Test
+    public void testStructNotElementOf() throws Exception {
+        testJava("StructNotElementOf", "StructNotElementOf", "StructNotElementOfAddition.stjava", true);
+    }
 }

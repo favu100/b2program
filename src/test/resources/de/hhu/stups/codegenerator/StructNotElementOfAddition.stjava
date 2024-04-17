@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    StructNotElementOf machine = new StructNotElementOf();
+    machine.op();
+    System.out.println(machine.getRes());
+}

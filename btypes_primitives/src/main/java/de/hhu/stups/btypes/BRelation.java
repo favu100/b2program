@@ -698,6 +698,55 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return result;
 	}
 
+	public BBoolean isInClosure(BTuple<S,S> tuple) {
+		S projection1 = tuple.projection1();
+		S projection2 = tuple.projection2();
+		if(projection1.equals(projection2)) {
+			PersistentHashSet imageOfProjection1 = (PersistentHashSet) GET.invoke(this.map, projection1);
+			if(imageOfProjection1 != null && !imageOfProjection1.isEmpty()) {
+				return new BBoolean(true);
+			}
+			PersistentHashSet keys = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+			for (Object key : keys) {
+				PersistentHashSet image = (PersistentHashSet) GET.invoke(this.map, key);
+				if(image != null && image.contains(projection2)) {
+					return new BBoolean(true);
+				}
+			}
+		}
+		return isInClosure1(tuple);
+	}
+
+	public BBoolean isNotInClosure(BTuple<S,S> tuple) {
+		return isInClosure(tuple).not();
+	}
+
+	@SuppressWarnings("unchecked")
+	public BBoolean isInClosure1(BTuple<S,S> tuple) {
+		BBoolean inThisRelation = this.elementOf((BTuple<S, T>) tuple);
+		if(inThisRelation.booleanValue()) {
+			return inThisRelation;
+		}
+		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
+		BRelation<S,S> result = (BRelation<S,S>) this;
+		BRelation<S,S> nextResult = result.composition(thisRelation);
+		BRelation<S,S> lastResult = null;
+		do {
+			inThisRelation = nextResult.elementOf(tuple);
+			if(inThisRelation.booleanValue()) {
+				return inThisRelation;
+			}
+			lastResult = result;
+			result = result.union(nextResult);
+			nextResult = result.composition(thisRelation);
+		} while(!result.equal(lastResult).booleanValue());
+		return new BBoolean(false);
+	}
+
+	public BBoolean isNotInClosure1(BTuple<S,S> tuple) {
+		return isInClosure1(tuple).not();
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <S,T> BRelation<BTuple<S,T>, S> projection1(BSet<S> arg1, BSet<T> arg2) {
 		PersistentHashSet argSet1 = (PersistentHashSet) arg1.getSet();

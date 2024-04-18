@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsInClosure closure = new IsInClosure();
+    closure.op();
+    System.out.println(closure.getRes());
+}

@@ -459,4 +459,24 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInComposition() throws Exception {
         testJava("IsNotInComposition", "IsNotInComposition", "IsNotInCompositionAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInClosure() throws Exception {
+        testJava("IsInClosure", "IsInClosure", "IsInClosureAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInClosure() throws Exception {
+        testJava("IsNotInClosure", "IsNotInClosure", "IsNotInClosureAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsInClosure1() throws Exception {
+        testJava("IsInClosure1", "IsInClosure1", "IsInClosure1Addition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInClosure1() throws Exception {
+        testJava("IsNotInClosure1", "IsNotInClosure1", "IsNotInClosure1Addition.stjava", true);
+    }
 }

@@ -30,12 +30,14 @@ public class SetWithPredicateGenerator {
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
-                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION);
+                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION,
+                    ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
 
-    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION);
+    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION,
+            ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
 
     private final STGroup currentGroup;
 
@@ -435,6 +437,74 @@ public class SetWithPredicateGenerator {
         return operatorName;
     }
 
+    private String generateClosure(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInClosure";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInClosure";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
+    private String generateClosure1(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInClosure1";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInClosure1";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     /*
     * This function generates code an operation name for a predicate with a struct on the right-hand side
     */
@@ -546,6 +616,12 @@ public class SetWithPredicateGenerator {
                 break;
             case COMPOSITION:
                 operatorName = generateComposition(operator);
+                break;
+            case CLOSURE:
+                operatorName = generateClosure(operator);
+                break;
+            case CLOSURE1:
+                operatorName = generateClosure1(operator);
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);

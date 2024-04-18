@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfDomainRestriction machine = new NotSubsetOfDomainRestriction();
+    machine.op();
+    System.out.println(machine.getRes());
+}

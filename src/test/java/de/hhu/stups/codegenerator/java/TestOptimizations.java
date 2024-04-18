@@ -581,6 +581,26 @@ public class TestOptimizations extends TestJava {
     }
 
     @Test
+    public void testSubsetOfDomainRestriction() throws Exception {
+        testJava("SubsetOfDomainRestriction", "SubsetOfDomainRestriction", "SubsetOfDomainRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfDomainRestriction() throws Exception {
+        testJava("NotSubsetOfDomainRestriction", "NotSubsetOfDomainRestriction", "NotSubsetOfDomainRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfDomainSubstraction() throws Exception {
+        testJava("SubsetOfDomainSubstraction", "SubsetOfDomainSubstraction", "SubsetOfDomainSubstractionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfDomainSubstraction() throws Exception {
+        testJava("NotSubsetOfDomainSubstraction", "NotSubsetOfDomainSubstraction", "NotSubsetOfDomainSubstractionAddition.stjava", true);
+    }
+
+    @Test
     public void testSubsetOfParallelProduct() throws Exception {
         testJava("SubsetOfParallelProduct", "SubsetOfParallelProduct", "SubsetOfParallelProductAddition.stjava", true);
     }
@@ -590,6 +610,15 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfParallelProduct", "NotSubsetOfParallelProduct", "NotSubsetOfParallelProductAddition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfComposition() throws Exception {
+        testJava("SubsetOfComposition", "SubsetOfComposition", "SubsetOfCompositionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfComposition() throws Exception {
+        testJava("NotSubsetOfComposition", "NotSubsetOfComposition", "NotSubsetOfCompositionAddition.stjava", true);
+    }
 
 
 }

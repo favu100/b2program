@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfDomainSubstraction machine = new NotSubsetOfDomainSubstraction();
+    machine.op();
+    System.out.println(machine.getRes());
+}

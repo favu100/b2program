@@ -479,4 +479,9 @@ public class TestOptimizations extends TestJava {
     public void testIsNotInClosure1() throws Exception {
         testJava("IsNotInClosure1", "IsNotInClosure1", "IsNotInClosure1Addition.stjava", true);
     }
+
+    @Test
+    public void testIsSubsetOfInterval() throws Exception {
+        testJava("SubsetOfInterval", "SubsetOfInterval", "SubsetOfIntervalAddition.stjava", true);
+    }
 }

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    IsNotInComposition machine = new IsNotInComposition();
+    machine.op();
+    System.out.println(machine.getRes());
+}

@@ -1327,7 +1327,28 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	public BBoolean isNotInRelationalImage(T element, BSet<S> set) {
-		return isNotInRelationalImage(element, set).not();
+		return isInRelationalImage(element, set).not();
+	}
+
+	public <R> BBoolean isInComposition(BTuple<S,R> tuple, BRelation<T,R> arg) {
+		S projection1 = tuple.projection1();
+		R projection2 = tuple.projection2();
+
+		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, projection1);
+
+		if(range != null) {
+			for (Object value : range) {
+				PersistentHashSet range2 = (PersistentHashSet) GET.invoke(arg.map, value);
+				if (range2 != null && range2.contains(projection2)) {
+					return new BBoolean(true);
+				}
+			}
+		}
+		return new BBoolean(false);
+	}
+
+	public <R> BBoolean isNotInComposition(BTuple<S,R> tuple, BRelation<T,R> arg) {
+		return isInComposition(tuple, arg).not();
 	}
 
 	@SuppressWarnings("unchecked")

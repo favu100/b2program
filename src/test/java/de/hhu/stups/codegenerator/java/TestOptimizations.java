@@ -449,4 +449,14 @@ public class TestOptimizations extends TestJava {
     public void testStructNotElementOf() throws Exception {
         testJava("StructNotElementOf", "StructNotElementOf", "StructNotElementOfAddition.stjava", true);
     }
+
+    @Test
+    public void testIsInComposition() throws Exception {
+        testJava("IsInComposition", "IsInComposition", "IsInCompositionAddition.stjava", true);
+    }
+
+    @Test
+    public void testIsNotInComposition() throws Exception {
+        testJava("IsNotInComposition", "IsNotInComposition", "IsNotInCompositionAddition.stjava", true);
+    }
 }

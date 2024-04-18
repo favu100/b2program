@@ -30,12 +30,12 @@ public class SetWithPredicateGenerator {
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
-                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE);
+                    ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
 
-    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE);
+    private static List<ExpressionOperatorNode.ExpressionOperator> SWAP_SET_EXPRESSIONS = Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION);
 
     private final STGroup currentGroup;
 
@@ -401,6 +401,40 @@ public class SetWithPredicateGenerator {
         return operatorName;
     }
 
+    private String generateComposition(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        String operatorName;
+        switch(operator) {
+            case ELEMENT_OF:
+                operatorName = "isInComposition";
+                break;
+            case NOT_BELONGING:
+                operatorName = "isNotInComposition";
+                break;
+            // TODO
+            case INCLUSION:
+                operatorName = "";
+                break;
+            case NON_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_INCLUSION:
+                operatorName = "";
+                break;
+            case STRICT_NON_INCLUSION:
+                operatorName = "";
+                break;
+            case EQUAL:
+                operatorName = "";
+                break;
+            case NOT_EQUAL:
+                operatorName = "";
+                break;
+            default:
+                throw new RuntimeException("Given node is not implemented: " + operator);
+        }
+        return operatorName;
+    }
+
     /*
     * This function generates code an operation name for a predicate with a struct on the right-hand side
     */
@@ -509,6 +543,9 @@ public class SetWithPredicateGenerator {
                 break;
             case RELATIONAL_IMAGE:
                 operatorName = generateRelationalImage(operator);
+                break;
+            case COMPOSITION:
+                operatorName = generateComposition(operator);
                 break;
             default:
                 throw new RuntimeException("Given node is not implemented: " + operator);

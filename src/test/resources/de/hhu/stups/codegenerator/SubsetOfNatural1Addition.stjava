@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfNatural1 machine = new SubsetOfNatural1();
+    machine.op();
+    System.out.println(machine.getRes());
+}

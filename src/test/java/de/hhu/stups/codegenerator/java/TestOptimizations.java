@@ -650,5 +650,45 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfClosure1", "NotSubsetOfClosure1", "NotSubsetOfClosure1Addition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfString() throws Exception {
+        testJava("SubsetOfString", "SubsetOfString", "SubsetOfStringAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfString() throws Exception {
+        testJava("NotSubsetOfString", "NotSubsetOfString", "NotSubsetOfStringAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfInteger() throws Exception {
+        testJava("SubsetOfInteger", "SubsetOfInteger", "SubsetOfIntegerAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfInteger() throws Exception {
+        testJava("NotSubsetOfInteger", "NotSubsetOfInteger", "NotSubsetOfIntegerAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfNatural() throws Exception {
+        testJava("SubsetOfNatural", "SubsetOfNatural", "SubsetOfNaturalAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfNatural() throws Exception {
+        testJava("NotSubsetOfNatural", "NotSubsetOfNatural", "NotSubsetOfNaturalAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfNatural1() throws Exception {
+        testJava("SubsetOfNatural1", "SubsetOfNatural1", "SubsetOfNatural1Addition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfNatural1() throws Exception {
+        testJava("NotSubsetOfNatural1", "NotSubsetOfNatural1", "NotSubsetOfNatural1Addition.stjava", true);
+    }
+
 
 }

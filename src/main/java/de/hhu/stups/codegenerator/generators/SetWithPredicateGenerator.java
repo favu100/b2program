@@ -584,7 +584,9 @@ public class SetWithPredicateGenerator {
             }
         }
 
-        rhsArguments.set(0, machineGenerator.visitExprNode(lhs, null));
+        if(!rhsArguments.isEmpty()) {
+            rhsArguments.set(0, machineGenerator.visitExprNode(lhs, null));
+        }
 
         TemplateHandler.add(template, "swap", SWAP_SET_EXPRESSIONS.contains(rhsOperator));
         TemplateHandler.add(template, "rhsArguments", rhsArguments);

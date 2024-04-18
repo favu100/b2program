@@ -616,8 +616,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
-        innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
-        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
+        innerPredicate = optimizeNotElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
+        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION);
         result.setType(new UntypedType());
         typeChecker.setDeclarationTypes(result.getDeclarationList());

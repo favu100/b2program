@@ -481,7 +481,13 @@ public class TestOptimizations extends TestJava {
     }
 
     @Test
-    public void testIsSubsetOfInterval() throws Exception {
+    public void testSubsetOfInterval() throws Exception {
         testJava("SubsetOfInterval", "SubsetOfInterval", "SubsetOfIntervalAddition.stjava", true);
     }
+
+    @Test
+    public void testNotSubsetOfInterval() throws Exception {
+        testJava("NotSubsetOfInterval", "NotSubsetOfInterval", "NotSubsetOfIntervalAddition.stjava", true);
+    }
+
 }

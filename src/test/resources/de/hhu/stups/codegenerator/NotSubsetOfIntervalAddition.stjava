@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfInterval interval = new NotSubsetOfInterval();
+    interval.op();
+    System.out.println(interval.getRes());
+}

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfRange range = new NotSubsetOfRange();
+    range.op();
+    System.out.println(range.getRes());
+}

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfDomain domain = new SubsetOfDomain();
+    domain.op();
+    System.out.println(domain.getRes());
+}

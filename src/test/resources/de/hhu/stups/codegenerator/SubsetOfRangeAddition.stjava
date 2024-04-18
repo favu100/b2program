@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfRange range = new SubsetOfRange();
+    range.op();
+    System.out.println(range.getRes());
+}

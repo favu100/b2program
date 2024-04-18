@@ -530,4 +530,24 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfInverse", "NotSubsetOfInverse", "NotSubsetOfInverseAddition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfDomain() throws Exception {
+        testJava("SubsetOfDomain", "SubsetOfDomain", "SubsetOfDomainAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfDomain() throws Exception {
+        testJava("NotSubsetOfDomain", "NotSubsetOfDomain", "NotSubsetOfDomainAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfRange() throws Exception {
+        testJava("SubsetOfRange", "SubsetOfRange", "SubsetOfRangeAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfRange() throws Exception {
+        testJava("NotSubsetOfRange", "NotSubsetOfRange", "NotSubsetOfRangeAddition.stjava", true);
+    }
+
 }

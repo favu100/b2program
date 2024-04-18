@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfUnion union = new NotSubsetOfUnion();
+    union.op();
+    System.out.println(union.getRes());
+}

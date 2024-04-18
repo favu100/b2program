@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfIntersection intersection = new NotSubsetOfIntersection();
+    intersection.op();
+    System.out.println(intersection.getRes());
+}

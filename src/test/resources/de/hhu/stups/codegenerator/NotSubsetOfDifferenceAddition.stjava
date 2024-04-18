@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfDifference difference = new NotSubsetOfDifference();
+    difference.op();
+    System.out.println(difference.getRes());
+}

@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfIntersection intersection = new SubsetOfIntersection();
+    intersection.op();
+    System.out.println(intersection.getRes());
+}

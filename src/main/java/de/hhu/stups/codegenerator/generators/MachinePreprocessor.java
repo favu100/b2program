@@ -331,9 +331,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 }
                 case SET_SUBTRACTION: {
                     List<PredicateNode> predicates = new ArrayList<>();
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
-                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);
@@ -698,8 +698,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 }
                 case SET_SUBTRACTION: {
                     List<PredicateNode> predicates = new ArrayList<>();
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(1))));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);

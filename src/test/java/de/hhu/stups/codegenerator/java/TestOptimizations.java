@@ -490,4 +490,34 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfInterval", "NotSubsetOfInterval", "NotSubsetOfIntervalAddition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfUnion() throws Exception {
+        testJava("SubsetOfUnion", "SubsetOfUnion", "SubsetOfUnionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfUnion() throws Exception {
+        testJava("NotSubsetOfUnion", "NotSubsetOfUnion", "NotSubsetOfUnionAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfIntersection() throws Exception {
+        testJava("SubsetOfIntersection", "SubsetOfIntersection", "SubsetOfIntersectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfIntersection() throws Exception {
+        testJava("NotSubsetOfIntersection", "NotSubsetOfIntersection", "NotSubsetOfIntersectionAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfDifference() throws Exception {
+        testJava("SubsetOfDifference", "SubsetOfDifference", "SubsetOfDifferenceAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfDifference() throws Exception {
+        testJava("NotSubsetOfDifference", "NotSubsetOfDifference", "NotSubsetOfDifferenceAddition.stjava", true);
+    }
+
 }

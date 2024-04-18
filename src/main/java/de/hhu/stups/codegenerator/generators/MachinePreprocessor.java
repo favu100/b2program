@@ -592,48 +592,18 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
 
-        if(rhs instanceof ExpressionOperatorNode) {
-            ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
-            ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
-            switch(rhsOperator) {
-                case NAT:
-                case NAT1:
-                case INT:
-                case SET_ENUMERATION:
-                case INTERVAL:
-                case UNION:
-                case INTERSECTION:
-                case SET_SUBTRACTION:
-                case FIN:
-                case POW:
-                case FIN1:
-                case POW1:
-                case ID:
-                case INVERSE_RELATION:
-                case CARTESIAN_PRODUCT:
-                case RANGE_SUBTRACTION:
-                case RANGE_RESTRICTION:
-                case DOMAIN_SUBTRACTION:
-                case DOMAIN_RESTRICTION:
-                case PARALLEL_PRODUCT:
-                case DIRECT_PRODUCT:
-                    DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt", DeclarationNode.Kind.VARIABLE, machineNode);
-                    declarationNode.setType(((SetType) lhs.getType()).getSubType());
-                    IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
-                    PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
-                    PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
-                    innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
-                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
-                    QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION);
-                    result.setType(new UntypedType());
-                    typeChecker.setDeclarationTypes(result.getDeclarationList());
-                    typeChecker.checkPredicateNode(result);
-                    return result;
-                default:
-                    break;
-            }
-        }
-        return node;
+        DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt", DeclarationNode.Kind.VARIABLE, machineNode);
+        declarationNode.setType(((SetType) lhs.getType()).getSubType());
+        IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
+        PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
+        PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
+        innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
+        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
+        QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION);
+        result.setType(new UntypedType());
+        typeChecker.setDeclarationTypes(result.getDeclarationList());
+        typeChecker.checkPredicateNode(result);
+        return result;
     }
 
     private PredicateNode optimizeNotSubsetOf(PredicateOperatorWithExprArgsNode node) {
@@ -641,48 +611,18 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
 
-        if(rhs instanceof ExpressionOperatorNode) {
-            ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
-            ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
-            switch(rhsOperator) {
-                case NAT:
-                case NAT1:
-                case INT:
-                case SET_ENUMERATION:
-                case INTERVAL:
-                case UNION:
-                case INTERSECTION:
-                case SET_SUBTRACTION:
-                case FIN:
-                case POW:
-                case FIN1:
-                case POW1:
-                case ID:
-                case INVERSE_RELATION:
-                case CARTESIAN_PRODUCT:
-                case RANGE_SUBTRACTION:
-                case RANGE_RESTRICTION:
-                case DOMAIN_SUBTRACTION:
-                case DOMAIN_RESTRICTION:
-                case PARALLEL_PRODUCT:
-                case DIRECT_PRODUCT:
-                    DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt", DeclarationNode.Kind.VARIABLE, machineNode);
-                    declarationNode.setType(((SetType) lhs.getType()).getSubType());
-                    IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
-                    PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
-                    PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
-                    innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
-                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
-                    QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION);
-                    result.setType(new UntypedType());
-                    typeChecker.setDeclarationTypes(result.getDeclarationList());
-                    typeChecker.checkPredicateNode(result);
-                    return result;
-                default:
-                    break;
-            }
-        }
-        return node;
+        DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt", DeclarationNode.Kind.VARIABLE, machineNode);
+        declarationNode.setType(((SetType) lhs.getType()).getSubType());
+        IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
+        PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
+        PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
+        innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
+        PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
+        QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION);
+        result.setType(new UntypedType());
+        typeChecker.setDeclarationTypes(result.getDeclarationList());
+        typeChecker.checkPredicateNode(result);
+        return result;
     }
 
     private PredicateNode optimizeNotElementOf(PredicateOperatorWithExprArgsNode node) {

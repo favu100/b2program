@@ -620,5 +620,35 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfComposition", "NotSubsetOfComposition", "NotSubsetOfCompositionAddition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfIdentity() throws Exception {
+        testJava("SubsetOfIdentity", "SubsetOfIdentity", "SubsetOfIdentityAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfIdentity() throws Exception {
+        testJava("NotSubsetOfIdentity", "NotSubsetOfIdentity", "NotSubsetOfIdentityAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfClosure() throws Exception {
+        testJava("SubsetOfClosure", "SubsetOfClosure", "SubsetOfClosureAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfClosure() throws Exception {
+        testJava("NotSubsetOfClosure", "NotSubsetOfClosure", "NotSubsetOfClosureAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfClosure1() throws Exception {
+        testJava("SubsetOfClosure1", "SubsetOfClosure1", "SubsetOfClosure1Addition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfClosure1() throws Exception {
+        testJava("NotSubsetOfClosure1", "NotSubsetOfClosure1", "NotSubsetOfClosure1Addition.stjava", true);
+    }
+
 
 }

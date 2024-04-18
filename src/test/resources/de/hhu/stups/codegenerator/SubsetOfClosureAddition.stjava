@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfClosure closure = new SubsetOfClosure();
+    closure.op();
+    System.out.println(closure.getRes());
+}

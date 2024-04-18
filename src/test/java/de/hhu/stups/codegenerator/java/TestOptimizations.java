@@ -550,4 +550,46 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfRange", "NotSubsetOfRange", "NotSubsetOfRangeAddition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfRelationalImage() throws Exception {
+        testJava("SubsetOfRelationalImage", "SubsetOfRelationalImage", "SubsetOfRelationalImageAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfRelationalImage() throws Exception {
+        testJava("NotSubsetOfRelationalImage", "NotSubsetOfRelationalImage", "NotSubsetOfRelationalImageAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfRangeRestriction() throws Exception {
+        testJava("SubsetOfRangeRestriction", "SubsetOfRangeRestriction", "SubsetOfRangeRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfRangeRestriction() throws Exception {
+        testJava("NotSubsetOfRangeRestriction", "NotSubsetOfRangeRestriction", "NotSubsetOfRangeRestrictionAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfRangeSubstraction() throws Exception {
+        testJava("SubsetOfRangeSubstraction", "SubsetOfRangeSubstraction", "SubsetOfRangeSubstractionAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfRangeSubstraction() throws Exception {
+        testJava("NotSubsetOfRangeSubstraction", "NotSubsetOfRangeSubstraction", "NotSubsetOfRangeSubstractionAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfParallelProduct() throws Exception {
+        testJava("SubsetOfParallelProduct", "SubsetOfParallelProduct", "SubsetOfParallelProductAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfParallelProduct() throws Exception {
+        testJava("NotSubsetOfParallelProduct", "NotSubsetOfParallelProduct", "NotSubsetOfParallelProductAddition.stjava", true);
+    }
+
+
+
 }

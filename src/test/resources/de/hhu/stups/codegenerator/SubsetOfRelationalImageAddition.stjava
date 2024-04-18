@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfRelationalImage image = new SubsetOfRelationalImage();
+    image.op();
+    System.out.println(image.getRes());
+}

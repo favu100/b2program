@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfParallelProduct machine = new SubsetOfParallelProduct();
+    machine.op();
+    System.out.println(machine.getRes());
+}

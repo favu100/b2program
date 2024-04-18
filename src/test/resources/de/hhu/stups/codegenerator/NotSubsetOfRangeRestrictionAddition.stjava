@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfRangeRestriction machine = new NotSubsetOfRangeRestriction();
+    machine.op();
+    System.out.println(machine.getRes());
+}

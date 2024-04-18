@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfRangeSubstraction machine = new SubsetOfRangeSubstraction();
+    machine.op();
+    System.out.println(machine.getRes());
+}

@@ -520,4 +520,14 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfDifference", "NotSubsetOfDifference", "NotSubsetOfDifferenceAddition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfInverse() throws Exception {
+        testJava("SubsetOfInverse", "SubsetOfInverse", "SubsetOfInverseAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfInverse() throws Exception {
+        testJava("NotSubsetOfInverse", "NotSubsetOfInverse", "NotSubsetOfInverseAddition.stjava", true);
+    }
+
 }

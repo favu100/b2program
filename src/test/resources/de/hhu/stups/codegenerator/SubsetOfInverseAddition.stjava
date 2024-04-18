@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SubsetOfInverse inverse = new SubsetOfInverse();
+    inverse.op();
+    System.out.println(inverse.getRes());
+}

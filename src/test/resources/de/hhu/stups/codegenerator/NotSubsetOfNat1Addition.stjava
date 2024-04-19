@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    NotSubsetOfNat1 machine = new NotSubsetOfNat1();
+    machine.op();
+    System.out.println(machine.getRes());
+}

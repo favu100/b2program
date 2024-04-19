@@ -690,5 +690,35 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfNatural1", "NotSubsetOfNatural1", "NotSubsetOfNatural1Addition.stjava", true);
     }
 
+    @Test
+    public void testSubsetOfBoolean() throws Exception {
+        testJava("SubsetOfBoolean", "SubsetOfBoolean", "SubsetOfBooleanAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfBoolean() throws Exception {
+        testJava("NotSubsetOfBoolean", "NotSubsetOfBoolean", "NotSubsetOfBooleanAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfNat() throws Exception {
+        testJava("SubsetOfNat", "SubsetOfNat", "SubsetOfNatAddition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfNat() throws Exception {
+        testJava("NotSubsetOfNat", "NotSubsetOfNat", "NotSubsetOfNatAddition.stjava", true);
+    }
+
+    @Test
+    public void testSubsetOfNat1() throws Exception {
+        testJava("SubsetOfNat1", "SubsetOfNat1", "SubsetOfNat1Addition.stjava", true);
+    }
+
+    @Test
+    public void testNotSubsetOfNat1() throws Exception {
+        testJava("NotSubsetOfNat1", "NotSubsetOfNat1", "NotSubsetOfNat1Addition.stjava", true);
+    }
+
 
 }

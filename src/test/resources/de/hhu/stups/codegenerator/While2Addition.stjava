@@ -1,0 +1,4 @@
+public static void main(String[] args) {
+    While2 while2 = new While2();
+    while2.Inc();
+}

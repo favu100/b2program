@@ -26,10 +26,14 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<btypes_big_integer/BUtils.hpp>
 #include \<btypes_big_integer/StateNotReachableError.hpp>
 #include \<btypes_big_integer/PreconditionOrAssertionViolation.hpp>
+#include \<btypes_big_integer/VariantViolation.hpp>
+#include \<btypes_big_integer/LoopInvariantViolation.hpp>
 <else>
 #include \<btypes_primitives/BUtils.hpp>
 #include \<btypes_primitives/StateNotReachableError.hpp>
 #include \<btypes_primitives/PreconditionOrAssertionViolation.hpp>
+#include \<btypes_primitives/VariantViolation.hpp>
+#include \<btypes_primitives/LoopInvariantViolation.hpp>
 <endif>
 <imports; separator="\n">
 <includedMachines; separator="\n">
@@ -929,11 +933,21 @@ becomes_such_that_store(lhs, rhs) ::= <<
 <lhs> = <rhs>;
 >>
 
-while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+while(forModelChecking, iterationConstruct1, iterationConstruct2, predicate, then, variant, invariant) ::= <<
 <iterationConstruct1; separator="\n">
+BInteger _loop_variant = <variant>;
 while((<predicate>).booleanValue()) {
     <then>
     <iterationConstruct2; separator="\n">
+    <if(forModelChecking)>
+    if(!(<invariant>.booleanValue())) {
+        throw LoopInvariantViolation();
+    }
+    if(_loop_variant.greaterEqual(<variant>).booleanValue()) {
+        throw VariantViolation();
+    }
+    _loop_variant = <variant>;
+    <endif>
 }
 >>
 

@@ -955,6 +955,9 @@ public class SubstitutionGenerator {
         TemplateHandler.add(whileST, "predicate", machineGenerator.visitPredicateNode(node.getCondition(), expected));
         TemplateHandler.add(whileST, "then", machineGenerator.visitSubstitutionNode(node.getBody(), expected));
         TemplateHandler.add(whileST, "iterationConstruct2", iterationConstructHandler.inspectPredicate(node.getCondition()).getIterationsMapCode().values());
+        TemplateHandler.add(whileST, "forModelChecking", machineGenerator.isForModelChecking());
+        TemplateHandler.add(whileST, "invariant", machineGenerator.visitPredicateNode(node.getInvariant(), expected));
+        TemplateHandler.add(whileST, "variant", machineGenerator.visitExprNode(node.getVariant(), expected));
         return whileST.render();
     }
 

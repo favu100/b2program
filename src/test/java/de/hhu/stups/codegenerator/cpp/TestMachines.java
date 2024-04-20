@@ -250,4 +250,9 @@ public class TestMachines extends TestCpp {
         testCppMC("Lift_MC_Large");
     }
 
+    @Test
+    public void testWhile2() throws Exception {
+        testCppMC("While2");
+    }
+
 }

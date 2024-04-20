@@ -29,6 +29,8 @@ import java.util.Objects;
 import java.util.Arrays;
 import de.hhu.stups.btypes.PreconditionOrAssertionViolation;
 import de.hhu.stups.btypes.StateNotReachableError;
+import de.hhu.stups.btypes.LoopInvariantViolation;
+import de.hhu.stups.btypes.VariantViolation;
 import de.hhu.stups.btypes.BUtils;
 
 
@@ -1099,11 +1101,23 @@ becomes_such_that_store(lhs, rhs) ::= <<
 <lhs> = <rhs>;
 >>
 
-while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+while(forModelChecking, iterationConstruct1, iterationConstruct2, predicate, then, invariant, variant) ::= <<
 <iterationConstruct1; separator="\n">
+<if(forModelChecking)>
+BInteger _loop_variant = <variant>;
+<endif>
 while((<predicate>).booleanValue()) {
     <then>
     <iterationConstruct2; separator="\n">
+    <if(forModelChecking)>
+    if(!<invariant>.booleanValue()) {
+        throw new LoopInvariantViolation("Invariant of WHILE loop is violated");
+    }
+    if(_loop_variant.greaterEqual(<variant>).booleanValue()) {
+        throw new VariantViolation("Variant of WHILE loop is violated");
+    }
+    _loop_variant = <variant>;
+    <endif>
 }
 >>
 

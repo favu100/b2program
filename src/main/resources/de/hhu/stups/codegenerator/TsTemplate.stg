@@ -9,6 +9,8 @@ machine(forModelChecking, forVisualisation, imports, includedMachines, machine, 
 <includedMachines; separator="\n">
 import {BUtils} from "./btypes/BUtils.js";
 import {SelectError} from "./btypes/BUtils.js";
+import {VariantViolation} from "./btypes/BUtils.js";
+import {LoopInvariantViolation} from "./btypes/BUtils.js";
 <if(forModelChecking)>
 import * as immutable from "./immutable/dist/immutable.es.js";
 import {LinkedList} from  "./modelchecking/LinkedList.js";
@@ -751,7 +753,8 @@ if((<predicate>).booleanValue()) {
     <then>
 } else {
     throw new SelectError("Parameters are invalid!");
-}<endif>
+}
+<endif>
 >>
 
 if(iterationConstruct, predicate, then, else1) ::= <<
@@ -854,11 +857,21 @@ becomes_such_that_store(lhs, rhs) ::= <<
 <lhs> = <rhs>;
 >>
 
-while(iterationConstruct1, iterationConstruct2, predicate, then) ::= <<
+while(forModelChecking, iterationConstruct1, iterationConstruct2, predicate, then, variant, invariant) ::= <<
 <iterationConstruct1; separator="\n">
+let _loop_variant : BInteger = <variant>;
 while((<predicate>).booleanValue()) {
     <then>
     <iterationConstruct2; separator="\n">
+    <if(forModelChecking)>
+    if(!(<invariant>.booleanValue())) {
+        throw new LoopInvariantViolation("WHILE loop invariant is violated.");
+    }
+    if(_loop_variant.greaterEqual(<variant>).booleanValue()) {
+        throw VariantViolation("WHILE loop invariant is violated.");
+    }
+    _loop_variant = <variant>;
+    <endif>
 }
 >>
 

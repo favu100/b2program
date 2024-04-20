@@ -428,5 +428,10 @@ public class TestMachines extends TestJava {
         testJavaMC("Generated126_small_mc");
     }
 
+    @Test
+    public void testWhile2() throws Exception {
+        testJavaMC("While2");
+    }
+
 
 }

@@ -11,3 +11,17 @@ export class SelectError extends Error {
         Object.setPrototypeOf(this, SelectError.prototype);
     }
 }
+
+export class VariantViolation extends Error {
+    constructor(msg: string) {
+        super(msg);
+        Object.setPrototypeOf(this, SelectError.prototype);
+    }
+}
+
+export class LoopInvariantViolation extends Error {
+    constructor(msg: string) {
+        super(msg);
+        Object.setPrototypeOf(this, SelectError.prototype);
+    }
+}

@@ -278,4 +278,9 @@ public class TestMachines extends TestJs {
         testJSMC("QueensWithEvents_4");
     }
 
+    @Test
+    public void testWhile2() throws Exception {
+        testJSMC("While2");
+    }
+
 }

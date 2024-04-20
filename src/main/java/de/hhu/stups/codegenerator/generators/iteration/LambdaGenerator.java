@@ -127,7 +127,8 @@ public class LambdaGenerator {
     * This function generates code for the expression representing the values the variables are mapped to within the lambda expression
     */
     public String generateLambdaExpression(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String leftType, String rightType, ExprNode expression, String relationName, String elementName, List<DeclarationNode> declarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
+        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(declarations, predicateNode, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

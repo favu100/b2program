@@ -1,0 +1,5 @@
+public static void main(String[] args) {
+    SetComprehension12 machine = new SetComprehension12();
+    machine.op();
+    System.out.println(machine.getRes());
+}

@@ -1,0 +1,14 @@
+MACHINE SetComprehension10
+
+VARIABLES  set
+
+INVARIANT  set : POW(INTEGER*INTEGER*INTEGER)
+
+INITIALISATION set := {}
+
+OPERATIONS
+
+	op = BEGIN set := {x,y,z|x : 0..5 & x < 3 & y : 0..4 & x = y & z : 0..3} END;
+	out <-- getRes = out := card(set)
+
+END

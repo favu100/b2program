@@ -107,7 +107,10 @@ public class BecomesSuchThatGenerator {
     * This function generates code for the inner body of the becomes such that substitution
     */
     private String generateBecomesSuchThatBody(Collection<String> otherConstructs, List<IdentifierExprNode> identifiers, PredicateNode conditionalPredicate, PredicateNode predicateNode, int counter, String operation, boolean isLastChoicePoint) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, identifiers.size(), false);
+        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(identifiers.stream()
+                .map(IdentifierExprNode::getDeclarationNode)
+                .collect(Collectors.toList()), predicateNode, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
 
         ST template = group.getInstanceOf("becomes_such_that_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);

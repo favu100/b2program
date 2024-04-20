@@ -312,6 +312,12 @@ for(let <identifier> of <set>.pow().difference(<set>)) {
 }
 >>
 
+iteration_construct_pruning(predicate, body) ::= <<
+if(<predicate>.booleanValue()) {
+    <body>
+}
+>>
+
 let_expression_predicate(type, identifier, body, isJavaScript) ::= <<
 let <identifier><if(!isJavaScript)>: <type><endif> = null;
 <body>

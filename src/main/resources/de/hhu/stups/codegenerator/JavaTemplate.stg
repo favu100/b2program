@@ -360,6 +360,12 @@ for(<type> <identifier> : <set>.pow().difference(new BSet\<<type>\>(<set>))) {
 }
 >>
 
+iteration_construct_pruning(predicate, body) ::= <<
+if(<predicate>.booleanValue()) {
+    <body>
+}
+>>
+
 let_expression_predicate(type, identifier, body) ::= <<
 <type> <identifier> = null;
 <body>

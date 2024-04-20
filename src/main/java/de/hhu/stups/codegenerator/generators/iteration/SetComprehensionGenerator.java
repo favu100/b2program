@@ -158,27 +158,6 @@ public class SetComprehensionGenerator {
     }
 
     /*
-    * This function generates code for the predicate of a set comprehension
-    */
-    private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations.size(), false);
-        ST template = group.getInstanceOf("set_comprehension_predicate");
-        TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
-        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        if(conditionalPredicate != null) {
-            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
-        }
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
-        TemplateHandler.add(template, "type", type);
-        TemplateHandler.add(template, "set", setName);
-        TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
-        generateSubType(template, declarations);
-        TemplateHandler.add(template, "element", elementName);
-        return template.render();
-    }
-
-    /*
     * This function generates code for other iteration constructs within a set comprehension
     */
     private Collection<String> generateOtherIterationConstructs(PredicateNode predicate) {
@@ -201,17 +180,38 @@ public class SetComprehensionGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
         String elementName = getElementFromBoundedVariables(declarations);
-
         String generatedType = typeGenerator.generate(type);
 
-        String innerBody = generateSetComprehensionPredicate(otherConstructs, conditionalPredicate, predicate, generatedType, identifier, elementName, declarations);
-        String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         generateSubType(template, declarations);
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", generatedType);
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "isRelation", isRelation);
+        String innerBody = generateSetComprehensionPredicate(otherConstructs, conditionalPredicate, predicate, generatedType, identifier, elementName, declarations);
+        String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
         TemplateHandler.add(template, "comprehension", comprehension);
+    }
+
+    /*
+     * This function generates code for the predicate of a set comprehension
+     */
+    private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
+        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(declarations, predicateNode, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
+        ST template = group.getInstanceOf("set_comprehension_predicate");
+        TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
+        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
+        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        TemplateHandler.add(template, "type", type);
+        TemplateHandler.add(template, "set", setName);
+        TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
+        generateSubType(template, declarations);
+        TemplateHandler.add(template, "element", elementName);
+        return template.render();
     }
 
     /*

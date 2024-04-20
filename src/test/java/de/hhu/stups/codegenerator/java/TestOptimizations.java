@@ -721,4 +721,20 @@ public class TestOptimizations extends TestJava {
     }
 
 
+    @Test
+    public void testSetComprehension10() throws Exception {
+        testJava("SetComprehension10", "SetComprehension10", "SetComprehension10Addition.stjava", true);
+    }
+
+    @Test
+    public void testSetComprehension11() throws Exception {
+        testJava("SetComprehension11", "SetComprehension11", "SetComprehension11Addition.stjava", true);
+    }
+
+    @Test
+    public void testSetComprehension12() throws Exception {
+        testJava("SetComprehension12", "SetComprehension12", "SetComprehension12Addition.stjava", true);
+    }
+
+
 }

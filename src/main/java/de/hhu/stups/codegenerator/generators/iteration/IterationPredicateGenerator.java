@@ -18,8 +18,9 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 
 /**
@@ -101,10 +102,54 @@ public class IterationPredicateGenerator {
     /*
     * This function checks whether an identifier is on the left-hand side of a predicate and whether the i-th predicate constraints the i-th bounded variable.
     */
-    private void checkEnumerationPredicate(ExprNode lhs, DeclarationNode declarationNode) {
-        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
+    private void checkEnumerationPredicate(ExprNode lhs, Set<String> declarationProcessed, DeclarationNode declarationNode) {
+        if(!checkEnumerationPredicateAsBoolean(lhs, declarationProcessed, declarationNode)) {
             throw new CodeGenerationException("The expression on the left-hand side of the first predicates must match the first identifier names " + GetNodeLocationAndText(lhs));
         }
+    }
+
+    private boolean checkEnumerationPredicateAsBoolean(ExprNode lhs, Set<String> declarationProcessed, DeclarationNode declarationNode) {
+        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
+            if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public int computeSubpredicate(List<DeclarationNode> declarations, PredicateNode predicate, boolean universalQuantification) {
+        Set<String> declarationProcessed = new HashSet<>();
+        int j = 0;
+        for(int i = 0; i < declarations.size(); i++, j++) {
+            DeclarationNode declarationNode = declarations.get(i);
+            PredicateOperatorWithExprArgsNode innerPredicate = null;
+            if(universalQuantification) {
+                if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                } else if(predicate instanceof PredicateOperatorNode) {
+                    if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                    } else {
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(j);
+                    }
+                }
+            } else {
+                try {
+                    innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
+                            : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
+                } catch (Exception e) {
+                    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
+                }
+            }
+            ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
+            if(enumerationTemplate == null) {
+                i = i - 1;
+                continue;
+            }
+            declarationProcessed.add(declarationNode.getName());
+        }
+        return j;
     }
 
     /*
@@ -165,8 +210,11 @@ public class IterationPredicateGenerator {
     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with element of as predicate.
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
-    private ST getElementOfTemplate(DeclarationNode declarationNode, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationNode);
+    private ST getElementOfTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
+        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return null;
+        }
         ST template = group.getInstanceOf("iteration_construct_enumeration");
         return generateEnumeration(template, declarationNode);
     }
@@ -175,8 +223,11 @@ public class IterationPredicateGenerator {
     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with equal as predicate.
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
-    private ST getEqualTemplate(DeclarationNode declarationNode, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationNode);
+    private ST getEqualTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
+        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return null;
+        }
         ST template = group.getInstanceOf("iteration_construct_assignment");
         return generateEnumeration(template, declarationNode);
     }
@@ -185,8 +236,11 @@ public class IterationPredicateGenerator {
     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with subset as predicate.
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
-    private ST getSubsetTemplate(DeclarationNode declarationNode, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationNode);
+    private ST getSubsetTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
+        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return null;
+        }
         ST template = group.getInstanceOf("iteration_construct_subset");
         return generateEnumeration(template, declarationNode);
     }
@@ -195,8 +249,11 @@ public class IterationPredicateGenerator {
     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with strict subset as predicate.
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
-    private ST getSubsetNeqTemplate(DeclarationNode declarationNode, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationNode);
+    private ST getSubsetNeqTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
+        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return null;
+        }
         ST template = group.getInstanceOf("iteration_construct_subsetneq");
         return generateEnumeration(template, declarationNode);
     }
@@ -207,7 +264,8 @@ public class IterationPredicateGenerator {
     public List<ST> getEnumerationTemplates(IterationConstructGenerator iterationConstructGenerator, List<DeclarationNode> declarations, PredicateNode predicate, boolean universalQuantification) {
         ST enumerationTemplate = null;
         List<ST> enumerationTemplates = new ArrayList<>();
-        for(int i = 0; i < declarations.size(); i++) {
+        Set<String> declarationProcessed = new HashSet<>();
+        for(int i = 0, j = 0; i < declarations.size(); i++, j++) {
             DeclarationNode declarationNode = declarations.get(i);
             PredicateOperatorWithExprArgsNode innerPredicate = null;
             if(universalQuantification) {
@@ -217,21 +275,29 @@ public class IterationPredicateGenerator {
                     if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
                     } else {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(i);
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(j);
                     }
                 }
             } else {
                 try {
                     innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
-                            : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+                            : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
                 } catch (Exception e) {
                     throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
                 }
             }
-            enumerationTemplate = getEnumerationTemplate(declarationNode, innerPredicate);
+            enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
+            if(enumerationTemplate == null) {
+                i = i - 1;
+                enumerationTemplate = group.getInstanceOf("iteration_construct_pruning");
+                TemplateHandler.add(enumerationTemplate, "predicate", machineGenerator.visitPredicateNode(innerPredicate, null));
+                enumerationTemplates.add(enumerationTemplate);
+                continue;
+            }
             generateOtherIterationConstructs(iterationConstructGenerator, enumerationTemplate, innerPredicate);
             TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(innerPredicate.getExpressionNodes().get(1), null));
             enumerationTemplates.add(enumerationTemplate);
+            declarationProcessed.add(declarationNode.getName());
         }
         return enumerationTemplates;
     }
@@ -239,23 +305,24 @@ public class IterationPredicateGenerator {
     /*
     * This function returns an enumeration template for a declaration representing a bounded variable and the given predicate declaring an enumeration
     */
-    private ST getEnumerationTemplate(DeclarationNode declaration, PredicateOperatorWithExprArgsNode innerPredicate) {
+    private ST getEnumerationTemplate(DeclarationNode declaration, Set<String> declarationProcessed, PredicateOperatorWithExprArgsNode innerPredicate) {
         ST enumerationTemplate = null;
         if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-            enumerationTemplate = getElementOfTemplate(declaration, innerPredicate.getExpressionNodes().get(0));
+            enumerationTemplate = getElementOfTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
             inLoop = true;
         } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
-            enumerationTemplate = getEqualTemplate(declaration, innerPredicate.getExpressionNodes().get(0));
+            enumerationTemplate = getEqualTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
             inLoop = false;
         } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION) {
-            enumerationTemplate = getSubsetTemplate(declaration, innerPredicate.getExpressionNodes().get(0));
+            enumerationTemplate = getSubsetTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
             inLoop = true;
         } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
-            enumerationTemplate = getSubsetNeqTemplate(declaration, innerPredicate.getExpressionNodes().get(0));
+            enumerationTemplate = getSubsetNeqTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
             inLoop = true;
         } else {
-            throw new RuntimeException("Only =,:,<:,<<: operators are supported within the enumeration predicate " +
-                                       GetNodeLocationAndText(innerPredicate));
+            return null;
+            //throw new RuntimeException("Only =,:,<:,<<: operators are supported within the enumeration predicate " +
+            //                           GetNodeLocationAndText(innerPredicate));
         }
         return enumerationTemplate;
     }
@@ -276,6 +343,10 @@ public class IterationPredicateGenerator {
             i--;
         }
         return lastEnumeration;
+    }
+
+    public ST evaluateEnumerationTemplateWithPruning(List<ST> enumerationTemplates) {
+        return null;
     }
 
     /*

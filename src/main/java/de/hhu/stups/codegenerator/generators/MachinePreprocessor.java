@@ -59,7 +59,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.prob.parser.antlr.Antlr4BParser.parseExpression;
@@ -103,10 +105,45 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     }
 
     public PredicateNode visitPredicateNode(PredicateNode predicateNode) {
+        if(predicateNode != null) {
+            if(predicateNode.getParent() instanceof IfOrSelectSubstitutionsNode) {
+                IfOrSelectSubstitutionsNode substitutionsNode = (IfOrSelectSubstitutionsNode) predicateNode.getParent();
+                if(substitutionsNode.getParent() instanceof OperationNode) {
+                    OperationNode operationNode = (OperationNode) substitutionsNode.getParent();
+                    return handlePredicateForEnumeration(predicateNode, operationNode.getParams(), new HashSet<>());
+                }
+            }
+        }
+        return predicateNode;
+    }
+
+    public PredicateNode handlePredicateForEnumeration(PredicateNode predicateNode, List<DeclarationNode> declarations, Set<String> declarationsProcessed) {
         if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
-            return (PredicateNode) visitPredicateOperatorWithExprArgs((PredicateOperatorWithExprArgsNode) predicateNode, null);
+            PredicateOperatorWithExprArgsNode predicate = (PredicateOperatorWithExprArgsNode) predicateNode;
+            PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = predicate.getOperator();
+            ExprNode lhs = predicate.getExpressionNodes().get(0);
+            Set<String> declarationsAsString = declarations.stream()
+                    .map(DeclarationNode::getName)
+                    .collect(Collectors.toSet());
+            if(lhs instanceof IdentifierExprNode) {
+                String id = ((IdentifierExprNode) lhs).getName();
+                if(!declarationsAsString.contains(id) || declarationsProcessed.contains(id)) {
+                    return (PredicateNode) visitPredicateOperatorWithExprArgs(predicate, null);
+                } else {
+                    if(operator != PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF && operator != PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL &&
+                            operator != PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION && operator != PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
+                        return (PredicateNode) visitPredicateOperatorWithExprArgs(predicate, null);
+                    }
+                    declarationsProcessed.add(id);
+                }
+            }
         } else if(predicateNode instanceof PredicateOperatorNode) {
-            return (PredicateNode) visitPredicateOperatorNode((PredicateOperatorNode) predicateNode, null);
+            PredicateOperatorNode predicate = (PredicateOperatorNode) predicateNode;
+            List<PredicateNode> predicates = predicate.getPredicateArguments()
+                    .stream()
+                    .map(pred -> handlePredicateForEnumeration(pred, declarations, declarationsProcessed))
+                    .collect(Collectors.toList());
+            return new PredicateOperatorNode(predicate.getSourceCodePosition(), predicate.getOperator(), predicates);
         }
         return predicateNode;
     }

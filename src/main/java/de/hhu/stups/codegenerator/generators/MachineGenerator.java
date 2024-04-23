@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.analyzers.CheckReachabilityAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -113,6 +114,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	private final BacktrackingGenerator backtrackingGenerator;
 
+	private final CheckReachabilityAnalyzer checkReachabilityAnalyzer;
+
 	private final boolean forModelChecking;
 
 	private final boolean forVisualisation;
@@ -188,7 +191,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.operatorGenerator = new OperatorGenerator(mode, predicateGenerator, expressionGenerator);
 		this.operationGenerator = new OperationGenerator(currentGroup, this, substitutionGenerator, declarationGenerator, identifierGenerator, nameHandler,
 															typeGenerator, recordStructGenerator);
-		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator, backtrackingGenerator);
+		this.checkReachabilityAnalyzer = new CheckReachabilityAnalyzer();
+		this.modelCheckingGenerator = new ModelCheckingGenerator(currentGroup, nameHandler, typeGenerator, backtrackingGenerator, checkReachabilityAnalyzer);
 		this.invariantGenerator = new InvariantGenerator(mode, currentGroup, this, iterationConstructHandler);
 		this.transitionGenerator = new TransitionGenerator(currentGroup, nameHandler, this, typeGenerator, iterationConstructHandler);
 		this.modelCheckingInfoGenerator = new ModelCheckingInfoGenerator(currentGroup, nameHandler, invariantGenerator, transitionGenerator, typeGenerator);
@@ -204,6 +208,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	public int getAndIncCurrentExpressionCount() {
 		return currentExpressionCount++;
 	}
+
 	public boolean isUseBigInteger() { return useBigInteger; }
 
 	public int getCurrentExpressionCount() {
@@ -253,7 +258,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		backtrackingGenerator.calculateChoicePoints(node);
 
 		ST machine = currentGroup.getInstanceOf("machine");
-		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation));
+		TemplateHandler.add(machine, "forModelChecking", (forModelChecking || forVisualisation) && !isIncludedMachine);
 		TemplateHandler.add(machine, "forVisualisation", forVisualisation);
 		TemplateHandler.add(machine, "useBigInteger", useBigInteger);
 		TemplateHandler.add(machine, "addition", addition);
@@ -322,13 +327,16 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "operations", operationGenerator.visitOperations(node.getOperations(), node.getVariables().stream()
 				.map(DeclarationNode::getName)
 				.collect(Collectors.toList())));
-		List<DeclarationNode> gettableNodes = new ArrayList<>();
-		gettableNodes.addAll(node.getConstants());
-		gettableNodes.addAll(node.getVariables());
+		List<DeclarationNode> declarationNodesForGetter = new ArrayList<>();
+		declarationNodesForGetter.addAll(node.getConstants());
+		declarationNodesForGetter.addAll(node.getVariables());
 		node.getEnumeratedSets().forEach(enumeratedSet -> {
-			gettableNodes.add(enumeratedSet.getSetDeclarationNode());
+			declarationNodesForGetter.add(enumeratedSet.getSetDeclarationNode());
 		});
-		TemplateHandler.add(machine, "getters", generateGetters(gettableNodes));
+		List<MachineNode> machineNodesForGetter = node.getMachineReferences()
+				.stream()
+				.map(MachineReferenceNode::getMachineNode).collect(Collectors.toList());
+		TemplateHandler.add(machine, "getters", generateGetters(declarationNodesForGetter, machineNodesForGetter));
 		TemplateHandler.add(machine, "transitions", generateTransitions(node.getOperations()));
 		TemplateHandler.add(machine, "transitionCachesDeclaration", transitionGenerator.generateTransitionCaches(node.getOperations()));
 		TemplateHandler.add(machine, "invariant", generateInvariants(node.getInvariant()));
@@ -359,14 +367,19 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	/*
 	* This function generates code for all getters for variables if the machine is an included machine
 	*/
-	private List<String> generateGetters(List<DeclarationNode> variables) {
+	private List<String> generateGetters(List<DeclarationNode> variables, List<MachineNode> includedMachines) {
 		Set<String> lambdaFunctions = getLambdaFunctions();
 		Set<String> infiniteSets = getInfiniteSets();
-		return variables.stream()
+		List<String> getters = new ArrayList<>();
+		getters.addAll(variables.stream()
 				.filter(variable -> !lambdaFunctions.contains(variable.getName()))
 				.filter(variable -> !infiniteSets.contains(variable.getName()))
 				.map(this::generateGetter)
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
+		getters.addAll(includedMachines.stream()
+				.map(this::generateGetter)
+				.collect(Collectors.toList()));
+		return getters;
 	}
 
 	/*
@@ -382,25 +395,47 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		return getter.render();
 	}
 
-	private String generateCopyConstructor(MachineNode node) {
-		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
-			ST template = currentGroup.getInstanceOf("copy_constructor");
-			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
-			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
-			parameters.addAll(node.getVariables());
+	private String generateGetter(MachineNode includedMachine) {
+		ST getter = currentGroup.getInstanceOf("getter");
+		TemplateHandler.add(getter, "variable", nameHandler.handleIdentifier(includedMachine.getName(), NameHandler.IdentifierHandlingEnum.MACHINES));
+		TemplateHandler.add(getter, "isConstant", false);
+		TemplateHandler.add(getter, "machine", nameHandler.handle(includedMachine.getName()));
+		TemplateHandler.add(getter, "returnType", nameHandler.handle(includedMachine.getName()));
+		TemplateHandler.add(getter, "machineName", machineNode.getName());
+		return getter.render();
+	}
 
-			TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
-			TemplateHandler.add(template, "assignments", parameters.stream()
-					.map(this::generateCopyAssignment)
-					.collect(Collectors.toList()));
-			return template.render();
-		}
-		return "";
+	private String generateCopyConstructor(MachineNode node) {
+
+		ST template = currentGroup.getInstanceOf("copy_constructor");
+		TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
+		List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
+		parameters.addAll(node.getVariables());
+
+		List<String> assignments = new ArrayList<>();
+		assignments.addAll(parameters.stream()
+				.map(this::generateCopyAssignment)
+				.collect(Collectors.toList()));
+		assignments.addAll(node.getMachineReferences().stream()
+				.map(this::generateCopyMachine)
+				.collect(Collectors.toList()));
+
+		TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
+		TemplateHandler.add(template, "assignments", assignments);
+		return template.render();
+
 	}
 
 	public String generateCopyAssignment(DeclarationNode declaration) {
 		ST template = currentGroup.getInstanceOf("copy_assignment");
 		TemplateHandler.add(template, "variable", nameHandler.handleIdentifier(declaration.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+		return template.render();
+	}
+
+	public String generateCopyIncludedMachine(MachineReferenceNode machineReferenceNode) {
+		ST template = currentGroup.getInstanceOf("copy_included_machine");
+		TemplateHandler.add(template, "machine", nameHandler.handle(machineReferenceNode.getMachineName()));
+		TemplateHandler.add(template, "variable", nameHandler.handleIdentifier(machineReferenceNode.getMachineName(), NameHandler.IdentifierHandlingEnum.MACHINES));
 		return template.render();
 	}
 
@@ -411,20 +446,17 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private String generateCopy(MachineNode node) {
-		if((forModelChecking && !isIncludedMachine) || forVisualisation) {
-			ST template = currentGroup.getInstanceOf("copy");
-			List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
-			parameters.addAll(node.getVariables());
-			TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
-			TemplateHandler.add(template, "parameters", parameters.stream()
-					.map(variable -> nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
-					.collect(Collectors.toList()));
-			TemplateHandler.add(template, "operations", node.getOperations().stream()
-					.map(op -> nameHandler.handleIdentifier(op.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES))
-					.collect(Collectors.toList()));
-			return template.render();
-		}
-		return "";
+		ST template = currentGroup.getInstanceOf("copy");
+		List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
+		parameters.addAll(node.getVariables());
+		TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
+		TemplateHandler.add(template, "parameters", parameters.stream()
+				.map(variable -> nameHandler.handleIdentifier(variable.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+				.collect(Collectors.toList()));
+		TemplateHandler.add(template, "operations", node.getOperations().stream()
+				.map(op -> nameHandler.handleIdentifier(op.getName(), NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES))
+				.collect(Collectors.toList()));
+		return template.render();
 	}
 
 	/*

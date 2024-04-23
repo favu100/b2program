@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators;
 
+import de.hhu.stups.codegenerator.analyzers.CheckReachabilityAnalyzer;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
@@ -27,6 +28,8 @@ public class ModelCheckingGenerator {
 
     private final BacktrackingGenerator backtrackingGenerator;
 
+    private final CheckReachabilityAnalyzer checkReachabilityAnalyzer;
+
     private Map<String, Integer> invariantIDs;
 
     private Map<String, Integer> operationIDs;
@@ -34,11 +37,13 @@ public class ModelCheckingGenerator {
     private Map<String, Integer> evalTransitionsIDs;
 
     public ModelCheckingGenerator(final STGroup currentGroup, final NameHandler nameHandler,
-                                  final TypeGenerator typeGenerator, final BacktrackingGenerator backtrackingGenerator) {
+                                  final TypeGenerator typeGenerator, final BacktrackingGenerator backtrackingGenerator,
+                                  final CheckReachabilityAnalyzer checkReachabilityAnalyzer) {
         this.currentGroup = currentGroup;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
         this.backtrackingGenerator = backtrackingGenerator;
+        this.checkReachabilityAnalyzer = checkReachabilityAnalyzer;
     }
 
     // If we use IDs to implement caching, then this code will be helpful
@@ -135,6 +140,7 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "isNondeterministic", false);
         //TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
+        TemplateHandler.add(template, "checkReachability", checkReachabilityAnalyzer.visitOperation(opNode));
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
 
@@ -330,6 +336,11 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("machine_equal");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
         List<String> predicates = new ArrayList<>();
+        for(String var : modelCheckingInfo.getIncludedMachines()) {
+            ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
+            TemplateHandler.add(predicateTemplate, "var", var);
+            predicates.add(predicateTemplate.render());
+        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST predicateTemplate = currentGroup.getInstanceOf("machine_equal_predicate");
             TemplateHandler.add(predicateTemplate, "var", var);
@@ -343,6 +354,11 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("machine_unequal");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
         List<String> predicates = new ArrayList<>();
+        for(String var : modelCheckingInfo.getIncludedMachines()) {
+            ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
+            TemplateHandler.add(predicateTemplate, "var", var);
+            predicates.add(predicateTemplate.render());
+        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST predicateTemplate = currentGroup.getInstanceOf("machine_unequal_predicate");
             TemplateHandler.add(predicateTemplate, "var", var);
@@ -355,6 +371,12 @@ public class ModelCheckingGenerator {
     public String generateHash() {
         ST template = currentGroup.getInstanceOf("machine_hash");
         List<String> assignments1 = new ArrayList<>();
+        for(String var : modelCheckingInfo.getIncludedMachines()) {
+            ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
+            TemplateHandler.add(assignmentTemplate, "primeNumber", 1543);
+            TemplateHandler.add(assignmentTemplate, "var", var);
+            assignments1.add(assignmentTemplate.render());
+        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
             TemplateHandler.add(assignmentTemplate, "primeNumber", 1543);
@@ -363,6 +385,12 @@ public class ModelCheckingGenerator {
         }
 
         List<String> assignments2 = new ArrayList<>();
+        for(String var : modelCheckingInfo.getIncludedMachines()) {
+            ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
+            TemplateHandler.add(assignmentTemplate, "primeNumber", 6151);
+            TemplateHandler.add(assignmentTemplate, "var", var);
+            assignments2.add(assignmentTemplate.render());
+        }
         for(String var : modelCheckingInfo.getVariables()) {
             ST assignmentTemplate = currentGroup.getInstanceOf("machine_hash_assignment");
             TemplateHandler.add(assignmentTemplate, "primeNumber", 6151);
@@ -376,9 +404,13 @@ public class ModelCheckingGenerator {
     }
 
     public String generateToString() {
+        List<String> variablesForToString = new ArrayList<>();
+        variablesForToString.addAll(modelCheckingInfo.getIncludedMachines());
+        variablesForToString.addAll(modelCheckingInfo.getVariables());
+
         ST template = currentGroup.getInstanceOf("machine_string");
         TemplateHandler.add(template, "machine", modelCheckingInfo.getMachineName());
-        TemplateHandler.add(template, "variables", modelCheckingInfo.getVariables());
+        TemplateHandler.add(template, "variables", variablesForToString);
         return template.render();
     }
 

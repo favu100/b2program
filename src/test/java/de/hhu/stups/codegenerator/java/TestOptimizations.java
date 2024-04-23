@@ -720,7 +720,6 @@ public class TestOptimizations extends TestJava {
         testJava("NotSubsetOfNat1", "NotSubsetOfNat1", "NotSubsetOfNat1Addition.stjava", true);
     }
 
-
     @Test
     public void testSetComprehension10() throws Exception {
         testJava("SetComprehension10", "SetComprehension10", "SetComprehension10Addition.stjava", true);

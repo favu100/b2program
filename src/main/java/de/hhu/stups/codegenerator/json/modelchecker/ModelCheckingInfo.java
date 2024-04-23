@@ -11,6 +11,8 @@ public class ModelCheckingInfo {
 
     private final String machineName;
 
+    private final List<String> includedMachines;
+
     private final List<String> variables;
 
     private final List<String> constants;
@@ -31,12 +33,13 @@ public class ModelCheckingInfo {
 
     private final Map<String, List<String>> operationsWrite;
 
-    public ModelCheckingInfo(final String machineName, final List<String> variables, final List<String> constants, final Map<String, String> transitionEvaluationFunctions,
+    public ModelCheckingInfo(final String machineName, final List<String> includedMachines, final List<String> variables, final List<String> constants, final Map<String, String> transitionEvaluationFunctions,
                              final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions,
                              final Map<String, List<String>> invariantDependency, final Map<String, List<String>> guardDependency,
                              final Map<String, List<String>> guardsRead,
                              final Map<String, List<String>> operationsRead, final Map<String, List<String>> operationsWrite) {
         this.machineName = machineName;
+        this.includedMachines = includedMachines;
         this.variables = variables;
         this.constants = constants;
         this.transitionEvaluationFunctions = transitionEvaluationFunctions;
@@ -51,6 +54,10 @@ public class ModelCheckingInfo {
 
     public String getMachineName() {
         return machineName;
+    }
+
+    public List<String> getIncludedMachines() {
+        return includedMachines;
     }
 
     public List<String> getVariables() {
@@ -97,6 +104,7 @@ public class ModelCheckingInfo {
     public String toString() {
         return new StringJoiner(", ", ModelCheckingInfo.class.getSimpleName() + "[", "]")
                 .add("machineName='" + machineName + "'")
+                .add("includedMachines=" + includedMachines)
                 .add("variables=" + variables)
                 .add("constants=" + constants)
                 .add("operationFunctions=" + operationFunctions)
@@ -141,6 +149,10 @@ public class ModelCheckingInfo {
         JsonArray invariantsArray = new JsonArray();
         invariantFunctions.forEach(invariantsArray::add);
         jsonObject.add("invariants", invariantsArray);
+
+        JsonArray includedMachinesArray = new JsonArray();
+        includedMachines.forEach(includedMachinesArray::add);
+        jsonObject.add("includedMachines", includedMachinesArray);
 
 
         JsonObject writeInformationObject = new JsonObject();

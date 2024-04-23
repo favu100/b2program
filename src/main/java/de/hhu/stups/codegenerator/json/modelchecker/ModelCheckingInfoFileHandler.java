@@ -22,6 +22,7 @@ public class ModelCheckingInfoFileHandler {
         JsonObject modelCheckingInfoObject = gson.fromJson(reader, JsonObject.class);
 
         String machineName = modelCheckingInfoObject.get("machineName").getAsString();
+        List<String> includedMachines = new ArrayList<>();
         List<String> variables = new ArrayList<>();
         List<String> constants = new ArrayList<>();
         Map<String, String> transitionEvaluationFunctions = new HashMap<>();
@@ -30,6 +31,11 @@ public class ModelCheckingInfoFileHandler {
         JsonArray variablesArray = modelCheckingInfoObject.getAsJsonArray("variables");
         for(int i = 0; i < variablesArray.size(); i++) {
             variables.add(variablesArray.get(i).getAsString());
+        }
+
+        JsonArray includedMachinesArray = modelCheckingInfoObject.getAsJsonArray("includedMachines");
+        for(int i = 0; i < includedMachinesArray.size(); i++) {
+            includedMachines.add(includedMachinesArray.get(i).getAsString());
         }
 
         JsonArray constantsArray = modelCheckingInfoObject.getAsJsonArray("constants");
@@ -120,7 +126,7 @@ public class ModelCheckingInfoFileHandler {
         }
 
 
-        return new ModelCheckingInfo(machineName, variables, constants, transitionEvaluationFunctions,  operationFunctions, invariants,
+        return new ModelCheckingInfo(machineName, includedMachines, variables, constants, transitionEvaluationFunctions,  operationFunctions, invariants,
                                     invariantDependency, guardDependency, guardReads, operationReads, operationWrites);
     }
 

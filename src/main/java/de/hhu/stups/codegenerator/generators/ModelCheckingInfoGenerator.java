@@ -7,6 +7,7 @@ import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
 import de.hhu.stups.codegenerator.json.modelchecker.OperationFunctionInfo;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.types.BType;
@@ -24,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
+import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.MACHINES;
 
 public class ModelCheckingInfoGenerator {
 
@@ -46,6 +48,14 @@ public class ModelCheckingInfoGenerator {
         this.transitionGenerator = transitionGenerator;
         this.typeGenerator = typeGenerator;
     }
+
+    private List<String> generateIncludedMachines(MachineNode node) {
+        return node.getMachineReferences().stream()
+                .map(MachineReferenceNode::getMachineName)
+                .map(machine -> "_get_" + nameHandler.handleIdentifier(machine, MACHINES))
+                .collect(Collectors.toList());
+    }
+
 
     private List<String> generateVariables(MachineNode node) {
         return node.getVariables().stream()
@@ -98,6 +108,7 @@ public class ModelCheckingInfoGenerator {
 
     public ModelCheckingInfo generateModelCheckingInfo(MachineNode node) {
         String machineName = nameHandler.handle(node.getName());
+        List<String> includedMachines = generateIncludedMachines(node);
         List<String> variables = generateVariables(node);
         List<String> constants = generateConstants(node);
         Map<String, String> transitionEvaluationFunctions = generateTransitionEvaluationFunctions(node);
@@ -146,7 +157,7 @@ public class ModelCheckingInfoGenerator {
         }
 
         // TODO: Split guards conjuncts
-        return new ModelCheckingInfo(machineName, variables, constants, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
+        return new ModelCheckingInfo(machineName, includedMachines, variables, constants, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
                 invariantDependency, guardDependency, guardsReads, operationReads, operationWrites);
     }
 

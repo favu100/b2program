@@ -45,7 +45,7 @@ OPERATIONS
   ENV_Pitman_Tip_blinking_start(newPos) = 
   SELECT newPos : PITMAN_TIP_BLINKING &
      newPos /= pitmanArmUpDown THEN
-     // ELS-2, ELS-5
+     // ELS-2, ELS-5     
      SET_Pitman_Tip_blinking_short(newPos);
      IF hazardWarningSwitchOn = switch_off
         /* "ELS-13: If the warning light is activated,

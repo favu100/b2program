@@ -87,23 +87,21 @@ public class <machine> {
 
     <initialization>
 
-    <if(forModelChecking)>
-
     <copyConstructor>
-
-    <endif>
 
     <operations; separator="\n\n">
 
     <getters; separator="\n\n">
+
+    <hash_equal; separator="\n\n">
+
+    <copy>
 
     <if(forModelChecking)>
 
     <transitions; separator="\n\n">
 
     <invariant; separator="\n\n">
-
-    <copy>
 
     <if(false)>
 
@@ -122,8 +120,6 @@ public class <machine> {
     <choicePointOperationApplies; separator="\n\n">
 
     <endif>
-
-    <hash_equal; separator="\n\n">
 
     <modelcheck>
 
@@ -544,7 +540,7 @@ this.<variable> = copy.<variable>;
 >>
 
 copy_machine(machine) ::= <<
-this.<machine> = <machine>._copy();
+this.<machine> = copy.<machine>._copy();
 >>
 
 copy(machine) ::= <<
@@ -1340,7 +1336,7 @@ private void addCachedInfos(final String operation, final <machine> state, final
 }
 >>
 
-model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters) ::= <<
+model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters, checkReachability) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
@@ -1366,11 +1362,23 @@ while(!currentState._get_calculate_flag_cp()) {
 }
 <else>
 <machine> copiedState = state._copy();
+<if(checkReachability)>
+try {
+    copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
+    addCachedInfos("<operation>", state, copiedState);
+    result.add(copiedState);
+    transitions.getAndIncrement();
+} catch(StateNotReachableError e) {
+    // Do not execute as a non-reachable state is not part of the state space
+}
+<else>
 copiedState.<operation>(<parameters; separator=", ">);
 copiedState.parent = state;
 addCachedInfos("<operation>", state, copiedState);
 result.add(copiedState);
 transitions.getAndIncrement();
+<endif>
 <endif>
 >>
 

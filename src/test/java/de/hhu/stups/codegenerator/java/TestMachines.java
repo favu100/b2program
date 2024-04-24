@@ -313,6 +313,21 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testSensors() throws Exception {
+        testJavaMC("visualisation/Sensors");
+    }
+
+    @Test
+    public void testBlinkLamps() throws Exception {
+        testJavaMC("visualisation/BlinkLamps_v3");
+    }
+
+    @Test
+    public void testGenericTimers() throws Exception {
+        testJavaMC("visualisation/GenericTimersMC");
+    }
+
+    @Test
     public void testButton() throws Exception {
         testJavaMC("visualisation/Button");
     }

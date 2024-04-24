@@ -300,7 +300,6 @@ public class SubstitutionGenerator {
         int stateCountElse = machineGenerator.getCurrentStateCount();
 
         if (node.getElseSubstitution() != null) {
-            elseStr.clear();
             elseStr.add(generateElse(node));
             exprCountElse = machineGenerator.getCurrentExpressionCount();
             stateCountElse = machineGenerator.getCurrentStateCount();

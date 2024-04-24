@@ -208,7 +208,7 @@ public class SubstitutionGenerator {
         }
 
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
-        if(infiniteSetGenerator.checkSetExpressionWithPredicate(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
+        if(infiniteSetGenerator.checkInfiniteSetExpressionWithPredicate(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
             return "";
         }
 

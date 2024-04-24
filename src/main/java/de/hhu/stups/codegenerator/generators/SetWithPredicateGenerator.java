@@ -33,6 +33,9 @@ public class SetWithPredicateGenerator {
                     ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION,
                     ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
 
+    private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
+
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
 
@@ -70,6 +73,16 @@ public class SetWithPredicateGenerator {
         return false;
     }
 
+    public boolean checkInfiniteSetWithPredicate(PredicateOperatorWithExprArgsNode node) {
+        List<ExprNode> expressions = node.getExpressionNodes();
+        PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
+        if(expressions.size() == 2 && SET_WITH_PREDICATE_OPERATORS.contains(operator)) {
+            ExprNode rhs = node.getExpressionNodes().get(1);
+            return checkInfiniteSetExpressionWithPredicate(rhs, operator);
+        }
+        return false;
+    }
+
     public boolean checkSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         if(expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
@@ -92,13 +105,46 @@ public class SetWithPredicateGenerator {
         return false;
     }
 
+    public boolean checkInfiniteSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+        if(expr instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
+            if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
+                return true;
+            } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
+                ExprNode innerRhs = ((ExpressionOperatorNode) expr).getExpressionNodes().get(0);
+                if(innerRhs instanceof ExpressionOperatorNode && isSetWithPredicateExpression(innerRhs) && operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
+                    return true;
+                } else if(innerRhs instanceof StructNode) {
+                    return true;
+                }
+            }
+        } else if(expr instanceof StructNode) {
+            return true;
+        } else if(expr instanceof SetComprehensionNode) {
+            return checkInfiniteSetWithPredicate(((SetComprehensionNode) expr).getPredicateNode());
+
+        }
+        return false;
+    }
+
     public boolean checkSetWithPredicate(PredicateNode predicate) {
         if (predicate instanceof PredicateOperatorWithExprArgsNode) {
             return checkSetWithPredicate((PredicateOperatorWithExprArgsNode) predicate);
         } else if (predicate instanceof PredicateOperatorNode) {
             return ((PredicateOperatorNode) predicate).getPredicateArguments().stream()
                     .map(this::checkSetWithPredicate)
-                    .reduce(false, (e,a) -> e || a);
+                    .reduce(false, (a,e) -> a || e);
+        }
+        return false;
+    }
+
+    public boolean checkInfiniteSetWithPredicate(PredicateNode predicate) {
+        if (predicate instanceof PredicateOperatorWithExprArgsNode) {
+            return checkInfiniteSetWithPredicate((PredicateOperatorWithExprArgsNode) predicate);
+        } else if (predicate instanceof PredicateOperatorNode) {
+            return ((PredicateOperatorNode) predicate).getPredicateArguments().stream()
+                    .map(this::checkInfiniteSetWithPredicate)
+                    .reduce(false, (a,e) -> a || e);
         }
         return false;
     }
@@ -929,7 +975,7 @@ public class SetWithPredicateGenerator {
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);
         if(!(expression instanceof SetComprehensionNode)) {
             return false;
-        } else if(!checkSetExpressionWithPredicate(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
+        } else if(!checkInfiniteSetExpressionWithPredicate(expression, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL)) {
             return false;
         }
         return true;

@@ -55,6 +55,10 @@ public class TestMachines extends TestJava {
         testJavaMC("Lift_MC");
     }
 
+    @Test
+    public void testLift_MC_With_Execute() throws Exception {
+        testJavaMC("Lift_MC", "Lift_MC", true, 1, false);
+    }
 
     @Test
     public void testTravelAgency() throws Exception {
@@ -89,6 +93,11 @@ public class TestMachines extends TestJava {
     @Test
     public void testTrafficLightMC() throws Exception {
         testJavaMC("TrafficLight_MC");
+    }
+
+    @Test
+    public void testTrafficLightMC_With_Execute() throws Exception {
+        testJavaMC("TrafficLight_MC", "TrafficLight_MC", true, 1, false);
     }
 
     @Test
@@ -142,6 +151,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testCruiseControllerDeterministic_MC_With_Execute() throws Exception {
+        testJavaMC("Cruise_finite1_deterministic_MC", "Cruise_finite1_deterministic_MC", true, 1, false);
+    }
+
+    @Test
     public void testCruiseControllerDeterministicExec() throws Exception {
         testJava("Cruise_finite1_deterministic_exec");
     }
@@ -161,6 +175,10 @@ public class TestMachines extends TestJava {
         testJavaMC("scheduler_deterministic_MC");
     }
 
+    @Test
+    public void testSchedulerDeterministicMC_With_Execute() throws Exception {
+        testJavaMC("scheduler_deterministic_MC", "scheduler_deterministic_MC", true, 1, false);
+    }
 
     @Test
     public void testCanBusTLC() throws Exception {
@@ -170,6 +188,11 @@ public class TestMachines extends TestJava {
     @Test
     public void testCanBusMC() throws Exception {
         testJavaMC("CAN_BUS_tlc");
+    }
+
+    @Test
+    public void testCanBusMC_With_Execute() throws Exception {
+        testJavaMC("CAN_BUS_tlc", "CAN_BUS_tlc", true, 1, false);
     }
 
     @Test

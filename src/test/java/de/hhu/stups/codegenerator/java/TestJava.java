@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by fabian on 31.05.18.
@@ -178,6 +179,72 @@ public class TestJava {
 		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
 		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
 	}
+
+	public void testJavaMC(String machinePath, String machineName, boolean execute, int threads, boolean caching) throws Exception {
+		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("de/hhu/stups/codegenerator/" + machinePath + ".mch").toURI());
+		CodeGenerator codeGenerator = new CodeGenerator();
+		List<Path> javaFilePaths = codeGenerator.generate(mchPath,
+				GeneratorMode.JAVA,
+				false,
+				String.valueOf(Integer.MIN_VALUE),
+				String.valueOf(Integer.MAX_VALUE),
+				"10",
+				true,
+				false,
+				true,
+				null,
+				false,
+				false,
+				null,
+				null);
+
+		Runtime runtime = Runtime.getRuntime();
+		Process compileProcess = runtime
+				.exec("javac -cp btypes.jar " + String.join(" ", javaFilePaths.stream()
+						.map(path -> path.toFile().getAbsoluteFile().toString())
+						.collect(Collectors.toSet())));
+
+		writeInputToSystem(compileProcess.getErrorStream());
+		writeInputToOutput(compileProcess.getErrorStream(), compileProcess.getOutputStream());
+		compileProcess.waitFor();
+
+		String error = streamToString(compileProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+		Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
+
+		if(!execute) {
+			return;
+		}
+
+		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machinePath.substring(0, machinePath.length() - machineName.length()) + " " + machineName).toString();
+
+		Process executeProcess = runtime.exec("java -cp btypes.jar:" + generatedMachinePath + String.format(" mixed %s %s", threads, caching));
+		executeProcess.waitFor();
+
+		error = streamToString(executeProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
+		String result = streamToString(executeProcess.getInputStream());
+		result = result.substring(result.indexOf("\n") + 1).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out"))).replaceAll("\n", "");
+
+		System.out.println("Assert starts with: " + result + " = " + expectedOutput);
+
+		assertTrue(result.startsWith(expectedOutput));
+
+		Set<File> classFiles = javaFilePaths.stream()
+				.map(path -> new File(path.getParent().toFile(), machinePath + ".class"))
+				.collect(Collectors.toSet());
+
+		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
+		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+	}
+
 
 	private void cleanUp(String path) {
 		File file = new File(path);

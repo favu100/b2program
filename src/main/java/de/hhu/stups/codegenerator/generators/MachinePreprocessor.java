@@ -113,6 +113,11 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     return handlePredicateForEnumeration(predicateNode, operationNode.getParams(), new HashSet<>());
                 }
             }
+            if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
+                return (PredicateNode) visitPredicateOperatorWithExprArgs((PredicateOperatorWithExprArgsNode) predicateNode, null);
+            } else if(predicateNode instanceof PredicateOperatorNode) {
+                return (PredicateNode) visitPredicateOperatorNode((PredicateOperatorNode) predicateNode, null);
+            }
         }
         return predicateNode;
     }

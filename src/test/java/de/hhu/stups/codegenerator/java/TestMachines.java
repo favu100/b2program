@@ -381,8 +381,18 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testLandingGear_MC_With_Execute() throws Exception {
+        testJavaMC("landing_gear/LandingGear_R6", "LandingGear_R6", true, 1, false);
+    }
+
+    @Test
     public void testQueensWithEvents_4() throws Exception {
         testJavaMC("QueensWithEvents_4");
+    }
+
+    @Test
+    public void testQueensWithEvents_4_With_Execute() throws Exception {
+        testJavaMC("QueensWithEvents_4", "QueensWithEvents_4", true, 1, false);
     }
 
     @Test
@@ -403,6 +413,11 @@ public class TestMachines extends TestJava {
     @Test
     public void testNota2() throws Exception {
         testJavaMC("nota_v2");
+    }
+
+    @Test
+    public void testNota2_With_Execute() throws Exception {
+        testJavaMC("nota_v2", "nota_v2", true, 1, false);
     }
 
     @Test

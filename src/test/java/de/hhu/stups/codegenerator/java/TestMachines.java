@@ -411,6 +411,31 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testArithmeticExpLaws_With_Execute() throws Exception {
+        testJavaMC("ArithmeticExpLaws", "ArithmeticExpLaws", true, 1, false);
+    }
+
+    @Test
+    public void testBoolLaws_With_Execute() throws Exception {
+        testJavaMC("BoolLaws", "BoolLaws", true, 1, false);
+    }
+
+    @Test
+    public void testBoolWithArithLaws_With_Execute() throws Exception {
+        testJavaMC("BoolWithArithLaws", "BoolWithArithLaws", true, 1, false);
+    }
+
+    @Test
+    public void testBoolLaws_SetCompr_With_Execute() throws Exception {
+        testJavaMC("BoolLaws_SetCompr", "BoolLaws_SetCompr", true, 1, false);
+    }
+
+    @Test
+    public void testCardinalityLaws() throws Exception {
+        testJavaMC("CardinalityLaws", "CardinalityLaws", true, 1, false);
+    }
+
+    @Test
     public void testNota() throws Exception {
         testJavaMC("nota");
     }

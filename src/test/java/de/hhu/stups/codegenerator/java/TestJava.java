@@ -231,7 +231,7 @@ public class TestJava {
 
 		String result = streamToString(executeProcess.getInputStream());
 		result = result.substring(result.indexOf("\n") + 1).replaceAll("\n", "");
-		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", ".out"))).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".java", "_MC.out"))).replaceAll("\n", "");
 
 		System.out.println("Assert starts with: " + result + " = " + expectedOutput);
 

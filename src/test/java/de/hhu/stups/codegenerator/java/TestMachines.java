@@ -247,8 +247,18 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void Train1LukasPORv3_With_Execute() throws Exception {
+        testJavaMC("Train1_Lukas_POR_v3", "Train1_Lukas_POR_v3", true, 1, false);
+    }
+
+    @Test
     public void Train1LukasPORv4() throws Exception {
         testJavaMC("Train1_Lukas_POR_v4");
+    }
+
+    @Test
+    public void Train1LukasPORv4_With_Execute() throws Exception {
+        testJavaMC("Train1_Lukas_POR_v4", "Train1_Lukas_POR_v4", true, 1, false);
     }
 
     @Test
@@ -282,8 +292,18 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void ThreeCounter_With_Execute() throws Exception {
+        testJavaMC("ThreeCounter", "ThreeCounter", true, 1, false);
+    }
+
+    @Test
     public void ThreeCounter2() throws Exception {
         testJavaMC("ThreeCounter2");
+    }
+
+    @Test
+    public void ThreeCounter2_With_Execute() throws Exception {
+        testJavaMC("ThreeCounter2", "ThreeCounter2", true, 1, false);
     }
 
     @Ignore

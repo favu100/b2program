@@ -501,6 +501,16 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testNatRangeLaws() throws Exception {
+        testJavaMC("NatRangeLaws", "NatRangeLaws", true, 1, false);
+    }
+
+    @Test
+    public void testRelLaws() throws Exception {
+        testJavaMC("RelLaws", "RelLaws", true, 1, false);
+    }
+
+    @Test
     public void testTautologiesPL() throws Exception {
         testJavaMC("TautologiesPL", "TautologiesPL", true, 1, false);
     }

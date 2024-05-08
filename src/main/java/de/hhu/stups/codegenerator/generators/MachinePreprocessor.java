@@ -394,6 +394,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 }
                 case FIN1:
                 case POW1: {
+                    // Do not iterate over empty sets; rather keep original code
+                    if(lhs instanceof ExpressionOperatorNode) {
+                        if(((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
+                            if(((ExpressionOperatorNode) lhs).getExpressionNodes().size() == 0) {
+                                return node;
+                            }
+                        }
+                    }
                     List<PredicateNode> predicates = new ArrayList<>();
                     ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_EQUAL, Arrays.asList(lhs, emptySetNode)));
@@ -636,6 +644,15 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
 
+        // Do not iterate over empty sets; rather keep original code
+        if(lhs instanceof ExpressionOperatorNode) {
+            if(((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
+                if(((ExpressionOperatorNode) lhs).getExpressionNodes().size() == 0) {
+                    return node;
+                }
+            }
+        }
+
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
@@ -657,6 +674,15 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         SourceCodePosition sourceCodePosition = node.getSourceCodePosition();
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
+
+        // Do not iterate over empty sets; rather keep original code
+        if(lhs instanceof ExpressionOperatorNode) {
+            if(((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
+                if(((ExpressionOperatorNode) lhs).getExpressionNodes().size() == 0) {
+                    return node;
+                }
+            }
+        }
 
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
@@ -766,6 +792,13 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 }
                 case FIN1:
                 case POW1: {
+                    if(lhs instanceof ExpressionOperatorNode) {
+                        if(((ExpressionOperatorNode) lhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION) {
+                            if(((ExpressionOperatorNode) lhs).getExpressionNodes().size() == 0) {
+                                return node;
+                            }
+                        }
+                    }
                     List<PredicateNode> predicates = new ArrayList<>();
                     ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(lhs, emptySetNode)));

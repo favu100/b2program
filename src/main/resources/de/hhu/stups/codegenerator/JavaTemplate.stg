@@ -1115,7 +1115,7 @@ while((<predicate>).booleanValue()) {
     if(!<invariant>.booleanValue()) {
         throw new LoopInvariantViolation("Invariant of WHILE loop is violated");
     }
-    if(_loop_variant.greaterEqual(<variant>).booleanValue()) {
+    if(<variant>.greater(_loop_variant).booleanValue()) {
         throw new VariantViolation("Variant of WHILE loop is violated");
     }
     _loop_variant = <variant>;

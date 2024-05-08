@@ -402,6 +402,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                             }
                         }
                     }
+                    BType lhsType = lhs.getType();
                     List<PredicateNode> predicates = new ArrayList<>();
                     ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_EQUAL, Arrays.asList(lhs, emptySetNode)));
@@ -410,6 +411,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);
+                    emptySetNode.setType(lhsType);
                     return predicateNode;
                 }
                 case ID: {
@@ -799,6 +801,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                             }
                         }
                     }
+                    BType lhsType = lhs.getType();
                     List<PredicateNode> predicates = new ArrayList<>();
                     ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(lhs, emptySetNode)));
@@ -807,6 +810,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);
+                    emptySetNode.setType(lhsType);
                     return predicateNode;
                 }
                 case ID: {

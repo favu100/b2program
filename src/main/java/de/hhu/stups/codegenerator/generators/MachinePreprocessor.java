@@ -74,8 +74,11 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     private MachineNode machineNode;
 
+    private int optimizationVariableCounter;
+
     public MachinePreprocessor() {
         this.inEnumeration = false;
+        optimizationVariableCounter = 0;
     }
 
     public MachineNode visitMachineNode(MachineNode machineNode) {
@@ -393,7 +396,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 case POW1: {
                     List<PredicateNode> predicates = new ArrayList<>();
                     ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
-                    typeChecker.checkExprNode(lhs);
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_EQUAL, Arrays.asList(lhs, emptySetNode)));
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
@@ -634,9 +636,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
 
-        DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt", DeclarationNode.Kind.VARIABLE, machineNode);
+        optimizationVariableCounter++;
+        DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
-        IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
+        IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, false);
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
@@ -655,9 +658,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         ExprNode lhs = node.getExpressionNodes().get(0);
         ExprNode rhs = node.getExpressionNodes().get(1);
 
-        DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt", DeclarationNode.Kind.VARIABLE, machineNode);
+        optimizationVariableCounter++;
+        DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
-        IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt", false);
+        IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, false);
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
@@ -764,7 +768,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 case POW1: {
                     List<PredicateNode> predicates = new ArrayList<>();
                     ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
-                    typeChecker.checkExprNode(lhs);
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(lhs, emptySetNode)));
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);

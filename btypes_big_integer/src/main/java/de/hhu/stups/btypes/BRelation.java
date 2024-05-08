@@ -1226,6 +1226,17 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return new BBoolean(true);
 	}
 
+	public BBoolean checkRangeBoolean() {
+		for(T e : this.range()) {
+			if(e instanceof BBoolean) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
 	public BBoolean checkRangeNatural() {
 		for(T e : this.range()) {
 			if(e instanceof BInteger && !((BInteger) e).isNatural().booleanValue()) {

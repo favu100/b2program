@@ -406,6 +406,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testArithmeticLaws_With_Execute() throws Exception {
+        testJavaMC("ArithmeticLaws", "ArithmeticLaws", true, 1, false);
+    }
+
+    @Test
     public void testNota() throws Exception {
         testJavaMC("nota");
     }

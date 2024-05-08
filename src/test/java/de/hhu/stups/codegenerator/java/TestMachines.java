@@ -436,6 +436,81 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testEqualityLaws() throws Exception {
+        testJavaMC("EqualityLaws", "EqualityLaws", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitChecks() throws Exception {
+        testJavaMC("ExplicitChecks", "ExplicitChecks", true, 1, false);
+    }
+
+    @Test
+    public void testFin1Test() throws Exception {
+        testJavaMC("Fin1Test", "Fin1Test", true, 1, false);
+    }
+
+    @Test
+    public void testLargeFunction() throws Exception {
+        testJavaMC("LargeFunction", "LargeFunction", true, 1, false);
+    }
+
+    @Test
+    public void testSetLaws() throws Exception {
+        testJavaMC("SetLaws", "SetLaws", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsNat() throws Exception {
+        testJavaMC("SetLawsNat", "SetLawsNat", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPow() throws Exception {
+        testJavaMC("SetLawsPow", "SetLawsPow", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPow2() throws Exception {
+        testJavaMC("SetLawsPow2", "SetLawsPow2", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPowPow() throws Exception {
+        testJavaMC("SetLawsPowPow", "SetLawsPowPow", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPowPowCart() throws Exception {
+        testJavaMC("SetLawsPowPowCart", "SetLawsPowPowCart", true, 1, false);
+    }
+
+    @Test
+    public void testStringLaws() throws Exception {
+        testJavaMC("StringLaws", "StringLaws", true, 1, false);
+    }
+
+    @Test
+    public void testSubsetLaws() throws Exception {
+        testJavaMC("SubsetLaws", "SubsetLaws", true, 1, false);
+    }
+
+    @Test
+    public void testSubstitutionLaws() throws Exception {
+        testJavaMC("SubstitutionLaws", "SubstitutionLaws", true, 1, false);
+    }
+
+    @Test
+    public void testTautologiesPL() throws Exception {
+        testJavaMC("TautologiesPL", "TautologiesPL", true, 1, false);
+    }
+
+    @Test
+    public void testTicTac() throws Exception {
+        testJavaMC("tictac", "tictac", true, 1, false);
+    }
+
+    @Test
     public void testNota() throws Exception {
         testJavaMC("nota");
     }

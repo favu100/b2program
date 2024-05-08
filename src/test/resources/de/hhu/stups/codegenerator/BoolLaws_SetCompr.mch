@@ -47,4 +47,8 @@ INVARIANT
    {p,q| p : BOOL & q : BOOL & (((p=TRUE) => (q=TRUE)) => ( ((q=TRUE)=>(p=TRUE)) => ((q=TRUE)<=>(p=TRUE)) ) )} = BOOL*BOOL &
 
  TT/=FF
+INITIALISATION
+    BEGIN skip END
+OPERATIONS
+    IDLE = BEGIN skip END
 END

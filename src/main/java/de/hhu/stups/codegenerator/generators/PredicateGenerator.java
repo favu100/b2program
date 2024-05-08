@@ -52,7 +52,7 @@ public class PredicateGenerator {
 
     private final IterationConstructHandler iterationConstructHandler;
 
-    private final SetWithPredicateGenerator infiniteSetGenerator;
+    private final SetWithPredicateGenerator setWithPredicateGenerator;
 
     private final RelationSetGenerator relationSetGenerator;
 
@@ -60,16 +60,16 @@ public class PredicateGenerator {
 
     public PredicateGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
                               final ImportGenerator importGenerator, final IterationConstructHandler iterationConstructHandler,
-                              final SetWithPredicateGenerator infiniteSetGenerator) {
+                              final SetWithPredicateGenerator setWithPredicateGenerator) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.importGenerator = importGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationConstructHandler.setPredicateGenerator(this);
-        this.infiniteSetGenerator = infiniteSetGenerator;
-        this.infiniteSetGenerator.setPredicateGenerator(this);
-        this.relationSetGenerator = new RelationSetGenerator(currentGroup, machineGenerator, nameHandler, infiniteSetGenerator);
+        this.setWithPredicateGenerator = setWithPredicateGenerator;
+        this.setWithPredicateGenerator.setPredicateGenerator(this);
+        this.relationSetGenerator = new RelationSetGenerator(currentGroup, machineGenerator, nameHandler, setWithPredicateGenerator);
     }
 
     /*
@@ -88,8 +88,8 @@ public class PredicateGenerator {
     */
     public String visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node) {
         importGenerator.addImport(node.getType());
-        if(infiniteSetGenerator.checkSetWithPredicate(node)) {
-            return infiniteSetGenerator.generateInfinite(node);
+        if(setWithPredicateGenerator.checkInfiniteSetWithPredicate(node)) {
+            return setWithPredicateGenerator.generateInfinite(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
             return generateRelationOnRhs(node);

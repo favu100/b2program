@@ -122,7 +122,6 @@ public class SetWithPredicateGenerator {
             return true;
         } else if(expr instanceof SetComprehensionNode) {
             return checkInfiniteSetWithPredicate(((SetComprehensionNode) expr).getPredicateNode());
-
         }
         return false;
     }

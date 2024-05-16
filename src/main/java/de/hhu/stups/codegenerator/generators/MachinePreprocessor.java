@@ -402,16 +402,16 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                             }
                         }
                     }
-                    BType lhsType = lhs.getType();
                     List<PredicateNode> predicates = new ArrayList<>();
-                    ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_EQUAL, Arrays.asList(lhs, emptySetNode)));
+                    // We can assume in the code generator that the cardinality is WD as we do not support code generation for infinite sets explicitly
+                    ExpressionOperatorNode cardSetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD);
+                    NumberNode zeroNode = new NumberNode(node.getSourceCodePosition(), new BigInteger("0"));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER, Arrays.asList(cardSetNode, zeroNode)));
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);
-                    emptySetNode.setType(lhsType);
                     return predicateNode;
                 }
                 case ID: {
@@ -657,8 +657,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
+        typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
         IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, false);
+        newIdentifierNode.setType(((SetType) lhs.getType()).getSubType());
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
@@ -667,7 +669,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION);
         result.setType(new UntypedType());
-        typeChecker.setDeclarationTypes(result.getDeclarationList());
         typeChecker.checkPredicateNode(result);
         return result;
     }
@@ -688,8 +689,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
+        typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
         IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, false);
+        newIdentifierNode.setType(((SetType) lhs.getType()).getSubType());
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
@@ -698,7 +701,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION);
         result.setType(new UntypedType());
-        typeChecker.setDeclarationTypes(result.getDeclarationList());
         typeChecker.checkPredicateNode(result);
         return result;
     }
@@ -801,16 +803,16 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                             }
                         }
                     }
-                    BType lhsType = lhs.getType();
                     List<PredicateNode> predicates = new ArrayList<>();
-                    ExpressionOperatorNode emptySetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
-                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(lhs, emptySetNode)));
+                    // We can assume in the code generator that the cardinality is WD as we do not support code generation for infinite sets explicitly
+                    ExpressionOperatorNode cardSetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD);
+                    NumberNode zeroNode = new NumberNode(node.getSourceCodePosition(), new BigInteger("0"));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(cardSetNode, zeroNode)));
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION, Arrays.asList(lhs, rhsAsExpression.getExpressionNodes().get(0))));
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);
-                    emptySetNode.setType(lhsType);
                     return predicateNode;
                 }
                 case ID: {

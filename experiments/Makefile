@@ -15,7 +15,7 @@ BFILE=$(FILE).mch
 JAVAFILE=$(FILE).java
 
 probmc: $(BFILE)
-	time probcli $(BFILE) --model-check -disable-timeout
+	time probcli $(BFILE) --model-check -disable-timeout -p MAX_OPERATIONS 100 -p MAX_INITIALISATIONS 100
 opreuse: $(BFILE)
 	time probcli $(BFILE) --model-check -disable-timeout -df -p COMPRESSION TRUE -p OPERATION_REUSE full -p SAFETY_MODEL_CHECK TRUE -nodead -nogoal
 tlc: $(BFILE)
@@ -24,11 +24,11 @@ tlc: $(BFILE)
 BIGINT=false
 # for big integer:
 ifeq ($(BIGINT),true)
-btypes.jar:
+btypes.jar: Makefile
 	cd ../btypes_big_integer && ./gradlew fatJar && cp build/libs/btypes_big_integer-all.jar ../experiments/btypes.jar && cd ../experiments
 else
 # for primitive integer (BIGINT=false):
-btypes.jar:
+btypes.jar: Makefile
 	cd ../btypes_primitives && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../experiments/btypes.jar && cd ../experiments
 endif
 
@@ -41,7 +41,7 @@ $(JAR): ../build/libs/$(JAR)
 	cp ../build/libs/$(JAR) .
 
 $(JAVAFILE): $(JAR) $(BFILE) Makefile
-	@echo "Generating Java Model Checker file $(JAVAFILE) from B file $(BFILE)"
+	@echo "Generating Java Model Checker file $(JAVAFILE) from B file $(BFILE), BIGINT=$(BIGINT)"
 	#java -jar $(JAR) java $(BIGINT) -2147483648 2147483647 10 false true $(BFILE)
 	java -jar $(JAR) -l java -bi $(BIGINT) -min -2147483648 --max 2147483647 -dss 10 -cs false -mc true -f $(BFILE)
 

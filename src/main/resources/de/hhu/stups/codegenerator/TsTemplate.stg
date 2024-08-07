@@ -1103,24 +1103,22 @@ addCachedInfos(operation: string, state: <machine>, copiedState: <machine>): voi
 }
 >>
 
+opreuse_declaration(type, variable) ::= <<
+>>
+
+opreuse_parameter(type, variable) ::= <<
+>>
+
+opreuse_class(isRead, name, declarations, parameters, variabels, initializations, equalPredicates, unequalPredicates) ::= <<
+>>
+
 opreuse_read_projection(operation, projectState) ::= <<
-private Map\<String, Object> projected_state_for_<operation>() {
-    Map\<String, Object> projectedState = new HashMap\<>();
-    <projectState; separator="\n">
-    return projectedState;
-}
 >>
 
 opreuse_write_projection(operation, projectState) ::= <<
-private Map\<String, Object> update_for_<operation>() {
-    Map\<String, Object> projectedState = new HashMap\<>();
-    <projectState; separator="\n">
-    return projectedState;
-}
 >>
 
 opreuse_evaluate_getter(variable) ::= <<
-projectedState.put("<variable>", <variable>);
 >>
 
 

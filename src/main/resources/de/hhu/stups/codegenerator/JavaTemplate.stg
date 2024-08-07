@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, projection, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
+machine(forModelChecking, imports, machine, projectionClasses, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, projection, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -58,6 +58,8 @@ public class <machine> {
     public PersistentHashMap guardCache = PersistentHashMap.EMPTY;
     public Set\<String> dependentInvariant = new HashSet\<>();
     public String stateAccessedVia;
+
+    <projectionClasses; separator="\n">
 
     <if(false)>
 
@@ -1338,24 +1340,84 @@ private void addCachedInfos(final String operation, final <machine> state, final
 }
 >>
 
+opreuse_declaration(type, variable) ::= <<
+public <type> <variable>;
+>>
+
+opreuse_parameter(type, variable) ::= <<
+<type> <variable>
+>>
+
+opreuse_class(isRead, name, declarations, parameters, variables) ::= <<
+<if(isRead)>
+public static class _ProjectionRead_<name> {
+
+    <declarations; separator="\n">
+
+    public _ProjectionRead_<name>(<parameters; separator=", ">) {
+        <variables:{variable | this.<variable> = <variable>;}; separator="\n">
+    }
+
+    public String toString() {
+        return "{" + <variables:{variable | "<variable>: " + this.<variable>}; separator=" + \",\" + "> + "}";
+    }
+
+    public boolean equals(Object other) {
+        if(!(other instanceof _ProjectionRead_<name>)) {
+            return false;
+        }
+        _ProjectionRead_<name> o = (_ProjectionRead_<name>) other;
+        return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
+    }
+
+    public int hashCode() {
+        return Objects.hash(<variables; separator=", ">);
+    }
+}
+<else>
+public static class _ProjectionWrite_<name> {
+
+    <declarations; separator="\n">
+
+    public _ProjectionWrite_<name>(<parameters; separator=", ">) {
+        <variables:{variable | this.<variable> = <variable>;}; separator="\n">
+    }
+
+    public String toString() {
+        return "{" + <variables:{variable | "<variable>: " + this.<variable>}; separator=" + \",\" + "> + "}";
+    }
+
+    public boolean equals(Object other) {
+        if(!(other instanceof _ProjectionWrite_<name>)) {
+            return false;
+        }
+        _ProjectionWrite_<name> o = (_ProjectionWrite_<name>) other;
+        return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
+    }
+
+    public int hashCode() {
+        return Objects.hash(<variables; separator=", ">);
+    }
+}
+<endif>
+>>
+
 opreuse_read_projection(operation, projectState) ::= <<
-private Map\<String, Object> projected_state_for_<operation>() {
-    Map\<String, Object> projectedState = new HashMap\<>();
-    <projectState; separator="\n">
-    return projectedState;
+public _ProjectionRead_<operation> projected_state_for_<operation>() {
+    return new _ProjectionRead_<operation>(<projectState; separator=",">);
 }
 >>
 
 opreuse_write_projection(operation, projectState) ::= <<
-private Map\<String, Object> update_for_<operation>() {
-    Map\<String, Object> projectedState = new HashMap\<>();
-    <projectState; separator="\n">
-    return projectedState;
+public _ProjectionWrite_<operation> update_for_<operation>() {
+    return new _ProjectionWrite_<operation>(<projectState; separator=",">);
 }
 >>
 
-opreuse_evaluate_getter(variable) ::= <<
-projectedState.put("<variable>", <variable>);
+opreuse_apply_update(operation, projectState) ::= <<
+public void apply_update_for_<operation>(_ProjectionWrite_<operation> update) {
+    <projectState:{variable | this.<variable> = update.<variable>;}; separator="\n">
+}
 >>
 
 

@@ -10,6 +10,8 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.RecordType;
+import de.prob.parser.ast.visitors.TypeChecker;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -125,10 +127,65 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
+    private String generateDeclarationForOpReuse(DeclarationNode declarationNode, String variable) {
+        String type = typeGenerator.generate(declarationNode.getType());
+        ST declaration = currentGroup.getInstanceOf("opreuse_declaration");
+        TemplateHandler.add(declaration, "type", type);
+        TemplateHandler.add(declaration, "variable", variable);
+        return declaration.render();
+    }
+
+    private String generateParameterForOpReuse(DeclarationNode declarationNode, String variable) {
+        String type = typeGenerator.generate(declarationNode.getType());
+        ST parameter = currentGroup.getInstanceOf("opreuse_parameter");
+        TemplateHandler.add(parameter, "type", type);
+        TemplateHandler.add(parameter, "variable", variable);
+        return parameter.render();
+    }
+
+    public String generateClassesForOpReuse(MachineNode machineNode, boolean isRead, String operation) {
+        ST classes = currentGroup.getInstanceOf("opreuse_class");
+
+        List<String> variables = isRead ? modelCheckingInfo.getOperationsRead().get(operation) : modelCheckingInfo.getOperationsWrite().get(operation);
+
+        TemplateHandler.add(classes, "isRead", isRead);
+        TemplateHandler.add(classes, "name", operation);
+
+        List<String> declarations = new ArrayList<>();
+        List<String> parameters = new ArrayList<>();
+        List<String> initializations = new ArrayList<>();
+
+        List<DeclarationNode> constantNodes = machineNode.getConstants();
+        List<DeclarationNode> variableNodes = machineNode.getVariables();
+
+        for(String var : variables) {
+            for(DeclarationNode constantNode : constantNodes) {
+                if(constantNode.getName().equals(var)) {
+                    declarations.add(generateDeclarationForOpReuse(constantNode, var));
+                    parameters.add(generateParameterForOpReuse(constantNode, var));
+                }
+            }
+            for(DeclarationNode variableNode : variableNodes) {
+                if(variableNode.getName().equals(var)) {
+                    declarations.add(generateDeclarationForOpReuse(variableNode, var));
+                    parameters.add(generateParameterForOpReuse(variableNode, var));
+                }
+            }
+        }
+
+
+        TemplateHandler.add(classes, "declarations", declarations);
+        TemplateHandler.add(classes, "parameters", parameters);
+        TemplateHandler.add(classes, "initializations", initializations);
+        TemplateHandler.add(classes, "variables", variables);
+        return classes.render();
+    }
+
     public List<String> generateProjection() {
         List<String> result = new ArrayList<>();
         result.addAll(generateReadProjection(modelCheckingInfo.getOperationsRead()));
         result.addAll(generateWriteProjection(modelCheckingInfo.getOperationsWrite()));
+        result.addAll(generateApplyWriteProjection(modelCheckingInfo.getOperationsWrite()));
         return result;
     }
 
@@ -143,12 +200,7 @@ public class ModelCheckingGenerator {
     private String generateReadProjectionForOperation(String operation, List<String> reads) {
         ST template = currentGroup.getInstanceOf("opreuse_read_projection");
         TemplateHandler.add(template, "operation", operation);
-        List<String> projectResult = new ArrayList<>();
-        for(String read : reads) {
-            projectResult.add(generateEvaluateGetterForOpReuse(read));
-        }
-        TemplateHandler.add(template, "projectState", projectResult);
-
+        TemplateHandler.add(template, "projectState", reads);
         return template.render();
     }
 
@@ -160,23 +212,29 @@ public class ModelCheckingGenerator {
         return result;
     }
 
+    private List<String> generateApplyWriteProjection(Map<String, List<String>> operationWrites) {
+        List<String> result = new ArrayList<>();
+        for(String operation : operationWrites.keySet()) {
+            result.add(generateApplyWriteProjectionForOperation(operation, operationWrites.get(operation)));
+        }
+        return result;
+    }
+
     private String generateWriteProjectionForOperation(String operation, List<String> writes) {
         ST template = currentGroup.getInstanceOf("opreuse_write_projection");
         TemplateHandler.add(template, "operation", operation);
-        List<String> projectResult = new ArrayList<>();
-        for(String write : writes) {
-            projectResult.add(generateEvaluateGetterForOpReuse(write));
-        }
-        TemplateHandler.add(template, "projectState", projectResult);
-
+        TemplateHandler.add(template, "projectState", writes);
         return template.render();
     }
 
-    private String generateEvaluateGetterForOpReuse(String variable) {
-        ST template = currentGroup.getInstanceOf("opreuse_evaluate_getter");
-        TemplateHandler.add(template, "variable", variable);
+
+    private String generateApplyWriteProjectionForOperation(String operation, List<String> writes) {
+        ST template = currentGroup.getInstanceOf("opreuse_apply_update");
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "projectState", writes);
         return template.render();
     }
+
 
     private String generateAddCachedInfos(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_add_cached_infos");
@@ -466,7 +524,6 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "variables", variablesForToString);
         return template.render();
     }
-
 
 
     public void setModelCheckingInfo(ModelCheckingInfo modelCheckingInfo) {

@@ -316,6 +316,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		Set<String> identifier = new HashSet<>();
 		TemplateHandler.add(machine, "constants_declarations", declarationGenerator.generateConstantsDeclarations(node));
 		TemplateHandler.add(machine, "enums", declarationGenerator.generateEnumDeclarations(node, identifier));
+		TemplateHandler.add(machine, "projectionClasses", generateProjectionClasses());
 		enumIdentifier.addAll(identifier);
 		TemplateHandler.add(machine, "enum_imports", importGenerator.getImportedEnums());
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));
@@ -355,6 +356,15 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "choicePointOperationTriggeredResets", backtrackingGenerator.getChoicePointOperationTriggeredResets());
 		TemplateHandler.add(machine, "lambdaFunctions", lambdaFunctionGenerator.generateFunctions(node));
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
+	}
+
+	private List<String> generateProjectionClasses() {
+		List<String> projectionClasses = new ArrayList<>();
+		for(OperationNode operation : machineNode.getOperations()) {
+			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, true, operation.getName()));
+			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, false, operation.getName()));
+		}
+		return projectionClasses;
 	}
 
 	public List<String> generateTransitions(List<OperationNode> operations) {

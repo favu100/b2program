@@ -1152,7 +1152,7 @@ opreuse_read_projection(operation, projectState) ::= <<
 opreuse_write_projection(operation, projectState) ::= <<
 >>
 
-opreuse_evaluate_getter(variable) ::= <<
+opreuse_apply_update(operation, projectState) ::= <<
 >>
 
 

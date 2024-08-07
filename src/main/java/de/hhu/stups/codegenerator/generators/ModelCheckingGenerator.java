@@ -125,6 +125,59 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
+    public List<String> generateProjection() {
+        List<String> result = new ArrayList<>();
+        result.addAll(generateReadProjection(modelCheckingInfo.getOperationsRead()));
+        result.addAll(generateWriteProjection(modelCheckingInfo.getOperationsWrite()));
+        return result;
+    }
+
+    private List<String> generateReadProjection(Map<String, List<String>> operationReads) {
+        List<String> result = new ArrayList<>();
+        for(String operation : operationReads.keySet()) {
+            result.add(generateReadProjectionForOperation(operation, operationReads.get(operation)));
+        }
+        return result;
+    }
+
+    private String generateReadProjectionForOperation(String operation, List<String> reads) {
+        ST template = currentGroup.getInstanceOf("opreuse_read_projection");
+        TemplateHandler.add(template, "operation", operation);
+        List<String> projectResult = new ArrayList<>();
+        for(String read : reads) {
+            projectResult.add(generateEvaluateGetterForOpReuse(read));
+        }
+        TemplateHandler.add(template, "projectState", projectResult);
+
+        return template.render();
+    }
+
+    private List<String> generateWriteProjection(Map<String, List<String>> operationWrites) {
+        List<String> result = new ArrayList<>();
+        for(String operation : operationWrites.keySet()) {
+            result.add(generateWriteProjectionForOperation(operation, operationWrites.get(operation)));
+        }
+        return result;
+    }
+
+    private String generateWriteProjectionForOperation(String operation, List<String> writes) {
+        ST template = currentGroup.getInstanceOf("opreuse_write_projection");
+        TemplateHandler.add(template, "operation", operation);
+        List<String> projectResult = new ArrayList<>();
+        for(String write : writes) {
+            projectResult.add(generateEvaluateGetterForOpReuse(write));
+        }
+        TemplateHandler.add(template, "projectState", projectResult);
+
+        return template.render();
+    }
+
+    private String generateEvaluateGetterForOpReuse(String variable) {
+        ST template = currentGroup.getInstanceOf("opreuse_evaluate_getter");
+        TemplateHandler.add(template, "variable", variable);
+        return template.render();
+    }
+
     private String generateAddCachedInfos(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_add_cached_infos");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));

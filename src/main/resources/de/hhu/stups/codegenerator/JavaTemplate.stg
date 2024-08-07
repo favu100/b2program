@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
+machine(forModelChecking, imports, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, projection, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -100,6 +100,8 @@ public class <machine> {
     <if(forModelChecking)>
 
     <transitions; separator="\n\n">
+
+    <projection; separator="\n\n">
 
     <invariant; separator="\n\n">
 
@@ -1335,6 +1337,27 @@ private void addCachedInfos(final String operation, final <machine> state, final
     copiedState.stateAccessedVia = operation;
 }
 >>
+
+opreuse_read_projection(operation, projectState) ::= <<
+private Map\<String, Object> projected_state_for_<operation>() {
+    Map\<String, Object> projectedState = new HashMap\<>();
+    <projectState; separator="\n">
+    return projectedState;
+}
+>>
+
+opreuse_write_projection(operation, projectState) ::= <<
+private Map\<String, Object> update_for_<operation>() {
+    Map\<String, Object> projectedState = new HashMap\<>();
+    <projectState; separator="\n">
+    return projectedState;
+}
+>>
+
+opreuse_evaluate_getter(variable) ::= <<
+projectedState.put("<variable>", <variable>);
+>>
+
 
 model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters, checkReachability) ::= <<
 <if(hasParameters)>

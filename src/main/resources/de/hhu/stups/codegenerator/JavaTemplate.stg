@@ -1364,7 +1364,11 @@ public static class _ProjectionRead_<name> {
     }
 
     public String toString() {
+        <if(variables)>
         return "{" + <variables:{variable | "<variable>: " + this.<variable>}; separator=" + \",\" + "> + "}";
+        <else>
+        return "{}";
+        <endif>
     }
 
     public boolean equals(Object other) {
@@ -1372,7 +1376,11 @@ public static class _ProjectionRead_<name> {
             return false;
         }
         _ProjectionRead_<name> o = (_ProjectionRead_<name>) other;
+        <if(variables)>
         return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
+        <else>
+        return true;
+        <endif>
     }
 
     public int hashCode() {
@@ -1389,7 +1397,11 @@ public static class _ProjectionWrite_<name> {
     }
 
     public String toString() {
+        <if(variables)>
         return "{" + <variables:{variable | "<variable>: " + this.<variable>}; separator=" + \",\" + "> + "}";
+        <else>
+        return "{}";
+        <endif>
     }
 
     public boolean equals(Object other) {
@@ -1397,7 +1409,11 @@ public static class _ProjectionWrite_<name> {
             return false;
         }
         _ProjectionWrite_<name> o = (_ProjectionWrite_<name>) other;
+        <if(variables)>
         return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
+        <else>
+        return true;
+        <endif>
     }
 
     public int hashCode() {
@@ -1459,7 +1475,7 @@ while(!currentState._get_calculate_flag_cp()) {
 <if(checkReachability)>
 try {
     <if(isCaching)>
-    _ProjectionRead_<operation> readState = copiedState._projected_state_for_<operation>();
+    _ProjectionRead_<operation> readState = state._projected_state_for_<operation>();
     PersistentHashMap _OpCache_with_parameter_<operation> = (PersistentHashMap) GET.invoke(_OpCache_<operation>, <transitionEval>);
     if(_OpCache_with_parameter_<operation> != null) {
         _ProjectionWrite_<operation> writeState = (_ProjectionWrite_<operation>) GET.invoke(OpCache_with_parameter_<operation>, readState);
@@ -1471,6 +1487,7 @@ try {
             copiedState.<operation>(<parameters; separator=", ">);
             copiedState.parent = state;
             addCachedInfos("<operation>", state, copiedState);
+            writeState = copiedState._update_for_<operation>();
             _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
             _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
         }
@@ -1493,7 +1510,7 @@ try {
 }
 <else>
 <if(isCaching)>
-_ProjectionRead_<operation> readState = copiedState._projected_state_for_<operation>();
+_ProjectionRead_<operation> readState = state._projected_state_for_<operation>();
 PersistentHashMap _OpCache_with_parameter_<operation> = (PersistentHashMap) GET.invoke(_OpCache_<operation>, <transitionEval>);
 if(_OpCache_with_parameter_<operation> != null) {
     _ProjectionWrite_<operation> writeState = (_ProjectionWrite_<operation>) GET.invoke(_OpCache_with_parameter_<operation>, readState);
@@ -1505,6 +1522,7 @@ if(_OpCache_with_parameter_<operation> != null) {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
         addCachedInfos("<operation>", state, copiedState);
+        writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
     }

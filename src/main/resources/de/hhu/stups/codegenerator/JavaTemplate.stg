@@ -1616,7 +1616,20 @@ private boolean invariantViolated(final <machine> state) {
 >>
 
 model_check_invariant(invariant) ::= <<
-if(!state.<invariant>()) {
+boolean <invariant>;
+if(isCaching) {
+    _ProjectionRead_<invariant> read_<invariant>_state = state._projected_state_for_<invariant>();
+    Object _obj_<invariant> = GET.invoke(_InvCache_<invariant>, read_<invariant>_state);
+    if(_obj_<invariant> == null) {
+        <invariant> = state.<invariant>();
+        _InvCache_<invariant> = (PersistentHashMap) ASSOC.invoke(_InvCache_<invariant>, read_<invariant>_state, <invariant>);
+    } else {
+        <invariant> = (boolean) _obj_<invariant>;
+    }
+} else {
+    <invariant> = state.<invariant>();
+}
+if(!<invariant>) {
     System.out.println("INVARIANT CONJUNCT VIOLATED: <invariant>");
     return true;
 }

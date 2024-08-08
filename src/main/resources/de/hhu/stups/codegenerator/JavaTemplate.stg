@@ -1330,7 +1330,7 @@ opreuse_parameter(type, variable) ::= <<
 <type> <variable>
 >>
 
-opreuse_class(isRead, isGuard, name, declarations, parameters, variables) ::= <<
+opreuse_class(isRead, isGuard, isInvariant, name, declarations, parameters, variables) ::= <<
 <if(isRead)>
 <if(isGuard)>
 public static class _ProjectionRead__tr_<name> {
@@ -1354,6 +1354,40 @@ public static class _ProjectionRead__tr_<name> {
             return false;
         }
         _ProjectionRead__tr_<name> o = (_ProjectionRead__tr_<name>) other;
+        <if(variables)>
+        return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
+        <else>
+        return true;
+        <endif>
+    }
+
+    public int hashCode() {
+        return Objects.hash(<variables; separator=", ">);
+    }
+}
+<else>
+<if(isInvariant)>
+public static class _ProjectionRead_<name> {
+
+    <declarations; separator="\n">
+
+    public _ProjectionRead_<name>(<parameters; separator=", ">) {
+        <variables:{variable | this.<variable> = <variable>;}; separator="\n">
+    }
+
+    public String toString() {
+        <if(variables)>
+        return "{" + <variables:{variable | "<variable>: " + this.<variable>}; separator=" + \",\" + "> + "}";
+        <else>
+        return "{}";
+        <endif>
+    }
+
+    public boolean equals(Object other) {
+        if(!(other instanceof _ProjectionRead_<name>)) {
+            return false;
+        }
+        _ProjectionRead_<name> o = (_ProjectionRead_<name>) other;
         <if(variables)>
         return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
         <else>
@@ -1398,6 +1432,7 @@ public static class _ProjectionRead_<name> {
         return Objects.hash(<variables; separator=", ">);
     }
 }
+<endif>
 <endif>
 <else>
 public static class _ProjectionWrite_<name> {
@@ -1444,6 +1479,12 @@ public _ProjectionRead_<operation> _projected_state_for_<operation>() {
 opreuse_grd_read_projection(operation, projectState) ::= <<
 public _ProjectionRead_<operation> _projected_state_for_<operation>() {
     return new _ProjectionRead_<operation>(<projectState; separator=",">);
+}
+>>
+
+opreuse_inv_read_projection(invariant, projectState) ::= <<
+public _ProjectionRead_<invariant> _projected_state_for_<invariant>() {
+    return new _ProjectionRead_<invariant>(<projectState; separator=",">);
 }
 >>
 

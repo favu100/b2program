@@ -163,7 +163,7 @@ public class ModelCheckingGenerator {
         return parameter.render();
     }
 
-    public String generateClassesForOpReuse(MachineNode machineNode, boolean isRead, boolean isGuard, String operation) {
+    public String generateClassesForOpReuse(MachineNode machineNode, boolean isRead, boolean isGuard, boolean isInvariant, String operation) {
         ST classes = currentGroup.getInstanceOf("opreuse_class");
 
         List<String> variables = new ArrayList<>();
@@ -171,6 +171,8 @@ public class ModelCheckingGenerator {
         if(isRead) {
             if(isGuard) {
                 variables = modelCheckingInfo.getGuardsRead().get("_tr_" + operation);
+            } else if(isInvariant) {
+                variables = modelCheckingInfo.getInvariantsRead().get(operation);
             } else {
                 variables = modelCheckingInfo.getOperationsRead().get(operation);
             }
@@ -180,6 +182,7 @@ public class ModelCheckingGenerator {
 
         TemplateHandler.add(classes, "isRead", isRead);
         TemplateHandler.add(classes, "isGuard", isGuard);
+        TemplateHandler.add(classes, "isInvariant", isInvariant);
         TemplateHandler.add(classes, "name", operation);
 
         List<String> declarations = new ArrayList<>();
@@ -216,6 +219,7 @@ public class ModelCheckingGenerator {
         List<String> result = new ArrayList<>();
         result.addAll(generateReadProjection(modelCheckingInfo.getOperationsRead()));
         result.addAll(generateReadGrdProjection(modelCheckingInfo.getGuardsRead()));
+        result.addAll(generateReadInvProjection(modelCheckingInfo.getInvariantsRead()));
         result.addAll(generateWriteProjection(modelCheckingInfo.getOperationsWrite()));
         result.addAll(generateApplyWriteProjection(modelCheckingInfo.getOperationsWrite()));
         return result;
@@ -246,6 +250,21 @@ public class ModelCheckingGenerator {
 
     private String generateReadGrdProjectionForOperation(String operation, List<String> reads) {
         ST template = currentGroup.getInstanceOf("opreuse_grd_read_projection");
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "projectState", reads);
+        return template.render();
+    }
+
+    private List<String> generateReadInvProjection(Map<String, List<String>> operationInvReads) {
+        List<String> result = new ArrayList<>();
+        for(String invariant : operationInvReads.keySet()) {
+            result.add(generateReadGrdProjectionForOperation(invariant, operationInvReads.get(invariant)));
+        }
+        return result;
+    }
+
+    private String generateReadInvProjectionForOperation(String operation, List<String> reads) {
+        ST template = currentGroup.getInstanceOf("opreuse_inv_read_projection");
         TemplateHandler.add(template, "operation", operation);
         TemplateHandler.add(template, "projectState", reads);
         return template.render();
@@ -584,5 +603,9 @@ public class ModelCheckingGenerator {
         this.operationIDs = new HashMap<>();
         this.evalTransitionsIDs = new HashMap<>();
         initIDMaps();
+    }
+
+    public ModelCheckingInfo getModelCheckingInfo() {
+        return modelCheckingInfo;
     }
 }

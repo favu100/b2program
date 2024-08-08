@@ -1262,13 +1262,18 @@ private static class ModelChecker {
 
 >>
 
-model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
+opreuse_initialize_opcaches(operation) ::= <<
+PersistentHashMap _OpCache_<operation> = PersistentHashMap.EMPTY;
+>>
+
+model_check_next_states(machine, operationCaches, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 @SuppressWarnings("unchecked")
 private Set\<<machine>\> generateNextStates(final <machine> state) {
     Set\<<machine>\> result = new HashSet\<>();
     if(isCaching) {
         PersistentHashMap parentsGuard = state.guardCache;
         PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
+        <operationCaches; separator="\n">
         Object cachedValue = null;
         boolean dependentGuardsBoolean = true;
         <transitionsWithCaching>
@@ -1403,25 +1408,25 @@ public static class _ProjectionWrite_<name> {
 >>
 
 opreuse_read_projection(operation, projectState) ::= <<
-public _ProjectionRead_<operation> projected_state_for_<operation>() {
+public _ProjectionRead_<operation> _projected_state_for_<operation>() {
     return new _ProjectionRead_<operation>(<projectState; separator=",">);
 }
 >>
 
 opreuse_write_projection(operation, projectState) ::= <<
-public _ProjectionWrite_<operation> update_for_<operation>() {
+public _ProjectionWrite_<operation> _update_for_<operation>() {
     return new _ProjectionWrite_<operation>(<projectState; separator=",">);
 }
 >>
 
 opreuse_apply_update(operation, projectState) ::= <<
-public void apply_update_for_<operation>(_ProjectionWrite_<operation> update) {
+public void _apply_update_for_<operation>(_ProjectionWrite_<operation> update) {
     <projectState:{variable | this.<variable> = update.<variable>;}; separator="\n">
 }
 >>
 
 
-model_check_transition_body(machine, operation, hasParameters, isNondeterministic, readParameters, parameters, checkReachability) ::= <<
+model_check_transition_body(machine, operation, hasParameters, transitionEval, isCaching, isNondeterministic, readParameters, parameters, checkReachability) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
@@ -1432,9 +1437,13 @@ while(!currentState._get_calculate_flag_cp()) {
     <machine> copiedState = state._copy();
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
+    <if(isCaching)>
     copiedState.parent = state;
+    <endif>
     if(copiedState._get_<operation>_triggered()) {
+        <if(isCaching)>
         addCachedInfos("<operation>", state, copiedState);
+        <endif>
         if(!newStatesForNondeterministic.contains(copiedState)) {
             transitions.getAndIncrement();
         }
@@ -1449,18 +1458,68 @@ while(!currentState._get_calculate_flag_cp()) {
 <machine> copiedState = state._copy();
 <if(checkReachability)>
 try {
+    <if(isCaching)>
+    _ProjectionRead_<operation> readState = copiedState._projected_state_for_<operation>();
+    PersistentHashMap _OpCache_with_parameter_<operation> = (PersistentHashMap) GET.invoke(_OpCache_<operation>, <transitionEval>);
+    if(_OpCache_with_parameter_<operation> != null) {
+        _ProjectionWrite_<operation> writeState = (_ProjectionWrite_<operation>) GET.invoke(OpCache_with_parameter_<operation>, readState);
+        if(writeState != null) {
+            copiedState._apply_update_for_<operation>(writeState);
+            copiedState.parent = state;
+            addCachedInfos("<operation>", state, copiedState);
+        } else {
+            copiedState.<operation>(<parameters; separator=", ">);
+            copiedState.parent = state;
+            addCachedInfos("<operation>", state, copiedState);
+            _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
+            _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
+        }
+
+    } else {
+        copiedState.<operation>(<parameters; separator=", ">);
+        copiedState.parent = state;
+        addCachedInfos("<operation>", state, copiedState);
+        _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+        _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
+        _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
+    }
+    <else>
     copiedState.<operation>(<parameters; separator=", ">);
-    copiedState.parent = state;
-    addCachedInfos("<operation>", state, copiedState);
+    <endif>
     result.add(copiedState);
     transitions.getAndIncrement();
 } catch(StateNotReachableError e) {
     // Do not execute as a non-reachable state is not part of the state space
 }
 <else>
+<if(isCaching)>
+_ProjectionRead_<operation> readState = copiedState._projected_state_for_<operation>();
+PersistentHashMap _OpCache_with_parameter_<operation> = (PersistentHashMap) GET.invoke(_OpCache_<operation>, <transitionEval>);
+if(_OpCache_with_parameter_<operation> != null) {
+    _ProjectionWrite_<operation> writeState = (_ProjectionWrite_<operation>) GET.invoke(_OpCache_with_parameter_<operation>, readState);
+    if(writeState != null) {
+        copiedState._apply_update_for_<operation>(writeState);
+        copiedState.parent = state;
+        addCachedInfos("<operation>", state, copiedState);
+    } else {
+        copiedState.<operation>(<parameters; separator=", ">);
+        copiedState.parent = state;
+        addCachedInfos("<operation>", state, copiedState);
+        _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
+        _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
+    }
+
+} else {
+    copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
+    addCachedInfos("<operation>", state, copiedState);
+    _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+    _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
+    _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
+}
+<else>
 copiedState.<operation>(<parameters; separator=", ">);
-copiedState.parent = state;
-addCachedInfos("<operation>", state, copiedState);
+<endif>
 result.add(copiedState);
 transitions.getAndIncrement();
 <endif>

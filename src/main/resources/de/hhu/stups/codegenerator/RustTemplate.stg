@@ -1155,6 +1155,9 @@ opreuse_write_projection(operation, projectState) ::= <<
 opreuse_apply_update(operation, projectState) ::= <<
 >>
 
+opreuse_initialize_opcaches(operation) ::= <<
+>>
+
 
 model_check_add_cached_infos() ::= <<>>
 choice_point_declaration() ::= <<>>

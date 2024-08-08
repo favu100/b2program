@@ -1174,6 +1174,9 @@ opreuse_write_projection(operation, projectState) ::= <<
 opreuse_apply_update(operation, projectState) ::= <<
 >>
 
+opreuse_initialize_opcaches(operation) ::= <<
+>>
+
 
 model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
 <if(hasParameters)>

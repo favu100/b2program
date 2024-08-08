@@ -1255,8 +1255,6 @@ private static class ModelChecker {
 
     <invariantViolated>
 
-    <addCachedInfos>
-
     <printResult>
 }
 
@@ -1271,13 +1269,8 @@ model_check_next_states(machine, operationCaches, transitionsWithCaching, transi
 private Set\<<machine>\> generateNextStates(final <machine> state) {
     Set\<<machine>\> result = new HashSet\<>();
     if(isCaching) {
-        PersistentHashMap parentsGuard = state.guardCache;
-        PersistentHashMap newCache = parentsGuard == null ? PersistentHashMap.EMPTY : parentsGuard;
         <operationCaches; separator="\n">
-        Object cachedValue = null;
-        boolean dependentGuardsBoolean = true;
         <transitionsWithCaching>
-        state.guardCache = newCache;
     } else {
         <transitionsWithoutCaching>
     }
@@ -1289,17 +1282,7 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 <if(hasParameters)>
 <if(isCaching)>
 BSet\<<tupleType>\> <transitionIdentifier>;
-if(!state.dependentGuard.isEmpty()) {
-    cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
-    dependentGuardsBoolean = state.dependentGuard.contains("<evalTransitions>");
-}
-
-if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = (BSet\<<tupleType>\>) cachedValue;
-}
-newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
+<transitionIdentifier> = state.<evalTransitions>();
 for(<tupleType> param : <transitionIdentifier>) {
     <execTransitions>
 }
@@ -1312,18 +1295,7 @@ for(<tupleType> param : <transitionIdentifier>) {
 <else>
 <if(isCaching)>
 boolean <transitionIdentifier>;
-if(!state.dependentGuard.isEmpty()) {
-    cachedValue = GET.invoke(parentsGuard, "<evalTransitions>");
-    dependentGuardsBoolean = state.dependentGuard.contains("<evalTransitions>");
-}
-
-if(state.dependentGuard.isEmpty() || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = (boolean) cachedValue;
-}
-
-newCache = (PersistentHashMap) ASSOC.invoke(newCache, "<evalTransitions>", <transitionIdentifier>);
+<transitionIdentifier> = state.<evalTransitions>();
 if(<transitionIdentifier>) {
     <execTransitions>
 }
@@ -1336,13 +1308,6 @@ if(state.<evalTransitions>()) {
 >>
 
 model_check_add_cached_infos(machine) ::= <<
-private void addCachedInfos(final String operation, final <machine> state, final <machine> copiedState) {
-    if(isCaching) {
-        copiedState.dependentInvariant = invariantDependency.get(operation);
-        copiedState.dependentGuard = guardDependency.get(operation);
-    }
-    copiedState.stateAccessedVia = operation;
-}
 >>
 
 opreuse_declaration(type, variable) ::= <<
@@ -1458,7 +1423,6 @@ while(!currentState._get_calculate_flag_cp()) {
     <endif>
     if(copiedState._get_<operation>_triggered()) {
         <if(isCaching)>
-        addCachedInfos("<operation>", state, copiedState);
         <endif>
         if(!newStatesForNondeterministic.contains(copiedState)) {
             transitions.getAndIncrement();
@@ -1482,11 +1446,9 @@ try {
         if(writeState != null) {
             copiedState._apply_update_for_<operation>(writeState);
             copiedState.parent = state;
-            addCachedInfos("<operation>", state, copiedState);
         } else {
             copiedState.<operation>(<parameters; separator=", ">);
             copiedState.parent = state;
-            addCachedInfos("<operation>", state, copiedState);
             writeState = copiedState._update_for_<operation>();
             _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
             _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1495,7 +1457,6 @@ try {
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
-        addCachedInfos("<operation>", state, copiedState);
         _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1517,11 +1478,9 @@ if(_OpCache_with_parameter_<operation> != null) {
     if(writeState != null) {
         copiedState._apply_update_for_<operation>(writeState);
         copiedState.parent = state;
-        addCachedInfos("<operation>", state, copiedState);
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
-        addCachedInfos("<operation>", state, copiedState);
         writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1530,7 +1489,6 @@ if(_OpCache_with_parameter_<operation> != null) {
 } else {
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
-    addCachedInfos("<operation>", state, copiedState);
     _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
     _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
     _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1632,10 +1590,6 @@ private void modelCheckSingleThreaded() {
     states.add(machine);
     unvisitedStates.add(machine);
 
-    if(isCaching) {
-        initCache(machine);
-    }
-
     while(!unvisitedStates.isEmpty()) {
         <machine> state = next();
 
@@ -1677,10 +1631,6 @@ private void modelCheckMultiThreaded() {
 
     AtomicBoolean stopThreads = new AtomicBoolean(false);
     AtomicInteger possibleQueueChanges = new AtomicInteger(0);
-
-    if(isCaching) {
-        initCache(machine);
-    }
 
     while(!unvisitedStates.isEmpty() && !stopThreads.get()) {
         possibleQueueChanges.incrementAndGet();
@@ -1741,11 +1691,6 @@ private void modelCheckMultiThreaded() {
         e.printStackTrace();
     }
     printResult(states.size(), transitions.get());
-}
-
-private void initCache(final <machine> machine) {
-    <invariantDependency; separator="\n">
-    <guardDependency; separator="\n">
 }
 >>
 

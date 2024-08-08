@@ -1757,8 +1757,8 @@ private void modelCheckMultiThreaded() {
                 }
             });
 
+            int running = possibleQueueChanges.decrementAndGet();
             synchronized (unvisitedStates) {
-                int running = possibleQueueChanges.decrementAndGet();
                 if (!unvisitedStates.isEmpty() || running == 0) {
                     synchronized (waitLock) {
                         waitLock.notify();

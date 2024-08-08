@@ -10,8 +10,6 @@ import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
-import de.prob.parser.ast.types.RecordType;
-import de.prob.parser.ast.visitors.TypeChecker;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -75,7 +73,7 @@ public class ModelCheckingGenerator {
 
             ST template = currentGroup.getInstanceOf("modelchecker");
             TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
-            TemplateHandler.add(template, "addCachedInfos", generateAddCachedInfos(machineNode));
+            TemplateHandler.add(template, "initializeCaches", generateOpCaches(machineNode));
             TemplateHandler.add(template, "main", generateMain(machineNode));
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
             TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariantsFunction(machineNode));
@@ -100,7 +98,6 @@ public class ModelCheckingGenerator {
     public String generateNextStates(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_next_states");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
-        TemplateHandler.add(template, "operationCaches", generateOpCaches(machineNode));
         TemplateHandler.add(template, "transitionsWithCaching", generateTransitions(machineNode, true));
         TemplateHandler.add(template, "transitionsWithoutCaching", generateTransitions(machineNode, false));
         return template.render();
@@ -154,12 +151,23 @@ public class ModelCheckingGenerator {
         return parameter.render();
     }
 
-    public String generateClassesForOpReuse(MachineNode machineNode, boolean isRead, String operation) {
+    public String generateClassesForOpReuse(MachineNode machineNode, boolean isRead, boolean isGuard, String operation) {
         ST classes = currentGroup.getInstanceOf("opreuse_class");
 
-        List<String> variables = isRead ? modelCheckingInfo.getOperationsRead().get(operation) : modelCheckingInfo.getOperationsWrite().get(operation);
+        List<String> variables = new ArrayList<>();
+
+        if(isRead) {
+            if(isGuard) {
+                variables = modelCheckingInfo.getGuardsRead().get("_tr_" + operation);
+            } else {
+                variables = modelCheckingInfo.getOperationsRead().get(operation);
+            }
+        } else { // Write
+            variables = modelCheckingInfo.getOperationsWrite().get(operation);
+        }
 
         TemplateHandler.add(classes, "isRead", isRead);
+        TemplateHandler.add(classes, "isGuard", isGuard);
         TemplateHandler.add(classes, "name", operation);
 
         List<String> declarations = new ArrayList<>();
@@ -195,6 +203,7 @@ public class ModelCheckingGenerator {
     public List<String> generateProjection() {
         List<String> result = new ArrayList<>();
         result.addAll(generateReadProjection(modelCheckingInfo.getOperationsRead()));
+        result.addAll(generateReadGrdProjection(modelCheckingInfo.getGuardsRead()));
         result.addAll(generateWriteProjection(modelCheckingInfo.getOperationsWrite()));
         result.addAll(generateApplyWriteProjection(modelCheckingInfo.getOperationsWrite()));
         return result;
@@ -210,6 +219,21 @@ public class ModelCheckingGenerator {
 
     private String generateReadProjectionForOperation(String operation, List<String> reads) {
         ST template = currentGroup.getInstanceOf("opreuse_read_projection");
+        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "projectState", reads);
+        return template.render();
+    }
+
+    private List<String> generateReadGrdProjection(Map<String, List<String>> operationGrdReads) {
+        List<String> result = new ArrayList<>();
+        for(String operation : operationGrdReads.keySet()) {
+            result.add(generateReadGrdProjectionForOperation(operation, operationGrdReads.get(operation)));
+        }
+        return result;
+    }
+
+    private String generateReadGrdProjectionForOperation(String operation, List<String> reads) {
+        ST template = currentGroup.getInstanceOf("opreuse_grd_read_projection");
         TemplateHandler.add(template, "operation", operation);
         TemplateHandler.add(template, "projectState", reads);
         return template.render();

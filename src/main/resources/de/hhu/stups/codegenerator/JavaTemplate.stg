@@ -54,9 +54,6 @@ public class <machine> {
     }
 
     public <machine> parent;
-    public Set\<String> dependentGuard = new HashSet\<>();
-    public PersistentHashMap guardCache = PersistentHashMap.EMPTY;
-    public Set\<String> dependentInvariant = new HashSet\<>();
     public String stateAccessedVia;
 
     <projectionClasses; separator="\n">
@@ -1211,7 +1208,7 @@ skip() ::= <<
 enum_import() ::= <<
 >>
 
-modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
+modelchecker(machine, initializeCaches, main, nextStates, invariantViolated, printResult) ::= <<
 
 private static class ModelChecker {
     private final Type type;
@@ -1229,8 +1226,7 @@ private static class ModelChecker {
     private AtomicBoolean deadlockDetected = new AtomicBoolean(false);
     private <machine> counterExampleState = null;
 
-    private final Map\<String, Set\<String>\> invariantDependency = new HashMap\<>();
-    private final Map\<String, Set\<String>\> guardDependency = new HashMap\<>();
+    <initializeCaches; separator="\n">
 
     public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
         this.type = type;
@@ -1262,6 +1258,7 @@ private static class ModelChecker {
 
 opreuse_initialize_opcaches(operation) ::= <<
 PersistentHashMap _OpCache_<operation> = PersistentHashMap.EMPTY;
+PersistentHashMap _OpCache_tr_<operation> = PersistentHashMap.EMPTY;
 >>
 
 model_check_next_states(machine, operationCaches, transitionsWithCaching, transitionsWithoutCaching) ::= <<
@@ -1269,7 +1266,6 @@ model_check_next_states(machine, operationCaches, transitionsWithCaching, transi
 private Set\<<machine>\> generateNextStates(final <machine> state) {
     Set\<<machine>\> result = new HashSet\<>();
     if(isCaching) {
-        <operationCaches; separator="\n">
         <transitionsWithCaching>
     } else {
         <transitionsWithoutCaching>
@@ -1278,11 +1274,16 @@ private Set\<<machine>\> generateNextStates(final <machine> state) {
 }
 >>
 
+
 model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
 <if(isCaching)>
-BSet\<<tupleType>\> <transitionIdentifier>;
-<transitionIdentifier> = state.<evalTransitions>();
+_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
+BSet\<<tupleType>\> <transitionIdentifier> = (BSet\<<tupleType>\>) GET.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state);
+if(<transitionIdentifier> == null) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    _OpCache<evalTransitions> = (PersistentHashMap) ASSOC.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state, <transitionIdentifier>);
+}
 for(<tupleType> param : <transitionIdentifier>) {
     <execTransitions>
 }
@@ -1294,8 +1295,12 @@ for(<tupleType> param : <transitionIdentifier>) {
 <endif>
 <else>
 <if(isCaching)>
-boolean <transitionIdentifier>;
-<transitionIdentifier> = state.<evalTransitions>();
+_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for<evalTransitions>();
+boolean <transitionIdentifier> = (boolean) GET.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state);
+if(<transitionIdentifier> == null) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    _OpCache<evalTransitions> = (PersistentHashMap) ASSOC.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state, <transitionIdentifier>);
+}
 if(<transitionIdentifier>) {
     <execTransitions>
 }
@@ -1318,8 +1323,42 @@ opreuse_parameter(type, variable) ::= <<
 <type> <variable>
 >>
 
-opreuse_class(isRead, name, declarations, parameters, variables) ::= <<
+opreuse_class(isRead, isGuard, name, declarations, parameters, variables) ::= <<
 <if(isRead)>
+<if(isGuard)>
+public static class _ProjectionRead__tr_<name> {
+
+    <declarations; separator="\n">
+
+    public _ProjectionRead__tr_<name>(<parameters; separator=", ">) {
+        <variables:{variable | this.<variable> = <variable>;}; separator="\n">
+    }
+
+    public String toString() {
+        <if(variables)>
+        return "{" + <variables:{variable | "<variable>: " + this.<variable>}; separator=" + \",\" + "> + "}";
+        <else>
+        return "{}";
+        <endif>
+    }
+
+    public boolean equals(Object other) {
+        if(!(other instanceof _ProjectionRead__tr_<name>)) {
+            return false;
+        }
+        _ProjectionRead__tr_<name> o = (_ProjectionRead__tr_<name>) other;
+        <if(variables)>
+        return <variables:{variable | this.<variable>.equals(o.<variable>)}; separator=" && ">;
+        <else>
+        return true;
+        <endif>
+    }
+
+    public int hashCode() {
+        return Objects.hash(<variables; separator=", ">);
+    }
+}
+<else>
 public static class _ProjectionRead_<name> {
 
     <declarations; separator="\n">
@@ -1352,6 +1391,7 @@ public static class _ProjectionRead_<name> {
         return Objects.hash(<variables; separator=", ">);
     }
 }
+<endif>
 <else>
 public static class _ProjectionWrite_<name> {
 
@@ -1389,6 +1429,12 @@ public static class _ProjectionWrite_<name> {
 >>
 
 opreuse_read_projection(operation, projectState) ::= <<
+public _ProjectionRead_<operation> _projected_state_for_<operation>() {
+    return new _ProjectionRead_<operation>(<projectState; separator=",">);
+}
+>>
+
+opreuse_grd_read_projection(operation, projectState) ::= <<
 public _ProjectionRead_<operation> _projected_state_for_<operation>() {
     return new _ProjectionRead_<operation>(<projectState; separator=",">);
 }
@@ -1522,11 +1568,9 @@ private boolean invariantViolated(final <machine> state) {
 >>
 
 model_check_invariant(invariant) ::= <<
-if(!isCaching || state.dependentInvariant.contains("<invariant>")) {
-    if(!state.<invariant>()) {
-        System.out.println("INVARIANT CONJUNCT VIOLATED: <invariant>");
-        return true;
-    }
+if(!state.<invariant>()) {
+    System.out.println("INVARIANT CONJUNCT VIOLATED: <invariant>");
+    return true;
 }
 >>
 

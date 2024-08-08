@@ -361,8 +361,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private List<String> generateProjectionClasses() {
 		List<String> projectionClasses = new ArrayList<>();
 		for(OperationNode operation : machineNode.getOperations()) {
-			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, true, operation.getName()));
-			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, false, operation.getName()));
+			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, true, false, operation.getName()));
+			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, true, true, operation.getName()));
+			projectionClasses.add(modelCheckingGenerator.generateClassesForOpReuse(machineNode, false, false, operation.getName()));
 		}
 		return projectionClasses;
 	}

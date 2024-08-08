@@ -158,7 +158,7 @@ public class ModelCheckingInfoGenerator {
 
         // TODO: Split guards conjuncts
         return new ModelCheckingInfo(machineName, includedMachines, variables, constants, transitionEvaluationFunctions, operationFunctions, invariantFunctions,
-                invariantDependency, guardDependency, guardsReads, operationReads, operationWrites);
+                invariantDependency, guardDependency, guardsReads, operationReads, operationWrites, invariantReads);
     }
 
     public Map<String, List<String>> generateWriteInformation(List<OperationNode> operations, List<DeclarationNode> variables) {

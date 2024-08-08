@@ -33,11 +33,14 @@ public class ModelCheckingInfo {
 
     private final Map<String, List<String>> operationsWrite;
 
+    private final Map<String, List<String>> invariantsRead;
+
     public ModelCheckingInfo(final String machineName, final List<String> includedMachines, final List<String> variables, final List<String> constants, final Map<String, String> transitionEvaluationFunctions,
                              final List<OperationFunctionInfo> operationFunctions, final List<String> invariantFunctions,
                              final Map<String, List<String>> invariantDependency, final Map<String, List<String>> guardDependency,
                              final Map<String, List<String>> guardsRead,
-                             final Map<String, List<String>> operationsRead, final Map<String, List<String>> operationsWrite) {
+                             final Map<String, List<String>> operationsRead, final Map<String, List<String>> operationsWrite,
+                             final Map<String, List<String>> invariantsRead) {
         this.machineName = machineName;
         this.includedMachines = includedMachines;
         this.variables = variables;
@@ -50,6 +53,7 @@ public class ModelCheckingInfo {
         this.guardsRead = guardsRead;
         this.operationsRead = operationsRead;
         this.operationsWrite = operationsWrite;
+        this.invariantsRead = invariantsRead;
     }
 
     public String getMachineName() {
@@ -100,6 +104,10 @@ public class ModelCheckingInfo {
         return operationsWrite;
     }
 
+    public Map<String, List<String>> getInvariantsRead() {
+        return invariantsRead;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", ModelCheckingInfo.class.getSimpleName() + "[", "]")
@@ -115,6 +123,7 @@ public class ModelCheckingInfo {
                 .add("guardsRead=" + guardsRead)
                 .add("operationsRead=" + operationsRead)
                 .add("operationsWrite=" + operationsWrite)
+                .add("invariantsRead=" + invariantsRead)
                 .toString();
     }
 
@@ -194,6 +203,14 @@ public class ModelCheckingInfo {
             operationWriteObject.add(key, operationsWriteArray);
         }
         jsonObject.add("operationsWrite", operationWriteObject);
+
+        JsonObject invariantsReadObject = new JsonObject();
+        for(String key : invariantsRead.keySet()) {
+            JsonArray invariantsReadArray = new JsonArray();
+            invariantsRead.get(key).forEach(invariantsReadArray::add);
+            invariantsReadObject.add(key, invariantsReadArray);
+        }
+        jsonObject.add("invariantsRead", invariantsReadObject);
 
         return jsonObject;
     }

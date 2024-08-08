@@ -126,8 +126,20 @@ public class ModelCheckingInfoFileHandler {
         }
 
 
+        Map<String, List<String>> invariantsRead = new HashMap<>();
+        JsonObject invariantsReadObject = modelCheckingInfoObject.getAsJsonObject("invariantsRead");
+        for(String key : invariantsReadObject.keySet()) {
+            List<String> readVariables = new ArrayList<>();
+            JsonArray invariantsReadArray = invariantsReadObject.get(key).getAsJsonArray();
+            for(int i = 0; i < invariantsReadArray.size(); i++) {
+                readVariables.add(invariantsReadArray.get(i).getAsString());
+            }
+            invariantsRead.put(key, readVariables);
+        }
+
+
         return new ModelCheckingInfo(machineName, includedMachines, variables, constants, transitionEvaluationFunctions,  operationFunctions, invariants,
-                                    invariantDependency, guardDependency, guardReads, operationReads, operationWrites);
+                                    invariantDependency, guardDependency, guardReads, operationReads, operationWrites, invariantsRead);
     }
 
 }

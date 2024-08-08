@@ -1299,11 +1299,14 @@ for(<tupleType> param : <transitionIdentifier>) {
 <endif>
 <else>
 <if(isCaching)>
-_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for<evalTransitions>();
-boolean <transitionIdentifier> = (boolean) GET.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state);
-if(<transitionIdentifier> == null) {
+_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
+Object _obj_<transitionIdentifier> = GET.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state);
+boolean <transitionIdentifier>;
+if(_obj_<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
     _OpCache<evalTransitions> = (PersistentHashMap) ASSOC.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state, <transitionIdentifier>);
+} else {
+    <transitionIdentifier> = state.<evalTransitions>();
 }
 if(<transitionIdentifier>) {
     <execTransitions>

@@ -1261,6 +1261,10 @@ PersistentHashMap _OpCache_<operation> = PersistentHashMap.EMPTY;
 PersistentHashMap _OpCache_tr_<operation> = PersistentHashMap.EMPTY;
 >>
 
+opreuse_initialize_invariant_caches(invariant) ::= <<
+PersistentHashMap _InvCache_<invariant> = PersistentHashMap.EMPTY;
+>>
+
 model_check_next_states(machine, operationCaches, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 @SuppressWarnings("unchecked")
 private Set\<<machine>\> generateNextStates(final <machine> state) {

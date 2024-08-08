@@ -1306,7 +1306,7 @@ if(_obj_<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
     _OpCache<evalTransitions> = (PersistentHashMap) ASSOC.invoke(_OpCache<evalTransitions>, read_<evalTransitions>_state, <transitionIdentifier>);
 } else {
-    <transitionIdentifier> = state.<evalTransitions>();
+    <transitionIdentifier> = (boolean) _obj_<transitionIdentifier>;
 }
 if(<transitionIdentifier>) {
     <execTransitions>

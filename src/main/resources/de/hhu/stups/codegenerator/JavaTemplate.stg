@@ -275,11 +275,11 @@ record_field_to_string(identifier) ::= <<
 >>
 
 record_equal_predicate(field) ::= <<
-this.<field> == o.<field>
+this.<field>.equals(o.<field>)
 >>
 
 record_unequal_predicate(field) ::= <<
-this.<field> != o.<field>
+!(this.<field>.equals(o.<field>))
 >>
 
 record(struct, parameters) ::= <<

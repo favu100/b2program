@@ -133,7 +133,7 @@ public class ModelCheckingGenerator {
 
         TemplateHandler.add(template, "evalTransitions", modelCheckingInfo.getTransitionEvaluationFunctions().get(opName));
         //TemplateHandler.add(template, "evalTransitionsID", evalTransitionsIDs.get(modelCheckingInfo.getTransitionEvaluationFunctions().get(opName)));
-        TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType, isCaching));
+        TemplateHandler.add(template, "execTransitions", generateTransitionBody(machineNode, operationNode, tupleType, isCaching, "_trid_" + index));
         TemplateHandler.add(template, "isCaching", isCaching);
         return template.render();
     }
@@ -253,7 +253,7 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
-    public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType, boolean isCaching) {
+    public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType, boolean isCaching, String transitionIdentifier) {
         ST template = currentGroup.getInstanceOf("model_check_transition_body");
         boolean hasParameters = !opNode.getParams().isEmpty();
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
@@ -265,14 +265,12 @@ public class ModelCheckingGenerator {
         TemplateHandler.add(template, "hasParameters", hasParameters);
         TemplateHandler.add(template, "checkReachability", checkReachabilityAnalyzer.visitOperation(opNode));
 
-        String evalName = "";
+        String evalName = hasParameters ? "param" : transitionIdentifier;
         List<String> readParameters = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
 
 
         if(hasParameters) {
-
-            evalName = "param";
 
             BType currentType = tupleType;
 
@@ -298,10 +296,9 @@ public class ModelCheckingGenerator {
                         // Access rhs were it is not the left-most parameter
 
                         ST paramTemplateLhs = currentGroup.getInstanceOf("model_check_transition_param_assignment");
-                        evalName = j == 1 ? "param" : "_tmp_" + (j - 1);
                         TemplateHandler.add(paramTemplateLhs, "type", typeGenerator.generate(paramNode.getType()));
                         TemplateHandler.add(paramTemplateLhs, "param", "_tmp_" + j);
-                        TemplateHandler.add(paramTemplateLhs, "val", evalName);
+                        TemplateHandler.add(paramTemplateLhs, "val", j == 1 ? "param" : "_tmp_" + (j - 1));
                         TemplateHandler.add(paramTemplateLhs, "isLhs", false);
                         TemplateHandler.add(paramTemplateLhs, "oneParameter", false);
                         String lhsParameter = paramTemplateLhs.render();
@@ -316,10 +313,9 @@ public class ModelCheckingGenerator {
                             // Store temporary tuples im necessary
                             currentType = ((CoupleType) currentType).getLeft();
                             ST paramTemplateRhs = currentGroup.getInstanceOf("model_check_transition_param_assignment");
-                            evalName = j == 2 ? "param" : "_tmp_" + (j - 2);
                             TemplateHandler.add(paramTemplateRhs, "type", typeGenerator.generate(currentType));
                             TemplateHandler.add(paramTemplateRhs, "param", "_tmp_" + j);
-                            TemplateHandler.add(paramTemplateRhs, "val", evalName);
+                            TemplateHandler.add(paramTemplateRhs, "val", j == 2 ? "param" : "_tmp_" + (j - 2));
                             TemplateHandler.add(paramTemplateRhs, "isLhs", true);
                             TemplateHandler.add(paramTemplateRhs, "oneParameter", false);
                             readParameters.add(paramTemplateRhs.render());
@@ -328,10 +324,9 @@ public class ModelCheckingGenerator {
                     } else {
                         // Access left-most parameter
                         ST paramTemplateLhs = currentGroup.getInstanceOf("model_check_transition_param_assignment");
-                        evalName = j == 2 ? "param" : "_tmp_" + (j - 2);
                         TemplateHandler.add(paramTemplateLhs, "type", typeGenerator.generate(paramNode.getType()));
                         TemplateHandler.add(paramTemplateLhs, "param", "_tmp_" + j);
-                        TemplateHandler.add(paramTemplateLhs, "val", evalName);
+                        TemplateHandler.add(paramTemplateLhs, "val", j == 2 ? "param" : "_tmp_" + (j - 2));
                         TemplateHandler.add(paramTemplateLhs, "isLhs", true);
                         TemplateHandler.add(paramTemplateLhs, "oneParameter", false);
                         String lhsParameter = paramTemplateLhs.render();

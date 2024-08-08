@@ -1421,13 +1421,19 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return new Iterator<BTuple<S, T>>() {
 
 			final Iterator<S> keyIterator = thisMap.keyIterator();
-			S currentLhs = keyIterator.next();
+			S currentLhs = keyIterator.hasNext() ? keyIterator.next() : null;
 			Iterator<T> valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
 
 			@Override
 			public boolean hasNext() {
+				if(keyIterator == null) {
+					return false;
+				}
 				if(keyIterator.hasNext()) {
 					return true;
+				}
+				if(valueIterator == null) {
+					return false;
 				}
 				return valueIterator.hasNext();
 			}

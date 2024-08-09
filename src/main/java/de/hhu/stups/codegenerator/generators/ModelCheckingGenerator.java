@@ -91,7 +91,7 @@ public class ModelCheckingGenerator {
         List<String> opCaches = new ArrayList<>();
         for(OperationNode operationNode : machineNode.getOperations()) {
             ST template = currentGroup.getInstanceOf("opreuse_initialize_opcaches");
-            TemplateHandler.add(template, "operation", operationNode.getName());
+            TemplateHandler.add(template, "operation", nameHandler.handle(operationNode.getName()));
             opCaches.add(template.render());
         }
         return opCaches;
@@ -170,24 +170,23 @@ public class ModelCheckingGenerator {
 
         if(isRead) {
             if(isGuard) {
-                variables = modelCheckingInfo.getGuardsRead().get("_tr_" + operation);
+                variables = modelCheckingInfo.getGuardsRead().get("_tr_" + nameHandler.handle(operation));
             } else if(isInvariant) {
-                variables = modelCheckingInfo.getInvariantsRead().get(operation);
+                variables = modelCheckingInfo.getInvariantsRead().get(nameHandler.handle(operation));
             } else {
-                variables = modelCheckingInfo.getOperationsRead().get(operation);
+                variables = modelCheckingInfo.getOperationsRead().get(nameHandler.handle(operation));
             }
         } else { // Write
-            variables = modelCheckingInfo.getOperationsWrite().get(operation);
+            variables = modelCheckingInfo.getOperationsWrite().get(nameHandler.handle(operation));
         }
 
         TemplateHandler.add(classes, "isRead", isRead);
         TemplateHandler.add(classes, "isGuard", isGuard);
         TemplateHandler.add(classes, "isInvariant", isInvariant);
-        TemplateHandler.add(classes, "name", operation);
+        TemplateHandler.add(classes, "name", nameHandler.handle(operation));
 
         List<String> declarations = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
-        List<String> initializations = new ArrayList<>();
 
         List<DeclarationNode> constantNodes = machineNode.getConstants();
         List<DeclarationNode> variableNodes = machineNode.getVariables();
@@ -195,14 +194,14 @@ public class ModelCheckingGenerator {
         for(String var : variables) {
             for(DeclarationNode constantNode : constantNodes) {
                 if(constantNode.getName().equals(var)) {
-                    declarations.add(generateDeclarationForOpReuse(constantNode, var));
-                    parameters.add(generateParameterForOpReuse(constantNode, var));
+                    declarations.add(generateDeclarationForOpReuse(constantNode, nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)));
+                    parameters.add(generateParameterForOpReuse(constantNode, nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)));
                 }
             }
             for(DeclarationNode variableNode : variableNodes) {
                 if(variableNode.getName().equals(var)) {
-                    declarations.add(generateDeclarationForOpReuse(variableNode, var));
-                    parameters.add(generateParameterForOpReuse(variableNode, var));
+                    declarations.add(generateDeclarationForOpReuse(variableNode, nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)));
+                    parameters.add(generateParameterForOpReuse(variableNode, nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES)));
                 }
             }
         }
@@ -210,8 +209,9 @@ public class ModelCheckingGenerator {
 
         TemplateHandler.add(classes, "declarations", declarations);
         TemplateHandler.add(classes, "parameters", parameters);
-        TemplateHandler.add(classes, "initializations", initializations);
-        TemplateHandler.add(classes, "variables", variables);
+        TemplateHandler.add(classes, "variables", variables.stream()
+                .map(var -> nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                .collect(Collectors.toList()));
         return classes.render();
     }
 
@@ -228,7 +228,9 @@ public class ModelCheckingGenerator {
     private List<String> generateReadProjection(Map<String, List<String>> operationReads) {
         List<String> result = new ArrayList<>();
         for(String operation : operationReads.keySet()) {
-            result.add(generateReadProjectionForOperation(operation, operationReads.get(operation)));
+            result.add(generateReadProjectionForOperation(operation, operationReads.get(operation).stream()
+                    .map(var -> nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                    .collect(Collectors.toList())));
         }
         return result;
     }
@@ -243,14 +245,16 @@ public class ModelCheckingGenerator {
     private List<String> generateReadGrdProjection(Map<String, List<String>> operationGrdReads) {
         List<String> result = new ArrayList<>();
         for(String operation : operationGrdReads.keySet()) {
-            result.add(generateReadGrdProjectionForOperation(operation, operationGrdReads.get(operation)));
+            result.add(generateReadGrdProjectionForOperation(operation, operationGrdReads.get(operation).stream()
+                    .map(var -> nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                    .collect(Collectors.toList())));
         }
         return result;
     }
 
     private String generateReadGrdProjectionForOperation(String operation, List<String> reads) {
         ST template = currentGroup.getInstanceOf("opreuse_grd_read_projection");
-        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "operation", nameHandler.handle(operation));
         TemplateHandler.add(template, "projectState", reads);
         return template.render();
     }
@@ -258,14 +262,16 @@ public class ModelCheckingGenerator {
     private List<String> generateReadInvProjection(Map<String, List<String>> operationInvReads) {
         List<String> result = new ArrayList<>();
         for(String invariant : operationInvReads.keySet()) {
-            result.add(generateReadGrdProjectionForOperation(invariant, operationInvReads.get(invariant)));
+            result.add(generateReadInvProjectionForOperation(invariant, operationInvReads.get(invariant).stream()
+                    .map(var -> nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                    .collect(Collectors.toList())));
         }
         return result;
     }
 
-    private String generateReadInvProjectionForOperation(String operation, List<String> reads) {
+    private String generateReadInvProjectionForOperation(String invariant, List<String> reads) {
         ST template = currentGroup.getInstanceOf("opreuse_inv_read_projection");
-        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "invariant", invariant);
         TemplateHandler.add(template, "projectState", reads);
         return template.render();
     }
@@ -273,7 +279,9 @@ public class ModelCheckingGenerator {
     private List<String> generateWriteProjection(Map<String, List<String>> operationWrites) {
         List<String> result = new ArrayList<>();
         for(String operation : operationWrites.keySet()) {
-            result.add(generateWriteProjectionForOperation(operation, operationWrites.get(operation)));
+            result.add(generateWriteProjectionForOperation(operation, operationWrites.get(operation).stream()
+                    .map(var -> nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                    .collect(Collectors.toList())));
         }
         return result;
     }
@@ -281,14 +289,16 @@ public class ModelCheckingGenerator {
     private List<String> generateApplyWriteProjection(Map<String, List<String>> operationWrites) {
         List<String> result = new ArrayList<>();
         for(String operation : operationWrites.keySet()) {
-            result.add(generateApplyWriteProjectionForOperation(operation, operationWrites.get(operation)));
+            result.add(generateApplyWriteProjectionForOperation(operation, operationWrites.get(operation).stream()
+                    .map(var -> nameHandler.handleIdentifier(var, NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES))
+                    .collect(Collectors.toList())));
         }
         return result;
     }
 
     private String generateWriteProjectionForOperation(String operation, List<String> writes) {
         ST template = currentGroup.getInstanceOf("opreuse_write_projection");
-        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "operation", nameHandler.handle(operation));
         TemplateHandler.add(template, "projectState", writes);
         return template.render();
     }
@@ -296,7 +306,7 @@ public class ModelCheckingGenerator {
 
     private String generateApplyWriteProjectionForOperation(String operation, List<String> writes) {
         ST template = currentGroup.getInstanceOf("opreuse_apply_update");
-        TemplateHandler.add(template, "operation", operation);
+        TemplateHandler.add(template, "operation", nameHandler.handle(operation));
         TemplateHandler.add(template, "projectState", writes);
         return template.render();
     }

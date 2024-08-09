@@ -230,6 +230,14 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
         if(kind == Kind.WRITE) {
             node.getLeftSide().forEach(lhs -> visitExprNode(lhs, expected));
         } else {
+            node.getLeftSide().forEach(lhs -> {
+                if(lhs instanceof ExpressionOperatorNode) {
+                    ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) lhs).getOperator();
+                    if(operator == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
+                        visitExprNode(lhs, expected);
+                    }
+                }
+            });
             node.getRightSide().forEach(rhs -> visitExprNode(rhs, expected));
         }
         return null;

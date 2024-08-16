@@ -51,6 +51,16 @@ public class TestQuantifiedConstructs extends TestJava {
     }
 
     @Test
+    public void testSetComprehension_Old() throws Exception {
+        testJava("SetComprehension_Old");
+    }
+
+    @Test
+    public void testSetComprehension_Pruning() throws Exception {
+        testJava("SetComprehension_Pruning");
+    }
+
+    @Test
     public void testLambda() throws Exception {
         testJava("Lambda", "Lambda", "LambdaAddition.stjava", true);
     }

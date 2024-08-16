@@ -511,6 +511,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testFinitenessLaws() throws Exception {
+        testJavaMC("FinitenessLaws", "FinitenessLaws", true, 1, false);
+    }
+
+    @Test
     public void testTautologiesPL() throws Exception {
         testJavaMC("TautologiesPL", "TautologiesPL", true, 1, false);
     }

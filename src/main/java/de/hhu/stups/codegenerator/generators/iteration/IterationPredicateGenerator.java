@@ -211,10 +211,10 @@ public class IterationPredicateGenerator {
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
     private ST getElementOfTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
-        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+        if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_enumeration");
         return generateEnumeration(template, declarationNode);
     }
@@ -224,10 +224,10 @@ public class IterationPredicateGenerator {
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
     private ST getEqualTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
-        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+        if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_assignment");
         return generateEnumeration(template, declarationNode);
     }
@@ -237,10 +237,10 @@ public class IterationPredicateGenerator {
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
     private ST getSubsetTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
-        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+        if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_subset");
         return generateEnumeration(template, declarationNode);
     }
@@ -250,10 +250,10 @@ public class IterationPredicateGenerator {
     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
     */
     private ST getSubsetNeqTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
-        if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+        if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
+        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_subsetneq");
         return generateEnumeration(template, declarationNode);
     }

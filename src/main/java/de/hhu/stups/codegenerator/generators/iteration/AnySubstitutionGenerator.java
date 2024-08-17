@@ -98,8 +98,7 @@ public class AnySubstitutionGenerator {
     * This function generates code for the inner body of the ANY substitution
     */
     private String generateAnyBody(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, SubstitutionNode substitutionNode, List<DeclarationNode> declarations, int counter, String operation, boolean isLastChoicePoint) {
-        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(declarations, predicateNode, false);
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

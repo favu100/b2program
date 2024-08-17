@@ -99,26 +99,18 @@ public class IterationPredicateGenerator {
         }
     }
 
-    /*
-    * This function checks whether an identifier is on the left-hand side of a predicate and whether the i-th predicate constraints the i-th bounded variable.
-    */
-    private void checkEnumerationPredicate(ExprNode lhs, Set<String> declarationProcessed, DeclarationNode declarationNode) {
-        if(!checkEnumerationPredicateAsBoolean(lhs, declarationProcessed, declarationNode)) {
-            throw new CodeGenerationException("The expression on the left-hand side of the first predicates must match the first identifier names " + GetNodeLocationAndText(lhs));
-        }
-    }
-
     private boolean checkEnumerationPredicateAsBoolean(ExprNode lhs, Set<String> declarationProcessed, DeclarationNode declarationNode) {
-        if(!(lhs instanceof IdentifierExprNode) || !(((IdentifierExprNode) lhs).getName().equals(declarationNode.getName()))) {
-            if(lhs instanceof IdentifierExprNode && declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
-                return true;
-            }
+        if(declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return true;
+        }
+        if(!((IdentifierExprNode) lhs).getName().equals(declarationNode.getName())) {
             return false;
         }
         return true;
     }
 
-    public int computeSubpredicate(List<DeclarationNode> declarations, PredicateNode predicate, boolean universalQuantification) {
+    public PredicateNode subpredicate(PredicateNode predicate, List<DeclarationNode> declarations, boolean universalQuantification) {
+        List<PredicateNode> subpredicates = new ArrayList<>();
         Set<String> declarationProcessed = new HashSet<>();
         int j = 0;
         for(int i = 0; i < declarations.size(); i++, j++) {
@@ -135,21 +127,30 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-                try {
-                    innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
-                            : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
-                } catch (Exception e) {
-                    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
-                }
+                //try {
+                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
+                        : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
+                //} catch (Exception e) {
+                //    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
+                //}
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
                 i = i - 1;
+                subpredicates.add(innerPredicate);
                 continue;
             }
             declarationProcessed.add(declarationNode.getName());
         }
-        return j;
+        if(subpredicates.size() == 0) {
+            return subpredicate(predicate, j, universalQuantification);
+        } else {
+            subpredicates.add(subpredicate(predicate, j, universalQuantification));
+        }
+        if(universalQuantification) {
+            return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, subpredicates);
+        }
+        return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, subpredicates);
     }
 
     /*
@@ -214,7 +215,6 @@ public class IterationPredicateGenerator {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_enumeration");
         return generateEnumeration(template, declarationNode);
     }
@@ -227,7 +227,6 @@ public class IterationPredicateGenerator {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_assignment");
         return generateEnumeration(template, declarationNode);
     }
@@ -240,7 +239,6 @@ public class IterationPredicateGenerator {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_subset");
         return generateEnumeration(template, declarationNode);
     }
@@ -253,20 +251,26 @@ public class IterationPredicateGenerator {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
-        checkEnumerationPredicate(lhs, declarationProcessed, declarationNode);
         ST template = group.getInstanceOf("iteration_construct_subsetneq");
         return generateEnumeration(template, declarationNode);
     }
 
+    /*
+    * 1. Implement functions to check whether this is a predicate which assigns a declaration node
+    * 2. Sort declaration nodes
+    * 3. Use sorted declaration nodes instead
+    */
     /*
     * This function returns all templates for enumeration in the whole iteration construct from the given list of declarations representing bounded variables and the given predicate
     */
     public List<ST> getEnumerationTemplates(IterationConstructGenerator iterationConstructGenerator, List<DeclarationNode> declarations, PredicateNode predicate, boolean universalQuantification) {
         ST enumerationTemplate = null;
         List<ST> enumerationTemplates = new ArrayList<>();
+        List<DeclarationNode> sortedDeclarations = this.sortDeclarationNodes(declarations, predicate, universalQuantification);
         Set<String> declarationProcessed = new HashSet<>();
-        for(int i = 0, j = 0; i < declarations.size(); i++, j++) {
-            DeclarationNode declarationNode = declarations.get(i);
+
+        for(int i = 0, j = 0; i < sortedDeclarations.size() & j < sortedDeclarations.size(); i++, j++) {
+            DeclarationNode declarationNode = sortedDeclarations.get(i);
             PredicateOperatorWithExprArgsNode innerPredicate = null;
             if(universalQuantification) {
                 if(predicate instanceof PredicateOperatorWithExprArgsNode) {
@@ -279,12 +283,14 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-                try {
+               //System.out.println(predicate);
+               //System.out.println("---------");
+               //try {
                     innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
                             : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
-                } catch (Exception e) {
-                    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
-                }
+                //} catch (Exception e) {
+                //    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
+                //}
             }
             enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
@@ -300,6 +306,73 @@ public class IterationPredicateGenerator {
             declarationProcessed.add(declarationNode.getName());
         }
         return enumerationTemplates;
+    }
+
+    private List<DeclarationNode> sortDeclarationNodes(List<DeclarationNode> declarations, PredicateNode predicateNode, boolean universalQuantification) {
+        List<DeclarationNode> result = new ArrayList<>();
+        Set<String> declarationProcessed = new HashSet<>();
+        int i = 0;
+        while(i < declarations.size() && declarations.size() != declarationProcessed.size()) {
+            DeclarationNode nextDeclaration = getNextDeclarationInEnumerationPredicate(declarations, declarationProcessed, predicateNode, universalQuantification);
+            if(nextDeclaration == null) {
+                throw new RuntimeException("There are not enough predicates to constraint bounded variables.");
+            }
+            result.add(nextDeclaration);
+            declarationProcessed.add(nextDeclaration.getName());
+            i++;
+        }
+        return result;
+    }
+
+    private DeclarationNode getNextDeclarationInEnumerationPredicate(List<DeclarationNode> declarations, Set<String> declarationProcessed, PredicateNode predicate, boolean universalQuantification) {
+        PredicateOperatorWithExprArgsNode innerPredicate = null;
+        int numberConjuncts = 0;
+        if(universalQuantification) {
+            if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                numberConjuncts = 1;
+            } else if(predicate instanceof PredicateOperatorNode) {
+                if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
+                    numberConjuncts = 1;
+                } else {
+                    numberConjuncts = ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().size();
+                }
+            }
+        } else {
+            numberConjuncts = predicate instanceof PredicateOperatorWithExprArgsNode ? 1
+                    : ((PredicateOperatorNode) predicate).getPredicateArguments().size();
+        }
+
+        for(int i = 0; i < numberConjuncts; i++) {
+            if(universalQuantification) {
+                if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                } else {
+                    if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                    } else {
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(i);
+                    }
+                }
+            } else {
+                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
+                        : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+            }
+            for(DeclarationNode declaration : declarations) {
+                if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF ||
+                        innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL ||
+                        innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION ||
+                        innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
+                    ExprNode lhs = innerPredicate.getExpressionNodes().get(0);
+                    if(lhs instanceof IdentifierExprNode && !declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+                        if(declaration.getName().equals(((IdentifierExprNode) lhs).getName())) {
+                            return declaration;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     /*

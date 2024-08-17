@@ -103,7 +103,6 @@ public class SetComprehensionGenerator {
         String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
 
         boolean isRelation = node.getDeclarationList().size() > 1;
-        //generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, predicate, declarations, type);
 
         template.add("identifier", identifier);
         template.add("isRelation", isRelation);
@@ -196,8 +195,7 @@ public class SetComprehensionGenerator {
      * This function generates code for the predicate of a set comprehension
      */
     private String generateSetComprehensionPredicate(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String type, String setName, String elementName, List<DeclarationNode> declarations) {
-        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(declarations, predicateNode, false);
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("set_comprehension_predicate");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

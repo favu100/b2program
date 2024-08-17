@@ -90,8 +90,7 @@ public class TransitionIterationGenerator {
     * This function generates code for the inner body of evaluating transitions
     */
     private String generateTransitionBody(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String setName, String elementName, List<DeclarationNode> declarations) {
-        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(declarations, predicateNode, false);
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("parameter_combination_predicate");
         BType type = extractTypeFromDeclarations(declarations);
         TemplateHandler.add(template, "subType", typeGenerator.generate(type));

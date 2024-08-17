@@ -159,8 +159,7 @@ public class QuantifiedExpressionGenerator {
     * This function generates code for the evaluation of the quantified expression
     */
     private String generateQuantifiedExpressionEvaluation(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String identifier, String operation, ExprNode expression, List<DeclarationNode> declarations) {
-        int subpredicateIndex = iterationPredicateGenerator.computeSubpredicate(declarations, predicateNode, false);
-        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, subpredicateIndex, false);
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("quantified_expression_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);

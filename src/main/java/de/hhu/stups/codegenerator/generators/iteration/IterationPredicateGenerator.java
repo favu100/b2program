@@ -14,6 +14,7 @@ import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
+import de.prob.parser.ast.nodes.predicate.QuantifiedPredicateNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -315,7 +316,7 @@ public class IterationPredicateGenerator {
         while(i < declarations.size() && declarations.size() != declarationProcessed.size()) {
             DeclarationNode nextDeclaration = getNextDeclarationInEnumerationPredicate(declarations, declarationProcessed, predicateNode, universalQuantification);
             if(nextDeclaration == null) {
-                throw new RuntimeException("There are not enough predicates to constraint bounded variables.");
+                throw new RuntimeException("There are not enough predicates to constraint bounded variables at: " + "line: " + predicateNode.getSourceCodePosition().getStartLine() + " column: " + predicateNode.getSourceCodePosition().getStartColumn());
             }
             result.add(nextDeclaration);
             declarationProcessed.add(nextDeclaration.getName());
@@ -339,6 +340,7 @@ public class IterationPredicateGenerator {
             }
         } else {
             numberConjuncts = predicate instanceof PredicateOperatorWithExprArgsNode ? 1
+                    : predicate instanceof QuantifiedPredicateNode ? 1
                     : ((PredicateOperatorNode) predicate).getPredicateArguments().size();
         }
 

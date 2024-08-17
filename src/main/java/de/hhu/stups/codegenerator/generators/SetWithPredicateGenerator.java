@@ -713,7 +713,7 @@ public class SetWithPredicateGenerator {
                 operatorName = "checkDomainBoolean";
                 break;
             default:
-                throw new RuntimeException("Given node is not implemented: " + operator);
+                throw new RuntimeException("Given node is not implemented: " + operator + " at line " + node.getSourceCodePosition().getStartLine() + " column " + node.getSourceCodePosition().getStartColumn());
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template.render();

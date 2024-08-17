@@ -466,8 +466,18 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testSetRelLaws_NatBool() throws Exception {
+        testJavaMC("SetRelLaws_NatBool", "SetRelLaws_NatBool", true, 1, false);
+    }
+
+    @Test
     public void testSetLawsNat() throws Exception {
         testJavaMC("SetLawsNat", "SetLawsNat", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsNatural() throws Exception {
+        testJavaMC("SetLawsNatural", "SetLawsNatural", true, 1, false);
     }
 
     @Test
@@ -513,6 +523,16 @@ public class TestMachines extends TestJava {
     @Test
     public void testRelLaws() throws Exception {
         testJavaMC("RelLaws", "RelLaws", true, 1, false);
+    }
+
+    @Test
+    public void testFunLaws() throws Exception {
+        testJavaMC("FunLaws", "FunLaws", true, 1, false);
+    }
+
+    @Test
+    public void testRelLaws_BOOL1() throws Exception {
+        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", true, 1, false);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.java;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -205,10 +206,9 @@ public class TestMachines extends TestJava {
         testJava("Core");
     }
 
-    @Ignore
     @Test
     public void testSetLawsNAT() throws Exception {
-        testJava("SetLawsNAT");
+        testJava("SetLawsNat");
     }
 
     @Test
@@ -443,6 +443,11 @@ public class TestMachines extends TestJava {
     @Test
     public void testExplicitChecks() throws Exception {
         testJavaMC("ExplicitChecks", "ExplicitChecks", true, 1, false);
+    }
+
+    @Test(expected = CodeGenerationException.class)
+    public void testExplicitChecks_Old() throws Exception {
+        testJavaMC("ExplicitChecks_Old", "ExplicitChecks_Old", true, 1, false);
     }
 
     @Test

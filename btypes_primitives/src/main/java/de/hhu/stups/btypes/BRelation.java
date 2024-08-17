@@ -432,8 +432,13 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(arg.map, domainElement);
-			if(thisRangeSet != null && !thisRangeSet.isEmpty() && !otherRangeSet.containsAll(thisRangeSet)) {
-				return new BBoolean(false);
+			if(thisRangeSet != null) {
+				if(otherRangeSet == null) {
+					return new BBoolean(false);
+				}
+				if(!thisRangeSet.isEmpty() && !otherRangeSet.containsAll(thisRangeSet)) {
+					return new BBoolean(false);
+				}
 			}
 		}
 		return new BBoolean(true);
@@ -445,11 +450,11 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	public BBoolean strictSubset(BRelation<S,T> set) {
-		return new BBoolean(set.size() != this.size() && set.subset(this).booleanValue());
+		return new BBoolean(set.size() != this.size() && this.subset(set).booleanValue());
 	}
 
 	public BBoolean strictNotSubset(BRelation<S, T> set) {
-		return new BBoolean(set.size() == this.size() || !set.subset(this).booleanValue());
+		return new BBoolean(set.size() == this.size() || !this.subset(set).booleanValue());
 	}
 
 	@SuppressWarnings("unchecked")

@@ -74,7 +74,8 @@ public class SetComprehensionGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
-        boolean isRelation = node.getDeclarationList().size() > 1;
+        boolean isRelation = node.getDeclarationList().size() > 1 ||
+                (node.getDeclarationList().size() == 1 && node.getDeclarationList().get(0).getType() instanceof CoupleType);
         generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, conditionalPredicate, predicate, declarations, type);
 
         String result = template.render();
@@ -102,7 +103,8 @@ public class SetComprehensionGenerator {
         String identifier = "_cs_set_" + iterationConstructCounter;
         String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
 
-        boolean isRelation = node.getDeclarationList().size() > 1;
+        boolean isRelation = node.getDeclarationList().size() > 1 ||
+                (node.getDeclarationList().size() == 1 && node.getDeclarationList().get(0).getType() instanceof CoupleType);
 
         template.add("identifier", identifier);
         template.add("isRelation", isRelation);
@@ -206,7 +208,7 @@ public class SetComprehensionGenerator {
         TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
         TemplateHandler.add(template, "type", type);
         TemplateHandler.add(template, "set", setName);
-        TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1);
+        TemplateHandler.add(template, "isRelation", iterationConstructGenerator.getBoundedVariables().size() > 1 || (declarations.size() == 1 && declarations.get(0).getType() instanceof CoupleType));
         generateSubType(template, declarations);
         TemplateHandler.add(template, "element", elementName);
         return template.render();
@@ -218,7 +220,14 @@ public class SetComprehensionGenerator {
     private void generateSubType(ST template, List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             DeclarationNode declarationNode = declarations.get(0);
-            TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
+            if(declarationNode.getType() instanceof CoupleType) {
+                BType leftType = ((CoupleType) declarationNode.getType()).getLeft();
+                BType rightType = ((CoupleType) declarationNode.getType()).getRight();
+                TemplateHandler.add(template, "leftType", typeGenerator.generate(leftType));
+                TemplateHandler.add(template, "rightType", typeGenerator.generate(rightType));
+            } else {
+                TemplateHandler.add(template, "subType", typeGenerator.generate(declarationNode.getType()));
+            }
         } else {
             CoupleType type = extractTypeFromDeclarations(declarations);
             BType leftType = type.getLeft();

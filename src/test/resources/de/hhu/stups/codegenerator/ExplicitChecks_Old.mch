@@ -16,8 +16,8 @@ INVARIANT
     ( (%x.(x : 1 .. 9000|{x + 1}) \/ {0 |-> {0}} ; %y.(y <: {0,3}|y) \/ {{0} |-> {0}}) = {(0|->{0}),(2|->{3})} ) /* 15/10/2011 9:20 */
  &
   ( {1 |-> (1 .. 2000000) - {2222},2 |-> {3}}(1 + 1) = {3} ) /* 18/10/2011 6:9 */
- //&
- //#(f,y).(y=1000 & f = %x.(x : 0..100|x + y) & f(5) = 1005)  /* 19/10/2011 9:34 */  // Symbol not found error when commented in:
+ &
+ ( #(f,y).((y=1000 & f = %x.(x : 0..100|x + y) & f(5) = 1005)) ) /* 19/10/2011 9:34 */  // Symbol not found error when commented in:
    // ExplicitChecks.java:156: error: cannot find symbol
    //         _ic_set_7 = _ic_set_7.union(new BRelation<BInteger, BInteger>(new BTuple<>(_ic_x_1, _ic_x_1.plus(y))));
 // &

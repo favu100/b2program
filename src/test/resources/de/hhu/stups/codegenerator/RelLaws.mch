@@ -382,7 +382,7 @@ INVARIANT
       )
      )
     )
-  & (
+  /*& (
      (ff : dom(gg) <-> ran(gg))
      <=>
      (
@@ -390,7 +390,7 @@ INVARIANT
       &
       ran(ff) <: ran(gg)
      )
-    )
+    )*/
   & ff |> ran(ff) = ff
   & ff |>> {} = ff
   & ff |>> ran(ff) = {}
@@ -427,7 +427,7 @@ INVARIANT
   & closure1(rx \/ id(setX)) = closure(rx)
   & iterate(rx,1) = rx
   & iterate(rx,0) = id(setX)
-  & (
+  /*& (
      rx <: hh
      =>
      (
@@ -437,7 +437,7 @@ INVARIANT
       &
       closure1(rx) <: closure(hh)
      )
-    )
+    )*/
   & closure(rx) = closure(closure(rx))
   & closure(rx) = closure1(closure(rx))
   & (closure(rx) ; closure(rx)) = closure(rx)
@@ -499,12 +499,12 @@ INVARIANT
      <=>
      (ff = gg)
     )
-  & (
+  /*& (
      id(ff) <: id(gg)
      <=>
      ff <: gg
-    )
-  & %fnc_x.(fnc_x : dom(ff)|ff[{fnc_x}]) : dom(ff) --> POW(ran(ff))
+    )*/
+  //& %fnc_x.(fnc_x : dom(ff)|ff[{fnc_x}]) : dom(ff) --> POW(ran(ff))
   & {rel_x,rel_y|rel_x : dom(ff) & rel_y : union(%fnc_x.(fnc_x : dom(ff)|ff[{fnc_x}])[{rel_x}])} = ff
   &
     !x.(
@@ -563,11 +563,11 @@ INVARIANT
   & (rx ; {}) = {}
   & {} = ({} ; rx)
   & (ff ; gg~) = {b,c|b : dom(ff) & c : dom(gg) & #a.(a : ran(ff) & b |-> a : ff & c |-> a : gg)}
-  & (
+  /*& (
      (ff~ ; ff) <: id(setY)
      <=>
      (ff : setX +-> setY)
-    )
+    )*/
   & (rx ; (ff ; ry)) = ((rx ; ff) ; ry)
   & rx <: ((rx ; rx~) ; rx)
 INITIALISATION

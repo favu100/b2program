@@ -12,6 +12,7 @@ import de.prob.parser.ast.nodes.expression.QuantifiedExpressionNode;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -73,8 +74,16 @@ public class QuantifiedExpressionGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "" : "_";
         String identifier = isInteger ? prefix + "ic_integer_" + iterationConstructCounter : prefix + "ic_set_"+ iterationConstructCounter;
+        boolean isRelation = false;
+        if(node.getDeclarationList().get(0).getType() instanceof SetType) {
+            SetType setType = (SetType) node.getDeclarationList().get(0).getType();
+            BType subType = setType.getSubType();
+            if(subType instanceof CoupleType) {
+                isRelation = true;
+            }
+        }
 
-        generateBody(template, enumerationTemplates, otherConstructs, identifier, node, conditionalPredicate, predicate, expression, declarations);
+        generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, node, conditionalPredicate, predicate, expression, declarations);
         String result = template.render();
         iterationConstructGenerator.addGeneration(node.toString(), identifier, declarations, result);
         machineGenerator.leaveIterationConstruct(node.getDeclarationList());
@@ -135,7 +144,7 @@ public class QuantifiedExpressionGenerator {
     /*
     * This function generates code for the body of the quantified expression
     */
-    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, QuantifiedExpressionNode node, PredicateNode conditionalPredicate, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
+    private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, String identifier, boolean isRelation, QuantifiedExpressionNode node, PredicateNode conditionalPredicate, PredicateNode predicate, ExprNode expression, List<DeclarationNode> declarations) {
         QuantifiedExpressionNode.QuantifiedExpressionOperator operator = node.getOperator();
         boolean isInteger = !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_UNION) && !(operator == QuantifiedExpressionNode.QuantifiedExpressionOperator.QUANTIFIED_INTER);
 
@@ -149,9 +158,10 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "identity", getIdentity(operator));
         TemplateHandler.add(template, "useBigInteger", machineGenerator.isUseBigInteger());
         if(node.getType() instanceof SetType) {
-            TemplateHandler.add(template, "setType", typeGenerator.generate(((SetType) node.getType()).getSubType()));
+            generateSubType(template, declarations);
         }
         TemplateHandler.add(template, "isInteger", isInteger);
+        TemplateHandler.add(template, "isRelation", isRelation);
         TemplateHandler.add(template, "evaluation", evaluation);
     }
 
@@ -172,6 +182,35 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "operation", operation);
         TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));
         return template.render();
+    }
+
+    /*
+     * This function generates code for the type of the set comprehension from the given semantic information
+     */
+    private void generateSubType(ST template, List<DeclarationNode> declarations) {
+        DeclarationNode declarationNode = declarations.get(0);
+        if(declarationNode.getType() instanceof SetType) {
+            BType subType = ((SetType) declarationNode.getType()).getSubType();
+            if (subType instanceof CoupleType) {
+                BType leftType = ((CoupleType) subType).getLeft();
+                BType rightType = ((CoupleType) subType).getRight();
+                TemplateHandler.add(template, "leftType", typeGenerator.generate(leftType));
+                TemplateHandler.add(template, "rightType", typeGenerator.generate(rightType));
+            } else {
+                TemplateHandler.add(template, "subType", typeGenerator.generate(subType));
+            }
+        }
+    }
+
+    /*
+     * This function extracts the couple type from a list of declarations
+     */
+    private CoupleType extractTypeFromDeclarations(List<DeclarationNode> declarations) {
+        CoupleType result = new CoupleType(declarations.get(0).getType(), declarations.get(1).getType());
+        for(int i = 2; i < declarations.size(); i++) {
+            result = new CoupleType(result, declarations.get(i).getType());
+        }
+        return result;
     }
 
 }

@@ -464,8 +464,11 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 <endif>
 >>
 
-quantified_expression(identifier, identity, useBigInteger, setType, evaluation, isInteger) ::= <<
-<if(isInteger)>BInteger <identifier> = <if(useBigInteger)>new BInteger("<identity>")<else>new BInteger(<identity>)<endif>;<else>BSet\<<setType>\> <identifier> = new BSet\<<setType>\>();<endif>
+quantified_expression(identifier, identity, useBigInteger, subType, leftType, rightType, evaluation, isInteger, isRelation) ::= <<
+<if(isInteger)>BInteger <identifier> = <if(useBigInteger)>new BInteger("<identity>")<else>new BInteger(<identity>)<endif>;<else>
+<if(isRelation)>BRelation\<<leftType>, <rightType>\> <identifier> = new BRelation\<<leftType>, <rightType>\>();
+<else>BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();<endif><endif>
+
 <evaluation>
 >>
 

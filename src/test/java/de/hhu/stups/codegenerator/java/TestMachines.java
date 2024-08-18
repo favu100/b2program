@@ -445,6 +445,16 @@ public class TestMachines extends TestJava {
         testJavaMC("ExplicitChecks", "ExplicitChecks", true, 1, false);
     }
 
+    @Test
+    public void testExplicitComputations() throws Exception {
+        testJavaMC("ExplicitComputations", "ExplicitComputations", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitComputations2() throws Exception {
+        testJavaMC("ExplicitComputations2", "ExplicitComputations2", true, 1, false);
+    }
+
     @Test(expected = CodeGenerationException.class)
     public void testExplicitChecks_Old() throws Exception {
         testJavaMC("ExplicitChecks_Old", "ExplicitChecks_Old", true, 1, false);

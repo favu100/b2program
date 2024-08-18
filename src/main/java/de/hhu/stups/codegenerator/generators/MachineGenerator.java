@@ -294,6 +294,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private void initializeLambdaFunctions() {
+		lambdaFunctionGenerator.computeConstantsOnlyUsedInFunctionCall(machineNode);
 		lambdaFunctions.addAll(lambdaFunctionGenerator.getLambdaFunctions(machineNode));
 		for(MachineReferenceNode reference : machineNode.getMachineReferences()) {
 			MachineNode machine = reference.getMachineNode();

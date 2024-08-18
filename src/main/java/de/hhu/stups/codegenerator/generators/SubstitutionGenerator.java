@@ -212,7 +212,7 @@ public class SubstitutionGenerator {
             return "";
         }
 
-        if(expression instanceof LambdaNode && lambdaFunctionGenerator.checkPredicate((LambdaNode) expression, node)) {
+        if(expression instanceof LambdaNode && lambdaFunctionGenerator.isLambdaFunction(node, constant)) {
             return "";
         }
         TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectExpression(expression).getIterationsMapCode().values());

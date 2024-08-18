@@ -12,4 +12,6 @@ INVARIANT
   f1(1)=TRUE &
   card(f6) = 9 & f6(11)=100 &
   card(f7) = 20 & f7(20)=20
+OPERATIONS
+    test = BEGIN skip END
 END

@@ -47,7 +47,9 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
@@ -62,6 +64,8 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
 
     private final DeclarationGenerator declarationGenerator;
 
+    private Set<String> constantsOnlyUsedInFunctionCall;
+
     public LambdaFunctionGenerator(final STGroup group, final ExpressionGenerator expressionGenerator, final PredicateGenerator predicateGenerator,
                                    final TypeGenerator typeGenerator, final DeclarationGenerator declarationGenerator) {
         this.group = group;
@@ -69,6 +73,13 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
         this.predicateGenerator = predicateGenerator;
         this.typeGenerator = typeGenerator;
         this.declarationGenerator = declarationGenerator;
+    }
+
+    public void computeConstantsOnlyUsedInFunctionCall(MachineNode machineNode) {
+        this.constantsOnlyUsedInFunctionCall = new HashSet<>();
+        visitPredicateNode(machineNode.getInvariant(), null);
+        machineNode.getOperations()
+                .forEach(op -> visitSubstitutionNode(op.getSubstitution(), null));
     }
 
     public List<String> generateFunctions(MachineNode node) {
@@ -90,7 +101,7 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
                 .collect(Collectors.toList());
     }
 
-    private boolean isLambdaFunction(MachineNode node, DeclarationNode constant) {
+    public boolean isLambdaFunction(MachineNode node, DeclarationNode constant) {
         List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
             return false;
@@ -101,7 +112,7 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
         } else if(!checkPredicate((LambdaNode) expression, node)) {
             return false;
         }
-        return true;
+        return constantsOnlyUsedInFunctionCall.contains(constant.getName());
     }
 
     public String generateFunction(MachineNode node, DeclarationNode constant) {
@@ -175,20 +186,24 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
         return true;
     }
 
-    // TODO: Improve lambda implementation
-
     @Override
     public Void visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
+        node.getExpressionNodes().forEach(expr -> visitExprNode(expr, expected));
         return null;
     }
 
+    /*
+     * This function checks whether the given identifier is primed. If yes, then it is added to the list of primed identifiers
+     */
     @Override
     public Void visitIdentifierExprNode(IdentifierExprNode node, Void expected) {
+        constantsOnlyUsedInFunctionCall.remove(node.getName());
         return null;
     }
 
     @Override
     public Void visitCastPredicateExpressionNode(CastPredicateExpressionNode node, Void expected) {
+        visitPredicateNode(node.getPredicate(), expected);
         return null;
     }
 
@@ -204,31 +219,196 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
+        visitExprNode(node.getExpressionNode(), expected);
+        visitPredicateNode(node.getPredicateNode(), expected);
         return null;
     }
 
     @Override
     public Void visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
+        visitPredicateNode(node.getPredicateNode(), expected);
         return null;
     }
 
     @Override
     public Void visitLambdaNode(LambdaNode node, Void expected) {
+        visitPredicateNode(node.getPredicate(), expected);
+        visitExprNode(node.getExpression(), expected);
         return null;
     }
 
     @Override
     public Void visitLetExpressionNode(LetExpressionNode node, Void expected) {
+        visitPredicateNode(node.getPredicate(), expected);
+        visitExprNode(node.getExpression(), expected);
         return null;
     }
 
     @Override
     public Void visitIfExpressionNode(IfExpressionNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), expected);
+        visitExprNode(node.getThenExpression(), expected);
+        visitExprNode(node.getElseExpression(), expected);
         return null;
     }
 
     @Override
     public Void visitStringNode(StringNode node, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitLTLPrefixOperatorNode(LTLPrefixOperatorNode ltlPrefixOperatorNode, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitLTLKeywordNode(LTLKeywordNode ltlKeywordNode, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitLTLInfixOperatorNode(LTLInfixOperatorNode ltlInfixOperatorNode, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitLTLBPredicateNode(LTLBPredicateNode ltlbPredicateNode, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitIdentifierPredicateNode(IdentifierPredicateNode node, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitPredicateOperatorNode(PredicateOperatorNode node, Void expected) {
+        node.getPredicateArguments().forEach(pred -> visitPredicateNode(pred, expected));
+        return null;
+    }
+
+    @Override
+    public Void visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node, Void expected) {
+        node.getExpressionNodes().forEach(expr -> visitExprNode(expr, expected));
+        return null;
+    }
+
+    @Override
+    public Void visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
+        visitPredicateNode(node.getPredicateNode(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
+        visitPredicateNode(node.getWherePredicate(), expected);
+        visitPredicateNode(node.getPredicate(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitIfPredicateNode(IfPredicateNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), expected);
+        visitPredicateNode(node.getThenPredicate(), expected);
+        visitPredicateNode(node.getElsePredicate(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
+        visitSubstitutionNode(node.getBody(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), expected);
+        visitSubstitutionNode(node.getBody(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitListSubstitutionNode(ListSubstitutionNode node, Void expected) {
+        node.getSubstitutions().forEach(substitution -> visitSubstitutionNode(substitution, expected));
+        return null;
+    }
+
+    @Override
+    public Void visitIfOrSelectSubstitutionsNode(IfOrSelectSubstitutionsNode node, Void expected) {
+        node.getConditions().forEach(cond -> visitPredicateNode(cond, expected));
+        node.getSubstitutions().forEach(subs -> visitSubstitutionNode(subs, expected));
+        if(node.getElseSubstitution() != null) {
+            visitSubstitutionNode(node.getElseSubstitution(), expected);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expected) {
+        node.getLeftSide().forEach(lhs -> {
+            if(lhs instanceof ExpressionOperatorNode) {
+                ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) lhs).getOperator();
+                if(operator == ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL) {
+                    ExprNode first = ((ExpressionOperatorNode) lhs).getExpressionNodes().get(0);
+                    if(first instanceof IdentifierExprNode) {
+                        constantsOnlyUsedInFunctionCall.remove(((IdentifierExprNode) first).getName());
+                    }
+                }
+            }
+            visitExprNode(lhs, expected);
+        });
+        node.getRightSide().forEach(rhs -> visitExprNode(rhs, expected));
+        return null;
+    }
+
+    @Override
+    public Void visitSkipSubstitutionNode(SkipSubstitutionNode node, Void expected) {
+        return null;
+    }
+
+    @Override
+    public Void visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
+        visitPredicateNode(node.getCondition(), expected);
+        visitSubstitutionNode(node.getSubstitution(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
+        visitPredicateNode(node.getWherePredicate(), expected);
+        visitSubstitutionNode(node.getThenSubstitution(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
+        visitPredicateNode(node.getPredicate(), expected);
+        visitSubstitutionNode(node.getBody(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node, Void expected) {
+        visitExprNode(node.getExpression(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
+        visitPredicateNode(node.getPredicate(), expected);
+        return null;
+    }
+
+    @Override
+    public Void visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode node, Void expected) {
+        node.getArguments().forEach(arg -> visitExprNode(arg, expected));
+        return null;
+    }
+
+    @Override
+    public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
+        node.getSubstitutions().forEach(substitution -> visitSubstitutionNode(substitution, expected));
         return null;
     }
 
@@ -247,118 +427,4 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
         return null;
     }
 
-    @Override
-    public Void visitLTLPrefixOperatorNode(LTLPrefixOperatorNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitLTLKeywordNode(LTLKeywordNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitLTLInfixOperatorNode(LTLInfixOperatorNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitLTLBPredicateNode(LTLBPredicateNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitIdentifierPredicateNode(IdentifierPredicateNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitPredicateOperatorNode(PredicateOperatorNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitIfPredicateNode(IfPredicateNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitListSubstitutionNode(ListSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitIfOrSelectSubstitutionsNode(IfOrSelectSubstitutionsNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitSkipSubstitutionNode(SkipSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitBecomesElementOfSubstitutionNode(BecomesElementOfSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitSubstitutionIdentifierCallNode(OperationCallSubstitutionNode node, Void expected) {
-        return null;
-    }
-
-    @Override
-    public Void visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
-        return null;
-    }
 }

@@ -501,6 +501,16 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testSeqLaws() throws Exception {
+        testJavaMC("SeqLaws", "SeqLaws", true, 1, false);
+    }
+
+    @Test
+    public void testINTEGERSET_Laws() throws Exception {
+        testJavaMC("INTEGERSET_Laws", "INTEGERSET_Laws", true, 1, false);
+    }
+
+    @Test
     public void testStringLaws() throws Exception {
         testJavaMC("StringLaws", "StringLaws", true, 1, false);
     }

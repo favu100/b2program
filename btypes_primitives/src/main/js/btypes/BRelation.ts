@@ -899,6 +899,17 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BBoolean(true);
 	}
 
+    checkRangeBoolean(): BBoolean {
+        this.range().getSet().forEach((e: T) => {
+            if(e instanceof BBoolean) {
+                return new BBoolean(true);
+            } else {
+                return new BBoolean(false);
+            }
+        });
+        return new BBoolean(true);
+    }
+
 	checkRangeNatural(): BBoolean {
 		this.range().getSet().forEach((e: T) => {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural().booleanValue()) {

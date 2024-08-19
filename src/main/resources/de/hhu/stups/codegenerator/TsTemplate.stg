@@ -35,9 +35,6 @@ export default class <machine> {
 
     <if(forModelChecking)>
     parent: <machine>;
-    dependentGuard: immutable.Set\<string> = immutable.Set();
-    guardCache: immutable.Map = immutable.Map();
-    dependentInvariant: immutable.Set\<string> = immutable.Set();
     stateAccessedVia: string;
     <endif>
 
@@ -976,7 +973,7 @@ this.
 >>
 
 
-modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
+modelchecker(machine, main, initializeCaches, nextStates, invariantViolated, printResult) ::= <<
 export class ModelChecker {
     private type: Type;
     private isCaching: boolean;
@@ -990,8 +987,7 @@ export class ModelChecker {
     private deadlockDetected: boolean = false;
     private counterExampleState: <machine> = undefined;
 
-    private invariantDependency: immutable.Map\<string, immutable.Set\<string>\> = new immutable.Map();
-    private guardDependency: immutable.Map\<string, immutable.Set\<string>\> = new immutable.Map();
+    <initializeCaches; separator="\n">
 
     constructor(type: Type, isCaching: boolean, isDebug: boolean) {
         this.type = type;
@@ -1023,8 +1019,6 @@ export class ModelChecker {
 
     <invariantViolated>
 
-    <addCachedInfos>
-
     <printResult>
 }
 
@@ -1034,12 +1028,7 @@ model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCachi
 generateNextStates(state: <machine>): Set\<<machine>\> {
     let result: immutable.Set\<<machine>\> = immutable.Set();
     if(this.isCaching) {
-        let parentsGuard: immutable.Map = state.guardCache;
-        let newCache: immutable.Map = parentsGuard == null ? immutable.Map() : parentsGuard;
-        let cachedValue: any = null;
-        let dependentGuardsBoolean: boolean = true;
         <transitionsWithCaching>
-        state.guardCache = newCache;
     } else {
         <transitionsWithoutCaching>
     }
@@ -1050,18 +1039,13 @@ generateNextStates(state: <machine>): Set\<<machine>\> {
 model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
 <if(isCaching)>
-let <transitionIdentifier>: BSet\<<tupleType>\>;
-if(!(state.dependentGuard.size === 0)) {
-    cachedValue = parentsGuard.get("<evalTransitions>");
-    dependentGuardsBoolean = state.dependentGuard.has("<evalTransitions>");
+let read_<evalTransitions>_state : _ProjectionRead_<evalTransitions> = state._projected_state_for_<evalTransitions>();
+let <transitionIdentifier> : BSet\<<tupleType>\>  = this._OpCache<evalTransitions>[read_<evalTransitions>_state] as BSet\<<tupleType>\>;
+if(<transitionIdentifier> == null) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    this._OpCache<evalTransitions> = this._OpCache<evalTransitions>.set(read_<evalTransitions>_state, <transitionIdentifier>);
 }
 
-if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
-    <transitionIdentifier> = state.<evalTransitions>();
-} else {
-    <transitionIdentifier> = cachedValue as BSet\<<tupleType>\>;
-}
-newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
 for(let param of <transitionIdentifier>) {
     <execTransitions>
 }
@@ -1073,19 +1057,16 @@ for(let param of <transitionIdentifier>) {
 <endif>
 <else>
 <if(isCaching)>
+let read_<evalTransitions>_state : _ProjectionRead_<evalTransitions> = state._projected_state_for_<evalTransitions>();
+let _obj_<transitionIdentifier>: any = this._OpCache<evalTransitions>[read_<evalTransitions>_state];
 let <transitionIdentifier>: boolean;
-if(!(state.dependentGuard.size === 0)) {
-    cachedValue = parentsGuard.get("<evalTransitions>");
-    dependentGuardsBoolean = state.dependentGuard.has("<evalTransitions>");
-}
-
-if(state.dependentGuard.size === 0 || dependentGuardsBoolean || parentsGuard == null || cachedValue == null) {
+if(_obj_<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
+    this._OpCache<evalTransitions> = this._OpCache<evalTransitions>.set(read_<evalTransitions>_state, <transitionIdentifier>);
 } else {
-    <transitionIdentifier> = cachedValue as boolean;
+    <transitionIdentifier> = _obj_<transitionIdentifier> as boolean;
 }
 
-newCache = newCache.set("<evalTransitions>", <transitionIdentifier>);
 if(<transitionIdentifier>) {
     <execTransitions>
 }
@@ -1253,13 +1234,37 @@ _InvCache_<invariant>: immutable.Map\<any, any\> = new immutable.Map();
 >>
 
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters) ::= <<
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, transitionEval, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
 let copiedState: <machine> = state._copy();
+<if(isCaching)>
+let readState: _ProjectionRead_<operation> = state._projected_state_for_<operation>();
+let _OpCache_with_parameter_<operation>: immutable.Map = this._OpCache_<operation>[<transitionEval>];
+if(_OpCache_with_parameter_<operation> != null) {
+    let writeState: _ProjectionWrite_<operation> = _OpCache_with_parameter_<operation>[readState] as _ProjectionWrite_<operation>;
+    if(writeState != null) {
+        copiedState._apply_update_for_<operation>(writeState);
+        copiedState.parent = state;
+    } else {
+        copiedState.<operation>(<parameters; separator=", ">);
+        copiedState.parent = state;
+        writeState = copiedState._update_for_<operation>();
+        _OpCache_with_parameter_<operation> = _OpCache_with_parameter_<operation>.set(readState, writeState);
+        this._OpCache_<operation> = this._OpCache_<operation>.set(<transitionEval>, _OpCache_with_parameter_<operation>);
+    }
+
+} else {
+    copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
+    let writeState : _ProjectionWrite_<operation> = copiedState._update_for_<operation>();
+    _OpCache_with_parameter_<operation> = new immutable.Map().set(readState, writeState);
+    this._OpCache_<operation> = this._OpCache_<operation>.set(<transitionEval>, _OpCache_with_parameter_<operation>);
+}
+<else>
 copiedState.<operation>(<parameters; separator=", ">);
-copiedState.parent = state;
+<endif>
 result = result.add(copiedState);
 this.transitions = this.transitions + 1;
 >>
@@ -1284,11 +1289,22 @@ invViolated(state: <machine>): boolean {
 >>
 
 model_check_invariant(invariant) ::= <<
-if(!(this.isCaching) || state.dependentInvariant.has("<invariant>")) {
-    if(!state.<invariant>()) {
-        console.log("INVARIANT CONJUNCT VIOLATED: <invariant>");
-        return true;
+let <invariant>: boolean;
+if(isCaching) {
+    let read_<invariant>_state: _ProjectionRead_<invariant> = state._projected_state_for_<invariant>();
+    let _obj_<invariant>: any = this._InvCache_<invariant>[read_<invariant>_state];
+    if(_obj_<invariant> == null) {
+        <invariant> = state.<invariant>();
+        this._InvCache_<invariant> = this._InvCache_<invariant>.set(read_<invariant>_state, <invariant>);
+    } else {
+        <invariant> = _obj_<invariant> as boolean;
     }
+} else {
+    <invariant> = state.<invariant>();
+}
+if(!state.<invariant>()) {
+    console.log("INVARIANT CONJUNCT VIOLATED: <invariant>");
+    return true;
 }
 >>
 
@@ -1332,7 +1348,7 @@ model_check_init_static(map, keyy, entries) ::= <<
 this.<map> = this.<map>.set("<keyy>", immutable.Set([<entries:{entry | "<entry>"}; separator=", ">]));
 >>
 
-model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
+model_check_main(machine, invariants) ::= <<
 modelCheck(): void {
     if (this.isDebug) {
         console.log("Starting Modelchecking, STRATEGY=" + this.type + ", CACHING=" + this.isCaching);
@@ -1344,10 +1360,6 @@ modelCheckSingleThreaded(): void {
     let machine: <machine> = new <machine>();
     this.states = this.states.add(machine);
     this.unvisitedStates.pushBack(machine);
-
-    if(this.isCaching) {
-        this.initCache(machine);
-    }
 
     while(!(this.unvisitedStates.length === 0)) {
         let state: <machine> = this.next();
@@ -1380,11 +1392,6 @@ modelCheckSingleThreaded(): void {
 
     }
     this.printResult(this.states.size, this.transitions);
-}
-
-initCache(machine: <machine> ): void {
-    <invariantDependency; separator="\n">
-    <guardDependency; separator="\n">
 }
 >>
 

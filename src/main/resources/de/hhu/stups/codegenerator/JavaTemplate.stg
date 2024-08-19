@@ -1683,6 +1683,7 @@ public void modelCheck() {
     }
 
     if (threads \<= 1) {
+
         modelCheckSingleThreaded();
     } else {
         this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);

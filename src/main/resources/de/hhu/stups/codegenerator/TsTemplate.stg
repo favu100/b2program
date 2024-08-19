@@ -1040,7 +1040,7 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 <if(hasParameters)>
 <if(isCaching)>
 let read_<evalTransitions>_state : _ProjectionRead_<evalTransitions> = state._projected_state_for_<evalTransitions>();
-let <transitionIdentifier> : BSet\<<tupleType>\>  = this._OpCache<evalTransitions>[read_<evalTransitions>_state] as BSet\<<tupleType>\>;
+let <transitionIdentifier> : BSet\<<tupleType>\>  = this._OpCache<evalTransitions>.get(read_<evalTransitions>_state) as BSet\<<tupleType>\>;
 if(<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
     this._OpCache<evalTransitions> = this._OpCache<evalTransitions>.set(read_<evalTransitions>_state, <transitionIdentifier>);
@@ -1058,7 +1058,7 @@ for(let param of <transitionIdentifier>) {
 <else>
 <if(isCaching)>
 let read_<evalTransitions>_state : _ProjectionRead_<evalTransitions> = state._projected_state_for_<evalTransitions>();
-let _obj_<transitionIdentifier>: any = this._OpCache<evalTransitions>[read_<evalTransitions>_state];
+let _obj_<transitionIdentifier>: any = this._OpCache<evalTransitions>.get(read_<evalTransitions>_state);
 let <transitionIdentifier>: boolean;
 if(_obj_<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
@@ -1241,9 +1241,9 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 let copiedState: <machine> = state._copy();
 <if(isCaching)>
 let readState: _ProjectionRead_<operation> = state._projected_state_for_<operation>();
-let _OpCache_with_parameter_<operation>: immutable.Map = this._OpCache_<operation>[<transitionEval>];
+let _OpCache_with_parameter_<operation>: immutable.Map = this._OpCache_<operation>.get(<transitionEval>);
 if(_OpCache_with_parameter_<operation> != null) {
-    let writeState: _ProjectionWrite_<operation> = _OpCache_with_parameter_<operation>[readState] as _ProjectionWrite_<operation>;
+    let writeState: _ProjectionWrite_<operation> = _OpCache_with_parameter_<operation>.get(readState) as _ProjectionWrite_<operation>;
     if(writeState != null) {
         copiedState._apply_update_for_<operation>(writeState);
         copiedState.parent = state;
@@ -1292,7 +1292,7 @@ model_check_invariant(invariant) ::= <<
 let <invariant>: boolean;
 if(isCaching) {
     let read_<invariant>_state: _ProjectionRead_<invariant> = state._projected_state_for_<invariant>();
-    let _obj_<invariant>: any = this._InvCache_<invariant>[read_<invariant>_state];
+    let _obj_<invariant>: any = this._InvCache_<invariant>.get(read_<invariant>_state);
     if(_obj_<invariant> == null) {
         <invariant> = state.<invariant>();
         this._InvCache_<invariant> = this._InvCache_<invariant>.set(read_<invariant>_state, <invariant>);
@@ -1302,7 +1302,7 @@ if(isCaching) {
 } else {
     <invariant> = state.<invariant>();
 }
-if(!state.<invariant>()) {
+if(!<invariant>) {
     console.log("INVARIANT CONJUNCT VIOLATED: <invariant>");
     return true;
 }

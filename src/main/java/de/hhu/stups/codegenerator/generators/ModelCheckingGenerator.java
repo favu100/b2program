@@ -311,13 +311,6 @@ public class ModelCheckingGenerator {
         return template.render();
     }
 
-
-    private String generateAddCachedInfos(MachineNode machineNode) {
-        ST template = currentGroup.getInstanceOf("model_check_add_cached_infos");
-        TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
-        return template.render();
-    }
-
     public String generateTransitionBody(MachineNode machineNode, OperationNode opNode, BType tupleType, boolean isCaching, String transitionIdentifier) {
         ST template = currentGroup.getInstanceOf("model_check_transition_body");
         boolean hasParameters = !opNode.getParams().isEmpty();

@@ -5,7 +5,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 >>
 
 
-machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration, machineString) ::= <<
+machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, projection, projectionClasses, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration, machineString) ::= <<
 #include \<iostream>
 #include \<string>
 <if(forModelChecking)>
@@ -72,6 +72,9 @@ class <machine> {
                         return false;
                     }
             };
+
+        <projectionClasses; separator="\n">
+
         <endif>
 
     private:
@@ -111,6 +114,8 @@ class <machine> {
         <if(forModelChecking)>
 
         <transitions; separator="\n\n">
+
+        <projection; separator="\n\n">
 
         <invariant; separator="\n\n">
 
@@ -1119,19 +1124,6 @@ class ModelChecker {
 };
 >>
 
-// TODO: delete
-model_check(addCachedInfos, nextStates, printResult, checkInvariants, main) ::= <<
-<addCachedInfos>
-
-<nextStates>
-
-<printResult>
-
-<checkInvariants>
-
-<main>
->>
-
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
@@ -1153,28 +1145,223 @@ if(state.<evalTransitions>(isCaching)) {
 <endif>
 >>
 
-model_check_add_cached_infos(machine) ::= <<
->>
-
 opreuse_declaration(type, variable) ::= <<
+<type> <variable>;
 >>
 
 opreuse_parameter(type, variable) ::= <<
+const <type>& <variable>
 >>
 
-opreuse_class(isRead, name, declarations, parameters, variabels, initializations, equalPredicates, unequalPredicates) ::= <<
+opreuse_class(isRead, isGuard, isInvariant, name, declarations, parameters, variables) ::= <<
+<if(isRead)>
+<if(isGuard)>
+class _ProjectionRead__tr_<name> {
+
+    public:
+        <declarations; separator="\n">
+
+        _ProjectionRead__tr_<name>(<parameters; separator=", ">) {
+            <variables:{variable | this-><variable> = <variable>;}; separator="\n">
+        }
+
+        friend bool operator ==(const _ProjectionRead__tr_<name>& o1, const _ProjectionRead__tr_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> == (o2.<variable>)}; separator=" && ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend bool operator !=(const _ProjectionRead__tr_<name>& o1, const _ProjectionRead__tr_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> != (o2.<variable>)}; separator=" || ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionRead__tr_<name>& e) {
+            strm \<\< "{";
+            <if(variables)>
+            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <endif>
+            strm \<\< "}";
+            return strm;
+        }
+
+        int hashCode() const {
+            int result = 1;
+            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return result;
+        }
+};
+<else>
+<if(isInvariant)>
+class _ProjectionRead_<name> {
+
+    public:
+        <declarations; separator="\n">
+
+        _ProjectionRead_<name>(<parameters; separator=", ">) {
+            <variables:{variable | this-><variable> = <variable>;}; separator="\n">
+        }
+
+        friend bool operator ==(const _ProjectionRead_<name>& o1, const _ProjectionRead_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> == (o2.<variable>)}; separator=" && ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend bool operator !=(const _ProjectionRead_<name>& o1, const _ProjectionRead_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> != (o2.<variable>)}; separator=" || ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionRead_<name>& e) {
+            strm \<\< "{";
+            <if(variables)>
+            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <endif>
+            strm \<\< "}";
+            return strm;
+        }
+
+        int hashCode() const {
+            int result = 1;
+            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return result;
+        }
+};
+<else>
+class _ProjectionRead_<name> {
+
+    public:
+        <declarations; separator="\n">
+
+        _ProjectionRead_<name>(<parameters; separator=", ">) {
+            <variables:{variable | this-><variable> = <variable>;}; separator="\n">
+        }
+
+        friend bool operator ==(const _ProjectionRead_<name>& o1, const _ProjectionRead_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> == (o2.<variable>)}; separator=" && ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend bool operator !=(const _ProjectionRead_<name>& o1, const _ProjectionRead_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> != (o2.<variable>)}; separator=" || ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionRead_<name>& e) {
+            strm \<\< "{";
+            <if(variables)>
+            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <endif>
+            strm \<\< "}";
+            return strm;
+        }
+
+        int hashCode() const {
+            int result = 1;
+            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return result;
+        }
+};
+<endif>
+<endif>
+<else>
+class _ProjectionWrite_<name> {
+
+    public:
+        <declarations; separator="\n">
+
+        _ProjectionWrite_<name>(<parameters; separator=", ">) {
+            <variables:{variable | this-><variable> = <variable>;}; separator="\n">
+        }
+
+        friend bool operator ==(const _ProjectionWrite_<name>& o1, const _ProjectionWrite_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> == (o2.<variable>)}; separator=" && ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend bool operator !=(const _ProjectionWrite_<name>& o1, const _ProjectionWrite_<name>& o2) {
+            <if(variables)>
+            return <variables:{variable | o1.<variable> != (o2.<variable>)}; separator=" || ">;
+            <else>
+            return true;
+            <endif>
+        }
+
+        friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionWrite_<name>& e) {
+            strm \<\< "{";
+            <if(variables)>
+            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <endif>
+            strm \<\< "}";
+            return strm;
+        }
+
+        int hashCode() const {
+            int result = 1;
+            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return result;
+        }
+};
+<endif>
 >>
 
 opreuse_read_projection(operation, projectState) ::= <<
+_ProjectionRead_<operation> _projected_state_for_<operation>() {
+    return _ProjectionRead_<operation>(<projectState; separator=",">);
+}
+>>
+
+opreuse_grd_read_projection(operation, projectState) ::= <<
+_ProjectionRead_<operation> _projected_state_for_<operation>() {
+    return _ProjectionRead_<operation>(<projectState; separator=",">);
+}
+>>
+
+opreuse_inv_read_projection(invariant, projectState) ::= <<
+_ProjectionRead_<invariant> _projected_state_for_<invariant>() {
+    return _ProjectionRead_<invariant>(<projectState; separator=",">);
+}
 >>
 
 opreuse_write_projection(operation, projectState) ::= <<
+_ProjectionWrite_<operation> _update_for_<operation>() {
+    return _ProjectionWrite_<operation>(<projectState; separator=",">);
+}
 >>
 
 opreuse_apply_update(operation, projectState) ::= <<
+void _apply_update_for_<operation>(const _ProjectionWrite_<operation>& update) {
+    <projectState:{variable | this-><variable> = update.<variable>;}; separator="\n">
+}
 >>
 
 opreuse_initialize_opcaches(operation) ::= <<
+std::unordered_map\<std::any, std::unordered_map\<std::any, std::any>\> _OpCache_<operation>;
+std::unordered_map\<std::any, std::any\> _OpCache_tr_<operation>;
+>>
+
+opreuse_initialize_invariant_caches(invariant) ::= <<
+std::unordered_map\<std::any, std::any> _InvCache_<invariant>;
 >>
 
 

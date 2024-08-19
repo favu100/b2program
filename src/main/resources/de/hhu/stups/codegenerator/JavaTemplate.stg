@@ -1322,9 +1322,6 @@ if(state.<evalTransitions>()) {
 <endif>
 >>
 
-model_check_add_cached_infos(machine) ::= <<
->>
-
 opreuse_declaration(type, variable) ::= <<
 public <type> <variable>;
 >>

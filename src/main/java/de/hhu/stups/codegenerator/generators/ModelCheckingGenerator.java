@@ -90,8 +90,19 @@ public class ModelCheckingGenerator {
     private List<String> generateOpCaches(MachineNode machineNode) {
         List<String> opCaches = new ArrayList<>();
         for(OperationNode operationNode : machineNode.getOperations()) {
+            boolean hasParameters = !operationNode.getParams().isEmpty();
             ST template = currentGroup.getInstanceOf("opreuse_initialize_opcaches");
             TemplateHandler.add(template, "operation", nameHandler.handle(operationNode.getName()));
+            TemplateHandler.add(template, "hasParameters", hasParameters);
+            BType tupleType;
+            if(!hasParameters) {
+                tupleType = null;
+            } else {
+                tupleType = this.extractTypeFromDeclarations(operationNode.getParams());
+            }
+            if(hasParameters) {
+                TemplateHandler.add(template, "tupleType", typeGenerator.generate(tupleType));
+            }
             opCaches.add(template.render());
         }
         return opCaches;
@@ -102,6 +113,7 @@ public class ModelCheckingGenerator {
         for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
             ST template = currentGroup.getInstanceOf("opreuse_initialize_invariant_caches");
             TemplateHandler.add(template, "invariant", invariant);
+            TemplateHandler.add(template, "readType", "_ProjectionRead_");
             invariantCaches.add(template.render());
         }
         return invariantCaches;
@@ -128,6 +140,7 @@ public class ModelCheckingGenerator {
         ST template = currentGroup.getInstanceOf("model_check_transition");
         String opName = nameHandler.handle(operationNode.getName());
         boolean hasParameters = !operationNode.getParams().isEmpty();
+        TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         BType tupleType;
         if(!hasParameters) {

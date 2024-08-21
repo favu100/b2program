@@ -1040,7 +1040,7 @@ model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTrans
 <if(hasParameters)>
 <if(isCaching)>
 let read_<evalTransitions>_state : _ProjectionRead_<evalTransitions> = state._projected_state_for_<evalTransitions>();
-let <transitionIdentifier> : BSet\<<tupleType>\>  = this._OpCache<evalTransitions>.get(read_<evalTransitions>_state) as BSet\<<tupleType>\>;
+let <transitionIdentifier> : BSet\<<tupleType>\>  = this._OpCache<evalTransitions>.get(read_<evalTransitions>_state);
 if(<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
     this._OpCache<evalTransitions> = this._OpCache<evalTransitions>.set(read_<evalTransitions>_state, <transitionIdentifier>);
@@ -1064,7 +1064,7 @@ if(_obj_<transitionIdentifier> == null) {
     <transitionIdentifier> = state.<evalTransitions>();
     this._OpCache<evalTransitions> = this._OpCache<evalTransitions>.set(read_<evalTransitions>_state, <transitionIdentifier>);
 } else {
-    <transitionIdentifier> = _obj_<transitionIdentifier> as boolean;
+    <transitionIdentifier> = _obj_<transitionIdentifier>;
 }
 
 if(<transitionIdentifier>) {
@@ -1224,13 +1224,18 @@ _apply_update_for_<operation>(update : _ProjectionWrite_<operation>): void {
 }
 >>
 
-opreuse_initialize_opcaches(operation) ::= <<
-_OpCache_<operation>: immutable.Map\<any, immutable.Map\<any, any>\> = new immutable.Map();
-_OpCache_tr_<operation>: immutable.Map\<any, any\> = new immutable.Map();
+opreuse_initialize_opcaches(operation, hasParameters, tupleType) ::= <<
+<if(hasParameters)>
+_OpCache_<operation>: immutable.Map\<_ProjectionRead_<operation>, immutable.Map\<BSet\<<tupleType>\>, _ProjectionWrite_<operation>\>\> = new immutable.Map();
+_OpCache_tr_<operation>: immutable.Map\<_ProjectionRead__tr_<operation>, BSet\<<tupleType>\>\> = new immutable.Map();
+<else>
+_OpCache_<operation>: immutable.Map\<_ProjectionRead_<operation>, immutable.Map\<boolean, _ProjectionWrite_<operation>\>\> = new immutable.Map();
+_OpCache_tr_<operation>: immutable.Map\<_ProjectionRead__tr_<operation>, boolean\> = new immutable.Map();
+<endif>
 >>
 
 opreuse_initialize_invariant_caches(invariant) ::= <<
-_InvCache_<invariant>: immutable.Map\<any, any\> = new immutable.Map();
+_InvCache_<invariant>: immutable.Map\<_ProjectionRead_<invariant>, boolean\> = new immutable.Map();
 >>
 
 
@@ -1243,7 +1248,7 @@ let copiedState: <machine> = state._copy();
 let readState: _ProjectionRead_<operation> = state._projected_state_for_<operation>();
 let _OpCache_with_parameter_<operation>: immutable.Map = this._OpCache_<operation>.get(<transitionEval>);
 if(_OpCache_with_parameter_<operation> != null) {
-    let writeState: _ProjectionWrite_<operation> = _OpCache_with_parameter_<operation>.get(readState) as _ProjectionWrite_<operation>;
+    let writeState: _ProjectionWrite_<operation> = _OpCache_with_parameter_<operation>.get(readState);
     if(writeState != null) {
         copiedState._apply_update_for_<operation>(writeState);
         copiedState.parent = state;
@@ -1292,12 +1297,12 @@ model_check_invariant(invariant) ::= <<
 let <invariant>: boolean;
 if(isCaching) {
     let read_<invariant>_state: _ProjectionRead_<invariant> = state._projected_state_for_<invariant>();
-    let _obj_<invariant>: any = this._InvCache_<invariant>.get(read_<invariant>_state);
+    let _obj_<invariant>: boolean = this._InvCache_<invariant>.get(read_<invariant>_state);
     if(_obj_<invariant> == null) {
         <invariant> = state.<invariant>();
         this._InvCache_<invariant> = this._InvCache_<invariant>.set(read_<invariant>_state, <invariant>);
     } else {
-        <invariant> = _obj_<invariant> as boolean;
+        <invariant> = _obj_<invariant>;
     }
 } else {
     <invariant> = state.<invariant>();

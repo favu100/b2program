@@ -1506,7 +1506,10 @@ copiedState.<operation>(<parameters; separator=", ">);
 <endif>
 copiedState.stateAccessedVia = "<operation>";
 result.insert(copiedState);
-transitions += 1;
+{
+    std::unique_lock\<std::mutex> lock(mutex);
+    transitions += 1;
+}
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -1665,9 +1668,9 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
             std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state);
 
             for(auto& nextState : nextStates) {
-                if(states.find(nextState) == states.end()) {
-                    {
-                        std::unique_lock\<std::mutex\> lock(mutex);
+                {
+                    std::unique_lock\<std::mutex\> lock(mutex);
+                    if(states.find(nextState) == states.end()) {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);

@@ -74,7 +74,7 @@ public class ModelCheckingGenerator {
             ST template = currentGroup.getInstanceOf("modelchecker");
             TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
             List<String> initializeCaches = new ArrayList<>(generateOpCaches(machineNode));
-            initializeCaches.addAll(generateInvCaches());
+            initializeCaches.addAll(generateInvCaches(machineNode));
             TemplateHandler.add(template, "initializeCaches", initializeCaches);
             TemplateHandler.add(template, "main", generateMain(machineNode));
             TemplateHandler.add(template, "nextStates", generateNextStates(machineNode));
@@ -92,6 +92,7 @@ public class ModelCheckingGenerator {
         for(OperationNode operationNode : machineNode.getOperations()) {
             boolean hasParameters = !operationNode.getParams().isEmpty();
             ST template = currentGroup.getInstanceOf("opreuse_initialize_opcaches");
+            TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
             TemplateHandler.add(template, "operation", nameHandler.handle(operationNode.getName()));
             TemplateHandler.add(template, "hasParameters", hasParameters);
             BType tupleType;
@@ -108,10 +109,11 @@ public class ModelCheckingGenerator {
         return opCaches;
     }
 
-    private List<String> generateInvCaches() {
+    private List<String> generateInvCaches(MachineNode machineNode) {
         List<String> invariantCaches = new ArrayList<>();
         for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
             ST template = currentGroup.getInstanceOf("opreuse_initialize_invariant_caches");
+            TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
             TemplateHandler.add(template, "invariant", invariant);
             TemplateHandler.add(template, "readType", "_ProjectionRead_");
             invariantCaches.add(template.render());
@@ -335,6 +337,7 @@ public class ModelCheckingGenerator {
         //TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         TemplateHandler.add(template, "checkReachability", checkReachabilityAnalyzer.visitOperation(opNode));
+        TemplateHandler.add(template, "tupleType", typeGenerator.generate(tupleType));
 
         String evalName = hasParameters ? "param" : transitionIdentifier;
         List<String> readParameters = new ArrayList<>();
@@ -484,15 +487,16 @@ public class ModelCheckingGenerator {
     public String generateModelCheckInvariantsFunction(MachineNode machineNode) {
         ST template = currentGroup.getInstanceOf("model_check_invariants");
         TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
-        TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariants());
+        TemplateHandler.add(template, "invariantViolated", generateModelCheckInvariants(machineNode));
         TemplateHandler.add(template, "invariants", modelCheckingInfo.getInvariantFunctions());
         return template.render();
     }
 
-    public List<String> generateModelCheckInvariants() {
+    public List<String> generateModelCheckInvariants(MachineNode machineNode) {
         List<String> invariants = new ArrayList<>();
         for(String invariant : modelCheckingInfo.getInvariantFunctions()) {
             ST template = currentGroup.getInstanceOf("model_check_invariant");
+            TemplateHandler.add(template, "machine", nameHandler.handle(machineNode.getName()));
             TemplateHandler.add(template, "invariant", invariant);
             //TemplateHandler.add(template, "invariantID", invariantIDs.get(invariant));
             invariants.add(template.render());

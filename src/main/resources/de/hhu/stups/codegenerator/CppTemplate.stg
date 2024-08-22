@@ -15,6 +15,7 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<unordered_map>
 #include \<list>
 #include \<atomic>
+#include \<any>
 #include \<mutex>
 #include \<future>
 #include \<boost/asio/post.hpp>
@@ -519,24 +520,18 @@ if((<predicate>).booleanValue()) {
 >>
 
 transition(noParameters, noPredicate, identifier, subType, operationName, predicate, combination) ::= <<
-<if(noParameters)>bool<else>BSet\<<subType>\><endif> _tr_<operationName>(bool isCaching) const {
-    if (this->_tr_cache_<operationName> == boost::none){
-        <if(noParameters)>
-        <if(noPredicate)>
-        return true;
-        <else>
-        bool __tmp_result = (<predicate>).booleanValue();
-        if (isCaching) this->_tr_cache_<operationName> = __tmp_result;
-        else return __tmp_result;
-        <endif>
-        <else>
-        BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
-        <combination>
-        if (isCaching) this->_tr_cache_<operationName> = <identifier>;
-        else return <identifier>;
-        <endif>
-    }
-    return this->_tr_cache_<operationName>.get();
+<if(noParameters)>bool<else>BSet\<<subType>\><endif> _tr_<operationName>() const {
+    <if(noParameters)>
+    <if(noPredicate)>
+    return true;
+    <else>
+    return (<predicate>).booleanValue();
+    <endif>
+    <else>
+    BSet\<<subType>\> <identifier> = BSet\<<subType>\>();
+    <combination>
+    return <identifier>;
+    <endif>
 }
 >>
 
@@ -562,24 +557,8 @@ this-><machine> = <machine>->_copy();
 >>
 
 copy(machine, parameters, operations) ::= <<
-static constexpr unsigned int strHash(const char *s, int off = 0) {
-    return !s[off] ? 5381 : (strHash(s, off+1)*33) ^ s[off];
-}
-
-<machine> _copy(unordered_set\<string> toInvalidate) const {
-    static const char* allTransitions[] = {<operations: {op | "_tr_<op>"}; separator=", ">};
-
-    <machine> result = <machine>(<parameters; separator=", ">);
-
-    for (const auto &item : allTransitions) {
-        if(toInvalidate.find(item) == toInvalidate.end()) {
-            switch(strHash(item)) {
-                <operations: {op | case strHash("_tr_<op>"): result._tr_cache_<op> = this->_tr_cache_<op>; break;}; separator="\n">
-                default: cout \<\< "Transition " \<\< item \<\< " not found!";
-            }
-        }
-    }
-    return result;
+<machine> _copy() const {
+    return <machine>(<parameters; separator=", ">);
 }
 >>
 
@@ -1046,7 +1025,7 @@ skip() ::= <<
 enum_import() ::= <<
 >>
 
-modelchecker(machine, addCachedInfos, main, nextStates, invariantViolated, printResult) ::= <<
+modelchecker(machine, main, nextStates, invariantViolated, initializeCaches, printResult) ::= <<
 class ModelChecker {
     private:
         <machine>::Type type;
@@ -1066,8 +1045,8 @@ class ModelChecker {
         std::atomic\<bool> deadlockDetected;
         <machine> counterExampleState;
 
-        std::unordered_map\<string, std::unordered_set\<string>\> invariantDependency;
-        std::unordered_map\<string, std::unordered_set\<string>\> guardDependency;
+        <initializeCaches; separator="\n">
+
         std::unordered_map\<<machine>, <machine>, <machine>::Hash, <machine>::HashEqual> parents;
 
     public:
@@ -1118,8 +1097,6 @@ class ModelChecker {
 
         <invariantViolated>
 
-        <addCachedInfos>
-
         <printResult>
 };
 >>
@@ -1127,21 +1104,57 @@ class ModelChecker {
 model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCaching) ::= <<
 std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
-    <transitionsWithCaching>
+    if(isCaching) {
+        <transitionsWithCaching>
+    } else {
+        <transitionsWithoutCaching>
+    }
     return result;
 }
 >>
 
-model_check_transition(hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
+model_check_transition(machine, hasParameters, tupleType, transitionIdentifier, evalTransitions, execTransitions, isCaching) ::= <<
 <if(hasParameters)>
-BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>(isCaching);
+<if(isCaching)>
+<machine>::_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
+auto <transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
+BSet\<<tupleType>\> <transitionIdentifier>;
+if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    _OpCache<evalTransitions>[read_<evalTransitions>_state] = <transitionIdentifier>;
+} else {
+    <transitionIdentifier> = <transitionIdentifier>_ptr->second;
+}
+
 for(const <tupleType>& param : <transitionIdentifier>) {
     <execTransitions>
 }
 <else>
-if(state.<evalTransitions>(isCaching)) {
+BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
+for(const <tupleType>& param : <transitionIdentifier>) {
     <execTransitions>
 }
+<endif>
+<else>
+<if(isCaching)>
+<machine>::_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
+auto _obj_<transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
+bool <transitionIdentifier>;
+if(_obj_<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    _OpCache<evalTransitions>[read_<evalTransitions>_state] = <transitionIdentifier>;
+} else {
+    <transitionIdentifier> = _obj_<transitionIdentifier>_ptr->second;
+}
+
+if(<transitionIdentifier>) {
+    <execTransitions>
+}
+<else>
+if(state.<evalTransitions>()) {
+    <execTransitions>
+}
+<endif>
 <endif>
 >>
 
@@ -1159,6 +1172,23 @@ opreuse_class(isRead, isGuard, isInvariant, name, declarations, parameters, vari
 class _ProjectionRead__tr_<name> {
 
     public:
+        struct Hash {
+            public:
+                size_t operator()(const _ProjectionRead__tr_<name>& obj) const {
+                    return obj.hashCode();
+                }
+        };
+
+        struct HashEqual {
+            public:
+                bool operator()(const _ProjectionRead__tr_<name>& obj1, const _ProjectionRead__tr_<name>& obj2) const {
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                    }
+            };
+
         <declarations; separator="\n">
 
         _ProjectionRead__tr_<name>(<parameters; separator=", ">) {
@@ -1184,7 +1214,7 @@ class _ProjectionRead__tr_<name> {
         friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionRead__tr_<name>& e) {
             strm \<\< "{";
             <if(variables)>
-            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <variables:{variable |strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\nstrm \<\< \", \"; \n">;
             <endif>
             strm \<\< "}";
             return strm;
@@ -1201,6 +1231,23 @@ class _ProjectionRead__tr_<name> {
 class _ProjectionRead_<name> {
 
     public:
+        struct Hash {
+            public:
+                size_t operator()(const _ProjectionRead_<name>& obj) const {
+                    return obj.hashCode();
+                }
+        };
+
+        struct HashEqual {
+            public:
+                bool operator()(const _ProjectionRead_<name>& obj1, const _ProjectionRead_<name>& obj2) const {
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                    }
+            };
+
         <declarations; separator="\n">
 
         _ProjectionRead_<name>(<parameters; separator=", ">) {
@@ -1226,7 +1273,7 @@ class _ProjectionRead_<name> {
         friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionRead_<name>& e) {
             strm \<\< "{";
             <if(variables)>
-            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <variables:{variable |strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\nstrm \<\< \", \";\n">;
             <endif>
             strm \<\< "}";
             return strm;
@@ -1237,11 +1284,29 @@ class _ProjectionRead_<name> {
             <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
             return result;
         }
+
 };
 <else>
 class _ProjectionRead_<name> {
 
     public:
+        struct Hash {
+            public:
+                size_t operator()(const _ProjectionRead_<name>& obj) const {
+                    return obj.hashCode();
+                }
+        };
+
+        struct HashEqual {
+            public:
+                bool operator()(const _ProjectionRead_<name>& obj1, const _ProjectionRead_<name>& obj2) const {
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                    }
+            };
+
         <declarations; separator="\n">
 
         _ProjectionRead_<name>(<parameters; separator=", ">) {
@@ -1267,7 +1332,7 @@ class _ProjectionRead_<name> {
         friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionRead_<name>& e) {
             strm \<\< "{";
             <if(variables)>
-            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <variables:{variable |strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\nstrm \<\< \", \";\n">;
             <endif>
             strm \<\< "}";
             return strm;
@@ -1278,6 +1343,7 @@ class _ProjectionRead_<name> {
             <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
             return result;
         }
+
 };
 <endif>
 <endif>
@@ -1285,6 +1351,23 @@ class _ProjectionRead_<name> {
 class _ProjectionWrite_<name> {
 
     public:
+        struct Hash {
+            public:
+                size_t operator()(const _ProjectionWrite_<name>& obj) const {
+                    return obj.hashCode();
+                }
+        };
+
+        struct HashEqual {
+            public:
+                bool operator()(const _ProjectionWrite_<name>& obj1, const _ProjectionWrite_<name>& obj2) const {
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                    }
+            };
+
         <declarations; separator="\n">
 
         _ProjectionWrite_<name>(<parameters; separator=", ">) {
@@ -1310,7 +1393,7 @@ class _ProjectionWrite_<name> {
         friend std::ostream& operator\<\<(std::ostream &strm, const _ProjectionWrite_<name>& e) {
             strm \<\< "{";
             <if(variables)>
-            <variables:{variable | strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\n strm \<\< \",\";">;
+            <variables:{variable |strm \<\< "<variable>: " \<\< e.<variable>;}; separator="\nstrm \<\< \", \";\n">;
             <endif>
             strm \<\< "}";
             return strm;
@@ -1321,30 +1404,31 @@ class _ProjectionWrite_<name> {
             <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
             return result;
         }
+
 };
 <endif>
 >>
 
 opreuse_read_projection(operation, projectState) ::= <<
-_ProjectionRead_<operation> _projected_state_for_<operation>() {
+_ProjectionRead_<operation> _projected_state_for_<operation>() const {
     return _ProjectionRead_<operation>(<projectState; separator=",">);
 }
 >>
 
 opreuse_grd_read_projection(operation, projectState) ::= <<
-_ProjectionRead_<operation> _projected_state_for_<operation>() {
+_ProjectionRead_<operation> _projected_state_for_<operation>() const {
     return _ProjectionRead_<operation>(<projectState; separator=",">);
 }
 >>
 
 opreuse_inv_read_projection(invariant, projectState) ::= <<
-_ProjectionRead_<invariant> _projected_state_for_<invariant>() {
+_ProjectionRead_<invariant> _projected_state_for_<invariant>() const {
     return _ProjectionRead_<invariant>(<projectState; separator=",">);
 }
 >>
 
 opreuse_write_projection(operation, projectState) ::= <<
-_ProjectionWrite_<operation> _update_for_<operation>() {
+_ProjectionWrite_<operation> _update_for_<operation>() const {
     return _ProjectionWrite_<operation>(<projectState; separator=",">);
 }
 >>
@@ -1355,22 +1439,55 @@ void _apply_update_for_<operation>(const _ProjectionWrite_<operation>& update) {
 }
 >>
 
-opreuse_initialize_opcaches(operation) ::= <<
-std::unordered_map\<std::any, std::unordered_map\<std::any, std::any>\> _OpCache_<operation>;
-std::unordered_map\<std::any, std::any\> _OpCache_tr_<operation>;
+opreuse_initialize_opcaches(machine, operation, hasParameters, tupleType) ::= <<
+<if(hasParameters)>
+std::unordered_map\<BSet\<<tupleType>\>, std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\>, BSet\<<tupleType>\>::SetHash, BSet\<<tupleType>\>::SetHashEqual\> _OpCache_<operation>;
+std::unordered_map\<<machine>::_ProjectionRead__tr_<operation>,  BSet\<<tupleType>\>, <machine>::_ProjectionRead__tr_<operation>::Hash, <machine>::_ProjectionRead__tr_<operation>::HashEqual\> _OpCache_tr_<operation>;
+<else>
+std::unordered_map\<bool, std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\>\> _OpCache_<operation>;
+std::unordered_map\<<machine>::_ProjectionRead__tr_<operation>, bool, <machine>::_ProjectionRead__tr_<operation>::Hash, <machine>::_ProjectionRead__tr_<operation>::HashEqual\> _OpCache_tr_<operation>;
+<endif>
 >>
 
-opreuse_initialize_invariant_caches(invariant) ::= <<
-std::unordered_map\<std::any, std::any> _InvCache_<invariant>;
+opreuse_initialize_invariant_caches(machine, invariant) ::= <<
+std::unordered_map\<<machine>::_ProjectionRead_<invariant>, bool, <machine>::_ProjectionRead_<invariant>::Hash, <machine>::_ProjectionRead_<invariant>::HashEqual> _InvCache_<invariant>;
 >>
 
 
-model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, isCaching) ::= <<
+model_check_transition_body(machine, operation, hasParameters, readParameters, parameters, transitionEval, isCaching) ::= <<
 <if(hasParameters)>
 <readParameters>
 <endif>
-<machine> copiedState = state._copy(guardDependency["<operation>"]);
+<machine> copiedState = state._copy();
+<if(isCaching)>
+<machine>::_ProjectionRead_<operation> readState = state._projected_state_for_<operation>();
+auto _OpCache_with_parameter_<operation>_ptr = _OpCache_<operation>.find(<transitionEval>);
+if(_OpCache_with_parameter_<operation>_ptr == _OpCache_<operation>.end()) {
+    copiedState.<operation>(<parameters; separator=", ">);
+    parents.insert({copiedState, state});
+    <machine>::_ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+    std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\> _OpCache_with_parameter_<operation>;
+    _OpCache_with_parameter_<operation>.insert({readState, writeState});
+    _OpCache_<operation>.insert({<transitionEval>, _OpCache_with_parameter_<operation>});
+
+} else {
+    std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\> _OpCache_with_parameter_<operation> = _OpCache_with_parameter_<operation>_ptr->second;
+    auto writeState_ptr = _OpCache_with_parameter_<operation>.find(readState);
+    if(writeState_ptr != _OpCache_with_parameter_<operation>.end()) {
+        <machine>::_ProjectionWrite_<operation> writeState = writeState_ptr->second;
+        copiedState._apply_update_for_<operation>(writeState);
+        parents.insert({copiedState, state});
+    } else {
+        copiedState.<operation>(<parameters; separator=", ">);
+        parents.insert({copiedState, state});
+        <machine>::_ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+        _OpCache_with_parameter_<operation>.insert({readState, writeState});
+        _OpCache_<operation>.insert({<transitionEval>, _OpCache_with_parameter_<operation>});
+    }
+}
+<else>
 copiedState.<operation>(<parameters; separator=", ">);
+<endif>
 copiedState.stateAccessedVia = "<operation>";
 result.insert(copiedState);
 transitions += 1;
@@ -1390,28 +1507,28 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 
 model_check_invariants(machine, invariantViolated) ::= <<
 bool invariantViolated(const <machine>& state) {
-    std::unordered_set\<string> dependentInvariantsOfState;
-    if(isCaching) {
-        dependentInvariantsOfState = invariantDependency[state.stateAccessedVia];
-    }
     <invariantViolated; separator="\n">
     return false;
 }
 >>
 
-model_check_invariant(invariant) ::= <<
+model_check_invariant(machine, invariant) ::= <<
+bool <invariant>;
 if(isCaching) {
-    if(dependentInvariantsOfState.find("<invariant>") != dependentInvariantsOfState.end()) {
-        if(!state.<invariant>()) {
-            cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
-            return true;
-        }
+    <machine>::_ProjectionRead_<invariant> read_<invariant>_state = state._projected_state_for_<invariant>();
+    auto _obj_<invariant>_ptr = _InvCache_<invariant>.find(read_<invariant>_state);
+    if(_obj_<invariant>_ptr == _InvCache_<invariant>.end()) {
+        <invariant> = state.<invariant>();
+        _InvCache_<invariant>.insert({read_<invariant>_state, <invariant>});
+    } else {
+        <invariant> = _obj_<invariant>_ptr->second;
     }
 } else {
-    if(!state.<invariant>()) {
-      cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
-      return true;
-    }
+    <invariant> = state.<invariant>();
+}
+if(!<invariant>) {
+  cout \<\< "INVARIANT CONJUNCT VIOLATED: <invariant>" \<\< "\n";
+  return true;
 }
 >>
 
@@ -1456,7 +1573,7 @@ model_check_init_static(map, keyy, entries) ::= <<
 <map>.insert({"<keyy>", {<entries:{entry | "<entry>"}; separator=", ">}});
 >>
 
-model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
+model_check_main(machine, invariants) ::= <<
 void modelCheck() {
     if (isDebug) {
         cout \<\< "Starting Modelchecking, STRATEGY=" \<\< type \<\< ", THREADS=" \<\< threads \<\< ", CACHING=" \<\< isCaching \<\< "\n";
@@ -1474,10 +1591,6 @@ void modelCheckSingleThreaded() {
     <machine> machine = <machine>();
     states.insert(machine);
     unvisitedStates.push_back(machine);
-
-    if (isCaching) {
-        initCache(machine);
-    }
 
     while(!unvisitedStates.empty()) {
         <machine> state = next();
@@ -1522,10 +1635,6 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
     stopThreads = false;
     std::atomic\<int> possibleQueueChanges;
     possibleQueueChanges = 0;
-
-    if(isCaching) {
-        initCache(machine);
-    }
 
     std::atomic\<bool> waitFlag;
     waitFlag = true;
@@ -1594,12 +1703,6 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
     workers.join();
     printResult();
 }
-
-void initCache(<machine>& machine) {
-    <invariantDependency; separator="\n">
-    invariantDependency.insert({"", {}});
-    <guardDependency; separator="\n">
-}
 >>
 
 model_check_main_method(machine) ::= <<
@@ -1667,7 +1770,6 @@ include_initialization() ::= <<
 >>
 
 transition_cache_declaration(type, identifier, operationHasParams) ::= <<
-mutable boost::optional\<<if(operationHasParams)>BSet\<<type>\><else>bool<endif>\> _tr_cache_<identifier>;
 >>
 
 set_initialization(identifier, type, enums) ::= <<>>

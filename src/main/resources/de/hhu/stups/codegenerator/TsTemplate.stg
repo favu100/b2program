@@ -1226,10 +1226,10 @@ _apply_update_for_<operation>(update : _ProjectionWrite_<operation>): void {
 
 opreuse_initialize_opcaches(operation, hasParameters, tupleType) ::= <<
 <if(hasParameters)>
-_OpCache_<operation>: immutable.Map\<_ProjectionRead_<operation>, immutable.Map\<BSet\<<tupleType>\>, _ProjectionWrite_<operation>\>\> = new immutable.Map();
+_OpCache_<operation>: immutable.Map\<BSet\<<tupleType>\>, immutable.Map\<_ProjectionRead_<operation>, _ProjectionWrite_<operation>\>\> = new immutable.Map();
 _OpCache_tr_<operation>: immutable.Map\<_ProjectionRead__tr_<operation>, BSet\<<tupleType>\>\> = new immutable.Map();
 <else>
-_OpCache_<operation>: immutable.Map\<_ProjectionRead_<operation>, immutable.Map\<boolean, _ProjectionWrite_<operation>\>\> = new immutable.Map();
+_OpCache_<operation>: immutable.Map\<boolean, immutable.Map\<_ProjectionRead_<operation>, _ProjectionWrite_<operation>\>\> = new immutable.Map();
 _OpCache_tr_<operation>: immutable.Map\<_ProjectionRead__tr_<operation>, boolean\> = new immutable.Map();
 <endif>
 >>

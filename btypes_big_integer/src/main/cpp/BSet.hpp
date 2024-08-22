@@ -23,6 +23,23 @@ class BSet : public BObject {
         typedef void left_type;
         typedef void right_type;
 
+        struct SetHash {
+            public:
+                size_t operator()(const BSet<T>& obj) const {
+                    return obj.hashCode();
+                }
+        };
+
+        struct SetHashEqual {
+            public:
+                bool operator()(const BSet<T>& obj1, const BSet<T>& obj2) const {
+                    if (obj1 == obj2)
+                        return true;
+                    else
+                        return false;
+                    }
+            };
+
         struct Hash {
             public:
                 size_t operator()(const T& obj) const {

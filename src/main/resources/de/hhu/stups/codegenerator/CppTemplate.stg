@@ -1038,7 +1038,7 @@ class ModelChecker {
         std::atomic\<int> transitions;
         std::mutex mutex;
         std::mutex waitMutex;
-        std::mutex guardMutex;
+        std::mutex cacheMutex;
         std::condition_variable waitCV;
 
         std::atomic\<bool> invariantViolatedBool;
@@ -1067,27 +1067,29 @@ class ModelChecker {
 
     private:
         <machine> next() {
-            std::unique_lock\<std::mutex> lock(mutex);
-            switch(type) {
-                case <machine>::BFS: {
-                    <machine> state = unvisitedStates.front();
-                    unvisitedStates.pop_front();
-                    return state;
-                }
-                case <machine>::DFS: {
-                    <machine> state = unvisitedStates.back();
-                    unvisitedStates.pop_back();
-                    return state;
-                }
-                case <machine>::MIXED: {
-                    if(unvisitedStates.size() % 2 == 0) {
+            {
+                std::unique_lock\<std::mutex> lock(mutex);
+                switch(type) {
+                    case <machine>::BFS: {
                         <machine> state = unvisitedStates.front();
                         unvisitedStates.pop_front();
                         return state;
-                    } else {
+                    }
+                    case <machine>::DFS: {
                         <machine> state = unvisitedStates.back();
                         unvisitedStates.pop_back();
                         return state;
+                    }
+                    case <machine>::MIXED: {
+                        if(unvisitedStates.size() % 2 == 0) {
+                            <machine> state = unvisitedStates.front();
+                            unvisitedStates.pop_front();
+                            return state;
+                        } else {
+                            <machine> state = unvisitedStates.back();
+                            unvisitedStates.pop_back();
+                            return state;
+                        }
                     }
                 }
             };
@@ -1105,6 +1107,7 @@ model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCachi
 std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
     if(isCaching) {
+        std::unique_lock\<std::mutex\> lock(cacheMutex);
         <transitionsWithCaching>
     } else {
         <transitionsWithoutCaching>
@@ -1515,6 +1518,7 @@ bool invariantViolated(const <machine>& state) {
 model_check_invariant(machine, invariant) ::= <<
 bool <invariant>;
 if(isCaching) {
+    std::unique_lock\<std::mutex\> lock(cacheMutex);
     <machine>::_ProjectionRead_<invariant> read_<invariant>_state = state._projected_state_for_<invariant>();
     auto _obj_<invariant>_ptr = _InvCache_<invariant>.find(read_<invariant>_state);
     if(_obj_<invariant>_ptr == _InvCache_<invariant>.end()) {
@@ -1647,11 +1651,11 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 
             for(auto& nextState : nextStates) {
                 {
-                    std::unique_lock\<std::mutex> lock(mutex);
+                    std::unique_lock\<std::mutex\> lock(mutex);
                     if(states.find(nextState) == states.end()) {
                         states.insert(nextState);
                         parents.insert({nextState, state});
-                        unvisitedStates.push_back(nextState); // TODO: sync ?
+                        unvisitedStates.push_back(nextState);
                         if(isDebug && states.size() % 50000 == 0) {
                             cout \<\< "VISITED STATES: " \<\< states.size() \<\< "\n";
                             cout \<\< "EVALUATED TRANSITIONS: " \<\< transitions \<\< "\n";
@@ -1692,7 +1696,7 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
         boost::asio::post(workers, std::move(task));
 
         {
-            std::unique_lock\<std::mutex> lock(waitMutex);
+            std::unique_lock\<std::mutex> lock(mutex);
             while (unvisitedStates.empty() && possibleQueueChanges > 0) {
                 waitCV.wait(lock, [&] {
                     return waitFlag == false;

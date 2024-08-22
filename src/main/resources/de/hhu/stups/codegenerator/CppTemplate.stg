@@ -1107,7 +1107,6 @@ model_check_next_states(machine, transitionsWithCaching, transitionsWithoutCachi
 std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> generateNextStates(const <machine>& state) {
     std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> result = std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual>();
     if(isCaching) {
-        std::unique_lock\<std::mutex> cacheLock(cacheMutex);
         <transitionsWithCaching>
     } else {
         <transitionsWithoutCaching>
@@ -1121,15 +1120,15 @@ model_check_transition(machine, hasParameters, tupleType, transitionIdentifier, 
 <if(isCaching)>
 <machine>::_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
 BSet\<<tupleType>\> <transitionIdentifier>;
-{
-    std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
-    auto <transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
-    if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
-        <transitionIdentifier> = state.<evalTransitions>();
+auto <transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
+if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    {
+        std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
         _OpCache<evalTransitions>[read_<evalTransitions>_state] = <transitionIdentifier>;
-    } else {
-        <transitionIdentifier> = <transitionIdentifier>_ptr->second;
     }
+} else {
+    <transitionIdentifier> = <transitionIdentifier>_ptr->second;
 }
 
 for(const <tupleType>& param : <transitionIdentifier>) {
@@ -1145,17 +1144,16 @@ for(const <tupleType>& param : <transitionIdentifier>) {
 <if(isCaching)>
 <machine>::_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
 bool <transitionIdentifier>;
-{
-    std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
-    auto _obj_<transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
-    if(_obj_<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
-        <transitionIdentifier> = state.<evalTransitions>();
+auto _obj_<transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
+if(_obj_<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
+    <transitionIdentifier> = state.<evalTransitions>();
+    {
+        std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
         _OpCache<evalTransitions>[read_<evalTransitions>_state] = <transitionIdentifier>;
-    } else {
-        <transitionIdentifier> = _obj_<transitionIdentifier>_ptr->second;
     }
+} else {
+    <transitionIdentifier> = _obj_<transitionIdentifier>_ptr->second;
 }
-
 if(<transitionIdentifier>) {
     <execTransitions>
 }
@@ -1475,33 +1473,34 @@ model_check_transition_body(machine, operation, hasParameters, readParameters, p
 <machine> copiedState = state._copy();
 <if(isCaching)>
 <machine>::_ProjectionRead_<operation> readState = state._projected_state_for_<operation>();
-{
-    std::unique_lock\<std::mutex> _ProjectionRead_<operation>_lock(_ProjectionRead_<operation>_mutex);
-    auto _OpCache_with_parameter_<operation>_ptr = _OpCache_<operation>.find(<transitionEval>);
-    if(_OpCache_with_parameter_<operation>_ptr == _OpCache_<operation>.end()) {
-        copiedState.<operation>(<parameters; separator=", ">);
-        parents.insert({copiedState, state});
-        <machine>::_ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
-        std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\> _OpCache_with_parameter_<operation>;
-        _OpCache_with_parameter_<operation>.insert({readState, writeState});
-        _OpCache_<operation>.insert({<transitionEval>, _OpCache_with_parameter_<operation>});
 
+auto _OpCache_with_parameter_<operation>_ptr = _OpCache_<operation>.find(<transitionEval>);
+if(_OpCache_with_parameter_<operation>_ptr == _OpCache_<operation>.end()) {
+    copiedState.<operation>(<parameters; separator=", ">);
+    <machine>::_ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+    std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\> _OpCache_with_parameter_<operation>;
+    _OpCache_with_parameter_<operation>.insert({readState, writeState});
+    {
+        std::unique_lock\<std::mutex> _ProjectionRead_<operation>_lock(_ProjectionRead_<operation>_mutex);
+        _OpCache_<operation>.insert({<transitionEval>, _OpCache_with_parameter_<operation>});
+    }
+
+} else {
+    std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\> _OpCache_with_parameter_<operation> = _OpCache_with_parameter_<operation>_ptr->second;
+    auto writeState_ptr = _OpCache_with_parameter_<operation>.find(readState);
+    if(writeState_ptr != _OpCache_with_parameter_<operation>.end()) {
+        <machine>::_ProjectionWrite_<operation> writeState = writeState_ptr->second;
+        copiedState._apply_update_for_<operation>(writeState);
     } else {
-        std::unordered_map\<<machine>::_ProjectionRead_<operation>, <machine>::_ProjectionWrite_<operation>, <machine>::_ProjectionRead_<operation>::Hash, <machine>::_ProjectionRead_<operation>::HashEqual\> _OpCache_with_parameter_<operation> = _OpCache_with_parameter_<operation>_ptr->second;
-        auto writeState_ptr = _OpCache_with_parameter_<operation>.find(readState);
-        if(writeState_ptr != _OpCache_with_parameter_<operation>.end()) {
-            <machine>::_ProjectionWrite_<operation> writeState = writeState_ptr->second;
-            copiedState._apply_update_for_<operation>(writeState);
-            parents.insert({copiedState, state});
-        } else {
-            copiedState.<operation>(<parameters; separator=", ">);
-            parents.insert({copiedState, state});
-            <machine>::_ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+        copiedState.<operation>(<parameters; separator=", ">);
+        <machine>::_ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
+        {
+            std::unique_lock\<std::mutex> _ProjectionRead_<operation>_lock(_ProjectionRead_<operation>_mutex);
             _OpCache_with_parameter_<operation>.insert({readState, writeState});
-            _OpCache_<operation>.insert({<transitionEval>, _OpCache_with_parameter_<operation>});
         }
     }
 }
+
 <else>
 copiedState.<operation>(<parameters; separator=", ">);
 <endif>
@@ -1524,7 +1523,6 @@ model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) :
 
 model_check_invariants(machine, invariantViolated) ::= <<
 bool invariantViolated(const <machine>& state) {
-    std::unique_lock\<std::mutex> cacheLock(cacheMutex);
     <invariantViolated; separator="\n">
     return false;
 }
@@ -1534,15 +1532,15 @@ model_check_invariant(machine, invariant) ::= <<
 bool <invariant>;
 if(isCaching) {
     <machine>::_ProjectionRead_<invariant> read_<invariant>_state = state._projected_state_for_<invariant>();
-    {
-        std::unique_lock\<std::mutex> _ProjectionRead_<invariant>_lock(_ProjectionRead_<invariant>_mutex);
-        auto _obj_<invariant>_ptr = _InvCache_<invariant>.find(read_<invariant>_state);
-        if(_obj_<invariant>_ptr == _InvCache_<invariant>.end()) {
-            <invariant> = state.<invariant>();
+    auto _obj_<invariant>_ptr = _InvCache_<invariant>.find(read_<invariant>_state);
+    if(_obj_<invariant>_ptr == _InvCache_<invariant>.end()) {
+        <invariant> = state.<invariant>();
+        {
+            std::unique_lock\<std::mutex> _ProjectionRead_<invariant>_lock(_ProjectionRead_<invariant>_mutex);
             _InvCache_<invariant>.insert({read_<invariant>_state, <invariant>});
-        } else {
-            <invariant> = _obj_<invariant>_ptr->second;
         }
+    } else {
+        <invariant> = _obj_<invariant>_ptr->second;
     }
 } else {
     <invariant> = state.<invariant>();
@@ -1714,8 +1712,8 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
         boost::asio::post(workers, std::move(task));
 
         {
-            std::unique_lock\<std::mutex> lock(waitMutex);
-            while (unvisitedStates.empty() && possibleQueueChanges > 0) {
+            std::unique_lock\<std::mutex> lock(mutex);
+            if(unvisitedStates.empty() && possibleQueueChanges > 0) {
                 waitCV.wait(lock, [&] {
                     return waitFlag == false;
                 });

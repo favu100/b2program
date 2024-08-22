@@ -1125,7 +1125,7 @@ if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
     <transitionIdentifier> = state.<evalTransitions>();
     {
         std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
-        _OpCache<evalTransitions>[read_<evalTransitions>_state] = <transitionIdentifier>;
+        _OpCache<evalTransitions>.insert({read_<evalTransitions>_state, <transitionIdentifier>});
     }
 } else {
     <transitionIdentifier> = <transitionIdentifier>_ptr->second;
@@ -1149,7 +1149,7 @@ if(_obj_<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
     <transitionIdentifier> = state.<evalTransitions>();
     {
         std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
-        _OpCache<evalTransitions>[read_<evalTransitions>_state] = <transitionIdentifier>;
+        _OpCache<evalTransitions>.insert({read_<evalTransitions>_state, <transitionIdentifier>});
     }
 } else {
     <transitionIdentifier> = _obj_<transitionIdentifier>_ptr->second;
@@ -1712,7 +1712,7 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
         boost::asio::post(workers, std::move(task));
 
         {
-            std::unique_lock\<std::mutex> lock(mutex);
+            std::unique_lock\<std::mutex> lock(waitMutex);
             if(unvisitedStates.empty() && possibleQueueChanges > 0) {
                 waitCV.wait(lock, [&] {
                     return waitFlag == false;

@@ -1165,6 +1165,17 @@ class BRelation : public BObject {
             return BBoolean(true);
         }
 
+        BBoolean checkRangeBoolean() const {
+            for(const T& element : this->range()) {
+                if(typeid(element) == typeid(BBoolean)) {
+                    return BBoolean(true);
+                } else {
+                    return BBoolean(false);
+                }
+            }
+            return new BBoolean(true);
+        }
+
     	BBoolean checkRangeInteger() const {
     		for(const T& element : this->range()) {
     			if(typeid(element) == typeid(BInteger)) {

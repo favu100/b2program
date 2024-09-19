@@ -35,7 +35,7 @@ test:linux:
     - git clone https://github.com/arximboldi/immer.git
     - cd immer
     - mkdir immer_build && cd immer_build
-    - cmake .. && sudo make install
+    - cmake .. && make install
     - cd .. & cd ..
     - mkdir cpp_build && cd cpp_build
     - cmake ..

@@ -21,7 +21,6 @@ stages:
   extends: .test-common
   before_script: &default_before_script_linux
     - curl -L https://nixos.org/nix/install | sh
-    - . /home/gitlab-runner/.nix-profile/etc/profile.d/nix.sh
     - chmod +x ./gradlew
     - export DEBIAN_FRONTEND="noninteractive"
     - apt-get update

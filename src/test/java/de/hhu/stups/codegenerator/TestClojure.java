@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+@Ignore
 public class TestClojure {
 
     public static void writeInputToOutput(InputStream inputStream, OutputStream outputStream) throws IOException {

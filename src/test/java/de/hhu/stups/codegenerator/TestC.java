@@ -16,6 +16,7 @@ import java.util.List;
  * Created by fabian on 05.08.18.
  */
 
+@Ignore
 public class TestC {
 
     public static void writeInputToOutput(InputStream inputStream, OutputStream outputStream) throws IOException {

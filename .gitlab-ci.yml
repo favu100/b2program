@@ -20,6 +20,7 @@ stages:
 .test-linux:
   extends: .test-common
   before_script: &default_before_script_linux
+    - apt-get install xz-utils
     - curl -L https://nixos.org/nix/install | sh
     - chmod +x ./gradlew
     - export DEBIAN_FRONTEND="noninteractive"
@@ -30,7 +31,7 @@ test:linux:
   image: eclipse-temurin:17
   before_script:
     - *default_before_script_linux
-    - apt-get install --assume-yes build-essential fakeroot cmake xz-utils git
+    - apt-get install --assume-yes build-essential fakeroot cmake git
   script:
     - make btypes_primitives
     - git clone https://github.com/arximboldi/immer.git

@@ -32,4 +32,4 @@ test:linux:
     - *default_before_script_linux
     - apt-get install --assume-yes build-essential fakeroot
   script:
-    - ./gradlew test $(GRADLE_OPTIONS)
+    - ./gradlew test --stacktrace

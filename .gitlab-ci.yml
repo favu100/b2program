@@ -31,10 +31,13 @@ test:linux:
   image: eclipse-temurin:17
   before_script:
     - *default_before_script_linux
-    - apt-get install --assume-yes build-essential fakeroot cmake xz-utils
+    - apt-get install --assume-yes build-essential fakeroot cmake xz-utils git
   script:
     - make btypes_primitives
-    - nix-env -if https://github.com/arximboldi/immer/archive/master.tar.gz
+    - git clone https://github.com/arximboldi/immer.git
+    - cd immer
+    - mkdir -p build && cd build
+    - cmake .. && sudo make install & cd ..
     - mkdir cpp_build && cd cpp_build
     - cmake ..
     - make install & cd ..

@@ -30,6 +30,19 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 }
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+        showStandardStreams = true
+        events 'failed', 'skipped', 'passed'
+
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+
 jar {
     manifest {
         attributes(

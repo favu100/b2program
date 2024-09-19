@@ -33,5 +33,5 @@ test:linux:
   script:
     - mkdir cpp_build && cd cpp_build
     - cmake ..
-    - make install
+    - make install & cd ..
     - ./gradlew test --stacktrace

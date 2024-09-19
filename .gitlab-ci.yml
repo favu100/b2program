@@ -31,4 +31,7 @@ test:linux:
     - *default_before_script_linux
     - apt-get install --assume-yes build-essential fakeroot
   script:
+    - mkdir cpp_build && cd cpp_build
+    - cmake ..
+    - make install
     - ./gradlew test --stacktrace

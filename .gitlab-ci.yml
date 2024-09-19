@@ -29,7 +29,7 @@ test:linux:
   image: eclipse-temurin:17
   before_script:
     - *default_before_script_linux
-    - apt-get install --assume-yes build-essential fakeroot
+    - apt-get install --assume-yes build-essential fakeroot cmake
   script:
     - mkdir cpp_build && cd cpp_build
     - cmake ..

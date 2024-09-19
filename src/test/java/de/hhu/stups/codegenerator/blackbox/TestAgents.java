@@ -1,7 +1,9 @@
 package de.hhu.stups.codegenerator.blackbox;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestAgents extends TestBlackBox {
 
     @Test

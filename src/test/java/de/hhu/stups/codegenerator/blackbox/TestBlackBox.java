@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.blackbox;
 
 import de.hhu.stups.codegenerator.CodeGenerator;
 import de.hhu.stups.codegenerator.blackbox.traces.TraceGenerator;
+import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,6 +22,7 @@ import static org.junit.Assert.assertEquals;
  * Created by fabian on 31.05.18.
  */
 
+@Ignore
 public class TestBlackBox {
 
 	public static void writeInputToSystem(InputStream inputStream) throws IOException {

@@ -31,7 +31,7 @@ test:linux:
   image: eclipse-temurin:17
   before_script:
     - *default_before_script_linux
-    - apt-get install --assume-yes build-essential fakeroot cmake
+    - apt-get install --assume-yes build-essential fakeroot cmake xz-utils
   script:
     - make btypes_primitives
     - nix-env -if https://github.com/arximboldi/immer/archive/master.tar.gz

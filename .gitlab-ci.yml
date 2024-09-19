@@ -31,6 +31,7 @@ test:linux:
     - *default_before_script_linux
     - apt-get install --assume-yes build-essential fakeroot cmake
   script:
+    - make btypes_primitives
     - mkdir cpp_build && cd cpp_build
     - cmake ..
     - make install & cd ..

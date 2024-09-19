@@ -36,7 +36,7 @@ test:linux:
     - cd immer
     - mkdir immer_build && cd immer_build
     - cmake .. && make install
-    - cd .. & cd ..
+    - cd .. && cd ..
     - mkdir cpp_build && cd cpp_build
     - cmake ..
     - make install & cd ..

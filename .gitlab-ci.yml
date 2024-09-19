@@ -20,6 +20,8 @@ stages:
 .test-linux:
   extends: .test-common
   before_script: &default_before_script_linux
+    - curl -L https://nixos.org/nix/install | sh
+    - . /home/gitlab-runner/.nix-profile/etc/profile.d/nix.sh
     - chmod +x ./gradlew
     - export DEBIAN_FRONTEND="noninteractive"
     - apt-get update
@@ -32,6 +34,7 @@ test:linux:
     - apt-get install --assume-yes build-essential fakeroot cmake
   script:
     - make btypes_primitives
+    - nix-env -if https://github.com/arximboldi/immer/archive/master.tar.gz
     - mkdir cpp_build && cd cpp_build
     - cmake ..
     - make install & cd ..

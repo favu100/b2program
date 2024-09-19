@@ -6,7 +6,7 @@ stages:
   stage: test
   variables:
     GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
-    GRADLE_OPTIONS: --no-daemon --info --stacktrace --warning-mode=all
+    GRADLE_OPTIONS: --no-daemon --debug --stacktrace --warning-mode=all
   cache:
     paths:
       - .gradle/caches
@@ -32,4 +32,4 @@ test:linux:
     - *default_before_script_linux
     - apt-get install --assume-yes build-essential fakeroot
   script:
-    - ./gradlew test
+    - ./gradlew test $(GRADLE_OPTIONS)

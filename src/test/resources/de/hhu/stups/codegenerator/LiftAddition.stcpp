@@ -3,6 +3,6 @@ int main() {
     lift.inc();
     lift.inc();
     lift.inc();
-    cout << lift.getFloor();
+    cout << lift._get_floor();
     return 0;
 }

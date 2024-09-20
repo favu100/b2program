@@ -101,7 +101,7 @@ public class TestCpp {
 		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machine + ".cpp").toString();
 
 		Process compileProcess = runtime
-				.exec("g++ -std=c++17 -O2 -flto -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+				.exec("g++ -std=c++17 -O2 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		compileProcess.waitFor();
 
 		String error = streamToString(compileProcess.getErrorStream());

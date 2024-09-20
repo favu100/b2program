@@ -34,9 +34,8 @@ test:linux:
     - make btypes_primitives
     - git clone https://github.com/arximboldi/immer.git
     - cd immer
-    - mkdir immer_build && cd immer_build
-    - cmake .. && make install
-    - cd .. && cd ..
+    - mv immer /usr/local/include/
+    - cd ..
     - mkdir cpp_build && cd cpp_build
     - cmake ..
     - make install & cd ..

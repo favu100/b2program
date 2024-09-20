@@ -1,2 +1,3 @@
 let traffic: TrafficLightExec = new TrafficLightExec();
+console.log(traffic.getCounter());
 traffic.simulate();

@@ -219,7 +219,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testUnionSmall() throws Exception {
-		testCpp("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stCpp", true);
+		testCpp("setoperation_small/SetUnionSmall", "SetUnionSmall", "SetUnionSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -229,12 +229,12 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeBig() throws Exception {
-		testCpp("range_big/RangeBig", "RangeBig", "RangeBigAddition.stCpp", true);
+		testCpp("range_big/RangeBig", "RangeBig", "RangeBigAddition.stcpp", true);
 	}
 
 	@Test
 	public void testRangeCardBig() throws Exception {
-		testCpp("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stCpp", false);
+		testCpp("range_big/RangeCardBig", "RangeCardBig", "RangeCardBigAddition.stcpp", false);
 	}
 
 	@Test
@@ -245,7 +245,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeDifferenceBig() throws Exception {
-		testCpp("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stCpp", true);
+		testCpp("range_big/RangeDifferenceBig", "RangeDifferenceBig", "RangeDifferenceBigAddition.stcpp", true);
 	}
 
 	@Test
@@ -256,7 +256,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeElementOfBig() throws Exception {
-		testCpp("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stCpp", true);
+		testCpp("range_big/RangeElementOfBig", "RangeElementOfBig", "RangeElementOfBigAddition.stcpp", true);
 	}
 
 	@Test
@@ -267,7 +267,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeIntersectionBig() throws Exception {
-		testCpp("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stCpp", true);
+		testCpp("range_big/RangeIntersectionBig", "RangeIntersectionBig", "RangeIntersectionBigAddition.stcpp", true);
 	}
 
 	@Test
@@ -278,7 +278,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeUnionBig() throws Exception {
-		testCpp("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stCpp", false);
+		testCpp("range_big/RangeUnionBig", "RangeUnionBig", "RangeUnionBigAddition.stcpp", false);
 	}
 
 	@Test
@@ -289,13 +289,13 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeSmall() throws Exception {
-		testCpp("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stCpp", true);
+		testCpp("range_small/RangeSmall", "RangeSmall", "RangeSmallAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void testRangeCardSmall() throws Exception {
-		testCpp("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stCpp", true);
+		testCpp("range_small/RangeCardSmall", "RangeCardSmall", "RangeCardSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -306,7 +306,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeDifferenceSmall() throws Exception {
-		testCpp("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stCpp", true);
+		testCpp("range_small/RangeDifferenceSmall", "RangeDifferenceSmall", "RangeDifferenceSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -316,7 +316,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeElementOfSmall() throws Exception {
-		testCpp("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stCpp", true);
+		testCpp("range_small/RangeElementOfSmall", "RangeElementOfSmall", "RangeElementOfSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -326,7 +326,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeIntersectionSmall() throws Exception {
-		testCpp("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stCpp", true);
+		testCpp("range_small/RangeIntersectionSmall", "RangeIntersectionSmall", "RangeIntersectionSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -336,7 +336,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testRangeUnionSmall() throws Exception {
-		testCpp("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stCpp", true);
+		testCpp("range_small/RangeUnionSmall", "RangeUnionSmall", "RangeUnionSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -346,17 +346,17 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testLiftBenchmarks() throws Exception {
-		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stCpp", true);
+		testCpp("liftbenchmarks/LiftExec", "LiftExec", "LiftExecAddition.stcpp", true);
 	}
 
 	@Test
 	public void testSieveBenchmarks() throws Exception {
-		testCpp("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stCpp", true);
+		testCpp("sievebenchmarks/Sieve", "Sieve", "SieveAddition.stcpp", true);
 	}
 
 	@Test
 	public void testTrafficLightBenchmarks() throws Exception {
-		testCpp("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stCpp", true);
+		testCpp("trafficlightbenchmarks/TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stcpp", true);
 	}
 
 	@Test
@@ -366,42 +366,42 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testSetOperation() throws Exception {
-		testCpp("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stCpp", true);
+		testCpp("setoperationbenchmarks/SetOperation", "SetOperation", "SetOperationAddition.stcpp", true);
 	}
 
 	@Test
 	public void testCAN_BUS_tlc_exec() throws Exception {
-		testCpp("CAN_BUS_tlc_exec", "CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.stCpp", false);
+		testCpp("CAN_BUS_tlc_exec", "CAN_BUS_tlc_exec", "CAN_BUS_tlc_execAddition.stcpp", false);
 	}
 
 	@Test
 	public void testCruise_finite1_deterministic_exec() throws Exception {
-		testCpp("Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_execAddition.stCpp", false);
+		testCpp("Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_exec", "Cruise_finite1_deterministic_execAddition.stcpp", false);
 	}
 
 	@Test
 	public void testLiftExec() throws Exception {
-		testCpp("LiftExec", "LiftExec", "LiftExecAddition.stCpp", false);
+		testCpp("LiftExec", "LiftExec", "LiftExecAddition.stcpp", false);
 	}
 
 	@Test
 	public void testTrafficLightExec() throws Exception {
-		testCpp("TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stCpp", false);
+		testCpp("TrafficLightExec", "TrafficLightExec", "TrafficLightExecAddition.stcpp", false);
 	}
 
 	@Test
 	public void testTrain1BeebookDeterministicExec() throws Exception {
-		testCpp("Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_execAddition.stCpp", false);
+		testCpp("Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_exec", "Train_1_beebook_deterministic_execAddition.stcpp", false);
 	}
 
 	@Test
 	public void testSchedulerDeterministicExec() throws Exception {
-		testCpp("scheduler_deterministic_exec", "scheduler_deterministic_exec", "scheduler_deterministic_execAddition.stCpp", false);
+		testCpp("scheduler_deterministic_exec", "scheduler_deterministic_exec", "scheduler_deterministic_execAddition.stcpp", false);
 	}
 
 	@Test
 	public void testSortExec() throws Exception {
-		testCpp("sort_m2_data1000_exec", "sort_m2_data1000_exec", "sort_m2_data1000_execAddition.stCpp", false);
+		testCpp("sort_m2_data1000_exec", "sort_m2_data1000_exec", "sort_m2_data1000_execAddition.stcpp", false);
 	}
 
 }

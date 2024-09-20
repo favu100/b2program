@@ -623,6 +623,7 @@ class <name> : public BObject {
             switch(e.value) {
                 <enums: {enum | case <enum>: return strm \<\< "<enum>";}; separator="\n">
             }
+            return strm;
         }
 
         int hashCode() const {

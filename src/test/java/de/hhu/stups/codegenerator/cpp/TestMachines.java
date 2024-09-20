@@ -12,7 +12,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testOperation() throws Exception {
-        testCpp("Operation", "Operation", "OperationAddition.stCpp", true);
+        testCpp("Operation", "Operation", "OperationAddition.stcpp", true);
     }
 
     @Test
@@ -27,12 +27,12 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testCounter() throws Exception {
-        testCpp("Counter", "Counter", "CounterAddition.stCpp", true);
+        testCpp("Counter", "Counter", "CounterAddition.stcpp", true);
     }
 
     @Test
     public void testBakery0() throws Exception {
-        testCpp("Bakery0", "Bakery0", "Bakery0Addition.stCpp", true);
+        testCpp("Bakery0", "Bakery0", "Bakery0Addition.stcpp", true);
     }
 
     @Test
@@ -42,12 +42,12 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testACounter() throws Exception {
-        testCpp("ACounter", "ACounter", "ACounterAddition.stCpp", true);
+        testCpp("ACounter", "ACounter", "ACounterAddition.stcpp", true);
     }
 
     @Test
     public void testLift() throws Exception {
-        testCpp("Lift", "Lift", "LiftAddition.stCpp", true);
+        testCpp("Lift", "Lift", "LiftAddition.stcpp", true);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testTrafficLight() throws Exception {
-        testCpp("TrafficLight", "TrafficLight", "TrafficLightAddition.stCpp", true);
+        testCpp("TrafficLight", "TrafficLight", "TrafficLightAddition.stcpp", true);
     }
 
     @Test
@@ -72,12 +72,12 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testSieve() throws Exception {
-        testCpp("Sieve", "Sieve", "SieveAddition.stCpp", true);
+        testCpp("Sieve", "Sieve", "SieveAddition.stcpp", true);
     }
 
     @Test
     public void testSieveParallel() throws Exception {
-        testCpp("SieveParallel", "SieveParallel", "SieveParallelAddition.stCpp", true);
+        testCpp("SieveParallel", "SieveParallel", "SieveParallelAddition.stcpp", true);
     }
 
     @Test

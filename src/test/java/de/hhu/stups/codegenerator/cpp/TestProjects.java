@@ -8,12 +8,12 @@ public class TestProjects extends TestCpp {
     @Test
     public void testProject() throws Exception {
         //This might be a bug in the parser in the scoping part
-        testCpp("project1/A", "A", "AAddition.stCpp", true);
+        testCpp("project1/A", "A", "AAddition.stcpp", true);
     }
 
     @Test
     public void testProject2() throws Exception {
-        testCpp("project2/MachineA", "MachineA", "MachineAAddition.stCpp", true);
+        testCpp("project2/MachineA", "MachineA", "MachineAAddition.stcpp", true);
     }
 
     @Test

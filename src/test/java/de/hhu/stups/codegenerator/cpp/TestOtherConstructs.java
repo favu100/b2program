@@ -6,32 +6,32 @@ public class TestOtherConstructs extends TestCpp {
 
     @Test
     public void testWhile() throws Exception {
-        testCpp("While", "While", "WhileAddition.stCpp", true);
+        testCpp("While", "While", "WhileAddition.stcpp", true);
     }
 
     @Test
     public void testEquivalence() throws Exception {
-        testCpp("Equivalence", "Equivalence", "EquivalenceAddition.stCpp", true);
+        testCpp("Equivalence", "Equivalence", "EquivalenceAddition.stcpp", true);
     }
 
     @Test
     public void testBooleanPredicate() throws Exception {
-        testCpp("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stCpp", true);
+        testCpp("BooleanPredicate", "BooleanPredicate", "BooleanPredicateAddition.stcpp", true);
     }
 
     @Test
     public void testNondeterminism() throws Exception {
-        testCpp("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stCpp", true);
+        testCpp("Nondeterminism", "Nondeterminism", "NondeterminismAddition.stcpp", true);
     }
 
     @Test
     public void testNondeterminism2() throws Exception {
-        testCpp("Nondeterminism2", "Nondeterminism2", "Nondeterminism2Addition.stCpp", true);
+        testCpp("Nondeterminism2", "Nondeterminism2", "Nondeterminism2Addition.stcpp", true);
     }
 
     @Test
     public void testMapFunction() throws Exception {
-        testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stCpp", true);
+        testCpp("MapFunction", "MapFunction", "MapFunctionAddition.stcpp", true);
     }
 
     @Test
@@ -42,12 +42,12 @@ public class TestOtherConstructs extends TestCpp {
 
     @Test
     public void testManyLocalDeclarations() throws Exception {
-        testCpp("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stCpp", true);
+        testCpp("ManyLocalDeclarations", "ManyLocalDeclarations", "ManyLocalDeclarationsAddition.stcpp", true);
     }
 
     @Test
     public void testManyLocalDeclarations2() throws Exception {
-        testCpp("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2Addition.stCpp", true);
+        testCpp("ManyLocalDeclarations2", "ManyLocalDeclarations2", "ManyLocalDeclarations2Addition.stcpp", true);
     }
 
     @Test

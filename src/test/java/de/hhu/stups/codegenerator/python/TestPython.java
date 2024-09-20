@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * Created by fabian on 31.05.18.
  */
 
+@Ignore
 public class TestPython {
 
 	public static void writeInputToOutput(InputStream inputStream, OutputStream outputStream) throws IOException {

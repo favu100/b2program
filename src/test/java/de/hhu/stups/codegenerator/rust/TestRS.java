@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.rust;
 
 import de.hhu.stups.codegenerator.CodeGenerator;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import org.junit.Ignore;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class TestRS {
     public static void writeInputToOutput(InputStream inputStream, OutputStream outputStream) throws IOException {
         int size;

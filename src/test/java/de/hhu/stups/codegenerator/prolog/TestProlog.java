@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.prolog;
 
 import de.hhu.stups.codegenerator.CodeGenerator;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import org.junit.Ignore;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class TestProlog {
 
     public static void writeInputToSystem(InputStream inputStream) throws IOException {

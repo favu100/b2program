@@ -8,6 +8,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, projection, projectionClasses, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration, machineString) ::= <<
 #include \<iostream>
 #include \<string>
+#include <sstream>
 <if(forModelChecking)>
 #include \<immer/map.hpp>
 #include \<map>
@@ -1070,29 +1071,27 @@ class ModelChecker {
         <machine> next() {
             {
                 std::unique_lock\<std::mutex> lock(mutex);
+                <machine> state;
                 switch(type) {
                     case <machine>::BFS: {
-                        <machine> state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case <machine>::DFS: {
-                        <machine> state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case <machine>::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            <machine> state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            <machine> state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 

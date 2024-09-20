@@ -8,7 +8,7 @@ return, short, signed, sizeof, static, static_cast, volatile, struct, switch, te
 machine(forModelChecking, imports, includedMachines, machine, structs, constants_declarations, includes, enums, sets, declarations, initialization, copyConstructor, operations, addition, useBigInteger, getters, transitions, projection, projectionClasses, invariant, copy, hash_equal, modelcheck, lambdaFunctions, mainMethod, transitionCachesDeclaration, machineString) ::= <<
 #include \<iostream>
 #include \<string>
-#include <sstream>
+#include \<sstream>
 <if(forModelChecking)>
 #include \<immer/map.hpp>
 #include \<map>

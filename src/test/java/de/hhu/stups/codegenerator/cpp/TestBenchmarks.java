@@ -7,33 +7,33 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testPlus() throws Exception {
-		testCpp("arithmetic/Plus", "Plus", "PlusAddition.stCpp", true);
+		testCpp("arithmetic/Plus", "Plus", "PlusAddition.stcpp", true);
 	}
 
 	@Test
 	public void testMinus2() throws Exception {
-		testCpp("arithmetic/Minus", "Minus", "MinusAddition.stCpp", true);
+		testCpp("arithmetic/Minus", "Minus", "MinusAddition.stcpp", true);
 	}
 
 	@Test
 	public void testMultiply2() throws Exception {
-		testCpp("arithmetic/Multiply", "Multiply", "MultiplyAddition.stCpp", true);
+		testCpp("arithmetic/Multiply", "Multiply", "MultiplyAddition.stcpp", true);
 	}
 
 	@Test
 	public void testDivide2() throws Exception {
-		testCpp("arithmetic/Divide", "Divide", "DivideAddition.stCpp", true);
+		testCpp("arithmetic/Divide", "Divide", "DivideAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void testModulo2() throws Exception {
-		testCpp("arithmetic/Modulo", "Modulo", "ModuloAddition.stCpp", true);
+		testCpp("arithmetic/Modulo", "Modulo", "ModuloAddition.stcpp", true);
 	}
 
 	@Test
 	public void testNegative() throws Exception {
-		testCpp("arithmetic/Negative", "Negative", "NegativeAddition.stCpp", true);
+		testCpp("arithmetic/Negative", "Negative", "NegativeAddition.stcpp", true);
 	}
 
 	@Ignore
@@ -44,29 +44,29 @@ public class TestBenchmarks extends TestCpp {
 
 	/*@Test
 	public void testSmallNumbers() throws Exception {
-		testCpp("integers/SmallNumbers", "SmallNumbersAddition.stCpp", true);
+		testCpp("integers/SmallNumbers", "SmallNumbersAddition.stcpp", true);
 	}
 
 	@Test
 	public void testBigNumbers() throws Exception {
-		testCpp("integers/BigNumbers", "BigNumbersAddition.stCpp", true);
+		testCpp("integers/BigNumbers", "BigNumbersAddition.stcpp", true);
 	}*/
 
 	@Test
 	public void testAnd2() throws Exception {
-		testCpp("logical/And", "And", "AndAddition.stCpp", true);
+		testCpp("logical/And", "And", "AndAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void testOr2() throws Exception {
-		testCpp("logical/Or", "Or", "OrAddition.stCpp", true);
+		testCpp("logical/Or", "Or", "OrAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void testImpliesPerformance() throws Exception {
-		testCpp("logical/Implies", "Implies", "ImpliesAddition.stCpp", true);
+		testCpp("logical/Implies", "Implies", "ImpliesAddition.stcpp", true);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testEquivalent2() throws Exception {
-		testCpp("logical/Equivalent", "Equivalent", "EquivalentAddition.stCpp", true);
+		testCpp("logical/Equivalent", "Equivalent", "EquivalentAddition.stcpp", true);
 	}
 
 	@Test
@@ -91,40 +91,40 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testLess2() throws Exception {
-		testCpp("comparison/Less", "Less", "LessAddition.stCpp", true);
+		testCpp("comparison/Less", "Less", "LessAddition.stcpp", true);
 	}
 
 	@Test
 	public void testLessEqual2() throws Exception {
-		testCpp("comparison/LessEqual", "LessEqual", "LessEqualAddition.stCpp", true);
+		testCpp("comparison/LessEqual", "LessEqual", "LessEqualAddition.stcpp", true);
 	}
 
 	@Test
 	public void testGreater2() throws Exception {
-		testCpp("comparison/Greater", "Greater", "GreaterAddition.stCpp", true);
+		testCpp("comparison/Greater", "Greater", "GreaterAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void testGreaterEqual2() throws Exception {
-		testCpp("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stCpp", true);
+		testCpp("comparison/GreaterEqual", "GreaterEqual", "GreaterEqualAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void tessEqual() throws Exception {
-		testCpp("comparison/Equal", "Equal", "EqualAddition.stCpp", true);
+		testCpp("comparison/Equal", "Equal", "EqualAddition.stcpp", true);
 	}
 
 
 	@Test
 	public void testUnequal2() throws Exception {
-		testCpp("comparison/Unequal", "Unequal", "UnequalAddition.stCpp", true);
+		testCpp("comparison/Unequal", "Unequal", "UnequalAddition.stcpp", true);
 	}
 
 	@Test
 	public void testCardBig() throws Exception {
-		testCpp("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stCpp", false);
+		testCpp("setoperation_big/SetCardBig", "SetCardBig", "SetCardBigAddition.stcpp", false);
 	}
 
 	@Test
@@ -135,7 +135,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testDifferenceBig() throws Exception {
-		testCpp("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceBigAddition.stCpp", true);
+		testCpp("setoperation_big/SetDifferenceBig", "SetDifferenceBig", "SetDifferenceBigAddition.stcpp", true);
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testElementOfBig() throws Exception {
-		testCpp("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfBigAddition.stCpp", true);
+		testCpp("setoperation_big/SetElementOfBig", "SetElementOfBig", "SetElementOfBigAddition.stcpp", true);
 	}
 
 	@Test
@@ -155,7 +155,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testIntersectionBig() throws Exception {
-		testCpp("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stCpp", true);
+		testCpp("setoperation_big/SetIntersectionBig", "SetIntersectionBig", "SetIntersectionBigAddition.stcpp", true);
 	}
 
 	@Test
@@ -165,7 +165,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testUnionBig() throws Exception {
-		testCpp("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stCpp", false);
+		testCpp("setoperation_big/SetUnionBig", "SetUnionBig", "SetUnionBigAddition.stcpp", false);
 	}
 
 	@Test
@@ -176,7 +176,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testCardSmall() throws Exception {
-		testCpp("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stCpp", true);
+		testCpp("setoperation_small/SetCardSmall", "SetCardSmall", "SetCardSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -187,7 +187,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testDifferenceSmall() throws Exception {
-		testCpp("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetDifferenceSmallAddition.stCpp", true);
+		testCpp("setoperation_small/SetDifferenceSmall", "SetDifferenceSmall", "SetDifferenceSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -198,7 +198,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testElementOfSmall() throws Exception {
-		testCpp("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stCpp", true);
+		testCpp("setoperation_small/SetElementOfSmall", "SetElementOfSmall", "SetElementOfSmallAddition.stcpp", true);
 	}
 
 	@Test
@@ -209,7 +209,7 @@ public class TestBenchmarks extends TestCpp {
 
 	@Test
 	public void testIntersectionSmall() throws Exception {
-		testCpp("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stCpp", true);
+		testCpp("setoperation_small/SetIntersectionSmall", "SetIntersectionSmall", "SetIntersectionSmallAddition.stcpp", true);
 	}
 
 	@Test

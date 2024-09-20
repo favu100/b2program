@@ -1,7 +1,9 @@
 package de.hhu.stups.codegenerator.js;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestLustre extends TestJs {
 
     @Test

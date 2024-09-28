@@ -14,11 +14,11 @@ class BStruct {
             return 0;
         };
 
-        BBoolean isRecord() {
+        BBoolean isRecord() const {
             return BBoolean(true);
         }
 
-        BBoolean isNotRecord() {
+        BBoolean isNotRecord() const {
             return BBoolean(false);
         }
 };

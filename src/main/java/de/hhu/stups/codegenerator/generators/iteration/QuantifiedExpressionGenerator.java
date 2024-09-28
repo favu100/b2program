@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.generators.ImportGenerator;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
@@ -14,6 +15,7 @@ import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
+import de.prob.parser.ast.types.UntypedType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -36,19 +38,22 @@ public class QuantifiedExpressionGenerator {
 
     private final TypeGenerator typeGenerator;
 
+    private final ImportGenerator importGenerator;
+
     private final IterationConstructGenerator iterationConstructGenerator;
 
     private final IterationConstructHandler iterationConstructHandler;
 
     private final IterationPredicateGenerator iterationPredicateGenerator;
 
-    public QuantifiedExpressionGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler, final TypeGenerator typeGenerator,
-                                         final IterationConstructGenerator iterationConstructGenerator,  final IterationConstructHandler iterationConstructHandler,
+    public QuantifiedExpressionGenerator(final STGroup group, final MachineGenerator machineGenerator, final NameHandler nameHandler, final TypeGenerator typeGenerator, final ImportGenerator importGenerator,
+                                         final IterationConstructGenerator iterationConstructGenerator, final IterationConstructHandler iterationConstructHandler,
                                          final IterationPredicateGenerator iterationPredicateGenerator) {
         this.group = group;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
         this.typeGenerator = typeGenerator;
+        this.importGenerator = importGenerator;
         this.iterationConstructGenerator = iterationConstructGenerator;
         this.iterationConstructHandler = iterationConstructHandler;
         this.iterationPredicateGenerator = iterationPredicateGenerator;
@@ -81,6 +86,14 @@ public class QuantifiedExpressionGenerator {
             if(subType instanceof CoupleType) {
                 isRelation = true;
             }
+        } else {
+            isRelation = false;
+        }
+
+        if(isRelation) {
+            importGenerator.addImport(new SetType(new CoupleType(new UntypedType(), new UntypedType())));
+        } else {
+            importGenerator.addImport(new SetType(new UntypedType()));
         }
 
         generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, node, conditionalPredicate, predicate, expression, declarations);
@@ -157,9 +170,7 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "identity", getIdentity(operator));
         TemplateHandler.add(template, "useBigInteger", machineGenerator.isUseBigInteger());
-        if(node.getType() instanceof SetType) {
-            generateSubType(template, declarations);
-        }
+        generateSubType(template, declarations);
         TemplateHandler.add(template, "isInteger", isInteger);
         TemplateHandler.add(template, "isRelation", isRelation);
         TemplateHandler.add(template, "evaluation", evaluation);
@@ -188,9 +199,9 @@ public class QuantifiedExpressionGenerator {
      * This function generates code for the type of the set comprehension from the given semantic information
      */
     private void generateSubType(ST template, List<DeclarationNode> declarations) {
-        DeclarationNode declarationNode = declarations.get(0);
-        if(declarationNode.getType() instanceof SetType) {
-            BType subType = ((SetType) declarationNode.getType()).getSubType();
+        if(declarations.get(0).getType() instanceof SetType) {
+            SetType setType = (SetType) declarations.get(0).getType();
+            BType subType = setType.getSubType();
             if (subType instanceof CoupleType) {
                 BType leftType = ((CoupleType) subType).getLeft();
                 BType rightType = ((CoupleType) subType).getRight();
@@ -199,6 +210,8 @@ public class QuantifiedExpressionGenerator {
             } else {
                 TemplateHandler.add(template, "subType", typeGenerator.generate(subType));
             }
+        } else {
+            TemplateHandler.add(template, "subType", typeGenerator.generate(declarations.get(0).getType()));
         }
     }
 

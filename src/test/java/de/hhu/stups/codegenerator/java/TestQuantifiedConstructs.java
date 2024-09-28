@@ -130,7 +130,6 @@ public class TestQuantifiedConstructs extends TestJava {
         testJava("QuantifiedExpression5", "QuantifiedExpression5", "QuantifiedExpression5Addition.stjava", true);
     }
 
-
     @Test
     public void testLetExpression() throws Exception {
         testJava("LetExpression", "LetExpression", "LetExpressionAddition.stjava", true);

@@ -108,7 +108,7 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         this.setComprehensionGenerator = new SetComprehensionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator, expressionGenerator, predicateGenerator);
         this.lambdaGenerator = new LambdaGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, typeGenerator);
         this.quantifiedPredicateGenerator = new QuantifiedPredicateGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
-        this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
+        this.quantifiedExpressionGenerator = new QuantifiedExpressionGenerator(group, machineGenerator, nameHandler, typeGenerator, importGenerator,this, iterationConstructHandler, iterationPredicateGenerator);
         this.anySubstitutionGenerator = new AnySubstitutionGenerator(group, machineGenerator, this, iterationConstructHandler, iterationPredicateGenerator, backtrackingGenerator);
         this.letExpressionPredicateGenerator = new LetExpressionPredicateGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator);
         this.becomesSuchThatGenerator = new BecomesSuchThatGenerator(group, machineGenerator, typeGenerator, this, iterationConstructHandler, iterationPredicateGenerator, backtrackingGenerator);

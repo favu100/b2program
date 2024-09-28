@@ -509,10 +509,10 @@ public class TestMachines extends TestJava {
     public void testSetLawsPowPow() throws Exception {
         testJavaMC("SetLawsPowPow", "SetLawsPowPow", true, 1, false);
     }
-
+    
     @Test
     public void testSetLawsPowPowCart() throws Exception {
-        testJavaMC("SetLawsPowPowCart", "SetLawsPowPowCart", true, 1, false);
+        testJavaMC("SetLawsPowPowCart", "SetLawsPowPowCart", false, 1, false);
     }
 
     @Test

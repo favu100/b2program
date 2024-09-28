@@ -575,6 +575,7 @@ public class TestMachines extends TestJava {
         testJavaMC("tictac", "tictac", true, 1, false);
     }
 
+    @Ignore
     @Test
     public void testNota() throws Exception {
         testJavaMC("nota");

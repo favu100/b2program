@@ -35,5 +35,6 @@ OPERATIONS
   Addb(yy) = PRE yy:d & yy/: b THEN b := b \/ {yy} END;
   Addc(yy) = PRE yy:ID & yy/: c THEN c := c \/ {yy} END;
   Addd(yy) = PRE yy:ID & yy/: d THEN d := d \/ {yy} END;
-  Addf(xx,yy) = PRE xx:ID & yy:ID & (xx,yy)/: f THEN f := f \/ {xx|->yy} END
+  Addf(xx,yy) = PRE xx:ID & yy:ID & (xx,yy)/: f THEN f := f \/ {xx|->yy} END;
+  default = BEGIN skip END
 END

@@ -6,7 +6,7 @@ public class TestInfiniteConstructs extends TestCpp {
 
     @Test
     public void testString() throws Exception {
-        testCpp("String");
+        testCpp("Stringg");
     }
 
     @Test

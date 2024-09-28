@@ -1107,10 +1107,10 @@ becomes_such_that_store(lhs, rhs) ::= <<
 <lhs> = <rhs>;
 >>
 
-while(forModelChecking, iterationConstruct1, iterationConstruct2, predicate, then, invariant, variant) ::= <<
+while(forModelChecking, iterationConstruct1, iterationConstruct2, predicate, then, invariant, variant, variantCounter) ::= <<
 <iterationConstruct1; separator="\n">
 <if(forModelChecking)>
-BInteger _loop_variant = <variant>;
+BInteger _loop_variant_<variantCounter> = <variant>;
 <endif>
 while((<predicate>).booleanValue()) {
     <then>
@@ -1119,10 +1119,10 @@ while((<predicate>).booleanValue()) {
     if(!<invariant>.booleanValue()) {
         throw new LoopInvariantViolation("Invariant of WHILE loop is violated");
     }
-    if(<variant>.greater(_loop_variant).booleanValue()) {
+    if(<variant>.greater(_loop_variant_<variantCounter>).booleanValue()) {
         throw new VariantViolation("Variant of WHILE loop is violated");
     }
-    _loop_variant = <variant>;
+    _loop_variant_<variantCounter> = <variant>;
     <endif>
 }
 >>

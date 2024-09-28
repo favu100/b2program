@@ -77,6 +77,8 @@ public class SubstitutionGenerator {
 
     private int recordCounter;
 
+    private int variantCounter;
+
     private final boolean forVisualisation;
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
@@ -104,6 +106,7 @@ public class SubstitutionGenerator {
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
         this.recordCounter = 0;
+        this.variantCounter = 0;
         this.forVisualisation = forVisualisation;
     }
 
@@ -957,6 +960,8 @@ public class SubstitutionGenerator {
         TemplateHandler.add(whileST, "forModelChecking", machineGenerator.isForModelChecking());
         TemplateHandler.add(whileST, "invariant", machineGenerator.visitPredicateNode(node.getInvariant(), expected));
         TemplateHandler.add(whileST, "variant", machineGenerator.visitExprNode(node.getVariant(), expected));
+        TemplateHandler.add(whileST, "variantCounter", variantCounter);
+        variantCounter++;
         return whileST.render();
     }
 

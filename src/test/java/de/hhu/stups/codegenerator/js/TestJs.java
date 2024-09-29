@@ -72,8 +72,8 @@ public class TestJs {
 		Path tsConfig = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("tsconfig.json").toURI());
 		if (Files.exists(tsConfig)) {
-			if (Files.notExists(btypeDirectory.resolve("tsconfig.json"))) {
-				Files.copy(btypeDirectory, btypeDirectory.resolve("tsconfig.json"), REPLACE_EXISTING);
+			if (Files.notExists(machineDirectory.resolve("tsconfig.json"))) {
+				Files.copy(machineDirectory, machineDirectory.resolve("tsconfig.json"), REPLACE_EXISTING);
 			}
 		}
 

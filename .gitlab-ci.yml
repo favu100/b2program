@@ -29,7 +29,7 @@ test:linux:
   image: eclipse-temurin:17
   before_script:
     - *default_before_script_linux
-    - apt-get install --assume-yes build-essential fakeroot cmake git build-essential libboost-all-dev wget
+    - apt-get install --assume-yes build-essential fakeroot cmake git build-essential libboost-all-dev wget curl nodejs
     - npm install -g typescript
   timeout: 3h
   script:

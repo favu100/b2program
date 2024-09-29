@@ -1536,7 +1536,7 @@ try {
     _ProjectionRead_<operation> readState = state._projected_state_for_<operation>();
     PersistentHashMap _OpCache_with_parameter_<operation> = (PersistentHashMap) GET.invoke(_OpCache_<operation>, <transitionEval>);
     if(_OpCache_with_parameter_<operation> != null) {
-        _ProjectionWrite_<operation> writeState = (_ProjectionWrite_<operation>) GET.invoke(OpCache_with_parameter_<operation>, readState);
+        _ProjectionWrite_<operation> writeState = (_ProjectionWrite_<operation>) GET.invoke(_OpCache_with_parameter_<operation>, readState);
         if(writeState != null) {
             copiedState._apply_update_for_<operation>(writeState);
             copiedState.parent = state;

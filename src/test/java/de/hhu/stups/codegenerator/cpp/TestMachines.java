@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.cpp;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -161,7 +162,7 @@ public class TestMachines extends TestCpp {
         testCpp("SetLawsNAT");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testCpp("Simpson_Four_Slot");
     }

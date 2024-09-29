@@ -85,10 +85,10 @@ public class RecordStructGenerator {
     /*
     * This function generates code for all structs
     */
-    public Set<String> generateStructs() {
+    public List<String> generateStructs() {
         return generatedStructs.stream()
                 .map(this::generateStruct)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     /*

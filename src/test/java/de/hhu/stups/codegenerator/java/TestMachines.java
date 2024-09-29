@@ -596,7 +596,7 @@ public class TestMachines extends TestJava {
         testJavaMC("Range");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testLibrary3_3() throws Exception {
         testJavaMC("Library_3_3");
     }

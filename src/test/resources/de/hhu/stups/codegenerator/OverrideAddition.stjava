@@ -1,5 +1,5 @@
 public static void main(String[] args) {
-    Override override = new Override();
+    OOverride override = new OOverride();
     override.calculate();
     System.out.println(override.getRes());
 }

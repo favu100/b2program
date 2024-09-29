@@ -1,5 +1,5 @@
 int main() {
-    Override override;
+    OOverride override;
     override.calculate();
     cout << override.getRes();
     return 0;

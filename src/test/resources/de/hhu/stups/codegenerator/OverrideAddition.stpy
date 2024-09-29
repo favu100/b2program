@@ -1,4 +1,4 @@
 if __name__ == '__main__':
-    override = Override()
+    override = OOverride()
     override.calculate()
     print(override.getRes())

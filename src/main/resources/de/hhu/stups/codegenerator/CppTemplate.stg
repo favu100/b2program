@@ -700,7 +700,7 @@ constant_initialization(iterationConstruct, identifier, val) ::= <<
 <identifier> = <val>;
 >>
 
-values() ::= <<
+values(assignments) ::= <<
 <assignments; separator="\n">
 >>
 

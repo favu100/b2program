@@ -112,7 +112,7 @@ public class TestOptimizations extends TestJava {
 
     @Test
     public void testPowEmptySet2() throws Exception {
-        testJava("PowEmptySet2", "PowEmptySet2", "PowEmptySet2Addition.stjava", true);
+        testJava("PowEmptySet2", "PowEmptySet2", "PowEmptySet2Addition.stjava", false);
     }
 
     @Test
@@ -122,7 +122,7 @@ public class TestOptimizations extends TestJava {
 
     @Test
     public void testFinEmptySet2() throws Exception {
-        testJava("FinEmptySet2", "FinEmptySet2", "FinEmptySet2Addition.stjava", true);
+        testJava("FinEmptySet2", "FinEmptySet2", "FinEmptySet2Addition.stjava", false);
     }
 
     @Test

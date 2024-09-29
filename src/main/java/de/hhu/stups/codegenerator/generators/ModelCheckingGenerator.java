@@ -181,7 +181,7 @@ public class ModelCheckingGenerator {
     public String generateClassesForOpReuse(MachineNode machineNode, boolean isRead, boolean isGuard, boolean isInvariant, String operation) {
         ST classes = currentGroup.getInstanceOf("opreuse_class");
 
-        List<String> variables = new ArrayList<>();
+        List<String> variables;
 
         if(isRead) {
             if(isGuard) {
@@ -205,6 +205,8 @@ public class ModelCheckingGenerator {
 
         List<DeclarationNode> constantNodes = machineNode.getConstants();
         List<DeclarationNode> variableNodes = machineNode.getVariables();
+
+        variables = variables == null ? new ArrayList<>() : variables;
 
         for(String var : variables) {
             for(DeclarationNode constantNode : constantNodes) {

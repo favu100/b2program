@@ -77,7 +77,9 @@ public class LambdaFunctionGenerator implements AbstractVisitor<Void, Void> {
 
     public void computeConstantsOnlyUsedInFunctionCall(MachineNode machineNode) {
         this.constantsOnlyUsedInFunctionCall = new HashSet<>();
-        visitPredicateNode(machineNode.getInvariant(), null);
+        if(machineNode.getInvariant() != null) {
+            visitPredicateNode(machineNode.getInvariant(), null);
+        }
         machineNode.getOperations()
                 .forEach(op -> visitSubstitutionNode(op.getSubstitution(), null));
     }

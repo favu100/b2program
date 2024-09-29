@@ -199,6 +199,9 @@ public class ModelCheckingInfoGenerator {
         Map<String, List<String>> invariantReads = new HashMap<>();
         for(int i = 0; i < invariantConjuncts.size(); i++) {
             PredicateNode conj = invariantConjuncts.get(i);
+            if(conj == null) {
+                continue;
+            }
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitPredicateNode(conj, null);
             List<String> identifiers = identifierAnalyzer.getIdentifiers()

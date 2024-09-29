@@ -588,20 +588,11 @@ public class ExpressionGenerator {
                 operatorName = "conc";
                 break;
             case SEQ:
-                operatorName = "seq";
-                break;
             case SEQ1:
-                operatorName = "seq1";
-                break;
             case ISEQ:
-                operatorName = "iseq";
-                break;
             case ISEQ1:
-                operatorName = "iseq1";
-                break;
             case PERM:
-                operatorName = "permutate";
-                break;
+                throw new CodeGenerationException("Operator only supported in element of: " + operator);
             case SIZE:
                 operatorName = "size";
                 break;
@@ -678,35 +669,16 @@ public class ExpressionGenerator {
                 operatorName = "composition";
                 break;
             case TOTAL_FUNCTION:
-                operatorName = "totalFunction";
-                break;
             case TOTAL_BIJECTION:
-                operatorName = "totalBijection";
-                break;
             case TOTAL_INJECTION:
-                operatorName = "totalInjection";
-                break;
             case TOTAL_SURJECTION:
-                operatorName = "totalSurjection";
-                break;
             case TOTAL_RELATION:
-                operatorName = "totalRelation";
-                break;
             case TOTAL_SURJECTION_RELATION:
-                operatorName = "totalSurjectionRelation";
-                break;
             case PARTIAL_BIJECTION:
-                operatorName = "partialBijection";
-                break;
             case PARTIAL_SURJECTION:
-                operatorName = "partialSurjection";
-                break;
             case PARTIAL_FUNCTION:
-                operatorName = "partialFunction";
-                break;
             case PARTIAL_INJECTION:
-                operatorName = "partialInjection";
-                break;
+                throw new CodeGenerationException("Operator only supported in element of: " + operator);
             case INSERT_FRONT:
                 operatorName = "prepend";
                 break;

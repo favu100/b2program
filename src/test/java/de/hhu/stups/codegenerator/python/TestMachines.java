@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.python;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -141,7 +142,7 @@ public class TestMachines extends TestPython {
         testPython("SetLawsNAT");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testPython("Simpson_Four_Slot");
     }

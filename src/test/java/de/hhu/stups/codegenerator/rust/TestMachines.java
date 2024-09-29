@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.rust;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Test;
 
 public class TestMachines extends TestRS {
@@ -156,7 +157,7 @@ public class TestMachines extends TestRS {
     }
 
     // totalFunction currently not supported (and maybe never will)
-    @Test(expected = Exception.class)
+    @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testRS("Simpson_Four_Slot");
     }

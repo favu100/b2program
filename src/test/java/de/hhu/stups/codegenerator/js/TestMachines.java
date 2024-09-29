@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.js;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -194,7 +195,7 @@ public class TestMachines extends TestJs {
         testJs("SetLawsNAT");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testJs("Simpson_Four_Slot");
     }

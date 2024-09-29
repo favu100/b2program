@@ -211,7 +211,7 @@ public class TestMachines extends TestJava {
         testJava("SetLawsNat");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testJava("Simpson_Four_Slot");
     }

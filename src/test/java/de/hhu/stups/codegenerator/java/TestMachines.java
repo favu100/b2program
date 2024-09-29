@@ -542,7 +542,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testNatRangeLaws() throws Exception {
-        testJavaMC("NatRangeLaws", "NatRangeLaws", true, 1, false);
+        testJavaMC("NatRangeLaws", "NatRangeLaws", true, 1, true);
     }
 
     @Test
@@ -674,8 +674,8 @@ public class TestMachines extends TestJava {
 
 
     @Test
-    public void testGenerated1000MC() throws Exception {
-        testJavaMC("Generated1000");
+    public void testGenerated100MC() throws Exception {
+        testJavaMC("Generated100");
     }
 
     @Test

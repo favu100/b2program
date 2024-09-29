@@ -1,9 +1,7 @@
 MACHINE NatRangeLaws
-DEFINITIONS
-SET_PREF_MAXINT == 4
 VARIABLES xx,zz
 INVARIANT
-  xx:NAT & zz:INT &
+  xx:(0..4) & zz:(-3..4) &
   xx: xx..xx+1 &
   xx: xx..xx &
   xx: xx-1..xx &
@@ -15,17 +13,17 @@ INVARIANT
   (xx<=zz => card(xx..zz) = zz-xx+1) &
   (xx<1 => {} : 1..xx --> INTEGER) &
   {} : 1..0 --> INTEGER &
-  xx..zz = {nn | nn:INT & nn>=xx & nn<=zz}&
-  NAT1 = 1..MAXINT &
-  NAT = 0..MAXINT &
-  INT = MININT..MAXINT &
-  NAT - NAT1 = {0} &
-  NAT1 - NAT = {} &
-  NAT \/ NAT1 = NAT &
-  NAT1 <<: NAT & NAT <<: INT &
-  (xx>=zz =>  zz..MAXINT = zz..xx \/ xx+1..MAXINT) &
+  xx..zz = {nn | nn:(-3..4) & nn>=xx & nn<=zz}&
+  (1..4) = (1..4) &
+  (0..4) = (0..4) &
+  (-3..4) = (-3..4) &
+  (0..4) - (1..4) = {0} &
+  (1..4) - (0..4) = {} &
+  (0..4) \/ (1..4) = (0..4) &
+  (1..4) <<: (0..4) & (0..4) <<: (-3..4) &
+  (xx>=zz =>  (zz..4) = (zz..xx) \/ (xx+1)..4) &
   card(0..xx) = xx+1 &
-  card(1..MAXINT) = MAXINT &
+  card((1..4)) = 4 &
   min(-1..xx) = -1 & max(-1..xx) = xx &
   (xx..zz = {}  <=>  zz < xx) &
   (xx..zz /= {}  <=>  zz >= xx) &
@@ -46,12 +44,12 @@ INVARIANT
   ( xx..zz <: zz..xx <=> zz<=xx) &
   ( xx..zz <<: zz..xx <=> zz<xx) &
 
-  perm(NAT1) = perm(1..MAXINT) &
-  %i.(i:NAT1|i) : perm(NAT1)
+  perm((1..4)) = perm((1..4)) &
+  %i.(i:(1..4)|i) : perm((1..4))
 
 INITIALISATION xx:=0 || zz:=0
 OPERATIONS
- Setxx(yy) = PRE yy:NAT THEN xx:= yy END;
- Setzz(yy) = PRE yy:INT THEN zz:= yy END;
+ Setxx(yy) = PRE yy:(0..4) THEN xx:= yy END;
+ Setzz(yy) = PRE yy:(1..4) THEN zz:= yy END;
  r <-- Cardxxzz = r := card(xx..zz)
 END

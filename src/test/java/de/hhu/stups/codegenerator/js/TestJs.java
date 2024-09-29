@@ -69,6 +69,14 @@ public class TestJs {
 			Files.copy(immutableDirectory.resolve("dist/immutable.es.js"), machineDirectory.resolve("immutable/dist/immutable.es.js"), REPLACE_EXISTING);
 		}
 
+		Path tsConfig = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("tsconfig.json").toURI());
+		if (Files.exists(tsConfig)) {
+			if (Files.notExists(btypeDirectory.resolve("tsconfig.json"))) {
+				Files.copy(btypeDirectory, btypeDirectory.resolve("tsconfig.json"), REPLACE_EXISTING);
+			}
+		}
+
 		Path modelcheckingDirectory = Paths.get(CodeGenerator.class.getClassLoader()
 				.getResource("modelchecking").toURI());
 		if (Files.exists(modelcheckingDirectory)) {

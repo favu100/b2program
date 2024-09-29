@@ -92,7 +92,7 @@ INVARIANT
 
  (ff: iseq(setY) <=>  card(ran(ff)) = size(ff)) &
 
- (ff: perm(setY) <=>  (ff: iseq(setY) & size(ff) = card(setY))) &
+ //(ff: perm(setY) <=>  (ff: iseq(setY) & size(ff) = card(setY))) &
 
  (ff /=[] => (front(ff) <- last(ff) = ff)) &
 

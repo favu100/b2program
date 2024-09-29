@@ -41,12 +41,12 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
     }
 
     public BBoolean lessEqual(BInteger o) {
-        return new BBoolean(compareTo(o) <= 0);
+        return new BBoolean(this.value <= o.value);
     }
 
 
     public BBoolean greaterEqual(BInteger o) {
-        return new BBoolean(compareTo(o) >= 0);
+        return new BBoolean(this.value >= o.value);
     }
 
     public java.math.BigInteger asBigInteger() {
@@ -54,19 +54,19 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
     }
 
     public BBoolean less(BInteger o) {
-        return new BBoolean(compareTo(o) < 0);
+        return new BBoolean(this.value < o.value);
     }
 
     public BBoolean greater(BInteger o) {
-        return new BBoolean(compareTo(o) > 0);
+        return new BBoolean(this.value > o.value);
     }
 
     public BBoolean equal(BInteger o) {
-        return new BBoolean(compareTo(o) == 0);
+        return new BBoolean(this.value == o.value);
     }
 
     public BBoolean unequal(BInteger o) {
-        return new BBoolean(compareTo(o) != 0);
+        return new BBoolean(this.value != o.value);
     }
 
     @Override

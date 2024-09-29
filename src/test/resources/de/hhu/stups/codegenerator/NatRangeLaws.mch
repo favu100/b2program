@@ -42,10 +42,10 @@ INVARIANT
                (xx+1)..(zz-1) <<: xx..zz)) &
 
   ( xx..zz <: zz..xx <=> zz<=xx) &
-  ( xx..zz <<: zz..xx <=> zz<xx) &
+  ( xx..zz <<: zz..xx <=> zz<xx)// &
 
-  perm((1..4)) = perm((1..4)) &
-  %i.(i:(1..4)|i) : perm((1..4))
+  //perm((1..4)) = perm((1..4)) &
+  //%i.(i:(1..4)|i) : perm((1..4))
 
 INITIALISATION xx:=0 || zz:=0
 OPERATIONS

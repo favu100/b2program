@@ -502,7 +502,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testSetLawsPowPow() throws Exception {
-        testJavaMC("SetLawsPowPow", "SetLawsPowPow", true, 1, false);
+        testJavaMC("SetLawsPowPow", "SetLawsPowPow", false, 1, false);
     }
 
     @Test

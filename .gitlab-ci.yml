@@ -30,6 +30,7 @@ test:linux:
   before_script:
     - *default_before_script_linux
     - apt-get install --assume-yes build-essential fakeroot cmake git build-essential libboost-all-dev wget
+    - npm install -g typescript
   timeout: 3h
   script:
     - make btypes_primitives

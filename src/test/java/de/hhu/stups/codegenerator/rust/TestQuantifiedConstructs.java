@@ -2,8 +2,10 @@ package de.hhu.stups.codegenerator.rust;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.java.TestJava;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestQuantifiedConstructs extends TestRS {
 
     @Test

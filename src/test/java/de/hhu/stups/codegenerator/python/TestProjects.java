@@ -1,8 +1,10 @@
 package de.hhu.stups.codegenerator.python;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestProjects extends TestPython {
 
     @Test

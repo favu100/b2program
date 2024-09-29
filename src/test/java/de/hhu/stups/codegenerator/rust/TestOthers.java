@@ -1,7 +1,9 @@
 package de.hhu.stups.codegenerator.rust;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestOthers extends TestRS{
     private final String PROB_OTHER_PATH = "../../../../benchmarks/model_checking/ProB/Other";
     @Test

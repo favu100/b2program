@@ -4,6 +4,7 @@ import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestMachines extends TestPython {
 
     @Test

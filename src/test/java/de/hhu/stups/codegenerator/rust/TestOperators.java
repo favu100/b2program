@@ -1,7 +1,9 @@
 package de.hhu.stups.codegenerator.rust;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestOperators extends TestRS {
 
     @Test

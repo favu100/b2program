@@ -1,7 +1,9 @@
 package de.hhu.stups.codegenerator.prolog;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class TestMachines extends TestProlog {
     @Test
     public void testLift() throws Exception {

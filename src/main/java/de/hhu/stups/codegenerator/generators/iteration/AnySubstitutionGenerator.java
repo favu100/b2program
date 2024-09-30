@@ -101,12 +101,14 @@ public class AnySubstitutionGenerator {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("any_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "emptyPredicate", subpredicate == null || ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        if(subpredicate != null) {
+            TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        }
         TemplateHandler.add(template, "body", machineGenerator.visitSubstitutionNode(substitutionNode, null));
         TemplateHandler.add(template, "forModelChecking", machineGenerator.isForModelChecking());
         TemplateHandler.add(template, "choicePoint", counter);

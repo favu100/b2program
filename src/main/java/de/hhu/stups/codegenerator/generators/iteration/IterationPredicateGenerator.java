@@ -154,7 +154,7 @@ public class IterationPredicateGenerator {
     */
     public PredicateNode subpredicate(PredicateNode predicate, int n, boolean universalQuantification) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
-            return subpredicate((PredicateOperatorWithExprArgsNode) predicate);
+            return null;
         } else if(predicate instanceof PredicateOperatorNode) {
             if(universalQuantification) {
                 List<PredicateNode> subpredicates = new ArrayList<>();
@@ -178,16 +178,6 @@ public class IterationPredicateGenerator {
             "at line " + node.getSourceCodePosition().getStartLine() + 
             " and column " + node.getSourceCodePosition().getStartColumn() + 
             ": " + node.getSourceCodePosition().getText();
-    }
-
-    /*
-    * This function returns the subpredicate of the given predicate represented by a PredicateOperatorWithExprArgsNode. This predicate is empty.
-    */
-    private PredicateNode subpredicate(PredicateOperatorWithExprArgsNode predicate) {
-        PredicateNode result = new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, new ArrayList<>());;
-        result.setParent(predicate.getParent());
-        result.setType(predicate.getType());
-        return result;
     }
 
     /*

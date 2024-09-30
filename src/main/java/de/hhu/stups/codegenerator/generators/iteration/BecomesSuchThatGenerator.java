@@ -114,12 +114,14 @@ public class BecomesSuchThatGenerator {
         ST template = group.getInstanceOf("becomes_such_that_body");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
 
-        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "emptyPredicate", subpredicate == null || ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        if(subpredicate != null) {
+            TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        }
 
         List<String> stores = identifiers.stream().map(this::generateStore).collect(Collectors.toList());
         TemplateHandler.add(template, "stores", stores);

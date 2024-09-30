@@ -183,12 +183,14 @@ public class QuantifiedExpressionGenerator {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("quantified_expression_evaluation");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "emptyPredicate", subpredicate == null || ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        if(subpredicate != null) {
+            TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        }
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "operation", operation);
         TemplateHandler.add(template, "expression", machineGenerator.visitExprNode(expression, null));

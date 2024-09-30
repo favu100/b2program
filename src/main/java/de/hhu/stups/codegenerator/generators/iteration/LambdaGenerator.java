@@ -130,12 +130,14 @@ public class LambdaGenerator {
         PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, false);
         ST template = group.getInstanceOf("lambda_expression");
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "emptyPredicate", ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "emptyPredicate", subpredicate == null || ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        if(subpredicate != null) {
+            TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        }
         TemplateHandler.add(template, "leftType", leftType);
         TemplateHandler.add(template, "rightType", rightType);
         TemplateHandler.add(template, "relation", relationName);

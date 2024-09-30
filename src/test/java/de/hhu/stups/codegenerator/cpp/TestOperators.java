@@ -242,7 +242,7 @@ public class TestOperators extends TestCpp {
 
     @Test
     public void testOverride() throws Exception {
-        testCpp("Override", "Override", "OverrideAddition.stcpp", true);
+        testCpp("OOverride", "OOverride", "OverrideAddition.stcpp", true);
     }
 
     @Test

@@ -252,7 +252,7 @@ public class TestOperators extends TestJs {
 
     @Test
     public void testOverride() throws Exception {
-        testJs("Override", "Override", "OverrideAddition.stjs", true);
+        testJs("OOverride", "OOverride", "OverrideAddition.stjs", true);
     }
 
     @Test

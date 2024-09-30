@@ -302,7 +302,7 @@ public class ExpressionGenerator {
             String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
             return prefix + "_primed_" + node.getName();
         }
-        if(machineGenerator.isInIterationConstruct() && machineGenerator.getBoundedVariablesDepth().containsKey(node.getName())) {
+        if(machineGenerator.isInIterationConstruct() && iterationConstructHandler.getCurrentIterationConstructGenerator().getAllBoundedVariables().contains(node.getName())) {
             String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
             return prefix + "_ic_" + node.getName() + "_" + machineGenerator.getBoundedVariablesDepth().get(node.getName());
         }

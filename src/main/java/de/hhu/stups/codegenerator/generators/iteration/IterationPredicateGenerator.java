@@ -128,26 +128,21 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-                //try {
                 innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
                         : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
-                //} catch (Exception e) {
-                //    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
-                //}
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
                 i = i - 1;
-                subpredicates.add(innerPredicate);
                 continue;
             }
             declarationProcessed.add(declarationNode.getName());
         }
-        if(subpredicates.size() == 0) {
-            return subpredicate(predicate, j, universalQuantification);
-        } else {
-            subpredicates.add(subpredicate(predicate, j, universalQuantification));
+        PredicateNode subpredicate = subpredicate(predicate, j, universalQuantification);
+        if(subpredicate == null) {
+            return null;
         }
+        subpredicates.add(subpredicate);
         if(universalQuantification) {
             return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, subpredicates);
         }
@@ -202,6 +197,9 @@ public class IterationPredicateGenerator {
         PredicateOperatorNode.PredicateOperator operator = predicate.getOperator();
         int size = predicate.getPredicateArguments().size();
         List<PredicateNode> predicates = predicate.getPredicateArguments().subList(n, size);
+        if(predicates.isEmpty()) {
+            return null;
+        }
         PredicateNode result = new PredicateOperatorNode(predicate.getSourceCodePosition(), operator, predicates);
         result.setParent(predicate.getParent());
         result.setType(predicate.getType());
@@ -270,7 +268,7 @@ public class IterationPredicateGenerator {
         List<DeclarationNode> sortedDeclarations = this.sortDeclarationNodes(declarations, predicate, universalQuantification);
         Set<String> declarationProcessed = new HashSet<>();
 
-        for(int i = 0, j = 0; i < sortedDeclarations.size() & j < sortedDeclarations.size(); i++, j++) {
+        for(int i = 0, j = 0; i < sortedDeclarations.size(); i++, j++) {
             DeclarationNode declarationNode = sortedDeclarations.get(i);
             PredicateOperatorWithExprArgsNode innerPredicate = null;
             if(universalQuantification) {
@@ -284,14 +282,8 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-               //System.out.println(predicate);
-               //System.out.println("---------");
-               //try {
-                    innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
-                            : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
-                //} catch (Exception e) {
-                //    throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
-                //}
+                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
+                        : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
             }
             enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {

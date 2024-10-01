@@ -656,6 +656,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             }
         }
 
+        if(rhs instanceof IdentifierExprNode) {
+            return node;
+        } else if(rhs instanceof ExpressionOperatorNode) {
+            if(((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode && ((ExpressionOperatorNode) rhs).getExpressionNodes().get(1) instanceof IdentifierExprNode) {
+                return node;
+            }
+        }
+
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
         typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
@@ -668,6 +676,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         typeChecker.checkPredicateNode(innerPredicate);
         // Optimize inner predicates in quantified constructs for better performance; TODO: handle error
         innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
+
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION);
         result.setType(new UntypedType());
@@ -686,6 +695,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 if(((ExpressionOperatorNode) lhs).getExpressionNodes().size() == 0) {
                     return node;
                 }
+            }
+        }
+
+        if(rhs instanceof IdentifierExprNode) {
+            return node;
+        } else if(rhs instanceof ExpressionOperatorNode) {
+            if(((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode && ((ExpressionOperatorNode) rhs).getExpressionNodes().get(1) instanceof IdentifierExprNode) {
+                return node;
             }
         }
 

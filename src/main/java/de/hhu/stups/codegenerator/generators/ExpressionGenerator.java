@@ -678,7 +678,7 @@ public class ExpressionGenerator {
             case PARTIAL_SURJECTION:
             case PARTIAL_FUNCTION:
             case PARTIAL_INJECTION:
-                throw new CodeGenerationException("Operator only supported in element of: " + operator);
+                throw new CodeGenerationException("Operator only supported in element of: " + operator + " at ");
             case INSERT_FRONT:
                 operatorName = "prepend";
                 break;

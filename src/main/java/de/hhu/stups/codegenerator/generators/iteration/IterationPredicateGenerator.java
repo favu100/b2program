@@ -128,8 +128,15 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
-                        : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
+                if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                } else {
+                    if(j < ((PredicateOperatorNode) predicate).getPredicateArguments().size()) {
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
+                    } else {
+                        return null;
+                    }
+                }
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
@@ -308,7 +315,7 @@ public class IterationPredicateGenerator {
     }
 
     private DeclarationNode getNextDeclarationInEnumerationPredicate(List<DeclarationNode> declarations, Set<String> declarationProcessed, PredicateNode predicate, boolean universalQuantification) {
-        PredicateOperatorWithExprArgsNode innerPredicate = null;
+        PredicateNode innerPredicate = null;
         int numberConjuncts = 0;
         if(universalQuantification) {
             if(predicate instanceof PredicateOperatorWithExprArgsNode) {
@@ -338,18 +345,26 @@ public class IterationPredicateGenerator {
                     }
                 }
             } else {
-                innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
-                        : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+                if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                } else if(predicate instanceof QuantifiedPredicateNode) {
+                    innerPredicate = (QuantifiedPredicateNode) predicate;
+                } else {
+                    innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+                }
             }
             for(DeclarationNode declaration : declarations) {
-                if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF ||
-                        innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL ||
-                        innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION ||
-                        innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
-                    ExprNode lhs = innerPredicate.getExpressionNodes().get(0);
-                    if(lhs instanceof IdentifierExprNode && !declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
-                        if(declaration.getName().equals(((IdentifierExprNode) lhs).getName())) {
-                            return declaration;
+                if(innerPredicate instanceof PredicateOperatorWithExprArgsNode) {
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = ((PredicateOperatorWithExprArgsNode) innerPredicate).getOperator();
+                    if (operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF ||
+                            operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL ||
+                            operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION ||
+                            operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
+                        ExprNode lhs = ((PredicateOperatorWithExprArgsNode) innerPredicate).getExpressionNodes().get(0);
+                        if (lhs instanceof IdentifierExprNode && !declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+                            if (declaration.getName().equals(((IdentifierExprNode) lhs).getName())) {
+                                return declaration;
+                            }
                         }
                     }
                 }
@@ -364,6 +379,9 @@ public class IterationPredicateGenerator {
     */
     private ST getEnumerationTemplate(DeclarationNode declaration, Set<String> declarationProcessed, PredicateOperatorWithExprArgsNode innerPredicate) {
         ST enumerationTemplate = null;
+        if(innerPredicate == null) {
+            return null;
+        }
         if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
             enumerationTemplate = getElementOfTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
             inLoop = true;

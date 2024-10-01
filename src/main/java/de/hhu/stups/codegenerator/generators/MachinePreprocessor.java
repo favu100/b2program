@@ -471,6 +471,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
                     predicateNode.setType(new UntypedType());
+
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);
                     return predicateNode;
@@ -665,7 +666,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
         typeChecker.checkPredicateNode(innerPredicate);
-        innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
+        // Do not optimize inner predicates in quantified constructs
+        //innerPredicate = optimizeElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION);
         result.setType(new UntypedType());
@@ -697,7 +699,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
         typeChecker.checkPredicateNode(innerPredicate);
-        innerPredicate = optimizeNotElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
+        // Do not optimize inner predicates in quantified constructs
+        //innerPredicate = optimizeNotElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION);
         result.setType(new UntypedType());

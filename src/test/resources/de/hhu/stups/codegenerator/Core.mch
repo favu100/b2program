@@ -39,8 +39,8 @@ INVARIANT
     User_sessions : Users <-> Sessions &
     User_sessions~: Sessions --> Users &
 
-    PA <: Permissions * Roles  &
-    UA <: Users * Roles &
+    PA <: (Permissions * Roles)  &
+    UA <: (Users * Roles) &
     Session_roles : Sessions --> POW(Roles) &
     Assigned_users : Roles --> POW(Users) &
     !role.(role:Roles => Assigned_users(role) = UA~[{role}]) &

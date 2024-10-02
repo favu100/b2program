@@ -296,7 +296,7 @@ public class ExpressionGenerator {
     */
     public String visitIdentifierExprNode(IdentifierExprNode node) {
         if(machineGenerator.getInfiniteSets().contains(node.getName())) {
-            throw new RuntimeException("Infinite Set Declarations are not supported");
+            throw new CodeGenerationException("Infinite Set Declarations are not supported");
         }
         if(node.isPrimed()) {
             String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
@@ -471,7 +471,7 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == NAT1) {
             return generateNat1();
         }
-        throw new RuntimeException("Given operator is not implemented: " + node.getOperator());
+        throw new CodeGenerationException("Given operator is not supported: " + node.getOperator());
     }
 
     /*

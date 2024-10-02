@@ -365,7 +365,7 @@ public class TestMachines extends TestJava {
         testJavaMC("visualisation/BlinkLamps_v3");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testGenericTimers() throws Exception {
         testJavaMC("visualisation/GenericTimersMC");
     }

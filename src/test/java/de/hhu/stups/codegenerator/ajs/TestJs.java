@@ -176,7 +176,7 @@ public class TestJs {
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.environment().put("NODE_PATH", "btypes_primitives/src/main/js/");
-		processBuilder.command("node", "--experimental-specifier-resolution=node", "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".js");
+		processBuilder.command("node", "--input-type=module", "build/resources/test/de/hhu/stups/codegenerator/" + machinePath.substring(0, machinePath.length() - machineName.length()) + machineName + ".js");
 		Process executeProcess = processBuilder.start();
 		executeProcess.waitFor();
 

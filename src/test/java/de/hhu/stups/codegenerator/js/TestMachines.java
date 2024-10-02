@@ -1,4 +1,4 @@
-package de.hhu.stups.codegenerator.ajs;
+package de.hhu.stups.codegenerator.js;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;

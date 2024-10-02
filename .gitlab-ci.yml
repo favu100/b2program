@@ -34,6 +34,7 @@ test:linux:
     - curl -fsSL https://deb.nodesource.com/setup_21.x | bash -
     - apt-get install --assume-yes nodejs
     - npm install -g typescript
+    - npm i --save-dev @types/node
   timeout: 3h
   script:
     - make btypes_primitives

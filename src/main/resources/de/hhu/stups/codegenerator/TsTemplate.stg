@@ -421,8 +421,11 @@ if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
 <endif>
 >>
 
-quantified_expression(identifier, identity, setType, evaluation, isInteger, isJavaScript) ::= <<
-<if(isInteger)>let <identifier><if(!isJavaScript)>: BInteger<endif> = new BInteger(<identity>);<else>let <identifier>: <if(!isJavaScript)>: BSet\<<setType>\><endif> = new BSet\<<setType>\>();<endif>
+quantified_expression(identifier, identity, subType, leftType, rightType, evaluation, isInteger, isRelation, isJavaScript) ::= <<
+<if(isInteger)>let <identifier><if(!isJavaScript)>: BInteger<endif> = new BInteger(<identity>);<else>
+<if(isRelation)>let <identifier>: BRelation\<<leftType>, <rightType>\> = new BRelation\<<leftType>, <rightType>\>();
+<else>let <identifier>: <if(!isJavaScript)>BSet\<<subType>\><endif> = new BSet\<<subType>\>();<endif><endif>
+
 <evaluation>
 >>
 

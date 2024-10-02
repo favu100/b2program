@@ -56,14 +56,14 @@ export default class <machine> {
 
     <getters; separator="\n\n">
 
+    <hash_equal; separator="\n\n">
+
     <if(forModelChecking)>
     <transitions; separator="\n\n">
 
     <projection; separator="\n\n">
 
     <invariant; separator="\n\n">
-
-    <hash_equal; separator="\n\n">
 
     <endif>
 

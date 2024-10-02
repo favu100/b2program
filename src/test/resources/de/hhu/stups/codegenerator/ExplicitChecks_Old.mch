@@ -1,4 +1,4 @@
-MACHINE ExplicitChecks
+MACHINE ExplicitChecks_Old
 VARIABLES
   x
 INVARIANT

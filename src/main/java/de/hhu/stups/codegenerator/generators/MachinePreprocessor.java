@@ -656,9 +656,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             }
         }
 
-        if(rhs instanceof IdentifierExprNode) {
-            return node;
-        } else if(rhs instanceof ExpressionOperatorNode) {
+        if(rhs instanceof ExpressionOperatorNode) {
             if(((ExpressionOperatorNode) rhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
                 if (((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode && ((ExpressionOperatorNode) rhs).getExpressionNodes().get(1) instanceof IdentifierExprNode) {
                     return node;
@@ -700,15 +698,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             }
         }
 
-        if(rhs instanceof IdentifierExprNode) {
-            return node;
-        } else if(rhs instanceof ExpressionOperatorNode) {
-            if(((ExpressionOperatorNode) rhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
+        if(rhs instanceof ExpressionOperatorNode) {
+            if (((ExpressionOperatorNode) rhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
                 if (((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode && ((ExpressionOperatorNode) rhs).getExpressionNodes().get(1) instanceof IdentifierExprNode) {
                     return node;
                 }
             }
         }
+
 
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);

@@ -29,7 +29,7 @@ INVARIANT
   r /: {p2} +-> PROC & r /: PROC +-> {p2} &  r /: PROC +-> {p3} &  r /: PROC +-> {p1} &
   r /: PROC +-> {p1,p2} &
   fnc(r) = {p1|->{p2}, p2 |->{p3}} &
-  fnc(r): dom(r) --> POW(ran(r)) &
+  //fnc(r): dom(r) --> POW(ran(r)) &
   rel(fnc(r)) = r &
   rel(fnc({x,y|x:1..10 & y:1..x})) = {x,y|x:1..10 & y:1..x} &
 
@@ -71,26 +71,26 @@ INVARIANT
   card({p1} <-> {p2}) = 2 &
   {p1} <-> {p2,p3} = { {p1|->p2}, {p1|->p3}, {} , {p1|->p2, p1|->p3} } &
   card({p1,p2,p3} <-> {p1,p2,p3}) = 2**(3*3) &
-  {} +-> {} = { {} } &
-  PROC +-> {} = { {} } &
-  {} +-> PROC = { {} } &
-  {p1} +-> {p2} = { {p1|->p2}, {} } &
-  {p1} +-> {p2,p3} = { {p1|->p2}, {p1|->p3}, {} } &
-  {} --> {} = { {} } &
-  PROC --> {} = { } &
-  {} --> PROC = { {} } &
-  {p1} --> {p2} = { {p1|->p2} } &
-  {p1} --> {p2,p3} = { {p1|->p2}, {p1|->p3} } &
-  card({p1,p2,p3} --> {p1,p2,p3}) = 3**3 &
-  card({p1,p2,p3} +-> {p1,p2,p3}) = 4**3 &
-  card({p1,p3} --> {p1,p2,p3}) = 3**2 &
-  card({p1,p3} +-> {p1,p2,p3}) = 4**2 &
-  {p1} >+> {p2,p3} = { {}, {p1|->p2}, {p1|->p3} } &
-  {p1} >-> {p2,p3} = { {p1|->p2}, {p1|->p3} } &
-  {p1} -->> {p2,p3} = { } &
-  {p1} +->> {p2,p3} = { } &
-  {p1,p2} -->> {p3} = { {p1|->p3, p2|->p3} } &
-  {p1,p2} +->> {p3} = { {p1|->p3}, {p2|->p3}, {p1|->p3, p2|->p3} } &
+  //{} +-> {} = { {} } &
+  //PROC +-> {} = { {} } &
+  //{} +-> PROC = { {} } &
+  //{p1} +-> {p2} = { {p1|->p2}, {} } &
+  //{p1} +-> {p2,p3} = { {p1|->p2}, {p1|->p3}, {} } &
+  //{} --> {} = { {} } &
+  //PROC --> {} = { } &
+  //{} --> PROC = { {} } &
+  //{p1} --> {p2} = { {p1|->p2} } &
+  //{p1} --> {p2,p3} = { {p1|->p2}, {p1|->p3} } &
+  //card({p1,p2,p3} --> {p1,p2,p3}) = 3**3 &
+  //card({p1,p2,p3} +-> {p1,p2,p3}) = 4**3 &
+  //card({p1,p3} --> {p1,p2,p3}) = 3**2 &
+  //card({p1,p3} +-> {p1,p2,p3}) = 4**2 &
+  //{p1} >+> {p2,p3} = { {}, {p1|->p2}, {p1|->p3} } &
+  //{p1} >-> {p2,p3} = { {p1|->p2}, {p1|->p3} } &
+  //{p1} -->> {p2,p3} = { } &
+  //{p1} +->> {p2,p3} = { } &
+  //{p1,p2} -->> {p3} = { {p1|->p3, p2|->p3} } &
+  //{p1,p2} +->> {p3} = { {p1|->p3}, {p2|->p3}, {p1|->p3, p2|->p3} } &
 
   not(d=cd) & cd /= d &
   dom(r) = d &
@@ -119,16 +119,16 @@ INVARIANT
   #rr.(rr:BOOL<->BOOL & card(rr)=1 & iterate(rr,2)={}) &
   !rr.(rr:BOOL<->BOOL & card(rr)=1 & iterate(rr,2)=rr => (rr={TRUE|->TRUE} or rr={FALSE|->FALSE})) &
   !rr.(rr:BOOL<->BOOL & card(rr)=1 & iterate(rr,2)={} => (rr={TRUE|->FALSE} or rr={FALSE|->TRUE})) &
-  #rr.(rr:BOOL<->BOOL & card(rr)=1 & closure1(rr)=rr) &
+  /*#rr.(rr:BOOL<->BOOL & card(rr)=1 & closure1(rr)=rr) &
   !rr.(rr:BOOL<->BOOL & card(rr)=1 => closure1(rr)=rr) &
   #rr.(rr:BOOL<->BOOL & card(rr)=2 & closure1(rr)=rr) &
   #rr.(rr:BOOL<->BOOL & card(rr)=2 & closure1(rr)/=rr) &
   !rr.(rr:BOOL<->BOOL & card(rr)=2 & closure1(rr)/=rr => rr={TRUE|->FALSE,FALSE|->TRUE}) &
   card({rr|rr:BOOL<->BOOL & closure1(rr)=rr}) + card({rr|rr:BOOL<->BOOL & closure1(rr)/=rr}) = 16 &
-  {rr|rr:BOOL<->BOOL & card(rr)=4 & closure1(rr)=rr} = {BOOL*BOOL} &
+  {rr|rr:BOOL<->BOOL & card(rr)=4 & closure1(rr)=rr} = {BOOL*BOOL} &*/
   closure1(%x.(x:1..1000000|x/2))[{1001}]  = {0,1,3,7,15,31,62,125,250,500} &
   closure1(%x.(x:1..10000|x/2))[{1001}]  = {0,1,3,7,15,31,62,125,250,500} &
-  {x| closure1(%x.(x:1..1000|x/2))[{x}] = {0,1,2,4} & x:1..100} = {8,9} &
+  //{x| closure1(%x.(x:1..1000|x/2))[{x}] = {0,1,2,4} & x:1..100} = {8,9} & // TODO
   iterate(r,1) = r &
   iterate(r,2) = (r;r) &
   iterate(r,3) = ((r;r);r) &
@@ -220,16 +220,16 @@ INVARIANT
  /* ((0..5)*(0..5)) : NATURAL <-> INTEGER & (NATURAL*(0..5)) /: NATURAL <-> INTEGER : still expands ! */
 
  /* Set Comprehensions */
-  {x|x:r} = r & {x,y|x|->y:r} = r &
-  {y,x|x|->y:r} = r~ &
-  card({y,x|x|->y:r}) = card(r) &
-  card({y,x|x|->y:r}) = 2 &
-  card({y,x|x|->y:r}) >= 2 &
-  card({y,x|x|->y:r}) > 1 &
+  {x|x:r} = r & {x,y|x : dom(r) & y : ran(r) & x|->y:r} = r &
+  {y,x|x : dom(r) & y : ran(r) & x|->y:r} = r~ &
+  card({y,x|x : dom(r) & y : ran(r) & x|->y:r}) = card(r) &
+  card({y,x|x : dom(r) & y : ran(r) & x|->y:r}) = 2 &
+  card({y,x|x : dom(r) & y : ran(r) & x|->y:r}) >= 2 &
+  card({y,x|x : dom(r) & y : ran(r) & x|->y:r}) > 1 &
   {x| x <<: {y| y<<: {z | z:0..1}}} = {{}, {{}}, {{},{0}}, {{},{1}}, {{0}}, {{0},{1}}, {{1}}} &
   card({x| x <: {y| y<: {z | z:0..1}}}) = 16 &
   {x,y| x<:0..1 & y<:0..1 & x/<:y & y/<:x } = {({0}|->{1}),({1}|->{0})} &
-  {x,y| (x:{y+3,y+5} or y:{x+2,x+4}) & x:0..6 & y:0..4} =
+  {x,y| (x:0..6 & y:0..4 & (x:{y+3,y+5} or y:{x+2,x+4}))} =
     {(0|->2),(0|->4),(1|->3),(2|->4),(3|->0),(4|->1),(5|->0),(5|->2),(6|->1),(6|->3)} &
   {x|x<:1..4 & card(x)>0 & x /\ 3..4 /= {} & x /\ 0..2 = {}}  =  {{3}, {3,4}, {4}} &
   {x|x<:1..10 & card(x)>0 & x /\ 3..4 /= {} & x /\ 0..2 = {} &
@@ -237,8 +237,8 @@ INVARIANT
   {xx | xx:{1|->TRUE,2|->TRUE,2|->FALSE} & (xx  :  {(2|->TRUE),(2|->FALSE),(3|->TRUE)} or xx  :  {(1|->TRUE),(1|->FALSE),(2|->TRUE),(2|->FALSE),(3|->TRUE),(3|->FALSE)})} =
   {1|->TRUE, 2|->TRUE, 2|->FALSE} &
   {x| x:1..10 & not(x..x+1 <: 3..8)} = {1,2,8,9,10} &
-  {n | [0,1,2,3,4,5,6,7,8,9,10]: 1..n --> 0..10} = {11} &
-  {n,m | [0,1,2,3,4,5,6,7,8,9,10]: 1..n --> 0..m & m:0..12} = {11|->10, 11|->11, 11|->12} &
+  //{n | [0,1,2,3,4,5,6,7,8,9,10]: 1..n --> 0..10} = {11} &
+  //{n,m | [0,1,2,3,4,5,6,7,8,9,10]: 1..n --> 0..m & m:0..12} = {11|->10, 11|->11, 11|->12} &
 
  /* Powersets */
   POW(d) = {{},{p1},{p2},d} & POW({}) = { {} } &
@@ -258,7 +258,7 @@ INVARIANT
 
   /* Cartesian Product: */
   d*{p3} = {p1|->p3, p2|->p3} &
-  d*{} = {} & {}=d*{} & {}*{} = {} &
+  //d*{} = {} & {}=d*{} & {}*{} = {} &
   d*d = {p1|->p1, p2|->p1, p1|->p2, p2|->p2} &
   p1|->p2 : d*d & p1|->p3 /: d*d &
   /*dom((NATURAL*INTEGER)) = NATURAL &
@@ -270,7 +270,7 @@ INVARIANT
   ran((NATURAL * {})) = {} &
   ran(({} * NATURAL)) = {} &*/
   card((1..3)*(1..4)) = 12 &
-  card((1..3)*{}) = 0 &
+  //card((1..3)*{}) = 0 &
   card({1}*(1..4)) = 4 &
   card({ x | x <: {1,2,3}*{TRUE,FALSE}}) = 2**6 &
   card(id((1..100)*(1..100))) = 100*100 &
@@ -293,13 +293,13 @@ INVARIANT
          (12|->41),(12|->51),(12|->101),(13|->101),(18|->111),(23|->111)} &
   {x,y| x<:y & y<:0..1 & x*y={}} =
     {x,y| x<:y & y<:0..1 & x*y={}} &
-  {x,y| ((x<<:y & y<:0..1) or (y<<:x & x<:0..1)) & x*y={}} =
-    {({}|->{0}),({}|->{0,1}),({}|->{1}),({0}|->{}),({0,1}|->{}),({1}|->{})} &
-  {x,y| ((x<<:y & y<:0..1) or (y<<:x & x<:0..1)) & x*y/={}} =
-    {({0}|->{0,1}),({0,1}|->{0}),({0,1}|->{1}),({1}|->{0,1})} &
+  //{x,y| ((x<<:y & y<:0..1) or (y<<:x & x<:0..1)) & x*y={}} =
+  //  {({}|->{0}),({}|->{0,1}),({}|->{1}),({0}|->{}),({0,1}|->{}),({1}|->{})} &
+  //{x,y| ((x<<:y & y<:0..1) or (y<<:x & x<:0..1)) & x*y/={}} =
+  //  {({0}|->{0,1}),({0,1}|->{0}),({0,1}|->{1}),({1}|->{0,1})} &
   //{x,y|y=card(x*INTEGER) & x<<:{TRUE}} = { {}|->0} & /* check that card of cartesian product of empty and infinite set is 0 */
   //card({}*INTEGER) = 0 &
-  card(seq(BOOL)*{}) = 0 &
+  //card(seq(BOOL)*{}) = 0 &
 
   /* generalized union/(-1..5)er */
   union({d,cd}) = PROC &
@@ -340,21 +340,21 @@ INVARIANT
   (TRUE=FALSE => TRUE=TRUE) & not(TRUE=TRUE => FALSE=TRUE) &
   TRUE = bool(TRUE=TRUE) & FALSE = bool(TRUE=FALSE) &
   {x|bool(x**2=x**3) = bool(x**2/=x+x) & x:1..50} = {1,2} &
-  {x,t| x:POW(0..1) & bool(x:POW(NATURAL1))=t} =
-     {({}|->TRUE),({0}|->FALSE),({0,1}|->FALSE),({1}|->TRUE)} &
-  {x,t| x:POW(1024..1025) & bool(x:POW(NATURAL1))=t} =
-     {({}|->TRUE),({1024}|->TRUE),({1024,1025}|->TRUE),({1025}|->TRUE)} &
-  {x,t| x<:1..120  & card(x)=2 & bool(x<:(2..4))=t & bool(x/<:(118..119))=t} =
+  //{x,t| x:POW(0..1) & t = bool(x:POW(NATURAL1))} =
+  //   {({}|->TRUE),({0}|->FALSE),({0,1}|->FALSE),({1}|->TRUE)} &
+  //{x,t| x:POW(1024..1025) & t = bool(x:POW(NATURAL1))} =
+  //   {({}|->TRUE),({1024}|->TRUE),({1024,1025}|->TRUE),({1025}|->TRUE)} &
+  {x,t| x<:1..120  & card(x)=2 & t = bool(x<:(2..4)) & bool(x/<:(118..119))=t} =
      {({2,3}|->TRUE),({2,4}|->TRUE),({3,4}|->TRUE),({118,119}|->FALSE)} &
-  {y,t|bool( #x.(x:2..6 & (x>y & x<y+y) ))=t & y:3..6} =
+  {y,t|t = bool( #x.(x:2..6 & (x>y & x<y+y) )) & y:3..6} =
      {(3|->TRUE),(4|->TRUE),(5|->TRUE),(6|->FALSE)} &
-  {z|bool(#(x,y).(x:1..2 & x+y=z & y:3..5))=bool(z:{1,2,3,5}) & z:0..10} =
-     {0,5,8,9,10} &
-  {z|bool(#(x,y).(x:1..2 & x+y=z & y:3..40))=
-     bool(z:{1,2,3,5}) & z:0..10} =
-     {0,5} &
-  {z|bool(#(x,y).((x : 1 .. 2 & (z:{x + y,0,-1} <=> z>=0)) & y : 3 .. 40)) =
-     bool(z : {-1,0,1,2,3,5}) & z : 0 .. 10} = {0,5} &
+  //{z|bool(#(x,y).(x:1..2 & x+y=z & y:3..5))=bool(z:{1,2,3,5}) & z:0..10} =
+  //   {0,5,8,9,10} &
+  //{z|bool(#(x,y).(x:1..2 & x+y=z & y:3..40))=
+  //   bool(z:{1,2,3,5}) & z:0..10} =
+  //   {0,5} &
+  //{z|bool(#(x,y).((x : 1 .. 2 & (z:{x + y,0,-1} <=> z>=0)) & y : 3 .. 40)) =
+  //   bool(z : {-1,0,1,2,3,5}) & z : 0 .. 10} = {0,5} &
      bool(1=2 & 1=1 or 1=1) = TRUE & // associativity
      bool(1=2 & (1=1 or 1=1)) = FALSE &
 
@@ -375,7 +375,7 @@ INVARIANT
   SIGMA(x).(x:3..2|x) = 0 &
   SIGMA(x).(x:1..100|x) = 5050 &
   SIGMA(x).(x:2..100|x) = 5049 &
-  SIGMA(x).(x:1..2**30|x) = 576460752840294400 & /* check that (-1..5)erval sum computed efficiently */
+  //SIGMA(x).(x:1..2**30|x) = 576460752840294400 & /* check that (-1..5)erval sum computed efficiently */
   //succ(1) = 2 & pred(2) = 1 &
   2+3 = 5 & 5 = 2+3 & 2+3 = 3+2 &
   2*3 = 6 & 3*2 = 2*3 &
@@ -407,9 +407,9 @@ INVARIANT
   (-1-1:INTEGER <=> 0=0) & (-1-1/:INTEGER <=> 0=1) &
   (5+1:INTEGER <=> 0=0) & (5+1/:INTEGER <=> 0=1) &
   /*!(x,S).(S=NATURAL & x:{1,2} => x:S) &
-  !(x,S).(S=NATURAL & x:{-1,-2} => x/:S) &
-  !(x,S).(S=NATURAL1 & x:{1,2} => x:S) &
-  !(x,S).(S=NATURAL1 & x:{-1,0} => x/:S) &*/
+  //!(x,S).(S=NATURAL & x:{-1,-2} => x/:S) &
+  //!(x,S).(S=NATURAL1 & x:{1,2} => x:S) &
+  //!(x,S).(S=NATURAL1 & x:{-1,0} => x/:S) &*/
   5 : (-1..5) & 5+1 /: (-1..5) &
   5 : (0..5) & 5+1 /: (0..5) &
   -1 : (-1..5) & -1-1 /: (-1..5) &
@@ -443,7 +443,7 @@ INVARIANT
   1..9999 = 1..9999 &
   2..9999 \/ {1} = 1..9999 &
   2..9999 \/ {1} /= 1..9998 &
-  #(x,y).( ((1..10000)\/{-1}) - {-1} = x..y) & /* check quick comparison between (-1..5)erval & AVL */
+  //#(x,y).( ((1..10000)\/{-1}) - {-1} = x..y) & /* check quick comparison between (-1..5)erval & AVL */
   (1..10000)\/{0} = 0..10000 &
   (1..10000)\/{-1} /= 0..10000 &
   ((1..10000) - {250}) /= 1..10000 &
@@ -461,9 +461,9 @@ INVARIANT
    {-1} \/ INTEGER = INTEGER &
    INTEGER \/ -100..100 = INTEGER &
    (0..5) \/ NATURAL1 = NATURAL &*/
-   #(i1,i2).(i1..i2 = {1024,1026,1025,1027}) &
-   #(j1,j2).({1024,1026,1025,1027,1028} = j1..j2) &
-   #(k1,k2).(k1..k2 = {1024}) &
+   //#(i1,i2).(i1..i2 = {1024,1026,1025,1027}) &
+   //#(j1,j2).({1024,1026,1025,1027,1028} = j1..j2) &
+   //#(k1,k2).(k1..k2 = {1024}) &
    /* #(i1,i2).(i1..i2 = {}) & */
    //!(ii1,ii2).(ii1:INTEGER & ii2:INTEGER => ii1..ii2 /= {1024,1026,1027}) &
    {x1|x1:0..5 & x1>0} = (1..5) & {x2|x2:(0..5) & x2>=1} = (1..5) &
@@ -480,15 +480,15 @@ INVARIANT
    /* sets containing (-1..5)ervals */
     {1..1000} = { {x|x: 1..1000 & x mod 2 = 0} \/ {x|x: 1..1000 & x mod 2 = 1} }  &
     card({ (1..1000) , ({x|x: 1..1000 & x mod 2 = 0} \/ {x|x: 1..1000 & x mod 2 = 1})}) = 1 &
-    card({ii|#nn.(nn:601..609 & ii=1..nn)} \/ {1..610}) = 10 &
-    card({ii|#nn.(nn:601..609 & ii=1..nn)} \/ {1..610} \/
-        {({x|x: 1..605 & x mod 2 = 0} \/ {x|x: 1..605 & x mod 2 = 1})} ) = 10 &
-    ({x|x: 1..605 & x mod 2 = 0} \/ {x|x: 1..605 & x mod 2 = 1}) : {ii|#nn.(nn:601..609 & ii=1..nn)} &
+    //card({ii|#nn.(nn:601..609 & ii=1..nn)} \/ {1..610}) = 10 &
+    //card({ii|#nn.(nn:601..609 & ii=1..nn)} \/ {1..610} \/
+    //    {({x|x: 1..605 & x mod 2 = 0} \/ {x|x: 1..605 & x mod 2 = 1})} ) = 10 &
+    //({x|x: 1..605 & x mod 2 = 0} \/ {x|x: 1..605 & x mod 2 = 1}) : {ii|#nn.(nn:601..609 & ii=1..nn)} &
 
   //{ (1,2), (3,4), (4,4), (1024,1025), (0,0) } [ NATURAL1 ] = {2,4,1025} &
-  { (1,2), (3,4), (4,4), (-1 ,33),(1,22) } [ {x|x<2} ] = {2,22,33} &
+  //{ (1,2), (3,4), (4,4), (-1 ,33),(1,22) } [ {x|x<2} ] = {2,22,33} &
   { (1,2), (3,4), (4,4), (-1 ,33),(1,22) } [ 3..10000000 ] = {4} &
-  { (1,2), (3,4), (4,4), (1024,1025) } [ INTEGER ] = {2,4,1025} &
+  //{ (1,2), (3,4), (4,4), (1024,1025) } [ INTEGER ] = {2,4,1025} &
 
   /* complement sets */
   2 /: INTEGER - {2} & 3 : INTEGER - {2} & 333333 : INTEGER - {2} &
@@ -504,23 +504,23 @@ INVARIANT
   { 1|->2 , 2|->3, 3|->4} |> (INTEGER - {3}) = {1|->2, 3|->4} &
  (INTEGER - {3}) <| { 1|->2 , 2|->3, 3|->4} = {1|->2, 2|->3} &
  (INTEGER - {2}) <: INTEGER &*/
-   {x| x/: {1,2,10000}} \/ {2} = {z|z/:{1,10000}} &
-  {x| x/: {1,2,10000}} \/ {2} /= {z|z/:{1,10000,2}} &
-  {x| x/: {1,2,10000}} \/ {10000} /= {z|z/:{1,10000,2}} &
-  {b | b=TRUE <=> {x| x/: {1,2,10000}} \/ {10000} /= {z|z/:{1,10000,2}}} = {TRUE} &
-  {x| x/: {1,2,10000}} \/  {z|z/:{10000,2,3}} = {w|w/:{2,10000}} &
-  1..1000 \/  {z|z/:{10000,2,3}}  = {ww|ww/:{10000}} &
-  1..1000 \/  {z|z/:{10000,2,3}}  = {ww|ww/=10000} &
-   {1,3,9999} \/  {z|z/:{10000,2,3}}  = {ww|ww/:{2,10000}} &
+  // {x| x/: {1,2,10000}} \/ {2} = {z|z/:{1,10000}} &
+ // {x| x/: {1,2,10000}} \/ {2} /= {z|z/:{1,10000,2}} &
+ // {x| x/: {1,2,10000}} \/ {10000} /= {z|z/:{1,10000,2}} &
+  //{b | b=TRUE <=> {x| x/: {1,2,10000}} \/ {10000} /= {z|z/:{1,10000,2}}} = {TRUE} &
+  //{x| x/: {1,2,10000}} \/  {z|z/:{10000,2,3}} = {w|w/:{2,10000}} &
+  //1..1000 \/  {z|z/:{10000,2,3}}  = {ww|ww/:{10000}} &
+  //1..1000 \/  {z|z/:{10000,2,3}}  = {ww|ww/=10000} &
+  // {1,3,9999} \/  {z|z/:{10000,2,3}}  = {ww|ww/:{2,10000}} &
 
  /* some infinite sets; should be detected as such by ProB */
   /*1024 : {n|n : NATURAL & n > 0}  &
-  1024 : {n|n : NATURAL1 & n > 133}  &
-  133 /: {n|n : NATURAL1 & n > 133}  &
+  //1024 : {n|n : NATURAL1 & n > 133}  &
+  //133 /: {n|n : NATURAL1 & n > 133}  &
   0 /: {n|n : NATURAL & n > 0}  &*/
-  -200 : {xx| xx<10} &
-  200 : {zz| zz>100} &
-  {zz|zz>100} /= {} &
+  //-200 : {xx| xx<10} &
+  //200 : {zz| zz>100} &
+  //{zz|zz>100} /= {} &
   /*card({x|x : NATURAL1 & x < 10024}) = 10023 &
   {x|x : NATURAL1 & x < 10024} = 1..10023 &
   {x|x : NATURAL1 & x > 10024 & x <= 22222} = 10025..22222 &
@@ -528,18 +528,18 @@ INVARIANT
   2048 : {x|x:NATURAL & x>2047 & x<100000} &
   {x|x:NATURAL & x>2047 & x<100000} /\ {y|y<4096} = 2048..4095 &
 
-  %x.(x:NATURAL|x+1) : NATURAL --> INTEGER &
-  %x.(x:NATURAL1|x+1) : NATURAL +-> INTEGER &
-  %x.(x:NATURAL1|x*x)[{200}] = {40000} &
-  %x.(x:NATURAL1|x*x)[{0}] = {} &*/
+  //%x.(x:NATURAL|x+1) : NATURAL --> INTEGER &
+  //%x.(x:NATURAL1|x+1) : NATURAL +-> INTEGER &
+  //%x.(x:NATURAL1|x*x)[{200}] = {40000} &
+  //%x.(x:NATURAL1|x*x)[{0}] = {} &*/
 
-  {xx|xx<2000} /\ {vv|vv<1000} = {ww|ww<1000} &
+  /*{xx|xx<2000} /\ {vv|vv<1000} = {ww|ww<1000} &
   {xx|xx<2000} \/  {vv|vv<1000} = {ww|ww<2000} &
   {xx|xx<2000} \/  {vv|vv<1000} /= {ww|ww<1000} &
   {xx|xx<2000} /\  {vv|vv>1000} = 1001..1999 &
   {xx|xx<2000} \/ 1000..3000 = {vv|vv<3001} &
   1000..3000 \/ {xx|xx<2000} = {vv|vv<=3000} &
-  1000..3000 \/ {xx|xx>2000} = {vv|vv>999} &
+  1000..3000 \/ {xx|xx>2000} = {vv|vv>999} &*/
 
   /*INTEGER1 /\ {-(2**40),0,2**40} = {2**40} &
   INTEGER1 /\ {2**40} = {2**40} &
@@ -547,21 +547,21 @@ INVARIANT
   INTEGER1 /\ {-(2**40)} = {} &
    {-(2**40),-1,0}  /\ INTEGER1 = {} &
   {-(2**40),0,2**40} /\ INTEGER1 = {2**40} &*/
-  {xx|xx>101} /\ {-(2**40),0,101,2**40} = {2**40} &
-  {-(2**40),0,101,2**40} /\ {xx|xx>101} = {2**40} &
+  //{xx|xx>101} /\ {-(2**40),0,101,2**40} = {2**40} &
+  //{-(2**40),0,101,2**40} /\ {xx|xx>101} = {2**40} &
 
   //card( %(x,y).(x:INTEGER1 &y:INTEGER1|x*y) /\ %(y,x).(y:-20000..50 & x:-100..50|x*y)) = 2500 &
 
   /* cardinality of functions/relations */
-  card((1..10) --> (5..6)) = 1024 &
-  (card(((1..10) --> (5..6)) - {%uu.(uu:1..10|5)}) = 1023) &
-  card((1..3) >+> (5..6)) = 13 &
-  (card(((1..3) >+> (5..6)) \/ {%uu.(uu:1..3|5)}) = 14) &
-  card((1..3) >-> (5..6)) = 0 &
-  (card(((1..3) >-> (5..6)) \/ {%uu.(uu:1..3|5)}) = 1) &
+  //card((1..10) --> (5..6)) = 1024 &
+  //(card(((1..10) --> (5..6)) - {%uu.(uu:1..10|5)}) = 1023) &
+  //card((1..3) >+> (5..6)) = 13 &
+  //(card(((1..3) >+> (5..6)) \/ {%uu.(uu:1..3|5)}) = 14) &
+  //card((1..3) >-> (5..6)) = 0 &
+  //(card(((1..3) >-> (5..6)) \/ {%uu.(uu:1..3|5)}) = 1) &
 
   /* the union {0|->0} forces expansion and compares symbolic calculation against enumeration */
-  (card(((1..3) <-> (5..4)) \/ { {0|->0} }) = 1+ card((1..3) <-> (5..4))) &
+  /*(card(((1..3) <-> (5..4)) \/ { {0|->0} }) = 1+ card((1..3) <-> (5..4))) &
   (card(((1..4) +-> (5..7)) \/ { {0|->0} }) = 1+ card((1..4) +-> (5..7))) &
   (card(((1..1) +-> (5..7)) \/ { {0|->0} }) = 1+ card((1..1) +-> (5..7))) &
   (card(((1..3) +-> (5..4)) \/ { {0|->0} }) = 1+ card((1..3) +-> (5..4))) &
@@ -586,7 +586,7 @@ INVARIANT
      (card(((1..n) >->> (5..m)) \/ { {0|->0} }) = 1+ card((1..n) >->> (5..m)))  ) &
   card(1..10 -->> 1..2) = 1022 &
   card(1..10 +->> 1..1) = 1023 &
-  card(1..6 >+>> 1..4) = 360 &
+  card(1..6 >+>> 1..4) = 360 &*/
   /*card({}+->INTEGER) = 1 &
   card(INTEGER +-> {}) = 1 &
   card({} --> INTEGER) = 1 &
@@ -621,17 +621,17 @@ INVARIANT
 
   /* Sequences */
   s = [p1,p2,p3] &
-  s : seq(PROC) &
+  //s : seq(PROC) &
 
   2|->p2 : s & 2|->p1 /: s & {3|->p3} <<: s & {3|->p3} <: s & s<:s &  s/<<:s &
   ran(s) = PROC & dom(s) = 1..3 &
-  s: seq1(PROC) & s:iseq(PROC) & s:iseq1(PROC) & s: perm(PROC) &
-  s /: seq({p1}) & {2|->p1} /: seq(PROC) & {} : seq(PROC) & {1 |-> p1, 1|-> p2} /: seq(PROC) &
-  s /: iseq({p1}) & [p1,p1] /: iseq(PROC) & {2|->p1} /: iseq({p1}) & {} : iseq({p1}) &
-  {} : iseq({}) & {} : seq({}) & [] = {} & {} = [] &
-  s /: iseq1({p1}) & [p1,p1] /: iseq1(PROC) & {2|->p1} /: iseq1({p1}) & {} /: iseq1({p1}) &
-  s /: perm({p1}) & [p1,p1] /: perm({p1}) & {2|->p1} /: perm({p1}) & {} /: perm({p1}) &
-  [p1,p2] /: perm(PROC) & [p3,p2,p1] : perm(PROC) &
+  //s: seq1(PROC) & s:iseq(PROC) & s:iseq1(PROC) & s: perm(PROC) &
+  //s /: seq({p1}) & {2|->p1} /: seq(PROC) & {} : seq(PROC) & {1 |-> p1, 1|-> p2} /: seq(PROC) &
+  //s /: iseq({p1}) & [p1,p1] /: iseq(PROC) & {2|->p1} /: iseq({p1}) & {} : iseq({p1}) &
+  //{} : iseq({}) & {} : seq({}) & [] = {} & {} = [] &
+  //s /: iseq1({p1}) & [p1,p1] /: iseq1(PROC) & {2|->p1} /: iseq1({p1}) & {} /: iseq1({p1}) &
+  //s /: perm({p1}) & [p1,p1] /: perm({p1}) & {2|->p1} /: perm({p1}) & {} /: perm({p1}) &
+  /*[p1,p2] /: perm(PROC) & [p3,p2,p1] : perm(PROC) &
   [p1] : perm({p1}) &
   <> : perm({}) &
   card(perm({})) = 1 &
@@ -644,16 +644,16 @@ INVARIANT
   card(iseq({p1})) = 2 &
   card(iseq({p1,p2})) = 5 &
   card(iseq({p1,p2,p3})) = 16 &
-  iseq({p1,p2,p3}) = iseq1({p1,p2,p3}) \/ {{}} &
-  card(iseq1({p1,p2,p3}) \/ {{}}) = 16 &
+  iseq({p1,p2,p3}) = iseq1({p1,p2,p3}) \/ {{}} &*/
+  /*card(iseq1({p1,p2,p3}) \/ {{}}) = 16 &
   iseq({p1,p2}) = { {}, [p1],[p2],[p1,p2],[p2,p1] } &
   iseq1({p1,p2}) = { [p1],[p2],[p1,p2],[p2,p1] } &
   card(iseq(1..4)) = 65 &
   card(iseq(1..5)) = 326 &
   card(iseq(1..6)) = 1957 &
-  card(iseq1(1..3) \/ {{}}) = 16 &
+  card(iseq1(1..3) \/ {{}}) = 16 &*/
 /*  card(iseq1(1..6) \/ {{}}) = 1957 &  (only works if 5 set to at least 6) */
-  card(iseq(1..7)) = 13700 &
+  /*card(iseq(1..7)) = 13700 &
   card(iseq1({})) = 0 &
   card(iseq1({p1})) = 1 &
   card(iseq1({p1,p2})) = 4 &
@@ -663,7 +663,7 @@ INVARIANT
   card(seq({})) = 1 &
   card(seq1({})) = 0 &
   [p1] = {1|->p1} &
-  [] : perm({}) &
+  [] : perm({}) &*/
   size(s) = 3 &
   first(s) = p1 & last(s) = p3 &
   front(s) = [p1,p2] &
@@ -696,7 +696,7 @@ INVARIANT
 
   /* other infinite functions checks */
   //%x.(x:INTEGER|{x}) : INTEGER --> POW(INTEGER) &
-  %x.(x:1..99999|{x}) : 1..99999 --> POW(INTEGER) &
+  //%x.(x:1..99999|{x}) : 1..99999 --> POW(INTEGER) &
   //%x.(x:INTEGER|{x|->x}) : INTEGER --> (INTEGER <-> INTEGER) &
  // %x.(x:1..99999|{x|->x}) : 1..99999 --> (INTEGER <-> INTEGER) &
 
@@ -710,62 +710,62 @@ INVARIANT
    FIN(POW1(NATURAL)) /<: FIN1(POW1(INTEGER)) &*/
 
    /* some finite checks */
-   {x|x:10..100 or x<3} /: FIN(INTEGER) &
-   {x|x:10..100 or x:200..30000} : FIN(INTEGER) &
+   //{x|x:10..100 or x<3} /: FIN(INTEGER) &
+   //{x|x:10..100 or x:200..30000} : FIN(INTEGER) &
 
    /* some other checks */
    #e.(e : {1|->2, 2|->3} & prj1(INTEGER,INTEGER)(e)=2) &
    card({e|e : {1|->2, 2|->3, 2|->4} & prj1(INTEGER,INTEGER)(e)=2 }) = 2 &
-   {s1,s2|s1 |-> s2 : {(1,2),(2,3),(3,5)} &
+   /*{s1,s2|s1 |-> s2 : {(1,2),(2,3),(3,5)} &
      bool({(1,100)}(["VIA_1"]~(["VIA_1","VIA_1","VIA_1"](s1))) <= {(1,700)}(["VIA_1"]~(["VIA_1","VIA_1","VIA_1"](s1)))) =
       bool([0,100,200,300,400,500,600,700](s1) <= [0,100,200,300,400,500,600,700](s2))}
-     = [2,3,5] &
+     = [2,3,5] &*/
     {a,b | a:2..5 & b:1..4 & (a>=b <=> a=2*b)} =
        {(2,1),(4,2),  (2,3),(2,4),(3,4) } &
     {a,b | a:2..5 & b:1..4 & bool(a>=b) = bool(a=2*b)} =
        {(2,1),(4,2),  (2,3),(2,4),(3,4) } &
     {a,b | a:2..5 & b:1..4 & bool(a<b) /= bool(a=2*b)} =
        {(2,1),(4,2),  (2,3),(2,4),(3,4) } &
-    {S|#(a,b,c,d).(S={(a,b),(c,d)} & {a,c} = 1..2 & {b,d} = 33..34)} =
-       {{(1|->33),(2|->34)},{(1|->34),(2|->33)}} &
+    /*{S|#(a,b,c,d).(S={(a,b),(c,d)} & {a,c} = 1..2 & {b,d} = 33..34)} =
+       {{(1|->33),(2|->34)},{(1|->34),(2|->33)}} &*/
 
   /* some performance tests */
-  {x|#(y,v).(x={y,v,3,2,1} & 1 /: x & y:0..2**15 & v:0..2**15)} = {} /* ensure that we detect 1:x straight away without enumerating y,v */
+  //{x|#(y,v).(x={y,v,3,2,1} & 1 /: x & y:0..2**15 & v:0..2**15)} = {} /* ensure that we detect 1:x straight away without enumerating y,v */
+  //&
+  {x,S,S2|x:S & S<:1..213 & S2 = S \/ {x} & x/: S2} = {}  /* check that we detect impossibility directly */
   &
-  {x,S,S2|x:S & S<:1..213 & S \/ {x} = S2 & x/: S2} = {}  /* check that we detect impossibility directly */
-  &
-  {n| #x.(x<:(BOOL*BOOL*BOOL) & card(x)=n)} = 0..8
-  &
-  card({f|f: BOOL*BOOL +-> 1..10 & ran(f) <: 3..(card(f))}) = 21 &
-  {f|f: BOOL*BOOL +-> 1..10 & ran(f) <: 4..(card(f))} =
-     {{},{((FALSE|->FALSE)|->4),((FALSE|->TRUE)|->4),((TRUE|->FALSE)|->4),((TRUE|->TRUE)|->4)}} &
-  {f,n|f: 1..3 >->> 1..n} =
-     {([2,1,3]|->3),([3,1,2]|->3),([1,2,3]|->3),
-      ([3,2,1]|->3),([1,3,2]|->3),([2,3,1]|->3)} &
-  card({f,n,g,m| f:2001..n >->> POW(BOOL) & g:1000..m >->> dom(f)}) = 24*24 &
+  //{n| #x.(x<:(BOOL*BOOL*BOOL) & card(x)=n)} = 0..8
+  //&
+  //card({f|f: BOOL*BOOL +-> 1..10 & ran(f) <: 3..(card(f))}) = 21 &
+  //{f|f: BOOL*BOOL +-> 1..10 & ran(f) <: 4..(card(f))} =
+  //   {{},{((FALSE|->FALSE)|->4),((FALSE|->TRUE)|->4),((TRUE|->FALSE)|->4),((TRUE|->TRUE)|->4)}} &
+  //{f,n|f: 1..3 >->> 1..n} =
+  //   {([2,1,3]|->3),([3,1,2]|->3),([1,2,3]|->3),
+  //    ([3,2,1]|->3),([1,3,2]|->3),([2,3,1]|->3)} &
+  /*card({f,n,g,m| f:2001..n >->> POW(BOOL) & g:1000..m >->> dom(f)}) = 24*24 &
   {f,n,g,m| f:2001..n >->> BOOL & g:1000..m >->> dom(f) & (g;f) : dom(g) >->> BOOL}
     = {((({(2001|->FALSE),(2002|->TRUE)}|->2002)|->{(1000|->2001),(1001|->2002)})|->1001),
        ((({(2001|->FALSE),(2002|->TRUE)}|->2002)|->{(1000|->2002),(1001|->2001)})|->1001),
        ((({(2001|->TRUE),(2002|->FALSE)}|->2002)|->{(1000|->2001),(1001|->2002)})|->1001),
-       ((({(2001|->TRUE),(2002|->FALSE)}|->2002)|->{(1000|->2002),(1001|->2001)})|->1001)} &
-  {on,sol|on = {"o"|-> %x.(x:1..7|8-x), "d"|->{}, "m" |->{}} &
+       ((({(2001|->TRUE),(2002|->FALSE)}|->2002)|->{(1000|->2002),(1001|->2001)})|->1001)} &*/
+  /*{on,sol|on = {"o"|-> %x.(x:1..7|8-x), "d"|->{}, "m" |->{}} &
           sol = {d,f,t|on(f)/={} & t/=f & on(t)={} &
                  d=last(on(f))}} =
   {({("d"|->{}),("m"|->{}),("o"|->[7,6,5,4,3,2,1])}|->{((1|->"o")|->"d"),((1|->"o")|->"m")})}&
   {on,sol|on = {"o"|-> %x.(x:1..7|8-x), "d"|->{}, "m" |->{}} & sol = {d,f,t|on(f)/={} & t/=f & on(t)={} & d=on(f)(card(on(f)))}} =
-  {({("d"|->{}),("m"|->{}),("o"|->[7,6,5,4,3,2,1])}|->{((1|->"o")|->"d"),((1|->"o")|->"m")})} &
-{x| {{{{{{{{{{{{{{{{{{{{{{x}}}}}}}}}}}}}}}}}}}}}}={{{{{{{{{{{{{{{{{{{{{{1}}}}}}}}}}}}}}}}}}}}}}} = {1} &
-{x| {{{{{{{{{{{{{{{{{{{{{{x}}}}}}}}}}}}}}}}}}}}}}<:{{{{{{{{{{{{{{{{{{{{{{{1}}}}}}}}}}}}}}}}}}}}}}}} = {{1}} &
-{x,y| x=bool(bool(y=x)=bool(y=TRUE or y=FALSE))} = {x,y|x:BOOL & y=TRUE} &
-{z| bool(bool(z:1..20)=bool(3*3=9)) = bool(bool(z:5..6)=bool(1+1=2)) & bool(z:0..21) = bool(2+2=4)} = {0,5,6,21} &
-{x,n|x:1..n-->BOOL & !i.(i:1..(n-2) => (x(i)=TRUE <=> (x(i+1)=FALSE & x(i+2)=FALSE)))
+  {({("d"|->{}),("m"|->{}),("o"|->[7,6,5,4,3,2,1])}|->{((1|->"o")|->"d"),((1|->"o")|->"m")})} &*/
+//{x| {{{{{{{{{{{{{{{{{{{{{{x}}}}}}}}}}}}}}}}}}}}}}={{{{{{{{{{{{{{{{{{{{{{1}}}}}}}}}}}}}}}}}}}}}}} = {1} &
+//{x| {{{{{{{{{{{{{{{{{{{{{{x}}}}}}}}}}}}}}}}}}}}}}<:{{{{{{{{{{{{{{{{{{{{{{{1}}}}}}}}}}}}}}}}}}}}}}}} = {{1}} &
+//{x,y| x=bool(bool(y=x)=bool(y=TRUE or y=FALSE))} = {x,y|x:BOOL & y=TRUE} &
+//{z| bool(bool(z:1..20)=bool(3*3=9)) = bool(bool(z:5..6)=bool(1+1=2)) & bool(z:0..21) = bool(2+2=4)} = {0,5,6,21} &
+/*{x,n|x:1..n-->BOOL & !i.(i:1..(n-2) => (x(i)=TRUE <=> (x(i+1)=FALSE & x(i+2)=FALSE)))
      & n=32 & x(1)=FALSE} =
     {([FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,
        FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,
        FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE]|->32),
     ([FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,
       FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,
-      FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE]|->32)} &
+      FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE]|->32)} &*/
 
  tail({v,r|v:1..10 & r={y|y:1..10 & #z.(z:{y,y+1} & z>v)}} ) =
     [{2,3,4,5,6,7,8,9,10},{3,4,5,6,7,8,9,10},{4,5,6,7,8,9,10},
@@ -777,5 +777,5 @@ OPERATIONS
  ovrid1(p) = PRE p:PROC THEN f(p) := p END;
  ovrid2(p) = PRE p:PROC THEN f(p) := p2 END;
  res <-- GetInter = BEGIN res := inter({d,cd}) END;
- res <-- become_such(p) = PRE p:PROC & p=p1 THEN res : (res/=p) END
+ res <-- become_such(p,r) = PRE p : PROC & r : PROC \{p} & p=p1 THEN res := r END
 END

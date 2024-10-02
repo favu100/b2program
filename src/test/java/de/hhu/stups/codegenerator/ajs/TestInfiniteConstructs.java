@@ -6,7 +6,7 @@ public class TestInfiniteConstructs extends TestJs {
 
     @Test
     public void testString() throws Exception {
-        testJs("String");
+        testJs("Stringg");
     }
 
     @Test

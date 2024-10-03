@@ -657,8 +657,13 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         }
 
         if(rhs instanceof ExpressionOperatorNode) {
-            if(((ExpressionOperatorNode) rhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
+            ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) rhs).getOperator();
+            if(operator == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
                 if (((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode && ((ExpressionOperatorNode) rhs).getExpressionNodes().get(1) instanceof IdentifierExprNode) {
+                    return node;
+                }
+            } else if(operator == ExpressionOperatorNode.ExpressionOperator.ID) {
+                if (((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode) {
                     return node;
                 }
             }
@@ -699,8 +704,13 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         }
 
         if(rhs instanceof ExpressionOperatorNode) {
-            if (((ExpressionOperatorNode) rhs).getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
+            ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) rhs).getOperator();
+            if(operator == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
                 if (((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode && ((ExpressionOperatorNode) rhs).getExpressionNodes().get(1) instanceof IdentifierExprNode) {
+                    return node;
+                }
+            } else if(operator == ExpressionOperatorNode.ExpressionOperator.ID) {
+                if (((ExpressionOperatorNode) rhs).getExpressionNodes().get(0) instanceof IdentifierExprNode) {
                     return node;
                 }
             }

@@ -49,7 +49,7 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
  dom((ff||gg)) = dom(ff)*dom(gg) &
  ran((ff||gg)) = ran(ff)*ran(gg) &
  card((ff||gg)) = card(ff)*card(gg) &
- (ff||gg) = {xy,mn|#(x,y,m,n).(xy=(x,y) & mn=(m,n) & (x,m):ff & (y,n):gg)} &
+ //(ff||gg) = {xy,mn|#(x,y,m,n).(xy=(x,y) & mn=(m,n) & (x,m):ff & (y,n):gg)} &
  !(fx,fy,gx,gy).(fx:BOOL & gx:BOOL & fy:setY & gy:setY =>
                   ((fx|->fy:ff & gx|->gy:gg) <=> (fx,gx)|->(fy,gy) : (ff||gg))) &
 
@@ -138,10 +138,10 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
    &
    ( ff<<:gg <=>  (ff<:gg & #ee.(ee:gg & ee/:ff)))
 
-   &
+   //&
    (ff: dom(gg) <-> ran(gg)  <=>  (dom(ff)<:dom(gg) & ran(ff) <:ran(gg)) )
 
-&
+   &
 
    ( ff |>  {} = {}) &
    ( ff |>  ran(ff) = ff) &

@@ -168,23 +168,22 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <K extends BObject> T intersect() {
-		if (set.isEmpty()) {
-			//Think about passing the generic inner class through the constructor (or at least with a method)
-			try {
-				return (T) new BSet<K>();
-			} catch (ClassCastException e) {
-				return (T) new BRelation();
-			}
+	public <K extends BObject> T intersectForSets() {
+		if(set.isEmpty()) {
+			return (T) new BSet<K>();
 		} else {
-			//Think about passing the generic inner class through the constructor (or at least with a method)
-			try {
-				return (T) this.set.stream()
-						.reduce((a, e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
-			} catch (ClassCastException exception) {
-				return (T) this.set.stream()
-						.reduce((a, e) -> ((BRelation) a).intersect((BRelation) e)).get();
-			}
+			return (T) this.set.stream()
+					.reduce(new BSet<K>(), (a, e) -> ((BSet<K>) a).intersect((BSet<K>) e));
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T1 extends BObject, T2 extends BObject> T intersectForRelations() {
+		if(set.isEmpty()) {
+			return (T) new BRelation<T1,T2>();
+		} else {
+			return (T) this.set.stream()
+					.reduce(new BRelation<T1, T2>(), (a, e) -> ((BRelation<T1, T2>) a).intersect((BRelation<T1, T2>) e));
 		}
 	}
 

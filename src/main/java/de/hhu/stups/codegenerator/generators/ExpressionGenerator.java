@@ -570,7 +570,7 @@ public class ExpressionGenerator {
                 isOverloadedOperator = true;
                 break;
             case GENERALIZED_INTER:
-                operatorName = "intersect";
+                operatorName = isRelation ? "intersectForRelations" : "intersectForSets";
                 isOverloadedOperator = true;
                 break;
             case FIRST:

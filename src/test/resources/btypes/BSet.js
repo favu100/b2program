@@ -99,7 +99,7 @@ export class BSet {
             return new BSet();
         }
         else {
-            return this.set.reduce((a, e) => a.intersect(e), new BSet());
+            return this.set.reduce((a, e) => a.intersect(e));
         }
     }
     intersectForRelations() {
@@ -107,7 +107,7 @@ export class BSet {
             return new BRelation();
         }
         else {
-            return this.set.reduce((a, e) => a.intersect(e), new BRelation());
+            return this.set.reduce((a, e) => a.intersect(e));
         }
     }
     difference(other) {

@@ -197,7 +197,7 @@ public class BSet<T> implements BObject, Set<T> {
 			return (T) new BSet<K>();
 		} else {
 			return (T) this.set.stream()
-					.reduce(new BSet<K>(), (a, e) -> ((BSet<K>) a).intersect((BSet<K>) e));
+					.reduce((a, e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
 		}
 	}
 
@@ -207,7 +207,7 @@ public class BSet<T> implements BObject, Set<T> {
 			return (T) new BRelation<T1,T2>();
 		} else {
 			return (T) this.set.stream()
-					.reduce(new BRelation<T1, T2>(), (a, e) -> ((BRelation<T1, T2>) a).intersect((BRelation<T1, T2>) e));
+					.reduce((a, e) -> ((BRelation<T1, T2>) a).intersect((BRelation<T1, T2>) e)).get();
 		}
 	}
 

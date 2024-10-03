@@ -127,8 +127,7 @@ export class BSet<T extends BObject> implements BObject{
             return new BSet<K>();
         } else {
             return this.set.reduce(
-                (a: BSet<K>, e: BSet<K>) => a.intersect(e),
-                new BSet<K>()
+                (a: BSet<K>, e: BSet<K>) => a.intersect(e)
             );
         }
     }
@@ -138,8 +137,7 @@ export class BSet<T extends BObject> implements BObject{
             return new BRelation<T1, T2>();
         } else {
             return this.set.reduce(
-                (a: BRelation<T1, T2>, e: BRelation<T1, T2>) => a.intersect(e),
-                new BRelation<T1, T2>()
+                (a: BRelation<T1, T2>, e: BRelation<T1, T2>) => a.intersect(e)
             );
         }
     }

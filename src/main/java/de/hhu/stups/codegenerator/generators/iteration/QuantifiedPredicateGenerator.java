@@ -105,9 +105,6 @@ public class QuantifiedPredicateGenerator {
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
         TemplateHandler.add(template, "emptyPredicate", predicateNode instanceof PredicateOperatorNode && ((PredicateOperatorNode) predicateNode).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
-        System.out.println(conditionalPredicate);
-        System.out.println(predicateNode);
-        System.out.println("----------");
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }

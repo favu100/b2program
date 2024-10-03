@@ -155,10 +155,10 @@ class BSet : public BObject {
         }
 
      	template<typename K = value_type>
-     	BSet<K> unionForSets() const {
-     	    BSet<K> result;
+     	K unionForSets() const {
+     	    K result;
             for(const T& s : this->set) {
-                result = result._union(BSet<K>(s));
+                result = result._union(K(s));
             }
             return result;
      	}

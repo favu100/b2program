@@ -419,13 +419,11 @@ public class IterationPredicateGenerator {
         }
 
         TemplateHandler.add(lastEnumeration, "hasCondition", conditionalPredicate != null);
-        TemplateHandler.add(lastEnumeration, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        if(conditionalPredicate != null) {
+            TemplateHandler.add(lastEnumeration, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+        }
 
         return lastEnumeration;
-    }
-
-    public ST evaluateEnumerationTemplateWithPruning(List<ST> enumerationTemplates) {
-        return null;
     }
 
     /*

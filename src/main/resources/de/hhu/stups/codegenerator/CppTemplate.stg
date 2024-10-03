@@ -414,13 +414,7 @@ let_expression_predicate(type, identifier, body) ::= <<
 
 let_expression_predicate_body(otherIterationConstructs, hasCondition, conditionalPredicate, identifier, val) ::= <<
 <otherIterationConstructs>
-<if(hasCondition)>
-if((<conditionalPredicate>).booleanValue()) {
-    <identifier> = <val>;
-}
-<else>
 <identifier> = <val>;
-<endif>
 >>
 
 set_comprehension(type, identifier, comprehension) ::= <<
@@ -433,17 +427,9 @@ set_comprehension_predicate(otherIterationConstructs, set, type, element, emptyP
 <if(emptyPredicate)>
 <set> = <set>._union(<type>(<element>));
 <else>
-<if(hasCondition)>
-if((<conditionalPredicate>).booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <set> = <set>._union(<type>(<element>));
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <set> = <set>._union(<type>(<element>));
 }
-<endif>
 <endif>
 >>
 
@@ -457,17 +443,9 @@ lambda_expression(otherIterationConstructs, relation, leftType, rightType, eleme
 <if(emptyPredicate)>
 <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 <else>
-<if(hasCondition)>
-if((<conditionalPredicate>).booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <relation> = <relation>._union(BRelation\<<leftType>, <rightType>\>(BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 }
-<endif>
 <endif>
 >>
 
@@ -492,19 +470,10 @@ quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredi
 <identifier> = BBoolean(<if(forall)>false<else>true<endif>);
 break;
 <else>
-<if(hasCondition)>
-if((<conditionalPredicate>).booleanValue()) {
-    if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
-        <identifier> = BBoolean(<if(forall)>false<else>true<endif>);
-        break;
-    }
-}
-<else>
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     <identifier> = BBoolean(<if(forall)>false<else>true<endif>);
     break;
 }
-<endif>
 <endif>
 >>
 
@@ -521,17 +490,9 @@ quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, hasCo
 <if(emptyPredicate)>
 <identifier> = <identifier>.<operation>(<expression>);
 <else>
-<if(hasCondition)>
-if((<conditionalPredicate>).booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <identifier> = <identifier>.<operation>(<expression>);
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <identifier> = <identifier>.<operation>(<expression>);
 }
-<endif>
 <endif>
 >>
 
@@ -540,17 +501,9 @@ parameter_combination_predicate(otherIterationConstructs, set, element, emptyPre
 <if(emptyPredicate)>
 <set> = <set>._union(BSet\<<subType>\>(<element>));
 <else>
-<if(hasCondition)>
-if((<conditionalPredicate>).booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <set> = <set>._union(BSet\<<subType>\>(<element>));
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <set> = <set>._union(BSet\<<subType>\>(<element>));
 }
-<endif>
 <endif>
 >>
 

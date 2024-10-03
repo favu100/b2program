@@ -401,13 +401,7 @@ let_expression_predicate(type, identifier, body) ::= <<
 
 let_expression_predicate_body(otherIterationConstructs, hasCondition, conditionalPredicate, identifier, val) ::= <<
 <otherIterationConstructs>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    <identifier> = <val>;
-}
-<else>
 <identifier> = <val>;
-<endif>
 >>
 
 set_comprehension(type, identifier, isRelation, leftType, rightType, subType, comprehension) ::= <<
@@ -420,17 +414,9 @@ set_comprehension_predicate(otherIterationConstructs, set, element, emptyPredica
 <if(emptyPredicate)>
 <set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <set> = <set>.union(new <if(isRelation)>BRelation\<<leftType>, <rightType>\><else>BSet\<<subType>\><endif>(<element>));
 }
-<endif>
 <endif>
 >>
 
@@ -444,17 +430,9 @@ lambda_expression(otherIterationConstructs, relation, element, expression, empty
 <if(emptyPredicate)>
 <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
 }
-<endif>
 <endif>
 >>
 
@@ -479,19 +457,10 @@ quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredi
 <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
 break;
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
-        <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
-        break;
-    }
-}
-<else>
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
     <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
     break;
 }
-<endif>
 <endif>
 >>
 
@@ -508,17 +477,9 @@ quantified_expression_evaluation(otherIterationConstructs, emptyPredicate, hasCo
 <if(emptyPredicate)>
 <identifier> = <identifier>.<operation>(<expression>);
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <identifier> = <identifier>.<operation>(<expression>);
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <identifier> = <identifier>.<operation>(<expression>);
 }
-<endif>
 <endif>
 >>
 
@@ -527,17 +488,9 @@ parameter_combination_predicate(otherIterationConstructs, set, element, emptyPre
 <if(emptyPredicate)>
 <set> = <set>.union(new BSet\<<subType>\>(<element>));
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <set> = <set>.union(new BSet\<<subType>\>(<element>));
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <set> = <set>.union(new BSet\<<subType>\>(<element>));
 }
-<endif>
 <endif>
 >>
 
@@ -1035,19 +988,10 @@ if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
     }
 }
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <body>
-        break;
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <body>
     break;
 }
-<endif>
 <endif>
 <endif>
 >>
@@ -1113,19 +1057,10 @@ if(_ctr_cp_<operation>_<choicePoint> == _cp_<operation>_<choicePoint>) {
     }
 }
 <else>
-<if(hasCondition)>
-if(<conditionalPredicate>.booleanValue()) {
-    if((<predicate>).booleanValue()) {
-        <stores>
-        break;
-    }
-}
-<else>
 if((<predicate>).booleanValue()) {
     <stores>
     break;
 }
-<endif>
 <endif>
 <endif>
 >>

@@ -159,7 +159,7 @@ public class LetExpressionPredicateGenerator {
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, PredicateNode conditionalPredicate, String identifier, BType type, PredicateNode thenPredicate) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateLetBody(otherConstructs, conditionalPredicate, identifier, type, thenPredicate);
-        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "isBool", type instanceof BoolType);
@@ -173,7 +173,7 @@ public class LetExpressionPredicateGenerator {
     private void generateBody(ST template, List<ST> enumerationTemplates, Collection<String> otherConstructs, PredicateNode conditionalPredicate, String identifier, BType type, ExprNode expression) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateLetBody(otherConstructs, conditionalPredicate, identifier, type, expression);
-        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "isBool", type instanceof BoolType);

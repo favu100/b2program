@@ -89,7 +89,7 @@ public class QuantifiedPredicateGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
         String innerBody = generateQuantifiedPredicateEvaluation(otherConstructs, conditionalPredicate, predicate, identifier, forAll, declarations);
-        String predicateString = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String predicateString = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
 
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "identifier", identifier);

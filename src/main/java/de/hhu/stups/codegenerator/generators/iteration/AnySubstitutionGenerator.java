@@ -139,7 +139,7 @@ public class AnySubstitutionGenerator {
     private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode conditionalPredicate, PredicateNode predicate, SubstitutionNode substitution, List<DeclarationNode> declarations, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateAnyBody(otherConstructs, conditionalPredicate, predicate, substitution, declarations, counter, operation, isLastChoicePoint);
-        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         TemplateHandler.add(template, "body", body);
     }
 

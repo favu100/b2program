@@ -189,7 +189,7 @@ public class SetComprehensionGenerator {
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "isRelation", isRelation);
         String innerBody = generateSetComprehensionPredicate(otherConstructs, conditionalPredicate, predicate, generatedType, identifier, elementName, declarations);
-        String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String comprehension = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         TemplateHandler.add(template, "comprehension", comprehension);
     }
 

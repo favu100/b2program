@@ -164,7 +164,7 @@ public class QuantifiedExpressionGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
 
         String innerBody = generateQuantifiedExpressionEvaluation(otherConstructs, conditionalPredicate, predicate, identifier, getOperation(operator), expression, declarations);
-        String evaluation = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String evaluation = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
 
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "identifier", identifier);

@@ -155,7 +155,7 @@ public class BecomesSuchThatGenerator {
     private void generateBody(ST template, Collection<String> otherConstructs, List<ST> enumerationTemplates, PredicateNode conditionalPredicate, PredicateNode predicate, List<IdentifierExprNode> identifiers, int counter, String operation, boolean isLastChoicePoint) {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String innerBody = generateBecomesSuchThatBody(otherConstructs, identifiers, conditionalPredicate, predicate, counter, operation, isLastChoicePoint);
-        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         TemplateHandler.add(template, "body", body);
     }
 

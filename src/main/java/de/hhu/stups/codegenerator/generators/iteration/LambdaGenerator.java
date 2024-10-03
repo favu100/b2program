@@ -114,7 +114,7 @@ public class LambdaGenerator {
 
 
         String innerBody = generateLambdaExpression(otherConstructs, conditionalPredicate, predicate, leftType, rightType, expression, identifier, lhsExpr, declarations);
-        String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String lambda = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "type", typeGenerator.generate(type));
         TemplateHandler.add(template, "identifier", identifier);

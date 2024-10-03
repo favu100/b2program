@@ -131,7 +131,7 @@ public class TransitionIterationGenerator {
         iterationConstructHandler.setIterationConstructGenerator(iterationConstructGenerator);
         String elementName = getElementFromBoundedVariables(declarations);
         String innerBody = generateTransitionBody(otherConstructs, conditionalPredicate, predicate, setName, elementName, declarations);
-        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody).render();
+        String body = iterationPredicateGenerator.evaluateEnumerationTemplates(enumerationTemplates, innerBody, conditionalPredicate).render();
         generateSubType(template, declarations);
         TemplateHandler.add(template, "isJavaScript", machineGenerator.getMode() == GeneratorMode.JS);
         TemplateHandler.add(template, "identifier", setName);

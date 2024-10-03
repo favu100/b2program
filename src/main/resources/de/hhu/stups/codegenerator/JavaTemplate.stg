@@ -328,33 +328,64 @@ seq_enumeration(type, elements) ::= <<
 new BRelation\<BInteger, <type>\>(<elements; separator=", ">)
 >>
 
-iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(<type> <identifier> : <set>) {
+        <body>
+    }
+}
+<else>
 for(<type> <identifier> : <set>) {
     <body>
 }
+<endif>
 >>
 
-iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(<type> <identifier> : Arrays.asList(<set>)) {
+        <body>
+    }
+}
+<else>
 for(<type> <identifier> : Arrays.asList(<set>)) {
     <body>
 }
-
+<endif>
 >>
 
-iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(<type> <identifier> : <set>.pow()) {
+        <body>
+    }
+}
+<else>
 for(<type> <identifier> : <set>.pow()) {
     <body>
 }
+<endif>
 >>
 
-iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(<type> <identifier> : <set>.pow().difference(new BSet\<<type>\>(<set>))) {
+        <body>
+    }
+}
+<else>
 for(<type> <identifier> : <set>.pow().difference(new BSet\<<type>\>(<set>))) {
     <body>
 }
+<endif>
 >>
 
 iteration_construct_pruning(predicate, body) ::= <<

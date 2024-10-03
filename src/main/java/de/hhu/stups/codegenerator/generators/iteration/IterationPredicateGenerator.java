@@ -405,7 +405,7 @@ public class IterationPredicateGenerator {
     /*
     * This function gets a list of partly analyzed enumeration templates and a string for the inner part of the body for code generation. It then evaluates the given templates and reduced it to one template with replaced placeholders
     */
-    public ST evaluateEnumerationTemplates(List<ST> enumerationTemplates, String innerBody) {
+    public ST evaluateEnumerationTemplates(List<ST> enumerationTemplates, String innerBody, PredicateNode conditionalPredicate) {
         int enumerationSize = enumerationTemplates.size();
         ST lastEnumeration = enumerationTemplates.get(enumerationSize - 1);
         TemplateHandler.add(lastEnumeration, "body", innerBody);
@@ -417,6 +417,10 @@ public class IterationPredicateGenerator {
             lastEnumeration = currentEnumeration;
             i--;
         }
+
+        TemplateHandler.add(lastEnumeration, "hasCondition", conditionalPredicate != null);
+        TemplateHandler.add(lastEnumeration, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
+
         return lastEnumeration;
     }
 

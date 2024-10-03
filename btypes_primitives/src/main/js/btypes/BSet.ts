@@ -38,31 +38,32 @@ export class BSet<T extends BObject> implements BObject{
 		return sb;
 	}
 
-	union(other: BSet<T>): BSet<T>
-	union(): T
-	union(other: BSet<T> | null=null ): BSet<T> | T {
-		if (other == null) {
-			if (this.set.size === 0) {
-				return new BSet();
-			} else if (this.set.values().next().value instanceof BSet) {
-				let result = immutable.Set();
-				for (let current_set of this.set) {
-					result = BSet.immutableSetUnion(result, (<BSet<BObject>><unknown> current_set).set)
-				}
-				return new BSet(result)
-			} else if (this.set.values().next().value instanceof BRelation) {
-				let result = <immutable.Map<BObject, immutable.Set<BObject>>> immutable.Map();
-				for (let current_set of this.set) {
-					result = BSet.immutableMapUnion(result, (<BRelation<BObject, BObject>><unknown> current_set).map)
-				}
-				return <T><unknown> new BRelation(result);
-			} else {
-				throw new Error("Generalized Union is only possible on Sets of Sets or Relations.");
-			}
-		}
+	union(other: BSet<T>): BSet<T> {
 		let result = BSet.immutableSetUnion(this.set, other.set);
 		return new BSet(result)
 	}
+
+    unionForSets<K extends BObject>(): BSet<K> {
+        if (this.set.isEmpty()) {
+            return new BSet<K>();
+        } else {
+            return this.set.reduce(
+                (a: BSet<K>, e: BSet<K>) => a.union(e),
+                new BSet<K>()
+            );
+        }
+    }
+
+    unionForRelations<T1 extends BObject, T2 extends BObject>(): BRelation<T1, T2> {
+        if (this.set.isEmpty()) {
+            return new BRelation<T1, T2>();
+        } else {
+            return this.set.reduce(
+                (a: BRelation<T1, T2>, e: BRelation<T1, T2>) => a.union(e),
+                new BRelation<T1, T2>()
+            );
+        }
+    }
 
 	static immutableSetUnion<R extends BObject>(s1: immutable.Set<R>, s2: immutable.Set<R>): immutable.Set<R>{
 		return s1.union(s2);

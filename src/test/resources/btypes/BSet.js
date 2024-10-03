@@ -22,7 +22,7 @@ export class BSet {
     }
     toString() {
         let sb = "{";
-        this.set.forEach(element => {
+        this.set.forEach((element) => {
             if (sb.length > 1) {
                 sb += ", ";
             }
@@ -31,31 +31,25 @@ export class BSet {
         sb += "}";
         return sb;
     }
-    union(other = null) {
-        if (other == null) {
-            if (this.set.size === 0) {
-                return new BSet();
-            }
-            else if (this.set.values().next().value instanceof BSet) {
-                let result = immutable.Set();
-                for (let current_set of this.set) {
-                    result = BSet.immutableSetUnion(result, current_set.set);
-                }
-                return new BSet(result);
-            }
-            else if (this.set.values().next().value instanceof BRelation) {
-                let result = immutable.Map();
-                for (let current_set of this.set) {
-                    result = BSet.immutableMapUnion(result, current_set.map);
-                }
-                return new BRelation(result);
-            }
-            else {
-                throw new Error("Generalized Union is only possible on immutable.Sets of immutable.Sets or Relations");
-            }
-        }
+    union(other) {
         let result = BSet.immutableSetUnion(this.set, other.set);
         return new BSet(result);
+    }
+    unionForSets() {
+        if (this.set.isEmpty()) {
+            return new BSet();
+        }
+        else {
+            return this.set.reduce((a, e) => a.union(e), new BSet());
+        }
+    }
+    unionForRelations() {
+        if (this.set.isEmpty()) {
+            return new BRelation();
+        }
+        else {
+            return this.set.reduce((a, e) => a.union(e), new BRelation());
+        }
     }
     static immutableSetUnion(s1, s2) {
         return s1.union(s2);
@@ -116,7 +110,7 @@ export class BSet {
                 return new BRelation(result);
             }
             else {
-                throw new Error("Generalized Intersection is only possible on immutable.Sets of immutable.Sets or Relations");
+                throw new Error("Generalized Intersection is only possible on Sets of Sets or Relations");
             }
         }
         let new_set = BSet.immutableSetDifference(this.set, BSet.immutableSetDifference(this.set, other.set));
@@ -181,16 +175,16 @@ export class BSet {
         return this.set.size === 0;
     }
     equals(other) {
-        return this.equal(other).booleanValue();
+        if (!(other instanceof BSet)) {
+            return false;
+        }
+        return this.set.equals(other.set);
     }
     equal(other) {
-        if (!(other instanceof BSet)) {
-            return new BBoolean(false);
-        }
-        return this.subset(other).and(other.subset(this));
+        return new BBoolean(this.equals(other));
     }
     unequal(other) {
-        return this.equal(other).not();
+        return new BBoolean(!this.equals(other));
     }
     nondeterminism() {
         let values = [];
@@ -350,8 +344,11 @@ export class BSet {
         if (b.less(a).booleanValue()) {
             return new BSet();
         }
-        const range = [...Array(b.minus(a).intValue() + 1).keys()].map(e => new BInteger(e).plus(a));
-        return new BSet(immutable.Set(range));
+        let persistentSet = immutable.Set();
+        for (let i = a; i.lessEqual(b).booleanValue(); i = i.plus(new BInteger(1))) {
+            persistentSet = persistentSet.add(i);
+        }
+        return new BSet(persistentSet);
     }
     hashCode() {
         return this.set.hashCode();

@@ -192,21 +192,21 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <K extends BObject> BSet<K> unionForSets() {
+	public <K extends BObject> T unionForSets() {
 		if(set.isEmpty()) {
-			return new BSet<K>();
+			return (T) new BSet<K>();
 		} else {
-			return (BSet<K>) this.set.stream()
+			return (T) this.set.stream()
 					.reduce(new BSet<K>(), (a, e) -> ((BSet<K>) a).union((BSet<K>) e));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T1 extends BObject, T2 extends BObject> BRelation<T1, T2> unionForRelations() {
+	public <T1 extends BObject, T2 extends BObject> T unionForRelations() {
 		if(set.isEmpty()) {
-			return new BRelation<T1,T2>();
+			return (T) new BRelation<T1,T2>();
 		} else {
-			return (BRelation<T1,T2>) this.set.stream()
+			return (T) this.set.stream()
 					.reduce(new BRelation<T1, T2>(), (a, e) -> ((BRelation<T1, T2>) a).union((BRelation<T1, T2>) e));
 		}
 	}

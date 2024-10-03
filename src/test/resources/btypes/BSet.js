@@ -90,31 +90,25 @@ export class BSet {
         }
         return result;
     }
-    intersect(other = null) {
-        if (other == null) {
-            if (this.set.size === 0) {
-                return new BSet();
-            }
-            else if (this.set.values().next().value instanceof BSet) {
-                let result = this.set.values().next().value.set;
-                for (let current_set of this.set) {
-                    result = BSet.immutableSetDifference(result, BSet.immutableSetDifference(result, current_set.set));
-                }
-                return new BSet(result);
-            }
-            else if (this.set.values().next().value instanceof BRelation) {
-                let result = this.set.values().next().value.map;
-                for (let current_set of this.set) {
-                    result = BSet.immutableMapIntersection(result, current_set.map);
-                }
-                return new BRelation(result);
-            }
-            else {
-                throw new Error("Generalized Intersection is only possible on Sets of Sets or Relations");
-            }
+    intersect(other) {
+        let result = BSet.immutableSetIntersection(this.set, other.set);
+        return new BSet(result);
+    }
+    intersectForSets() {
+        if (this.set.isEmpty()) {
+            return new BSet();
         }
-        let new_set = BSet.immutableSetDifference(this.set, BSet.immutableSetDifference(this.set, other.set));
-        return new BSet(new_set);
+        else {
+            return this.set.reduce((a, e) => a.intersect(e), new BSet());
+        }
+    }
+    intersectForRelations() {
+        if (this.set.isEmpty()) {
+            return new BRelation();
+        }
+        else {
+            return this.set.reduce((a, e) => a.intersect(e), new BRelation());
+        }
     }
     difference(other) {
         let set = BSet.immutableSetDifference(this.set, other.set);

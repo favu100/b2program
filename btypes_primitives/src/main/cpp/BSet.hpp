@@ -155,13 +155,22 @@ class BSet : public BObject {
         }
 
      	template<typename K = value_type>
-     	K _union() const {
-     	    K result;
+     	BSet<K> unionForSets() const {
+     	    BSet<K> result;
+            for(const T& s : this->set) {
+                result = result._union(BSet<K>(s));
+            }
+            return result;
+     	}
+
+        template<typename K = value_type>
+        K unionForRelations() const {
+            K result;
             for(const T& s : this->set) {
                 result = result._union(K(s));
             }
             return result;
-     	}
+        }
 
         static BSet<BInteger> interval(const BInteger& a, const BInteger& b) {
             immer::set<BInteger, Hash, HashEqual> result;

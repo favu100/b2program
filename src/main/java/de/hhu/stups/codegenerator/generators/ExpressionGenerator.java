@@ -429,7 +429,8 @@ public class ExpressionGenerator {
             }
         } else if(UNARY_EXPRESSION_OPERATORS.contains(operator)) {
             List<String> expressionList = node.getExpressionNodes().stream().map(this::visitExprNode).collect(Collectors.toList());
-            return generateUnaryExpression(operator, expressionList);
+            boolean isRelation = node.getType() instanceof SetType && ((SetType) node.getType()).getSubType() instanceof CoupleType;
+            return generateUnaryExpression(operator, expressionList, isRelation);
         } else if(EXPRESSION_BOOLEANS.contains(operator)) {
             return generateBoolean(operator);
         } else if(node.getOperator() == SET_ENUMERATION) {
@@ -477,8 +478,8 @@ public class ExpressionGenerator {
     /*
     * This function generates code for an unary expression with the given operator and arguments.
     */
-    private String generateUnaryExpression(ExpressionOperatorNode.ExpressionOperator operator, List<String> expressionList) {
-        ST expression = generateUnary(operator);
+    private String generateUnaryExpression(ExpressionOperatorNode.ExpressionOperator operator, List<String> expressionList, boolean isRelation) {
+        ST expression = generateUnary(operator, isRelation);
         if (mode == GeneratorMode.PL) {
             if (machineGenerator.getEnumIdentifier().contains(expressionList.get(0))) {
                 List<String> exprOpNodes = new ArrayList<>();
@@ -505,7 +506,7 @@ public class ExpressionGenerator {
     /*
     * This function gets the template for unary expressions and replaces the placeholder with the given operator.
     */
-    private ST generateUnary(ExpressionOperatorNode.ExpressionOperator operator) {
+    private ST generateUnary(ExpressionOperatorNode.ExpressionOperator operator, boolean isRelation) {
         ST template = currentGroup.getInstanceOf("unary");
         boolean isOverloadedOperator = false; // indicates if the unary-operator has a binary equivalent, used for languages that don't support method overloading (like rust)
         String operatorName;
@@ -565,7 +566,7 @@ public class ExpressionGenerator {
                 operatorName = "fin1";
                 break;
             case GENERALIZED_UNION:
-                operatorName = "union";
+                operatorName = isRelation ? "unionForRelations" : "unionForSets";
                 isOverloadedOperator = true;
                 break;
             case GENERALIZED_INTER:

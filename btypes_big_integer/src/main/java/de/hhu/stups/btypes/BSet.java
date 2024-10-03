@@ -192,23 +192,22 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <K extends BObject> T union() {
-		if (set.isEmpty()) {
-			//Think about passing the generic inner class through the constructor (or at least with a method)
-			try {
-				return (T) new BSet<K>();
-			} catch (ClassCastException e) {
-				return (T) new BRelation();
-			}
+	public <K extends BObject> BSet<K> unionForSets() {
+		if(set.isEmpty()) {
+			return new BSet<K>();
 		} else {
-			//Think about passing the generic inner class through the constructor (or at least with a method)
-			try {
-				return (T) this.set.stream()
-						.reduce((a, e) -> ((BSet<K>) a).union((BSet<K>) e)).get();
-			} catch (ClassCastException exception) {
-				return (T) this.set.stream()
-						.reduce((a, e) -> ((BRelation) a).union((BRelation) e)).get();
-			}
+			return (BSet<K>) this.set.stream()
+					.reduce(new BSet<K>(), (a, e) -> ((BSet<K>) a).union((BSet<K>) e));
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T1 extends BObject, T2 extends BObject> BRelation<T1, T2> unionForRelations() {
+		if(set.isEmpty()) {
+			return new BRelation<T1,T2>();
+		} else {
+			return (BRelation<T1,T2>) this.set.stream()
+					.reduce(new BRelation<T1, T2>(), (a, e) -> ((BRelation<T1, T2>) a).union((BRelation<T1, T2>) e));
 		}
 	}
 

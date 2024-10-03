@@ -486,6 +486,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testWDCheck() throws Exception {
+        testJavaMC("WDCheck", "WDCheck", true, 1, false);
+    }
+
+    @Test
     public void testSetLawsNat() throws Exception {
         testJavaMC("SetLawsNat", "SetLawsNat", true, 1, false);
     }

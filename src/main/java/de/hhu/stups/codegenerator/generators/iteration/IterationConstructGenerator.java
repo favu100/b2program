@@ -235,6 +235,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
                 } else if(operator != PredicateOperatorNode.PredicateOperator.EQUIVALENCE) {
                     previousPredicates.add(pred);
                 }
+                //System.out.println(operator);
+                //System.out.println(previousPredicates);
             }
         }
         previousPredicates.clear();

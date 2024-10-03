@@ -226,6 +226,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
         PredicateOperatorNode.PredicateOperator operator = node.getOperator();
         List<DeclarationNode> parentDeclarations = extractDeclarations(node.getParent());
 
+        List<PredicateNode> oldPreviousPredicates = new ArrayList<>(previousPredicates);
+
         for(int i = 0; i < node.getPredicateArguments().size(); i++) {
             PredicateNode pred = node.getPredicateArguments().get(i);
             visitPredicateNode(pred, expected);
@@ -237,7 +239,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
                 }
             }
         }
-        //previousPredicates.clear();
+        previousPredicates.clear();
+        previousPredicates.addAll(oldPreviousPredicates);
         return null;
     }
 

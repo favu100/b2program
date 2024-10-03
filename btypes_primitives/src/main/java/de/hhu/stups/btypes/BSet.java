@@ -195,8 +195,8 @@ public class BSet<T> implements Set<T>, BObject {
 	public BSet<T> union(BSet<T> set) {
 		return new BSet<T>((PersistentHashSet) UNION.invoke(this.set, set.set));
 	}
-	}
 
+	
 	@SuppressWarnings("unchecked")
 	public <K extends BObject> BSet<K> unionForSets() {
 		if(set.isEmpty()) {

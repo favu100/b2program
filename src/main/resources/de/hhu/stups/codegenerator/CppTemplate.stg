@@ -341,33 +341,64 @@ set_declaration(identifier, type, enums) ::= <<
 #define <identifier> <set_enumeration("", type, "", enums, false)>
 >>
 
-iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    for(const <type>& <identifier> : <set>) {
+        <body>
+    }
+}
+<else>
 for(const <type>& <identifier> : <set>) {
     <body>
 }
+<endif>
 >>
 
-iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    for(const <type>& <identifier> : {<set>}) {
+        <body>
+    }
+}
+<else>
 for(const <type>& <identifier> : {<set>}) {
     <body>
 }
-
+<endif>
 >>
 
-iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    for(const <type>& <identifier> : <set>.pow()) {
+        <body>
+    }
+}
+<else>
 for(const <type>& <identifier> : <set>.pow()) {
     <body>
 }
+<endif>
 >>
 
-iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if((<conditionalPredicate>).booleanValue()) {
+    for(const <type>& <identifier> : <set>.pow().difference(BSet\<<type>\>(<set>))) {
+        <body>
+    }
+}
+<else>
 for(const <type>& <identifier> : <set>.pow().difference(BSet\<<type>\>(<set>))) {
     <body>
 }
+<endif>
 >>
 
 iteration_construct_pruning(predicate, body) ::= <<

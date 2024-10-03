@@ -92,6 +92,16 @@ class BSet : public BObject {
             return set.count(o) > 0;
         }
 
+        BSet<T> intersect(const BSet<T>& set) const {
+            immer::set<T,Hash, HashEqual> result = this->set;
+            for (const T& obj : this->set) {
+                if(set.set.count(obj) == 0) {
+                    result = result.erase(obj);
+                }
+            }
+            return BSet(result);
+        }
+
      	template<typename K = value_type>
      	K intersectForSets() const {
      	    if(this->size() == 0) {

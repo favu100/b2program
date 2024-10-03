@@ -497,7 +497,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testSetLawsNatural() throws Exception {
-        testJavaMC("SetLawsNatural", "SetLawsNatural", true, 1, false);
+        testJavaMC("SetLawsNatural", "SetLawsNatural", false, 1, false);
     }
 
     @Test

@@ -92,18 +92,8 @@ class BSet : public BObject {
             return set.count(o) > 0;
         }
 
-        BSet<T> intersect(const BSet<T>& set) const {
-            immer::set<T,Hash, HashEqual> result = this->set;
-            for (const T& obj : this->set) {
-                if(set.set.count(obj) == 0) {
-                    result = result.erase(obj);
-                }
-            }
-            return BSet(result);
-        }
-
      	template<typename K = value_type>
-     	K intersect() const {
+     	K intersectForSets() const {
      	    if(this->size() == 0) {
      	        return K();
      	    }
@@ -118,6 +108,24 @@ class BSet : public BObject {
             }
             return result;
      	}
+
+
+        template<typename K = value_type>
+        K intersectForRelations() const {
+            if(this->size() == 0) {
+                return K();
+            }
+            K result;
+            int i = 0;
+            for(const T& s : this->set) {
+                if(i == 0) {
+                    result = K(s);
+                }
+                ++i;
+                result = result.intersect(K(s));
+            }
+            return result;
+        }
 
         BSet<T> difference(const BSet<T>& set) const {
             if(this->size() == 0) {

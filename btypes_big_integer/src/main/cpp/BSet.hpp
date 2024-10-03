@@ -103,7 +103,7 @@ class BSet : public BObject {
         }
 
      	template<typename K = value_type>
-     	K intersect() const {
+     	K intersectForSets() const {
      	    if(this->size() == 0) {
      	        return K();
      	    }
@@ -118,6 +118,23 @@ class BSet : public BObject {
             }
             return result;
      	}
+
+        template<typename K = value_type>
+        K intersectForRelations() const {
+            if(this->size() == 0) {
+                return K();
+            }
+            K result;
+            int i = 0;
+            for(const T& s : this->set) {
+                if(i == 0) {
+                    result = K(s);
+                }
+                ++i;
+                result = result.intersect(K(s));
+            }
+            return result;
+        }
 
         BSet<T> difference(const BSet<T>& set) const {
             if(this->size() == 0) {

@@ -284,33 +284,64 @@ seq_enumeration(type, elements) ::= <<
 new BRelation\<BInteger, <type>\>(<elements; separator=", ">)
 >>
 
-iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_enumeration(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(let <identifier> of <set>) {
+        <body>
+    }
+}
+<else>
 for(let <identifier> of <set>) {
     <body>
 }
+<endif>
 >>
 
-iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_assignment(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(let <identifier> of Array.of(<set>)) {
+        <body>
+    }
+}
+<else>
 for(let <identifier> of Array.of(<set>)) {
     <body>
 }
-
+<endif>
 >>
 
-iteration_construct_subset(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_subset(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(let <identifier> of <set>.pow()) {
+        <body>
+    }
+}
+<else>
 for(let <identifier> of <set>.pow()) {
     <body>
 }
+<endif>
 >>
 
-iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body) ::= <<
+iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, body, hasCondition, conditionalPredicate) ::= <<
 <otherIterationConstructs>
+<if(hasCondition)>
+if(<conditionalPredicate>.booleanValue()) {
+    for(let <identifier> of <set>.pow().difference(<set>)) {
+        <body>
+    }
+}
+<else>
 for(let <identifier> of <set>.pow().difference(<set>)) {
     <body>
 }
+<endif>
 >>
 
 iteration_construct_pruning(predicate, body) ::= <<

@@ -919,16 +919,16 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R> BRelation<S,R> rel() {
+	public BRelation rel() {
 		BSet<S> domain = this.domain();
 
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 		for(S domainElement : domain) {
-			BSet<R> range = (BSet<R>) this.functionCall(domainElement);
+			BSet range = (BSet) this.functionCall(domainElement);
 			PersistentHashSet rangeSet = range.getSet();
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, rangeSet);
 		}
-		return new BRelation<S, R>(resultMap);
+		return new BRelation(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -647,6 +647,10 @@ void() ::= <<
 void
 >>
 
+void_type() ::= <<
+BObject
+>>
+
 type(type, fromOtherMachine, otherMachine) ::= <<
 <type>
 >>

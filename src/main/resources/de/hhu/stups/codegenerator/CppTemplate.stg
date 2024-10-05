@@ -727,6 +727,10 @@ void() ::= <<
 void
 >>
 
+void_type() ::= <<
+BObject
+>>
+
 type(type, fromOtherMachine, fromOutside, otherMachine) ::= <<
 <if(fromOtherMachine || fromOutside)><otherMachine>::<endif><type>
 >>

@@ -144,7 +144,7 @@ public class OperationGenerator {
     * This function generates code for empty output parameters
     */
     private void generateVoidReturnStatement(ST operation) {
-        TemplateHandler.add(operation, "returnType", typeGenerator.generate(new UntypedType()));
+        TemplateHandler.add(operation, "returnType", typeGenerator.generateVoid());
         TemplateHandler.add(operation, "return", group.getInstanceOf("no_return").render());
         TemplateHandler.add(operation, "isTyped", false);
     }

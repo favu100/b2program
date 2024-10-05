@@ -169,6 +169,10 @@ public class TypeGenerator {
     * This function generates code for untyped nodes.
     */
     private String generateUntyped() {
+        return group.getInstanceOf("void_type").render();
+    }
+
+    public String generateVoid() {
         return group.getInstanceOf("void").render();
     }
 

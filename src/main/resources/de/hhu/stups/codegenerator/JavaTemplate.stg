@@ -716,6 +716,11 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
 >>
 
 void() ::= <<
+void
+>>
+
+
+void_type() ::= <<
 BObject
 >>
 

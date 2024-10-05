@@ -524,10 +524,10 @@ public class ExpressionGenerator {
                 operatorName = "card";
                 break;
             case DOMAIN:
-                operatorName = "domain";
+                operatorName = isRelation ? "domainForRelations" : "domain";
                 break;
             case RANGE:
-                operatorName = "range";
+                operatorName = isRelation ? "rangeForRelations" : "range";
                 break;
             case CLOSURE:
                 operatorName = "closure";

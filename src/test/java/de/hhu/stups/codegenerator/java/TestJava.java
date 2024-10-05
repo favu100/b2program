@@ -74,7 +74,14 @@ public class TestJava {
 
 		String error = streamToString(process.getErrorStream());
 		if(!error.isEmpty()) {
-			throw new RuntimeException(error);
+			String finalError = error;
+			javaFilePaths.stream()
+					.map(path -> new File(path.getParent().toFile(), machine + ".class"))
+					.forEach(e -> {
+						if(!e.exists()) {
+							throw new RuntimeException(finalError);
+						}
+					});
 		}
 
 		Set<File> classFiles = javaFilePaths.stream()
@@ -112,7 +119,14 @@ public class TestJava {
 
 		String error = streamToString(compileProcess.getErrorStream());
 		if(!error.isEmpty()) {
-			throw new RuntimeException(error);
+			String finalError = error;
+			javaFilePaths.stream()
+					.map(path -> new File(path.getParent().toFile(), machineName + ".class"))
+					.forEach(e -> {
+						if(!e.exists()) {
+							throw new RuntimeException(finalError);
+						}
+					});
 		}
 		Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
 
@@ -211,7 +225,14 @@ public class TestJava {
 
 		String error = streamToString(compileProcess.getErrorStream());
 		if(!error.isEmpty()) {
-			throw new RuntimeException(error);
+			String finalError = error;
+			javaFilePaths.stream()
+					.map(path -> new File(path.getParent().toFile(), machineName + ".class"))
+					.forEach(e -> {
+						if(!e.exists()) {
+							throw new RuntimeException(finalError);
+						}
+					});
 		}
 		Path mainPath = javaFilePaths.get(javaFilePaths.size() - 1);
 

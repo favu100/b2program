@@ -548,13 +548,13 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R,A> BRelation<R,A> conc() {
+	public <R,A> T conc() {
 		BRelation<R,A> result = new BRelation<R,A>();
 		BInteger size = this.card();
 		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			result = result.concat((BRelation<R,A>) functionCall((S) i));
 		}
-		return result;
+		return (T) result;
 	}
 
 	@SuppressWarnings("unchecked")

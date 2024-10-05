@@ -138,7 +138,7 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
    &
    ( ff<<:gg <=>  (ff<:gg & #ee.(ee:gg & ee/:ff)))
 
-   //&
+   &
    (ff: dom(gg) <-> ran(gg)  <=>  (dom(ff)<:dom(gg) & ran(ff) <:ran(gg)) )
 
    &

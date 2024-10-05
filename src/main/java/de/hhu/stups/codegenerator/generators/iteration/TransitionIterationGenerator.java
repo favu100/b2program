@@ -166,7 +166,7 @@ public class TransitionIterationGenerator {
             return "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name);
         } else if(declarations.size() == 2) {
             String result = "";
-            CoupleType type = extractTypeFromDeclarations(declarations);
+            CoupleType type = (CoupleType) extractTypeFromDeclarations(declarations);
 
             ST tuple = group.getInstanceOf("tuple_create");
             BType leftType = type.getLeft();

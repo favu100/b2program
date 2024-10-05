@@ -163,7 +163,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
            case POW:
            case FIN:
            case SEQ:
+           case SEQ1:
+           case ISEQ:
            case ISEQ1:
+           case PERM:
                ExpressionOperatorNode expressionNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.emptyList(), ExpressionOperatorNode.ExpressionOperator.EMPTY_SET);
                typeChecker.checkExprNode(expressionNode);
                return expressionNode;
@@ -635,6 +638,140 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     predicateNode = visitPredicateNode(predicateNode);
                     return predicateNode;
                 }
+                case SEQ: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case SEQ1: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    ExpressionOperatorNode cardSetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD);
+                    NumberNode zeroNode = new NumberNode(node.getSourceCodePosition(), new BigInteger("0"));
+
+                    List<PredicateNode> predicates = new ArrayList<>();
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER, Arrays.asList(cardSetNode, zeroNode)));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions));
+
+                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case ISEQ: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case ISEQ1: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    ExpressionOperatorNode cardSetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD);
+                    NumberNode zeroNode = new NumberNode(node.getSourceCodePosition(), new BigInteger("0"));
+
+                    List<PredicateNode> predicates = new ArrayList<>();
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.GREATER, Arrays.asList(cardSetNode, zeroNode)));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions));
+
+                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, predicates);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case PERM: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_BIJECTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
                 default:
                     break;
             }
@@ -1061,6 +1198,140 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(projection2, rhsAsExpression.getExpressionNodes().get(1))));
 
                     PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case SEQ: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case SEQ1: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_FUNCTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    ExpressionOperatorNode cardSetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD);
+                    NumberNode zeroNode = new NumberNode(node.getSourceCodePosition(), new BigInteger("0"));
+
+                    List<PredicateNode> predicates = new ArrayList<>();
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(cardSetNode, zeroNode)));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions));
+
+                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case ISEQ: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case ISEQ1: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_INJECTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    ExpressionOperatorNode cardSetNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD);
+                    NumberNode zeroNode = new NumberNode(node.getSourceCodePosition(), new BigInteger("0"));
+
+                    List<PredicateNode> predicates = new ArrayList<>();
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(cardSetNode, zeroNode)));
+                    predicates.add(new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions));
+
+                    PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.OR, predicates);
+
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case PERM: {
+
+                    List<ExprNode> expressions = new ArrayList<>();
+
+                    List<ExprNode> innerExpressions = new ArrayList<>();
+                    List<ExprNode> lhsExpressions = new ArrayList<>();
+                    lhsExpressions.add(new NumberNode(sourceCodePosition, new BigInteger("1")));
+                    lhsExpressions.add(new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(lhs), ExpressionOperatorNode.ExpressionOperator.CARD));
+                    ExpressionOperatorNode lhsExpression = new ExpressionOperatorNode(sourceCodePosition, lhsExpressions, ExpressionOperatorNode.ExpressionOperator.INTERVAL);
+
+                    innerExpressions.add(lhsExpression);
+                    innerExpressions.add(rhsAsExpression.getExpressionNodes().get(0));
+                    ExpressionOperatorNode totalFunctionExpression = new ExpressionOperatorNode(sourceCodePosition, innerExpressions, ExpressionOperatorNode.ExpressionOperator.TOTAL_BIJECTION);
+
+                    expressions.add(lhs);
+                    expressions.add(totalFunctionExpression);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions);
+
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);

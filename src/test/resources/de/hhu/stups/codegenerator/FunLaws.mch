@@ -212,7 +212,7 @@ INVARIANT
    !x.(x:dom(ff) => fnc(ff)(x) = ff[{x}]) &
 
       /* Definitions from page 78 of B-Book */
-   ff~ = {b,a| b : setY & a : setX & (a,b):ff} &
+   ff~ = {b,a| b : SETY & a : SETX & (a,b):ff} &
    //dom(ff) = {a | #b1.( a|->b1 : ff)} &
    ran(ff) = dom(ff~) &
    //(ff;(gg~)) = {a,c| #b2.((a,b2):ff & (b2,c):(gg~))} &

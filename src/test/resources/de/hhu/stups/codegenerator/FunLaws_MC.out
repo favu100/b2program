@@ -1,1 +1,3 @@
-INVARIANT CONJUNCT VIOLATED: _check_inv_133
+MODEL CHECKING SUCCESSFUL
+Number of States: 4096
+Number of Transitions: 48256

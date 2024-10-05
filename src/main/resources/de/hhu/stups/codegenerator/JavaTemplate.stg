@@ -716,7 +716,7 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
 >>
 
 void() ::= <<
-void
+BObject
 >>
 
 type(type, fromOtherMachine, otherMachine) ::= <<

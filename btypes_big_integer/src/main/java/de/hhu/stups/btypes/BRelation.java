@@ -334,9 +334,27 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
+	public BRelation domainForRelations() {
+		BRelation result = new BRelation();
+		for(S elem : this.domain()) {
+			result = result.union(new BRelation((BTuple) elem));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
 	public BSet<T> range() {
 		PersistentHashSet set = (PersistentHashSet) REDUCE.invoke(UNION, SET.invoke(SEQ.invoke(LIST.invoke())), VALS.invoke(this.map));
 		return new BSet<T>(set);
+	}
+
+	@SuppressWarnings("unchecked")
+	public BRelation rangeForRelations() {
+		BRelation result = new BRelation();
+		for(T elem : this.range()) {
+			result = result.union(new BRelation((BTuple) elem));
+		}
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -520,7 +538,7 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		PersistentHashMap resultMap = this.map;
 		//Remove sets with index greater than n
 		for(BInteger i = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i, SET.invoke(SEQ.invoke(LIST.invoke())));
+			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, i);
 		}
 		return new BRelation<S, T>(resultMap);
 	}

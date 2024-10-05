@@ -18,6 +18,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -256,7 +257,22 @@ public class SetComprehensionGenerator {
     private String getElementFromBoundedVariables(List<DeclarationNode> declarations) {
         if(declarations.size() == 1) {
             String name = declarations.get(0).getName();
-            return "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name);
+            return "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name);
+        } else if(declarations.size() == 2) {
+            String result = "";
+            CoupleType type = extractTypeFromDeclarations(declarations);
+
+            ST tuple = group.getInstanceOf("tuple_create");
+            BType leftType = type.getLeft();
+            BType rightType = type.getRight();
+            TemplateHandler.add(tuple, "leftType", typeGenerator.generate(leftType));
+            TemplateHandler.add(tuple, "rightType", typeGenerator.generate(rightType));
+            String name = declarations.get(0).getName();
+            TemplateHandler.add(tuple, "arg1", "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
+            name = declarations.get(1).getName();
+            TemplateHandler.add(tuple, "arg2", "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
+            result = tuple.render();
+            return result;
         } else {
             String result = "";
 
@@ -267,6 +283,8 @@ public class SetComprehensionGenerator {
                 types.add(0, (CoupleType) type);
                 type = ((CoupleType) type).getLeft();
             }
+
+
 
             for(int i = 0; i < types.size(); i++) {
                 ST tuple = group.getInstanceOf("tuple_create");

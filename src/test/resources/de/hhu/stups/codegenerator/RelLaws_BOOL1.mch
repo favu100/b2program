@@ -159,12 +159,12 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
    ( dom(gg)  <| ff  = {xy|xy:ff & prj1(BOOL,setY)(xy):dom(gg)} ) &
    ( dom(gg) <<| ff  = {xy|xy:ff & prj1(BOOL,setY)(xy)/:dom(gg)} ) &
 
-   ( {dd | dd <| ff = ff} = {dd| dom(ff) <: dd} ) &
+   /*( {dd | dd <| ff = ff} = {dd| dom(ff) <: dd} ) &
    ( {rr | ff |> rr = ff} = {rr| ran(ff) <: rr} ) &
    ( {dd | dd <<| ff = ff} = {dd| dom(ff) /\ dd = {}} ) &
    ( {rr | ff |>> rr = ff} = {rr| ran(ff) /\ rr = {}} )
 
-    &
+    &*/
    rx <: closure1(rx) &
    rx <: closure(rx) &
    id( dom(rx) \/ ran(rx) ) <: closure(rx) &

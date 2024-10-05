@@ -556,6 +556,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testRelLaws_Small() throws Exception {
+        testJavaMC("RelLaws_Small", "RelLaws_Small", true, 1, false);
+    }
+
+    @Test
     public void testFunLaws() throws Exception {
         testJavaMC("FunLaws", "FunLaws", true, 1, false);
     }

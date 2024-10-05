@@ -428,10 +428,10 @@ lambda(type, identifier, lambda, leftType, rightType) ::= <<
 lambda_expression(otherIterationConstructs, relation, element, expression, emptyPredicate, hasCondition, conditionalPredicate, predicate, leftType, rightType) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
+<relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 <else>
 if((<predicate>).booleanValue()) {
-    <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<element>, <expression>)));
+    <relation> = <relation>.union(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<element>, <expression>)));
 }
 <endif>
 >>
@@ -711,7 +711,7 @@ if(!_triggered_cp_<operation>_<choicePoint>) {
     _<operation>_triggered = true;
 }
 <else>
-<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<>(<arg>,<set>.nondeterminism()));<endif>
+<if(isIdentifierLhs)><identifier> = <set>.nondeterminism();<elseif(isRecordAccessLhs)><identifier> = <modified_identifier>.override_<arg>(<set>.nondeterminism());<else><identifier> = <modified_identifier>.override(new BRelation\<<leftType>, <rightType>\>(new BTuple\<<leftType>, <rightType>\>(<arg>,<set>.nondeterminism()));<endif>
 <endif>
 >>
 
@@ -768,8 +768,8 @@ cartesian_product(arg1, arg2) ::= <<
 BRelation.cartesianProduct(<arg1>, <arg2>)
 >>
 
-tuple_create(arg1, arg2) ::= <<
-new BTuple\<>(<arg1>, <arg2>)
+tuple_create(leftType, rightType, arg1, arg2) ::= <<
+new BTuple\<<leftType>, <rightType>\>(<arg1>, <arg2>)
 >>
 
 binary(arg1,operator,arg2) ::= <<

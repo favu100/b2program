@@ -1171,6 +1171,17 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return new BBoolean(true);
 	}
 
+	public BBoolean checkDomainBoolean() {
+		for(S e : this.domain()) {
+			if(e instanceof BBoolean) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
 	public BBoolean checkDomainInteger() {
 		for(S e : this.domain()) {
 			if(e instanceof BInteger) {

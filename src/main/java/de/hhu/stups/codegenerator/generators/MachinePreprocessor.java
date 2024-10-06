@@ -48,6 +48,7 @@ import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.types.UntypedType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
@@ -423,6 +424,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -442,6 +447,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 case INVERSE_RELATION: {
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -462,6 +471,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -484,6 +497,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -505,6 +522,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -526,6 +547,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -547,6 +572,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1002,10 +1031,13 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 }
                 case ID: {
                     List<PredicateNode> predicates = new ArrayList<>();
-
-
+                    
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1025,6 +1057,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 case INVERSE_RELATION: {
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1045,6 +1081,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1066,6 +1106,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1087,6 +1131,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1108,6 +1156,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
@@ -1129,6 +1181,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
+                    
+                    if(leftType instanceof RecordType || rightType instanceof RecordType) {
+                        return node;
+                    }
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));

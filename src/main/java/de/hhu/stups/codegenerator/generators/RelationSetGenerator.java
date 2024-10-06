@@ -150,7 +150,6 @@ public class RelationSetGenerator {
         if(infiniteSetGenerator.isSetWithPredicateExpression(range)) {
             return infiniteSetGenerator.generateInfiniteRangeChecking(node, operator, range);
         }
-
         ST template = currentGroup.getInstanceOf("relation_check_range");
         TemplateHandler.add(template, "arg", machineGenerator.visitExprNode(lhs, null));
         TemplateHandler.add(template, "range", machineGenerator.visitExprNode(range, null));

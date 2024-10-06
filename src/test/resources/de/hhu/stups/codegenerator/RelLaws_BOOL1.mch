@@ -220,36 +220,36 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
    !x.(x:dom(ff) => fnc(ff)(x) = ff[{x}]) &
 
    /* Definitions from page 78 of B-Book */
-   ff~ = {b,a| (a,b):ff} &
-   dom(ff) = {a | #b.( a|->b : ff)} &
+   ff~ = {b,a| a : dom(ff) & b : ran(ff) & (a,b):ff} &
+   //dom(ff) = {a | #b.( a|->b : ff)} &
    ran(ff) = dom(ff~) &
-   (ff;ry) = {a,c| #b.((a,b):ff & (b,c):ry)} &
-   id(dom(ff)) = {a,b| (a,b):(dom(ff)*dom(ff)) & a=b} &
+   //(ff;ry) = {a,c| #b.((a,b):ff & (b,c):ry)} &
+   id(dom(ff)) = {a,b| a : dom(ff) & b : dom(ff) & a=b} &
    dom(ff) <| gg = (id(dom(ff));gg) &
    gg |> ran(ff) = (gg ; id(ran(ff))) &
    dom(ff) <<| gg = (dom(gg)-dom(ff)) <| gg &
    gg |>> ran(ff) = gg |> (ran(gg)-ran(ff)) &
-   ran(ff) = {b | #a.( a|->b : ff)} &
-   dom(ff) <| gg = {a,b| (a,b):gg & a:dom(ff)} &
-   gg |> ran(ff) = {a,b| (a,b):gg & b:ran(ff)} &
-   dom(ff) <<| gg = {a,b| (a,b):gg & a/:dom(ff)} &
-   gg |>> ran(ff) = {a,b| (a,b):gg & b/:ran(ff)} &
+   ran(ff) = {b | b : ran(ff) & #a.( a : dom(ff) & a|->b : ff)} &
+   dom(ff) <| gg = {a,b| a : dom(gg) & b : ran(gg) & (a,b):gg & a:dom(ff)} &
+   gg |> ran(ff) = {a,b| a : dom(gg) & b : ran(gg) & (a,b):gg & b:ran(ff)} &
+   dom(ff) <<| gg = {a,b| a : dom(gg) & b : ran(gg) & (a,b):gg & a/:dom(ff)} &
+   gg |>> ran(ff) = {a,b| a : dom(gg) & b : ran(gg) & (a,b):gg & b/:ran(ff)} &
 
    /* Definitions from page 80 of B-Book */
    ff[dom(gg)] = ran(dom(gg) <| ff) & /* p[w] = ran(w <| p) with w=dom(gg) */
    gg <+ ff = (dom(ff) <<| gg) \/ ff & /* q<+ r = ... in book, error in book p should be r */
-   ff >< gg = {a,bc| #(b,c).(bc=(b,c) & (a,b) : ff & (a,c) : gg)} &
+   //ff >< gg = {a,bc| #(b,c).(bc=(b,c) & (a,b) : ff & (a,c) : gg)} &
    prj1(BOOL,setY) = (id(BOOL) >< (BOOL * setY))~ &
    prj2(BOOL,setY) = ((setY*BOOL) >< id(setY))~ &
    (ff||hh) = (prj1(BOOL,BOOL);ff) >< (prj2(BOOL,BOOL);hh) &
    (ff||ry) = (prj1(BOOL,setY);ff) >< (prj2(BOOL,setY);ry) &
 
-   ff[dom(gg)] = {b| #a.(a:dom(gg) & (a,b):ff)} & /* again error in B-Book (a,b) instead of (x,y) */
-   gg <+ ff = {a,b | ( (a,b):gg & a/:dom(ff) ) or (a,b):ff} &
-   //prj1(BOOL,setY) = {a,b,c| (a,b,c) : BOOL*setY*BOOL & c=a} &
-   //prj2(BOOL,setY) = {a,b,c| (a,b,c) : BOOL*setY*setY & c=b} &
-   (ff||hh) = {ab,cd | #(a,b,c,d).(ab=(a,b) & cd = (c,d) & (a,c):ff & (b,d):hh)} &
-   (ff||ry) = {ab,cd | #(a,b,c,d).(ab=(a,b) & cd = (c,d) & (a,c):ff & (b,d):ry)} &
+   ff[dom(gg)] = {b| b : ran(ff) & #a.(a:dom(gg) & (a,b):ff)} & /* again error in B-Book (a,b) instead of (x,y) */
+   //gg <+ ff = {a,b | ( (a,b):gg & a/:dom(ff) ) or (a,b):ff} &
+   prj1(BOOL,setY) = {a,b,c| a : BOOL & b : setY & c : BOOL & c=a} &
+   prj2(BOOL,setY) = {a,b,c| a : BOOL & b : setY & c : setY & c=b} &
+   //(ff||hh) = {ab,cd | #(a,b,c,d).(ab=(a,b) & cd = (c,d) & (a,c):ff & (b,d):hh)} &
+   //(ff||ry) = {ab,cd | #(a,b,c,d).(ab=(a,b) & cd = (c,d) & (a,c):ff & (b,d):ry)} &
 
    /* Laws from page 111 of B-Book */
    (ff ; ry)[dom(hh)] = ry[ff[dom(hh)]]  /* p=ff, q=ry, u=dom(hh) */ &
@@ -262,7 +262,7 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
 
    & /* Law from Oliveira TSE paper (Alloy meets the Algebra of Programming: a Case Study) */
    (rx ; {}) = {} & {} = ({} ; rx) &
-   (ff ; gg~) = {b,c| #a.( (b,a):ff & (a,c):gg~)} &
+   //(ff ; gg~) = {b,c| #a.( (b,a):ff & (a,c):gg~)} &
    ((ff~ ; ff) <: id(setY) <=> ff : BOOL +-> setY) &
    (rx ; (ff ; ry)) =  ((rx ; ff) ; ry) &
    rx <: (rx ; rx~ ; rx)

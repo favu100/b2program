@@ -1066,6 +1066,11 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return this.domain().equal((BSet<S>) domainAsSet);
 	}
 
+	@SuppressWarnings("unchecked")
+	public BBoolean isTotalBoolean() {
+		return ((BSet<BBoolean>) this.domain()).equal(BUtils.BOOL);
+	}
+
 	public BBoolean isTotalInteger() {
 		return new BBoolean(false);
 	}
@@ -1099,6 +1104,17 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 				return new BBoolean(false);
 			}
 			if(!range.contains(elementAsTuple.projection2())) {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	public BBoolean isPartialBoolean() {
+		for(S e : this.domain()) {
+			if(e instanceof BBoolean) {
+				return new BBoolean(true);
+			} else {
 				return new BBoolean(false);
 			}
 		}

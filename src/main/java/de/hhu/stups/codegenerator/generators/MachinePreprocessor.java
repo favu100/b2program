@@ -772,6 +772,23 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     predicateNode = visitPredicateNode(predicateNode);
                     return predicateNode;
                 }
+                case SET_RELATION: {
+                    List<ExprNode> rhsNodes = ((ExpressionOperatorNode) rhs).getExpressionNodes();
+                    ExprNode first = rhsNodes.get(0);
+                    ExprNode second = rhsNodes.get(1);
+                    ExprNode cartesianProductExpr = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(first, second), ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT);
+                    ExprNode powExpr = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(cartesianProductExpr), ExpressionOperatorNode.ExpressionOperator.POW);
+
+                    List<ExprNode> expressions = new ArrayList<>();
+                    expressions.add(lhs);
+                    expressions.add(powExpr);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, expressions);
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
                 default:
                     break;
             }
@@ -1332,6 +1349,23 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions);
 
+                    predicateNode.setType(new UntypedType());
+                    typeChecker.checkPredicateNode(predicateNode);
+                    predicateNode = visitPredicateNode(predicateNode);
+                    return predicateNode;
+                }
+                case SET_RELATION: {
+                    List<ExprNode> rhsNodes = ((ExpressionOperatorNode) rhs).getExpressionNodes();
+                    ExprNode first = rhsNodes.get(0);
+                    ExprNode second = rhsNodes.get(1);
+                    ExprNode cartesianProductExpr = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(first, second), ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT);
+                    ExprNode powExpr = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(cartesianProductExpr), ExpressionOperatorNode.ExpressionOperator.POW);
+
+                    List<ExprNode> expressions = new ArrayList<>();
+                    expressions.add(lhs);
+                    expressions.add(powExpr);
+
+                    PredicateNode predicateNode = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, expressions);
                     predicateNode.setType(new UntypedType());
                     typeChecker.checkPredicateNode(predicateNode);
                     predicateNode = visitPredicateNode(predicateNode);

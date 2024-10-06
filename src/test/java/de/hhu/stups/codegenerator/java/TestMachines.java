@@ -561,6 +561,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testCompositionEmpty() throws Exception {
+        testJavaMC("CompositionEmpty", "CompositionEmpty", true, 1, false);
+    }
+
+    @Test
     public void testFunLaws() throws Exception {
         testJavaMC("FunLaws", "FunLaws", true, 1, false);
     }

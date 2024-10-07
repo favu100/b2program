@@ -534,7 +534,7 @@ INVARIANT
   //& (ff || hh) = (prj1(setX,setX) ; ff) >< (prj2(setX,setX) ; hh)
   //& (ff || ry) = (prj1(setX,setY) ; ff) >< (prj2(setX,setY) ; ry)
   & ff[dom(gg)] = {b|b : ran(ff) & #a.(a : dom(gg) & a |-> b : ff)}
-  & gg <+ ff = {a,b|a : dom(gg) & b : ran(gg) & ((a |-> b : gg & a /: dom(ff)) or a |-> b : ff)}
+  & gg <+ ff = {a,b|a : dom(gg) \/ dom(ff) & b : ran(gg) \/ ran(ff) & a |-> b : gg \/ ff & ((a |-> b : gg & a /: dom(ff)) or a |-> b : ff)}
   & prj1(setX,setY) = prj1(setX,setY)
   & prj2(setX,setY) = prj2(setX,setY)
   //& (ff || hh) = {ab,cd|#(a,b,c,d).(ab = a |-> b & cd = c |-> d & a |-> c : ff & b |-> d : hh)}
@@ -618,7 +618,9 @@ OPERATIONS
         (xx |-> yy) /: ry
     THEN
       ry := ry \/ {xx |-> yy}
-    END
+    END;
+
+    continue = BEGIN skip END
 /* DEFINITIONS
   PREDICATE otherlaw1;
   PREDICATE orderlaw5;

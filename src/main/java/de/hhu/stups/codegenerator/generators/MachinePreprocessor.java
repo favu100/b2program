@@ -468,7 +468,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
                     
-                    
+
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 

@@ -64,6 +64,7 @@ public class ImportGenerator {
         } else if(type instanceof StringType) {
             importBString();
         } else if(type instanceof SetType) {
+            importBObject();
             importSetType((SetType) type);
         } else if(type instanceof EnumeratedSetElementType) {
             importBObject();
@@ -74,6 +75,7 @@ public class ImportGenerator {
             importBBoolean();
             importEnum((DeferredSetElementType) type);
         } else if(type instanceof CoupleType) {
+            importBObject();
             importTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
             importBObject();

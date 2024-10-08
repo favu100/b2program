@@ -4,7 +4,7 @@ VARIABLES  f, s
 
 INVARIANT  f : BOOL --> BOOL & s : BOOL --> BOOL
 
-INITIALISATION f := {TRUE, FALSE}; s := {}
+INITIALISATION f := {TRUE |-> FALSE}; s := {}
 
 OPERATIONS
 

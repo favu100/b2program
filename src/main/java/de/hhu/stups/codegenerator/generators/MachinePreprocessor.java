@@ -47,6 +47,7 @@ import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
@@ -338,10 +339,12 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         } else if(operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION) {
             return optimizeNotSubsetOf(node);
         }
-        return new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), operator,
+        PredicateOperatorWithExprArgsNode result = new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), operator,
                 node.getExpressionNodes().stream()
                         .map(expr -> (ExprNode) visitExprNode(expr, null))
                         .collect(Collectors.toList()));
+        typeChecker.checkPredicateNode(result);
+        return result;
     }
 
     private PredicateNode optimizeElementOf(PredicateOperatorWithExprArgsNode node) {
@@ -1467,7 +1470,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 PredicateNode lhs = subpredicate.getPredicateArguments().get(0);
                 PredicateNode rhs = subpredicate.getPredicateArguments().get(1);
                 subpredicate = new PredicateOperatorNode(subpredicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(lhs, optimizePredicateNode(rhs)));
-                return new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), subpredicate, node.getOperator());
+                PredicateNode result = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), subpredicate, node.getOperator());
+                typeChecker.checkPredicateNode(result);
+                return result;
             }
         }
         return node;

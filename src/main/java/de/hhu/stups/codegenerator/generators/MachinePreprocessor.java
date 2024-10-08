@@ -343,7 +343,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 node.getExpressionNodes().stream()
                         .map(expr -> (ExprNode) visitExprNode(expr, null))
                         .collect(Collectors.toList()));
-        typeChecker.checkPredicateNode(result);
+        result.setType(BoolType.getInstance());
         return result;
     }
 

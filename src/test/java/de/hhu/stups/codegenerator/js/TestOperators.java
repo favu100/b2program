@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.js;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Test;
 
 public class TestOperators extends TestJs {
@@ -416,9 +417,14 @@ public class TestOperators extends TestJs {
         testJs("Iterate", "Iterate", "IterateAddition.stjs", true);
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testClosure() throws Exception {
         testJs("Closure", "Closure", "ClosureAddition.stjs", true);
+    }
+
+    @Test
+    public void testClosureBool() throws Exception {
+        testJs("ClosureBool", "ClosureBool", "ClosureBoolAddition.stjs", true);
     }
 
     @Test

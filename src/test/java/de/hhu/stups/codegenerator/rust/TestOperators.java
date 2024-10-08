@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.rust;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -418,9 +419,14 @@ public class TestOperators extends TestRS {
         testRS("Iterate", "Iterate", "IterateAddition.strs", true);
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testClosure() throws Exception {
         testRS("Closure", "Closure", "ClosureAddition.strs", true);
+    }
+
+    @Test
+    public void testClosureBool() throws Exception {
+        testRS("ClosureBool", "ClosureBool", "ClosureBoolAddition.strs", true);
     }
 
     @Test

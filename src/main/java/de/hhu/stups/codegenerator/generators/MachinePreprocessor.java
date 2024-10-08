@@ -1513,7 +1513,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitAssignSubstitutionNode(AssignSubstitutionNode node, Void expected) {
-        return node;
+        return new AssignSubstitutionNode(node.getSourceCodePosition(), node.getLeftSide(),
+                node.getRightSide().stream()
+                        .map(expr -> (ExprNode) visitExprNode(expr, null))
+                        .collect(Collectors.toList()));
     }
 
     @Override

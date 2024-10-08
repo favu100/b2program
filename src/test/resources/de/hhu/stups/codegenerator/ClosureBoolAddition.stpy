@@ -1,0 +1,4 @@
+if __name__ == '__main__':
+    closure = ClosureBool()
+    closure.calculate()
+    print(closure.getRes())

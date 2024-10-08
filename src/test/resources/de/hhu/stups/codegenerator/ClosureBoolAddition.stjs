@@ -1,0 +1,3 @@
+let closure: ClosureBool = new ClosureBool();
+closure.calculate();
+console.log(closure.getRes().toString());

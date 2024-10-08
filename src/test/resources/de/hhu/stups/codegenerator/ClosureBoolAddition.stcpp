@@ -1,0 +1,6 @@
+int main() {
+    ClosureBool closure;
+    closure.calculate();
+    cout << closure.getRes();
+    return 0;
+}

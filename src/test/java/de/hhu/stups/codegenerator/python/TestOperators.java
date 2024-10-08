@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.python;
 
+import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -408,9 +409,14 @@ public class TestOperators extends TestPython {
         testPython("Iterate", "Iterate", "IterateAddition.stpy", true);
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testClosure() throws Exception {
         testPython("Closure", "Closure", "ClosureAddition.stpy", true);
+    }
+
+    @Test
+    public void testClosureBool() throws Exception {
+        testPython("ClosureBool", "ClosureBool", "ClosureBoolAddition.stpy", true);
     }
 
     @Test

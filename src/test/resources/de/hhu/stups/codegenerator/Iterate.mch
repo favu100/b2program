@@ -2,9 +2,9 @@ MACHINE Iterate
 
 VARIABLES  f, s
 
-INVARIANT  f : INT --> INT & s : INT --> INT
+INVARIANT  f : BOOL --> BOOL & s : BOOL --> BOOL
 
-INITIALISATION f := {0|->1, 1|->2, 2|->3}; s := {}
+INITIALISATION f := {TRUE, FALSE}; s := {}
 
 OPERATIONS
 

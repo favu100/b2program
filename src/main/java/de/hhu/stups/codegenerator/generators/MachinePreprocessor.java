@@ -108,6 +108,17 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), substitution, operationNode.getParams());
     }
 
+    public PredicateNode optimizePredicateNode(PredicateNode predicateNode) {
+        if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
+            return (PredicateNode) visitPredicateOperatorWithExprArgs((PredicateOperatorWithExprArgsNode) predicateNode, null);
+        } else if(predicateNode instanceof PredicateOperatorNode) {
+            return (PredicateNode) visitPredicateOperatorNode((PredicateOperatorNode) predicateNode, null);
+        } else if(predicateNode instanceof QuantifiedPredicateNode) {
+            return (QuantifiedPredicateNode) visitQuantifiedPredicateNode((QuantifiedPredicateNode) predicateNode, null);
+        }
+        return predicateNode;
+    }
+
     public PredicateNode visitPredicateNode(PredicateNode predicateNode) {
         if(predicateNode != null) {
             if(predicateNode.getParent() instanceof IfOrSelectSubstitutionsNode) {
@@ -117,11 +128,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     return handlePredicateForEnumeration(predicateNode, operationNode.getParams(), new HashSet<>());
                 }
             }
-            if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
-                return (PredicateNode) visitPredicateOperatorWithExprArgs((PredicateOperatorWithExprArgsNode) predicateNode, null);
-            } else if(predicateNode instanceof PredicateOperatorNode) {
-                return (PredicateNode) visitPredicateOperatorNode((PredicateOperatorNode) predicateNode, null);
-            }
+            return optimizePredicateNode(predicateNode);
         }
         return predicateNode;
     }
@@ -129,6 +136,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     public PredicateNode handlePredicateForEnumeration(PredicateNode predicateNode, List<DeclarationNode> declarations, Set<String> declarationsProcessed) {
         if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode predicate = (PredicateOperatorWithExprArgsNode) predicateNode;
+            predicate.setArgumentsList(predicate.getExpressionNodes().stream()
+                    .map(expr -> (ExprNode) visitExprNode(expr, null))
+                    .collect(Collectors.toList()));
             PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = predicate.getOperator();
             ExprNode lhs = predicate.getExpressionNodes().get(0);
             Set<String> declarationsAsString = declarations.stream()
@@ -160,8 +170,45 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     @Override
     public Node visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
        ExpressionOperatorNode.ExpressionOperator operator = node.getOperator();
+       SourceCodePosition sourceCodePosition = node.getSourceCodePosition();
+
        switch (operator) {
-           case POW:
+           case CLOSURE: {
+               if(node.getType() instanceof SetType) {
+                   ExprNode subNode = node.getExpressionNodes().get(0);
+                   BType type = ((CoupleType) ((SetType) node.getType()).getSubType()).getLeft();
+                   ExprNode closure1Node = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(subNode), ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
+                   closure1Node.setType(node.getType());
+                   ExprNode typeNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(type.toString())));
+                   typeNode.setType(new SetType(type));
+                   ExprNode identityNode = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(typeNode), ExpressionOperatorNode.ExpressionOperator.ID);
+                   identityNode.setType(node.getType());
+                   ExprNode resultNode = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(closure1Node, identityNode), ExpressionOperatorNode.ExpressionOperator.UNION);
+                   resultNode.setType(node.getType());
+                   return resultNode;
+               }
+           }
+           case ITERATE: {
+               if(node.getType() instanceof SetType) {
+
+                   BType type = ((CoupleType) ((SetType) node.getType()).getSubType()).getLeft();
+                   ExprNode typeNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(type.toString())));
+                   typeNode.setType(new SetType(type));
+                   ExprNode identityNode = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(typeNode), ExpressionOperatorNode.ExpressionOperator.ID);
+                   identityNode.setType(node.getType());
+                   ExprNode compositionNode = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(identityNode, node), ExpressionOperatorNode.ExpressionOperator.COMPOSITION);
+                   compositionNode.setType(node.getType());
+
+                   ExprNode numberNode = node.getExpressionNodes().get(1);
+                   NumberNode zeroNode = new NumberNode(sourceCodePosition, new BigInteger("0"));
+                   PredicateNode condition = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(numberNode, zeroNode));
+
+                   ExprNode resultNode = new IfExpressionNode(sourceCodePosition, condition, identityNode, compositionNode);
+                   resultNode.setType(node.getType());
+                   return resultNode;
+               }
+           }
+           /*case POW:
            case FIN:
            case SEQ:
            case SEQ1:
@@ -170,13 +217,16 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
            case PERM:
                ExpressionOperatorNode expressionNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.emptyList(), ExpressionOperatorNode.ExpressionOperator.EMPTY_SET);
                typeChecker.checkExprNode(expressionNode);
-               return expressionNode;
+               return expressionNode;*/
            default:
                break;
        }
-       return new ExpressionOperatorNode(node.getSourceCodePosition(), node.getExpressionNodes().stream()
+       ExprNode exprNode = new ExpressionOperatorNode(node.getSourceCodePosition(), node.getExpressionNodes().stream()
                 .map(expr -> (ExprNode) visitExprNode(expr, null))
-                .collect(Collectors.toList()), node.getOperator());
+                .collect(Collectors.toList()),
+                node.getOperator());
+       exprNode.setType(node.getType());
+       return exprNode;
     }
 
     @Override
@@ -288,15 +338,18 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         } else if(operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NON_INCLUSION) {
             return optimizeNotSubsetOf(node);
         }
-        return node;
+        return new PredicateOperatorWithExprArgsNode(node.getSourceCodePosition(), operator,
+                node.getExpressionNodes().stream()
+                        .map(expr -> (ExprNode) visitExprNode(expr, null))
+                        .collect(Collectors.toList()));
     }
 
     private PredicateNode optimizeElementOf(PredicateOperatorWithExprArgsNode node) {
         SourceCodePosition sourceCodePosition = node.getSourceCodePosition();
         ExprNode lhs = node.getExpressionNodes().get(0);
-        ExprNode rhs = node.getExpressionNodes().get(1);
+        ExprNode rhs = (ExprNode) visitExprNode(node.getExpressionNodes().get(1), null);
 
-        ExprNode newRhs = rhs;
+        ExprNode newRhs;
         if(rhs instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode rhsAsExpression = ((ExpressionOperatorNode) rhs);
             ExpressionOperatorNode.ExpressionOperator rhsOperator = rhsAsExpression.getOperator();
@@ -424,7 +477,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     BType leftType = ((CoupleType) lhs.getType()).getLeft();
                     BType rightType = ((CoupleType) lhs.getType()).getRight();
-                    
 
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
@@ -852,6 +904,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION);
+        result = (QuantifiedPredicateNode) visitPredicateNode(result);
         result.setType(new UntypedType());
         typeChecker.checkPredicateNode(result);
         return result;
@@ -899,6 +952,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         innerPredicate = optimizeNotElementOf((PredicateOperatorWithExprArgsNode) innerPredicate);
         PredicateNode predicateNode = new PredicateOperatorNode(sourceCodePosition, PredicateOperatorNode.PredicateOperator.AND, Arrays.asList(firstPredicate, innerPredicate));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(sourceCodePosition, Collections.singletonList(declarationNode), predicateNode, QuantifiedPredicateNode.QuantifiedPredicateOperator.EXISTENTIAL_QUANTIFICATION);
+        result = (QuantifiedPredicateNode) visitPredicateNode(result);
         result.setType(new UntypedType());
         typeChecker.checkPredicateNode(result);
         return result;
@@ -1407,6 +1461,15 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
+        if(node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION) {
+            PredicateOperatorNode subpredicate = (PredicateOperatorNode) node.getPredicateNode();
+            if(subpredicate.getOperator() == PredicateOperatorNode.PredicateOperator.IMPLIES) {
+                PredicateNode lhs = subpredicate.getPredicateArguments().get(0);
+                PredicateNode rhs = subpredicate.getPredicateArguments().get(1);
+                subpredicate = new PredicateOperatorNode(subpredicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(lhs, optimizePredicateNode(rhs)));
+                return new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), subpredicate, node.getOperator());
+            }
+        }
         return node;
     }
 

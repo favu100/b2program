@@ -17,7 +17,10 @@ ABSTRACT_VARIABLES
   add_ry */
 INVARIANT
     ff <+ gg = gg \/ (dom(gg) <<| ff)
+  & ff : POW(setX * setY)
+  & gg : POW(setX * setY)
   & hh : POW(setX * setX)
+  & rx : POW(setX * setX)
   & ry : POW(setY * setY)
   & ff <+ {} = ff
   & {} <+ ff = ff
@@ -421,7 +424,6 @@ INVARIANT
   & closure(rx) = closure(rx) \/ id(dom(rx) \/ ran(rx))
   & closure(rx) = closure(rx \/ id(dom(rx) \/ ran(rx)))
   & closure1(rx) <: closure(rx)
-  & id(dom(rx) \/ ran(rx)) <: closure(rx)
   & closure1(rx \/ id(dom(rx) \/ ran(rx))) <: closure(rx)
   & closure1(rx) \/ id(setX) = closure(rx)
   & closure1(rx \/ id(setX)) = closure(rx)

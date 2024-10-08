@@ -24,7 +24,7 @@ hh: BOOL <-> BOOL &
 &
 ( (ff+>gg) = (gg<+ff) )
 &*/
-(ff~ = {yy,xx|xx:dom(ff)&yy:ran(ff)&({xx|->yy}<:ff)})
+(ff~ = {yy,xx|yy:ran(ff) & xx:dom(ff) & ({xx|->yy}<:ff)})
 &
 (id(ff) = {xx,yy|xx:ff&yy:ff&xx=yy})
 &
@@ -286,5 +286,6 @@ rx := rx \/ {xx |-> yy}
 END;
 add_ry(xx,yy) = PRE xx:setY & yy:setY & xx |-> yy /: ry THEN
 ry := ry \/ {xx |-> yy}
-END
+END;
+continue = BEGIN skip END
 END

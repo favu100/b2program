@@ -252,7 +252,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
-        return node;
+        QuantifiedExpressionNode exprNode = new QuantifiedExpressionNode(node.getSourceCodePosition(), node.getOperator(), node.getDeclarationList(),
+                node.getPredicateNode(), (ExprNode) visitExprNode(node.getExpressionNode(), null));
+        exprNode.setType(node.getType());
+        return exprNode;
     }
 
     @Override

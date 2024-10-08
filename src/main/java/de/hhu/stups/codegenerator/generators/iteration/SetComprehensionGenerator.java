@@ -14,6 +14,7 @@ import de.prob.parser.ast.nodes.predicate.PredicateNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
@@ -75,8 +76,18 @@ public class SetComprehensionGenerator {
 
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String identifier = "_ic_set_" + iterationConstructCounter;
-        boolean isRelation = node.getDeclarationList().size() > 1 ||
-                (node.getDeclarationList().size() == 1 && node.getDeclarationList().get(0).getType() instanceof CoupleType);
+        /*boolean isRelation = node.getDeclarationList().size() > 1 ||
+                (node.getDeclarationList().size() == 1 && node.getDeclarationList().get(0).getType() instanceof CoupleType);*/
+
+        boolean isRelation = false;
+
+        if(node.getType() instanceof SetType) {
+            BType subType = ((SetType) node.getType()).getSubType();
+            if(subType instanceof CoupleType) {
+                isRelation = true;
+            }
+        }
+
         generateBody(template, enumerationTemplates, otherConstructs, identifier, isRelation, conditionalPredicate, predicate, declarations, type);
 
         String result = template.render();
@@ -104,8 +115,17 @@ public class SetComprehensionGenerator {
         String identifier = "_cs_set_" + iterationConstructCounter;
         String problemIdentifier = "_cs_problem_" + iterationConstructCounter;
 
-        boolean isRelation = node.getDeclarationList().size() > 1 ||
-                (node.getDeclarationList().size() == 1 && node.getDeclarationList().get(0).getType() instanceof CoupleType);
+        /*boolean isRelation = node.getDeclarationList().size() > 1 ||
+                (node.getDeclarationList().size() == 1 && node.getDeclarationList().get(0).getType() instanceof CoupleType);*/
+
+        boolean isRelation = false;
+
+        if(node.getType() instanceof SetType) {
+            BType subType = ((SetType) node.getType()).getSubType();
+            if(subType instanceof CoupleType) {
+                isRelation = true;
+            }
+        }
 
         template.add("identifier", identifier);
         template.add("isRelation", isRelation);
@@ -276,35 +296,35 @@ public class SetComprehensionGenerator {
         } else {
             String result = "";
 
-            BType type = extractTypeFromDeclarations(declarations);
-            List<CoupleType> types = new ArrayList<>();
-
-            while(type instanceof CoupleType) {
-                types.add(0, (CoupleType) type);
-                type = ((CoupleType) type).getLeft();
-            }
+            CoupleType type = extractTypeFromDeclarations(declarations);
 
 
+            List<ST> templates = new ArrayList<>();
 
-            for(int i = 0; i < types.size(); i++) {
+
+            for(int i = declarations.size() - 1; i >= 1; i--) {
                 ST tuple = group.getInstanceOf("tuple_create");
-                BType leftType = types.get(i).getLeft();
-                BType rightType = types.get(i).getRight();
+                BType leftType = type.getLeft();
+                BType rightType = type.getRight();
                 TemplateHandler.add(tuple, "leftType", typeGenerator.generate(leftType));
                 TemplateHandler.add(tuple, "rightType", typeGenerator.generate(rightType));
-                if(i == 0) {
-                    String name = declarations.get(i).getName();
+                String name = declarations.get(i).getName();
+                TemplateHandler.add(tuple, "arg2", "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
+                if(i == 1) {
+                    name = declarations.get(0).getName();
                     TemplateHandler.add(tuple, "arg1", "_ic_" + name + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
                 } else {
-                    TemplateHandler.add(tuple, "arg1", result);
+                    type = (CoupleType) leftType;
                 }
-                if(i+1 >= declarations.size()) {
-                    continue;
-                }
-                String name = declarations.get(i+1).getName();
-                TemplateHandler.add(tuple, "arg2", "_ic_" + name  + "_" + machineGenerator.getBoundedVariablesDepth().get(name));
-                result = tuple.render();
+                templates.add(0, tuple);
             }
+
+            for(int i = 1; i < templates.size(); i++) {
+                TemplateHandler.add(templates.get(i), "arg1", templates.get(i-1).render());
+            }
+
+            result = templates.get(templates.size()-1).render();
+
             return result;
         }
     }

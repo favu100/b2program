@@ -2,7 +2,7 @@ MACHINE Iterate
 
 VARIABLES  f, s
 
-INVARIANT  f : BOOL --> BOOL & s : BOOL --> BOOL
+INVARIANT  f : BOOL <-> BOOL & s : BOOL <-> BOOL
 
 INITIALISATION f := {TRUE |-> FALSE}; s := {}
 

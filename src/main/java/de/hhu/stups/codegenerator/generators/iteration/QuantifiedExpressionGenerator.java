@@ -79,15 +79,14 @@ public class QuantifiedExpressionGenerator {
         int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
         String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "" : "_";
         String identifier = isInteger ? prefix + "ic_integer_" + iterationConstructCounter : prefix + "ic_set_"+ iterationConstructCounter;
+
         boolean isRelation = false;
-        if(node.getDeclarationList().get(0).getType() instanceof SetType) {
-            SetType setType = (SetType) node.getDeclarationList().get(0).getType();
-            BType subType = setType.getSubType();
+
+        if(node.getType() instanceof SetType) {
+            BType subType = ((SetType) node.getType()).getSubType();
             if(subType instanceof CoupleType) {
                 isRelation = true;
             }
-        } else {
-            isRelation = false;
         }
 
         if(isRelation) {
@@ -170,7 +169,7 @@ public class QuantifiedExpressionGenerator {
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "identity", getIdentity(operator));
         TemplateHandler.add(template, "useBigInteger", machineGenerator.isUseBigInteger());
-        generateSubType(template, declarations);
+        generateSubType(template, node);
         TemplateHandler.add(template, "isInteger", isInteger);
         TemplateHandler.add(template, "isRelation", isRelation);
         TemplateHandler.add(template, "evaluation", evaluation);
@@ -200,9 +199,9 @@ public class QuantifiedExpressionGenerator {
     /*
      * This function generates code for the type of the set comprehension from the given semantic information
      */
-    private void generateSubType(ST template, List<DeclarationNode> declarations) {
-        if(declarations.get(0).getType() instanceof SetType) {
-            SetType setType = (SetType) declarations.get(0).getType();
+    private void generateSubType(ST template, QuantifiedExpressionNode node) {
+        if(node.getType() instanceof SetType) {
+            SetType setType = (SetType) node.getType();
             BType subType = setType.getSubType();
             if (subType instanceof CoupleType) {
                 BType leftType = ((CoupleType) subType).getLeft();
@@ -212,8 +211,6 @@ public class QuantifiedExpressionGenerator {
             } else {
                 TemplateHandler.add(template, "subType", typeGenerator.generate(subType));
             }
-        } else {
-            TemplateHandler.add(template, "subType", typeGenerator.generate(declarations.get(0).getType()));
         }
     }
 

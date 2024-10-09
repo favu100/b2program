@@ -412,7 +412,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testArithmeticExpLaws_With_Execute() throws Exception {
-        testJavaMC("ArithmeticExpLaws", "ArithmeticExpLaws", true, 1, false);
+        testJavaMC("ArithmeticExpLaws", "ArithmeticExpLaws", false, 1, false);
     }
 
     @Test
@@ -572,7 +572,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testRelLaws_BOOL1() throws Exception {
-        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", false, 1, false);
+        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", true, 1, false);
     }
 
     @Test

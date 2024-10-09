@@ -135,7 +135,8 @@ public class IterationPredicateGenerator {
                     if(j < ((PredicateOperatorNode) predicate).getPredicateArguments().size()) {
                         innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
                     } else {
-                        continue;
+                        subpredicateIndex = Math.max(j-1, subpredicateIndex);
+                        break;
                     }
                 }
             }

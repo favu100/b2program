@@ -572,7 +572,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testRelLaws_BOOL1() throws Exception {
-        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", true, 1, false);
+        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", false, 1, false);
     }
 
     @Test

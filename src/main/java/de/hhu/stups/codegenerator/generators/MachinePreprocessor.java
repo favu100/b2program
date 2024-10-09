@@ -897,10 +897,11 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
-        typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
         IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, false);
         newIdentifierNode.setType(((SetType) lhs.getType()).getSubType());
+        newIdentifierNode.setDeclarationNode(declarationNode);
+        typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());
@@ -946,10 +947,11 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
         optimizationVariableCounter++;
         DeclarationNode declarationNode = new DeclarationNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, DeclarationNode.Kind.VARIABLE, machineNode);
-        typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
         declarationNode.setType(((SetType) lhs.getType()).getSubType());
         IdentifierExprNode newIdentifierNode = new IdentifierExprNode(sourceCodePosition, "_opt_" + optimizationVariableCounter, false);
+        newIdentifierNode.setDeclarationNode(declarationNode);
         newIdentifierNode.setType(((SetType) lhs.getType()).getSubType());
+        typeChecker.setDeclarationTypes(Collections.singletonList(declarationNode));
         PredicateOperatorWithExprArgsNode firstPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF, Arrays.asList(newIdentifierNode, lhs));
         PredicateNode innerPredicate = new PredicateOperatorWithExprArgsNode(sourceCodePosition, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING, Arrays.asList(newIdentifierNode, rhs));
         innerPredicate.setType(new UntypedType());

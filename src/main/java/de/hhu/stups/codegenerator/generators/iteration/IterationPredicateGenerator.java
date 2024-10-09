@@ -114,6 +114,7 @@ public class IterationPredicateGenerator {
         List<PredicateNode> subpredicates = new ArrayList<>();
         Set<String> declarationProcessed = new HashSet<>();
         int j = 0;
+        int subpredicateIndex = 0;
         for(int i = 0; i < declarations.size(); i++, j++) {
             DeclarationNode declarationNode = declarations.get(i);
             PredicateOperatorWithExprArgsNode innerPredicate = null;
@@ -134,32 +135,34 @@ public class IterationPredicateGenerator {
                     if(j < ((PredicateOperatorNode) predicate).getPredicateArguments().size()) {
                         innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
                     } else {
-                        return null;
+                        continue;
                     }
                 }
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
                 i = i - 1;
+                subpredicateIndex = Math.max(j-1, subpredicateIndex);
                 continue;
             }
             declarationProcessed.add(declarationNode.getName());
+
         }
-        PredicateNode subpredicate = subpredicate(predicate, j, universalQuantification);
+        PredicateNode subpredicate = subpredicate(predicate, subpredicateIndex, universalQuantification);
         if(subpredicate == null) {
             return null;
         }
         subpredicates.add(subpredicate);
-        if(universalQuantification) {
+        /*if(universalQuantification) {
             return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, subpredicates);
-        }
+        }*/
         return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, subpredicates);
     }
 
     /*
     * This function returns the subpredicate of the last n conjuncts of the given predicate
     */
-    public PredicateNode subpredicate(PredicateNode predicate, int n, boolean universalQuantification) {
+    private PredicateNode subpredicate(PredicateNode predicate, int n, boolean universalQuantification) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             return null;
         } else if(predicate instanceof PredicateOperatorNode) {
@@ -193,6 +196,9 @@ public class IterationPredicateGenerator {
     private PredicateNode subpredicate(PredicateOperatorNode predicate, int n) {
         PredicateOperatorNode.PredicateOperator operator = predicate.getOperator();
         int size = predicate.getPredicateArguments().size();
+        if(n > predicate.getPredicateArguments().size()) {
+            return null;
+        }
         List<PredicateNode> predicates = predicate.getPredicateArguments().subList(n, size);
         if(predicates.isEmpty()) {
             return null;

@@ -1,6 +1,7 @@
 package de.hhu.stups.codegenerator.generators.iteration;
 
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.analyzers.IdentifierAnalyzer;
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
 import de.hhu.stups.codegenerator.generators.MachineGenerator;
 import de.hhu.stups.codegenerator.generators.TypeGenerator;
@@ -340,21 +341,21 @@ public class IterationPredicateGenerator {
         for(int i = 0; i < numberConjuncts; i++) {
             if(universalQuantification) {
                 if(predicate instanceof PredicateOperatorWithExprArgsNode) {
-                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                    innerPredicate = predicate;
                 } else {
                     if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                        innerPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
                     } else {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(i);
+                        innerPredicate = ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(i);
                     }
                 }
             } else {
                 if(predicate instanceof PredicateOperatorWithExprArgsNode) {
-                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                    innerPredicate = predicate;
                 } else if(predicate instanceof QuantifiedPredicateNode) {
-                    innerPredicate = (QuantifiedPredicateNode) predicate;
+                    innerPredicate = predicate;
                 } else {
-                    innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
+                    innerPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(i);
                 }
             }
             for(DeclarationNode declaration : declarations) {

@@ -154,9 +154,6 @@ public class IterationPredicateGenerator {
             return null;
         }
         subpredicates.add(subpredicate);
-        /*if(universalQuantification) {
-            return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, subpredicates);
-        }*/
         return new PredicateOperatorNode(predicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, subpredicates);
     }
 

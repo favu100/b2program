@@ -115,6 +115,7 @@ public class IterationPredicateGenerator {
         List<PredicateNode> subpredicates = new ArrayList<>();
         Set<String> declarationProcessed = new HashSet<>();
         int j = 0;
+        int subpredicateIndex = 0;
         for(int i = 0; i < declarations.size(); i++, j++) {
             DeclarationNode declarationNode = declarations.get(i);
             PredicateNode innerPredicate = null;
@@ -126,7 +127,8 @@ public class IterationPredicateGenerator {
                     if(j < ((PredicateOperatorNode) lhsPredicate).getPredicateArguments().size()) {
                         innerPredicate = (((PredicateOperatorNode) lhsPredicate).getPredicateArguments().get(j));
                     } else {
-                        continue;
+                        subpredicateIndex = j-1;
+                        break;
                     }
                 }
             } else {
@@ -136,18 +138,24 @@ public class IterationPredicateGenerator {
                     if(j < ((PredicateOperatorNode) predicate).getPredicateArguments().size()) {
                         innerPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
                     } else {
-                        continue;
+                        subpredicateIndex = j-1;
+                        break;
                     }
                 }
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
                 i = i - 1;
+                if(declarations.size() != declarationProcessed.size()) {
+                    subpredicateIndex = j+1;
+                }
                 continue;
             }
+            subpredicateIndex = j+1;
             declarationProcessed.add(declarationNode.getName());
         }
-        PredicateNode subpredicate = subpredicate(predicate, j, universalQuantification);
+
+        PredicateNode subpredicate = subpredicate(predicate, subpredicateIndex, universalQuantification);
         if(subpredicate == null) {
             return null;
         }

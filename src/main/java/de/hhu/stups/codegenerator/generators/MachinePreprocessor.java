@@ -333,8 +333,11 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             predicateProcessedLater = processPredicateLater(allDeclarations, declarationsProcessed, firstPredicate);
         }
         if(predicateProcessedLater) {
-            List<PredicateNode> newPredicates = new ArrayList<>(predicates.subList(1, predicates.size()));
-            newPredicates.add(firstPredicate);
+            List<PredicateNode> newPredicates = new ArrayList<>(predicates.subList(2, predicates.size()));
+            newPredicates.add(0, firstPredicate);
+            if(predicates.size() > 1) {
+                newPredicates.add(0, predicates.get(1));
+            }
             return reorderConjuncts(n+1, declarations, declarationsProcessed, newPredicates, resultPredicates);
         }
         resultPredicates.add(firstPredicate);

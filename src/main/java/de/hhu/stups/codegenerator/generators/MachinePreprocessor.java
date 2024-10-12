@@ -1,5 +1,6 @@
 package de.hhu.stups.codegenerator.generators;
 
+import de.hhu.stups.codegenerator.analyzers.IdentifierAnalyzer;
 import de.prob.parser.antlr.MachineASTCreator;
 import de.prob.parser.ast.SourceCodePosition;
 import de.prob.parser.ast.nodes.DeclarationNode;
@@ -62,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -250,28 +252,114 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         return node;
     }
 
-    public PredicateNode rewriteQuantifiedPredicate(PredicateNode predicateNode) {
+    public PredicateNode rewriteQuantifiedPredicate(List<DeclarationNode> declarations, PredicateNode predicateNode) {
+        if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
+            PredicateOperatorWithExprArgsNode result = new PredicateOperatorWithExprArgsNode(predicateNode.getSourceCodePosition(), ((PredicateOperatorWithExprArgsNode) predicateNode).getOperator(), ((PredicateOperatorWithExprArgsNode) predicateNode).getExpressionNodes()
+                    .stream()
+                    .map(expr -> (ExprNode) visitExprNode(expr, null))
+                    .collect(Collectors.toList()));
+            result.setType(predicateNode.getType());
+            return result;
+        } else if(predicateNode instanceof PredicateOperatorNode) {
+            PredicateOperatorNode.PredicateOperator operator = ((PredicateOperatorNode) predicateNode).getOperator();
+            if(operator == PredicateOperatorNode.PredicateOperator.AND) {
+                List<PredicateNode> predicates = ((PredicateOperatorNode) predicateNode).getPredicateArguments();
+                List<PredicateNode> reorderedConjuncts = reorderConjuncts(0, declarations, new HashSet<>(), predicates, new LinkedList<>());
+                PredicateNode result = new PredicateOperatorNode(machineNode.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, reorderedConjuncts);
+                result.setType(predicateNode.getType());
+                return result;
+            }
+            return predicateNode;
+        } else if(predicateNode instanceof QuantifiedPredicateNode) {
+            return (QuantifiedPredicateNode) visitQuantifiedPredicateNode((QuantifiedPredicateNode) predicateNode, null);
+        }
         return predicateNode;
+    }
+
+    public boolean processPredicateLater(Set<String> allDeclarations, Set<String> declarationsProcessed, Node node) {
+        IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ_OUTER_SCOPE);
+        identifierAnalyzer.visitNode(node, null);
+        boolean predicateProcessedLater = false;
+        for(String identifier : identifierAnalyzer.getIdentifiers()) {
+            if(allDeclarations.contains(identifier) && !declarationsProcessed.contains(identifier)) {
+                predicateProcessedLater = true;
+                break;
+            }
+        }
+        return predicateProcessedLater;
+    }
+
+    public List<PredicateNode> reorderConjuncts(int n, List<DeclarationNode> declarations, Set<String> declarationsProcessed,
+                                                List<PredicateNode> predicates, List<PredicateNode> resultPredicates) {
+        if(n > predicates.size()) {
+            throw new CodeGenerationException("Cyclic dependency between predicate to constraint multiple bounded variables detected at: " + declarations.get(0).getSourceCodePosition().getStartLine());
+        }
+        if(predicates.isEmpty()) {
+            return resultPredicates;
+        }
+        PredicateNode firstPredicate = predicates.get(0);
+        Set<String> allDeclarations = declarations.stream()
+                .map(DeclarationNode::getName)
+                .collect(Collectors.toSet());
+        boolean predicateProcessedLater = false;
+        if(firstPredicate instanceof PredicateOperatorWithExprArgsNode) {
+            PredicateOperatorWithExprArgsNode.PredOperatorExprArgs innerOperator = ((PredicateOperatorWithExprArgsNode) firstPredicate).getOperator();
+            Set<PredicateOperatorWithExprArgsNode.PredOperatorExprArgs> iterationOperators = new HashSet<>(Arrays.asList(PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF,
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION,
+                    PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION));
+            if(iterationOperators.contains(innerOperator)) {
+                ExprNode lhs = ((PredicateOperatorWithExprArgsNode) firstPredicate).getExpressionNodes().get(0);
+                ExprNode rhs = ((PredicateOperatorWithExprArgsNode) firstPredicate).getExpressionNodes().get(1);
+                IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ_OUTER_SCOPE);
+                identifierAnalyzer.visitExprNode(rhs, null);
+                if(lhs instanceof IdentifierExprNode) {
+                    String name = ((IdentifierExprNode) lhs).getName();
+                    if(allDeclarations.contains(name) && !declarationsProcessed.contains(name))  {
+                        predicateProcessedLater = processPredicateLater(allDeclarations, declarationsProcessed, rhs);
+                        if(!predicateProcessedLater) {
+                            declarationsProcessed.add(name);
+                        }
+                    } else {
+                        predicateProcessedLater = processPredicateLater(allDeclarations, declarationsProcessed, lhs) & processPredicateLater(allDeclarations, declarationsProcessed, rhs);
+                    }
+
+                } else {
+                    predicateProcessedLater = processPredicateLater(allDeclarations, declarationsProcessed, firstPredicate);
+                }
+            } else {
+                predicateProcessedLater = processPredicateLater(allDeclarations, declarationsProcessed, firstPredicate);
+            }
+        } else {
+            predicateProcessedLater = processPredicateLater(allDeclarations, declarationsProcessed, firstPredicate);
+        }
+        if(predicateProcessedLater) {
+            List<PredicateNode> newPredicates = new ArrayList<>(predicates.subList(1, predicates.size()));
+            newPredicates.add(firstPredicate);
+            return reorderConjuncts(n+1, declarations, declarationsProcessed, newPredicates, resultPredicates);
+        }
+        resultPredicates.add(firstPredicate);
+        predicates = predicates.subList(1, predicates.size());
+        return reorderConjuncts(0, declarations, declarationsProcessed, predicates, resultPredicates);
     }
 
     @Override
     public Node visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
         QuantifiedExpressionNode exprNode = new QuantifiedExpressionNode(node.getSourceCodePosition(), node.getOperator(), node.getDeclarationList(),
-                rewriteQuantifiedPredicate(node.getPredicateNode()), (ExprNode) visitExprNode(node.getExpressionNode(), null));
+                rewriteQuantifiedPredicate(node.getDeclarationList(), node.getPredicateNode()), (ExprNode) visitExprNode(node.getExpressionNode(), null));
         exprNode.setType(node.getType());
         return exprNode;
     }
 
     @Override
     public Node visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
-        SetComprehensionNode result = new SetComprehensionNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getPredicateNode()));
+        SetComprehensionNode result = new SetComprehensionNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getDeclarationList(), node.getPredicateNode()));
         result.setType(node.getType());
         return result;
     }
 
     @Override
     public Node visitLambdaNode(LambdaNode node, Void expected) {
-        LambdaNode result = new LambdaNode(node.getSourceCodePosition(), node.getDeclarations(), rewriteQuantifiedPredicate(node.getPredicate()), (ExprNode) visitExprNode(node.getExpression(), null));
+        LambdaNode result = new LambdaNode(node.getSourceCodePosition(), node.getDeclarations(), rewriteQuantifiedPredicate(node.getDeclarations(), node.getPredicate()), (ExprNode) visitExprNode(node.getExpression(), null));
         result.setType(node.getType());
         return result;
     }
@@ -1481,7 +1569,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
-        QuantifiedPredicateNode newNode = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getPredicateNode()), node.getOperator());
+        QuantifiedPredicateNode newNode = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getDeclarationList(), node.getPredicateNode()), node.getOperator());
         if(newNode.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION) {
             PredicateOperatorNode subpredicate = (PredicateOperatorNode) newNode.getPredicateNode();
             if(subpredicate.getOperator() == PredicateOperatorNode.PredicateOperator.IMPLIES) {

@@ -447,7 +447,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testExplicitComputations() throws Exception {
-        testJavaMC("ExplicitComputations", "ExplicitComputations", true, 1, false);
+        testJavaMC("ExplicitComputations", "ExplicitComputations", false, 1, false);
     }
 
     @Test

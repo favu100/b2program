@@ -50,8 +50,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function replaces the placeholders for a bounded variable given by a DeclarationNode for the enumeration template of an iteration construct
-    */
+     * This function replaces the placeholders for a bounded variable given by a DeclarationNode for the enumeration template of an iteration construct
+     */
     public ST generateEnumeration(ST template, DeclarationNode declarationNode) {
         TemplateHandler.add(template, "type", typeGenerator.generate(declarationNode.getType()));
         String prefix = machineGenerator.getMode().equals(GeneratorMode.PL) ? "PL" : "";
@@ -60,8 +60,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function checks whether the predicate is a conjunction and whether first predicate declares a set to iterate over for a bounded variable
-    */
+     * This function checks whether the predicate is a conjunction and whether first predicate declares a set to iterate over for a bounded variable
+     */
     public void checkPredicate(PredicateNode predicate, List<DeclarationNode> declarations, boolean universalQuantification) {
         if(!(predicate instanceof PredicateOperatorNode)) {
             if(universalQuantification) {
@@ -87,8 +87,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function checks whether first predicate declares a set to iterate over for a bounded variable
-    */
+     * This function checks whether first predicate declares a set to iterate over for a bounded variable
+     */
     private void checkPredicateIteration(List<DeclarationNode> declarations, PredicateOperatorNode predicate) {
         if(predicate.getPredicateArguments().size() < declarations.size()) {
             throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n.\nThe failed predicate is " +  GetNodeLocationAndText(predicate));
@@ -159,8 +159,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function returns the subpredicate of the last n conjuncts of the given predicate
-    */
+     * This function returns the subpredicate of the last n conjuncts of the given predicate
+     */
     private PredicateNode subpredicate(PredicateNode predicate, int n, boolean universalQuantification) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             return null;
@@ -180,18 +180,18 @@ public class IterationPredicateGenerator {
         }
         throw new RuntimeException("Given predicate is not supported" + GetNodeLocationAndText(predicate));
     }
-   
+
     // todo: probably move this somewhere else so that we can use it for other error messages
     public static String GetNodeLocationAndText (Node node) {
-      return 
-            "at line " + node.getSourceCodePosition().getStartLine() + 
-            " and column " + node.getSourceCodePosition().getStartColumn() + 
-            ": " + node.getSourceCodePosition().getText();
+        return
+                "at line " + node.getSourceCodePosition().getStartLine() +
+                        " and column " + node.getSourceCodePosition().getStartColumn() +
+                        ": " + node.getSourceCodePosition().getText();
     }
 
     /*
-    * This function returns the subpredicate of the last n conjuncts of the given predicate represented by a PredicateOperatorNode.
-    */
+     * This function returns the subpredicate of the last n conjuncts of the given predicate represented by a PredicateOperatorNode.
+     */
     private PredicateNode subpredicate(PredicateOperatorNode predicate, int n) {
         PredicateOperatorNode.PredicateOperator operator = predicate.getOperator();
         int size = predicate.getPredicateArguments().size();
@@ -209,9 +209,9 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with element of as predicate.
-    * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
-    */
+     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with element of as predicate.
+     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
+     */
     private ST getElementOfTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
@@ -221,9 +221,9 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with equal as predicate.
-    * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
-    */
+     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with equal as predicate.
+     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
+     */
     private ST getEqualTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
@@ -233,9 +233,9 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with subset as predicate.
-    * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
-    */
+     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with subset as predicate.
+     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
+     */
     private ST getSubsetTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
@@ -245,9 +245,9 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with strict subset as predicate.
-    * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
-    */
+     * This function checks an enumeration with the given DeclarationNode and left-hand side of a predicate and then returns a template for an enumeration with strict subset as predicate.
+     * The placeholders for the enumeration are already replaced but a template is returned because it must be evaluated later.
+     */
     private ST getSubsetNeqTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
@@ -257,13 +257,13 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * 1. Implement functions to check whether this is a predicate which assigns a declaration node
-    * 2. Sort declaration nodes
-    * 3. Use sorted declaration nodes instead
-    */
+     * 1. Implement functions to check whether this is a predicate which assigns a declaration node
+     * 2. Sort declaration nodes
+     * 3. Use sorted declaration nodes instead
+     */
     /*
-    * This function returns all templates for enumeration in the whole iteration construct from the given list of declarations representing bounded variables and the given predicate
-    */
+     * This function returns all templates for enumeration in the whole iteration construct from the given list of declarations representing bounded variables and the given predicate
+     */
     public List<ST> getEnumerationTemplates(IterationConstructGenerator iterationConstructGenerator, List<DeclarationNode> declarations, PredicateNode predicate, boolean universalQuantification) {
         ST enumerationTemplate = null;
         List<ST> enumerationTemplates = new ArrayList<>();
@@ -278,7 +278,7 @@ public class IterationPredicateGenerator {
                     innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
                 } else if(predicate instanceof PredicateOperatorNode) {
                     if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
-                       innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
                     } else {
                         innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(j);
                     }
@@ -380,8 +380,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function returns an enumeration template for a declaration representing a bounded variable and the given predicate declaring an enumeration
-    */
+     * This function returns an enumeration template for a declaration representing a bounded variable and the given predicate declaring an enumeration
+     */
     private ST getEnumerationTemplate(DeclarationNode declaration, Set<String> declarationProcessed, PredicateOperatorWithExprArgsNode innerPredicate) {
         ST enumerationTemplate = null;
         if(innerPredicate == null) {
@@ -408,8 +408,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function gets a list of partly analyzed enumeration templates and a string for the inner part of the body for code generation. It then evaluates the given templates and reduced it to one template with replaced placeholders
-    */
+     * This function gets a list of partly analyzed enumeration templates and a string for the inner part of the body for code generation. It then evaluates the given templates and reduced it to one template with replaced placeholders
+     */
     public ST evaluateEnumerationTemplates(List<ST> enumerationTemplates, String innerBody, PredicateNode conditionalPredicate) {
         int enumerationSize = enumerationTemplates.size();
         ST lastEnumeration = enumerationTemplates.get(enumerationSize - 1);
@@ -432,8 +432,8 @@ public class IterationPredicateGenerator {
     }
 
     /*
-    * This function generates code for other iteration constructs in the predicate using for an iteration construct
-    */
+     * This function generates code for other iteration constructs in the predicate using for an iteration construct
+     */
     private void generateOtherIterationConstructs(IterationConstructGenerator iterationConstructGenerator, ST template, PredicateNode predicate) {
         IterationConstructGenerator otherConstructsGenerator = iterationConstructHandler.inspectPredicate(predicate);
         for (String key : otherConstructsGenerator.getIterationsMapIdentifier().keySet()) {

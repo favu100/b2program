@@ -451,6 +451,16 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testExplicitComputations_Small() throws Exception {
+        testJavaMC("ExplicitComputations_Small", "ExplicitComputations_Small", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitComputations_Small2() throws Exception {
+        testJavaMC("ExplicitComputations_Small2", "ExplicitComputations_Small2", true, 1, false);
+    }
+
+    @Test
     public void testExplicitComputations2() throws Exception {
         testJavaMC("ExplicitComputations2", "ExplicitComputations2", true, 1, false);
     }
@@ -572,7 +582,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testRelLaws_BOOL1() throws Exception {
-        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", false, 1, false);
+        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", true, 1, false);
     }
 
     @Test

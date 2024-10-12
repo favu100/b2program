@@ -115,42 +115,39 @@ public class IterationPredicateGenerator {
         List<PredicateNode> subpredicates = new ArrayList<>();
         Set<String> declarationProcessed = new HashSet<>();
         int j = 0;
-        int subpredicateIndex = 0;
         for(int i = 0; i < declarations.size(); i++, j++) {
             DeclarationNode declarationNode = declarations.get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = null;
+            PredicateNode innerPredicate = null;
             if(universalQuantification) {
-                if(predicate instanceof PredicateOperatorWithExprArgsNode) {
-                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
-                } else if(predicate instanceof PredicateOperatorNode) {
-                    if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                PredicateNode lhsPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                if(lhsPredicate instanceof PredicateOperatorWithExprArgsNode) {
+                    innerPredicate = lhsPredicate;
+                } else {
+                    if(j < ((PredicateOperatorNode) lhsPredicate).getPredicateArguments().size()) {
+                        innerPredicate = (((PredicateOperatorNode) lhsPredicate).getPredicateArguments().get(j));
                     } else {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(j);
+                        continue;
                     }
                 }
             } else {
                 if(predicate instanceof PredicateOperatorWithExprArgsNode) {
-                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                    innerPredicate = predicate;
                 } else {
                     if(j < ((PredicateOperatorNode) predicate).getPredicateArguments().size()) {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
+                        innerPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
                     } else {
-                        subpredicateIndex = Math.max(j-1, subpredicateIndex);
-                        break;
+                        continue;
                     }
                 }
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
                 i = i - 1;
-                subpredicateIndex = Math.max(j-1, subpredicateIndex);
                 continue;
             }
             declarationProcessed.add(declarationNode.getName());
-
         }
-        PredicateNode subpredicate = subpredicate(predicate, subpredicateIndex, universalQuantification);
+        PredicateNode subpredicate = subpredicate(predicate, j, universalQuantification);
         if(subpredicate == null) {
             return null;
         }
@@ -195,7 +192,7 @@ public class IterationPredicateGenerator {
     private PredicateNode subpredicate(PredicateOperatorNode predicate, int n) {
         PredicateOperatorNode.PredicateOperator operator = predicate.getOperator();
         int size = predicate.getPredicateArguments().size();
-        if(n > predicate.getPredicateArguments().size()) {
+        if(n >= predicate.getPredicateArguments().size()) {
             return null;
         }
         List<PredicateNode> predicates = predicate.getPredicateArguments().subList(n, size);
@@ -382,22 +379,26 @@ public class IterationPredicateGenerator {
     /*
      * This function returns an enumeration template for a declaration representing a bounded variable and the given predicate declaring an enumeration
      */
-    private ST getEnumerationTemplate(DeclarationNode declaration, Set<String> declarationProcessed, PredicateOperatorWithExprArgsNode innerPredicate) {
-        ST enumerationTemplate = null;
+    private ST getEnumerationTemplate(DeclarationNode declaration, Set<String> declarationProcessed, PredicateNode innerPredicate) {
         if(innerPredicate == null) {
             return null;
         }
-        if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
-            enumerationTemplate = getElementOfTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
+        if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
+            return null;
+        }
+        ST enumerationTemplate = null;
+        PredicateOperatorWithExprArgsNode innerPredicateCasted = (PredicateOperatorWithExprArgsNode) innerPredicate;
+        if(innerPredicateCasted.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF) {
+            enumerationTemplate = getElementOfTemplate(declaration, declarationProcessed, innerPredicateCasted.getExpressionNodes().get(0));
             inLoop = true;
-        } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
-            enumerationTemplate = getEqualTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
+        } else if(innerPredicateCasted.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {
+            enumerationTemplate = getEqualTemplate(declaration, declarationProcessed, innerPredicateCasted.getExpressionNodes().get(0));
             inLoop = false;
-        } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION) {
-            enumerationTemplate = getSubsetTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
+        } else if(innerPredicateCasted.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.INCLUSION) {
+            enumerationTemplate = getSubsetTemplate(declaration, declarationProcessed, innerPredicateCasted.getExpressionNodes().get(0));
             inLoop = true;
-        } else if(innerPredicate.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
-            enumerationTemplate = getSubsetNeqTemplate(declaration, declarationProcessed, innerPredicate.getExpressionNodes().get(0));
+        } else if(innerPredicateCasted.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.STRICT_INCLUSION) {
+            enumerationTemplate = getSubsetNeqTemplate(declaration, declarationProcessed, innerPredicateCasted.getExpressionNodes().get(0));
             inLoop = true;
         } else {
             return null;

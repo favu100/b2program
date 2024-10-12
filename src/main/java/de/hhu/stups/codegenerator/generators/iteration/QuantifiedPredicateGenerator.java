@@ -102,13 +102,16 @@ public class QuantifiedPredicateGenerator {
     */
     private String generateQuantifiedPredicateEvaluation(Collection<String> otherConstructs, PredicateNode conditionalPredicate, PredicateNode predicateNode, String identifier, boolean forAll, List<DeclarationNode> declarations) {
         ST template = group.getInstanceOf("quantified_predicate_evaluation");
+        PredicateNode subpredicate = iterationPredicateGenerator.subpredicate(predicateNode, declarations, forAll);
         TemplateHandler.add(template, "otherIterationConstructs", otherConstructs);
-        TemplateHandler.add(template, "emptyPredicate", predicateNode instanceof PredicateOperatorNode && ((PredicateOperatorNode) predicateNode).getPredicateArguments().size() == 0);
+        TemplateHandler.add(template, "emptyPredicate", subpredicate == null || subpredicate instanceof PredicateOperatorNode && ((PredicateOperatorNode) subpredicate).getPredicateArguments().size() == 0);
         TemplateHandler.add(template, "hasCondition", conditionalPredicate != null);
         if(conditionalPredicate != null) {
             TemplateHandler.add(template, "conditionalPredicate", machineGenerator.visitPredicateNode(conditionalPredicate, null));
         }
-        TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(predicateNode, null));
+        if(subpredicate != null) {
+            TemplateHandler.add(template, "predicate", machineGenerator.visitPredicateNode(subpredicate, null));
+        }
         TemplateHandler.add(template, "identifier", identifier);
         TemplateHandler.add(template, "forall", forAll);
         return template.render();

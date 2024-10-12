@@ -56,7 +56,8 @@ ran(ff><gg) = {y,z|y:ran((dom(gg))<|(ff)) & z:ran((dom(ff))<|(gg)) &
 
 (!(nn).((nn:0..100 &nn>0) => (iterate(hh,nn)=(iterate(hh,nn-1);hh))))
 &
-
+(#(nn).(nn:0..100 &nn>0 & (iterate(hh,nn)=(iterate(hh,nn-1);hh))))
+&
  ff[dom(rx)] =  ran((id(dom(rx));ff)) &  /* rule f[S] = ran((id(S);f)) */
 
 

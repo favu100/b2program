@@ -237,7 +237,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitCastPredicateExpressionNode(CastPredicateExpressionNode node, Void expected) {
-        return node;
+        return new CastPredicateExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getPredicate(), null));
     }
 
     @Override
@@ -250,32 +250,44 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         return node;
     }
 
+    public PredicateNode rewriteQuantifiedPredicate(PredicateNode predicateNode) {
+        return predicateNode;
+    }
+
     @Override
     public Node visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
         QuantifiedExpressionNode exprNode = new QuantifiedExpressionNode(node.getSourceCodePosition(), node.getOperator(), node.getDeclarationList(),
-                node.getPredicateNode(), (ExprNode) visitExprNode(node.getExpressionNode(), null));
+                rewriteQuantifiedPredicate(node.getPredicateNode()), (ExprNode) visitExprNode(node.getExpressionNode(), null));
         exprNode.setType(node.getType());
         return exprNode;
     }
 
     @Override
     public Node visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
-        return node;
+        SetComprehensionNode result = new SetComprehensionNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getPredicateNode()));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
     public Node visitLambdaNode(LambdaNode node, Void expected) {
-        return node;
+        LambdaNode result = new LambdaNode(node.getSourceCodePosition(), node.getDeclarations(), rewriteQuantifiedPredicate(node.getPredicate()), (ExprNode) visitExprNode(node.getExpression(), null));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
     public Node visitLetExpressionNode(LetExpressionNode node, Void expected) {
-        return node;
+        LetExpressionNode result = new LetExpressionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (ExprNode) visitExprNode(node.getExpression(), null));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
     public Node visitIfExpressionNode(IfExpressionNode node, Void expected) {
-        return node;
+        IfExpressionNode result = new IfExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getCondition(), null), (ExprNode) visitExprNode(node.getThenExpression(), null), (ExprNode) visitExprNode(node.getElseExpression(), null));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
@@ -1469,18 +1481,19 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
-        if(node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION) {
-            PredicateOperatorNode subpredicate = (PredicateOperatorNode) node.getPredicateNode();
+        QuantifiedPredicateNode newNode = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getPredicateNode()), node.getOperator());
+        if(newNode.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION) {
+            PredicateOperatorNode subpredicate = (PredicateOperatorNode) newNode.getPredicateNode();
             if(subpredicate.getOperator() == PredicateOperatorNode.PredicateOperator.IMPLIES) {
                 PredicateNode lhs = subpredicate.getPredicateArguments().get(0);
                 PredicateNode rhs = subpredicate.getPredicateArguments().get(1);
                 subpredicate = new PredicateOperatorNode(subpredicate.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(lhs, optimizePredicateNode(rhs)));
-                PredicateNode result = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), subpredicate, node.getOperator());
+                PredicateNode result = new QuantifiedPredicateNode(newNode.getSourceCodePosition(), newNode.getDeclarationList(), subpredicate, newNode.getOperator());
                 typeChecker.checkPredicateNode(result);
                 return result;
             }
         }
-        return node;
+        return newNode;
     }
 
     @Override

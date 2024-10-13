@@ -708,7 +708,8 @@ public class TestMachines extends TestJava {
     }
 
 
-    @Test
+    // Constants not assigned specifically
+    @Test(expected = CodeGenerationException.class)
     public void testGenerated100MC() throws Exception {
         testJavaMC("Generated100");
     }

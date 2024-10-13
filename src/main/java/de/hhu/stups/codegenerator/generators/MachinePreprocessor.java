@@ -211,16 +211,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                    return resultNode;
                }
            }
-           /*case POW:
-           case FIN:
-           case SEQ:
-           case SEQ1:
-           case ISEQ:
-           case ISEQ1:
-           case PERM:
-               ExpressionOperatorNode expressionNode = new ExpressionOperatorNode(node.getSourceCodePosition(), Collections.emptyList(), ExpressionOperatorNode.ExpressionOperator.EMPTY_SET);
-               typeChecker.checkExprNode(expressionNode);
-               return expressionNode;*/
            default:
                break;
        }

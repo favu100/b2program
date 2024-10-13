@@ -207,7 +207,7 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
         List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
-            return "";
+            throw new CodeGenerationException("There is no equal predicate to assign: " + constant.getName());
         }
 
         ExprNode expression = ((PredicateOperatorWithExprArgsNode) equalProperties.get(0)).getExpressionNodes().get(1);

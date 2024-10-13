@@ -25,6 +25,7 @@ import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.SetType;
 import org.antlr.v4.runtime.misc.OrderedHashSet;
 import org.stringtemplate.v4.ST;
@@ -207,6 +208,12 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "type", typeGenerator.generate(constant.getType()));
         List<PredicateNode> equalProperties = predicateGenerator.extractEqualProperties(node, constant);
         if(equalProperties.isEmpty()) {
+            if(constant.getType() instanceof DeferredSetElementType) {
+                return "";
+            }
+            if(assignedByValues(constant)) {
+                return "";
+            }
             throw new CodeGenerationException("There is no equal predicate to assign: " + constant.getName());
         }
 
@@ -233,6 +240,24 @@ public class SubstitutionGenerator {
         }
         TemplateHandler.add(initialization, "machineName", node.getName());
         return initialization.render();
+    }
+
+    private boolean assignedByValues(DeclarationNode constant) {
+        List<SubstitutionNode> values = machineGenerator.getMachineNode().getValues();
+        if(values == null || values.isEmpty()) {
+            return false;
+        }
+        for(SubstitutionNode substitution : values) {
+            if(substitution instanceof AssignSubstitutionNode) {
+                ExprNode lhs = ((AssignSubstitutionNode) substitution).getLeftSide().get(0);
+                if(lhs instanceof IdentifierExprNode) {
+                    if(((IdentifierExprNode) lhs).getName().equals(constant.getName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private String generateConstantFromDeferredSet(DeclarationNode constant, String machineName) {

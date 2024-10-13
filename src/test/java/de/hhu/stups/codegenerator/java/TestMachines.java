@@ -626,6 +626,11 @@ public class TestMachines extends TestJava {
         testJavaMC("Range");
     }
 
+    @Test
+    public void testFunctionAssigningConstant() throws Exception {
+        testJavaMC("FunctionAssigningConstant", "FunctionAssigningConstant", true, 1, false);
+    }
+
     @Test(expected = CodeGenerationException.class)
     public void testLibrary3_3() throws Exception {
         testJavaMC("Library_3_3");

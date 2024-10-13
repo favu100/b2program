@@ -571,6 +571,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testRelLaws_Small2() throws Exception {
+        testJavaMC("RelLaws_Small2", "RelLaws_Small2", true, 1, false);
+    }
+
+    @Test
     public void testCompositionEmpty() throws Exception {
         testJavaMC("CompositionEmpty", "CompositionEmpty", true, 1, false);
     }
@@ -582,7 +587,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testRelLaws_BOOL1() throws Exception {
-        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", true, 1, false);
+        testJavaMC("RelLaws_BOOL1", "RelLaws_BOOL1", false, 1, false);
     }
 
     @Test

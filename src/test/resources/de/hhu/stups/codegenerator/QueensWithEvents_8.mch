@@ -15,13 +15,7 @@ INITIALISATION
 OPERATIONS
   Solve(solution) = SELECT
         solution : allFields
-      // & solution : perm(interval)
-      &  dom(solution) = interval
-      &  ran(solution) = interval
-      // & !(x,y,z).(x : interval & y:interval & z:interval & x|->y : solution & x|->z: solution => y=z)
-      // this version works better with ProB:
-      & !(x,y).(x:interval & y:interval & x|->y : solution    => !z.(z:interval & x|->z: solution => y=z))
-        // this actually implies it is a bijection
+      & solution : perm(interval)
       &
         !(q1,q2).(
          (

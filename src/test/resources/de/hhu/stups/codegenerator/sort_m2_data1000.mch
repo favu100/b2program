@@ -25,6 +25,9 @@ INVARIANT
   & /* @sort_m2:inv2_m2  */ l : k .. j
   & /* @sort_m2:inv3_m2  */ g(l) = min(g[k .. j])
   & /* @sort_m1:inv1_m1  */ g : 1 .. n >-> NATURAL
+  & /* @sort_m1:inv2_m1  */ ran(g) = ran(f)
+  & /* @sort_m1:inv3_m1  */ k : 1 .. n
+  & /* @sort_m1:inv5_m1  */ l : NATURAL
 
 INITIALISATION
     BEGIN

@@ -1677,12 +1677,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitWhileSubstitutionNode(WhileSubstitutionNode node, Void expected) {
-        return node;
+        return new WhileSubstitutionNode(node.getSourceCodePosition(), visitPredicateNode(node.getCondition()), (SubstitutionNode) visitSubstitutionNode(node.getBody(), null), visitPredicateNode(node.getInvariant()), (ExprNode) visitExprNode(node.getVariant(), null));
     }
 
     @Override
     public Node visitListSubstitutionNode(ListSubstitutionNode node, Void expected) {
-        return node;
+        return new ListSubstitutionNode(node.getSourceCodePosition(), node.getOperator(), node.getSubstitutions().stream()
+                .map(subs -> (SubstitutionNode) visitSubstitutionNode(subs, null))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -1708,17 +1710,17 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitConditionSubstitutionNode(ConditionSubstitutionNode node, Void expected) {
-        return node;
+        return new ConditionSubstitutionNode(node.getSourceCodePosition(), node.getKind(), visitPredicateNode(node.getCondition()), (SubstitutionNode) visitSubstitutionNode(node.getSubstitution(), null));
     }
 
     @Override
     public Node visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-        return node;
+        return new AnySubstitutionNode(node.getSourceCodePosition(), node.getParameters(), visitPredicateNode(node.getWherePredicate()), (SubstitutionNode) visitSubstitutionNode(node.getThenSubstitution(), null));
     }
 
     @Override
     public Node visitLetSubstitution(LetSubstitutionNode node, Void expected) {
-        return node;
+        return new LetSubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), visitPredicateNode(node.getPredicate()), (SubstitutionNode) visitSubstitutionNode(node.getBody(), null));
     }
 
     @Override

@@ -111,7 +111,7 @@ public class SetWithPredicateGenerator {
     public boolean checkInfiniteSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         if(expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
-            if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
+            if(INFINITE_EXPRESSIONS.contains(rhsOperator) || OPTIMIZABLE_EXPRESSION.contains(rhsOperator)) {
                 return true;
             } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
                 ExprNode innerRhs = ((ExpressionOperatorNode) expr).getExpressionNodes().get(0);
@@ -157,7 +157,7 @@ public class SetWithPredicateGenerator {
     public boolean isSetWithPredicateExpression(ExprNode expression) {
         if(expression instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) expression).getOperator();
-            if(SET_EXPRESSIONS.contains(operator)) {
+            if(SET_EXPRESSIONS.contains(operator) || OPTIMIZABLE_EXPRESSION.contains(operator)) {
                 return true;
             }
             if(operator == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {

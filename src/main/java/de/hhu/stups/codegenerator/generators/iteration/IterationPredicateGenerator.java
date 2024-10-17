@@ -221,6 +221,9 @@ public class IterationPredicateGenerator {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
+        if(!((IdentifierExprNode) lhs).getName().equals(declarationNode.getName())) {
+            return null;
+        }
         ST template = group.getInstanceOf("iteration_construct_enumeration");
         return generateEnumeration(template, declarationNode);
     }
@@ -231,6 +234,9 @@ public class IterationPredicateGenerator {
      */
     private ST getEqualTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return null;
+        }
+        if(!((IdentifierExprNode) lhs).getName().equals(declarationNode.getName())) {
             return null;
         }
         ST template = group.getInstanceOf("iteration_construct_assignment");
@@ -245,6 +251,9 @@ public class IterationPredicateGenerator {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
             return null;
         }
+        if(!((IdentifierExprNode) lhs).getName().equals(declarationNode.getName())) {
+            return null;
+        }
         ST template = group.getInstanceOf("iteration_construct_subset");
         return generateEnumeration(template, declarationNode);
     }
@@ -255,6 +264,9 @@ public class IterationPredicateGenerator {
      */
     private ST getSubsetNeqTemplate(DeclarationNode declarationNode, Set<String> declarationProcessed, ExprNode lhs) {
         if(!(lhs instanceof IdentifierExprNode) || declarationProcessed.contains(((IdentifierExprNode) lhs).getName())) {
+            return null;
+        }
+        if(!((IdentifierExprNode) lhs).getName().equals(declarationNode.getName())) {
             return null;
         }
         ST template = group.getInstanceOf("iteration_construct_subsetneq");

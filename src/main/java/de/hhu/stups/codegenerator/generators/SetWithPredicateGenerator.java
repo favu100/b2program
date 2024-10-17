@@ -34,7 +34,10 @@ public class SetWithPredicateGenerator {
                     ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE, ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
+
+    private static final List<ExpressionOperatorNode.ExpressionOperator> OPTIMIZABLE_EXPRESSION =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
@@ -86,7 +89,7 @@ public class SetWithPredicateGenerator {
     public boolean checkSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         if(expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
-            if(SET_EXPRESSIONS.contains(rhsOperator)) {
+            if(SET_EXPRESSIONS.contains(rhsOperator) || OPTIMIZABLE_EXPRESSION.contains(rhsOperator)) {
                 return true;
             } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
                 ExprNode innerRhs = ((ExpressionOperatorNode) expr).getExpressionNodes().get(0);

@@ -1,5 +1,4 @@
-MACHINE nota_v2
-// a simplified version of nota for B2Program
+MACHINE nota
 
 /* these represent the classes */
 /* effectively these also include their addresses, which in an
@@ -8,12 +7,13 @@ MACHINE nota_v2
    a service is more complicated than just an object id */
 
 
+
 SETS
- INTERCONNECTNODE = {node1,node2};
- SOCKET = {socket1,socket2};
- SERVICE = {service1,service2};     
- RESOURCEMANAGER = {resource1,resource2};
- SID = {SID1,SID2};
+ INTERCONNECTNODE ;
+ SOCKET ;
+ SERVICE ;     
+ RESOURCEMANAGER ;
+ SID ;
  
 /* error codes */
  RM_ERROR_CODES = { RM_SERVICE_FOUND, RM_SERVICE_NOT_FOUND } ;
@@ -26,14 +26,7 @@ SETS
 
 
 DEFINITIONS
- //disjoint(rm_services) == !(a1,a2) . ( a1:dom(rm_services) & a2:dom(rm_services) & a1/=a2=>rm_services(a1)/\rm_services(a2)={} );
- SET_PREF_DEFAULT_SETSIZE == 2;
- SET_PREF_MAX_OPERATIONS == 30;
- scope_INTERCONNECTNODE == 2;
- scope_SOCKET == 2;
- scope_SERVICE == 2;
- scope_RESOURCEMANAGER == 2;
- scope_SID == 2
+ disjoint(f) == !(a1,a2) . ( a1:dom(f) & a2:dom(f) & a1/=a2=>f(a1)/\f(a2)={} )
 
 VARIABLES
 /* these represent the objects */
@@ -59,17 +52,17 @@ VARIABLES
  
  
 INVARIANT
- interconnectNodes <: INTERCONNECTNODE &
- sockets <: SOCKET &
- services <: SERVICE&
- resourceManagers <: RESOURCEMANAGER &
- sids <: SID &
+ interconnectNodes : POW( INTERCONNECTNODE ) &
+ sockets : POW( SOCKET ) &
+ services : POW( SERVICE ) &
+ resourceManagers :  POW( RESOURCEMANAGER ) &
+ sids : POW( SID ) &
 
  /*and now the invariants of the classes*/
  /*see page 99 of PUSSEE Book for explanations about the functions --> >+> etc  */
 
  rm_services : resourceManagers-->POW(services) &   /* 0..1 -> 0..n */
- !(a1,a2) . ( a1:dom(rm_services) & a2:dom(rm_services) & a1/=a2=>rm_services(a1)/\rm_services(a2)={} ) & // was disjoint(rm_services) &
+ disjoint(rm_services) &
  rm_sids     : services>+>sids &
 
 
@@ -120,29 +113,42 @@ INITIALISATION
 /* constructors */
 
 OPERATIONS
- oid <-- constructor_interconnectNode(newic) =
-  SELECT
+ oid <-- constructor_interconnectNode =
+ BEGIN
+  ANY
+   newic
+  WHERE
    newic : INTERCONNECTNODE - interconnectNodes 
   THEN
    interconnectNodes := interconnectNodes \/ { newic } ||
    in_resourceManager(newic) := {} ||
    oid := newic
+  END
  END ;
 
- oid <-- constructor_resourceManager(newrm) =
+ oid <-- constructor_resourceManager =
  PRE
-   resourceManagers = {} &
+  resourceManagers = {}
+ THEN
+  ANY
+   newrm
+  WHERE
    newrm : RESOURCEMANAGER - resourceManagers &
    newrm /: dom(rm_services)
- THEN
+  THEN
    resourceManagers := resourceManagers \/ { newrm } ||
    rm_services(newrm) := {}  ||
    oid := newrm
+  END
  END ;
 
- oid <-- constructor_service(ii,newsvc) =
+ oid <-- constructor_service(ii) =
  PRE 
-  ii : interconnectNodes &
+  ii : interconnectNodes
+ THEN
+  ANY
+   newsvc
+  WHERE
    newsvc : SERVICE - services
   THEN
    services := services \/ { newsvc } ||
@@ -151,14 +157,19 @@ OPERATIONS
    svc_ICNode(newsvc) := ii ||
    svc_serviceID := {} ||
    oid := newsvc
+  END
  END ;
 
 /* generic constructor for socket Superclass*/
- oid <-- constructor_socket(ii,srcsid,targsid,newsoc) =
+ oid <-- constructor_socket(ii,srcsid,targsid) =
  PRE
   ii : interconnectNodes &
   srcsid : sids &
-  targsid : sids &
+  targsid : sids
+ THEN
+  ANY
+   newsoc
+  WHERE
    newsoc : SOCKET - sockets
   THEN
    sockets := sockets \/ { newsoc } ||
@@ -166,6 +177,7 @@ OPERATIONS
    in_sockets(newsoc) := ii ||
    soc_to(newsoc) :=  srcsid  ||
    soc_from(newsoc) :=  targsid 
+  END
  END ;
 
 
@@ -195,18 +207,15 @@ rm_register(self,ss,ii) =
  sid,err<--rm_getSid(self,ss) =
  PRE
   self : resourceManagers &
-  ss : services &
-  ss:dom(rm_sids) THEN // ADDED
-   err := RM_SERVICE_FOUND ||
-   sid := {rm_sids(ss)}  // ORIGINALLY WD ERROR
- END ;
- sid,err<--rm_getSid_Not_Found(self,ss) =
- PRE
-  self : resourceManagers &
   ss : services 
  THEN
-   sid := SID-SID ||
+  CHOICE
+   err := RM_SERVICE_FOUND ||
+   sid := {rm_sids(ss)} 
+  OR
+   sid := {} ||
    err := RM_SERVICE_NOT_FOUND
+  END
  END ;
 
 /* interconnectNode */
@@ -222,11 +231,16 @@ in_announceResourceManager(self,rm) =
  END ;
 
 
-// Split for B2Program:
- sid,err <-- in_register_success(self,ss,si) =
+
+ sid,err <-- in_register(self,ss) =
  PRE
   self : interconnectNodes &
-  ss : services &
+  ss : services 
+ THEN
+  CHOICE
+   ANY
+    si
+   WHERE
     si : SID - sids &
     not(si : dom(in_localServices))
    THEN
@@ -234,38 +248,15 @@ in_announceResourceManager(self,rm) =
     in_localServices := in_localServices \/ { si|->self } ||
     err := IN_REGISTRATION_OK ||
     sid := {si}
-  END;
-
- sid,err <-- in_register_failed(self,ss) =
- PRE
-  self : interconnectNodes &
-  ss : services
- THEN
-   sid := SID - SID ||
+   END
+  OR
+   sid := {} ||
    err := IN_REGISTRATION_FAILED
+  END
  END ;
 
 
-// Split for B2Program:
-soc,err <-- in_requestTargetSocket_Granted(self,ii,srcsoc,srcsid,targsid,newsoc) =
-PRE
- self : interconnectNodes &
- ii : interconnectNodes &
- self /= ii &
- srcsoc : sockets &
- in_sockets(srcsoc) = ii &
- srcsid : sids &
- targsid : sids &
- newsoc : SOCKET - sockets
-  THEN
-   sockets := sockets \/ { newsoc } ||
-   soc := { newsoc } ||
-   err := IN_TARGET_SOCKET_GRANTED || 
-   in_sockets := in_sockets \/ { newsoc |-> self } ||
-   soc_to(newsoc) := srcsid ||
-   soc_from(newsoc) := targsid
-END ;
-soc,err <-- in_requestTargetSocket_NotGranted(self,ii,srcsoc,srcsid,targsid) =
+soc,err <-- in_requestTargetSocket(self,ii,srcsoc,srcsid,targsid) =
 PRE
  self : interconnectNodes &
  ii : interconnectNodes &
@@ -275,23 +266,95 @@ PRE
  srcsid : sids &
  targsid : sids
 THEN
-  soc := SOCKET-SOCKET ||
+ CHOICE
+  ANY
+   newsoc
+  WHERE
+   newsoc : SOCKET - sockets 
+  THEN
+   sockets := sockets \/ { newsoc } ||
+   soc := { newsoc } ||
+   err := IN_TARGET_SOCKET_GRANTED || 
+   in_sockets := in_sockets \/ { newsoc |-> self } ||
+   soc_to(newsoc) := srcsid ||
+   soc_from(newsoc) := targsid
+  END
+ OR
+  soc := {} ||
   err := IN_TARGET_SOCKET_NOT_GRANTED
- 
+ END 
 END ;
 
+/*
 
+ err <-- in_deregister(self,ss) =
+ PRE
+  self : interconnectNodes &
+  ss : services &
+  ss : ran( in_localServices )
+ THEN
+  CHOICE
+   err := IN_DEREGISTRATION_OK ||
+   in_localServices := in_localServices - { self|->ss }
+  OR
+   err := IN_DEREGISTRATION_FAILED
+  END
+ END ;
 
+ sid,err <-- in_getSid(self,ss) =
+ PRE
+  self : interconnectNodes &
+  ss : services
+ THEN
+  CHOICE
+   ANY
+    si
+   WHERE
+    si : sids
+   THEN
+    sid := {si} ||
+    err := IN_SERVICE_AVAILABLE
+   END
+  OR
+   err := IN_NO_AVAILABLE_SERVICE ||
+   sid := {}
+  END
+ END ;
+
+ soc,err <-- in_connect(self,srcservice,targsid) =
+  PRE
+   self : interconnectNodes &
+   srcservice : services &
+   targsid : sids &
+   srcservice : ran( in_localServices )
+  THEN
+   CHOICE
+    ANY
+     so
+    WHERE
+     so : SOCKETS - sockets
+    THEN
+     err := IN_SOCKET_CONNECTION_OK ||
+     soc := {so} ||
+     in_sockets := in_sockets \/ { self|->so }
+    END
+   OR
+    err := IN_NO_SOCKET_CONNECTION ||
+    soc := {}
+   END
+  END ;
+  
+*/ 
  svc_register(self) =
   PRE
    self : services &
    svc_registered(self) = FALSE
   THEN
-  // CHOICE  // not supported by B2Program
+   CHOICE
     svc_registered(self) := TRUE
-   //OR
-  //  svc_registered(self) := FALSE
-  // END
+   OR
+    svc_registered(self) := FALSE
+   END
   END
 
 

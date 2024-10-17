@@ -637,6 +637,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testInDomainOptimization() throws Exception {
+        testJavaMC("InDomainOptimization", "InDomainOptimization", true, 1, false);
+    }
+
+    @Test
     public void testRange() throws Exception {
         testJavaMC("Range");
     }

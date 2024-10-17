@@ -627,6 +627,16 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testIntervalInterval() throws Exception {
+        testJavaMC("IntervalInterval", "IntervalInterval", true, 1, false);
+    }
+
+    @Test
+    public void testNotInDomainOptimization() throws Exception {
+        testJavaMC("NotInDomainOptimization", "NotInDomainOptimization", true, 1, false);
+    }
+
+    @Test
     public void testRange() throws Exception {
         testJavaMC("Range");
     }

@@ -108,8 +108,20 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     }
 
     public OperationNode visitOperationNode(OperationNode operationNode) {
-        SubstitutionNode substitution = (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null);
-        return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), substitution, operationNode.getParams());
+        SubstitutionNode substitution = operationNode.getSubstitution();
+        if(substitution instanceof AnySubstitutionNode) {
+            List<DeclarationNode> newParameters = new ArrayList<>();
+            if(operationNode.getParams() != null && !operationNode.getParams().isEmpty()) {
+                newParameters.addAll(operationNode.getParams());
+            }
+            newParameters.addAll(((AnySubstitutionNode) substitution).getParameters());
+            PredicateNode predicate = visitPredicateNode(((AnySubstitutionNode) substitution).getWherePredicate());
+            SubstitutionNode newThenSubstitution = (SubstitutionNode) visitSubstitutionNode(((AnySubstitutionNode) substitution).getThenSubstitution(), null);
+            SubstitutionNode preSubstitution = new ConditionSubstitutionNode(operationNode.getSourceCodePosition(), ConditionSubstitutionNode.Kind.PRECONDITION, predicate, newThenSubstitution);
+            return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), preSubstitution, newParameters);
+        }
+        SubstitutionNode newSubstitution = (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null);
+        return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), newSubstitution, operationNode.getParams());
     }
 
     public PredicateNode optimizePredicateNode(PredicateNode predicateNode) {

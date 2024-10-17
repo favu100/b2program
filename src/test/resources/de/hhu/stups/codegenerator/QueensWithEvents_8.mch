@@ -13,7 +13,8 @@ INVARIANT
 INITIALISATION
   queens := {}
 OPERATIONS
-  Solve(solution) = SELECT
+  Solve =
+      ANY solution WHERE
         solution : allFields
       & solution : perm(interval)
       &

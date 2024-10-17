@@ -272,6 +272,11 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void Train1BeebookDeterministic_MC_POR_v3() throws Exception {
+        testJavaMC("Train_1_beebook_deterministic_MC_POR_v3");
+    }
+
+    @Test
     public void Train1() throws Exception {
         testJava("train_1");
     }
@@ -723,6 +728,5 @@ public class TestMachines extends TestJava {
     public void testWhile2() throws Exception {
         testJavaMC("While2");
     }
-
 
 }

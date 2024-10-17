@@ -1,4 +1,4 @@
-MACHINE Train_1_beebook_deterministic_MC_POR_v3
+MACHINE Train_1_beebook_deterministic_MC_POR_v3 // this version is very close to Train_1_beebook_tlc_POR. For instance, top-level ANY substitutions are not re-written to PRE as done in Train_1_beebook_deterministic_MC_POR_v2. DEFINITIONS are still inlined.
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I,J,K,L,M,N};
   ROUTES={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10}
@@ -76,9 +76,10 @@ INITIALISATION
          LBT := {}
 
 OPERATIONS
-  route_reservation(r) =
+  route_reservation =
 
-    PRE
+    ANY r
+    WHERE
       /* @grd1 */ r : ROUTES \ resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
@@ -90,8 +91,9 @@ OPERATIONS
          resbl := resbl \/ (rtbl~)[{r}]
     END;
 
-  route_freeing(r) =
-    PRE
+  route_freeing =
+    ANY r
+    WHERE
         /* @grd1 */ r : resrt \ ran(rsrtbl)
     THEN
          resrt := resrt \ {r}
@@ -99,8 +101,9 @@ OPERATIONS
          frm := frm \ {r}
     END;
 
-  FRONT_MOVE_1(r) =
-    PRE
+  FRONT_MOVE_1 =
+    ANY r
+    WHERE
         /* @grd1 */ r : frm
       & /* @grd3 */ fst(r) : resbl \ OCC
       & /* @grd2 */ r = rsrtbl(fst(r))
@@ -111,16 +114,18 @@ OPERATIONS
          LBT := LBT \/ {fst(r)}
     END;
 
-  FRONT_MOVE_2(b) =
-    PRE
+  FRONT_MOVE_2 =
+    ANY b
+    WHERE
         /* @grd1 */ b : OCC /\ dom(TRK)
       & /* @grd2 */ TRK(b) /: OCC
     THEN
          OCC := OCC \/ {TRK(b)}
     END;
 
-  BACK_MOVE_1(b) =
-    PRE
+  BACK_MOVE_1 =
+    ANY b
+    WHERE
       /* @grd1 */ b : LBT \ dom(TRK)
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
@@ -133,8 +138,9 @@ OPERATIONS
          LBT := LBT \ {b}
     END;
 
-  BACK_MOVE_2(b) =
-    PRE
+  BACK_MOVE_2 =
+    ANY b
+    WHERE
         /* @grd1 */ b : LBT /\ dom(TRK)
       & /* @grd2 */ TRK(b) : OCC
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
@@ -149,16 +155,18 @@ OPERATIONS
 
     END;
 
-  point_positionning(r) =
-    PRE
+  point_positionning =
+    ANY r
+    WHERE
         /* @grd1 */ r : resrt \ frm
         & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          TRK := ((dom(nxt(r)) <<| TRK) |>> ran(nxt(r))) \/ nxt(r)
     END;
 
-  route_formation(r) =
-    PRE
+  route_formation =
+    ANY r
+    WHERE
         /* @grd1 */ r : resrt \ frm
       & /* @grd2 */ (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */

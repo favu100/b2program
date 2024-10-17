@@ -115,9 +115,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 newParameters.addAll(operationNode.getParams());
             }
             newParameters.addAll(((AnySubstitutionNode) substitution).getParameters());
-            PredicateNode predicate = visitPredicateNode(((AnySubstitutionNode) substitution).getWherePredicate());
+            PredicateNode predicate = ((AnySubstitutionNode) substitution).getWherePredicate();
             SubstitutionNode newThenSubstitution = (SubstitutionNode) visitSubstitutionNode(((AnySubstitutionNode) substitution).getThenSubstitution(), null);
-            SubstitutionNode preSubstitution = new ConditionSubstitutionNode(operationNode.getSourceCodePosition(), ConditionSubstitutionNode.Kind.PRECONDITION, predicate, newThenSubstitution);
+            SubstitutionNode preSubstitution = new ConditionSubstitutionNode(operationNode.getSourceCodePosition(), ConditionSubstitutionNode.Kind.PRECONDITION, handlePredicateForEnumeration(predicate, newParameters, new HashSet<>()), newThenSubstitution);
             return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), preSubstitution, newParameters);
         }
         SubstitutionNode newSubstitution = (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null);
@@ -139,6 +139,12 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         if(predicateNode != null) {
             if(predicateNode.getParent() instanceof IfOrSelectSubstitutionsNode) {
                 IfOrSelectSubstitutionsNode substitutionsNode = (IfOrSelectSubstitutionsNode) predicateNode.getParent();
+                if(substitutionsNode.getParent() instanceof OperationNode) {
+                    OperationNode operationNode = (OperationNode) substitutionsNode.getParent();
+                    return handlePredicateForEnumeration(predicateNode, operationNode.getParams(), new HashSet<>());
+                }
+            } else if(predicateNode.getParent() instanceof ConditionSubstitutionNode && ((ConditionSubstitutionNode) predicateNode.getParent()).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
+                ConditionSubstitutionNode substitutionsNode = (ConditionSubstitutionNode) predicateNode.getParent();
                 if(substitutionsNode.getParent() instanceof OperationNode) {
                     OperationNode operationNode = (OperationNode) substitutionsNode.getParent();
                     return handlePredicateForEnumeration(predicateNode, operationNode.getParams(), new HashSet<>());

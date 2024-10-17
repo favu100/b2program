@@ -81,22 +81,6 @@ public class IterationPredicateGenerator {
                 if(predicateOperatorNode.getOperator() != PredicateOperatorNode.PredicateOperator.AND) {
                     throw new CodeGenerationException("Predicate for iteration must be a conjunction " + GetNodeLocationAndText(predicate));
                 }
-                checkPredicateIteration(declarations, predicateOperatorNode);
-            }
-        }
-    }
-
-    /*
-     * This function checks whether first predicate declares a set to iterate over for a bounded variable
-     */
-    private void checkPredicateIteration(List<DeclarationNode> declarations, PredicateOperatorNode predicate) {
-        if(predicate.getPredicateArguments().size() < declarations.size()) {
-            throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n.\nThe failed predicate is " +  GetNodeLocationAndText(predicate));
-        }
-        for(int i = 0; i < declarations.size(); i++) {
-            PredicateNode innerPredicate = predicate.getPredicateArguments().get(i);
-            if(!(innerPredicate instanceof PredicateOperatorWithExprArgsNode)) {
-                throw new CodeGenerationException("For n bounded variables, the i-th predicate must constrain the i-th variable for each i from 1 to n.\nThe failed predicate is " + GetNodeLocationAndText(innerPredicate));
             }
         }
     }

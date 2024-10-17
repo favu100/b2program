@@ -16,7 +16,7 @@ OPERATIONS
   Solve(solution) = SELECT
         solution : allFields
       & solution : perm(interval)
-      
+
       &
         !(q1,q2).(
          (

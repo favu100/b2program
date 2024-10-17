@@ -14,7 +14,6 @@ INITIALISATION
 OPERATIONS
   Solve(solution) = SELECT
       solution : perm(interval)
-
       &
         !(q1,q2).(
          (

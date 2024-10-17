@@ -729,4 +729,9 @@ public class TestMachines extends TestJava {
         testJavaMC("While2");
     }
 
+    @Test
+    public void testProb_oneway8seq() throws Exception {
+        testJavaMC("prob_oneway8seq", "prob_oneway8seq", true, 1, false);
+    }
+
 }

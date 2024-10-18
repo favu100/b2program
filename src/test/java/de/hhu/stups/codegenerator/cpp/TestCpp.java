@@ -161,9 +161,73 @@ public class TestCpp {
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
+	}
 
-		//javaFilePaths.forEach(path -> cleanUp(path.toString()));
-		//classFiles.forEach(path -> cleanUp(path.getAbsolutePath().toString()));
+	public void testCppMC(String machine, String machineName, boolean execute, int threads, boolean caching) throws Exception {
+		Path mchPath = Paths.get(CodeGenerator.class.getClassLoader()
+				.getResource("de/hhu/stups/codegenerator/" + machine + ".mch").toURI());
+		CodeGenerator codeGenerator = new CodeGenerator();
+		List<Path> cppFilePaths = codeGenerator.generate(mchPath,
+				GeneratorMode.CPP,
+				false,
+				String.valueOf(Integer.MIN_VALUE),
+				String.valueOf(Integer.MAX_VALUE),
+				"10",
+				true,
+				false,
+				true,
+				null,
+				false,
+				false,
+				null,
+				null);
+
+		Process process = Runtime.getRuntime()
+				.exec("g++ -std=c++17 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+		writeInputToSystem(process.getErrorStream());
+		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
+		process.waitFor();
+
+		Runtime runtime = Runtime.getRuntime();
+
+		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);
+
+		String generatedMachinePath = Paths.get("build", "resources", "test", "de", "hhu", "stups", "codegenerator", machine + ".cpp").toString();
+
+		String osName = System.getProperty("os.name").toLowerCase();
+		Process compileProcess;
+		if(osName.contains("mac")) {
+			compileProcess = runtime
+					.exec("g++ -std=c++17 -O2 -flto -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+		} else {
+			compileProcess = runtime
+					.exec("g++ -std=c++17 -O2 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+		}
+		compileProcess.waitFor();
+
+		String error = streamToString(compileProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
+		if(!execute) {
+			return;
+		}
+
+		Process executeProcess = runtime.exec("./" + machineName + ".exec" + String.format(" mixed %s %s", threads, caching));
+		executeProcess.waitFor();
+
+		error = streamToString(executeProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
+		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".cpp", "_MC.out"))).replaceAll("\n", "");
+
+		System.out.println("Assert: " + result + " = " + expectedOutput);
+
+		assertEquals(expectedOutput, result);
 	}
 
 	private void cleanUp(String path) {

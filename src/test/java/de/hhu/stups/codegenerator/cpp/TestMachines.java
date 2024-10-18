@@ -189,7 +189,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testLandingGear_MC() throws Exception {
-        testCppMC("landing_gear/LandingGear_R6");
+        testCppMC("landing_gear/LandingGear_R6", "LandingGear_R6", true, 1, false);
     }
 
     @Test
@@ -249,6 +249,11 @@ public class TestMachines extends TestCpp {
     @Test
     public void testLift_MC_Large() throws Exception {
         testCppMC("Lift_MC_Large");
+    }
+
+    @Test
+    public void testLift_MC() throws Exception {
+        testCppMC("Lift_MC", "Lift_MC", true, 1, false);
     }
 
     @Test

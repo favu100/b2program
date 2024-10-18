@@ -1662,17 +1662,17 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitLetPredicateNode(LetPredicateNode node, Void expected) {
-        return node;
+        return new LetPredicateNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), handlePredicateForEnumeration(node.getWherePredicate(), node.getLocalIdentifiers(), new HashSet<>()), visitPredicateNode(node.getPredicate()));
     }
 
     @Override
     public Node visitIfPredicateNode(IfPredicateNode node, Void expected) {
-        return node;
+        return new IfPredicateNode(node.getSourceCodePosition(), visitPredicateNode(node.getCondition()), visitPredicateNode(node.getThenPredicate()), visitPredicateNode(node.getElsePredicate()));
     }
 
     @Override
     public Node visitVarSubstitutionNode(VarSubstitutionNode node, Void expected) {
-        return node;
+        return new VarSubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (SubstitutionNode) visitSubstitutionNode(node.getBody(), null));
     }
 
     @Override

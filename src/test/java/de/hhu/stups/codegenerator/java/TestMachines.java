@@ -596,6 +596,26 @@ public class TestMachines extends TestJava {
     }
 
     @Test
+    public void testRether() throws Exception {
+        testJavaMC("rether", "rether", true, 1, false);
+    }
+
+    @Test
+    public void testOBSW1() throws Exception {
+        testJavaMC("obsw_M001_1", "obsw_M001_1", true, 1, false);
+    }
+
+    @Test
+    public void testOBSW2() throws Exception {
+        testJavaMC("obsw_M001_2", "obsw_M001_2", true, 1, true);
+    }
+
+    @Test
+    public void testPruningTest() throws Exception {
+        testJavaMC("PruningTest", "PruningTest", true, 1, false);
+    }
+
+    @Test
     public void testFinitenessLaws() throws Exception {
         testJavaMC("FinitenessLaws", "FinitenessLaws", true, 1, false);
     }

@@ -273,20 +273,20 @@ public class IterationPredicateGenerator {
 
         for(int i = 0, j = 0; i < sortedDeclarations.size(); i++, j++) {
             DeclarationNode declarationNode = sortedDeclarations.get(i);
-            PredicateOperatorWithExprArgsNode innerPredicate = null;
+            PredicateNode innerPredicate = null;
             if(universalQuantification) {
                 if(predicate instanceof PredicateOperatorWithExprArgsNode) {
-                    innerPredicate = (PredicateOperatorWithExprArgsNode) predicate;
+                    innerPredicate = predicate;
                 } else if(predicate instanceof PredicateOperatorNode) {
                     if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
+                        innerPredicate = ((PredicateOperatorNode) predicate).getPredicateArguments().get(0);
                     } else {
-                        innerPredicate = (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(j);
+                        innerPredicate = ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().get(j);
                     }
                 }
             } else {
                 innerPredicate = predicate instanceof PredicateOperatorWithExprArgsNode ? (PredicateOperatorWithExprArgsNode) predicate
-                        : (PredicateOperatorWithExprArgsNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
+                        : ((PredicateOperatorNode) predicate).getPredicateArguments().get(j);
             }
             enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
             if(enumerationTemplate == null) {
@@ -297,7 +297,7 @@ public class IterationPredicateGenerator {
                 continue;
             }
             generateOtherIterationConstructs(iterationConstructGenerator, enumerationTemplate, innerPredicate);
-            TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(innerPredicate.getExpressionNodes().get(1), null));
+            TemplateHandler.add(enumerationTemplate, "set", machineGenerator.visitExprNode(((PredicateOperatorWithExprArgsNode) innerPredicate).getExpressionNodes().get(1), null));
             enumerationTemplates.add(enumerationTemplate);
             declarationProcessed.add(declarationNode.getName());
         }

@@ -1,11 +1,12 @@
-
-MACHINE obsw_M001
+/* Dubravka Ilic, Linas Laibinis, Timo Latvala, Elena Troubitsyna, and Kimmo Varpaaniemi. Deployment in the Space Sector. In Industrial Deployment of System Engineering Methods, pages 45–62. Springer, 2013. */
+/* Modified version with cardinality of 2 for all deferred sets, and instantiation VALID_TCS = {TC_SET1}*/
+MACHINE obsw_M001_2
 SETS /* deferred */
   PACKET_START_ADDRESSES_IN_TC_BUFFER;
   PACKET_START_ADDRESSES_IN_TC_POOL;
   PACKET_START_ADDRESSES_IN_TM_BUFFER;
   PACKET_START_ADDRESSES_IN_TM_POOL;
-  TC_SET;
+  TC_SET = {TC_SET1,TC_SET2};
   TM_SET
  ; /* enumerated */
   TC_STATUSES={TC_Unchecked,TC_Accepted,TC_Rejected,TC_Waiting_for_Execution,TC_Successfully_Executed,TC_Execution_Failed,TC_Removable};
@@ -42,6 +43,13 @@ ABSTRACT_VARIABLES
   Drop_TM,
   env_Deliver_TM */
 PROPERTIES
+    card(TC_SET) = 2 &
+    card(TM_SET) = 2 &
+    card(PACKET_START_ADDRESSES_IN_TM_POOL) = 2 &
+    card(PACKET_START_ADDRESSES_IN_TM_BUFFER) = 2 &
+    card(PACKET_START_ADDRESSES_IN_TC_POOL) = 2 &
+    card(PACKET_START_ADDRESSES_IN_TC_BUFFER) = 2 &
+    VALID_TCS = {TC_SET1} &
     /* @axm_invalid_tcs  */ TC_SET \ VALID_TCS /= {}
 INVARIANT
     /* @inv_TCstatus  */ TCstatus : PACKET_START_ADDRESSES_IN_TC_POOL +-> TC_STATUSES
@@ -54,8 +62,7 @@ INVARIANT
   & /* @inv_TCpool  */ TCpool : PACKET_START_ADDRESSES_IN_TC_POOL +-> TC_SET
   & /* @inv_TMpool  */ TMpool : PACKET_START_ADDRESSES_IN_TM_POOL +-> TM_SET
 INITIALISATION
-    EVENT INITIALISATION = /* of machine obsw_M001 */
-    THEN
+    BEGIN
          TCbuffer := {}
       ||
          TMbuffer := {}
@@ -67,50 +74,32 @@ INITIALISATION
          TCstatus := {}
       ||
          TMstatus := {}
-    REFINES
-      EVENT INITIALISATION = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END
 OPERATIONS
   env_Receive_TC(tc,tc_pointer) =
-    EVENT env_Receive_TC = /* of machine obsw_M001 */
-    ANY tc,tc_pointer
-    WHERE
-        /* @grd_vacant_tc_buffer_address  */ tc_pointer /: dom(TCbuffer)
+    PRE
+        /* @grd_vacant_tc_buffer_address  */ tc_pointer /: dom(TCbuffer) &
+        tc_pointer : PACKET_START_ADDRESSES_IN_TC_BUFFER &
+        tc : TC_SET
     THEN
          TCbuffer := TCbuffer <+ {tc_pointer |-> tc}
-    REFINES
-      EVENT env_Receive_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Poll_TC(tc_handler,tc_pointer) =
-    EVENT Poll_TC = /* of machine obsw_M001 */
-    ANY tc_handler,tc_pointer
-    WHERE
+    PRE
         /* @grd_tc_pointer  */ tc_pointer : dom(TCbuffer)
       & /* @grd_vacant_tc_pool_address  */ tc_handler /: dom(TCpool)
+      & tc_handler : PACKET_START_ADDRESSES_IN_TC_POOL
     THEN
          TCpool := TCpool <+ {tc_handler |-> TCbuffer(tc_pointer)}
       ||
          TCbuffer := {tc_pointer} <<| TCbuffer
       ||
          TCstatus := TCstatus <+ {tc_handler |-> TC_Unchecked}
-    REFINES
-      EVENT Poll_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Accept_TC(tc_handler) =
-    EVENT Accept_TC = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_valid_tc  */ TCpool(tc_handler) : VALID_TCS
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
@@ -120,9 +109,7 @@ OPERATIONS
     END;
 
   Reject_TC(tc_handler) =
-    EVENT Reject_TC = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Unchecked
@@ -131,30 +118,23 @@ OPERATIONS
     END;
 
   Report_TC_Acceptance(tc_handler,tm,tm_handler) =
-    EVENT Report_TC_Acceptance = /* of machine obsw_M001 */
-    ANY tc_handler,tm,tm_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_vacant_tm_pool_address  */ tm_handler /: dom(TMpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Accepted
+      & tm : TM_SET
+      & tm_handler : PACKET_START_ADDRESSES_IN_TM_POOL
     THEN
          TMpool := TMpool <+ {tm_handler |-> tm}
       ||
          TCstatus := TCstatus <+ {tc_handler |-> TC_Waiting_for_Execution}
       ||
          TMstatus := TMstatus <+ {tm_handler |-> TM_Effective}
-    REFINES
-      EVENT Report_on_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Skip_TC_Acceptance_Report(tc_handler) =
-    EVENT Skip_TC_Acceptance_Report = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Accepted
@@ -163,30 +143,23 @@ OPERATIONS
     END;
 
   Report_TC_Rejection(tc_handler,tm,tm_handler) =
-    EVENT Report_TC_Rejection = /* of machine obsw_M001 */
-    ANY tc_handler,tm,tm_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_vacant_tm_pool_address  */ tm_handler /: dom(TMpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Rejected
+      & tm : TM_SET
+      & tm_handler : PACKET_START_ADDRESSES_IN_TM_POOL
     THEN
          TMpool := TMpool <+ {tm_handler |-> tm}
       ||
          TCstatus := TCstatus <+ {tc_handler |-> TC_Removable}
       ||
          TMstatus := TMstatus <+ {tm_handler |-> TM_Effective}
-    REFINES
-      EVENT Report_on_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Skip_TC_Rejection_Report(tc_handler) =
-    EVENT Skip_TC_Rejection_Report = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Rejected
@@ -195,9 +168,7 @@ OPERATIONS
     END;
 
   Execute_TC_Successfully(tc_handler) =
-    EVENT Execute_TC_Successfully = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_pool  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Waiting_for_Execution
@@ -206,9 +177,7 @@ OPERATIONS
     END;
 
   Reset_TM_Buffer(tc_handler) =
-    EVENT Reset_TM_Buffer = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Waiting_for_Execution
@@ -216,17 +185,10 @@ OPERATIONS
          TMbuffer := {}
       ||
          TCstatus := TCstatus <+ {tc_handler |-> TC_Successfully_Executed}
-    REFINES
-      EVENT Reset_TM_Buffer = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Fail_TC_Execution(tc_handler) =
-    EVENT Fail_TC_Execution = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Waiting_for_Execution
@@ -235,30 +197,23 @@ OPERATIONS
     END;
 
   Report_TC_Execution_Success(tc_handler,tm,tm_handler) =
-    EVENT Report_TC_Execution_Success = /* of machine obsw_M001 */
-    ANY tc_handler,tm,tm_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_vacant_tm_pool_address  */ tm_handler /: dom(TMpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Successfully_Executed
+      & tm : TM_SET
+      & tm_handler : PACKET_START_ADDRESSES_IN_TM_POOL
     THEN
          TMpool := TMpool <+ {tm_handler |-> tm}
       ||
          TCstatus := TCstatus <+ {tc_handler |-> TC_Removable}
       ||
          TMstatus := TMstatus <+ {tm_handler |-> TM_Effective}
-    REFINES
-      EVENT Report_on_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Skip_TC_Success_Report(tc_handler) =
-    EVENT Skip_TC_Success_Report = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Successfully_Executed
@@ -267,30 +222,23 @@ OPERATIONS
     END;
 
   Report_TC_Execution_Failure(tc_handler,tm,tm_handler) =
-    EVENT Report_TC_Execution_Failure = /* of machine obsw_M001 */
-    ANY tc_handler,tm,tm_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_vacant_tm_pool_address  */ tm_handler /: dom(TMpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Execution_Failed
+      & tm : TM_SET
+      & tm_handler : PACKET_START_ADDRESSES_IN_TM_POOL
     THEN
          TMpool := TMpool <+ {tm_handler |-> tm}
       ||
          TCstatus := TCstatus <+ {tc_handler |-> TC_Removable}
       ||
          TMstatus := TMstatus <+ {tm_handler |-> TM_Effective}
-    REFINES
-      EVENT Report_on_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Skip_TC_Failure_Report(tc_handler) =
-    EVENT Skip_TC_Failure_Report = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Execution_Failed
@@ -299,9 +247,7 @@ OPERATIONS
     END;
 
   Drop_TC(tc_handler) =
-    EVENT Drop_TC = /* of machine obsw_M001 */
-    ANY tc_handler
-    WHERE
+    PRE
         /* @grd_tc_handler  */ tc_handler : dom(TCpool)
       & /* @grd_tc_status_defined  */ tc_handler : dom(TCstatus)
       & /* @grd_tc_status_value  */ TCstatus(tc_handler) = TC_Removable
@@ -309,52 +255,34 @@ OPERATIONS
          TCpool := {tc_handler} <<| TCpool
       ||
          TCstatus := {tc_handler} <<| TCstatus
-    REFINES
-      EVENT Drop_TC = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Produce_TM(tm,tm_handler) =
-    EVENT Produce_TM = /* of machine obsw_M001 */
-    ANY tm,tm_handler
-    WHERE
+    PRE
         /* @grd_vacant_tm_pool_address  */ tm_handler /: dom(TMpool)
+      & tm : TM_SET
+      & tm_handler : PACKET_START_ADDRESSES_IN_TM_POOL
     THEN
          TMpool := TMpool <+ {tm_handler |-> tm}
       ||
          TMstatus := TMstatus <+ {tm_handler |-> TM_Effective}
-    REFINES
-      EVENT Produce_TM = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Pass_TM(tm_handler,tm_pointer) =
-    EVENT Pass_TM = /* of machine obsw_M001 */
-    ANY tm_handler,tm_pointer
-    WHERE
+    PRE
         /* @grd_tm_handler  */ tm_handler : dom(TMpool)
       & /* @grd_vacant_tm_buffer_address  */ tm_pointer /: dom(TMbuffer)
       & /* @grd_tm_status_defined  */ tm_handler : dom(TMstatus)
       & /* @grd_tm_status_value  */ TMstatus(tm_handler) = TM_Effective
+      & tm_pointer : PACKET_START_ADDRESSES_IN_TM_BUFFER
     THEN
          TMbuffer := TMbuffer <+ {tm_pointer |-> TMpool(tm_handler)}
       ||
          TMstatus := TMstatus <+ {tm_handler |-> TM_Removable}
-    REFINES
-      EVENT Pass_TM = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   Cancel_TM(tm_handler) =
-    EVENT Cancel_TM = /* of machine obsw_M001 */
-    ANY tm_handler
-    WHERE
+    PRE
         /* @grd_tm_handler  */ tm_handler : dom(TMpool)
       & /* @grd_tm_status_defined  */ tm_handler : dom(TMstatus)
       & /* @grd_tm_status_value  */ TMstatus(tm_handler) = TM_Effective
@@ -363,9 +291,7 @@ OPERATIONS
     END;
 
   Drop_TM(tm_handler) =
-    EVENT Drop_TM = /* of machine obsw_M001 */
-    ANY tm_handler
-    WHERE
+    PRE
         /* @grd_tm_handler  */ tm_handler : dom(TMpool)
       & /* @grd_tm_status_defined  */ tm_handler : dom(TMstatus)
       & /* @grd_tm_status_value  */ TMstatus(tm_handler) = TM_Removable
@@ -373,24 +299,12 @@ OPERATIONS
          TMpool := {tm_handler} <<| TMpool
       ||
          TMstatus := {tm_handler} <<| TMstatus
-    REFINES
-      EVENT Drop_TM = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END;
 
   env_Deliver_TM(tm_pointer) =
-    EVENT env_Deliver_TM = /* of machine obsw_M001 */
-    ANY tm_pointer
-    WHERE
+    PRE
         /* @grd_tm_pointer  */ tm_pointer : dom(TMbuffer)
     THEN
          TMbuffer := {tm_pointer} <<| TMbuffer
-    REFINES
-      EVENT env_Deliver_TM = /* of machine obsw_M000 */
-      THEN
-        skip
-      END
     END
 END

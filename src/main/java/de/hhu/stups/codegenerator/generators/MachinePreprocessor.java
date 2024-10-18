@@ -135,7 +135,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 List<SubstitutionNode> substitutionNodes = ((IfOrSelectSubstitutionsNode) substitution).getSubstitutions().stream()
                         .map(subs -> (SubstitutionNode) visitSubstitutionNode(subs, null))
                         .collect(Collectors.toList());
-                SubstitutionNode newSelectSubstitution = new IfOrSelectSubstitutionsNode(operationNode.getSourceCodePosition(), IfOrSelectSubstitutionsNode.Operator.SELECT, conditions, substitutionNodes, (SubstitutionNode) visitSubstitutionNode(((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution(), null));
+                SubstitutionNode newSelectSubstitution = new IfOrSelectSubstitutionsNode(operationNode.getSourceCodePosition(), IfOrSelectSubstitutionsNode.Operator.SELECT, conditions, substitutionNodes,
+                        ((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution() == null ? null : (SubstitutionNode) visitSubstitutionNode(((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution(), null));
                 return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), newSelectSubstitution, operationNode.getParams());
             }
         }

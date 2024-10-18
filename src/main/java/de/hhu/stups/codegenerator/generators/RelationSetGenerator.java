@@ -128,7 +128,7 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode domain = relation.getExpressionNodes().get(0);
-        if(infiniteSetGenerator.isSetWithPredicateExpression(domain)) {
+        if(infiniteSetGenerator.isSetWithInfiniteExpression(domain)) {
             return infiniteSetGenerator.generateInfiniteDomainChecking(node, operator, domain);
         }
 
@@ -166,7 +166,7 @@ public class RelationSetGenerator {
         ExprNode rhs = node.getExpressionNodes().get(1);
         ExpressionOperatorNode relation = (ExpressionOperatorNode) rhs;
         ExprNode domain = relation.getExpressionNodes().get(0);
-        if(infiniteSetGenerator.isSetWithPredicateExpression(domain)) {
+        if(infiniteSetGenerator.isSetWithInfiniteExpression(domain)) {
             return infiniteSetGenerator.generateInfiniteTotalPartial(node, operator, domain);
         }
 

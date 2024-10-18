@@ -171,6 +171,23 @@ public class SetWithPredicateGenerator {
         return false;
     }
 
+    public boolean isSetWithInfiniteExpression(ExprNode expression) {
+        if(expression instanceof ExpressionOperatorNode) {
+            ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) expression).getOperator();
+            if(INFINITE_EXPRESSIONS.contains(operator)) {
+                return true;
+            }
+            if(operator == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
+                return ((ExpressionOperatorNode) expression).getExpressionNodes().stream()
+                        .map(this::isSetWithInfiniteExpression)
+                        .reduce(false, (a,e) -> a || e);
+            }
+        } else if(expression instanceof StructNode) {
+            return true;
+        }
+        return false;
+    }
+
     /*
     * This function generates code an operation name for a predicate with INTEGER on the right-hand side
     */

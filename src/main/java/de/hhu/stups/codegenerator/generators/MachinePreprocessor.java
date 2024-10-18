@@ -1730,7 +1730,10 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
-        return node;
+        return new BecomesSuchThatSubstitutionNode(node.getSourceCodePosition(), node.getIdentifiers(), handlePredicateForEnumeration(node.getPredicate(), node.getIdentifiers()
+                .stream()
+                .map(IdentifierExprNode::getDeclarationNode)
+                .collect(Collectors.toList()), new HashSet<>()));
     }
 
     @Override
@@ -1740,6 +1743,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitChoiceSubstitutionNode(ChoiceSubstitutionNode node, Void expected) {
-        return node;
+        return new ChoiceSubstitutionNode(node.getSourceCodePosition(), node.getSubstitutions()
+                .stream()
+                .map(subs -> (SubstitutionNode) visitSubstitutionNode(subs, null))
+                .collect(Collectors.toList()));
     }
 }

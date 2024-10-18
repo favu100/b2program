@@ -53,7 +53,7 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testLiftMC() throws Exception {
-        testJSMC("Lift_MC");
+        testJSMC("Lift_MC", "Lift_MC", true, false);
     }
 
 

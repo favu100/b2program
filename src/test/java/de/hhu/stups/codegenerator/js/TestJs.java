@@ -116,6 +116,40 @@ public class TestJs {
 		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath()));
 	}
 
+	public void testJSMC(String machine, String machineName, boolean execute, boolean caching) throws Exception {
+		List<Path> tsFilePaths = compileMachine(machine, null, null, false, true, null);
+
+		Path mainPath = tsFilePaths.get(tsFilePaths.size() - 1);
+
+		if(!execute) {
+			return;
+		}
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.environment().put("NODE_PATH", "./btypes_primitives/src/main/js/");
+		processBuilder.command("node", "--experimental-specifier-resolution=node", "./build/resources/test/de/hhu/stups/codegenerator/" + machine.substring(0, machine.length() - machineName.length()) + machineName + ".js", "mixed", String.format("%s", caching));
+		Process executeProcess = processBuilder.start();
+		executeProcess.waitFor();
+
+		String error = streamToString(executeProcess.getErrorStream());
+		if(!error.isEmpty()) {
+			throw new RuntimeException(error);
+		}
+
+		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
+		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replace(".ts", "_MC.out"))).replaceAll("\n", "");
+
+		System.out.println("Assert: " + result + " = " + expectedOutput);
+
+		assertEquals(expectedOutput, result);
+
+		Set<File> jsFiles = tsFilePaths.stream()
+				.map(path -> new File(path.getParent().toFile(), machine + ".js"))
+				.collect(Collectors.toSet());
+
+		jsFiles.forEach(path -> cleanUp(path.getAbsolutePath()));
+	}
+
 	public void testJs(String machinePath, String machineName, String addition, boolean execute) throws Exception {
 		testJs(machinePath, machineName, addition, null, execute, false, null);
 	}

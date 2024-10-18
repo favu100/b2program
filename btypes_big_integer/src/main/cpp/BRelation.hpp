@@ -384,6 +384,28 @@ class BRelation : public BObject {
             return BSet<S>(resultSet);
     	}
 
+        BBoolean isInDomain(S arg) const {
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> thisMap = this->map;
+            const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = thisMap.find(arg);
+            if(rangePtr == nullptr) {
+                return BBoolean(false);
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean isNotInDomain(S arg) const {
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> thisMap = this->map;
+            const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = thisMap.find(arg);
+            if(rangePtr == nullptr) {
+                return BBoolean(true);
+            }
+            return BBoolean(false);
+        }
+
     	BSet<T> range() const {
             immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> resultSet;
             for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
@@ -396,6 +418,30 @@ class BRelation : public BObject {
             }
             return BSet<T>(resultSet);
     	}
+
+        BBoolean isInRange(T arg) const {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
+                for (const T& obj : thisRangeSet) {
+                    if(thisRangeSet.count(obj) > 0) {
+                        return BBoolean(true);
+                    }
+                }
+            }
+            return BBoolean(false);
+        }
+
+        BBoolean isNotInRange(T arg) const {
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
+                for (const T& obj : thisRangeSet) {
+                    if(thisRangeSet.count(obj) == 0) {
+                        return BBoolean(false);
+                    }
+                }
+            }
+            return BBoolean(true);
+        }
 
         BRelation<T,S> inverse() const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,

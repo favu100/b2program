@@ -951,8 +951,8 @@ number(number, useBigInteger) ::= <<
 <if(useBigInteger)>(BInteger("<number>"))<else>(BInteger(<number>))<endif>
 >>
 
-infinite_predicate(arg, operator) ::= <<
-(<arg>.<operator>())
+infinite_predicate(arg, operator, rhsArguments) ::= <<
+(<arg>.<operator>(<rhsArguments; separator=", ">))
 >>
 
 relation_predicate(predicates, checkElementOf) ::= <<

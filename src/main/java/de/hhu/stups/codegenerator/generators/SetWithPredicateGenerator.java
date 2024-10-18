@@ -15,6 +15,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,9 +106,6 @@ public class SetWithPredicateGenerator {
             }
         } else if(expr instanceof StructNode) {
             return true;
-        } else if(expr instanceof SetComprehensionNode) {
-            return checkSetWithPredicate(((SetComprehensionNode) expr).getPredicateNode());
-
         }
         return false;
     }
@@ -127,8 +125,6 @@ public class SetWithPredicateGenerator {
             }
         } else if(expr instanceof StructNode) {
             return true;
-        } else if(expr instanceof SetComprehensionNode) {
-            return checkInfiniteSetWithPredicate(((SetComprehensionNode) expr).getPredicateNode());
         }
         return false;
     }
@@ -870,9 +866,12 @@ public class SetWithPredicateGenerator {
     }
 
     private List<String> extractRhsArguments(ExprNode rhs) {
-        return ((ExpressionOperatorNode) rhs).getExpressionNodes().stream()
-            .map(expr -> machineGenerator.visitExprNode(expr, null))
-            .collect(Collectors.toList());
+        if(rhs instanceof ExpressionOperatorNode) {
+            return ((ExpressionOperatorNode) rhs).getExpressionNodes().stream()
+                    .map(expr -> machineGenerator.visitExprNode(expr, null))
+                    .collect(Collectors.toList());
+        }
+        return Collections.singletonList(machineGenerator.visitExprNode(rhs, null));
     }
 
     /*

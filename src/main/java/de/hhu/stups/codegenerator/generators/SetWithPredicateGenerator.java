@@ -14,7 +14,6 @@ import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,13 +30,14 @@ public class SetWithPredicateGenerator {
     private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING,
                     ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION,
-                    ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
+                    ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
+
+    private static final List<ExpressionOperatorNode.ExpressionOperator> SET_EXPRESSIONS_ONLY_ELEMENT_OF =
+            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.RELATIONAL_IMAGE, ExpressionOperatorNode.ExpressionOperator.COMPOSITION,
+                    ExpressionOperatorNode.ExpressionOperator.CLOSURE, ExpressionOperatorNode.ExpressionOperator.CLOSURE1, ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> INFINITE_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1, ExpressionOperatorNode.ExpressionOperator.STRING);
-
-    private static final List<ExpressionOperatorNode.ExpressionOperator> OPTIMIZABLE_EXPRESSION =
-            Arrays.asList(ExpressionOperatorNode.ExpressionOperator.DOMAIN, ExpressionOperatorNode.ExpressionOperator.RANGE);
 
     private static final List<ExpressionOperatorNode.ExpressionOperator> POWER_SET_EXPRESSIONS =
             Arrays.asList(ExpressionOperatorNode.ExpressionOperator.POW, ExpressionOperatorNode.ExpressionOperator.POW1, ExpressionOperatorNode.ExpressionOperator.FIN, ExpressionOperatorNode.ExpressionOperator.FIN1);
@@ -66,7 +66,7 @@ public class SetWithPredicateGenerator {
     /*
     * This function checks whether the given predicate contains a set with predicate expression on the right-hand side
     */
-    public boolean checkSetWithPredicate(PredicateOperatorWithExprArgsNode node) {
+    private boolean checkSetWithPredicate(PredicateOperatorWithExprArgsNode node) {
         List<ExprNode> expressions = node.getExpressionNodes();
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         if(expressions.size() == 2 && SET_WITH_PREDICATE_OPERATORS.contains(operator)) {
@@ -76,7 +76,7 @@ public class SetWithPredicateGenerator {
         return false;
     }
 
-    public boolean checkInfiniteSetWithPredicate(PredicateOperatorWithExprArgsNode node) {
+    private boolean checkInfiniteSetWithPredicate(PredicateOperatorWithExprArgsNode node) {
         List<ExprNode> expressions = node.getExpressionNodes();
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         if(expressions.size() == 2 && SET_WITH_PREDICATE_OPERATORS.contains(operator)) {
@@ -86,10 +86,14 @@ public class SetWithPredicateGenerator {
         return false;
     }
 
-    public boolean checkSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
+    private boolean checkSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         if(expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
-            if(SET_EXPRESSIONS.contains(rhsOperator) || OPTIMIZABLE_EXPRESSION.contains(rhsOperator)) {
+            if(SET_EXPRESSIONS.contains(rhsOperator)) {
+                if(SET_EXPRESSIONS_ONLY_ELEMENT_OF.contains(rhsOperator)) {
+                    return operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.ELEMENT_OF ||
+                            operator == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.NOT_BELONGING;
+                }
                 return true;
             } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
                 ExprNode innerRhs = ((ExpressionOperatorNode) expr).getExpressionNodes().get(0);
@@ -111,7 +115,7 @@ public class SetWithPredicateGenerator {
     public boolean checkInfiniteSetExpressionWithPredicate(ExprNode expr, PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator) {
         if(expr instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator rhsOperator = ((ExpressionOperatorNode) expr).getOperator();
-            if(INFINITE_EXPRESSIONS.contains(rhsOperator) || OPTIMIZABLE_EXPRESSION.contains(rhsOperator)) {
+            if(INFINITE_EXPRESSIONS.contains(rhsOperator)) {
                 return true;
             } else if(POWER_SET_EXPRESSIONS.contains(rhsOperator)) {
                 ExprNode innerRhs = ((ExpressionOperatorNode) expr).getExpressionNodes().get(0);
@@ -157,7 +161,7 @@ public class SetWithPredicateGenerator {
     public boolean isSetWithPredicateExpression(ExprNode expression) {
         if(expression instanceof ExpressionOperatorNode) {
             ExpressionOperatorNode.ExpressionOperator operator = ((ExpressionOperatorNode) expression).getOperator();
-            if(SET_EXPRESSIONS.contains(operator) || OPTIMIZABLE_EXPRESSION.contains(operator)) {
+            if(SET_EXPRESSIONS.contains(operator)) {
                 return true;
             }
             if(operator == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT) {
@@ -772,7 +776,7 @@ public class SetWithPredicateGenerator {
     /*
     * This function generates code for an infinite expression on the right-hand side of a predicate
     */
-    public String generateInfinite(PredicateOperatorWithExprArgsNode node) {
+    public String generateSetWithPredicate(PredicateOperatorWithExprArgsNode node) {
         PredicateOperatorWithExprArgsNode.PredOperatorExprArgs operator = node.getOperator();
         ST template = currentGroup.getInstanceOf("infinite_predicate");
         TemplateHandler.add(template, "stateCount", machineGenerator.getCurrentStateCount());

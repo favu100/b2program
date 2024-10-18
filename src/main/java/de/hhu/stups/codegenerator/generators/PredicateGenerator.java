@@ -88,8 +88,9 @@ public class PredicateGenerator {
     */
     public String visitPredicateOperatorWithExprArgs(PredicateOperatorWithExprArgsNode node) {
         importGenerator.addImport(node.getType());
-        if(setWithPredicateGenerator.checkInfiniteSetWithPredicate(node)) {
-            return setWithPredicateGenerator.generateInfinite(node);
+        if(setWithPredicateGenerator.checkInfiniteSetWithPredicate(node) ||
+              setWithPredicateGenerator.checkSetWithPredicate(node)) {
+            return setWithPredicateGenerator.generateSetWithPredicate(node);
         }
         if(relationSetGenerator.checkRelation(node)) {
             return generateRelationOnRhs(node);

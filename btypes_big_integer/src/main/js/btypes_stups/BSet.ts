@@ -198,7 +198,7 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	contains(other: T): boolean {
-		return other.toString() in this.set;
+		return other in this.set;
 	}
 
 	containsAll(other: BSet<T>): boolean {

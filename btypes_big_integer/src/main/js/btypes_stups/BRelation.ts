@@ -251,10 +251,48 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BSet<S>(resultSet);
 	}
 
+	isInDomain(arg: S): BBoolean {
+	    let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
+	    let image = thisMap.get(arg);
+	    if(image === null || image.size === 0) {
+	        return new BBoolean(false);
+	    }
+	    return new BBoolean(true);
+	}
+
+    isNotInDomain(arg: S): BBoolean {
+        let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
+        let image = thisMap.get(arg);
+        if(image === null || image.size === 0) {
+            return new BBoolean(true);
+        }
+        return new BBoolean(false);
+    }
+
 	range(): BSet<T> {
 		let set = immutable.Set.union(this.map.values());
 		return new BSet<T>(set);
 	}
+
+    isInRange(element: T): BBoolean {
+        for(let domainElement of this.map.keys()) {
+            let range = <immutable.Set<T>> this.map.get(domainElement)
+            if(element in range) {
+                return new BBoolean(true);
+            }
+        }
+        return new BBoolean(false);
+    }
+
+    isNotInRange(element: T): BBoolean {
+        for(let domainElement of this.map.keys()) {
+            let range = <immutable.Set<T>> this.map.get(domainElement)
+            if(element in range) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
 	inverse(): BRelation<T,S> {
 		let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;

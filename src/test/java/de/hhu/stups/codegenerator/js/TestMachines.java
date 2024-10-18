@@ -175,7 +175,7 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testLandingGear() throws Exception {
-        testJSMC("landing_gear/LandingGear_R6");
+        testJSMC("landing_gear/LandingGear_R6", "LandingGear_R6", true, false);
     }
 
     @Ignore

@@ -348,6 +348,22 @@ public class BSet<T> implements BObject, Set<T> {
 		return new BBoolean(true);
 	}
 
+	public BBoolean strictSubsetOfBoolean() {
+		return subsetOfBoolean();
+	}
+
+	public BBoolean notSubsetOfBoolean() {
+		return subsetOfBoolean().not();
+	}
+
+	public BBoolean equalBoolean() {
+		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() == 2);
+	}
+
+	public BBoolean unequalBoolean() {
+		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() < 2);
+	}
+
 	public BBoolean strictSubsetOfInteger() {
 		return subsetOfInteger();
 	}

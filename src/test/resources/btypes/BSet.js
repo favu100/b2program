@@ -155,7 +155,7 @@ export class BSet {
         return this.size().equal(other.size()).and(this.notSubset(other));
     }
     contains(other) {
-        return other.toString() in this.set;
+        return other in this.set;
     }
     containsAll(other) {
         for (let o of other.set) {

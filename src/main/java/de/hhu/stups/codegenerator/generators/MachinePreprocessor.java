@@ -345,6 +345,42 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         return node;
     }
 
+    private PredicateNode flattenPredicate(PredicateNode node, PredicateOperatorNode.PredicateOperator operator) {
+        if(node instanceof PredicateOperatorNode) {
+            List<PredicateNode> predicates = ((PredicateOperatorNode) node).getPredicateArguments();
+            PredicateOperatorNode.PredicateOperator predOperator = ((PredicateOperatorNode) node).getOperator();
+            if(predOperator != operator) {
+                return node;
+            }
+            List<PredicateNode> newPredicates = flattenPredicateList(predicates, operator);
+            return new PredicateOperatorNode(node.getSourceCodePosition(), ((PredicateOperatorNode) node).getOperator(), newPredicates);
+        }
+        return node;
+    }
+
+    private List<PredicateNode> flattenPredicateList(List<PredicateNode> predicates, PredicateOperatorNode.PredicateOperator operator) {
+        if(operator != PredicateOperatorNode.PredicateOperator.AND && operator != PredicateOperatorNode.PredicateOperator.OR) {
+            return predicates;
+        }
+        if(predicates.size() == 1) {
+            return predicates;
+        }
+        if(predicates.stream()
+                .filter(pred -> pred instanceof PredicateOperatorNode)
+                .noneMatch(pred -> ((PredicateOperatorNode) pred).getOperator() == operator)) {
+            return predicates;
+        }
+        List<PredicateNode> resultPredicates = new ArrayList<>();
+        for(PredicateNode predicate : predicates) {
+            if(predicate instanceof PredicateOperatorNode && ((PredicateOperatorNode) predicate).getOperator() == operator) {
+                resultPredicates.addAll(((PredicateOperatorNode) predicate).getPredicateArguments());
+            } else {
+                resultPredicates.add(predicate);
+            }
+        }
+        return flattenPredicateList(resultPredicates, operator);
+    }
+
     public PredicateNode rewriteQuantifiedPredicate(List<DeclarationNode> declarations, PredicateNode predicateNode, boolean universalQuantification) {
         if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode result = new PredicateOperatorWithExprArgsNode(predicateNode.getSourceCodePosition(), ((PredicateOperatorWithExprArgsNode) predicateNode).getOperator(), ((PredicateOperatorWithExprArgsNode) predicateNode).getExpressionNodes()
@@ -359,7 +395,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 if (operator == PredicateOperatorNode.PredicateOperator.IMPLIES) {
 
                     List<PredicateNode> predicates = ((PredicateOperatorNode) predicateNode).getPredicateArguments();
-                    PredicateNode lhs = predicates.get(0);
+                    PredicateNode lhs = flattenPredicate(predicates.get(0), PredicateOperatorNode.PredicateOperator.AND);
                     PredicateNode rhs = predicates.get(1);
                     PredicateNode innerPredicate = rewriteQuantifiedPredicate(declarations, lhs, false);
                     PredicateNode result = new PredicateOperatorNode(machineNode.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(innerPredicate, rhs));
@@ -369,6 +405,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             } else {
                 if (operator == PredicateOperatorNode.PredicateOperator.AND) {
                     List<PredicateNode> predicates = ((PredicateOperatorNode) predicateNode).getPredicateArguments();
+                    predicates = flattenPredicateList(predicates, PredicateOperatorNode.PredicateOperator.AND);
                     List<PredicateNode> reorderedConjuncts = reorderConjuncts(0, declarations, new HashSet<>(), predicates, new LinkedList<>());
                     PredicateNode result = new PredicateOperatorNode(machineNode.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, reorderedConjuncts);
                     result.setType(predicateNode.getType());

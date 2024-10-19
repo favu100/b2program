@@ -64,16 +64,25 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     private final List<PredicateOperatorWithExprArgsNode> newProperties;
 
-    public MachineConstantsOptimizer(MachineNode machineNode) {
+    private final boolean forModelChecking;
+
+    private final boolean forVisualization;
+
+
+    public MachineConstantsOptimizer(MachineNode machineNode, boolean forModelChecking, boolean forVisualization) {
         this.newProperties = new ArrayList<>();
         this.preprocessor = new MachineConstantsPreprocessor(machineNode);
         this.machineNode = machineNode;
         preprocessor.visitMachineNode(machineNode);
+        this.forModelChecking = forModelChecking;
+        this.forVisualization = forVisualization;
     }
 
     public MachineNode visitMachineNode() {
-        if(machineNode.getInvariant() != null) {
-            machineNode.setInvariant((PredicateNode) visitPredicateNode(machineNode.getInvariant(), null));
+        if(forModelChecking || forVisualization) {
+            if (machineNode.getInvariant() != null) {
+                machineNode.setInvariant((PredicateNode) visitPredicateNode(machineNode.getInvariant(), null));
+            }
         }
         preprocessor.getReplacementsExpressions().forEach((key, value) -> createNewProperty(preprocessor.getReplacements().get(key), preprocessor.getReplacementsExpressions().get(key)));
         machineNode.setOperations(machineNode.getOperations().stream()

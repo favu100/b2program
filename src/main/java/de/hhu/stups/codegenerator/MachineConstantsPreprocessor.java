@@ -59,7 +59,7 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
                     ExpressionOperatorNode.ExpressionOperator.PARTIAL_BIJECTION, ExpressionOperatorNode.ExpressionOperator.PARTIAL_FUNCTION, ExpressionOperatorNode.ExpressionOperator.PARTIAL_INJECTION, ExpressionOperatorNode.ExpressionOperator.PARTIAL_SURJECTION, ExpressionOperatorNode.ExpressionOperator.SURJECTION_RELATION,
                     ExpressionOperatorNode.ExpressionOperator.INTEGER, ExpressionOperatorNode.ExpressionOperator.STRING, ExpressionOperatorNode.ExpressionOperator.BOOL, ExpressionOperatorNode.ExpressionOperator.NATURAL, ExpressionOperatorNode.ExpressionOperator.NATURAL1,
                     ExpressionOperatorNode.ExpressionOperator.REAL,  ExpressionOperatorNode.ExpressionOperator.EMPTY_SET, ExpressionOperatorNode.ExpressionOperator.EMPTY_SEQUENCE, ExpressionOperatorNode.ExpressionOperator.TRUE, ExpressionOperatorNode.ExpressionOperator.FALSE,
-                    ExpressionOperatorNode.ExpressionOperator.MININT, ExpressionOperatorNode.ExpressionOperator.MAXINT, ExpressionOperatorNode.ExpressionOperator.NAT, ExpressionOperatorNode.ExpressionOperator.NAT1, ExpressionOperatorNode.ExpressionOperator.PRJ1, ExpressionOperatorNode.ExpressionOperator.PRJ2);
+                    ExpressionOperatorNode.ExpressionOperator.MININT, ExpressionOperatorNode.ExpressionOperator.MAXINT, ExpressionOperatorNode.ExpressionOperator.INT, ExpressionOperatorNode.ExpressionOperator.NAT, ExpressionOperatorNode.ExpressionOperator.NAT1, ExpressionOperatorNode.ExpressionOperator.PRJ1, ExpressionOperatorNode.ExpressionOperator.PRJ2);
 
     private final MachineNode machineNode;
 

@@ -109,6 +109,9 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
                 }
             }
         }
+        if(node.getOperator() == ExpressionOperatorNode.ExpressionOperator.PRJ1 || node.getOperator() == ExpressionOperatorNode.ExpressionOperator.PRJ2) {
+            return null;
+        }
         node.getExpressionNodes().forEach(expr -> visitExprNode(expr, null));
         return null;
     }

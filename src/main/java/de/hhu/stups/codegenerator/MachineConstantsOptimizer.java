@@ -71,7 +71,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     public MachineConstantsOptimizer(MachineNode machineNode, boolean forModelChecking, boolean forVisualization) {
         this.newProperties = new ArrayList<>();
-        this.preprocessor = new MachineConstantsPreprocessor(machineNode);
+        this.preprocessor = new MachineConstantsPreprocessor(machineNode, forModelChecking, forVisualization);
         this.machineNode = machineNode;
         preprocessor.visitMachineNode(machineNode);
         this.forModelChecking = forModelChecking;

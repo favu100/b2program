@@ -71,7 +71,11 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     private int constantsCounter;
 
-    public MachineConstantsPreprocessor(MachineNode machineNode) {
+    private final boolean forModelChecking;
+
+    private final boolean forVisualization;
+
+    public MachineConstantsPreprocessor(MachineNode machineNode, boolean forModelChecking, boolean forVisualization) {
         this.machineNode = machineNode;
         this.constants = machineNode.getConstants().stream()
                 .map(DeclarationNode::getName)
@@ -79,6 +83,8 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
         this.replacements = new HashMap<>();
         this.replacementsExpressions = new HashMap<>();
         this.constantsCounter = 1;
+        this.forModelChecking = forModelChecking;
+        this.forVisualization = forVisualization;
     }
 
     public boolean checkIfConstantsOnly(ExprNode exprNode) {
@@ -88,8 +94,10 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
     }
 
     public void visitMachineNode(MachineNode node) {
-        if(machineNode.getInvariant() != null) {
-            visitPredicateNode(machineNode.getInvariant(), null);
+        if(forModelChecking || forVisualization) {
+            if (machineNode.getInvariant() != null) {
+                visitPredicateNode(machineNode.getInvariant(), null);
+            }
         }
         machineNode.getOperations().forEach(this::visitOperationNode);
     }

@@ -253,7 +253,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	public String generateMachine(MachineNode node, GeneratorMode mode) {
 		machinePreprocessor.visitMachineNode(node);
-		MachineConstantsOptimizer machineConstantsOptimizer = new MachineConstantsOptimizer(node);
+		MachineConstantsOptimizer machineConstantsOptimizer = new MachineConstantsOptimizer(node, forModelChecking, forVisualisation);
 		machineConstantsOptimizer.visitMachineNode();
 		initialize(node);
 		recordStructAnalyzer.visitMachineNode(node);

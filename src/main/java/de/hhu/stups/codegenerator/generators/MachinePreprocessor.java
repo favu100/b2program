@@ -398,7 +398,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     public List<PredicateNode> reorderConjuncts(int n, List<DeclarationNode> declarations, Set<String> declarationsProcessed,
                                                 List<PredicateNode> predicates, List<PredicateNode> resultPredicates) {
         if(n > predicates.size()) {
-            throw new CodeGenerationException("Cyclic dependency between predicate to constraint multiple bounded variables detected at: " + declarations.get(0).getSourceCodePosition().getStartLine());
+            throw new CodeGenerationException("Cyclic dependency between predicate to constraint multiple bounded variables detected at line " + declarations.get(0).getSourceCodePosition().getStartLine() + " and column " + declarations.get(0).getSourceCodePosition().getStartColumn());
         }
         if(predicates.isEmpty()) {
             return resultPredicates;
@@ -1683,6 +1683,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     public Node visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
         QuantifiedPredicateNode newNode = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), rewriteQuantifiedPredicate(node.getDeclarationList(), node.getPredicateNode(), node.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION), node.getOperator());
         if(newNode.getOperator() == QuantifiedPredicateNode.QuantifiedPredicateOperator.UNIVERSAL_QUANTIFICATION) {
+            if(!(newNode.getPredicateNode() instanceof PredicateOperatorNode)) {
+                throw new CodeGenerationException("Implication in universal quantification missing at line: " + node.getPredicateNode().getSourceCodePosition().getStartLine() + " column " + node.getSourceCodePosition().getStartColumn());
+            }
             PredicateOperatorNode subpredicate = (PredicateOperatorNode) newNode.getPredicateNode();
             if(subpredicate.getOperator() == PredicateOperatorNode.PredicateOperator.IMPLIES) {
                 PredicateNode lhs = subpredicate.getPredicateArguments().get(0);
@@ -1691,6 +1694,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                 PredicateNode result = new QuantifiedPredicateNode(newNode.getSourceCodePosition(), newNode.getDeclarationList(), subpredicate, newNode.getOperator());
                 typeChecker.checkPredicateNode(result);
                 return result;
+            } else {
+                throw new CodeGenerationException("Implication in universal quantification missing at line: " + node.getPredicateNode().getSourceCodePosition().getStartLine() + " column " + node.getSourceCodePosition().getStartColumn());
             }
         }
         return newNode;

@@ -273,7 +273,6 @@ public class ExpressionGenerator {
         if(checkTupleProjections(node)) {
             return generateTupleProjection(node);
         }
-
         return generateExpression(node);
     }
 

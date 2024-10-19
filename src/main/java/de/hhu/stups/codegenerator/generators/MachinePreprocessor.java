@@ -99,7 +99,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             throw new RuntimeException(e.getMessage());
         }
         
-        // TODO: Process other constructs
         if(machineNode.getProperties() != null) {
             PredicateNode newProperies = addAuxiliraryProperties(machineNode.getProperties(), machineNode.getConstants());
             machineNode.setProperties(visitPredicateNode(newProperies));
@@ -221,6 +220,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     .collect(Collectors.toList());
             PredicateOperatorNode result = new PredicateOperatorNode(predicate.getSourceCodePosition(), predicate.getOperator(), predicates);
             result.setType(BoolType.getInstance());
+            return result;
         }
         return predicateNode;
     }

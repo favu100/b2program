@@ -183,7 +183,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     return handlePredicateForEnumeration(predicateNode, operationNode.getParams(), new HashSet<>());
                 }
             }
-            return optimizePredicateNode(predicateNode);
+            PredicateNode result = optimizePredicateNode(predicateNode);
+            result.setType(BoolType.getInstance());
+            return result;
         }
         return predicateNode;
     }
@@ -217,7 +219,8 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     .stream()
                     .map(pred -> handlePredicateForEnumeration(pred, declarations, declarationsProcessed))
                     .collect(Collectors.toList());
-            return new PredicateOperatorNode(predicate.getSourceCodePosition(), predicate.getOperator(), predicates);
+            PredicateOperatorNode result = new PredicateOperatorNode(predicate.getSourceCodePosition(), predicate.getOperator(), predicates);
+            result.setType(BoolType.getInstance());
         }
         return predicateNode;
     }
@@ -345,7 +348,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitCastPredicateExpressionNode(CastPredicateExpressionNode node, Void expected) {
-        return new CastPredicateExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getPredicate(), null));
+        CastPredicateExpressionNode result = new CastPredicateExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getPredicate(), null));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
@@ -1753,12 +1758,16 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitLetPredicateNode(LetPredicateNode node, Void expected) {
-        return new LetPredicateNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), handlePredicateForEnumeration(node.getWherePredicate(), node.getLocalIdentifiers(), new HashSet<>()), visitPredicateNode(node.getPredicate()));
+        LetPredicateNode result = new LetPredicateNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), handlePredicateForEnumeration(node.getWherePredicate(), node.getLocalIdentifiers(), new HashSet<>()), visitPredicateNode(node.getPredicate()));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
     public Node visitIfPredicateNode(IfPredicateNode node, Void expected) {
-        return new IfPredicateNode(node.getSourceCodePosition(), visitPredicateNode(node.getCondition()), visitPredicateNode(node.getThenPredicate()), visitPredicateNode(node.getElsePredicate()));
+        IfPredicateNode result = new IfPredicateNode(node.getSourceCodePosition(), visitPredicateNode(node.getCondition()), visitPredicateNode(node.getThenPredicate()), visitPredicateNode(node.getElsePredicate()));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override

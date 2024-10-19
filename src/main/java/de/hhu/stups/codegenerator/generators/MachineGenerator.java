@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.MachineConstantsOptimizer;
 import de.hhu.stups.codegenerator.analyzers.CheckReachabilityAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.RecordStructAnalyzer;
@@ -252,6 +253,8 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	*/
 	public String generateMachine(MachineNode node, GeneratorMode mode) {
 		machinePreprocessor.visitMachineNode(node);
+		MachineConstantsOptimizer machineConstantsOptimizer = new MachineConstantsOptimizer(node);
+		machineConstantsOptimizer.visitMachineNode();
 		initialize(node);
 		recordStructAnalyzer.visitMachineNode(node);
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());

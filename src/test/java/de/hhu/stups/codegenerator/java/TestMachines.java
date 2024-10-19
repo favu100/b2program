@@ -311,28 +311,9 @@ public class TestMachines extends TestJava {
         testJavaMC("ThreeCounter2", "ThreeCounter2", true, 1, false);
     }
 
-    @Ignore
-    @Test
-    public void testEarley2() throws Exception {
-        testJava("earley_2");
-    }
-
-    @Ignore
     @Test
     public void testOBSW_M001() throws Exception {
         testJava("obsw_M001");
-    }
-
-    @Ignore
-    @Test
-    public void testRef5Switch() throws Exception {
-        testJava("Ref5_Switch");
-    }
-
-    @Ignore
-    @Test
-    public void testrether_mch1() throws Exception {
-        testJava("rether_mch1");
     }
 
     @Test
@@ -342,7 +323,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testsort_m2_data1000_MC() throws Exception {
-        testJavaMC("sort_m2_data1000_MC");
+        testJavaMC("sort_m2_data1000_MC", "sort_m2_data1000_MC", true, 1, true);
     }
 
     @Test

@@ -80,9 +80,15 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     private int optimizationVariableCounter;
 
-    public MachinePreprocessor() {
+    private boolean forModelChecking;
+
+    private boolean forVisualization;
+
+    public MachinePreprocessor(boolean forModelChecking, boolean forVisualization) {
         this.inEnumeration = false;
         optimizationVariableCounter = 0;
+        this.forModelChecking = forModelChecking;
+        this.forVisualization = forVisualization;
     }
 
     public MachineNode visitMachineNode(MachineNode machineNode) {
@@ -121,23 +127,30 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             SubstitutionNode preSubstitution = new ConditionSubstitutionNode(operationNode.getSourceCodePosition(), ConditionSubstitutionNode.Kind.PRECONDITION, handlePredicateForEnumeration(predicate, newParameters, new HashSet<>()), newThenSubstitution);
             return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), preSubstitution, newParameters);
         } else if(substitution instanceof ConditionSubstitutionNode) {
-            if(((ConditionSubstitutionNode) substitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
-                PredicateNode predicate = rewriteQuantifiedPredicate(operationNode.getParams(), ((ConditionSubstitutionNode) substitution).getCondition(), false);
-                SubstitutionNode newPreSubstitution = new ConditionSubstitutionNode(operationNode.getSourceCodePosition(), ConditionSubstitutionNode.Kind.PRECONDITION, handlePredicateForEnumeration(predicate, operationNode.getParams(), new HashSet<>()), (SubstitutionNode) visitSubstitutionNode(((ConditionSubstitutionNode) substitution).getSubstitution(), null));
-                return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), newPreSubstitution, operationNode.getParams());
+            // Only in model checking mode or for visualization
+            if(forModelChecking || forVisualization) {
+                if(((ConditionSubstitutionNode) substitution).getKind() == ConditionSubstitutionNode.Kind.PRECONDITION) {
+                    PredicateNode predicate = rewriteQuantifiedPredicate(operationNode.getParams(), ((ConditionSubstitutionNode) substitution).getCondition(), false);
+                    SubstitutionNode newPreSubstitution = new ConditionSubstitutionNode(operationNode.getSourceCodePosition(), ConditionSubstitutionNode.Kind.PRECONDITION, handlePredicateForEnumeration(predicate, operationNode.getParams(), new HashSet<>()), (SubstitutionNode) visitSubstitutionNode(((ConditionSubstitutionNode) substitution).getSubstitution(), null));
+                    return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), newPreSubstitution, operationNode.getParams());
+                }
             }
+
         } else if(substitution instanceof IfOrSelectSubstitutionsNode) {
-            if(((IfOrSelectSubstitutionsNode) substitution).getOperator() == IfOrSelectSubstitutionsNode.Operator.SELECT) {
-                List<PredicateNode> conditions = ((IfOrSelectSubstitutionsNode) substitution).getConditions().stream()
-                        .map(cond -> rewriteQuantifiedPredicate(operationNode.getParams(), cond, false))
-                        .map(cond -> handlePredicateForEnumeration(cond, operationNode.getParams(), new HashSet<>()))
-                        .collect(Collectors.toList());
-                List<SubstitutionNode> substitutionNodes = ((IfOrSelectSubstitutionsNode) substitution).getSubstitutions().stream()
-                        .map(subs -> (SubstitutionNode) visitSubstitutionNode(subs, null))
-                        .collect(Collectors.toList());
-                SubstitutionNode newSelectSubstitution = new IfOrSelectSubstitutionsNode(operationNode.getSourceCodePosition(), IfOrSelectSubstitutionsNode.Operator.SELECT, conditions, substitutionNodes,
-                        ((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution() == null ? null : (SubstitutionNode) visitSubstitutionNode(((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution(), null));
-                return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), newSelectSubstitution, operationNode.getParams());
+            // Only in model checking mode or for visualization
+            if(forModelChecking || forVisualization) {
+                if (((IfOrSelectSubstitutionsNode) substitution).getOperator() == IfOrSelectSubstitutionsNode.Operator.SELECT) {
+                    List<PredicateNode> conditions = ((IfOrSelectSubstitutionsNode) substitution).getConditions().stream()
+                            .map(cond -> rewriteQuantifiedPredicate(operationNode.getParams(), cond, false))
+                            .map(cond -> handlePredicateForEnumeration(cond, operationNode.getParams(), new HashSet<>()))
+                            .collect(Collectors.toList());
+                    List<SubstitutionNode> substitutionNodes = ((IfOrSelectSubstitutionsNode) substitution).getSubstitutions().stream()
+                            .map(subs -> (SubstitutionNode) visitSubstitutionNode(subs, null))
+                            .collect(Collectors.toList());
+                    SubstitutionNode newSelectSubstitution = new IfOrSelectSubstitutionsNode(operationNode.getSourceCodePosition(), IfOrSelectSubstitutionsNode.Operator.SELECT, conditions, substitutionNodes,
+                            ((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution() == null ? null : (SubstitutionNode) visitSubstitutionNode(((IfOrSelectSubstitutionsNode) substitution).getElseSubstitution(), null));
+                    return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), newSelectSubstitution, operationNode.getParams());
+                }
             }
         }
         SubstitutionNode newSubstitution = (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null);
@@ -435,7 +448,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
     public List<PredicateNode> reorderConjuncts(int n, List<DeclarationNode> declarations, Set<String> declarationsProcessed,
                                                 List<PredicateNode> predicates, List<PredicateNode> resultPredicates) {
         if(n > predicates.size()) {
-            throw new CodeGenerationException("Cyclic dependency between predicate to constraint multiple bounded variables detected at line " + declarations.get(0).getSourceCodePosition().getStartLine() + " and column " + declarations.get(0).getSourceCodePosition().getStartColumn());
+            throw new CodeGenerationException("There are either no predicates to constraint all bounded variables. Or there is a cyclic dependency between predicate to constraint multiple bounded variables detected at line " + declarations.get(0).getSourceCodePosition().getStartLine() + " and column " + declarations.get(0).getSourceCodePosition().getStartColumn());
         }
         if(predicates.isEmpty()) {
             return resultPredicates;
@@ -477,7 +490,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         }
         if(predicateProcessedLater) {
             if(predicates.size() <= 1) {
-                throw new CodeGenerationException("Cyclic dependency between predicate to constraint multiple bounded variables detected at line " + declarations.get(0).getSourceCodePosition().getStartLine() + " and column " + declarations.get(0).getSourceCodePosition().getStartColumn());
+                throw new CodeGenerationException("There are either no predicates to constraint all bounded variables. Or there is a cyclic dependency between predicate to constraint multiple bounded variables detected at line " + declarations.get(0).getSourceCodePosition().getStartLine() + " and column " + declarations.get(0).getSourceCodePosition().getStartColumn());
             }
             List<PredicateNode> newPredicates = new ArrayList<>(predicates.subList(2, predicates.size()));
             newPredicates.add(0, firstPredicate);

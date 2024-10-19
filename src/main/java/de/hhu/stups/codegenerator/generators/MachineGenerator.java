@@ -167,7 +167,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 				e.printStackTrace();
 			}
 		}
-		this.machinePreprocessor = new MachinePreprocessor();
+		this.machinePreprocessor = new MachinePreprocessor(forModelChecking, forVisualisation);
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();
 		this.typeGenerator = new TypeGenerator(currentGroup, nameHandler, this);

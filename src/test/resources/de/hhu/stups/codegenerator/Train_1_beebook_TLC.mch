@@ -27,7 +27,7 @@ ABSTRACT_VARIABLES
 PROPERTIES
     /* @axm2 */ dom(rtbl) = BLOCKS
   & /* @axm3 */ ran(rtbl) = ROUTES
-  & /* @axm4 */ nxt : ROUTES --> (BLOCKS >+> BLOCKS)
+  & /* @axm4 */ dom(nxt) = ROUTES & ran(nxt) <: (BLOCKS >+> BLOCKS)
   & /* @axm5 */ fst : ROUTES --> BLOCKS
   & /* @axm6 */ lst : ROUTES --> BLOCKS
   & /* @axm7 */ fst~ <: rtbl

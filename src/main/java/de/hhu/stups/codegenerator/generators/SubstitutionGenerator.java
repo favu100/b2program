@@ -137,6 +137,7 @@ public class SubstitutionGenerator {
 
         PredicateNode otherProperties = extractPropertiesNotRelevantForAssigning();
         if(otherProperties != null) {
+            TemplateHandler.add(initialization, "iterationConstruct", iterationConstructHandler.inspectPredicate(otherProperties).getIterationsMapCode().values());
             TemplateHandler.add(initialization, "propertiesCheck", machineGenerator.visitPredicateNode(otherProperties, null));
         }
 

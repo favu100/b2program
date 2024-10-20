@@ -40,9 +40,7 @@ import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -369,5 +367,9 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
 
     public boolean containsIdentifier(String name) {
         return identifiers.contains(name);
+    }
+
+    public void setInnerIdentifiers(Set<String> innerIdentifiers) {
+        this.innerIdentifiers = innerIdentifiers;
     }
 }

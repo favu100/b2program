@@ -238,7 +238,7 @@ public class SubstitutionGenerator {
         } else {
             TemplateHandler.add(initialization, "val", machineGenerator.visitExprNode(expression, null));
         }
-        TemplateHandler.add(initialization, "machineName", node.getName());
+        TemplateHandler.add(initialization, "machineName", nameHandler.handle(node.getName()));
         return initialization.render();
     }
 

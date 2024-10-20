@@ -410,7 +410,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(getter, "isConstant", DeclarationNode.Kind.CONSTANT.equals(variable.getKind()) || DeclarationNode.Kind.ENUMERATED_SET.equals(variable.getKind()));
 		TemplateHandler.add(getter, "machine", nameHandler.handle(variable.getSurroundingMachineNode().getName()));
 		TemplateHandler.add(getter, "returnType", typeGenerator.generate(variable.getType()));
-		TemplateHandler.add(getter, "machineName", machineNode.getName());
+		TemplateHandler.add(getter, "machineName", nameHandler.handle(machineNode.getName()));
 		return getter.render();
 	}
 
@@ -420,7 +420,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(getter, "isConstant", false);
 		TemplateHandler.add(getter, "machine", nameHandler.handle(includedMachine.getName()));
 		TemplateHandler.add(getter, "returnType", nameHandler.handle(includedMachine.getName()));
-		TemplateHandler.add(getter, "machineName", machineNode.getName());
+		TemplateHandler.add(getter, "machineName", nameHandler.handle(machineNode.getName()));
 		return getter.render();
 	}
 

@@ -66,6 +66,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     private final boolean forVisualization;
 
+    private List<String> boundedVariables;
 
     public MachineConstantsOptimizer(MachineNode machineNode, boolean forModelChecking, boolean forVisualization) {
         this.newProperties = new ArrayList<>();
@@ -74,6 +75,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         preprocessor.visitMachineNode();
         this.forModelChecking = forModelChecking;
         this.forVisualization = forVisualization;
+        this.boundedVariables = new ArrayList<>();
     }
 
     public MachineNode visitMachineNode() {
@@ -123,12 +125,17 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
 
     private OperationNode visitOperationNode(OperationNode operationNode) {
-        return new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null), operationNode.getParams());
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(operationNode.getParams().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+        OperationNode result = new OperationNode(operationNode.getSourceCodePosition(), operationNode.getName(), operationNode.getOutputParams(), (SubstitutionNode) visitSubstitutionNode(operationNode.getSubstitution(), null), operationNode.getParams());
+        this.boundedVariables = oldBoundedVariables;
+        return result;
     }
 
     public void createNewProperty(DeclarationNode declaration, ExprNode expr) {
-        ExprNode lhs = new IdentifierExprNode(machineNode.getSourceCodePosition(), declaration.getName(), false);
+        IdentifierExprNode lhs = new IdentifierExprNode(machineNode.getSourceCodePosition(), declaration.getName(), false);
         lhs.setType(declaration.getType());
+        lhs.setDeclarationNode(declaration);
         PredicateOperatorWithExprArgsNode newProperty = new PredicateOperatorWithExprArgsNode(declaration.getSourceCodePosition(), PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(lhs, expr));
         newProperty.setType(BoolType.getInstance());
         newProperties.add(newProperty);
@@ -137,12 +144,17 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
     @Override
     public Node visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            declarationNode.setType(node.getType());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(node.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(boundedVariables.stream().collect(Collectors.toSet()));
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                declarationNode.setType(node.getType());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(node.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         ExpressionOperatorNode result = new ExpressionOperatorNode(node.getSourceCodePosition(), node.getExpressionNodes()
                 .stream()
@@ -160,11 +172,15 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
     @Override
     public Node visitCastPredicateExpressionNode(CastPredicateExpressionNode node, Void expected) {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(declarationNode.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(declarationNode.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         CastPredicateExpressionNode result = new CastPredicateExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getPredicate(), null));
         result.setType(node.getType());
@@ -183,68 +199,100 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(declarationNode.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(declarationNode.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         QuantifiedExpressionNode result = new QuantifiedExpressionNode(node.getSourceCodePosition(), node.getOperator(), node.getDeclarationList(), (PredicateNode) visitPredicateNode(node.getPredicateNode(), null), (ExprNode) visitExprNode(node.getExpressionNode(), null));
         result.setType(node.getType());
+        this.boundedVariables = oldBoundedVariables;
         return result;
     }
 
     @Override
     public Node visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(declarationNode.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(declarationNode.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         SetComprehensionNode result = new SetComprehensionNode(node.getSourceCodePosition(), node.getDeclarationList(), (PredicateNode) visitPredicateNode(node.getPredicateNode(), null));
         result.setType(node.getType());
+        this.boundedVariables = oldBoundedVariables;
         return result;
     }
 
     @Override
     public Node visitLambdaNode(LambdaNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(declarationNode.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(declarationNode.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         LambdaNode result = new LambdaNode(node.getSourceCodePosition(), node.getDeclarations(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (ExprNode) visitExprNode(node.getExpression(), null));
         result.setType(node.getType());
+        this.boundedVariables = oldBoundedVariables;
         return result;
     }
 
     @Override
     public Node visitLetExpressionNode(LetExpressionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(declarationNode.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(declarationNode.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         LetExpressionNode result = new LetExpressionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (ExprNode) visitExprNode(node.getExpression(), null));
         result.setType(node.getType());
+        this.boundedVariables = oldBoundedVariables;
         return result;
     }
 
     @Override
     public Node visitIfExpressionNode(IfExpressionNode node, Void expected) {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
-            DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
-            IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
-            result.setType(declarationNode.getType());
-            result.setDeclarationNode(declarationNode);
-            return result;
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
+            identifierAnalyzer.visitNode(node, null);
+            if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
+                DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
+                IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
+                result.setType(declarationNode.getType());
+                result.setDeclarationNode(declarationNode);
+                return result;
+            }
         }
         IfExpressionNode result = new IfExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getCondition(), null), (ExprNode) visitExprNode(node.getThenExpression(), null), (ExprNode) visitExprNode(node.getElseExpression(), null));
         result.setType(node.getType());
@@ -316,15 +364,21 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         QuantifiedPredicateNode result = new QuantifiedPredicateNode(node.getSourceCodePosition(), node.getDeclarationList(), (PredicateNode) visitPredicateNode(node.getPredicateNode(), null), node.getOperator());
         result.setType(node.getType());
+        this.boundedVariables = oldBoundedVariables;
         return result;
     }
 
     @Override
     public Node visitLetPredicateNode(LetPredicateNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         LetPredicateNode result = new LetPredicateNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (PredicateNode) visitPredicateNode(node.getWherePredicate(), null), (PredicateNode) visitPredicateNode(node.getPredicate(), null));
         result.setType(node.getType());
+        this.boundedVariables = oldBoundedVariables;
         return result;
     }
 
@@ -391,7 +445,11 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitLetSubstitution(LetSubstitutionNode node, Void expected) {
-        return new LetSubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (SubstitutionNode) visitSubstitutionNode(node.getBody(), null));
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+        LetSubstitutionNode result = new LetSubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (SubstitutionNode) visitSubstitutionNode(node.getBody(), null));
+        this.boundedVariables = oldBoundedVariables;
+        return result;
     }
 
     @Override

@@ -229,7 +229,7 @@ record(struct, parameters) ::= <<
 new <struct>(<parameters; separator=", ">)
 >>
 
-initialization(machine, properties, values, copy, body, iterationConstruct, forVisualization, forModelChecking) ::= <<
+initialization(machine, properties, values, copy, body, iterationConstruct, propertiesCheck, forVisualization, forModelChecking) ::= <<
 <if(properties)>
 <if(values)>
 static {

@@ -283,12 +283,17 @@ record(struct, parameters) ::= <<
 new <struct>(<parameters; separator=", ">)
 >>
 
-initialization(machine, properties, values, body) ::= <<
+initialization(machine, properties, values, body, propertiesCheck) ::= <<
 <if(properties)>
 <if(values)>
 static {
     <properties; separator="\n">
     <values>
+    <if(propertiesCheck)>
+    if(!(<propertiesCheck>).booleanValue()) {
+        throw new RuntimeException("Contradiction in PROPERTIES detected!");
+    }
+    <endif>
 }
 <endif>
 <endif>

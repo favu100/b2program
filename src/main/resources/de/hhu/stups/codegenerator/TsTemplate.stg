@@ -235,6 +235,11 @@ initialization(machine, properties, values, copy, body, forVisualization, forMod
 static {
     <properties; separator="\n">
     <values>
+    <if(propertiesCheck)>
+    if(!(<propertiesCheck>).booleanValue()) {
+        throw new Error("Contradiction in PROPERTIES detected!");
+    }
+    <endif>
 }
 <endif>
 <endif>

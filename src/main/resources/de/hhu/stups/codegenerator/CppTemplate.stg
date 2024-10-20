@@ -9,6 +9,7 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<iostream>
 #include \<string>
 #include \<sstream>
+#include \<stdexcept>
 <if(forModelChecking)>
 #include \<immer/map.hpp>
 #include \<map>
@@ -311,10 +312,15 @@ record(struct, parameters) ::= <<
 (<struct>(<parameters; separator=", ">))
 >>
 
-initialization(machine, properties, values, body) ::= <<
+initialization(machine, properties, values, body, propertiesCheck) ::= <<
 <machine>() {
     <properties; separator="\n">
     <values; separator="\n">
+    <if(propertiesCheck)>
+    if(!(<propertiesCheck>).booleanValue()) {
+        throw std::runtime_error("Contradiction in PROPERTIES detected!");
+    }
+    <endif>
     <body>
 }
 >>

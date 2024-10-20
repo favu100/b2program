@@ -2,6 +2,7 @@ package de.hhu.stups.codegenerator.generators;
 
 
 import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.analyzers.ParallelConstructAnalyzer;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
@@ -10,6 +11,7 @@ import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.*;
 import de.prob.parser.ast.nodes.expression.*;
 import de.prob.parser.ast.nodes.predicate.PredicateNode;
+import de.prob.parser.ast.nodes.predicate.PredicateOperatorNode;
 import de.prob.parser.ast.nodes.predicate.PredicateOperatorWithExprArgsNode;
 import de.prob.parser.ast.nodes.substitution.AnySubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.AssignSubstitutionNode;
@@ -24,6 +26,7 @@ import de.prob.parser.ast.nodes.substitution.SubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
+import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
@@ -82,6 +85,8 @@ public class SubstitutionGenerator {
 
     private int variantCounter;
 
+    private final DeferredSetAnalyzer deferredSetAnalyzer;
+
     private final boolean forVisualisation;
 
     public SubstitutionGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final NameHandler nameHandler,
@@ -89,7 +94,8 @@ public class SubstitutionGenerator {
                                  final IdentifierGenerator identifierGenerator,
                                  final IterationConstructHandler iterationConstructHandler, final ParallelConstructHandler parallelConstructHandler,
                                  final RecordStructGenerator recordStructGenerator, final DeclarationGenerator declarationGenerator, final LambdaFunctionGenerator lambdaFunctionGenerator,
-                                 final SetWithPredicateGenerator setWithPredicateGenerator, final BacktrackingGenerator backtrackingGenerator, final boolean forVisualisation) {
+                                 final SetWithPredicateGenerator setWithPredicateGenerator, final BacktrackingGenerator backtrackingGenerator,
+                                 final DeferredSetAnalyzer deferredSetAnalyzer, final boolean forVisualisation) {
         this.currentGroup = currentGroup;
         this.machineGenerator = machineGenerator;
         this.nameHandler = nameHandler;
@@ -105,6 +111,7 @@ public class SubstitutionGenerator {
         this.lambdaFunctionGenerator = lambdaFunctionGenerator;
         this.backtrackingGenerator = backtrackingGenerator;
         this.infiniteSetGenerator = setWithPredicateGenerator;
+        this.deferredSetAnalyzer = deferredSetAnalyzer;
         this.currentLocalScope = 0;
         this.localScopes = 0;
         this.parallelNestingLevel = 0;
@@ -128,6 +135,11 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "properties", generateConstantsInitializations(node));
         TemplateHandler.add(initialization, "values", generateValues(node));
 
+        PredicateNode otherProperties = extractPropertiesNotRelevantForAssigning();
+        if(otherProperties != null) {
+            TemplateHandler.add(initialization, "propertiesCheck", machineGenerator.visitPredicateNode(otherProperties, null));
+        }
+
         String body = "";
         if (node.getInitialisation() != null) body = machineGenerator.visitSubstitutionNode(node.getInitialisation(), null);
         //TODO: add empty templates in other languages instead of checking for existence
@@ -148,6 +160,42 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "forModelChecking", machineGenerator.isForModelChecking());
 
         return initialization.render();
+    }
+
+    private PredicateNode extractPropertiesNotRelevantForAssigning() {
+        MachineNode machineNode = machineGenerator.getMachineNode();
+        PredicateNode properties = machineNode.getProperties();
+        if(properties == null) {
+            return null;
+        }
+        List<PredicateNode> assigningPredicates = machineNode.getConstants()
+                .stream()
+                .filter(constant -> !machineGenerator.getLambdaFunctions().contains(constant.getName()))
+                .filter(constant -> !machineGenerator.getInfiniteSets().contains(constant.getName()))
+                .flatMap(cons -> predicateGenerator.extractEqualProperties(machineNode, cons).stream())
+                .collect(Collectors.toList());
+
+        List<PredicateNode> propertiesConjuncts = new ArrayList<>();
+        if(properties instanceof PredicateOperatorNode && ((PredicateOperatorNode) properties).getOperator() == PredicateOperatorNode.PredicateOperator.AND) {
+            propertiesConjuncts.addAll(((PredicateOperatorNode) properties).getPredicateArguments());
+        } else {
+            propertiesConjuncts.add(properties);
+        }
+        propertiesConjuncts = propertiesConjuncts
+                .stream()
+                .filter(conjunct -> machineNode.getDeferredSets().stream().noneMatch(dset -> deferredSetAnalyzer.isRelevantSizeConjunct(dset, conjunct)))
+                .collect(Collectors.toList());
+        propertiesConjuncts.removeAll(assigningPredicates);
+
+        if(propertiesConjuncts.size() == 0) {
+            return null;
+        } else if(propertiesConjuncts.size() == 1) {
+            return propertiesConjuncts.get(0);
+        }
+
+        PredicateNode result = new PredicateOperatorNode(properties.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, propertiesConjuncts);
+        result.setType(BoolType.getInstance());
+        return result;
     }
 
     /*

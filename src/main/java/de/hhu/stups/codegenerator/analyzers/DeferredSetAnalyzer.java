@@ -176,7 +176,7 @@ public class DeferredSetAnalyzer {
     /*
     * This function checks whether the given predicate is a relevant conjunct for extracting the size of the given deferred set
     */
-    private boolean isRelevantSizeConjunct(DeclarationNode deferredSet, PredicateNode predicate) {
+    public boolean isRelevantSizeConjunct(DeclarationNode deferredSet, PredicateNode predicate) {
         if(predicate instanceof PredicateOperatorWithExprArgsNode) {
             PredicateOperatorWithExprArgsNode pred = (PredicateOperatorWithExprArgsNode) predicate;
             if(pred.getOperator() == PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL) {

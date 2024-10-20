@@ -206,6 +206,7 @@ public class DeclarationGenerator {
     * This function generates code for all declarations of enums for sets from the node of the machine.
     */
     public List<String> generateSetDeclarations(MachineNode node) { return generateSetDeclarations(node, "set_declaration"); }
+
     public List<String> generateSetDeclarations(MachineNode node, String templateName) {
         List<String> enumeratedSets = generateEnumeratedSetDeclarations(node, templateName);
         List<String> deferredSets = generateDeferredSetDeclarations(node, templateName);

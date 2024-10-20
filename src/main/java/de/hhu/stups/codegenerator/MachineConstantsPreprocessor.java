@@ -45,6 +45,7 @@ import de.prob.parser.ast.nodes.substitution.VarSubstitutionNode;
 import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.visitors.AbstractVisitor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +76,8 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     private final boolean forVisualization;
 
+    private List<String> boundedVariables;
+
     public MachineConstantsPreprocessor(MachineNode machineNode, boolean forModelChecking, boolean forVisualization) {
         this.machineNode = machineNode;
         this.constants = machineNode.getConstants().stream()
@@ -82,6 +85,7 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
                 .collect(Collectors.toList());
         this.replacements = new HashMap<>();
         this.replacementsExpressions = new HashMap<>();
+        this.boundedVariables = new ArrayList<>();
         this.constantsCounter = 1;
         this.forModelChecking = forModelChecking;
         this.forVisualization = forVisualization;
@@ -90,10 +94,15 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
     public boolean checkIfConstantsOnly(ExprNode exprNode) {
         IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
         identifierAnalyzer.visitNode(exprNode, null);
-        return constants.containsAll(identifierAnalyzer.getIdentifiers());
+        for(String id : identifierAnalyzer.getIdentifiers()) {
+            if(!constants.contains(id) || boundedVariables.contains(id)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public void visitMachineNode(MachineNode node) {
+    public void visitMachineNode() {
         if(forModelChecking || forVisualization) {
             if (machineNode.getInvariant() != null) {
                 visitPredicateNode(machineNode.getInvariant(), null);
@@ -103,7 +112,10 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
     }
 
     public void visitOperationNode(OperationNode operationNode) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(operationNode.getParams().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         visitSubstitutionNode(operationNode.getSubstitution(), null);
+        this.boundedVariables = oldBoundedVariables;
     }
 
     @Override
@@ -154,6 +166,8 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     @Override
     public Node visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(checkIfConstantsOnly(node)) {
             if(!replacements.containsKey(node.toString())) {
                 replacements.put(node.toString(), generateNewDeclarationNode(node));
@@ -163,11 +177,14 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
         }
         visitPredicateNode(node.getPredicateNode(), null);
         visitExprNode(node.getExpressionNode(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 
     @Override
     public Node visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(checkIfConstantsOnly(node)) {
             if(!replacements.containsKey(node.toString())) {
                 replacements.put(node.toString(), generateNewDeclarationNode(node));
@@ -176,11 +193,12 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
             }
         }
         visitPredicateNode(node.getPredicateNode(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 
     private DeclarationNode generateNewDeclarationNode(ExprNode node) {
-        DeclarationNode newNode = new DeclarationNode(node.getSourceCodePosition(), "__aux_constant_" + constantsCounter, DeclarationNode.Kind.VARIABLE, machineNode);
+        DeclarationNode newNode = new DeclarationNode(node.getSourceCodePosition(), "__aux_constant_" + constantsCounter, DeclarationNode.Kind.CONSTANT, machineNode);
         newNode.setType(node.getType());
         constantsCounter++;
         return newNode;
@@ -188,6 +206,8 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     @Override
     public Node visitLambdaNode(LambdaNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarations().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(checkIfConstantsOnly(node)) {
             if(!replacements.containsKey(node.toString())) {
                 replacements.put(node.toString(), generateNewDeclarationNode(node));
@@ -197,11 +217,14 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
         }
         visitPredicateNode(node.getPredicate(), null);
         visitExprNode(node.getExpression(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 
     @Override
     public Node visitLetExpressionNode(LetExpressionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         if(checkIfConstantsOnly(node)) {
             if(!replacements.containsKey(node.toString())) {
                 replacements.put(node.toString(), generateNewDeclarationNode(node));
@@ -211,6 +234,7 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
         }
         visitExprNode(node.getExpression(), null);
         visitPredicateNode(node.getPredicate(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 
@@ -288,14 +312,20 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     @Override
     public Node visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getDeclarationList().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         visitPredicateNode(node.getPredicateNode(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 
     @Override
     public Node visitLetPredicateNode(LetPredicateNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         visitPredicateNode(node.getWherePredicate(), null);
         visitPredicateNode(node.getPredicate(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 
@@ -365,8 +395,11 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     @Override
     public Node visitLetSubstitution(LetSubstitutionNode node, Void expected) {
+        List<String> oldBoundedVariables = new ArrayList<>(this.boundedVariables);
+        this.boundedVariables.addAll(node.getLocalIdentifiers().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         visitPredicateNode(node.getPredicate(), null);
         visitSubstitutionNode(node.getBody(), null);
+        this.boundedVariables = oldBoundedVariables;
         return null;
     }
 

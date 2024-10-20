@@ -51,9 +51,7 @@ import de.prob.parser.ast.visitors.AbstractVisitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
@@ -73,7 +71,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         this.newProperties = new ArrayList<>();
         this.preprocessor = new MachineConstantsPreprocessor(machineNode, forModelChecking, forVisualization);
         this.machineNode = machineNode;
-        preprocessor.visitMachineNode(machineNode);
+        preprocessor.visitMachineNode();
         this.forModelChecking = forModelChecking;
         this.forVisualization = forVisualization;
     }
@@ -143,6 +141,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             declarationNode.setType(node.getType());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(node.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         ExpressionOperatorNode result = new ExpressionOperatorNode(node.getSourceCodePosition(), node.getExpressionNodes()

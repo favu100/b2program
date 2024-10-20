@@ -51,6 +51,7 @@ import de.prob.parser.ast.visitors.AbstractVisitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -146,7 +147,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
-            identifierAnalyzer.setInnerIdentifiers(boundedVariables.stream().collect(Collectors.toSet()));
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 declarationNode.setType(node.getType());
@@ -174,6 +175,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
@@ -204,6 +206,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
@@ -225,6 +228,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
@@ -246,6 +250,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
@@ -267,6 +272,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
@@ -286,6 +292,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
         if(preprocessor.getReplacements().containsKey(node.toString())) {
             IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ);
             identifierAnalyzer.visitNode(node, null);
+            identifierAnalyzer.setInnerIdentifiers(new HashSet<>(boundedVariables));
             if(boundedVariables.stream().noneMatch(identifierAnalyzer::containsIdentifier)) {
                 DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
                 IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);

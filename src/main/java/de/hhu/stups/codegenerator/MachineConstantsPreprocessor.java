@@ -110,15 +110,7 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
         if(exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.EMPTY_SET || exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.EMPTY_SEQUENCE) {
             return true;
         }
-        if(exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION ||
-            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT ||
-            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.POW ||
-            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.POW1 ||
-            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.FIN ||
-            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.FIN1) {
-            return exprNode.getExpressionNodes().stream().allMatch(this::checkEmptySetOnly);
-        }
-        return false;
+        return exprNode.getExpressionNodes().stream().allMatch(this::checkEmptySetOnly);
     }
 
     public void visitMachineNode() {

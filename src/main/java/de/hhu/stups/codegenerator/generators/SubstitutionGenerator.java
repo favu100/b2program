@@ -26,6 +26,8 @@ import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.DeferredSetElementType;
+import de.prob.parser.ast.types.EnumeratedSetElementType;
+import de.prob.parser.ast.types.SetElementType;
 import de.prob.parser.ast.types.SetType;
 import org.antlr.v4.runtime.misc.OrderedHashSet;
 import org.stringtemplate.v4.ST;
@@ -189,6 +191,7 @@ public class SubstitutionGenerator {
 
         List<String> constantsInitializations = new ArrayList<>();
         constantsInitializations.addAll(constants.stream()
+                .filter(constant -> constant.getType() instanceof DeferredSetElementType)
                 .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
                 .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
                 .collect(Collectors.toList()));

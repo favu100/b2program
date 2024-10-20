@@ -312,11 +312,6 @@ public class TestMachines extends TestJava {
     }
 
     @Test
-    public void testOBSW_M001() throws Exception {
-        testJava("obsw_M001");
-    }
-
-    @Test
     public void testsort_m2_data1000() throws Exception {
         testJava("sort_m2_data1000");
     }

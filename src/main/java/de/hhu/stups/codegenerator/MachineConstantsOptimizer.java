@@ -163,6 +163,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(declarationNode.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         CastPredicateExpressionNode result = new CastPredicateExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getPredicate(), null));
@@ -186,6 +187,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(declarationNode.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         QuantifiedExpressionNode result = new QuantifiedExpressionNode(node.getSourceCodePosition(), node.getOperator(), node.getDeclarationList(), (PredicateNode) visitPredicateNode(node.getPredicateNode(), null), (ExprNode) visitExprNode(node.getExpressionNode(), null));
@@ -199,6 +201,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(declarationNode.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         SetComprehensionNode result = new SetComprehensionNode(node.getSourceCodePosition(), node.getDeclarationList(), (PredicateNode) visitPredicateNode(node.getPredicateNode(), null));
@@ -212,6 +215,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(declarationNode.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         LambdaNode result = new LambdaNode(node.getSourceCodePosition(), node.getDeclarations(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (ExprNode) visitExprNode(node.getExpression(), null));
@@ -225,6 +229,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(declarationNode.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         LetExpressionNode result = new LetExpressionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), (PredicateNode) visitPredicateNode(node.getPredicate(), null), (ExprNode) visitExprNode(node.getExpression(), null));
@@ -238,6 +243,7 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
             DeclarationNode declarationNode = preprocessor.getReplacements().get(node.toString());
             IdentifierExprNode result = new IdentifierExprNode(declarationNode.getSourceCodePosition(), declarationNode.getName(), false);
             result.setType(declarationNode.getType());
+            result.setDeclarationNode(declarationNode);
             return result;
         }
         IfExpressionNode result = new IfExpressionNode(node.getSourceCodePosition(), (PredicateNode) visitPredicateNode(node.getCondition(), null), (ExprNode) visitExprNode(node.getThenExpression(), null), (ExprNode) visitExprNode(node.getElseExpression(), null));

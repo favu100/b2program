@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BRelation;
 import de.hhu.stups.btypes.BTuple;
 import de.hhu.stups.btypes.BSet;
+import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
@@ -421,13 +422,17 @@ public class sort_m2_data1000_MC {
     public static class _ProjectionRead__check_inv_2 {
 
         public BInteger j;
+        public BInteger k;
+        public BInteger l;
 
-        public _ProjectionRead__check_inv_2(BInteger j) {
+        public _ProjectionRead__check_inv_2(BInteger j, BInteger k, BInteger l) {
             this.j = j;
+            this.k = k;
+            this.l = l;
         }
 
         public String toString() {
-            return "{" + "j: " + this.j + "}";
+            return "{" + "j: " + this.j + "," + "k: " + this.k + "," + "l: " + this.l + "}";
         }
 
         public boolean equals(Object other) {
@@ -435,74 +440,22 @@ public class sort_m2_data1000_MC {
                 return false;
             }
             _ProjectionRead__check_inv_2 o = (_ProjectionRead__check_inv_2) other;
-            return this.j.equals(o.j);
+            return this.j.equals(o.j) && this.k.equals(o.k) && this.l.equals(o.l);
         }
 
         public int hashCode() {
-            return Objects.hash(j);
+            return Objects.hash(j, k, l);
         }
     }
 
     public static class _ProjectionRead__check_inv_3 {
-
-        public BInteger k;
-        public BInteger l;
-
-        public _ProjectionRead__check_inv_3(BInteger k, BInteger l) {
-            this.k = k;
-            this.l = l;
-        }
-
-        public String toString() {
-            return "{" + "k: " + this.k + "," + "l: " + this.l + "}";
-        }
-
-        public boolean equals(Object other) {
-            if(!(other instanceof _ProjectionRead__check_inv_3)) {
-                return false;
-            }
-            _ProjectionRead__check_inv_3 o = (_ProjectionRead__check_inv_3) other;
-            return this.k.equals(o.k) && this.l.equals(o.l);
-        }
-
-        public int hashCode() {
-            return Objects.hash(k, l);
-        }
-    }
-
-    public static class _ProjectionRead__check_inv_4 {
-
-        public BInteger j;
-
-        public _ProjectionRead__check_inv_4(BInteger j) {
-            this.j = j;
-        }
-
-        public String toString() {
-            return "{" + "j: " + this.j + "}";
-        }
-
-        public boolean equals(Object other) {
-            if(!(other instanceof _ProjectionRead__check_inv_4)) {
-                return false;
-            }
-            _ProjectionRead__check_inv_4 o = (_ProjectionRead__check_inv_4) other;
-            return this.j.equals(o.j);
-        }
-
-        public int hashCode() {
-            return Objects.hash(j);
-        }
-    }
-
-    public static class _ProjectionRead__check_inv_5 {
 
         public BRelation<BInteger, BInteger> g;
         public BInteger j;
         public BInteger k;
         public BInteger l;
 
-        public _ProjectionRead__check_inv_5(BRelation<BInteger, BInteger> g, BInteger j, BInteger k, BInteger l) {
+        public _ProjectionRead__check_inv_3(BRelation<BInteger, BInteger> g, BInteger j, BInteger k, BInteger l) {
             this.g = g;
             this.j = j;
             this.k = k;
@@ -514,10 +467,10 @@ public class sort_m2_data1000_MC {
         }
 
         public boolean equals(Object other) {
-            if(!(other instanceof _ProjectionRead__check_inv_5)) {
+            if(!(other instanceof _ProjectionRead__check_inv_3)) {
                 return false;
             }
-            _ProjectionRead__check_inv_5 o = (_ProjectionRead__check_inv_5) other;
+            _ProjectionRead__check_inv_3 o = (_ProjectionRead__check_inv_3) other;
             return this.g.equals(o.g) && this.j.equals(o.j) && this.k.equals(o.k) && this.l.equals(o.l);
         }
 
@@ -526,11 +479,11 @@ public class sort_m2_data1000_MC {
         }
     }
 
-    public static class _ProjectionRead__check_inv_6 {
+    public static class _ProjectionRead__check_inv_4 {
 
         public BRelation<BInteger, BInteger> g;
 
-        public _ProjectionRead__check_inv_6(BRelation<BInteger, BInteger> g) {
+        public _ProjectionRead__check_inv_4(BRelation<BInteger, BInteger> g) {
             this.g = g;
         }
 
@@ -539,10 +492,10 @@ public class sort_m2_data1000_MC {
         }
 
         public boolean equals(Object other) {
-            if(!(other instanceof _ProjectionRead__check_inv_6)) {
+            if(!(other instanceof _ProjectionRead__check_inv_4)) {
                 return false;
             }
-            _ProjectionRead__check_inv_6 o = (_ProjectionRead__check_inv_6) other;
+            _ProjectionRead__check_inv_4 o = (_ProjectionRead__check_inv_4) other;
             return this.g.equals(o.g);
         }
 
@@ -551,11 +504,88 @@ public class sort_m2_data1000_MC {
         }
     }
 
+    public static class _ProjectionRead__check_inv_5 {
+
+        public BRelation<BInteger, BInteger> g;
+
+        public _ProjectionRead__check_inv_5(BRelation<BInteger, BInteger> g) {
+            this.g = g;
+        }
+
+        public String toString() {
+            return "{" + "g: " + this.g + "}";
+        }
+
+        public boolean equals(Object other) {
+            if(!(other instanceof _ProjectionRead__check_inv_5)) {
+                return false;
+            }
+            _ProjectionRead__check_inv_5 o = (_ProjectionRead__check_inv_5) other;
+            return this.g.equals(o.g);
+        }
+
+        public int hashCode() {
+            return Objects.hash(g);
+        }
+    }
+
+    public static class _ProjectionRead__check_inv_6 {
+
+        public BInteger k;
+
+        public _ProjectionRead__check_inv_6(BInteger k) {
+            this.k = k;
+        }
+
+        public String toString() {
+            return "{" + "k: " + this.k + "}";
+        }
+
+        public boolean equals(Object other) {
+            if(!(other instanceof _ProjectionRead__check_inv_6)) {
+                return false;
+            }
+            _ProjectionRead__check_inv_6 o = (_ProjectionRead__check_inv_6) other;
+            return this.k.equals(o.k);
+        }
+
+        public int hashCode() {
+            return Objects.hash(k);
+        }
+    }
+
+    public static class _ProjectionRead__check_inv_7 {
+
+        public BInteger l;
+
+        public _ProjectionRead__check_inv_7(BInteger l) {
+            this.l = l;
+        }
+
+        public String toString() {
+            return "{" + "l: " + this.l + "}";
+        }
+
+        public boolean equals(Object other) {
+            if(!(other instanceof _ProjectionRead__check_inv_7)) {
+                return false;
+            }
+            _ProjectionRead__check_inv_7 o = (_ProjectionRead__check_inv_7) other;
+            return this.l.equals(o.l);
+        }
+
+        public int hashCode() {
+            return Objects.hash(l);
+        }
+    }
+
 
 
 
     private static BInteger n;
     private static BRelation<BInteger, BInteger> f;
+    private static BSet<BInteger> __aux_constant_2;
+    private static BSet<BInteger> __aux_constant_1;
 
 
 
@@ -569,10 +599,13 @@ public class sort_m2_data1000_MC {
         n = new BInteger(1000);
         BRelation<BInteger, BInteger> _ic_set_0 = new BRelation<BInteger, BInteger>();
         for(BInteger _ic_i_1 : BSet.interval(new BInteger(1), n)) {
-            _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple<>(_ic_i_1, new BInteger(15000).minus(_ic_i_1))));
+            _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(_ic_i_1, new BInteger(15000).minus(_ic_i_1))));
 
         }
+
         f = _ic_set_0;
+        __aux_constant_2 = f.range();
+        __aux_constant_1 = BSet.interval(new BInteger(1), n);
     }
 
     public sort_m2_data1000_MC() {
@@ -585,6 +618,8 @@ public class sort_m2_data1000_MC {
     public sort_m2_data1000_MC(sort_m2_data1000_MC copy) {
         this.n = copy.n;
         this.f = copy.f;
+        this.__aux_constant_2 = copy.__aux_constant_2;
+        this.__aux_constant_1 = copy.__aux_constant_1;
         this.j = copy.j;
         this.k = copy.k;
         this.l = copy.l;
@@ -595,7 +630,7 @@ public class sort_m2_data1000_MC {
         BRelation<BInteger, BInteger> _ld_g = g;
         BInteger _ld_k = k;
         BInteger _ld_l = l;
-        g = _ld_g.override(new BRelation<BInteger, BInteger>(new BTuple<>(_ld_k, _ld_g.functionCall(_ld_l))).override(new BRelation<BInteger, BInteger>(new BTuple<>(_ld_l, _ld_g.functionCall(_ld_k)))));
+        g = _ld_g.override(new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(_ld_k, _ld_g.functionCall(_ld_l))).override(new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(_ld_l, _ld_g.functionCall(_ld_k)))));
         k = _ld_k.plus(new BInteger(1));
         j = _ld_k.plus(new BInteger(1));
         l = _ld_k.plus(new BInteger(1));
@@ -626,6 +661,14 @@ public class sort_m2_data1000_MC {
 
     public BRelation<BInteger, BInteger> _get_f() {
         return f;
+    }
+
+    public BSet<BInteger> _get___aux_constant_2() {
+        return __aux_constant_2;
+    }
+
+    public BSet<BInteger> _get___aux_constant_1() {
+        return __aux_constant_1;
     }
 
     public BInteger _get_j() {
@@ -735,11 +778,11 @@ public class sort_m2_data1000_MC {
     }
 
     public _ProjectionRead__check_inv_2 _projected_state_for__check_inv_2() {
-        return new _ProjectionRead__check_inv_2(j);
+        return new _ProjectionRead__check_inv_2(j,k,l);
     }
 
     public _ProjectionRead__check_inv_3 _projected_state_for__check_inv_3() {
-        return new _ProjectionRead__check_inv_3(k,l);
+        return new _ProjectionRead__check_inv_3(g,j,k,l);
     }
 
     public _ProjectionRead__check_inv_1 _projected_state_for__check_inv_1() {
@@ -747,15 +790,19 @@ public class sort_m2_data1000_MC {
     }
 
     public _ProjectionRead__check_inv_6 _projected_state_for__check_inv_6() {
-        return new _ProjectionRead__check_inv_6(g);
+        return new _ProjectionRead__check_inv_6(k);
+    }
+
+    public _ProjectionRead__check_inv_7 _projected_state_for__check_inv_7() {
+        return new _ProjectionRead__check_inv_7(l);
     }
 
     public _ProjectionRead__check_inv_4 _projected_state_for__check_inv_4() {
-        return new _ProjectionRead__check_inv_4(j);
+        return new _ProjectionRead__check_inv_4(g);
     }
 
     public _ProjectionRead__check_inv_5 _projected_state_for__check_inv_5() {
-        return new _ProjectionRead__check_inv_5(g,j,k,l);
+        return new _ProjectionRead__check_inv_5(g);
     }
 
     public _ProjectionWrite_prog2 _update_for_prog2() {
@@ -795,27 +842,31 @@ public class sort_m2_data1000_MC {
     }
 
     public boolean _check_inv_1() {
-        return j.greaterEqual(k).booleanValue();
+        return new BBoolean(j.greaterEqual(k).booleanValue() && j.lessEqual(n).booleanValue()).booleanValue();
     }
 
     public boolean _check_inv_2() {
-        return j.lessEqual(n).booleanValue();
+        return new BBoolean(l.greaterEqual(k).booleanValue() && l.lessEqual(j).booleanValue()).booleanValue();
     }
 
     public boolean _check_inv_3() {
-        return l.greaterEqual(k).booleanValue();
-    }
-
-    public boolean _check_inv_4() {
-        return j.lessEqual(j).booleanValue();
-    }
-
-    public boolean _check_inv_5() {
         return g.functionCall(l).equal(g.relationImage(BSet.interval(k, j)).min()).booleanValue();
     }
 
+    public boolean _check_inv_4() {
+        return g.checkDomain(__aux_constant_1).and(g.checkRangeNatural()).and(g.isFunction()).and(g.isTotal(__aux_constant_1)).booleanValue();
+    }
+
+    public boolean _check_inv_5() {
+        return g.range().equal(__aux_constant_2).booleanValue();
+    }
+
     public boolean _check_inv_6() {
-        return g.checkDomain(BSet.interval(new BInteger(1), n)).and(g.checkRangeNatural()).and(g.isFunction()).and(g.isTotal(BSet.interval(new BInteger(1), n))).booleanValue();
+        return new BBoolean(k.greaterEqual(new BInteger(1)).booleanValue() && k.lessEqual(n).booleanValue()).booleanValue();
+    }
+
+    public boolean _check_inv_7() {
+        return l.isNatural().booleanValue();
     }
 
 
@@ -849,6 +900,7 @@ public class sort_m2_data1000_MC {
         PersistentHashMap _InvCache__check_inv_4 = PersistentHashMap.EMPTY;
         PersistentHashMap _InvCache__check_inv_5 = PersistentHashMap.EMPTY;
         PersistentHashMap _InvCache__check_inv_6 = PersistentHashMap.EMPTY;
+        PersistentHashMap _InvCache__check_inv_7 = PersistentHashMap.EMPTY;
 
         public ModelChecker(final Type type, final int threads, final boolean isCaching, final boolean isDebug) {
             this.type = type;
@@ -1279,6 +1331,23 @@ public class sort_m2_data1000_MC {
                 System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
                 return true;
             }
+            boolean _check_inv_7;
+            if(isCaching) {
+                _ProjectionRead__check_inv_7 read__check_inv_7_state = state._projected_state_for__check_inv_7();
+                Object _obj__check_inv_7 = GET.invoke(_InvCache__check_inv_7, read__check_inv_7_state);
+                if(_obj__check_inv_7 == null) {
+                    _check_inv_7 = state._check_inv_7();
+                    _InvCache__check_inv_7 = (PersistentHashMap) ASSOC.invoke(_InvCache__check_inv_7, read__check_inv_7_state, _check_inv_7);
+                } else {
+                    _check_inv_7 = (boolean) _obj__check_inv_7;
+                }
+            } else {
+                _check_inv_7 = state._check_inv_7();
+            }
+            if(!_check_inv_7) {
+                System.out.println("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
+                return true;
+            }
             return false;
         }
 
@@ -1322,7 +1391,7 @@ public class sort_m2_data1000_MC {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -1335,7 +1404,7 @@ public class sort_m2_data1000_MC {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -1347,7 +1416,7 @@ public class sort_m2_data1000_MC {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -1355,7 +1424,7 @@ public class sort_m2_data1000_MC {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

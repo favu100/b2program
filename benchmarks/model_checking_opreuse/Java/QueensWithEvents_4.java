@@ -1,6 +1,7 @@
 import de.hhu.stups.btypes.BRelation;
 import de.hhu.stups.btypes.BTuple;
 import de.hhu.stups.btypes.BSet;
+import de.hhu.stups.btypes.BObject;
 import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
@@ -155,8 +156,9 @@ public class QueensWithEvents_4 {
 
 
     private static BInteger n;
-    private static BSet<BInteger> interval;
-    private static BSet<BRelation<BInteger, BInteger>> allFields;
+    private static BSet<BRelation<BInteger, BInteger>> __aux_constant_2;
+    private static BSet<BInteger> __aux_constant_3;
+    private static BSet<BInteger> __aux_constant_1;
 
 
 
@@ -165,8 +167,9 @@ public class QueensWithEvents_4 {
 
     static {
         n = new BInteger(4);
-        interval = BSet.interval(new BInteger(1), n);
-        allFields = BRelation.cartesianProduct(interval, interval).pow();
+        __aux_constant_2 = BRelation.cartesianProduct(BSet.interval(new BInteger(1), n), BSet.interval(new BInteger(1), n)).pow();
+        __aux_constant_3 = BSet.interval(new BInteger(1), n).difference(new BSet<BInteger>(new BInteger(1)));
+        __aux_constant_1 = BSet.interval(new BInteger(1), n);
     }
 
     public QueensWithEvents_4() {
@@ -175,8 +178,9 @@ public class QueensWithEvents_4 {
 
     public QueensWithEvents_4(QueensWithEvents_4 copy) {
         this.n = copy.n;
-        this.interval = copy.interval;
-        this.allFields = copy.allFields;
+        this.__aux_constant_2 = copy.__aux_constant_2;
+        this.__aux_constant_3 = copy.__aux_constant_3;
+        this.__aux_constant_1 = copy.__aux_constant_1;
         this.queens = copy.queens;
     }
 
@@ -189,12 +193,16 @@ public class QueensWithEvents_4 {
         return n;
     }
 
-    public BSet<BInteger> _get_interval() {
-        return interval;
+    public BSet<BRelation<BInteger, BInteger>> _get___aux_constant_2() {
+        return __aux_constant_2;
     }
 
-    public BSet<BRelation<BInteger, BInteger>> _get_allFields() {
-        return allFields;
+    public BSet<BInteger> _get___aux_constant_3() {
+        return __aux_constant_3;
+    }
+
+    public BSet<BInteger> _get___aux_constant_1() {
+        return __aux_constant_1;
     }
 
     public BRelation<BInteger, BInteger> _get_queens() {
@@ -238,54 +246,39 @@ public class QueensWithEvents_4 {
 
 
     public BSet<BRelation<BInteger, BInteger>> _tr_Solve() {
-        BSet<BRelation<BInteger, BInteger>> _ic_set_4 = new BSet<BRelation<BInteger, BInteger>>();
-        for(BRelation<BInteger, BInteger> _ic_solution_1 : allFields) {
-            BBoolean _ic_boolean_5 = new BBoolean(true);
-            for(BInteger _ic_x_1 : interval) {
-                for(BInteger _ic_y_1 : interval) {
-                    BBoolean _ic_boolean_4 = new BBoolean(true);
-                    for(BInteger _ic_z_1 : interval) {
-                        if(!(new BBoolean(!new BBoolean(interval.elementOf(_ic_z_1).booleanValue() && _ic_solution_1.elementOf(new BTuple<>(_ic_x_1, _ic_z_1)).booleanValue()).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue())).booleanValue()) {
-                            _ic_boolean_4 = new BBoolean(false);
+        BSet<BRelation<BInteger, BInteger>> _ic_set_2 = new BSet<BRelation<BInteger, BInteger>>();
+        for(BRelation<BInteger, BInteger> _ic_solution_1 : __aux_constant_2) {
+            BBoolean _ic_boolean_2 = new BBoolean(true);
+            if(_ic_solution_1.checkDomain(BSet.interval(new BInteger(1), _ic_solution_1.card())).and(_ic_solution_1.checkRange(__aux_constant_1)).and(_ic_solution_1.isFunction()).and(_ic_solution_1.isTotal(BSet.interval(new BInteger(1), _ic_solution_1.card()))).and(_ic_solution_1.isBijection(__aux_constant_1)).booleanValue()) {
+                for(BInteger _ic_q1_1 : __aux_constant_1) {
+                    for(BInteger _ic_q2_1 : __aux_constant_3) {
+                        if(!(new BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || new BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue()).booleanValue())).booleanValue()) {
+                            _ic_boolean_2 = new BBoolean(false);
                             break;
                         }
 
-                    }
-                    if(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue()) {
-                        if(!(new BBoolean(!new BBoolean(new BBoolean(interval.elementOf(_ic_x_1).booleanValue() && interval.elementOf(_ic_y_1).booleanValue()).booleanValue() && _ic_solution_1.elementOf(new BTuple<>(_ic_x_1, _ic_y_1)).booleanValue()).booleanValue() || _ic_boolean_4.booleanValue())).booleanValue()) {
-                            _ic_boolean_5 = new BBoolean(false);
-                            break;
-                        }
                     }
 
                 }
-            }BBoolean _ic_boolean_6 = new BBoolean(true);
-            for(BInteger _ic_q1_1 : interval) {
-                for(BInteger _ic_q2_1 : interval.difference(new BSet<BInteger>(new BInteger(1)))) {
-                    if(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue()) {
-                        if(!(new BBoolean(!new BBoolean(new BBoolean(interval.elementOf(_ic_q1_1).booleanValue() && interval.difference(new BSet<BInteger>(new BInteger(1))).elementOf(_ic_q2_1).booleanValue()).booleanValue() && _ic_q2_1.greater(_ic_q1_1).booleanValue()).booleanValue() || new BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue()).booleanValue())).booleanValue()) {
-                            _ic_boolean_6 = new BBoolean(false);
-                            break;
-                        }
-                    }
-
-                }
-            }BBoolean _ic_boolean_7 = new BBoolean(true);
-            for(BInteger _ic_x_1 : queens.domain()) {
-                if(new BBoolean(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue()) {
-                    if(!(new BBoolean(!queens.domain().elementOf(_ic_x_1).booleanValue() || _ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1)).booleanValue())).booleanValue()) {
-                        _ic_boolean_7 = new BBoolean(false);
+            }
+            BBoolean _ic_boolean_3 = new BBoolean(true);
+            if(new BBoolean(_ic_solution_1.checkDomain(BSet.interval(new BInteger(1), _ic_solution_1.card())).and(_ic_solution_1.checkRange(__aux_constant_1)).and(_ic_solution_1.isFunction()).and(_ic_solution_1.isTotal(BSet.interval(new BInteger(1), _ic_solution_1.card()))).and(_ic_solution_1.isBijection(__aux_constant_1)).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue()) {
+                for(BInteger _ic_x_1 : queens.domain()) {
+                    if(!(_ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1))).booleanValue()) {
+                        _ic_boolean_3 = new BBoolean(false);
                         break;
                     }
-                }
 
+                }
             }
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()).booleanValue() && _ic_boolean_5.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue())).booleanValue()) {
-                _ic_set_4 = _ic_set_4.union(new BSet<BRelation<BInteger, BInteger>>(_ic_solution_1));
+
+            if((new BBoolean(new BBoolean(_ic_solution_1.checkDomain(BSet.interval(new BInteger(1), _ic_solution_1.card())).and(_ic_solution_1.checkRange(__aux_constant_1)).and(_ic_solution_1.isFunction()).and(_ic_solution_1.isTotal(BSet.interval(new BInteger(1), _ic_solution_1.card()))).and(_ic_solution_1.isBijection(__aux_constant_1)).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue())).booleanValue()) {
+                _ic_set_2 = _ic_set_2.union(new BSet<BRelation<BInteger, BInteger>>(_ic_solution_1));
             }
 
         }
-        return _ic_set_4;
+
+        return _ic_set_2;
     }
 
     public _ProjectionRead_Solve _projected_state_for_Solve() {
@@ -309,7 +302,7 @@ public class QueensWithEvents_4 {
     }
 
     public boolean _check_inv_1() {
-        return queens.checkDomain(interval).and(queens.checkRange(interval)).and(queens.isFunction()).and(queens.isPartial(interval)).booleanValue();
+        return queens.checkDomain(__aux_constant_1).and(queens.checkRange(__aux_constant_1)).and(queens.isFunction()).and(queens.isPartial(__aux_constant_1)).booleanValue();
     }
 
 
@@ -590,7 +583,7 @@ public class QueensWithEvents_4 {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -603,7 +596,7 @@ public class QueensWithEvents_4 {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -615,7 +608,7 @@ public class QueensWithEvents_4 {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -623,7 +616,7 @@ public class QueensWithEvents_4 {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

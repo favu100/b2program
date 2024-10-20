@@ -2293,6 +2293,7 @@ public class CAN_BUS_tlc {
 
 
     private static BSet<BInteger> NATSET;
+    private static BSet<BInteger> __aux_constant_1;
 
 
     public enum T1state implements BObject {
@@ -2385,6 +2386,7 @@ public class CAN_BUS_tlc {
 
     static {
         NATSET = BSet.interval(new BInteger(0), new BInteger(5));
+        __aux_constant_1 = BSet.interval(new BInteger(1).negative(), new BInteger(3));
     }
 
     public CAN_BUS_tlc() {
@@ -2402,7 +2404,7 @@ public class CAN_BUS_tlc {
         T3_readpriority = new BInteger(0);
         T1_timer = new BInteger(2);
         T2_timer = new BInteger(3);
-        BUSwrite = new BRelation<BInteger, BInteger>(new BTuple<>(new BInteger(0), new BInteger(0)));
+        BUSwrite = new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(new BInteger(0), new BInteger(0)));
         BUSvalue = new BInteger(0);
         BUSpriority = new BInteger(0);
         T2_mode = T2mode.T2MODE_SENSE;
@@ -2410,6 +2412,7 @@ public class CAN_BUS_tlc {
 
     public CAN_BUS_tlc(CAN_BUS_tlc copy) {
         this.NATSET = copy.NATSET;
+        this.__aux_constant_1 = copy.__aux_constant_1;
         this.BUSpriority = copy.BUSpriority;
         this.BUSvalue = copy.BUSvalue;
         this.BUSwrite = copy.BUSwrite;
@@ -2444,7 +2447,7 @@ public class CAN_BUS_tlc {
 
     public void T1SendResult(BInteger ppriority, BInteger pv) {
         BRelation<BInteger, BInteger> _ld_BUSwrite = BUSwrite;
-        BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple<>(ppriority, pv)));
+        BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(ppriority, pv)));
         T1_state = T1state.T1_WAIT;
 
     }
@@ -2498,7 +2501,7 @@ public class CAN_BUS_tlc {
 
     public void T2WriteBus(BInteger ppriority, BInteger pv) {
         BRelation<BInteger, BInteger> _ld_BUSwrite = BUSwrite;
-        BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple<>(ppriority, pv)));
+        BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(ppriority, pv)));
         T2_state = T2state.T2_WAIT;
 
     }
@@ -2522,7 +2525,7 @@ public class CAN_BUS_tlc {
 
     public void T3writebus(BInteger ppriority, BInteger pv) {
         BRelation<BInteger, BInteger> _ld_BUSwrite = BUSwrite;
-        BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple<>(ppriority, pv)));
+        BUSwrite = _ld_BUSwrite.override(new BRelation<BInteger, BInteger>(new BTuple<BInteger, BInteger>(ppriority, pv)));
         T3_state = T3state.T3_WAIT;
 
     }
@@ -2572,6 +2575,10 @@ public class CAN_BUS_tlc {
 
     public BSet<BInteger> _get_NATSET() {
         return NATSET;
+    }
+
+    public BSet<BInteger> _get___aux_constant_1() {
+        return __aux_constant_1;
     }
 
     public BInteger _get_BUSpriority() {
@@ -2738,12 +2745,13 @@ public class CAN_BUS_tlc {
 
     public BSet<BInteger> _tr_T1Calculate() {
         BSet<BInteger> _ic_set_1 = new BSet<BInteger>();
-        for(BInteger _ic_p_1 : BSet.interval(new BInteger(1).negative(), new BInteger(3))) {
+        for(BInteger _ic_p_1 : __aux_constant_1) {
             if((T1_state.equal(T1state.T1_CALC)).booleanValue()) {
                 _ic_set_1 = _ic_set_1.union(new BSet<BInteger>(_ic_p_1));
             }
 
         }
+
         return _ic_set_1;
     }
 
@@ -2752,7 +2760,7 @@ public class CAN_BUS_tlc {
         for(BInteger _ic_ppriority_1 : Arrays.asList(new BInteger(3))) {
             for(BInteger _ic_pv_1 : Arrays.asList(T1_writevalue)) {
                 if((T1_state.equal(T1state.T1_SEND)).booleanValue()) {
-                    _ic_set_2 = _ic_set_2.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<>(_ic_ppriority_1, _ic_pv_1)));
+                    _ic_set_2 = _ic_set_2.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<BInteger, BInteger>(_ic_ppriority_1, _ic_pv_1)));
                 }
 
             }
@@ -2783,7 +2791,7 @@ public class CAN_BUS_tlc {
         for(BInteger _ic_ppriority_1 : Arrays.asList(BUSpriority)) {
             for(BInteger _ic_pv_1 : Arrays.asList(BUSvalue)) {
                 if((T2_state.equal(T2state.T2_RCV)).booleanValue()) {
-                    _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<>(_ic_ppriority_1, _ic_pv_1)));
+                    _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<BInteger, BInteger>(_ic_ppriority_1, _ic_pv_1)));
                 }
 
             }
@@ -2804,7 +2812,7 @@ public class CAN_BUS_tlc {
     public BSet<BInteger> _tr_T2ReleaseBus() {
         BSet<BInteger> _ic_set_8 = new BSet<BInteger>();
         for(BInteger _ic_ppriority_1 : Arrays.asList(T2_readpriority)) {
-            if((new BBoolean(BUSwrite.domain().elementOf(_ic_ppriority_1).booleanValue() && T2_state.equal(T2state.T2_RELEASE).booleanValue())).booleanValue()) {
+            if((new BBoolean(BUSwrite.isInDomain(_ic_ppriority_1).booleanValue() && T2_state.equal(T2state.T2_RELEASE).booleanValue())).booleanValue()) {
                 _ic_set_8 = _ic_set_8.union(new BSet<BInteger>(_ic_ppriority_1));
             }
 
@@ -2822,7 +2830,7 @@ public class CAN_BUS_tlc {
         for(BInteger _ic_ppriority_1 : Arrays.asList(new BInteger(5))) {
             for(BInteger _ic_pv_1 : Arrays.asList(T2_writevalue)) {
                 if((T2_state.equal(T2state.T2_SEND)).booleanValue()) {
-                    _ic_set_10 = _ic_set_10.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<>(_ic_ppriority_1, _ic_pv_1)));
+                    _ic_set_10 = _ic_set_10.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<BInteger, BInteger>(_ic_ppriority_1, _ic_pv_1)));
                 }
 
             }
@@ -2857,7 +2865,7 @@ public class CAN_BUS_tlc {
         for(BInteger _ic_ppriority_1 : Arrays.asList(new BInteger(4))) {
             for(BInteger _ic_pv_1 : Arrays.asList(new BInteger(0))) {
                 if((T3_state.equal(T3state.T3_WRITE)).booleanValue()) {
-                    _ic_set_14 = _ic_set_14.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<>(_ic_ppriority_1, _ic_pv_1)));
+                    _ic_set_14 = _ic_set_14.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<BInteger, BInteger>(_ic_ppriority_1, _ic_pv_1)));
                 }
 
             }
@@ -2872,7 +2880,7 @@ public class CAN_BUS_tlc {
         for(BInteger _ic_ppriority_1 : Arrays.asList(BUSpriority)) {
             for(BInteger _ic_pv_1 : Arrays.asList(BUSvalue)) {
                 if((T3_state.equal(T3state.T3_READ)).booleanValue()) {
-                    _ic_set_15 = _ic_set_15.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<>(_ic_ppriority_1, _ic_pv_1)));
+                    _ic_set_15 = _ic_set_15.union(new BSet<BTuple<BInteger, BInteger>>(new BTuple<BInteger, BInteger>(_ic_ppriority_1, _ic_pv_1)));
                 }
 
             }
@@ -3366,11 +3374,11 @@ public class CAN_BUS_tlc {
     }
 
     public boolean _check_inv_2() {
-        return BUtils.BOOL.elementOf(T3_evaluated).booleanValue();
+        return T3_evaluated.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_3() {
-        return BUtils.BOOL.elementOf(T3_enabled).booleanValue();
+        return T3_enabled.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_4() {
@@ -3438,7 +3446,7 @@ public class CAN_BUS_tlc {
     }
 
     public boolean _check_inv_20() {
-        return BUSwrite.domain().elementOf(new BInteger(0)).booleanValue();
+        return BUSwrite.isInDomain(new BInteger(0)).booleanValue();
     }
 
 
@@ -5011,7 +5019,7 @@ public class CAN_BUS_tlc {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -5024,7 +5032,7 @@ public class CAN_BUS_tlc {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -5036,7 +5044,7 @@ public class CAN_BUS_tlc {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -5044,7 +5052,7 @@ public class CAN_BUS_tlc {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

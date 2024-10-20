@@ -4340,77 +4340,77 @@ public class LandingGear_R6 {
 
     public void env_start_retracting_first(POSITION gr) {
         BRelation<POSITION, GEAR_STATE> _ld_gears = gears;
-        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<>(gr, GEAR_STATE.gear_moving)));
+        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<POSITION, GEAR_STATE>(gr, GEAR_STATE.gear_moving)));
         gear = GEAR_STATE.gear_moving;
 
     }
 
     public void env_retract_gear_skip(POSITION gr) {
-        gears = gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<>(gr, GEAR_STATE.retracted)));
+        gears = gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<POSITION, GEAR_STATE>(gr, GEAR_STATE.retracted)));
 
     }
 
     public void env_retract_gear_last(POSITION gr) {
         BRelation<POSITION, GEAR_STATE> _ld_gears = gears;
-        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<>(gr, GEAR_STATE.retracted)));
+        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<POSITION, GEAR_STATE>(gr, GEAR_STATE.retracted)));
         gear = GEAR_STATE.retracted;
 
     }
 
     public void env_start_extending(POSITION gr) {
         BRelation<POSITION, GEAR_STATE> _ld_gears = gears;
-        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<>(gr, GEAR_STATE.gear_moving)));
+        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<POSITION, GEAR_STATE>(gr, GEAR_STATE.gear_moving)));
         gear = GEAR_STATE.gear_moving;
 
     }
 
     public void env_extend_gear_last(POSITION gr) {
         BRelation<POSITION, GEAR_STATE> _ld_gears = gears;
-        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<>(gr, GEAR_STATE.extended)));
+        gears = _ld_gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<POSITION, GEAR_STATE>(gr, GEAR_STATE.extended)));
         gear = GEAR_STATE.extended;
 
     }
 
     public void env_extend_gear_skip(POSITION gr) {
-        gears = gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<>(gr, GEAR_STATE.extended)));
+        gears = gears.override(new BRelation<POSITION, GEAR_STATE>(new BTuple<POSITION, GEAR_STATE>(gr, GEAR_STATE.extended)));
 
     }
 
     public void env_start_open_door(POSITION gr) {
         BRelation<POSITION, DOOR_STATE> _ld_doors = doors;
-        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<>(gr, DOOR_STATE.door_moving)));
+        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<POSITION, DOOR_STATE>(gr, DOOR_STATE.door_moving)));
         door = DOOR_STATE.door_moving;
 
     }
 
     public void env_open_door_last(POSITION gr) {
         BRelation<POSITION, DOOR_STATE> _ld_doors = doors;
-        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<>(gr, DOOR_STATE.open)));
+        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<POSITION, DOOR_STATE>(gr, DOOR_STATE.open)));
         door = DOOR_STATE.open;
 
     }
 
     public void env_open_door_skip(POSITION gr) {
-        doors = doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<>(gr, DOOR_STATE.open)));
+        doors = doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<POSITION, DOOR_STATE>(gr, DOOR_STATE.open)));
 
     }
 
     public void env_start_close_door(POSITION gr) {
         BRelation<POSITION, DOOR_STATE> _ld_doors = doors;
-        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<>(gr, DOOR_STATE.door_moving)));
+        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<POSITION, DOOR_STATE>(gr, DOOR_STATE.door_moving)));
         door = DOOR_STATE.door_moving;
 
     }
 
     public void env_close_door(POSITION gr) {
         BRelation<POSITION, DOOR_STATE> _ld_doors = doors;
-        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<>(gr, DOOR_STATE.closed)));
+        doors = _ld_doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<POSITION, DOOR_STATE>(gr, DOOR_STATE.closed)));
         door = DOOR_STATE.closed;
 
     }
 
     public void env_close_door_skip(POSITION gr) {
-        doors = doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<>(gr, DOOR_STATE.closed)));
+        doors = doors.override(new BRelation<POSITION, DOOR_STATE>(new BTuple<POSITION, DOOR_STATE>(gr, DOOR_STATE.closed)));
 
     }
 
@@ -4707,6 +4707,7 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_18;
     }
 
@@ -4718,6 +4719,7 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_19;
     }
 
@@ -4729,6 +4731,7 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_20;
     }
 
@@ -4740,6 +4743,7 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_21;
     }
 
@@ -4751,6 +4755,7 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_22;
     }
 
@@ -4762,39 +4767,43 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_23;
     }
 
     public BSet<POSITION> _tr_env_start_open_door() {
         BSet<POSITION> _ic_set_24 = new BSet<POSITION>();
         for(POSITION _ic_gr_1 : gears.domain()) {
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.closed).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.range().notElementOf(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_open_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && new BSet<DOOR_STATE>(DOOR_STATE.closed, DOOR_STATE.door_moving).elementOf(door).booleanValue()).booleanValue() && gear.unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gear.equal(GEAR_STATE.retracted).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gear.equal(GEAR_STATE.extended).booleanValue()).booleanValue()).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.closed).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.isNotInRange(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_open_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && new BSet<DOOR_STATE>(DOOR_STATE.closed, DOOR_STATE.door_moving).elementOf(door).booleanValue()).booleanValue() && gear.unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gear.equal(GEAR_STATE.retracted).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gear.equal(GEAR_STATE.extended).booleanValue()).booleanValue()).booleanValue())).booleanValue()) {
                 _ic_set_24 = _ic_set_24.union(new BSet<POSITION>(_ic_gr_1));
             }
 
         }
+
         return _ic_set_24;
     }
 
     public BSet<POSITION> _tr_env_open_door_last() {
         BSet<POSITION> _ic_set_25 = new BSet<POSITION>();
         for(POSITION _ic_gr_1 : gears.domain()) {
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.range().notElementOf(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).equal(new BSet<DOOR_STATE>(DOOR_STATE.open)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_open_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && door.equal(DOOR_STATE.door_moving).booleanValue()).booleanValue() && gear.unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gear.equal(GEAR_STATE.retracted).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gear.equal(GEAR_STATE.extended).booleanValue()).booleanValue()).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.isNotInRange(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).equal(new BSet<DOOR_STATE>(DOOR_STATE.open)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_open_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && door.equal(DOOR_STATE.door_moving).booleanValue()).booleanValue() && gear.unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gear.equal(GEAR_STATE.retracted).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gear.equal(GEAR_STATE.extended).booleanValue()).booleanValue()).booleanValue())).booleanValue()) {
                 _ic_set_25 = _ic_set_25.union(new BSet<POSITION>(_ic_gr_1));
             }
 
         }
+
         return _ic_set_25;
     }
 
     public BSet<POSITION> _tr_env_open_door_skip() {
         BSet<POSITION> _ic_set_26 = new BSet<POSITION>();
         for(POSITION _ic_gr_1 : gears.domain()) {
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.range().notElementOf(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).unequal(new BSet<DOOR_STATE>(DOOR_STATE.open)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_open_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.isNotInRange(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).unequal(new BSet<DOOR_STATE>(DOOR_STATE.open)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_open_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue())).booleanValue()) {
                 _ic_set_26 = _ic_set_26.union(new BSet<POSITION>(_ic_gr_1));
             }
 
         }
+
         return _ic_set_26;
     }
 
@@ -4806,28 +4815,31 @@ public class LandingGear_R6 {
             }
 
         }
+
         return _ic_set_27;
     }
 
     public BSet<POSITION> _tr_env_close_door() {
         BSet<POSITION> _ic_set_28 = new BSet<POSITION>();
         for(POSITION _ic_gr_1 : gears.domain()) {
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.range().notElementOf(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).equal(new BSet<DOOR_STATE>(DOOR_STATE.closed)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && new BBoolean(gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue() || gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_close_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue() || shock_absorber.equal(PLANE_STATE.ground).booleanValue()).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && door.equal(DOOR_STATE.door_moving).booleanValue()).booleanValue() && gear.unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gear.equal(GEAR_STATE.extended).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && new BSet<GEAR_STATE>(GEAR_STATE.extended, GEAR_STATE.retracted).elementOf(gear).booleanValue()).booleanValue()).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.isNotInRange(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).equal(new BSet<DOOR_STATE>(DOOR_STATE.closed)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && new BBoolean(gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue() || gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_close_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue() || shock_absorber.equal(PLANE_STATE.ground).booleanValue()).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && door.equal(DOOR_STATE.door_moving).booleanValue()).booleanValue() && gear.unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gear.equal(GEAR_STATE.extended).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && new BSet<GEAR_STATE>(GEAR_STATE.extended, GEAR_STATE.retracted).elementOf(gear).booleanValue()).booleanValue()).booleanValue())).booleanValue()) {
                 _ic_set_28 = _ic_set_28.union(new BSet<POSITION>(_ic_gr_1));
             }
 
         }
+
         return _ic_set_28;
     }
 
     public BSet<POSITION> _tr_env_close_door_skip() {
         BSet<POSITION> _ic_set_29 = new BSet<POSITION>();
         for(POSITION _ic_gr_1 : gears.domain()) {
-            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.range().notElementOf(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).unequal(new BSet<DOOR_STATE>(DOOR_STATE.closed)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && new BBoolean(gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue() || gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_close_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue() || shock_absorber.equal(PLANE_STATE.ground).booleanValue()).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue())).booleanValue()) {
+            if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(doors.functionCall(_ic_gr_1).equal(DOOR_STATE.door_moving).booleanValue() && gears.functionCall(_ic_gr_1).unequal(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && gears.isNotInRange(GEAR_STATE.gear_moving).booleanValue()).booleanValue() && doors.relationImage(_POSITION.difference(new BSet<POSITION>(_ic_gr_1))).unequal(new BSet<DOOR_STATE>(DOOR_STATE.closed)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && new BBoolean(gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.retracted)).booleanValue() || gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue() || new BBoolean(handle.equal(HANDLE_STATE.down).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue()).booleanValue()).booleanValue() && valve_close_door.equal(VALVE_STATE.valve_open).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(handle.equal(HANDLE_STATE.up).booleanValue() && gears.range().equal(new BSet<GEAR_STATE>(GEAR_STATE.extended)).booleanValue()).booleanValue() || shock_absorber.equal(PLANE_STATE.ground).booleanValue()).booleanValue()).booleanValue() && general_valve.equal(VALVE_STATE.valve_open).booleanValue())).booleanValue()) {
                 _ic_set_29 = _ic_set_29.union(new BSet<POSITION>(_ic_gr_1));
             }
 
         }
+
         return _ic_set_29;
     }
 
@@ -5587,7 +5599,7 @@ public class LandingGear_R6 {
     }
 
     public boolean _check_inv_2() {
-        return BUtils.BOOL.elementOf(general_EV).booleanValue();
+        return general_EV.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_3() {
@@ -5595,23 +5607,23 @@ public class LandingGear_R6 {
     }
 
     public boolean _check_inv_4() {
-        return BUtils.BOOL.elementOf(handle_move).booleanValue();
+        return handle_move.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_5() {
-        return BUtils.BOOL.elementOf(close_EV).booleanValue();
+        return close_EV.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_6() {
-        return BUtils.BOOL.elementOf(extend_EV).booleanValue();
+        return extend_EV.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_7() {
-        return BUtils.BOOL.elementOf(open_EV).booleanValue();
+        return open_EV.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_8() {
-        return BUtils.BOOL.elementOf(retract_EV).booleanValue();
+        return retract_EV.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_9() {
@@ -8116,7 +8128,7 @@ public class LandingGear_R6 {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -8129,7 +8141,7 @@ public class LandingGear_R6 {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -8141,7 +8153,7 @@ public class LandingGear_R6 {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -8149,7 +8161,7 @@ public class LandingGear_R6 {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

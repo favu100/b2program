@@ -1775,56 +1775,6 @@ public class nota_v2 {
         }
     }
 
-    public static class _Struct1 extends BStruct {
-        private BSet<SID> sid;
-        private RM_ERROR_CODES err;
-
-        public _Struct1(BSet<SID> sid, RM_ERROR_CODES err) {
-            this.sid = sid;
-            this.err = err;
-        }
-
-        public BSet<SID> get_sid() {
-            return this.sid;
-        }
-
-        public RM_ERROR_CODES get_err() {
-            return this.err;
-        }
-
-        public _Struct1 override_sid(BSet<SID> sid) {
-            return new _Struct1(sid, err);
-        }
-
-        public _Struct1 override_err(RM_ERROR_CODES err) {
-            return new _Struct1(sid, err);
-        }
-
-        public BBoolean equal(_Struct1 o) {
-            return new BBoolean(this.sid.equals(o.sid) && this.err.equals(o.err));
-        }
-
-        public BBoolean unequal(_Struct1 o) {
-            return new BBoolean(!(this.sid.equals(o.sid)) || !(this.err.equals(o.err)));
-        }
-
-        public String toString() {
-            return "(" + "sid : " + this.sid + "," + "err : " + this.err + ")";
-        }
-
-        public boolean equals(Object other) {
-            if(!(other instanceof _Struct1)) {
-                return false;
-            }
-            _Struct1 o = (_Struct1) other;
-            return this.sid.equals(o.sid) && this.err.equals(o.err);
-        }
-
-        public int hashCode() {
-            return Objects.hash(sid, err);
-        }
-    }
-
     public static class _Struct3 extends BStruct {
         private BSet<SID> sid;
         private IN_ERROR_CODES err;
@@ -1867,6 +1817,56 @@ public class nota_v2 {
                 return false;
             }
             _Struct3 o = (_Struct3) other;
+            return this.sid.equals(o.sid) && this.err.equals(o.err);
+        }
+
+        public int hashCode() {
+            return Objects.hash(sid, err);
+        }
+    }
+
+    public static class _Struct1 extends BStruct {
+        private BSet<SID> sid;
+        private RM_ERROR_CODES err;
+
+        public _Struct1(BSet<SID> sid, RM_ERROR_CODES err) {
+            this.sid = sid;
+            this.err = err;
+        }
+
+        public BSet<SID> get_sid() {
+            return this.sid;
+        }
+
+        public RM_ERROR_CODES get_err() {
+            return this.err;
+        }
+
+        public _Struct1 override_sid(BSet<SID> sid) {
+            return new _Struct1(sid, err);
+        }
+
+        public _Struct1 override_err(RM_ERROR_CODES err) {
+            return new _Struct1(sid, err);
+        }
+
+        public BBoolean equal(_Struct1 o) {
+            return new BBoolean(this.sid.equals(o.sid) && this.err.equals(o.err));
+        }
+
+        public BBoolean unequal(_Struct1 o) {
+            return new BBoolean(!(this.sid.equals(o.sid)) || !(this.err.equals(o.err)));
+        }
+
+        public String toString() {
+            return "(" + "sid : " + this.sid + "," + "err : " + this.err + ")";
+        }
+
+        public boolean equals(Object other) {
+            if(!(other instanceof _Struct1)) {
+                return false;
+            }
+            _Struct1 o = (_Struct1) other;
             return this.sid.equals(o.sid) && this.err.equals(o.err);
         }
 
@@ -2119,7 +2119,7 @@ public class nota_v2 {
         BRelation<SID, INTERCONNECTNODE> _ld_in_localServices = in_localServices;
         BSet<SID> _ld_sids = sids;
         sids = _ld_sids.union(new BSet<SID>(si));
-        in_localServices = _ld_in_localServices.union(new BRelation<SID, INTERCONNECTNODE>(new BTuple<>(si, self)));
+        in_localServices = _ld_in_localServices.union(new BRelation<SID, INTERCONNECTNODE>(new BTuple<SID, INTERCONNECTNODE>(si, self)));
         err = IN_ERROR_CODES.IN_REGISTRATION_OK;
         sid = new BSet<SID>(si);
 
@@ -2143,7 +2143,7 @@ public class nota_v2 {
         sockets = _ld_sockets.union(new BSet<SOCKET>(newsoc));
         soc = new BSet<SOCKET>(newsoc);
         err = IN_ERROR_CODES.IN_TARGET_SOCKET_GRANTED;
-        in_sockets = _ld_in_sockets.union(new BRelation<SOCKET, INTERCONNECTNODE>(new BTuple<>(newsoc, self)));
+        in_sockets = _ld_in_sockets.union(new BRelation<SOCKET, INTERCONNECTNODE>(new BTuple<SOCKET, INTERCONNECTNODE>(newsoc, self)));
         soc_to = soc_to.override(new BRelation<SOCKET, SID>(new BTuple<SOCKET, SID>(newsoc,srcsid)));
         soc_from = soc_from.override(new BRelation<SOCKET, SID>(new BTuple<SOCKET, SID>(newsoc,targsid)));
 
@@ -2328,14 +2328,18 @@ public class nota_v2 {
             _ic_set_0 = _ic_set_0.union(new BSet<INTERCONNECTNODE>(_ic_newic_1));
 
         }
+
         return _ic_set_0;
     }
 
     public BSet<RESOURCEMANAGER> _tr_constructor_resourceManager() {
         BSet<RESOURCEMANAGER> _ic_set_1 = new BSet<RESOURCEMANAGER>();
-        for(RESOURCEMANAGER _ic_newrm_1 : _RESOURCEMANAGER.difference(resourceManagers)) {
-            if((new BBoolean(rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && resourceManagers.equal(new BSet<RESOURCEMANAGER>()).booleanValue())).booleanValue()) {
-                _ic_set_1 = _ic_set_1.union(new BSet<RESOURCEMANAGER>(_ic_newrm_1));
+        if(resourceManagers.equal(new BSet<RESOURCEMANAGER>()).booleanValue()) {
+            for(RESOURCEMANAGER _ic_newrm_1 : _RESOURCEMANAGER.difference(resourceManagers)) {
+                if((rm_services.isNotInDomain(_ic_newrm_1)).booleanValue()) {
+                    _ic_set_1 = _ic_set_1.union(new BSet<RESOURCEMANAGER>(_ic_newrm_1));
+                }
+
             }
 
         }
@@ -2346,10 +2350,12 @@ public class nota_v2 {
         BSet<BTuple<INTERCONNECTNODE, SERVICE>> _ic_set_2 = new BSet<BTuple<INTERCONNECTNODE, SERVICE>>();
         for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
             for(SERVICE _ic_newsvc_1 : _SERVICE.difference(services)) {
-                _ic_set_2 = _ic_set_2.union(new BSet<BTuple<INTERCONNECTNODE, SERVICE>>(new BTuple<>(_ic_ii_1, _ic_newsvc_1)));
+                _ic_set_2 = _ic_set_2.union(new BSet<BTuple<INTERCONNECTNODE, SERVICE>>(new BTuple<INTERCONNECTNODE, SERVICE>(_ic_ii_1, _ic_newsvc_1)));
 
             }
+
         }
+
         return _ic_set_2;
     }
 
@@ -2359,12 +2365,16 @@ public class nota_v2 {
             for(SID _ic_srcsid_1 : sids) {
                 for(SID _ic_targsid_1 : sids) {
                     for(SOCKET _ic_newsoc_1 : _SOCKET.difference(sockets)) {
-                        _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>>(new BTuple<>(new BTuple<>(new BTuple<>(_ic_ii_1, _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
+                        _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>>(new BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>(new BTuple<BTuple<INTERCONNECTNODE, SID>, SID>(new BTuple<INTERCONNECTNODE, SID>(_ic_ii_1, _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
 
                     }
+
                 }
+
             }
+
         }
+
         return _ic_set_3;
     }
 
@@ -2373,11 +2383,14 @@ public class nota_v2 {
         for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
             for(SERVICE _ic_ss_1 : services) {
                 for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                    _ic_set_4 = _ic_set_4.union(new BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>(new BTuple<>(new BTuple<>(_ic_self_1, _ic_ss_1), _ic_ii_1)));
+                    _ic_set_4 = _ic_set_4.union(new BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>(new BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>(new BTuple<RESOURCEMANAGER, SERVICE>(_ic_self_1, _ic_ss_1), _ic_ii_1)));
 
                 }
+
             }
+
         }
+
         return _ic_set_4;
     }
 
@@ -2386,11 +2399,14 @@ public class nota_v2 {
         for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
             for(SERVICE _ic_ss_1 : services) {
                 for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                    _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>(new BTuple<>(new BTuple<>(_ic_self_1, _ic_ss_1), _ic_ii_1)));
+                    _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>(new BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>(new BTuple<RESOURCEMANAGER, SERVICE>(_ic_self_1, _ic_ss_1), _ic_ii_1)));
 
                 }
+
             }
+
         }
+
         return _ic_set_5;
     }
 
@@ -2398,12 +2414,14 @@ public class nota_v2 {
         BSet<BTuple<RESOURCEMANAGER, SERVICE>> _ic_set_6 = new BSet<BTuple<RESOURCEMANAGER, SERVICE>>();
         for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
             for(SERVICE _ic_ss_1 : services) {
-                if((rm_sids.domain().elementOf(_ic_ss_1)).booleanValue()) {
-                    _ic_set_6 = _ic_set_6.union(new BSet<BTuple<RESOURCEMANAGER, SERVICE>>(new BTuple<>(_ic_self_1, _ic_ss_1)));
+                if((rm_sids.isInDomain(_ic_ss_1)).booleanValue()) {
+                    _ic_set_6 = _ic_set_6.union(new BSet<BTuple<RESOURCEMANAGER, SERVICE>>(new BTuple<RESOURCEMANAGER, SERVICE>(_ic_self_1, _ic_ss_1)));
                 }
 
             }
+
         }
+
         return _ic_set_6;
     }
 
@@ -2411,10 +2429,12 @@ public class nota_v2 {
         BSet<BTuple<RESOURCEMANAGER, SERVICE>> _ic_set_7 = new BSet<BTuple<RESOURCEMANAGER, SERVICE>>();
         for(RESOURCEMANAGER _ic_self_1 : resourceManagers) {
             for(SERVICE _ic_ss_1 : services) {
-                _ic_set_7 = _ic_set_7.union(new BSet<BTuple<RESOURCEMANAGER, SERVICE>>(new BTuple<>(_ic_self_1, _ic_ss_1)));
+                _ic_set_7 = _ic_set_7.union(new BSet<BTuple<RESOURCEMANAGER, SERVICE>>(new BTuple<RESOURCEMANAGER, SERVICE>(_ic_self_1, _ic_ss_1)));
 
             }
+
         }
+
         return _ic_set_7;
     }
 
@@ -2423,11 +2443,13 @@ public class nota_v2 {
         for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
             for(RESOURCEMANAGER _ic_rm_1 : resourceManagers) {
                 if((in_resourceManager.functionCall(_ic_self_1).equal(new BSet<RESOURCEMANAGER>())).booleanValue()) {
-                    _ic_set_8 = _ic_set_8.union(new BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>(new BTuple<>(_ic_self_1, _ic_rm_1)));
+                    _ic_set_8 = _ic_set_8.union(new BSet<BTuple<INTERCONNECTNODE, RESOURCEMANAGER>>(new BTuple<INTERCONNECTNODE, RESOURCEMANAGER>(_ic_self_1, _ic_rm_1)));
                 }
 
             }
+
         }
+
         return _ic_set_8;
     }
 
@@ -2436,13 +2458,16 @@ public class nota_v2 {
         for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
             for(SERVICE _ic_ss_1 : services) {
                 for(SID _ic_si_1 : _SID.difference(sids)) {
-                    if((in_localServices.domain().elementOf(_ic_si_1).not()).booleanValue()) {
-                        _ic_set_9 = _ic_set_9.union(new BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>>(new BTuple<>(new BTuple<>(_ic_self_1, _ic_ss_1), _ic_si_1)));
+                    if((in_localServices.isInDomain(_ic_si_1).not()).booleanValue()) {
+                        _ic_set_9 = _ic_set_9.union(new BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>>(new BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>(new BTuple<INTERCONNECTNODE, SERVICE>(_ic_self_1, _ic_ss_1), _ic_si_1)));
                     }
 
                 }
+
             }
+
         }
+
         return _ic_set_9;
     }
 
@@ -2450,10 +2475,12 @@ public class nota_v2 {
         BSet<BTuple<INTERCONNECTNODE, SERVICE>> _ic_set_10 = new BSet<BTuple<INTERCONNECTNODE, SERVICE>>();
         for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
             for(SERVICE _ic_ss_1 : services) {
-                _ic_set_10 = _ic_set_10.union(new BSet<BTuple<INTERCONNECTNODE, SERVICE>>(new BTuple<>(_ic_self_1, _ic_ss_1)));
+                _ic_set_10 = _ic_set_10.union(new BSet<BTuple<INTERCONNECTNODE, SERVICE>>(new BTuple<INTERCONNECTNODE, SERVICE>(_ic_self_1, _ic_ss_1)));
 
             }
+
         }
+
         return _ic_set_10;
     }
 
@@ -2461,20 +2488,28 @@ public class nota_v2 {
         BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> _ic_set_11 = new BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>();
         for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
             for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                for(SOCKET _ic_srcsoc_1 : sockets) {
-                    for(SID _ic_srcsid_1 : sids) {
-                        for(SID _ic_targsid_1 : sids) {
-                            for(SOCKET _ic_newsoc_1 : _SOCKET.difference(sockets)) {
-                                if((new BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue())).booleanValue()) {
-                                    _ic_set_11 = _ic_set_11.union(new BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>(new BTuple<>(new BTuple<>(new BTuple<>(new BTuple<>(new BTuple<>(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
+                if(_ic_self_1.unequal(_ic_ii_1).booleanValue()) {
+                    for(SOCKET _ic_srcsoc_1 : sockets) {
+                        if(in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()) {
+                            for(SID _ic_srcsid_1 : sids) {
+                                for(SID _ic_targsid_1 : sids) {
+                                    for(SOCKET _ic_newsoc_1 : _SOCKET.difference(sockets)) {
+                                        _ic_set_11 = _ic_set_11.union(new BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>(new BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>(new BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>(new BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>(new BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>(new BTuple<INTERCONNECTNODE, INTERCONNECTNODE>(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
+
+                                    }
+
                                 }
 
                             }
+
                         }
                     }
+
                 }
             }
+
         }
+
         return _ic_set_11;
     }
 
@@ -2482,18 +2517,25 @@ public class nota_v2 {
         BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> _ic_set_12 = new BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>();
         for(INTERCONNECTNODE _ic_self_1 : interconnectNodes) {
             for(INTERCONNECTNODE _ic_ii_1 : interconnectNodes) {
-                for(SOCKET _ic_srcsoc_1 : sockets) {
-                    for(SID _ic_srcsid_1 : sids) {
-                        for(SID _ic_targsid_1 : sids) {
-                            if((new BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue())).booleanValue()) {
-                                _ic_set_12 = _ic_set_12.union(new BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>(new BTuple<>(new BTuple<>(new BTuple<>(new BTuple<>(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1)));
+                if(_ic_self_1.unequal(_ic_ii_1).booleanValue()) {
+                    for(SOCKET _ic_srcsoc_1 : sockets) {
+                        if(in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()) {
+                            for(SID _ic_srcsid_1 : sids) {
+                                for(SID _ic_targsid_1 : sids) {
+                                    _ic_set_12 = _ic_set_12.union(new BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>(new BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>(new BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>(new BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>(new BTuple<INTERCONNECTNODE, INTERCONNECTNODE>(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1)));
+
+                                }
+
                             }
 
                         }
                     }
+
                 }
             }
+
         }
+
         return _ic_set_12;
     }
 
@@ -2505,6 +2547,7 @@ public class nota_v2 {
             }
 
         }
+
         return _ic_set_13;
     }
 
@@ -2814,60 +2857,65 @@ public class nota_v2 {
     public boolean _check_inv_1() {
         BBoolean _ic_boolean_14 = new BBoolean(true);
         for(INTERCONNECTNODE _ic__opt_1_1 : interconnectNodes) {
-            if(!(new BBoolean(!interconnectNodes.elementOf(_ic__opt_1_1).booleanValue() || _INTERCONNECTNODE.elementOf(_ic__opt_1_1).booleanValue())).booleanValue()) {
+            if(!(_INTERCONNECTNODE.elementOf(_ic__opt_1_1)).booleanValue()) {
                 _ic_boolean_14 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_14.booleanValue();
     }
 
     public boolean _check_inv_2() {
         BBoolean _ic_boolean_15 = new BBoolean(true);
         for(SOCKET _ic__opt_2_1 : sockets) {
-            if(!(new BBoolean(!sockets.elementOf(_ic__opt_2_1).booleanValue() || _SOCKET.elementOf(_ic__opt_2_1).booleanValue())).booleanValue()) {
+            if(!(_SOCKET.elementOf(_ic__opt_2_1)).booleanValue()) {
                 _ic_boolean_15 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_15.booleanValue();
     }
 
     public boolean _check_inv_3() {
         BBoolean _ic_boolean_16 = new BBoolean(true);
         for(SERVICE _ic__opt_3_1 : services) {
-            if(!(new BBoolean(!services.elementOf(_ic__opt_3_1).booleanValue() || _SERVICE.elementOf(_ic__opt_3_1).booleanValue())).booleanValue()) {
+            if(!(_SERVICE.elementOf(_ic__opt_3_1)).booleanValue()) {
                 _ic_boolean_16 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_16.booleanValue();
     }
 
     public boolean _check_inv_4() {
         BBoolean _ic_boolean_17 = new BBoolean(true);
         for(RESOURCEMANAGER _ic__opt_4_1 : resourceManagers) {
-            if(!(new BBoolean(!resourceManagers.elementOf(_ic__opt_4_1).booleanValue() || _RESOURCEMANAGER.elementOf(_ic__opt_4_1).booleanValue())).booleanValue()) {
+            if(!(_RESOURCEMANAGER.elementOf(_ic__opt_4_1)).booleanValue()) {
                 _ic_boolean_17 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_17.booleanValue();
     }
 
     public boolean _check_inv_5() {
         BBoolean _ic_boolean_18 = new BBoolean(true);
         for(SID _ic__opt_5_1 : sids) {
-            if(!(new BBoolean(!sids.elementOf(_ic__opt_5_1).booleanValue() || _SID.elementOf(_ic__opt_5_1).booleanValue())).booleanValue()) {
+            if(!(_SID.elementOf(_ic__opt_5_1)).booleanValue()) {
                 _ic_boolean_18 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_18.booleanValue();
     }
 
@@ -2879,13 +2927,15 @@ public class nota_v2 {
         BBoolean _ic_boolean_19 = new BBoolean(true);
         for(RESOURCEMANAGER _ic_a1_1 : rm_services.domain()) {
             for(RESOURCEMANAGER _ic_a2_1 : rm_services.domain()) {
-                if(!(new BBoolean(!new BBoolean(new BBoolean(rm_services.domain().elementOf(_ic_a1_1).booleanValue() && rm_services.domain().elementOf(_ic_a2_1).booleanValue()).booleanValue() && _ic_a1_1.unequal(_ic_a2_1).booleanValue()).booleanValue() || rm_services.functionCall(_ic_a1_1).intersect(rm_services.functionCall(_ic_a2_1)).equal(new BSet<SERVICE>()).booleanValue())).booleanValue()) {
+                if(!(new BBoolean(!_ic_a1_1.unequal(_ic_a2_1).booleanValue() || rm_services.functionCall(_ic_a1_1).intersect(rm_services.functionCall(_ic_a2_1)).equal(new BSet<SERVICE>()).booleanValue())).booleanValue()) {
                     _ic_boolean_19 = new BBoolean(false);
                     break;
                 }
 
             }
+
         }
+
         return _ic_boolean_19.booleanValue();
     }
 
@@ -4211,7 +4261,7 @@ public class nota_v2 {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -4224,7 +4274,7 @@ public class nota_v2 {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -4236,7 +4286,7 @@ public class nota_v2 {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -4244,7 +4294,7 @@ public class nota_v2 {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

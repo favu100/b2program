@@ -320,16 +320,16 @@ public class Cruise_finite1_deterministic_MC {
 
     public static class _ProjectionRead_CCInitialisationFinished {
 
-        public BBoolean ObstacleStatusJustChanged;
         public BBoolean CCInitialisationInProgress;
+        public BBoolean ObstacleStatusJustChanged;
         public ODset ObstacleDistance;
         public RSset ObstacleRelativeSpeed;
         public BBoolean ObstaclePresent;
         public BBoolean CruiseSpeedChangeInProgress;
 
-        public _ProjectionRead_CCInitialisationFinished(BBoolean ObstacleStatusJustChanged, BBoolean CCInitialisationInProgress, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
-            this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+        public _ProjectionRead_CCInitialisationFinished(BBoolean CCInitialisationInProgress, BBoolean ObstacleStatusJustChanged, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
             this.CCInitialisationInProgress = CCInitialisationInProgress;
+            this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
             this.ObstacleDistance = ObstacleDistance;
             this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
             this.ObstaclePresent = ObstaclePresent;
@@ -337,7 +337,7 @@ public class Cruise_finite1_deterministic_MC {
         }
 
         public String toString() {
-            return "{" + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
+            return "{" + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
         }
 
         public boolean equals(Object other) {
@@ -345,26 +345,26 @@ public class Cruise_finite1_deterministic_MC {
                 return false;
             }
             _ProjectionRead_CCInitialisationFinished o = (_ProjectionRead_CCInitialisationFinished) other;
-            return this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
+            return this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
         }
 
         public int hashCode() {
-            return Objects.hash(ObstacleStatusJustChanged, CCInitialisationInProgress, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
+            return Objects.hash(CCInitialisationInProgress, ObstacleStatusJustChanged, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
         }
     }
 
     public static class _ProjectionRead__tr_CCInitialisationFinished {
 
-        public BBoolean ObstacleStatusJustChanged;
         public BBoolean CCInitialisationInProgress;
+        public BBoolean ObstacleStatusJustChanged;
         public ODset ObstacleDistance;
         public RSset ObstacleRelativeSpeed;
         public BBoolean ObstaclePresent;
         public BBoolean CruiseSpeedChangeInProgress;
 
-        public _ProjectionRead__tr_CCInitialisationFinished(BBoolean ObstacleStatusJustChanged, BBoolean CCInitialisationInProgress, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
-            this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+        public _ProjectionRead__tr_CCInitialisationFinished(BBoolean CCInitialisationInProgress, BBoolean ObstacleStatusJustChanged, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
             this.CCInitialisationInProgress = CCInitialisationInProgress;
+            this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
             this.ObstacleDistance = ObstacleDistance;
             this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
             this.ObstaclePresent = ObstaclePresent;
@@ -372,7 +372,7 @@ public class Cruise_finite1_deterministic_MC {
         }
 
         public String toString() {
-            return "{" + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
+            return "{" + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
         }
 
         public boolean equals(Object other) {
@@ -380,11 +380,11 @@ public class Cruise_finite1_deterministic_MC {
                 return false;
             }
             _ProjectionRead__tr_CCInitialisationFinished o = (_ProjectionRead__tr_CCInitialisationFinished) other;
-            return this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
+            return this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
         }
 
         public int hashCode() {
-            return Objects.hash(ObstacleStatusJustChanged, CCInitialisationInProgress, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
+            return Objects.hash(CCInitialisationInProgress, ObstacleStatusJustChanged, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
         }
     }
 
@@ -2137,16 +2137,16 @@ public class Cruise_finite1_deterministic_MC {
 
     public static class _ProjectionRead_VehicleManageObstacle {
 
-        public BBoolean CCInitialisationInProgress;
         public BBoolean ObstacleStatusJustChanged;
+        public BBoolean CCInitialisationInProgress;
         public ODset ObstacleDistance;
         public RSset ObstacleRelativeSpeed;
         public BBoolean ObstaclePresent;
         public BBoolean CruiseSpeedChangeInProgress;
 
-        public _ProjectionRead_VehicleManageObstacle(BBoolean CCInitialisationInProgress, BBoolean ObstacleStatusJustChanged, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
-            this.CCInitialisationInProgress = CCInitialisationInProgress;
+        public _ProjectionRead_VehicleManageObstacle(BBoolean ObstacleStatusJustChanged, BBoolean CCInitialisationInProgress, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
             this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+            this.CCInitialisationInProgress = CCInitialisationInProgress;
             this.ObstacleDistance = ObstacleDistance;
             this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
             this.ObstaclePresent = ObstaclePresent;
@@ -2154,7 +2154,7 @@ public class Cruise_finite1_deterministic_MC {
         }
 
         public String toString() {
-            return "{" + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
+            return "{" + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
         }
 
         public boolean equals(Object other) {
@@ -2162,26 +2162,26 @@ public class Cruise_finite1_deterministic_MC {
                 return false;
             }
             _ProjectionRead_VehicleManageObstacle o = (_ProjectionRead_VehicleManageObstacle) other;
-            return this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
+            return this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
         }
 
         public int hashCode() {
-            return Objects.hash(CCInitialisationInProgress, ObstacleStatusJustChanged, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
+            return Objects.hash(ObstacleStatusJustChanged, CCInitialisationInProgress, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
         }
     }
 
     public static class _ProjectionRead__tr_VehicleManageObstacle {
 
-        public BBoolean CCInitialisationInProgress;
         public BBoolean ObstacleStatusJustChanged;
+        public BBoolean CCInitialisationInProgress;
         public ODset ObstacleDistance;
         public RSset ObstacleRelativeSpeed;
         public BBoolean ObstaclePresent;
         public BBoolean CruiseSpeedChangeInProgress;
 
-        public _ProjectionRead__tr_VehicleManageObstacle(BBoolean CCInitialisationInProgress, BBoolean ObstacleStatusJustChanged, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
-            this.CCInitialisationInProgress = CCInitialisationInProgress;
+        public _ProjectionRead__tr_VehicleManageObstacle(BBoolean ObstacleStatusJustChanged, BBoolean CCInitialisationInProgress, ODset ObstacleDistance, RSset ObstacleRelativeSpeed, BBoolean ObstaclePresent, BBoolean CruiseSpeedChangeInProgress) {
             this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+            this.CCInitialisationInProgress = CCInitialisationInProgress;
             this.ObstacleDistance = ObstacleDistance;
             this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
             this.ObstaclePresent = ObstaclePresent;
@@ -2189,7 +2189,7 @@ public class Cruise_finite1_deterministic_MC {
         }
 
         public String toString() {
-            return "{" + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
+            return "{" + "ObstacleStatusJustChanged: " + this.ObstacleStatusJustChanged + "," + "CCInitialisationInProgress: " + this.CCInitialisationInProgress + "," + "ObstacleDistance: " + this.ObstacleDistance + "," + "ObstacleRelativeSpeed: " + this.ObstacleRelativeSpeed + "," + "ObstaclePresent: " + this.ObstaclePresent + "," + "CruiseSpeedChangeInProgress: " + this.CruiseSpeedChangeInProgress + "}";
         }
 
         public boolean equals(Object other) {
@@ -2197,11 +2197,11 @@ public class Cruise_finite1_deterministic_MC {
                 return false;
             }
             _ProjectionRead__tr_VehicleManageObstacle o = (_ProjectionRead__tr_VehicleManageObstacle) other;
-            return this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
+            return this.ObstacleStatusJustChanged.equals(o.ObstacleStatusJustChanged) && this.CCInitialisationInProgress.equals(o.CCInitialisationInProgress) && this.ObstacleDistance.equals(o.ObstacleDistance) && this.ObstacleRelativeSpeed.equals(o.ObstacleRelativeSpeed) && this.ObstaclePresent.equals(o.ObstaclePresent) && this.CruiseSpeedChangeInProgress.equals(o.CruiseSpeedChangeInProgress);
         }
 
         public int hashCode() {
-            return Objects.hash(CCInitialisationInProgress, ObstacleStatusJustChanged, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
+            return Objects.hash(ObstacleStatusJustChanged, CCInitialisationInProgress, ObstacleDistance, ObstacleRelativeSpeed, ObstaclePresent, CruiseSpeedChangeInProgress);
         }
     }
 
@@ -3849,26 +3849,32 @@ public class Cruise_finite1_deterministic_MC {
 
     public BSet<BTuple<BBoolean, BBoolean>> _tr_SetCruiseSpeed() {
         BSet<BTuple<BBoolean, BBoolean>> _ic_set_2 = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(BBoolean _ic_vcks_1 : BUtils.BOOL) {
-            for(BBoolean _ic_csam_1 : BUtils.BOOL) {
-                if((CruiseAllowed.equal(new BBoolean(true))).booleanValue()) {
-                    _ic_set_2 = _ic_set_2.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<>(_ic_vcks_1, _ic_csam_1)));
+        if(CruiseAllowed.equal(new BBoolean(true)).booleanValue()) {
+            for(BBoolean _ic_vcks_1 : BUtils.BOOL) {
+                for(BBoolean _ic_csam_1 : BUtils.BOOL) {
+                    _ic_set_2 = _ic_set_2.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<BBoolean, BBoolean>(_ic_vcks_1, _ic_csam_1)));
+
                 }
 
             }
+
         }
         return _ic_set_2;
     }
 
     public BSet<BTuple<BBoolean, BBoolean>> _tr_CCInitialisationFinished() {
         BSet<BTuple<BBoolean, BBoolean>> _ic_set_3 = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(BBoolean _ic_vtks_1 : BUtils.BOOL) {
-            for(BBoolean _ic_vtktg_1 : BUtils.BOOL) {
-                if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!ObstacleDistance.equal(ODset.ODnone).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODclose).booleanValue() && ObstacleRelativeSpeed.unequal(RSset.RSpos).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODveryclose).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSequal).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSneg).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<>(_ic_vtks_1, _ic_vtktg_1)));
+        if(CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()) {
+            for(BBoolean _ic_vtks_1 : BUtils.BOOL) {
+                for(BBoolean _ic_vtktg_1 : BUtils.BOOL) {
+                    if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!ObstacleDistance.equal(ODset.ODnone).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODclose).booleanValue() && ObstacleRelativeSpeed.unequal(RSset.RSpos).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODveryclose).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSequal).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSneg).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<BBoolean, BBoolean>(_ic_vtks_1, _ic_vtktg_1)));
+                    }
+
                 }
 
             }
+
         }
         return _ic_set_3;
     }
@@ -3879,13 +3885,17 @@ public class Cruise_finite1_deterministic_MC {
 
     public BSet<BTuple<BBoolean, BBoolean>> _tr_CruiseSpeedChangeFinished() {
         BSet<BTuple<BBoolean, BBoolean>> _ic_set_5 = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(BBoolean _ic_vtks_1 : BUtils.BOOL) {
-            for(BBoolean _ic_vtktg_1 : BUtils.BOOL) {
-                if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!ObstacleDistance.equal(ODset.ODnone).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODclose).booleanValue() && ObstacleRelativeSpeed.unequal(RSset.RSpos).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODveryclose).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSequal).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSneg).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<>(_ic_vtks_1, _ic_vtktg_1)));
+        if(CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()) {
+            for(BBoolean _ic_vtks_1 : BUtils.BOOL) {
+                for(BBoolean _ic_vtktg_1 : BUtils.BOOL) {
+                    if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!ObstacleDistance.equal(ODset.ODnone).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODclose).booleanValue() && ObstacleRelativeSpeed.unequal(RSset.RSpos).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODveryclose).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSequal).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSneg).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<BBoolean, BBoolean>(_ic_vtks_1, _ic_vtktg_1)));
+                    }
+
                 }
 
             }
+
         }
         return _ic_set_5;
     }
@@ -3952,10 +3962,14 @@ public class Cruise_finite1_deterministic_MC {
 
     public BSet<BTuple<RSset, ODset>> _tr_ObstacleAppearsWhenCruiseActive() {
         BSet<BTuple<RSset, ODset>> _ic_set_21 = new BSet<BTuple<RSset, ODset>>();
-        for(RSset _ic_ors_1 : _RSset.difference(new BSet<RSset>(RSset.RSnone))) {
-            for(ODset _ic_od_1 : _ODset.difference(new BSet<ODset>(ODset.ODnone))) {
-                if((new BBoolean(ObstaclePresent.equal(new BBoolean(false)).booleanValue() && CruiseActive.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_21 = _ic_set_21.union(new BSet<BTuple<RSset, ODset>>(new BTuple<>(_ic_ors_1, _ic_od_1)));
+        if(ObstaclePresent.equal(new BBoolean(false)).booleanValue()) {
+            if(CruiseActive.equal(new BBoolean(true)).booleanValue()) {
+                for(RSset _ic_ors_1 : _RSset.difference(new BSet<RSset>(RSset.RSnone))) {
+                    for(ODset _ic_od_1 : _ODset.difference(new BSet<ODset>(ODset.ODnone))) {
+                        _ic_set_21 = _ic_set_21.union(new BSet<BTuple<RSset, ODset>>(new BTuple<RSset, ODset>(_ic_ors_1, _ic_od_1)));
+
+                    }
+
                 }
 
             }
@@ -3965,11 +3979,14 @@ public class Cruise_finite1_deterministic_MC {
 
     public BSet<RSset> _tr_ObstacleAppearsWhenCruiseInactive() {
         BSet<RSset> _ic_set_22 = new BSet<RSset>();
-        for(RSset _ic_ors_1 : _RSset.difference(new BSet<RSset>(RSset.RSnone))) {
-            if((new BBoolean(ObstaclePresent.equal(new BBoolean(false)).booleanValue() && CruiseActive.equal(new BBoolean(false)).booleanValue())).booleanValue()) {
-                _ic_set_22 = _ic_set_22.union(new BSet<RSset>(_ic_ors_1));
-            }
+        if(ObstaclePresent.equal(new BBoolean(false)).booleanValue()) {
+            if(CruiseActive.equal(new BBoolean(false)).booleanValue()) {
+                for(RSset _ic_ors_1 : _RSset.difference(new BSet<RSset>(RSset.RSnone))) {
+                    _ic_set_22 = _ic_set_22.union(new BSet<RSset>(_ic_ors_1));
 
+                }
+
+            }
         }
         return _ic_set_22;
     }
@@ -3980,13 +3997,17 @@ public class Cruise_finite1_deterministic_MC {
 
     public BSet<BTuple<BBoolean, BBoolean>> _tr_VehicleManageObstacle() {
         BSet<BTuple<BBoolean, BBoolean>> _ic_set_24 = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(BBoolean _ic_vtks_1 : BUtils.BOOL) {
-            for(BBoolean _ic_vtktg_1 : BUtils.BOOL) {
-                if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() || CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!ObstacleDistance.equal(ODset.ODnone).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODclose).booleanValue() && ObstacleRelativeSpeed.unequal(RSset.RSpos).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODveryclose).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSequal).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSneg).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_24 = _ic_set_24.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<>(_ic_vtks_1, _ic_vtktg_1)));
+        if(ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()) {
+            for(BBoolean _ic_vtks_1 : BUtils.BOOL) {
+                for(BBoolean _ic_vtktg_1 : BUtils.BOOL) {
+                    if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() || CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!ObstacleDistance.equal(ODset.ODnone).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODclose).booleanValue() && ObstacleRelativeSpeed.unequal(RSset.RSpos).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(ObstacleDistance.equal(ODset.ODveryclose).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() && CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSequal).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSneg).booleanValue() && ObstacleDistance.equal(ODset.ODnone).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(ObstacleRelativeSpeed.equal(RSset.RSpos).booleanValue() && ObstacleDistance.unequal(ODset.ODveryclose).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_set_24 = _ic_set_24.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple<BBoolean, BBoolean>(_ic_vtks_1, _ic_vtktg_1)));
+                    }
+
                 }
 
             }
+
         }
         return _ic_set_24;
     }
@@ -4012,7 +4033,7 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public _ProjectionRead_CCInitialisationFinished _projected_state_for_CCInitialisationFinished() {
-        return new _ProjectionRead_CCInitialisationFinished(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+        return new _ProjectionRead_CCInitialisationFinished(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
     }
 
     public _ProjectionRead_VehicleReachesCruiseSpeed _projected_state_for_VehicleReachesCruiseSpeed() {
@@ -4068,7 +4089,7 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public _ProjectionRead_VehicleManageObstacle _projected_state_for_VehicleManageObstacle() {
-        return new _ProjectionRead_VehicleManageObstacle(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+        return new _ProjectionRead_VehicleManageObstacle(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
     }
 
     public _ProjectionRead_CruiseBecomesAllowed _projected_state_for_CruiseBecomesAllowed() {
@@ -4144,7 +4165,7 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public _ProjectionRead__tr_VehicleManageObstacle _projected_state_for__tr_VehicleManageObstacle() {
-        return new _ProjectionRead__tr_VehicleManageObstacle(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+        return new _ProjectionRead__tr_VehicleManageObstacle(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
     }
 
     public _ProjectionRead__tr_CruiseBecomesAllowed _projected_state_for__tr_CruiseBecomesAllowed() {
@@ -4172,7 +4193,7 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public _ProjectionRead__tr_CCInitialisationFinished _projected_state_for__tr_CCInitialisationFinished() {
-        return new _ProjectionRead__tr_CCInitialisationFinished(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+        return new _ProjectionRead__tr_CCInitialisationFinished(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
     }
 
     public _ProjectionRead__tr_CCInitialisationDelayFinished _projected_state_for__tr_CCInitialisationDelayFinished() {
@@ -4620,35 +4641,35 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public boolean _check_inv_1() {
-        return BUtils.BOOL.elementOf(CruiseAllowed).booleanValue();
+        return CruiseAllowed.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_2() {
-        return BUtils.BOOL.elementOf(CruiseActive).booleanValue();
+        return CruiseActive.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_3() {
-        return BUtils.BOOL.elementOf(VehicleAtCruiseSpeed).booleanValue();
+        return VehicleAtCruiseSpeed.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_4() {
-        return BUtils.BOOL.elementOf(VehicleCanKeepSpeed).booleanValue();
+        return VehicleCanKeepSpeed.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_5() {
-        return BUtils.BOOL.elementOf(VehicleTryKeepSpeed).booleanValue();
+        return VehicleTryKeepSpeed.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_6() {
-        return BUtils.BOOL.elementOf(SpeedAboveMax).booleanValue();
+        return SpeedAboveMax.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_7() {
-        return BUtils.BOOL.elementOf(VehicleTryKeepTimeGap).booleanValue();
+        return VehicleTryKeepTimeGap.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_8() {
-        return BUtils.BOOL.elementOf(CruiseSpeedAtMax).booleanValue();
+        return CruiseSpeedAtMax.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_9() {
@@ -4660,7 +4681,7 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public boolean _check_inv_11() {
-        return BUtils.BOOL.elementOf(ObstaclePresent).booleanValue();
+        return ObstaclePresent.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_12() {
@@ -4672,15 +4693,15 @@ public class Cruise_finite1_deterministic_MC {
     }
 
     public boolean _check_inv_14() {
-        return BUtils.BOOL.elementOf(ObstacleStatusJustChanged).booleanValue();
+        return ObstacleStatusJustChanged.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_15() {
-        return BUtils.BOOL.elementOf(CCInitialisationInProgress).booleanValue();
+        return CCInitialisationInProgress.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_16() {
-        return BUtils.BOOL.elementOf(CruiseSpeedChangeInProgress).booleanValue();
+        return CruiseSpeedChangeInProgress.isBoolean().booleanValue();
     }
 
     public boolean _check_inv_17() {
@@ -6907,7 +6928,7 @@ public class Cruise_finite1_deterministic_MC {
         boolean isCaching = false;
         boolean isDebug = false;
 
-        if(args.length > 0) { 
+        if(args.length > 0) {
             if("mixed".equals(args[0])) {
                 type = Type.MIXED;
             } else if("bf".equals(args[0])) {
@@ -6920,7 +6941,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 1) { 
+        if(args.length > 1) {
             try {
                 threads = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
@@ -6932,7 +6953,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 2) { 
+        if(args.length > 2) {
             try {
                 isCaching = Boolean.parseBoolean(args[2]);
             } catch(Exception e) {
@@ -6940,7 +6961,7 @@ public class Cruise_finite1_deterministic_MC {
                 return;
             }
         }
-        if(args.length > 3) { 
+        if(args.length > 3) {
             try {
                 isDebug = Boolean.parseBoolean(args[3]);
             } catch(Exception e) {

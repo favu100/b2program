@@ -102,6 +102,25 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
         return true;
     }
 
+    private boolean checkEmptySetOnly(ExprNode node) {
+        if(!(node instanceof ExpressionOperatorNode)) {
+            return false;
+        }
+        ExpressionOperatorNode exprNode = (ExpressionOperatorNode) node;
+        if(exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.EMPTY_SET || exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.EMPTY_SEQUENCE) {
+            return true;
+        }
+        if(exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION ||
+            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.CARTESIAN_PRODUCT ||
+            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.POW ||
+            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.POW1 ||
+            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.FIN ||
+            exprNode.getOperator() == ExpressionOperatorNode.ExpressionOperator.FIN1) {
+            return exprNode.getExpressionNodes().stream().allMatch(this::checkEmptySetOnly);
+        }
+        return false;
+    }
+
     public void visitMachineNode() {
         if(forModelChecking || forVisualization) {
             if (machineNode.getInvariant() != null) {
@@ -121,7 +140,7 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
     @Override
     public Node visitExprOperatorNode(ExpressionOperatorNode node, Void expected) {
         if(checkIfConstantsOnly(node) && !IGNORED_OPERATORS.contains(node.getOperator())) {
-            if(node.getOperator() != ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION || node.getExpressionNodes().size() > 0) {
+            if(!checkEmptySetOnly(node)) {
                 if (!replacements.containsKey(node.toString())) {
                     replacements.put(node.toString(), generateNewDeclarationNode(node));
                     replacementsExpressions.put(node.toString(), node);

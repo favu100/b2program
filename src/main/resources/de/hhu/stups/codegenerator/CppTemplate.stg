@@ -312,10 +312,11 @@ record(struct, parameters) ::= <<
 (<struct>(<parameters; separator=", ">))
 >>
 
-initialization(machine, properties, values, body, propertiesCheck) ::= <<
+initialization(machine, properties, values, body, iterationConstruct, propertiesCheck) ::= <<
 <machine>() {
     <properties; separator="\n">
     <values; separator="\n">
+    <iterationConstruct; separator="\n">
     <if(propertiesCheck)>
     if(!(<propertiesCheck>).booleanValue()) {
         throw std::runtime_error("Contradiction in PROPERTIES detected!");

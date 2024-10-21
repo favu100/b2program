@@ -12,7 +12,7 @@ public class TestProjects extends TestJava {
         testJava("project1/A", "A", "AAddition.stjava", true);
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testProject2() throws Exception {
         testJava("project2/MachineA", "MachineA", "MachineAAddition.stjava", true);
     }

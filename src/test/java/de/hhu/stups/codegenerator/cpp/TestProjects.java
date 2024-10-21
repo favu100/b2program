@@ -12,7 +12,7 @@ public class TestProjects extends TestCpp {
         testCpp("project1/A", "A", "AAddition.stcpp", true);
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testProject2() throws Exception {
         testCpp("project2/MachineA", "MachineA", "MachineAAddition.stcpp", true);
     }

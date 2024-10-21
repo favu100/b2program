@@ -17,7 +17,7 @@ public class TestProjects extends TestJs {
         testJs("project1/C" );
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void testProject2() throws Exception {
         testJs("project2/MachineA", "MachineA", "MachineAAddition.stjs", true);
     }

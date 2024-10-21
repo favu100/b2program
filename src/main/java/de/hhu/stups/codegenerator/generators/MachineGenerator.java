@@ -255,6 +255,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		machinePreprocessor.visitMachineNode(node);
 		MachineConstantsOptimizer machineConstantsOptimizer = new MachineConstantsOptimizer(node, forModelChecking, forVisualisation);
 		machineConstantsOptimizer.visitMachineNode();
+		if(node.getValues() != null && !node.getValues().isEmpty()) {
+			throw new CodeGenerationException("VALUES clause is not supported.");
+		}
 		initialize(node);
 		recordStructAnalyzer.visitMachineNode(node);
 		deferredSetAnalyzer.analyze(node.getDeferredSets(), node.getProperties());

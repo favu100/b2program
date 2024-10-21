@@ -220,6 +220,7 @@ public class SubstitutionGenerator {
     private List<DeclarationNode> sortConstantsDeclarations(MachineNode machineNode) {
         List<DeclarationNode> constants = machineNode.getConstants();
         List<DeclarationNode> assignedConstants = constants.stream()
+                .filter(constant -> !(constant.getType() instanceof DeferredSetElementType))
                 .filter(constant -> !machineGenerator.getLambdaFunctions().contains(constant.getName()))
                 .filter(constant -> !machineGenerator.getInfiniteSets().contains(constant.getName()))
                 .collect(Collectors.toList());
@@ -269,13 +270,13 @@ public class SubstitutionGenerator {
         Set<String> lambdaFunctions = machineGenerator.getLambdaFunctions();
 
         List<String> constantsInitializations = new ArrayList<>();
-        List<DeclarationNode> constants = sortConstantsDeclarations(machineGenerator.getMachineNode());
-        constantsInitializations.addAll(constants.stream()
+        constantsInitializations.addAll(node.getConstants().stream()
                 .filter(constant -> constant.getType() instanceof DeferredSetElementType)
                 .filter(constant -> declarationGenerator.getEnumToMachine().containsKey(constant.getType().toString()))
                 .map(constant -> this.generateConstantFromDeferredSet(constant,node.getName()))
                 .collect(Collectors.toList()));
-        constantsInitializations.addAll(constants.stream()
+        List<DeclarationNode> otherConstants = sortConstantsDeclarations(machineGenerator.getMachineNode());
+        constantsInitializations.addAll(otherConstants.stream()
                 .filter(constant -> !lambdaFunctions.contains(constant.getName()))
                 .map(constant -> generateConstantInitialization(node, constant))
                 .collect(Collectors.toList()));

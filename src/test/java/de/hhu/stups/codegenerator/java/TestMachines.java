@@ -276,9 +276,14 @@ public class TestMachines extends TestJava {
         testJavaMC("Train_1_beebook_deterministic_MC_POR_v3", "Train_1_beebook_deterministic_MC_POR_v3", true, 8, true);
     }
 
-    @Test
+    @Test(expected =  CodeGenerationException.class)
     public void Train1() throws Exception {
         testJava("train_1");
+    }
+
+    @Test
+    public void Train2() throws Exception {
+        testJava("train_2");
     }
 
     @Test

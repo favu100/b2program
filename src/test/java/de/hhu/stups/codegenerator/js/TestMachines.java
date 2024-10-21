@@ -215,9 +215,14 @@ public class TestMachines extends TestJs {
         testJs("Train_1_beebook_deterministic_exec");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void Train1() throws Exception {
         testJs("train_1");
+    }
+
+    @Test
+    public void Train2() throws Exception {
+        testJs("train_2");
     }
 
     @Test

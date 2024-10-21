@@ -202,9 +202,14 @@ public class TestMachines extends TestCpp {
         testCpp("Train_1_beebook_deterministic_exec");
     }
 
-    @Test
+    @Test(expected = CodeGenerationException.class)
     public void Train1() throws Exception {
         testCpp("train_1");
+    }
+
+    @Test
+    public void Train2() throws Exception {
+        testCpp("train_2");
     }
 
     @Ignore

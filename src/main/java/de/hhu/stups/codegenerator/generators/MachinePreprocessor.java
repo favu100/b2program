@@ -401,6 +401,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     public PredicateNode rewriteQuantifiedPredicate(List<DeclarationNode> declarations, PredicateNode predicateNode, boolean universalQuantification) {
         if(predicateNode instanceof PredicateOperatorWithExprArgsNode) {
+            IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ_OUTER_SCOPE);
+            identifierAnalyzer.visitExprNode(((PredicateOperatorWithExprArgsNode) predicateNode).getExpressionNodes().get(1), null);
+
             PredicateOperatorWithExprArgsNode result = new PredicateOperatorWithExprArgsNode(predicateNode.getSourceCodePosition(), ((PredicateOperatorWithExprArgsNode) predicateNode).getOperator(), ((PredicateOperatorWithExprArgsNode) predicateNode).getExpressionNodes()
                     .stream()
                     .map(expr -> (ExprNode) visitExprNode(expr, null))
@@ -414,10 +417,26 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     List<PredicateNode> predicates = ((PredicateOperatorNode) predicateNode).getPredicateArguments();
                     PredicateNode lhs = flattenPredicate(predicates.get(0), PredicateOperatorNode.PredicateOperator.AND);
+
+                    List<PredicateNode> lhsPredicates = new ArrayList<>();
+                    if(lhs instanceof PredicateOperatorNode && ((PredicateOperatorNode) lhs).getOperator() == PredicateOperatorNode.PredicateOperator.AND) {
+                        lhsPredicates = ((PredicateOperatorNode) lhs).getPredicateArguments();
+                    } else {
+                        lhsPredicates.add(lhs);
+                    }
+
+                    List<PredicateNode> reorderedConjuncts = reorderConjuncts(0, declarations, new HashSet<>(), lhsPredicates, new LinkedList<>());
+                    PredicateNode newLhs;
+                    if(reorderedConjuncts.size() > 1) {
+                        newLhs = new PredicateOperatorNode(machineNode.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.AND, reorderedConjuncts);
+                    } else {
+                        newLhs = reorderedConjuncts.get(0);
+                    }
+                    newLhs.setType(BoolType.getInstance());
+
                     PredicateNode rhs = predicates.get(1);
-                    PredicateNode innerPredicate = rewriteQuantifiedPredicate(declarations, lhs, false);
+                    PredicateNode innerPredicate = rewriteQuantifiedPredicate(declarations, newLhs, false);
                     PredicateNode result = new PredicateOperatorNode(machineNode.getSourceCodePosition(), PredicateOperatorNode.PredicateOperator.IMPLIES, Arrays.asList(innerPredicate, rhs));
-                    result.setType(BoolType.getInstance());
                     return result;
                 }
             } else {
@@ -450,7 +469,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         return predicateProcessedLater;
     }
 
-    public List<PredicateNode> reorderConjuncts(int n, List<DeclarationNode> declarations, Set<String> declarationsProcessed,
+    private List<PredicateNode> reorderConjuncts(int n, List<DeclarationNode> declarations, Set<String> declarationsProcessed,
                                                 List<PredicateNode> predicates, List<PredicateNode> resultPredicates) {
         if(n > predicates.size()) {
             throw new CodeGenerationException("There are either no predicates to constraint all bounded variables. Or there is a cyclic dependency between predicate to constraint multiple bounded variables detected at line " + declarations.get(0).getSourceCodePosition().getStartLine() + " and column " + declarations.get(0).getSourceCodePosition().getStartColumn());
@@ -471,8 +490,6 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
             if(iterationOperators.contains(innerOperator)) {
                 ExprNode lhs = ((PredicateOperatorWithExprArgsNode) firstPredicate).getExpressionNodes().get(0);
                 ExprNode rhs = ((PredicateOperatorWithExprArgsNode) firstPredicate).getExpressionNodes().get(1);
-                IdentifierAnalyzer identifierAnalyzer = new IdentifierAnalyzer(IdentifierAnalyzer.Kind.READ_OUTER_SCOPE);
-                identifierAnalyzer.visitExprNode(rhs, null);
                 if(lhs instanceof IdentifierExprNode) {
                     String name = ((IdentifierExprNode) lhs).getName();
                     if(allDeclarations.contains(name) && !declarationsProcessed.contains(name))  {

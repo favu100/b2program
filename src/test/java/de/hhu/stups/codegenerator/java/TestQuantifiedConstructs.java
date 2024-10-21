@@ -105,6 +105,11 @@ public class TestQuantifiedConstructs extends TestJava {
         testJava("QuantifiedPredicate7", "QuantifiedPredicate7", "QuantifiedPredicate7Addition.stjava", true);
     }
 
+    @Test(expected = CodeGenerationException.class)
+    public void testQuantifiedPredicate8() throws Exception {
+        testJavaMC("QuantifiedPredicate8", "QuantifiedPredicate8", true, 1, false);
+    }
+
     @Test
     public void testQuantifiedExpression1() throws Exception {
         testJava("QuantifiedExpression1", "QuantifiedExpression1", "QuantifiedExpression1Addition.stjava", true);

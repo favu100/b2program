@@ -273,7 +273,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void Train1BeebookDeterministic_MC_POR_v3() throws Exception {
-        testJavaMC("Train_1_beebook_deterministic_MC_POR_v3");
+        testJavaMC("Train_1_beebook_deterministic_MC_POR_v3", "Train_1_beebook_deterministic_MC_POR_v3", true, 8, true);
     }
 
     @Test

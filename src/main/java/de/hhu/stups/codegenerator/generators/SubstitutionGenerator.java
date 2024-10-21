@@ -230,6 +230,9 @@ public class SubstitutionGenerator {
                 .flatMap(cons -> predicateGenerator.extractEqualProperties(machineNode, cons).stream())
                 .map(cons -> ((PredicateOperatorWithExprArgsNode) cons).getExpressionNodes().get(1))
                 .collect(Collectors.toList());
+        if(assignedConstants.size() > assignedExprNodes.size()) {
+            throw new CodeGenerationException("There are too few predicates in the PROPERTIES for assigning constants.");
+        }
         for(int i = 0; i < assignedConstants.size(); i++) {
             constantsToExprNode.put(assignedConstants.get(i), assignedExprNodes.get(i));
         }

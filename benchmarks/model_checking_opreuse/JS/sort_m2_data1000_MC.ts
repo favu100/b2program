@@ -3,6 +3,7 @@ import {BInteger} from './btypes/BInteger.js';
 import {BRelation} from './btypes/BRelation.js';
 import {BBoolean} from './btypes/BBoolean.js';
 import {BSet} from './btypes/BSet.js';
+import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
 import {SelectError} from "./btypes/BUtils.js";
 import {VariantViolation} from "./btypes/BUtils.js";
@@ -365,43 +366,24 @@ class _ProjectionRead__check_inv_1 {
 class _ProjectionRead__check_inv_2 {
 
     public j: BInteger;
-
-    constructor(j : BInteger) {
-        this.j = j;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_2 = this;
-        let o2: _ProjectionRead__check_inv_2 = other as _ProjectionRead__check_inv_2;
-        return o1.j.equals(o2.j);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.j.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_3 {
-
     public k: BInteger;
     public l: BInteger;
 
-    constructor(k : BInteger, l : BInteger) {
+    constructor(j : BInteger, k : BInteger, l : BInteger) {
+        this.j = j;
         this.k = k;
         this.l = l;
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_3 = this;
-        let o2: _ProjectionRead__check_inv_3 = other as _ProjectionRead__check_inv_3;
-        return o1.k.equals(o2.k) && o1.l.equals(o2.l);
+        let o1: _ProjectionRead__check_inv_2 = this;
+        let o2: _ProjectionRead__check_inv_2 = other as _ProjectionRead__check_inv_2;
+        return o1.j.equals(o2.j) && o1.k.equals(o2.k) && o1.l.equals(o2.l);
     }
 
     hashCode(): number {
         let result: number = 1;
+        result = 31 * result + (this.j.hashCode() << 1);
         result = 31 * result + (this.k.hashCode() << 1);
         result = 31 * result + (this.l.hashCode() << 1);
         return result;
@@ -409,29 +391,7 @@ class _ProjectionRead__check_inv_3 {
 }
 
 
-class _ProjectionRead__check_inv_4 {
-
-    public j: BInteger;
-
-    constructor(j : BInteger) {
-        this.j = j;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_4 = this;
-        let o2: _ProjectionRead__check_inv_4 = other as _ProjectionRead__check_inv_4;
-        return o1.j.equals(o2.j);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.j.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_5 {
+class _ProjectionRead__check_inv_3 {
 
     public g: BRelation<BInteger, BInteger>;
     public j: BInteger;
@@ -446,8 +406,8 @@ class _ProjectionRead__check_inv_5 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_5 = this;
-        let o2: _ProjectionRead__check_inv_5 = other as _ProjectionRead__check_inv_5;
+        let o1: _ProjectionRead__check_inv_3 = this;
+        let o2: _ProjectionRead__check_inv_3 = other as _ProjectionRead__check_inv_3;
         return o1.g.equals(o2.g) && o1.j.equals(o2.j) && o1.k.equals(o2.k) && o1.l.equals(o2.l);
     }
 
@@ -462,7 +422,7 @@ class _ProjectionRead__check_inv_5 {
 }
 
 
-class _ProjectionRead__check_inv_6 {
+class _ProjectionRead__check_inv_4 {
 
     public g: BRelation<BInteger, BInteger>;
 
@@ -471,14 +431,80 @@ class _ProjectionRead__check_inv_6 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_6 = this;
-        let o2: _ProjectionRead__check_inv_6 = other as _ProjectionRead__check_inv_6;
+        let o1: _ProjectionRead__check_inv_4 = this;
+        let o2: _ProjectionRead__check_inv_4 = other as _ProjectionRead__check_inv_4;
         return o1.g.equals(o2.g);
     }
 
     hashCode(): number {
         let result: number = 1;
         result = 31 * result + (this.g.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_5 {
+
+    public g: BRelation<BInteger, BInteger>;
+
+    constructor(g : BRelation<BInteger, BInteger>) {
+        this.g = g;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_5 = this;
+        let o2: _ProjectionRead__check_inv_5 = other as _ProjectionRead__check_inv_5;
+        return o1.g.equals(o2.g);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.g.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_6 {
+
+    public k: BInteger;
+
+    constructor(k : BInteger) {
+        this.k = k;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_6 = this;
+        let o2: _ProjectionRead__check_inv_6 = other as _ProjectionRead__check_inv_6;
+        return o1.k.equals(o2.k);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.k.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_7 {
+
+    public l: BInteger;
+
+    constructor(l : BInteger) {
+        this.l = l;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_7 = this;
+        let o2: _ProjectionRead__check_inv_7 = other as _ProjectionRead__check_inv_7;
+        return o1.l.equals(o2.l);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.l.hashCode() << 1);
         return result;
     }
 }
@@ -498,6 +524,8 @@ export default class sort_m2_data1000_MC {
 
     private static n: BInteger;
     private static f: BRelation<BInteger, BInteger>;
+    private static __aux_constant_2: BSet<BInteger>;
+    private static __aux_constant_1: BSet<BInteger>;
 
 
     private j: BInteger;
@@ -512,7 +540,13 @@ export default class sort_m2_data1000_MC {
             _ic_set_0 = _ic_set_0.union(new BRelation<BInteger, BInteger>(new BTuple(_ic_i_1, new BInteger(15000).minus(_ic_i_1))));
 
         }
+
         sort_m2_data1000_MC.f = _ic_set_0;
+        sort_m2_data1000_MC.__aux_constant_2 = sort_m2_data1000_MC.f.range();
+        sort_m2_data1000_MC.__aux_constant_1 = BSet.interval(new BInteger(1), sort_m2_data1000_MC.n);
+        if(!(new BBoolean(new BBoolean(sort_m2_data1000_MC.n.isInteger().booleanValue() && sort_m2_data1000_MC.n.greater(new BInteger(0)).booleanValue()).booleanValue() && sort_m2_data1000_MC.f.checkDomain(BSet.interval(new BInteger(1), sort_m2_data1000_MC.n)).and(sort_m2_data1000_MC.f.checkRangeNatural()).and(sort_m2_data1000_MC.f.isFunction()).and(sort_m2_data1000_MC.f.isTotal(BSet.interval(new BInteger(1), sort_m2_data1000_MC.n))).booleanValue())).booleanValue()) {
+            throw new Error("Contradiction in PROPERTIES detected!");
+        }
     }
 
     constructor(copy? : sort_m2_data1000_MC) {
@@ -568,6 +602,14 @@ export default class sort_m2_data1000_MC {
         return sort_m2_data1000_MC.f;
     }
 
+    _get___aux_constant_2(): BSet<BInteger> {
+        return sort_m2_data1000_MC.__aux_constant_2;
+    }
+
+    _get___aux_constant_1(): BSet<BInteger> {
+        return sort_m2_data1000_MC.__aux_constant_1;
+    }
+
     _get_j(): BInteger {
         return this.j;
     }
@@ -583,6 +625,42 @@ export default class sort_m2_data1000_MC {
     _get_g(): BRelation<BInteger, BInteger> {
         return this.g;
     }
+
+    equals(o: any): boolean {
+        let o1: sort_m2_data1000_MC = this;
+        let o2: sort_m2_data1000_MC = o as sort_m2_data1000_MC;
+        return o1._get_j().equals(o2._get_j()) && o1._get_k().equals(o2._get_k()) && o1._get_l().equals(o2._get_l()) && o1._get_g().equals(o2._get_g());
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        result = (1543 * result) ^ ((this._get_j()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_k()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_l()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_g()).hashCode() << 1);
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        result = (6151 * result) ^ ((this._get_j()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_k()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_l()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_g()).hashCode() << 1);
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_j: " + (this._get_j()).toString(), "_get_k: " + (this._get_k()).toString(), "_get_l: " + (this._get_l()).toString(), "_get_g: " + (this._get_g()).toString());
+    }
+    */
 
     _tr_progress(): boolean {
         return new BBoolean(this.k.unequal(sort_m2_data1000_MC.n).booleanValue() && this.j.equal(sort_m2_data1000_MC.n).booleanValue()).booleanValue();
@@ -633,11 +711,11 @@ export default class sort_m2_data1000_MC {
     }
 
     _projected_state_for__check_inv_2(): _ProjectionRead__check_inv_2 {
-        return new _ProjectionRead__check_inv_2(this.j);
+        return new _ProjectionRead__check_inv_2(this.j,this.k,this.l);
     }
 
     _projected_state_for__check_inv_3(): _ProjectionRead__check_inv_3 {
-        return new _ProjectionRead__check_inv_3(this.k,this.l);
+        return new _ProjectionRead__check_inv_3(this.g,this.j,this.k,this.l);
     }
 
     _projected_state_for__check_inv_1(): _ProjectionRead__check_inv_1 {
@@ -645,15 +723,19 @@ export default class sort_m2_data1000_MC {
     }
 
     _projected_state_for__check_inv_6(): _ProjectionRead__check_inv_6 {
-        return new _ProjectionRead__check_inv_6(this.g);
+        return new _ProjectionRead__check_inv_6(this.k);
+    }
+
+    _projected_state_for__check_inv_7(): _ProjectionRead__check_inv_7 {
+        return new _ProjectionRead__check_inv_7(this.l);
     }
 
     _projected_state_for__check_inv_4(): _ProjectionRead__check_inv_4 {
-        return new _ProjectionRead__check_inv_4(this.j);
+        return new _ProjectionRead__check_inv_4(this.g);
     }
 
     _projected_state_for__check_inv_5(): _ProjectionRead__check_inv_5 {
-        return new _ProjectionRead__check_inv_5(this.g,this.j,this.k,this.l);
+        return new _ProjectionRead__check_inv_5(this.g);
     }
 
     _update_for_prog2(): _ProjectionWrite_prog2 {
@@ -693,64 +775,32 @@ export default class sort_m2_data1000_MC {
     }
 
     _check_inv_1() {
-        return this.j.greaterEqual(this.k).booleanValue();
+        return new BBoolean(this.j.greaterEqual(this.k).booleanValue() && this.j.lessEqual(sort_m2_data1000_MC.n).booleanValue()).booleanValue();
     }
 
     _check_inv_2() {
-        return this.j.lessEqual(sort_m2_data1000_MC.n).booleanValue();
+        return new BBoolean(this.l.greaterEqual(this.k).booleanValue() && this.l.lessEqual(this.j).booleanValue()).booleanValue();
     }
 
     _check_inv_3() {
-        return this.l.greaterEqual(this.k).booleanValue();
-    }
-
-    _check_inv_4() {
-        return this.j.lessEqual(this.j).booleanValue();
-    }
-
-    _check_inv_5() {
         return this.g.functionCall(this.l).equal(this.g.relationImage(BSet.interval(this.k, this.j)).min()).booleanValue();
     }
 
+    _check_inv_4() {
+        return this.g.checkDomain(sort_m2_data1000_MC.__aux_constant_1).and(this.g.checkRangeNatural()).and(this.g.isFunction()).and(this.g.isTotal(sort_m2_data1000_MC.__aux_constant_1)).booleanValue();
+    }
+
+    _check_inv_5() {
+        return this.g.range().equal(sort_m2_data1000_MC.__aux_constant_2).booleanValue();
+    }
+
     _check_inv_6() {
-        return this.g.checkDomain(BSet.interval(new BInteger(1), sort_m2_data1000_MC.n)).and(this.g.checkRangeNatural()).and(this.g.isFunction()).and(this.g.isTotal(BSet.interval(new BInteger(1), sort_m2_data1000_MC.n))).booleanValue();
+        return new BBoolean(this.k.greaterEqual(new BInteger(1)).booleanValue() && this.k.lessEqual(sort_m2_data1000_MC.n).booleanValue()).booleanValue();
     }
 
-    equals(o: any): boolean {
-        let o1: sort_m2_data1000_MC = this;
-        let o2: sort_m2_data1000_MC = o as sort_m2_data1000_MC;
-        return o1._get_j().equals(o2._get_j()) && o1._get_k().equals(o2._get_k()) && o1._get_l().equals(o2._get_l()) && o1._get_g().equals(o2._get_g());
+    _check_inv_7() {
+        return this.l.isNatural().booleanValue();
     }
-
-
-
-    hashCode(): number {
-        return this._hashCode_1();
-    }
-
-    _hashCode_1(): number {
-        let result: number = 1;
-        result = (1543 * result) ^ ((this._get_j()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_k()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_l()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_g()).hashCode() << 1);
-        return result;
-    }
-
-    _hashCode_2(): number {
-        let result: number = 1;
-        result = (6151 * result) ^ ((this._get_j()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_k()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_l()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_g()).hashCode() << 1);
-        return result;
-    }
-
-    /* TODO
-    toString(): string {
-        return String.join("\n", "_get_j: " + (this._get_j()).toString(), "_get_k: " + (this._get_k()).toString(), "_get_l: " + (this._get_l()).toString(), "_get_g: " + (this._get_g()).toString());
-    }
-    */
 
 
     public _copy(): sort_m2_data1000_MC {
@@ -792,6 +842,7 @@ export class ModelChecker {
     _InvCache__check_inv_4: immutable.Map<_ProjectionRead__check_inv_4, boolean> = new immutable.Map();
     _InvCache__check_inv_5: immutable.Map<_ProjectionRead__check_inv_5, boolean> = new immutable.Map();
     _InvCache__check_inv_6: immutable.Map<_ProjectionRead__check_inv_6, boolean> = new immutable.Map();
+    _InvCache__check_inv_7: immutable.Map<_ProjectionRead__check_inv_7, boolean> = new immutable.Map();
 
     constructor(type: Type, isCaching: boolean, isDebug: boolean) {
         this.type = type;
@@ -1145,6 +1196,23 @@ export class ModelChecker {
         }
         if(!_check_inv_6) {
             console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_6");
+            return true;
+        }
+        let _check_inv_7: boolean;
+        if(isCaching) {
+            let read__check_inv_7_state: _ProjectionRead__check_inv_7 = state._projected_state_for__check_inv_7();
+            let _obj__check_inv_7: boolean = this._InvCache__check_inv_7.get(read__check_inv_7_state);
+            if(_obj__check_inv_7 == null) {
+                _check_inv_7 = state._check_inv_7();
+                this._InvCache__check_inv_7 = this._InvCache__check_inv_7.set(read__check_inv_7_state, _check_inv_7);
+            } else {
+                _check_inv_7 = _obj__check_inv_7;
+            }
+        } else {
+            _check_inv_7 = state._check_inv_7();
+        }
+        if(!_check_inv_7) {
+            console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_7");
             return true;
         }
         return false;

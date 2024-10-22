@@ -316,68 +316,6 @@ export class IN_ERROR_CODES implements BObject{
 
 }
 
-class _Struct3 extends BStruct {
-    private sid: BSet<SID>;
-    private err: IN_ERROR_CODES;
-
-    constructor(sid: BSet<SID>, err: IN_ERROR_CODES) {
-        super();
-        this.sid = sid;
-        this.err = err;
-    }
-
-    get_sid(): BSet<SID> {
-        return this.sid;
-    }
-
-    get_err(): IN_ERROR_CODES {
-        return this.err;
-    }
-
-    override_sid(sid: BSet<SID>): _Struct3 {
-        return new _Struct3(sid, this.err);
-    }
-
-    override_err(err: IN_ERROR_CODES): _Struct3 {
-        return new _Struct3(this.sid, err);
-    }
-
-    equal(o: _Struct3): BBoolean {
-        return new BBoolean(this.sid === o.sid && this.err === o.err);
-    }
-
-    unequal(o: _Struct3): BBoolean {
-        return new BBoolean(this.sid !== o.sid || this.err !== o.err);
-    }
-
-    toString(): string {
-        return "(" + "sid : " + this.sid + "," + "err : " + this.err + ")";
-    }
-
-    equals(other: any): boolean {
-        if(!(other instanceof _Struct3)) {
-            return false;
-        }
-        let o: _Struct3 = other as _Struct3;
-        return this.sid === o.sid && this.err === o.err;
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.sid.hashCode() << 1);
-        result = 31 * result + (this.err.hashCode() << 1);
-        return result;
-    }
-
-    isRecord() {
-        return new BBoolean(true);
-    }
-
-    isNotRecord() {
-        return new BBoolean(false);
-    }
-}
-
 class _Struct5 extends BStruct {
     private soc: BSet<SOCKET>;
     private err: IN_ERROR_CODES;
@@ -427,6 +365,68 @@ class _Struct5 extends BStruct {
     hashCode(): number {
         let result: number = 1;
         result = 31 * result + (this.soc.hashCode() << 1);
+        result = 31 * result + (this.err.hashCode() << 1);
+        return result;
+    }
+
+    isRecord() {
+        return new BBoolean(true);
+    }
+
+    isNotRecord() {
+        return new BBoolean(false);
+    }
+}
+
+class _Struct3 extends BStruct {
+    private sid: BSet<SID>;
+    private err: IN_ERROR_CODES;
+
+    constructor(sid: BSet<SID>, err: IN_ERROR_CODES) {
+        super();
+        this.sid = sid;
+        this.err = err;
+    }
+
+    get_sid(): BSet<SID> {
+        return this.sid;
+    }
+
+    get_err(): IN_ERROR_CODES {
+        return this.err;
+    }
+
+    override_sid(sid: BSet<SID>): _Struct3 {
+        return new _Struct3(sid, this.err);
+    }
+
+    override_err(err: IN_ERROR_CODES): _Struct3 {
+        return new _Struct3(this.sid, err);
+    }
+
+    equal(o: _Struct3): BBoolean {
+        return new BBoolean(this.sid === o.sid && this.err === o.err);
+    }
+
+    unequal(o: _Struct3): BBoolean {
+        return new BBoolean(this.sid !== o.sid || this.err !== o.err);
+    }
+
+    toString(): string {
+        return "(" + "sid : " + this.sid + "," + "err : " + this.err + ")";
+    }
+
+    equals(other: any): boolean {
+        if(!(other instanceof _Struct3)) {
+            return false;
+        }
+        let o: _Struct3 = other as _Struct3;
+        return this.sid === o.sid && this.err === o.err;
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.sid.hashCode() << 1);
         result = 31 * result + (this.err.hashCode() << 1);
         return result;
     }
@@ -2373,20 +2373,84 @@ export default class nota_v2 {
         return nota_v2._IN_ERROR_CODES;
     }
 
+    equals(o: any): boolean {
+        let o1: nota_v2 = this;
+        let o2: nota_v2 = o as nota_v2;
+        return o1._get_interconnectNodes().equals(o2._get_interconnectNodes()) && o1._get_sockets().equals(o2._get_sockets()) && o1._get_services().equals(o2._get_services()) && o1._get_resourceManagers().equals(o2._get_resourceManagers()) && o1._get_sids().equals(o2._get_sids()) && o1._get_rm_services().equals(o2._get_rm_services()) && o1._get_rm_sids().equals(o2._get_rm_sids()) && o1._get_in_localServices().equals(o2._get_in_localServices()) && o1._get_in_sockets().equals(o2._get_in_sockets()) && o1._get_in_resourceManager().equals(o2._get_in_resourceManager()) && o1._get_soc_to().equals(o2._get_soc_to()) && o1._get_soc_from().equals(o2._get_soc_from()) && o1._get_svc_serviceID().equals(o2._get_svc_serviceID()) && o1._get_svc_sockets().equals(o2._get_svc_sockets()) && o1._get_svc_ICNode().equals(o2._get_svc_ICNode()) && o1._get_svc_registered().equals(o2._get_svc_registered());
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        result = (1543 * result) ^ ((this._get_interconnectNodes()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_sockets()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_services()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_resourceManagers()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_sids()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_rm_services()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_rm_sids()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_in_localServices()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_in_sockets()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_in_resourceManager()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_soc_to()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_soc_from()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_svc_serviceID()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_svc_sockets()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_svc_ICNode()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_svc_registered()).hashCode() << 1);
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        result = (6151 * result) ^ ((this._get_interconnectNodes()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_sockets()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_services()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_resourceManagers()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_sids()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_rm_services()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_rm_sids()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_in_localServices()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_in_sockets()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_in_resourceManager()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_soc_to()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_soc_from()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_svc_serviceID()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_svc_sockets()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_svc_ICNode()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_svc_registered()).hashCode() << 1);
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_interconnectNodes: " + (this._get_interconnectNodes()).toString(), "_get_sockets: " + (this._get_sockets()).toString(), "_get_services: " + (this._get_services()).toString(), "_get_resourceManagers: " + (this._get_resourceManagers()).toString(), "_get_sids: " + (this._get_sids()).toString(), "_get_rm_services: " + (this._get_rm_services()).toString(), "_get_rm_sids: " + (this._get_rm_sids()).toString(), "_get_in_localServices: " + (this._get_in_localServices()).toString(), "_get_in_sockets: " + (this._get_in_sockets()).toString(), "_get_in_resourceManager: " + (this._get_in_resourceManager()).toString(), "_get_soc_to: " + (this._get_soc_to()).toString(), "_get_soc_from: " + (this._get_soc_from()).toString(), "_get_svc_serviceID: " + (this._get_svc_serviceID()).toString(), "_get_svc_sockets: " + (this._get_svc_sockets()).toString(), "_get_svc_ICNode: " + (this._get_svc_ICNode()).toString(), "_get_svc_registered: " + (this._get_svc_registered()).toString());
+    }
+    */
+
     _tr_constructor_interconnectNode(): BSet<INTERCONNECTNODE> {
         let _ic_set_0: BSet<INTERCONNECTNODE> = new BSet<INTERCONNECTNODE>();
         for(let _ic_newic_1 of nota_v2._INTERCONNECTNODE.difference(this.interconnectNodes)) {
             _ic_set_0 = _ic_set_0.union(new BSet<INTERCONNECTNODE>(_ic_newic_1));
 
         }
+
         return _ic_set_0;
     }
 
     _tr_constructor_resourceManager(): BSet<RESOURCEMANAGER> {
         let _ic_set_1: BSet<RESOURCEMANAGER> = new BSet<RESOURCEMANAGER>();
-        for(let _ic_newrm_1 of nota_v2._RESOURCEMANAGER.difference(this.resourceManagers)) {
-            if((new BBoolean(this.rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && this.resourceManagers.equal(new BSet<RESOURCEMANAGER>()).booleanValue())).booleanValue()) {
-                _ic_set_1 = _ic_set_1.union(new BSet<RESOURCEMANAGER>(_ic_newrm_1));
+        if(this.resourceManagers.equal(new BSet<RESOURCEMANAGER>()).booleanValue()) {
+            for(let _ic_newrm_1 of nota_v2._RESOURCEMANAGER.difference(this.resourceManagers)) {
+                if((this.rm_services.isNotInDomain(_ic_newrm_1)).booleanValue()) {
+                    _ic_set_1 = _ic_set_1.union(new BSet<RESOURCEMANAGER>(_ic_newrm_1));
+                }
+
             }
 
         }
@@ -2400,7 +2464,9 @@ export default class nota_v2 {
                 _ic_set_2 = _ic_set_2.union(new BSet<BTuple<INTERCONNECTNODE, SERVICE>>(new BTuple(_ic_ii_1, _ic_newsvc_1)));
 
             }
+
         }
+
         return _ic_set_2;
     }
 
@@ -2413,9 +2479,13 @@ export default class nota_v2 {
                         _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID>, SID>, SOCKET>>(new BTuple(new BTuple(new BTuple(_ic_ii_1, _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
 
                     }
+
                 }
+
             }
+
         }
+
         return _ic_set_3;
     }
 
@@ -2427,8 +2497,11 @@ export default class nota_v2 {
                     _ic_set_4 = _ic_set_4.union(new BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>(new BTuple(new BTuple(_ic_self_1, _ic_ss_1), _ic_ii_1)));
 
                 }
+
             }
+
         }
+
         return _ic_set_4;
     }
 
@@ -2440,8 +2513,11 @@ export default class nota_v2 {
                     _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE>, INTERCONNECTNODE>>(new BTuple(new BTuple(_ic_self_1, _ic_ss_1), _ic_ii_1)));
 
                 }
+
             }
+
         }
+
         return _ic_set_5;
     }
 
@@ -2449,12 +2525,14 @@ export default class nota_v2 {
         let _ic_set_6: BSet<BTuple<RESOURCEMANAGER, SERVICE>> = new BSet<BTuple<RESOURCEMANAGER, SERVICE>>();
         for(let _ic_self_1 of this.resourceManagers) {
             for(let _ic_ss_1 of this.services) {
-                if((this.rm_sids.domain().elementOf(_ic_ss_1)).booleanValue()) {
+                if((this.rm_sids.isInDomain(_ic_ss_1)).booleanValue()) {
                     _ic_set_6 = _ic_set_6.union(new BSet<BTuple<RESOURCEMANAGER, SERVICE>>(new BTuple(_ic_self_1, _ic_ss_1)));
                 }
 
             }
+
         }
+
         return _ic_set_6;
     }
 
@@ -2465,7 +2543,9 @@ export default class nota_v2 {
                 _ic_set_7 = _ic_set_7.union(new BSet<BTuple<RESOURCEMANAGER, SERVICE>>(new BTuple(_ic_self_1, _ic_ss_1)));
 
             }
+
         }
+
         return _ic_set_7;
     }
 
@@ -2478,7 +2558,9 @@ export default class nota_v2 {
                 }
 
             }
+
         }
+
         return _ic_set_8;
     }
 
@@ -2487,13 +2569,16 @@ export default class nota_v2 {
         for(let _ic_self_1 of this.interconnectNodes) {
             for(let _ic_ss_1 of this.services) {
                 for(let _ic_si_1 of nota_v2._SID.difference(this.sids)) {
-                    if((this.in_localServices.domain().elementOf(_ic_si_1).not()).booleanValue()) {
+                    if((this.in_localServices.isInDomain(_ic_si_1).not()).booleanValue()) {
                         _ic_set_9 = _ic_set_9.union(new BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE>, SID>>(new BTuple(new BTuple(_ic_self_1, _ic_ss_1), _ic_si_1)));
                     }
 
                 }
+
             }
+
         }
+
         return _ic_set_9;
     }
 
@@ -2504,7 +2589,9 @@ export default class nota_v2 {
                 _ic_set_10 = _ic_set_10.union(new BSet<BTuple<INTERCONNECTNODE, SERVICE>>(new BTuple(_ic_self_1, _ic_ss_1)));
 
             }
+
         }
+
         return _ic_set_10;
     }
 
@@ -2512,20 +2599,28 @@ export default class nota_v2 {
         let _ic_set_11: BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>> = new BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>();
         for(let _ic_self_1 of this.interconnectNodes) {
             for(let _ic_ii_1 of this.interconnectNodes) {
-                for(let _ic_srcsoc_1 of this.sockets) {
-                    for(let _ic_srcsid_1 of this.sids) {
-                        for(let _ic_targsid_1 of this.sids) {
-                            for(let _ic_newsoc_1 of nota_v2._SOCKET.difference(this.sockets)) {
-                                if((new BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && this.in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue())).booleanValue()) {
-                                    _ic_set_11 = _ic_set_11.union(new BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>(new BTuple(new BTuple(new BTuple(new BTuple(new BTuple(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
+                if(_ic_self_1.unequal(_ic_ii_1).booleanValue()) {
+                    for(let _ic_srcsoc_1 of this.sockets) {
+                        if(this.in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()) {
+                            for(let _ic_srcsid_1 of this.sids) {
+                                for(let _ic_targsid_1 of this.sids) {
+                                    for(let _ic_newsoc_1 of nota_v2._SOCKET.difference(this.sockets)) {
+                                        _ic_set_11 = _ic_set_11.union(new BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>, SOCKET>>(new BTuple(new BTuple(new BTuple(new BTuple(new BTuple(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1), _ic_newsoc_1)));
+
+                                    }
+
                                 }
 
                             }
+
                         }
                     }
+
                 }
             }
+
         }
+
         return _ic_set_11;
     }
 
@@ -2533,18 +2628,25 @@ export default class nota_v2 {
         let _ic_set_12: BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>> = new BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>();
         for(let _ic_self_1 of this.interconnectNodes) {
             for(let _ic_ii_1 of this.interconnectNodes) {
-                for(let _ic_srcsoc_1 of this.sockets) {
-                    for(let _ic_srcsid_1 of this.sids) {
-                        for(let _ic_targsid_1 of this.sids) {
-                            if((new BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && this.in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue())).booleanValue()) {
-                                _ic_set_12 = _ic_set_12.union(new BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>(new BTuple(new BTuple(new BTuple(new BTuple(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1)));
+                if(_ic_self_1.unequal(_ic_ii_1).booleanValue()) {
+                    for(let _ic_srcsoc_1 of this.sockets) {
+                        if(this.in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()) {
+                            for(let _ic_srcsid_1 of this.sids) {
+                                for(let _ic_targsid_1 of this.sids) {
+                                    _ic_set_12 = _ic_set_12.union(new BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE>, SOCKET>, SID>, SID>>(new BTuple(new BTuple(new BTuple(new BTuple(_ic_self_1, _ic_ii_1), _ic_srcsoc_1), _ic_srcsid_1), _ic_targsid_1)));
+
+                                }
+
                             }
 
                         }
                     }
+
                 }
             }
+
         }
+
         return _ic_set_12;
     }
 
@@ -2556,6 +2658,7 @@ export default class nota_v2 {
             }
 
         }
+
         return _ic_set_13;
     }
 
@@ -2865,60 +2968,65 @@ export default class nota_v2 {
     _check_inv_1() {
         let _ic_boolean_14: BBoolean = new BBoolean(true);
         for(let _ic__opt_1_1 of this.interconnectNodes) {
-            if(!(new BBoolean(!this.interconnectNodes.elementOf(_ic__opt_1_1).booleanValue() || nota_v2._INTERCONNECTNODE.elementOf(_ic__opt_1_1).booleanValue())).booleanValue()) {
+            if(!(nota_v2._INTERCONNECTNODE.elementOf(_ic__opt_1_1)).booleanValue()) {
                 _ic_boolean_14 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_14.booleanValue();
     }
 
     _check_inv_2() {
         let _ic_boolean_15: BBoolean = new BBoolean(true);
         for(let _ic__opt_2_1 of this.sockets) {
-            if(!(new BBoolean(!this.sockets.elementOf(_ic__opt_2_1).booleanValue() || nota_v2._SOCKET.elementOf(_ic__opt_2_1).booleanValue())).booleanValue()) {
+            if(!(nota_v2._SOCKET.elementOf(_ic__opt_2_1)).booleanValue()) {
                 _ic_boolean_15 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_15.booleanValue();
     }
 
     _check_inv_3() {
         let _ic_boolean_16: BBoolean = new BBoolean(true);
         for(let _ic__opt_3_1 of this.services) {
-            if(!(new BBoolean(!this.services.elementOf(_ic__opt_3_1).booleanValue() || nota_v2._SERVICE.elementOf(_ic__opt_3_1).booleanValue())).booleanValue()) {
+            if(!(nota_v2._SERVICE.elementOf(_ic__opt_3_1)).booleanValue()) {
                 _ic_boolean_16 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_16.booleanValue();
     }
 
     _check_inv_4() {
         let _ic_boolean_17: BBoolean = new BBoolean(true);
         for(let _ic__opt_4_1 of this.resourceManagers) {
-            if(!(new BBoolean(!this.resourceManagers.elementOf(_ic__opt_4_1).booleanValue() || nota_v2._RESOURCEMANAGER.elementOf(_ic__opt_4_1).booleanValue())).booleanValue()) {
+            if(!(nota_v2._RESOURCEMANAGER.elementOf(_ic__opt_4_1)).booleanValue()) {
                 _ic_boolean_17 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_17.booleanValue();
     }
 
     _check_inv_5() {
         let _ic_boolean_18: BBoolean = new BBoolean(true);
         for(let _ic__opt_5_1 of this.sids) {
-            if(!(new BBoolean(!this.sids.elementOf(_ic__opt_5_1).booleanValue() || nota_v2._SID.elementOf(_ic__opt_5_1).booleanValue())).booleanValue()) {
+            if(!(nota_v2._SID.elementOf(_ic__opt_5_1)).booleanValue()) {
                 _ic_boolean_18 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_18.booleanValue();
     }
 
@@ -2930,13 +3038,15 @@ export default class nota_v2 {
         let _ic_boolean_19: BBoolean = new BBoolean(true);
         for(let _ic_a1_1 of this.rm_services.domain()) {
             for(let _ic_a2_1 of this.rm_services.domain()) {
-                if(!(new BBoolean(!new BBoolean(new BBoolean(this.rm_services.domain().elementOf(_ic_a1_1).booleanValue() && this.rm_services.domain().elementOf(_ic_a2_1).booleanValue()).booleanValue() && _ic_a1_1.unequal(_ic_a2_1).booleanValue()).booleanValue() || this.rm_services.functionCall(_ic_a1_1).intersect(this.rm_services.functionCall(_ic_a2_1)).equal(new BSet<SERVICE>()).booleanValue())).booleanValue()) {
+                if(!(new BBoolean(!_ic_a1_1.unequal(_ic_a2_1).booleanValue() || this.rm_services.functionCall(_ic_a1_1).intersect(this.rm_services.functionCall(_ic_a2_1)).equal(new BSet<SERVICE>()).booleanValue())).booleanValue()) {
                     _ic_boolean_19 = new BBoolean(false);
                     break;
                 }
 
             }
+
         }
+
         return _ic_boolean_19.booleanValue();
     }
 
@@ -2983,66 +3093,6 @@ export default class nota_v2 {
     _check_inv_18() {
         return new BBoolean(!this.resourceManagers.equal(new BSet<RESOURCEMANAGER>()).not().booleanValue() || this.resourceManagers.card().equal(new BInteger(1)).booleanValue()).booleanValue();
     }
-
-    equals(o: any): boolean {
-        let o1: nota_v2 = this;
-        let o2: nota_v2 = o as nota_v2;
-        return o1._get_interconnectNodes().equals(o2._get_interconnectNodes()) && o1._get_sockets().equals(o2._get_sockets()) && o1._get_services().equals(o2._get_services()) && o1._get_resourceManagers().equals(o2._get_resourceManagers()) && o1._get_sids().equals(o2._get_sids()) && o1._get_rm_services().equals(o2._get_rm_services()) && o1._get_rm_sids().equals(o2._get_rm_sids()) && o1._get_in_localServices().equals(o2._get_in_localServices()) && o1._get_in_sockets().equals(o2._get_in_sockets()) && o1._get_in_resourceManager().equals(o2._get_in_resourceManager()) && o1._get_soc_to().equals(o2._get_soc_to()) && o1._get_soc_from().equals(o2._get_soc_from()) && o1._get_svc_serviceID().equals(o2._get_svc_serviceID()) && o1._get_svc_sockets().equals(o2._get_svc_sockets()) && o1._get_svc_ICNode().equals(o2._get_svc_ICNode()) && o1._get_svc_registered().equals(o2._get_svc_registered());
-    }
-
-
-
-    hashCode(): number {
-        return this._hashCode_1();
-    }
-
-    _hashCode_1(): number {
-        let result: number = 1;
-        result = (1543 * result) ^ ((this._get_interconnectNodes()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_sockets()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_services()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_resourceManagers()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_sids()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_rm_services()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_rm_sids()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_in_localServices()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_in_sockets()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_in_resourceManager()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_soc_to()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_soc_from()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_svc_serviceID()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_svc_sockets()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_svc_ICNode()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_svc_registered()).hashCode() << 1);
-        return result;
-    }
-
-    _hashCode_2(): number {
-        let result: number = 1;
-        result = (6151 * result) ^ ((this._get_interconnectNodes()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_sockets()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_services()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_resourceManagers()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_sids()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_rm_services()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_rm_sids()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_in_localServices()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_in_sockets()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_in_resourceManager()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_soc_to()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_soc_from()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_svc_serviceID()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_svc_sockets()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_svc_ICNode()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_svc_registered()).hashCode() << 1);
-        return result;
-    }
-
-    /* TODO
-    toString(): string {
-        return String.join("\n", "_get_interconnectNodes: " + (this._get_interconnectNodes()).toString(), "_get_sockets: " + (this._get_sockets()).toString(), "_get_services: " + (this._get_services()).toString(), "_get_resourceManagers: " + (this._get_resourceManagers()).toString(), "_get_sids: " + (this._get_sids()).toString(), "_get_rm_services: " + (this._get_rm_services()).toString(), "_get_rm_sids: " + (this._get_rm_sids()).toString(), "_get_in_localServices: " + (this._get_in_localServices()).toString(), "_get_in_sockets: " + (this._get_in_sockets()).toString(), "_get_in_resourceManager: " + (this._get_in_resourceManager()).toString(), "_get_soc_to: " + (this._get_soc_to()).toString(), "_get_soc_from: " + (this._get_soc_from()).toString(), "_get_svc_serviceID: " + (this._get_svc_serviceID()).toString(), "_get_svc_sockets: " + (this._get_svc_sockets()).toString(), "_get_svc_ICNode: " + (this._get_svc_ICNode()).toString(), "_get_svc_registered: " + (this._get_svc_registered()).toString());
-    }
-    */
 
 
     public _copy(): nota_v2 {

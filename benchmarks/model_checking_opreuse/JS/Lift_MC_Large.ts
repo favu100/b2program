@@ -1,6 +1,7 @@
 import {BTuple} from './btypes/BTuple.js';
 import {BInteger} from './btypes/BInteger.js';
 import {BBoolean} from './btypes/BBoolean.js';
+import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
 import {SelectError} from "./btypes/BUtils.js";
 import {VariantViolation} from "./btypes/BUtils.js";
@@ -227,6 +228,36 @@ export default class Lift_MC_Large {
         return this.level;
     }
 
+    equals(o: any): boolean {
+        let o1: Lift_MC_Large = this;
+        let o2: Lift_MC_Large = o as Lift_MC_Large;
+        return o1._get_level().equals(o2._get_level());
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        result = (1543 * result) ^ ((this._get_level()).hashCode() << 1);
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        result = (6151 * result) ^ ((this._get_level()).hashCode() << 1);
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_level: " + (this._get_level()).toString());
+    }
+    */
+
     _tr_inc(): boolean {
         return this.level.less(new BInteger(1000000)).booleanValue();
     }
@@ -282,36 +313,6 @@ export default class Lift_MC_Large {
     _check_inv_2() {
         return this.level.lessEqual(new BInteger(1000000)).booleanValue();
     }
-
-    equals(o: any): boolean {
-        let o1: Lift_MC_Large = this;
-        let o2: Lift_MC_Large = o as Lift_MC_Large;
-        return o1._get_level().equals(o2._get_level());
-    }
-
-
-
-    hashCode(): number {
-        return this._hashCode_1();
-    }
-
-    _hashCode_1(): number {
-        let result: number = 1;
-        result = (1543 * result) ^ ((this._get_level()).hashCode() << 1);
-        return result;
-    }
-
-    _hashCode_2(): number {
-        let result: number = 1;
-        result = (6151 * result) ^ ((this._get_level()).hashCode() << 1);
-        return result;
-    }
-
-    /* TODO
-    toString(): string {
-        return String.join("\n", "_get_level: " + (this._get_level()).toString());
-    }
-    */
 
 
     public _copy(): Lift_MC_Large {

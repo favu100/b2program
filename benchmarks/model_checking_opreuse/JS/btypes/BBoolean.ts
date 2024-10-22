@@ -48,6 +48,14 @@ export class BBoolean implements BObject{
         return new BBoolean(this.value != other.value);
     }
 
+    isBoolean(): BBoolean {
+        return new BBoolean(true);
+    }
+
+    isNotBoolean(): BBoolean {
+        return new BBoolean(false);
+    }
+
     booleanValue(): boolean {
         return this.value;
     }

@@ -363,16 +363,16 @@ class _ProjectionWrite_SetCruiseSpeed {
 
 class _ProjectionRead_CCInitialisationFinished {
 
-    public ObstacleStatusJustChanged: BBoolean;
     public CCInitialisationInProgress: BBoolean;
+    public ObstacleStatusJustChanged: BBoolean;
     public ObstacleDistance: ODset;
     public ObstacleRelativeSpeed: RSset;
     public ObstaclePresent: BBoolean;
     public CruiseSpeedChangeInProgress: BBoolean;
 
-    constructor(ObstacleStatusJustChanged : BBoolean, CCInitialisationInProgress : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
-        this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+    constructor(CCInitialisationInProgress : BBoolean, ObstacleStatusJustChanged : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
         this.CCInitialisationInProgress = CCInitialisationInProgress;
+        this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
         this.ObstacleDistance = ObstacleDistance;
         this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
         this.ObstaclePresent = ObstaclePresent;
@@ -382,13 +382,13 @@ class _ProjectionRead_CCInitialisationFinished {
     equals(other: any): boolean {
         let o1: _ProjectionRead_CCInitialisationFinished = this;
         let o2: _ProjectionRead_CCInitialisationFinished = other as _ProjectionRead_CCInitialisationFinished;
-        return o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
+        return o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
     }
 
     hashCode(): number {
         let result: number = 1;
-        result = 31 * result + (this.ObstacleStatusJustChanged.hashCode() << 1);
         result = 31 * result + (this.CCInitialisationInProgress.hashCode() << 1);
+        result = 31 * result + (this.ObstacleStatusJustChanged.hashCode() << 1);
         result = 31 * result + (this.ObstacleDistance.hashCode() << 1);
         result = 31 * result + (this.ObstacleRelativeSpeed.hashCode() << 1);
         result = 31 * result + (this.ObstaclePresent.hashCode() << 1);
@@ -400,16 +400,16 @@ class _ProjectionRead_CCInitialisationFinished {
 
 class _ProjectionRead__tr_CCInitialisationFinished {
 
-    public ObstacleStatusJustChanged: BBoolean;
     public CCInitialisationInProgress: BBoolean;
+    public ObstacleStatusJustChanged: BBoolean;
     public ObstacleDistance: ODset;
     public ObstacleRelativeSpeed: RSset;
     public ObstaclePresent: BBoolean;
     public CruiseSpeedChangeInProgress: BBoolean;
 
-    constructor(ObstacleStatusJustChanged : BBoolean, CCInitialisationInProgress : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
-        this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+    constructor(CCInitialisationInProgress : BBoolean, ObstacleStatusJustChanged : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
         this.CCInitialisationInProgress = CCInitialisationInProgress;
+        this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
         this.ObstacleDistance = ObstacleDistance;
         this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
         this.ObstaclePresent = ObstaclePresent;
@@ -419,13 +419,13 @@ class _ProjectionRead__tr_CCInitialisationFinished {
     equals(other: any): boolean {
         let o1: _ProjectionRead__tr_CCInitialisationFinished = this;
         let o2: _ProjectionRead__tr_CCInitialisationFinished = other as _ProjectionRead__tr_CCInitialisationFinished;
-        return o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
+        return o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
     }
 
     hashCode(): number {
         let result: number = 1;
-        result = 31 * result + (this.ObstacleStatusJustChanged.hashCode() << 1);
         result = 31 * result + (this.CCInitialisationInProgress.hashCode() << 1);
+        result = 31 * result + (this.ObstacleStatusJustChanged.hashCode() << 1);
         result = 31 * result + (this.ObstacleDistance.hashCode() << 1);
         result = 31 * result + (this.ObstacleRelativeSpeed.hashCode() << 1);
         result = 31 * result + (this.ObstaclePresent.hashCode() << 1);
@@ -2112,16 +2112,16 @@ class _ProjectionWrite_ObstacleDisappears {
 
 class _ProjectionRead_VehicleManageObstacle {
 
-    public CCInitialisationInProgress: BBoolean;
     public ObstacleStatusJustChanged: BBoolean;
+    public CCInitialisationInProgress: BBoolean;
     public ObstacleDistance: ODset;
     public ObstacleRelativeSpeed: RSset;
     public ObstaclePresent: BBoolean;
     public CruiseSpeedChangeInProgress: BBoolean;
 
-    constructor(CCInitialisationInProgress : BBoolean, ObstacleStatusJustChanged : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
-        this.CCInitialisationInProgress = CCInitialisationInProgress;
+    constructor(ObstacleStatusJustChanged : BBoolean, CCInitialisationInProgress : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
         this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+        this.CCInitialisationInProgress = CCInitialisationInProgress;
         this.ObstacleDistance = ObstacleDistance;
         this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
         this.ObstaclePresent = ObstaclePresent;
@@ -2131,13 +2131,13 @@ class _ProjectionRead_VehicleManageObstacle {
     equals(other: any): boolean {
         let o1: _ProjectionRead_VehicleManageObstacle = this;
         let o2: _ProjectionRead_VehicleManageObstacle = other as _ProjectionRead_VehicleManageObstacle;
-        return o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
+        return o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
     }
 
     hashCode(): number {
         let result: number = 1;
-        result = 31 * result + (this.CCInitialisationInProgress.hashCode() << 1);
         result = 31 * result + (this.ObstacleStatusJustChanged.hashCode() << 1);
+        result = 31 * result + (this.CCInitialisationInProgress.hashCode() << 1);
         result = 31 * result + (this.ObstacleDistance.hashCode() << 1);
         result = 31 * result + (this.ObstacleRelativeSpeed.hashCode() << 1);
         result = 31 * result + (this.ObstaclePresent.hashCode() << 1);
@@ -2149,16 +2149,16 @@ class _ProjectionRead_VehicleManageObstacle {
 
 class _ProjectionRead__tr_VehicleManageObstacle {
 
-    public CCInitialisationInProgress: BBoolean;
     public ObstacleStatusJustChanged: BBoolean;
+    public CCInitialisationInProgress: BBoolean;
     public ObstacleDistance: ODset;
     public ObstacleRelativeSpeed: RSset;
     public ObstaclePresent: BBoolean;
     public CruiseSpeedChangeInProgress: BBoolean;
 
-    constructor(CCInitialisationInProgress : BBoolean, ObstacleStatusJustChanged : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
-        this.CCInitialisationInProgress = CCInitialisationInProgress;
+    constructor(ObstacleStatusJustChanged : BBoolean, CCInitialisationInProgress : BBoolean, ObstacleDistance : ODset, ObstacleRelativeSpeed : RSset, ObstaclePresent : BBoolean, CruiseSpeedChangeInProgress : BBoolean) {
         this.ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+        this.CCInitialisationInProgress = CCInitialisationInProgress;
         this.ObstacleDistance = ObstacleDistance;
         this.ObstacleRelativeSpeed = ObstacleRelativeSpeed;
         this.ObstaclePresent = ObstaclePresent;
@@ -2168,13 +2168,13 @@ class _ProjectionRead__tr_VehicleManageObstacle {
     equals(other: any): boolean {
         let o1: _ProjectionRead__tr_VehicleManageObstacle = this;
         let o2: _ProjectionRead__tr_VehicleManageObstacle = other as _ProjectionRead__tr_VehicleManageObstacle;
-        return o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
+        return o1.ObstacleStatusJustChanged.equals(o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress.equals(o2.CCInitialisationInProgress) && o1.ObstacleDistance.equals(o2.ObstacleDistance) && o1.ObstacleRelativeSpeed.equals(o2.ObstacleRelativeSpeed) && o1.ObstaclePresent.equals(o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress.equals(o2.CruiseSpeedChangeInProgress);
     }
 
     hashCode(): number {
         let result: number = 1;
-        result = 31 * result + (this.CCInitialisationInProgress.hashCode() << 1);
         result = 31 * result + (this.ObstacleStatusJustChanged.hashCode() << 1);
+        result = 31 * result + (this.CCInitialisationInProgress.hashCode() << 1);
         result = 31 * result + (this.ObstacleDistance.hashCode() << 1);
         result = 31 * result + (this.ObstacleRelativeSpeed.hashCode() << 1);
         result = 31 * result + (this.ObstaclePresent.hashCode() << 1);
@@ -3654,6 +3654,64 @@ export default class Cruise_finite1_deterministic_MC {
         return Cruise_finite1_deterministic_MC._ODset;
     }
 
+    equals(o: any): boolean {
+        let o1: Cruise_finite1_deterministic_MC = this;
+        let o2: Cruise_finite1_deterministic_MC = o as Cruise_finite1_deterministic_MC;
+        return o1._get_CruiseAllowed().equals(o2._get_CruiseAllowed()) && o1._get_CruiseActive().equals(o2._get_CruiseActive()) && o1._get_VehicleAtCruiseSpeed().equals(o2._get_VehicleAtCruiseSpeed()) && o1._get_VehicleCanKeepSpeed().equals(o2._get_VehicleCanKeepSpeed()) && o1._get_VehicleTryKeepSpeed().equals(o2._get_VehicleTryKeepSpeed()) && o1._get_SpeedAboveMax().equals(o2._get_SpeedAboveMax()) && o1._get_VehicleTryKeepTimeGap().equals(o2._get_VehicleTryKeepTimeGap()) && o1._get_CruiseSpeedAtMax().equals(o2._get_CruiseSpeedAtMax()) && o1._get_ObstaclePresent().equals(o2._get_ObstaclePresent()) && o1._get_ObstacleDistance().equals(o2._get_ObstacleDistance()) && o1._get_ObstacleRelativeSpeed().equals(o2._get_ObstacleRelativeSpeed()) && o1._get_ObstacleStatusJustChanged().equals(o2._get_ObstacleStatusJustChanged()) && o1._get_CCInitialisationInProgress().equals(o2._get_CCInitialisationInProgress()) && o1._get_CruiseSpeedChangeInProgress().equals(o2._get_CruiseSpeedChangeInProgress()) && o1._get_NumberOfSetCruise().equals(o2._get_NumberOfSetCruise());
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        result = (1543 * result) ^ ((this._get_CruiseAllowed()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_CruiseActive()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_VehicleAtCruiseSpeed()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_VehicleCanKeepSpeed()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_VehicleTryKeepSpeed()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_SpeedAboveMax()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_VehicleTryKeepTimeGap()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_CruiseSpeedAtMax()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_ObstaclePresent()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_ObstacleDistance()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_ObstacleRelativeSpeed()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_ObstacleStatusJustChanged()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_CCInitialisationInProgress()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_CruiseSpeedChangeInProgress()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_NumberOfSetCruise()).hashCode() << 1);
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        result = (6151 * result) ^ ((this._get_CruiseAllowed()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_CruiseActive()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_VehicleAtCruiseSpeed()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_VehicleCanKeepSpeed()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_VehicleTryKeepSpeed()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_SpeedAboveMax()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_VehicleTryKeepTimeGap()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_CruiseSpeedAtMax()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_ObstaclePresent()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_ObstacleDistance()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_ObstacleRelativeSpeed()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_ObstacleStatusJustChanged()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_CCInitialisationInProgress()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_CruiseSpeedChangeInProgress()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_NumberOfSetCruise()).hashCode() << 1);
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_CruiseAllowed: " + (this._get_CruiseAllowed()).toString(), "_get_CruiseActive: " + (this._get_CruiseActive()).toString(), "_get_VehicleAtCruiseSpeed: " + (this._get_VehicleAtCruiseSpeed()).toString(), "_get_VehicleCanKeepSpeed: " + (this._get_VehicleCanKeepSpeed()).toString(), "_get_VehicleTryKeepSpeed: " + (this._get_VehicleTryKeepSpeed()).toString(), "_get_SpeedAboveMax: " + (this._get_SpeedAboveMax()).toString(), "_get_VehicleTryKeepTimeGap: " + (this._get_VehicleTryKeepTimeGap()).toString(), "_get_CruiseSpeedAtMax: " + (this._get_CruiseSpeedAtMax()).toString(), "_get_ObstaclePresent: " + (this._get_ObstaclePresent()).toString(), "_get_ObstacleDistance: " + (this._get_ObstacleDistance()).toString(), "_get_ObstacleRelativeSpeed: " + (this._get_ObstacleRelativeSpeed()).toString(), "_get_ObstacleStatusJustChanged: " + (this._get_ObstacleStatusJustChanged()).toString(), "_get_CCInitialisationInProgress: " + (this._get_CCInitialisationInProgress()).toString(), "_get_CruiseSpeedChangeInProgress: " + (this._get_CruiseSpeedChangeInProgress()).toString(), "_get_NumberOfSetCruise: " + (this._get_NumberOfSetCruise()).toString());
+    }
+    */
+
     _tr_CruiseBecomesNotAllowed(): boolean {
         return this.CruiseAllowed.equal(new BBoolean(true)).booleanValue();
     }
@@ -3664,26 +3722,32 @@ export default class Cruise_finite1_deterministic_MC {
 
     _tr_SetCruiseSpeed(): BSet<BTuple<BBoolean, BBoolean>> {
         let _ic_set_2: BSet<BTuple<BBoolean, BBoolean>> = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(let _ic_vcks_1 of BUtils.BOOL) {
-            for(let _ic_csam_1 of BUtils.BOOL) {
-                if((this.CruiseAllowed.equal(new BBoolean(true))).booleanValue()) {
+        if(this.CruiseAllowed.equal(new BBoolean(true)).booleanValue()) {
+            for(let _ic_vcks_1 of BUtils.BOOL) {
+                for(let _ic_csam_1 of BUtils.BOOL) {
                     _ic_set_2 = _ic_set_2.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vcks_1, _ic_csam_1)));
+
                 }
 
             }
+
         }
         return _ic_set_2;
     }
 
     _tr_CCInitialisationFinished(): BSet<BTuple<BBoolean, BBoolean>> {
         let _ic_set_3: BSet<BTuple<BBoolean, BBoolean>> = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(let _ic_vtks_1 of BUtils.BOOL) {
-            for(let _ic_vtktg_1 of BUtils.BOOL) {
-                if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSequal)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vtks_1, _ic_vtktg_1)));
+        if(this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()) {
+            for(let _ic_vtks_1 of BUtils.BOOL) {
+                for(let _ic_vtktg_1 of BUtils.BOOL) {
+                    if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSequal)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_set_3 = _ic_set_3.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vtks_1, _ic_vtktg_1)));
+                    }
+
                 }
 
             }
+
         }
         return _ic_set_3;
     }
@@ -3694,13 +3758,17 @@ export default class Cruise_finite1_deterministic_MC {
 
     _tr_CruiseSpeedChangeFinished(): BSet<BTuple<BBoolean, BBoolean>> {
         let _ic_set_5: BSet<BTuple<BBoolean, BBoolean>> = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(let _ic_vtks_1 of BUtils.BOOL) {
-            for(let _ic_vtktg_1 of BUtils.BOOL) {
-                if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSequal)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vtks_1, _ic_vtktg_1)));
+        if(this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()) {
+            for(let _ic_vtks_1 of BUtils.BOOL) {
+                for(let _ic_vtktg_1 of BUtils.BOOL) {
+                    if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSequal)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_set_5 = _ic_set_5.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vtks_1, _ic_vtktg_1)));
+                    }
+
                 }
 
             }
+
         }
         return _ic_set_5;
     }
@@ -3767,10 +3835,14 @@ export default class Cruise_finite1_deterministic_MC {
 
     _tr_ObstacleAppearsWhenCruiseActive(): BSet<BTuple<RSset, ODset>> {
         let _ic_set_21: BSet<BTuple<RSset, ODset>> = new BSet<BTuple<RSset, ODset>>();
-        for(let _ic_ors_1 of Cruise_finite1_deterministic_MC._RSset.difference(new BSet<RSset>(new RSset(enum_RSset.RSnone)))) {
-            for(let _ic_od_1 of Cruise_finite1_deterministic_MC._ODset.difference(new BSet<ODset>(new ODset(enum_ODset.ODnone)))) {
-                if((new BBoolean(this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() && this.CruiseActive.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_21 = _ic_set_21.union(new BSet<BTuple<RSset, ODset>>(new BTuple(_ic_ors_1, _ic_od_1)));
+        if(this.ObstaclePresent.equal(new BBoolean(false)).booleanValue()) {
+            if(this.CruiseActive.equal(new BBoolean(true)).booleanValue()) {
+                for(let _ic_ors_1 of Cruise_finite1_deterministic_MC._RSset.difference(new BSet<RSset>(new RSset(enum_RSset.RSnone)))) {
+                    for(let _ic_od_1 of Cruise_finite1_deterministic_MC._ODset.difference(new BSet<ODset>(new ODset(enum_ODset.ODnone)))) {
+                        _ic_set_21 = _ic_set_21.union(new BSet<BTuple<RSset, ODset>>(new BTuple(_ic_ors_1, _ic_od_1)));
+
+                    }
+
                 }
 
             }
@@ -3780,11 +3852,14 @@ export default class Cruise_finite1_deterministic_MC {
 
     _tr_ObstacleAppearsWhenCruiseInactive(): BSet<RSset> {
         let _ic_set_22: BSet<RSset> = new BSet<RSset>();
-        for(let _ic_ors_1 of Cruise_finite1_deterministic_MC._RSset.difference(new BSet<RSset>(new RSset(enum_RSset.RSnone)))) {
-            if((new BBoolean(this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() && this.CruiseActive.equal(new BBoolean(false)).booleanValue())).booleanValue()) {
-                _ic_set_22 = _ic_set_22.union(new BSet<RSset>(_ic_ors_1));
-            }
+        if(this.ObstaclePresent.equal(new BBoolean(false)).booleanValue()) {
+            if(this.CruiseActive.equal(new BBoolean(false)).booleanValue()) {
+                for(let _ic_ors_1 of Cruise_finite1_deterministic_MC._RSset.difference(new BSet<RSset>(new RSset(enum_RSset.RSnone)))) {
+                    _ic_set_22 = _ic_set_22.union(new BSet<RSset>(_ic_ors_1));
 
+                }
+
+            }
         }
         return _ic_set_22;
     }
@@ -3795,13 +3870,17 @@ export default class Cruise_finite1_deterministic_MC {
 
     _tr_VehicleManageObstacle(): BSet<BTuple<BBoolean, BBoolean>> {
         let _ic_set_24: BSet<BTuple<BBoolean, BBoolean>> = new BSet<BTuple<BBoolean, BBoolean>>();
-        for(let _ic_vtks_1 of BUtils.BOOL) {
-            for(let _ic_vtktg_1 of BUtils.BOOL) {
-                if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSequal)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue())).booleanValue()) {
-                    _ic_set_24 = _ic_set_24.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vtks_1, _ic_vtktg_1)));
+        if(this.ObstacleStatusJustChanged.equal(new BBoolean(true)).booleanValue()) {
+            for(let _ic_vtks_1 of BUtils.BOOL) {
+                for(let _ic_vtktg_1 of BUtils.BOOL) {
+                    if((new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(_ic_vtks_1.equal(new BBoolean(true)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CCInitialisationInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() || this.CruiseSpeedChangeInProgress.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(!this.ObstaclePresent.equal(new BBoolean(false)).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODclose)).booleanValue() && this.ObstacleRelativeSpeed.unequal(new RSset(enum_RSset.RSpos)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(this.ObstacleDistance.equal(new ODset(enum_ODset.ODveryclose)).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() || _ic_vtks_1.equal(new BBoolean(true)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSequal)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSneg)).booleanValue() && this.ObstacleDistance.equal(new ODset(enum_ODset.ODnone)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() && new BBoolean(!new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() || _ic_vtktg_1.equal(new BBoolean(false)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_set_24 = _ic_set_24.union(new BSet<BTuple<BBoolean, BBoolean>>(new BTuple(_ic_vtks_1, _ic_vtktg_1)));
+                    }
+
                 }
 
             }
+
         }
         return _ic_set_24;
     }
@@ -3827,7 +3906,7 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _projected_state_for_CCInitialisationFinished(): _ProjectionRead_CCInitialisationFinished {
-        return new _ProjectionRead_CCInitialisationFinished(this.ObstacleStatusJustChanged,this.CCInitialisationInProgress,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
+        return new _ProjectionRead_CCInitialisationFinished(this.CCInitialisationInProgress,this.ObstacleStatusJustChanged,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
     }
 
     _projected_state_for_VehicleReachesCruiseSpeed(): _ProjectionRead_VehicleReachesCruiseSpeed {
@@ -3883,7 +3962,7 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _projected_state_for_VehicleManageObstacle(): _ProjectionRead_VehicleManageObstacle {
-        return new _ProjectionRead_VehicleManageObstacle(this.CCInitialisationInProgress,this.ObstacleStatusJustChanged,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
+        return new _ProjectionRead_VehicleManageObstacle(this.ObstacleStatusJustChanged,this.CCInitialisationInProgress,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
     }
 
     _projected_state_for_CruiseBecomesAllowed(): _ProjectionRead_CruiseBecomesAllowed {
@@ -3959,7 +4038,7 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _projected_state_for__tr_VehicleManageObstacle(): _ProjectionRead__tr_VehicleManageObstacle {
-        return new _ProjectionRead__tr_VehicleManageObstacle(this.CCInitialisationInProgress,this.ObstacleStatusJustChanged,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
+        return new _ProjectionRead__tr_VehicleManageObstacle(this.ObstacleStatusJustChanged,this.CCInitialisationInProgress,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
     }
 
     _projected_state_for__tr_CruiseBecomesAllowed(): _ProjectionRead__tr_CruiseBecomesAllowed {
@@ -3987,7 +4066,7 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _projected_state_for__tr_CCInitialisationFinished(): _ProjectionRead__tr_CCInitialisationFinished {
-        return new _ProjectionRead__tr_CCInitialisationFinished(this.ObstacleStatusJustChanged,this.CCInitialisationInProgress,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
+        return new _ProjectionRead__tr_CCInitialisationFinished(this.CCInitialisationInProgress,this.ObstacleStatusJustChanged,this.ObstacleDistance,this.ObstacleRelativeSpeed,this.ObstaclePresent,this.CruiseSpeedChangeInProgress);
     }
 
     _projected_state_for__tr_CCInitialisationDelayFinished(): _ProjectionRead__tr_CCInitialisationDelayFinished {
@@ -4435,35 +4514,35 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _check_inv_1() {
-        return BUtils.BOOL.elementOf(this.CruiseAllowed).booleanValue();
+        return this.CruiseAllowed.isBoolean().booleanValue();
     }
 
     _check_inv_2() {
-        return BUtils.BOOL.elementOf(this.CruiseActive).booleanValue();
+        return this.CruiseActive.isBoolean().booleanValue();
     }
 
     _check_inv_3() {
-        return BUtils.BOOL.elementOf(this.VehicleAtCruiseSpeed).booleanValue();
+        return this.VehicleAtCruiseSpeed.isBoolean().booleanValue();
     }
 
     _check_inv_4() {
-        return BUtils.BOOL.elementOf(this.VehicleCanKeepSpeed).booleanValue();
+        return this.VehicleCanKeepSpeed.isBoolean().booleanValue();
     }
 
     _check_inv_5() {
-        return BUtils.BOOL.elementOf(this.VehicleTryKeepSpeed).booleanValue();
+        return this.VehicleTryKeepSpeed.isBoolean().booleanValue();
     }
 
     _check_inv_6() {
-        return BUtils.BOOL.elementOf(this.SpeedAboveMax).booleanValue();
+        return this.SpeedAboveMax.isBoolean().booleanValue();
     }
 
     _check_inv_7() {
-        return BUtils.BOOL.elementOf(this.VehicleTryKeepTimeGap).booleanValue();
+        return this.VehicleTryKeepTimeGap.isBoolean().booleanValue();
     }
 
     _check_inv_8() {
-        return BUtils.BOOL.elementOf(this.CruiseSpeedAtMax).booleanValue();
+        return this.CruiseSpeedAtMax.isBoolean().booleanValue();
     }
 
     _check_inv_9() {
@@ -4475,7 +4554,7 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _check_inv_11() {
-        return BUtils.BOOL.elementOf(this.ObstaclePresent).booleanValue();
+        return this.ObstaclePresent.isBoolean().booleanValue();
     }
 
     _check_inv_12() {
@@ -4487,15 +4566,15 @@ export default class Cruise_finite1_deterministic_MC {
     }
 
     _check_inv_14() {
-        return BUtils.BOOL.elementOf(this.ObstacleStatusJustChanged).booleanValue();
+        return this.ObstacleStatusJustChanged.isBoolean().booleanValue();
     }
 
     _check_inv_15() {
-        return BUtils.BOOL.elementOf(this.CCInitialisationInProgress).booleanValue();
+        return this.CCInitialisationInProgress.isBoolean().booleanValue();
     }
 
     _check_inv_16() {
-        return BUtils.BOOL.elementOf(this.CruiseSpeedChangeInProgress).booleanValue();
+        return this.CruiseSpeedChangeInProgress.isBoolean().booleanValue();
     }
 
     _check_inv_17() {
@@ -4589,64 +4668,6 @@ export default class Cruise_finite1_deterministic_MC {
     _check_inv_39() {
         return new BBoolean(!new BBoolean(new BBoolean(new BBoolean(this.ObstacleRelativeSpeed.equal(new RSset(enum_RSset.RSpos)).booleanValue() && this.ObstacleDistance.unequal(new ODset(enum_ODset.ODveryclose)).booleanValue()).booleanValue() && this.CruiseActive.equal(new BBoolean(true)).booleanValue()).booleanValue() && new BBoolean(new BBoolean(this.ObstacleStatusJustChanged.equal(new BBoolean(false)).booleanValue() && this.CCInitialisationInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue() && this.CruiseSpeedChangeInProgress.equal(new BBoolean(false)).booleanValue()).booleanValue()).booleanValue() || this.VehicleTryKeepSpeed.equal(new BBoolean(true)).booleanValue()).booleanValue();
     }
-
-    equals(o: any): boolean {
-        let o1: Cruise_finite1_deterministic_MC = this;
-        let o2: Cruise_finite1_deterministic_MC = o as Cruise_finite1_deterministic_MC;
-        return o1._get_CruiseAllowed().equals(o2._get_CruiseAllowed()) && o1._get_CruiseActive().equals(o2._get_CruiseActive()) && o1._get_VehicleAtCruiseSpeed().equals(o2._get_VehicleAtCruiseSpeed()) && o1._get_VehicleCanKeepSpeed().equals(o2._get_VehicleCanKeepSpeed()) && o1._get_VehicleTryKeepSpeed().equals(o2._get_VehicleTryKeepSpeed()) && o1._get_SpeedAboveMax().equals(o2._get_SpeedAboveMax()) && o1._get_VehicleTryKeepTimeGap().equals(o2._get_VehicleTryKeepTimeGap()) && o1._get_CruiseSpeedAtMax().equals(o2._get_CruiseSpeedAtMax()) && o1._get_ObstaclePresent().equals(o2._get_ObstaclePresent()) && o1._get_ObstacleDistance().equals(o2._get_ObstacleDistance()) && o1._get_ObstacleRelativeSpeed().equals(o2._get_ObstacleRelativeSpeed()) && o1._get_ObstacleStatusJustChanged().equals(o2._get_ObstacleStatusJustChanged()) && o1._get_CCInitialisationInProgress().equals(o2._get_CCInitialisationInProgress()) && o1._get_CruiseSpeedChangeInProgress().equals(o2._get_CruiseSpeedChangeInProgress()) && o1._get_NumberOfSetCruise().equals(o2._get_NumberOfSetCruise());
-    }
-
-
-
-    hashCode(): number {
-        return this._hashCode_1();
-    }
-
-    _hashCode_1(): number {
-        let result: number = 1;
-        result = (1543 * result) ^ ((this._get_CruiseAllowed()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_CruiseActive()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_VehicleAtCruiseSpeed()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_VehicleCanKeepSpeed()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_VehicleTryKeepSpeed()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_SpeedAboveMax()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_VehicleTryKeepTimeGap()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_CruiseSpeedAtMax()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_ObstaclePresent()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_ObstacleDistance()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_ObstacleRelativeSpeed()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_ObstacleStatusJustChanged()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_CCInitialisationInProgress()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_CruiseSpeedChangeInProgress()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_NumberOfSetCruise()).hashCode() << 1);
-        return result;
-    }
-
-    _hashCode_2(): number {
-        let result: number = 1;
-        result = (6151 * result) ^ ((this._get_CruiseAllowed()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_CruiseActive()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_VehicleAtCruiseSpeed()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_VehicleCanKeepSpeed()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_VehicleTryKeepSpeed()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_SpeedAboveMax()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_VehicleTryKeepTimeGap()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_CruiseSpeedAtMax()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_ObstaclePresent()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_ObstacleDistance()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_ObstacleRelativeSpeed()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_ObstacleStatusJustChanged()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_CCInitialisationInProgress()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_CruiseSpeedChangeInProgress()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_NumberOfSetCruise()).hashCode() << 1);
-        return result;
-    }
-
-    /* TODO
-    toString(): string {
-        return String.join("\n", "_get_CruiseAllowed: " + (this._get_CruiseAllowed()).toString(), "_get_CruiseActive: " + (this._get_CruiseActive()).toString(), "_get_VehicleAtCruiseSpeed: " + (this._get_VehicleAtCruiseSpeed()).toString(), "_get_VehicleCanKeepSpeed: " + (this._get_VehicleCanKeepSpeed()).toString(), "_get_VehicleTryKeepSpeed: " + (this._get_VehicleTryKeepSpeed()).toString(), "_get_SpeedAboveMax: " + (this._get_SpeedAboveMax()).toString(), "_get_VehicleTryKeepTimeGap: " + (this._get_VehicleTryKeepTimeGap()).toString(), "_get_CruiseSpeedAtMax: " + (this._get_CruiseSpeedAtMax()).toString(), "_get_ObstaclePresent: " + (this._get_ObstaclePresent()).toString(), "_get_ObstacleDistance: " + (this._get_ObstacleDistance()).toString(), "_get_ObstacleRelativeSpeed: " + (this._get_ObstacleRelativeSpeed()).toString(), "_get_ObstacleStatusJustChanged: " + (this._get_ObstacleStatusJustChanged()).toString(), "_get_CCInitialisationInProgress: " + (this._get_CCInitialisationInProgress()).toString(), "_get_CruiseSpeedChangeInProgress: " + (this._get_CruiseSpeedChangeInProgress()).toString(), "_get_NumberOfSetCruise: " + (this._get_NumberOfSetCruise()).toString());
-    }
-    */
 
 
     public _copy(): Cruise_finite1_deterministic_MC {

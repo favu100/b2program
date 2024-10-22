@@ -2283,6 +2283,7 @@ export default class CAN_BUS_tlc {
 
 
     private static NATSET: BSet<BInteger>;
+    private static __aux_constant_1: BSet<BInteger>;
 
     private static _T1state: BSet<T1state> = new BSet<T1state>(new T1state(enum_T1state.T1_EN), new T1state(enum_T1state.T1_CALC), new T1state(enum_T1state.T1_SEND), new T1state(enum_T1state.T1_WAIT));
     private static _T2mode: BSet<T2mode> = new BSet<T2mode>(new T2mode(enum_T2mode.T2MODE_SENSE), new T2mode(enum_T2mode.T2MODE_TRANSMIT), new T2mode(enum_T2mode.T2MODE_RELEASE));
@@ -2310,6 +2311,7 @@ export default class CAN_BUS_tlc {
 
     static {
         CAN_BUS_tlc.NATSET = BSet.interval(new BInteger(0), new BInteger(5));
+        CAN_BUS_tlc.__aux_constant_1 = BSet.interval(new BInteger(1).negative(), new BInteger(3));
     }
 
     constructor(copy? : CAN_BUS_tlc) {
@@ -2500,6 +2502,10 @@ export default class CAN_BUS_tlc {
         return CAN_BUS_tlc.NATSET;
     }
 
+    _get___aux_constant_1(): BSet<BInteger> {
+        return CAN_BUS_tlc.__aux_constant_1;
+    }
+
     _get_BUSpriority(): BInteger {
         return this.BUSpriority;
     }
@@ -2588,18 +2594,83 @@ export default class CAN_BUS_tlc {
         return CAN_BUS_tlc._T3state;
     }
 
+    equals(o: any): boolean {
+        let o1: CAN_BUS_tlc = this;
+        let o2: CAN_BUS_tlc = o as CAN_BUS_tlc;
+        return o1._get_BUSpriority().equals(o2._get_BUSpriority()) && o1._get_BUSvalue().equals(o2._get_BUSvalue()) && o1._get_BUSwrite().equals(o2._get_BUSwrite()) && o1._get_T1_state().equals(o2._get_T1_state()) && o1._get_T1_timer().equals(o2._get_T1_timer()) && o1._get_T1_writevalue().equals(o2._get_T1_writevalue()) && o1._get_T2_mode().equals(o2._get_T2_mode()) && o1._get_T2_readpriority().equals(o2._get_T2_readpriority()) && o1._get_T2_readvalue().equals(o2._get_T2_readvalue()) && o1._get_T2_state().equals(o2._get_T2_state()) && o1._get_T2_timer().equals(o2._get_T2_timer()) && o1._get_T2_writevalue().equals(o2._get_T2_writevalue()) && o1._get_T2v().equals(o2._get_T2v()) && o1._get_T3_enabled().equals(o2._get_T3_enabled()) && o1._get_T3_evaluated().equals(o2._get_T3_evaluated()) && o1._get_T3_readpriority().equals(o2._get_T3_readpriority()) && o1._get_T3_readvalue().equals(o2._get_T3_readvalue()) && o1._get_T3_state().equals(o2._get_T3_state());
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        result = (1543 * result) ^ ((this._get_BUSpriority()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_BUSvalue()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_BUSwrite()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T1_state()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T1_timer()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T1_writevalue()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2_mode()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2_readpriority()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2_readvalue()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2_state()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2_timer()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2_writevalue()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T2v()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T3_enabled()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T3_evaluated()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T3_readpriority()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T3_readvalue()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_T3_state()).hashCode() << 1);
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        result = (6151 * result) ^ ((this._get_BUSpriority()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_BUSvalue()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_BUSwrite()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T1_state()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T1_timer()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T1_writevalue()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2_mode()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2_readpriority()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2_readvalue()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2_state()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2_timer()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2_writevalue()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T2v()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T3_enabled()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T3_evaluated()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T3_readpriority()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T3_readvalue()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_T3_state()).hashCode() << 1);
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_BUSpriority: " + (this._get_BUSpriority()).toString(), "_get_BUSvalue: " + (this._get_BUSvalue()).toString(), "_get_BUSwrite: " + (this._get_BUSwrite()).toString(), "_get_T1_state: " + (this._get_T1_state()).toString(), "_get_T1_timer: " + (this._get_T1_timer()).toString(), "_get_T1_writevalue: " + (this._get_T1_writevalue()).toString(), "_get_T2_mode: " + (this._get_T2_mode()).toString(), "_get_T2_readpriority: " + (this._get_T2_readpriority()).toString(), "_get_T2_readvalue: " + (this._get_T2_readvalue()).toString(), "_get_T2_state: " + (this._get_T2_state()).toString(), "_get_T2_timer: " + (this._get_T2_timer()).toString(), "_get_T2_writevalue: " + (this._get_T2_writevalue()).toString(), "_get_T2v: " + (this._get_T2v()).toString(), "_get_T3_enabled: " + (this._get_T3_enabled()).toString(), "_get_T3_evaluated: " + (this._get_T3_evaluated()).toString(), "_get_T3_readpriority: " + (this._get_T3_readpriority()).toString(), "_get_T3_readvalue: " + (this._get_T3_readvalue()).toString(), "_get_T3_state: " + (this._get_T3_state()).toString());
+    }
+    */
+
     _tr_T1Evaluate(): boolean {
         return new BBoolean(this.T1_timer.equal(new BInteger(0)).booleanValue() && this.T1_state.equal(new T1state(enum_T1state.T1_EN)).booleanValue()).booleanValue();
     }
 
     _tr_T1Calculate(): BSet<BInteger> {
         let _ic_set_1: BSet<BInteger> = new BSet<BInteger>();
-        for(let _ic_p_1 of BSet.interval(new BInteger(1).negative(), new BInteger(3))) {
+        for(let _ic_p_1 of CAN_BUS_tlc.__aux_constant_1) {
             if((this.T1_state.equal(new T1state(enum_T1state.T1_CALC))).booleanValue()) {
                 _ic_set_1 = _ic_set_1.union(new BSet<BInteger>(_ic_p_1));
             }
 
         }
+
         return _ic_set_1;
     }
 
@@ -2660,7 +2731,7 @@ export default class CAN_BUS_tlc {
     _tr_T2ReleaseBus(): BSet<BInteger> {
         let _ic_set_8: BSet<BInteger> = new BSet<BInteger>();
         for(let _ic_ppriority_1 of Array.of(this.T2_readpriority)) {
-            if((new BBoolean(this.BUSwrite.domain().elementOf(_ic_ppriority_1).booleanValue() && this.T2_state.equal(new T2state(enum_T2state.T2_RELEASE)).booleanValue())).booleanValue()) {
+            if((new BBoolean(this.BUSwrite.isInDomain(_ic_ppriority_1).booleanValue() && this.T2_state.equal(new T2state(enum_T2state.T2_RELEASE)).booleanValue())).booleanValue()) {
                 _ic_set_8 = _ic_set_8.union(new BSet<BInteger>(_ic_ppriority_1));
             }
 
@@ -3222,11 +3293,11 @@ export default class CAN_BUS_tlc {
     }
 
     _check_inv_2() {
-        return BUtils.BOOL.elementOf(this.T3_evaluated).booleanValue();
+        return this.T3_evaluated.isBoolean().booleanValue();
     }
 
     _check_inv_3() {
-        return BUtils.BOOL.elementOf(this.T3_enabled).booleanValue();
+        return this.T3_enabled.isBoolean().booleanValue();
     }
 
     _check_inv_4() {
@@ -3294,72 +3365,8 @@ export default class CAN_BUS_tlc {
     }
 
     _check_inv_20() {
-        return this.BUSwrite.domain().elementOf(new BInteger(0)).booleanValue();
+        return this.BUSwrite.isInDomain(new BInteger(0)).booleanValue();
     }
-
-    equals(o: any): boolean {
-        let o1: CAN_BUS_tlc = this;
-        let o2: CAN_BUS_tlc = o as CAN_BUS_tlc;
-        return o1._get_BUSpriority().equals(o2._get_BUSpriority()) && o1._get_BUSvalue().equals(o2._get_BUSvalue()) && o1._get_BUSwrite().equals(o2._get_BUSwrite()) && o1._get_T1_state().equals(o2._get_T1_state()) && o1._get_T1_timer().equals(o2._get_T1_timer()) && o1._get_T1_writevalue().equals(o2._get_T1_writevalue()) && o1._get_T2_mode().equals(o2._get_T2_mode()) && o1._get_T2_readpriority().equals(o2._get_T2_readpriority()) && o1._get_T2_readvalue().equals(o2._get_T2_readvalue()) && o1._get_T2_state().equals(o2._get_T2_state()) && o1._get_T2_timer().equals(o2._get_T2_timer()) && o1._get_T2_writevalue().equals(o2._get_T2_writevalue()) && o1._get_T2v().equals(o2._get_T2v()) && o1._get_T3_enabled().equals(o2._get_T3_enabled()) && o1._get_T3_evaluated().equals(o2._get_T3_evaluated()) && o1._get_T3_readpriority().equals(o2._get_T3_readpriority()) && o1._get_T3_readvalue().equals(o2._get_T3_readvalue()) && o1._get_T3_state().equals(o2._get_T3_state());
-    }
-
-
-
-    hashCode(): number {
-        return this._hashCode_1();
-    }
-
-    _hashCode_1(): number {
-        let result: number = 1;
-        result = (1543 * result) ^ ((this._get_BUSpriority()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_BUSvalue()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_BUSwrite()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T1_state()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T1_timer()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T1_writevalue()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2_mode()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2_readpriority()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2_readvalue()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2_state()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2_timer()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2_writevalue()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T2v()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T3_enabled()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T3_evaluated()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T3_readpriority()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T3_readvalue()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_T3_state()).hashCode() << 1);
-        return result;
-    }
-
-    _hashCode_2(): number {
-        let result: number = 1;
-        result = (6151 * result) ^ ((this._get_BUSpriority()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_BUSvalue()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_BUSwrite()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T1_state()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T1_timer()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T1_writevalue()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2_mode()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2_readpriority()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2_readvalue()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2_state()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2_timer()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2_writevalue()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T2v()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T3_enabled()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T3_evaluated()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T3_readpriority()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T3_readvalue()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_T3_state()).hashCode() << 1);
-        return result;
-    }
-
-    /* TODO
-    toString(): string {
-        return String.join("\n", "_get_BUSpriority: " + (this._get_BUSpriority()).toString(), "_get_BUSvalue: " + (this._get_BUSvalue()).toString(), "_get_BUSwrite: " + (this._get_BUSwrite()).toString(), "_get_T1_state: " + (this._get_T1_state()).toString(), "_get_T1_timer: " + (this._get_T1_timer()).toString(), "_get_T1_writevalue: " + (this._get_T1_writevalue()).toString(), "_get_T2_mode: " + (this._get_T2_mode()).toString(), "_get_T2_readpriority: " + (this._get_T2_readpriority()).toString(), "_get_T2_readvalue: " + (this._get_T2_readvalue()).toString(), "_get_T2_state: " + (this._get_T2_state()).toString(), "_get_T2_timer: " + (this._get_T2_timer()).toString(), "_get_T2_writevalue: " + (this._get_T2_writevalue()).toString(), "_get_T2v: " + (this._get_T2v()).toString(), "_get_T3_enabled: " + (this._get_T3_enabled()).toString(), "_get_T3_evaluated: " + (this._get_T3_evaluated()).toString(), "_get_T3_readpriority: " + (this._get_T3_readpriority()).toString(), "_get_T3_readvalue: " + (this._get_T3_readvalue()).toString(), "_get_T3_state: " + (this._get_T3_state()).toString());
-    }
-    */
 
 
     public _copy(): CAN_BUS_tlc {

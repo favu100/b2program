@@ -832,156 +832,6 @@ class _ProjectionWrite_route_formation {
 
 class _ProjectionRead__check_inv_1 {
 
-    public TRK: BRelation<BLOCKS, BLOCKS>;
-
-    constructor(TRK : BRelation<BLOCKS, BLOCKS>) {
-        this.TRK = TRK;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_1 = this;
-        let o2: _ProjectionRead__check_inv_1 = other as _ProjectionRead__check_inv_1;
-        return o1.TRK.equals(o2.TRK);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.TRK.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_2 {
-
-    public frm: BSet<ROUTES>;
-    public resrt: BSet<ROUTES>;
-    public rsrtbl: BRelation<BLOCKS, ROUTES>;
-
-    constructor(frm : BSet<ROUTES>, resrt : BSet<ROUTES>, rsrtbl : BRelation<BLOCKS, ROUTES>) {
-        this.frm = frm;
-        this.resrt = resrt;
-        this.rsrtbl = rsrtbl;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_2 = this;
-        let o2: _ProjectionRead__check_inv_2 = other as _ProjectionRead__check_inv_2;
-        return o1.frm.equals(o2.frm) && o1.resrt.equals(o2.resrt) && o1.rsrtbl.equals(o2.rsrtbl);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.frm.hashCode() << 1);
-        result = 31 * result + (this.resrt.hashCode() << 1);
-        result = 31 * result + (this.rsrtbl.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_3 {
-
-    public TRK: BRelation<BLOCKS, BLOCKS>;
-
-    constructor(TRK : BRelation<BLOCKS, BLOCKS>) {
-        this.TRK = TRK;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_3 = this;
-        let o2: _ProjectionRead__check_inv_3 = other as _ProjectionRead__check_inv_3;
-        return o1.TRK.equals(o2.TRK);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.TRK.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_4 {
-
-    public frm: BSet<ROUTES>;
-    public TRK: BRelation<BLOCKS, BLOCKS>;
-    public rsrtbl: BRelation<BLOCKS, ROUTES>;
-
-    constructor(frm : BSet<ROUTES>, TRK : BRelation<BLOCKS, BLOCKS>, rsrtbl : BRelation<BLOCKS, ROUTES>) {
-        this.frm = frm;
-        this.TRK = TRK;
-        this.rsrtbl = rsrtbl;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_4 = this;
-        let o2: _ProjectionRead__check_inv_4 = other as _ProjectionRead__check_inv_4;
-        return o1.frm.equals(o2.frm) && o1.TRK.equals(o2.TRK) && o1.rsrtbl.equals(o2.rsrtbl);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.frm.hashCode() << 1);
-        result = 31 * result + (this.TRK.hashCode() << 1);
-        result = 31 * result + (this.rsrtbl.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_5 {
-
-    public OCC: BSet<BLOCKS>;
-    public LBT: BSet<BLOCKS>;
-
-    constructor(OCC : BSet<BLOCKS>, LBT : BSet<BLOCKS>) {
-        this.OCC = OCC;
-        this.LBT = LBT;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_5 = this;
-        let o2: _ProjectionRead__check_inv_5 = other as _ProjectionRead__check_inv_5;
-        return o1.OCC.equals(o2.OCC) && o1.LBT.equals(o2.LBT);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.OCC.hashCode() << 1);
-        result = 31 * result + (this.LBT.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_6 {
-
-    public rsrtbl: BRelation<BLOCKS, ROUTES>;
-    public LBT: BSet<BLOCKS>;
-
-    constructor(rsrtbl : BRelation<BLOCKS, ROUTES>, LBT : BSet<BLOCKS>) {
-        this.rsrtbl = rsrtbl;
-        this.LBT = LBT;
-    }
-
-    equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_6 = this;
-        let o2: _ProjectionRead__check_inv_6 = other as _ProjectionRead__check_inv_6;
-        return o1.rsrtbl.equals(o2.rsrtbl) && o1.LBT.equals(o2.LBT);
-    }
-
-    hashCode(): number {
-        let result: number = 1;
-        result = 31 * result + (this.rsrtbl.hashCode() << 1);
-        result = 31 * result + (this.LBT.hashCode() << 1);
-        return result;
-    }
-}
-
-
-class _ProjectionRead__check_inv_7 {
-
     public resrt: BSet<ROUTES>;
     public resbl: BSet<BLOCKS>;
     public rsrtbl: BRelation<BLOCKS, ROUTES>;
@@ -993,8 +843,8 @@ class _ProjectionRead__check_inv_7 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_7 = this;
-        let o2: _ProjectionRead__check_inv_7 = other as _ProjectionRead__check_inv_7;
+        let o1: _ProjectionRead__check_inv_1 = this;
+        let o2: _ProjectionRead__check_inv_1 = other as _ProjectionRead__check_inv_1;
         return o1.resrt.equals(o2.resrt) && o1.resbl.equals(o2.resbl) && o1.rsrtbl.equals(o2.rsrtbl);
     }
 
@@ -1008,7 +858,7 @@ class _ProjectionRead__check_inv_7 {
 }
 
 
-class _ProjectionRead__check_inv_8 {
+class _ProjectionRead__check_inv_2 {
 
     public rsrtbl: BRelation<BLOCKS, ROUTES>;
 
@@ -1017,8 +867,8 @@ class _ProjectionRead__check_inv_8 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_8 = this;
-        let o2: _ProjectionRead__check_inv_8 = other as _ProjectionRead__check_inv_8;
+        let o1: _ProjectionRead__check_inv_2 = this;
+        let o2: _ProjectionRead__check_inv_2 = other as _ProjectionRead__check_inv_2;
         return o1.rsrtbl.equals(o2.rsrtbl);
     }
 
@@ -1030,7 +880,7 @@ class _ProjectionRead__check_inv_8 {
 }
 
 
-class _ProjectionRead__check_inv_9 {
+class _ProjectionRead__check_inv_3 {
 
     public resbl: BSet<BLOCKS>;
     public OCC: BSet<BLOCKS>;
@@ -1041,8 +891,8 @@ class _ProjectionRead__check_inv_9 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_9 = this;
-        let o2: _ProjectionRead__check_inv_9 = other as _ProjectionRead__check_inv_9;
+        let o1: _ProjectionRead__check_inv_3 = this;
+        let o2: _ProjectionRead__check_inv_3 = other as _ProjectionRead__check_inv_3;
         return o1.resbl.equals(o2.resbl) && o1.OCC.equals(o2.OCC);
     }
 
@@ -1055,7 +905,7 @@ class _ProjectionRead__check_inv_9 {
 }
 
 
-class _ProjectionRead__check_inv_10 {
+class _ProjectionRead__check_inv_4 {
 
     public OCC: BSet<BLOCKS>;
     public rsrtbl: BRelation<BLOCKS, ROUTES>;
@@ -1066,8 +916,8 @@ class _ProjectionRead__check_inv_10 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_10 = this;
-        let o2: _ProjectionRead__check_inv_10 = other as _ProjectionRead__check_inv_10;
+        let o1: _ProjectionRead__check_inv_4 = this;
+        let o2: _ProjectionRead__check_inv_4 = other as _ProjectionRead__check_inv_4;
         return o1.OCC.equals(o2.OCC) && o1.rsrtbl.equals(o2.rsrtbl);
     }
 
@@ -1080,7 +930,76 @@ class _ProjectionRead__check_inv_10 {
 }
 
 
-class _ProjectionRead__check_inv_11 {
+class _ProjectionRead__check_inv_5 {
+
+    public rsrtbl: BRelation<BLOCKS, ROUTES>;
+
+    constructor(rsrtbl : BRelation<BLOCKS, ROUTES>) {
+        this.rsrtbl = rsrtbl;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_5 = this;
+        let o2: _ProjectionRead__check_inv_5 = other as _ProjectionRead__check_inv_5;
+        return o1.rsrtbl.equals(o2.rsrtbl);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.rsrtbl.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_6 {
+
+    public OCC: BSet<BLOCKS>;
+    public rsrtbl: BRelation<BLOCKS, ROUTES>;
+
+    constructor(OCC : BSet<BLOCKS>, rsrtbl : BRelation<BLOCKS, ROUTES>) {
+        this.OCC = OCC;
+        this.rsrtbl = rsrtbl;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_6 = this;
+        let o2: _ProjectionRead__check_inv_6 = other as _ProjectionRead__check_inv_6;
+        return o1.OCC.equals(o2.OCC) && o1.rsrtbl.equals(o2.rsrtbl);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.OCC.hashCode() << 1);
+        result = 31 * result + (this.rsrtbl.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_7 {
+
+    public TRK: BRelation<BLOCKS, BLOCKS>;
+
+    constructor(TRK : BRelation<BLOCKS, BLOCKS>) {
+        this.TRK = TRK;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_7 = this;
+        let o2: _ProjectionRead__check_inv_7 = other as _ProjectionRead__check_inv_7;
+        return o1.TRK.equals(o2.TRK);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.TRK.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_8 {
 
     public frm: BSet<ROUTES>;
     public resrt: BSet<ROUTES>;
@@ -1091,8 +1010,8 @@ class _ProjectionRead__check_inv_11 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_11 = this;
-        let o2: _ProjectionRead__check_inv_11 = other as _ProjectionRead__check_inv_11;
+        let o1: _ProjectionRead__check_inv_8 = this;
+        let o2: _ProjectionRead__check_inv_8 = other as _ProjectionRead__check_inv_8;
         return o1.frm.equals(o2.frm) && o1.resrt.equals(o2.resrt);
     }
 
@@ -1105,7 +1024,7 @@ class _ProjectionRead__check_inv_11 {
 }
 
 
-class _ProjectionRead__check_inv_12 {
+class _ProjectionRead__check_inv_9 {
 
     public frm: BSet<ROUTES>;
     public OCC: BSet<BLOCKS>;
@@ -1118,8 +1037,8 @@ class _ProjectionRead__check_inv_12 {
     }
 
     equals(other: any): boolean {
-        let o1: _ProjectionRead__check_inv_12 = this;
-        let o2: _ProjectionRead__check_inv_12 = other as _ProjectionRead__check_inv_12;
+        let o1: _ProjectionRead__check_inv_9 = this;
+        let o2: _ProjectionRead__check_inv_9 = other as _ProjectionRead__check_inv_9;
         return o1.frm.equals(o2.frm) && o1.OCC.equals(o2.OCC) && o1.rsrtbl.equals(o2.rsrtbl);
     }
 
@@ -1133,15 +1052,143 @@ class _ProjectionRead__check_inv_12 {
 }
 
 
+class _ProjectionRead__check_inv_10 {
+
+    public frm: BSet<ROUTES>;
+    public resrt: BSet<ROUTES>;
+    public rsrtbl: BRelation<BLOCKS, ROUTES>;
+
+    constructor(frm : BSet<ROUTES>, resrt : BSet<ROUTES>, rsrtbl : BRelation<BLOCKS, ROUTES>) {
+        this.frm = frm;
+        this.resrt = resrt;
+        this.rsrtbl = rsrtbl;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_10 = this;
+        let o2: _ProjectionRead__check_inv_10 = other as _ProjectionRead__check_inv_10;
+        return o1.frm.equals(o2.frm) && o1.resrt.equals(o2.resrt) && o1.rsrtbl.equals(o2.rsrtbl);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.frm.hashCode() << 1);
+        result = 31 * result + (this.resrt.hashCode() << 1);
+        result = 31 * result + (this.rsrtbl.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_11 {
+
+    public TRK: BRelation<BLOCKS, BLOCKS>;
+
+    constructor(TRK : BRelation<BLOCKS, BLOCKS>) {
+        this.TRK = TRK;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_11 = this;
+        let o2: _ProjectionRead__check_inv_11 = other as _ProjectionRead__check_inv_11;
+        return o1.TRK.equals(o2.TRK);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.TRK.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_12 {
+
+    public frm: BSet<ROUTES>;
+    public TRK: BRelation<BLOCKS, BLOCKS>;
+    public rsrtbl: BRelation<BLOCKS, ROUTES>;
+
+    constructor(frm : BSet<ROUTES>, TRK : BRelation<BLOCKS, BLOCKS>, rsrtbl : BRelation<BLOCKS, ROUTES>) {
+        this.frm = frm;
+        this.TRK = TRK;
+        this.rsrtbl = rsrtbl;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_12 = this;
+        let o2: _ProjectionRead__check_inv_12 = other as _ProjectionRead__check_inv_12;
+        return o1.frm.equals(o2.frm) && o1.TRK.equals(o2.TRK) && o1.rsrtbl.equals(o2.rsrtbl);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.frm.hashCode() << 1);
+        result = 31 * result + (this.TRK.hashCode() << 1);
+        result = 31 * result + (this.rsrtbl.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_13 {
+
+    public OCC: BSet<BLOCKS>;
+    public LBT: BSet<BLOCKS>;
+
+    constructor(OCC : BSet<BLOCKS>, LBT : BSet<BLOCKS>) {
+        this.OCC = OCC;
+        this.LBT = LBT;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_13 = this;
+        let o2: _ProjectionRead__check_inv_13 = other as _ProjectionRead__check_inv_13;
+        return o1.OCC.equals(o2.OCC) && o1.LBT.equals(o2.LBT);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.OCC.hashCode() << 1);
+        result = 31 * result + (this.LBT.hashCode() << 1);
+        return result;
+    }
+}
+
+
+class _ProjectionRead__check_inv_14 {
+
+    public LBT: BSet<BLOCKS>;
+    public rsrtbl: BRelation<BLOCKS, ROUTES>;
+
+    constructor(LBT : BSet<BLOCKS>, rsrtbl : BRelation<BLOCKS, ROUTES>) {
+        this.LBT = LBT;
+        this.rsrtbl = rsrtbl;
+    }
+
+    equals(other: any): boolean {
+        let o1: _ProjectionRead__check_inv_14 = this;
+        let o2: _ProjectionRead__check_inv_14 = other as _ProjectionRead__check_inv_14;
+        return o1.LBT.equals(o2.LBT) && o1.rsrtbl.equals(o2.rsrtbl);
+    }
+
+    hashCode(): number {
+        let result: number = 1;
+        result = 31 * result + (this.LBT.hashCode() << 1);
+        result = 31 * result + (this.rsrtbl.hashCode() << 1);
+        return result;
+    }
+}
+
+
 export enum Type {
     BFS,
     DFS,
     MIXED
 }
 
-export default class Train_1_beebook_deterministic_MC_POR_v2 {
+export default class Train_1_beebook_deterministic_MC_POR_v3 {
 
-    parent: Train_1_beebook_deterministic_MC_POR_v2;
+    parent: Train_1_beebook_deterministic_MC_POR_v3;
     stateAccessedVia: string;
 
 
@@ -1149,6 +1196,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     private static lst: BRelation<ROUTES, BLOCKS>;
     private static nxt: BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>;
     private static rtbl: BRelation<BLOCKS, ROUTES>;
+    private static __aux_constant_1: BRelation<ROUTES, BLOCKS>;
 
     private static _BLOCKS: BSet<BLOCKS> = new BSet<BLOCKS>(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.N));
     private static _ROUTES: BSet<ROUTES> = new BSet<ROUTES>(new ROUTES(enum_ROUTES.R1), new ROUTES(enum_ROUTES.R2), new ROUTES(enum_ROUTES.R3), new ROUTES(enum_ROUTES.R4), new ROUTES(enum_ROUTES.R5), new ROUTES(enum_ROUTES.R6), new ROUTES(enum_ROUTES.R7), new ROUTES(enum_ROUTES.R8), new ROUTES(enum_ROUTES.R9), new ROUTES(enum_ROUTES.R10));
@@ -1162,22 +1210,131 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     private rsrtbl: BRelation<BLOCKS, ROUTES>;
 
     static {
-        Train_1_beebook_deterministic_MC_POR_v2.nxt = new BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>(new BTuple(new ROUTES(enum_ROUTES.R1), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C)))), new BTuple(new ROUTES(enum_ROUTES.R2), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R3), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R4), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R5), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R6), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R7), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R8), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R9), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))), new BTuple(new ROUTES(enum_ROUTES.R10), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))));
-        Train_1_beebook_deterministic_MC_POR_v2.fst = new BRelation<ROUTES, BLOCKS>(new BTuple(new ROUTES(enum_ROUTES.R1), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R2), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R3), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R4), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R5), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R6), new BLOCKS(enum_BLOCKS.C)), new BTuple(new ROUTES(enum_ROUTES.R7), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R8), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R9), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R10), new BLOCKS(enum_BLOCKS.N)));
-        Train_1_beebook_deterministic_MC_POR_v2.lst = new BRelation<ROUTES, BLOCKS>(new BTuple(new ROUTES(enum_ROUTES.R1), new BLOCKS(enum_BLOCKS.C)), new BTuple(new ROUTES(enum_ROUTES.R2), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R3), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R4), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R5), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R6), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R7), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R8), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R9), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R10), new BLOCKS(enum_BLOCKS.M)));
+        Train_1_beebook_deterministic_MC_POR_v3.fst = new BRelation<ROUTES, BLOCKS>(new BTuple(new ROUTES(enum_ROUTES.R1), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R2), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R3), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R4), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R5), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R6), new BLOCKS(enum_BLOCKS.C)), new BTuple(new ROUTES(enum_ROUTES.R7), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R8), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R9), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R10), new BLOCKS(enum_BLOCKS.N)));
+        Train_1_beebook_deterministic_MC_POR_v3.lst = new BRelation<ROUTES, BLOCKS>(new BTuple(new ROUTES(enum_ROUTES.R1), new BLOCKS(enum_BLOCKS.C)), new BTuple(new ROUTES(enum_ROUTES.R2), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R3), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R4), new BLOCKS(enum_BLOCKS.G)), new BTuple(new ROUTES(enum_ROUTES.R5), new BLOCKS(enum_BLOCKS.N)), new BTuple(new ROUTES(enum_ROUTES.R6), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R7), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R8), new BLOCKS(enum_BLOCKS.L)), new BTuple(new ROUTES(enum_ROUTES.R9), new BLOCKS(enum_BLOCKS.M)), new BTuple(new ROUTES(enum_ROUTES.R10), new BLOCKS(enum_BLOCKS.M)));
+        Train_1_beebook_deterministic_MC_POR_v3.nxt = new BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>(new BTuple(new ROUTES(enum_ROUTES.R1), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.C)))), new BTuple(new ROUTES(enum_ROUTES.R2), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R3), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.L), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R4), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.G)))), new BTuple(new ROUTES(enum_ROUTES.R5), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.M), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.N)))), new BTuple(new ROUTES(enum_ROUTES.R6), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.C), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R7), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.E)), new BTuple(new BLOCKS(enum_BLOCKS.E), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R8), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.D)), new BTuple(new BLOCKS(enum_BLOCKS.D), new BLOCKS(enum_BLOCKS.B)), new BTuple(new BLOCKS(enum_BLOCKS.B), new BLOCKS(enum_BLOCKS.A)), new BTuple(new BLOCKS(enum_BLOCKS.A), new BLOCKS(enum_BLOCKS.L)))), new BTuple(new ROUTES(enum_ROUTES.R9), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.G), new BLOCKS(enum_BLOCKS.F)), new BTuple(new BLOCKS(enum_BLOCKS.F), new BLOCKS(enum_BLOCKS.K)), new BTuple(new BLOCKS(enum_BLOCKS.K), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))), new BTuple(new ROUTES(enum_ROUTES.R10), new BRelation<BLOCKS, BLOCKS>(new BTuple(new BLOCKS(enum_BLOCKS.N), new BLOCKS(enum_BLOCKS.J)), new BTuple(new BLOCKS(enum_BLOCKS.J), new BLOCKS(enum_BLOCKS.I)), new BTuple(new BLOCKS(enum_BLOCKS.I), new BLOCKS(enum_BLOCKS.H)), new BTuple(new BLOCKS(enum_BLOCKS.H), new BLOCKS(enum_BLOCKS.M)))));
         let _ic_set_0: BRelation<BLOCKS, ROUTES> = new BRelation<BLOCKS, ROUTES>();
-        for(let _ic_b_1 of Train_1_beebook_deterministic_MC_POR_v2._BLOCKS) {
-            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES) {
-                if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.nxt.domain().elementOf(_ic_r_1).booleanValue() && new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).domain().elementOf(_ic_b_1).booleanValue() || Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).range().elementOf(_ic_b_1).booleanValue()).booleanValue())).booleanValue()) {
+        for(let _ic_b_1 of Train_1_beebook_deterministic_MC_POR_v3._BLOCKS) {
+            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.nxt.isInDomain(_ic_r_1).booleanValue() && new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).isInDomain(_ic_b_1).booleanValue() || Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).isInRange(_ic_b_1).booleanValue()).booleanValue())).booleanValue()) {
                     _ic_set_0 = _ic_set_0.union(new BRelation<BLOCKS, ROUTES>(new BTuple(_ic_b_1, _ic_r_1)));
                 }
 
             }
+
         }
-        Train_1_beebook_deterministic_MC_POR_v2.rtbl = _ic_set_0;
+
+        Train_1_beebook_deterministic_MC_POR_v3.rtbl = _ic_set_0;
+        Train_1_beebook_deterministic_MC_POR_v3.__aux_constant_1 = Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse();
+        let _ic_boolean_1: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue()) {
+            for(let _ic__opt_1_1 of Train_1_beebook_deterministic_MC_POR_v3.nxt.range()) {
+                if(!(_ic__opt_1_1.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).and(_ic__opt_1_1.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(_ic__opt_1_1.isFunction()).and(_ic__opt_1_1.isPartial(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(_ic__opt_1_1.isInjection())).booleanValue()) {
+                    _ic_boolean_1 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        let _ic_boolean_2: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue()) {
+            for(let _ic__opt_2_1 of Train_1_beebook_deterministic_MC_POR_v3.fst.inverse()) {
+                if(!(Train_1_beebook_deterministic_MC_POR_v3.rtbl.elementOf(_ic__opt_2_1)).booleanValue()) {
+                    _ic_boolean_2 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        let _ic_boolean_3: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue()) {
+            for(let _ic__opt_3_1 of Train_1_beebook_deterministic_MC_POR_v3.lst.inverse()) {
+                if(!(Train_1_beebook_deterministic_MC_POR_v3.rtbl.elementOf(_ic__opt_3_1)).booleanValue()) {
+                    _ic_boolean_3 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        let _ic_boolean_4: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue()) {
+            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                if(!(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1).unequal(Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_r_1))).booleanValue()) {
+                    _ic_boolean_4 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        let _ic_boolean_6: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue()) {
+            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                let _ic_boolean_5: BBoolean = new BBoolean(true);
+                for(let _ic_S_1 of Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).range().pow()) {
+                    if(!(new BBoolean(!_ic_S_1.subset(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).relationImage(_ic_S_1)).booleanValue() || _ic_S_1.equal(new BSet<BLOCKS>()).booleanValue())).booleanValue()) {
+                        _ic_boolean_5 = new BBoolean(false);
+                        break;
+                    }
+
+                }
+
+                if(!(_ic_boolean_5).booleanValue()) {
+                    _ic_boolean_6 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        let _ic_boolean_7: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue()) {
+            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                if(!(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).checkDomain(Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_r_1)))).and(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).checkRange(Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1))))).and(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).isTotal(Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_r_1))))).and(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).isBijection(Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1)))))).booleanValue()) {
+                    _ic_boolean_7 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        let _ic_boolean_8: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue()).booleanValue()) {
+            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                for(let _ic_s_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                    if(!(new BBoolean(!_ic_r_1.unequal(_ic_s_1).booleanValue() || new BBoolean(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_s_1), Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_s_1)).elementOf(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1)).booleanValue() || Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse().isNotInRelationalImage(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1), new BSet<ROUTES>(_ic_s_1)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_boolean_8 = new BBoolean(false);
+                        break;
+                    }
+
+                }
+
+            }
+        }
+
+        let _ic_boolean_9: BBoolean = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue()).booleanValue() && _ic_boolean_8.booleanValue()).booleanValue()) {
+            for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                for(let _ic_s_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                    if(!(new BBoolean(!_ic_r_1.unequal(_ic_s_1).booleanValue() || new BBoolean(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_s_1), Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_s_1)).elementOf(Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_r_1)).booleanValue() || Train_1_beebook_deterministic_MC_POR_v3.rtbl.inverse().isNotInRelationalImage(Train_1_beebook_deterministic_MC_POR_v3.lst.functionCall(_ic_r_1), new BSet<ROUTES>(_ic_s_1)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_boolean_9 = new BBoolean(false);
+                        break;
+                    }
+
+                }
+
+            }
+        }
+
+        if(!(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.rtbl.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.rtbl.range().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.nxt.domain().equal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.fst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.fst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.fst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && Train_1_beebook_deterministic_MC_POR_v3.lst.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._ROUTES).and(Train_1_beebook_deterministic_MC_POR_v3.lst.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isFunction()).and(Train_1_beebook_deterministic_MC_POR_v3.lst.isTotal(Train_1_beebook_deterministic_MC_POR_v3._ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue()).booleanValue() && _ic_boolean_8.booleanValue()).booleanValue() && _ic_boolean_9.booleanValue())).booleanValue()) {
+            throw new Error("Contradiction in PROPERTIES detected!");
+        }
     }
 
-    constructor(copy? : Train_1_beebook_deterministic_MC_POR_v2) {
+    constructor(copy? : Train_1_beebook_deterministic_MC_POR_v3) {
         if(copy) {
             this.LBT = copy.LBT;
             this.TRK = copy.TRK;
@@ -1205,8 +1362,8 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         let _ld_rsrtbl: BRelation<BLOCKS, ROUTES> = this.rsrtbl;
         let _ld_resbl: BSet<BLOCKS> = this.resbl;
         this.resrt = _ld_resrt.union(new BSet<ROUTES>(r));
-        this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.rangeRestriction(new BSet<ROUTES>(r)));
-        this.resbl = _ld_resbl.union(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(r)));
+        this.rsrtbl = _ld_rsrtbl.union(Train_1_beebook_deterministic_MC_POR_v3.rtbl.rangeRestriction(new BSet<ROUTES>(r)));
+        this.resbl = _ld_resbl.union(Train_1_beebook_deterministic_MC_POR_v3.__aux_constant_1.relationImage(new BSet<ROUTES>(r)));
 
     }
 
@@ -1222,8 +1379,8 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     FRONT_MOVE_1(r: ROUTES): void {
         let _ld_OCC: BSet<BLOCKS> = this.OCC;
         let _ld_LBT: BSet<BLOCKS> = this.LBT;
-        this.OCC = _ld_OCC.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
-        this.LBT = _ld_LBT.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(r)));
+        this.OCC = _ld_OCC.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(r)));
+        this.LBT = _ld_LBT.union(new BSet<BLOCKS>(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(r)));
 
     }
 
@@ -1257,7 +1414,7 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
     point_positionning(r: ROUTES): void {
-        this.TRK = this.TRK.domainSubstraction(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r).domain()).rangeSubstraction(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r).range()).union(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(r));
+        this.TRK = this.TRK.domainSubstraction(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(r).domain()).rangeSubstraction(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(r).range()).union(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(r));
 
     }
 
@@ -1267,19 +1424,23 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
     _get_fst(): BRelation<ROUTES, BLOCKS> {
-        return Train_1_beebook_deterministic_MC_POR_v2.fst;
+        return Train_1_beebook_deterministic_MC_POR_v3.fst;
     }
 
     _get_lst(): BRelation<ROUTES, BLOCKS> {
-        return Train_1_beebook_deterministic_MC_POR_v2.lst;
+        return Train_1_beebook_deterministic_MC_POR_v3.lst;
     }
 
     _get_nxt(): BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>> {
-        return Train_1_beebook_deterministic_MC_POR_v2.nxt;
+        return Train_1_beebook_deterministic_MC_POR_v3.nxt;
     }
 
     _get_rtbl(): BRelation<BLOCKS, ROUTES> {
-        return Train_1_beebook_deterministic_MC_POR_v2.rtbl;
+        return Train_1_beebook_deterministic_MC_POR_v3.rtbl;
+    }
+
+    _get___aux_constant_1(): BRelation<ROUTES, BLOCKS> {
+        return Train_1_beebook_deterministic_MC_POR_v3.__aux_constant_1;
     }
 
     _get_LBT(): BSet<BLOCKS> {
@@ -1311,97 +1472,147 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
     _get__BLOCKS(): BSet<BLOCKS> {
-        return Train_1_beebook_deterministic_MC_POR_v2._BLOCKS;
+        return Train_1_beebook_deterministic_MC_POR_v3._BLOCKS;
     }
 
     _get__ROUTES(): BSet<ROUTES> {
-        return Train_1_beebook_deterministic_MC_POR_v2._ROUTES;
+        return Train_1_beebook_deterministic_MC_POR_v3._ROUTES;
     }
 
+    equals(o: any): boolean {
+        let o1: Train_1_beebook_deterministic_MC_POR_v3 = this;
+        let o2: Train_1_beebook_deterministic_MC_POR_v3 = o as Train_1_beebook_deterministic_MC_POR_v3;
+        return o1._get_LBT().equals(o2._get_LBT()) && o1._get_TRK().equals(o2._get_TRK()) && o1._get_frm().equals(o2._get_frm()) && o1._get_OCC().equals(o2._get_OCC()) && o1._get_resbl().equals(o2._get_resbl()) && o1._get_resrt().equals(o2._get_resrt()) && o1._get_rsrtbl().equals(o2._get_rsrtbl());
+    }
+
+
+
+    hashCode(): number {
+        return this._hashCode_1();
+    }
+
+    _hashCode_1(): number {
+        let result: number = 1;
+        result = (1543 * result) ^ ((this._get_LBT()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_TRK()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_frm()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_OCC()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_resbl()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_resrt()).hashCode() << 1);
+        result = (1543 * result) ^ ((this._get_rsrtbl()).hashCode() << 1);
+        return result;
+    }
+
+    _hashCode_2(): number {
+        let result: number = 1;
+        result = (6151 * result) ^ ((this._get_LBT()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_TRK()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_frm()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_OCC()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_resbl()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_resrt()).hashCode() << 1);
+        result = (6151 * result) ^ ((this._get_rsrtbl()).hashCode() << 1);
+        return result;
+    }
+
+    /* TODO
+    toString(): string {
+        return String.join("\n", "_get_LBT: " + (this._get_LBT()).toString(), "_get_TRK: " + (this._get_TRK()).toString(), "_get_frm: " + (this._get_frm()).toString(), "_get_OCC: " + (this._get_OCC()).toString(), "_get_resbl: " + (this._get_resbl()).toString(), "_get_resrt: " + (this._get_resrt()).toString(), "_get_rsrtbl: " + (this._get_rsrtbl()).toString());
+    }
+    */
+
     _tr_route_reservation(): BSet<ROUTES> {
-        let _ic_set_1: BSet<ROUTES> = new BSet<ROUTES>();
-        for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES.difference(this.resrt)) {
-            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).intersect(this.resbl).equal(new BSet<BLOCKS>()).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_1 = _ic_set_1.union(new BSet<ROUTES>(_ic_r_1));
+        let _ic_set_10: BSet<ROUTES> = new BSet<ROUTES>();
+        for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES.difference(this.resrt)) {
+            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.__aux_constant_1.relationImage(new BSet<ROUTES>(_ic_r_1)).intersect(this.resbl).equal(new BSet<BLOCKS>()).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+                _ic_set_10 = _ic_set_10.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
-        return _ic_set_1;
+
+        return _ic_set_10;
     }
 
     _tr_route_freeing(): BSet<ROUTES> {
-        let _ic_set_2: BSet<ROUTES> = new BSet<ROUTES>();
+        let _ic_set_11: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.resrt.difference(this.rsrtbl.range())) {
-            _ic_set_2 = _ic_set_2.union(new BSet<ROUTES>(_ic_r_1));
+            _ic_set_11 = _ic_set_11.union(new BSet<ROUTES>(_ic_r_1));
 
         }
-        return _ic_set_2;
+
+        return _ic_set_11;
     }
 
     _tr_FRONT_MOVE_1(): BSet<ROUTES> {
-        let _ic_set_3: BSet<ROUTES> = new BSet<ROUTES>();
+        let _ic_set_12: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.frm) {
-            if((new BBoolean(new BBoolean(this.resbl.difference(this.OCC).elementOf(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(this.rsrtbl.functionCall(Train_1_beebook_deterministic_MC_POR_v2.fst.functionCall(_ic_r_1))).booleanValue()).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_3 = _ic_set_3.union(new BSet<ROUTES>(_ic_r_1));
+            if((new BBoolean(new BBoolean(this.resbl.difference(this.OCC).elementOf(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(this.rsrtbl.functionCall(Train_1_beebook_deterministic_MC_POR_v3.fst.functionCall(_ic_r_1))).booleanValue()).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+                _ic_set_12 = _ic_set_12.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
-        return _ic_set_3;
+
+        return _ic_set_12;
     }
 
     _tr_FRONT_MOVE_2(): BSet<BLOCKS> {
-        let _ic_set_4: BSet<BLOCKS> = new BSet<BLOCKS>();
+        let _ic_set_13: BSet<BLOCKS> = new BSet<BLOCKS>();
         for(let _ic_b_1 of this.OCC.intersect(this.TRK.domain())) {
             if((this.OCC.notElementOf(this.TRK.functionCall(_ic_b_1))).booleanValue()) {
-                _ic_set_4 = _ic_set_4.union(new BSet<BLOCKS>(_ic_b_1));
+                _ic_set_13 = _ic_set_13.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
         }
-        return _ic_set_4;
+
+        return _ic_set_13;
     }
 
     _tr_BACK_MOVE_1(): BSet<BLOCKS> {
-        let _ic_set_5: BSet<BLOCKS> = new BSet<BLOCKS>();
+        let _ic_set_14: BSet<BLOCKS> = new BSet<BLOCKS>();
         for(let _ic_b_1 of this.LBT.difference(this.TRK.domain())) {
             if((new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range()))).booleanValue()) {
-                _ic_set_5 = _ic_set_5.union(new BSet<BLOCKS>(_ic_b_1));
+                _ic_set_14 = _ic_set_14.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
         }
-        return _ic_set_5;
+
+        return _ic_set_14;
     }
 
     _tr_BACK_MOVE_2(): BSet<BLOCKS> {
-        let _ic_set_6: BSet<BLOCKS> = new BSet<BLOCKS>();
+        let _ic_set_15: BSet<BLOCKS> = new BSet<BLOCKS>();
         for(let _ic_b_1 of this.LBT.intersect(this.TRK.domain())) {
             if((new BBoolean(this.OCC.elementOf(this.TRK.functionCall(_ic_b_1)).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_6 = _ic_set_6.union(new BSet<BLOCKS>(_ic_b_1));
+                _ic_set_15 = _ic_set_15.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
         }
-        return _ic_set_6;
+
+        return _ic_set_15;
     }
 
     _tr_point_positionning(): BSet<ROUTES> {
-        let _ic_set_7: BSet<ROUTES> = new BSet<ROUTES>();
+        let _ic_set_16: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.resrt.difference(this.frm)) {
             if((new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range()))).booleanValue()) {
-                _ic_set_7 = _ic_set_7.union(new BSet<ROUTES>(_ic_r_1));
+                _ic_set_16 = _ic_set_16.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
-        return _ic_set_7;
+
+        return _ic_set_16;
     }
 
     _tr_route_formation(): BSet<ROUTES> {
-        let _ic_set_8: BSet<ROUTES> = new BSet<ROUTES>();
+        let _ic_set_17: BSet<ROUTES> = new BSet<ROUTES>();
         for(let _ic_r_1 of this.resrt.difference(this.frm)) {
-            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(this.TRK.domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_8 = _ic_set_8.union(new BSet<ROUTES>(_ic_r_1));
+            if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(this.TRK.domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).booleanValue() && new BSet<ROUTES>().equal(this.resrt.difference(this.rsrtbl.range())).booleanValue())).booleanValue()) {
+                _ic_set_17 = _ic_set_17.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
-        return _ic_set_8;
+
+        return _ic_set_17;
     }
 
     _projected_state_for_point_positionning(): _ProjectionRead_point_positionning {
@@ -1468,52 +1679,60 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
         return new _ProjectionRead__tr_BACK_MOVE_2(this.resrt,this.TRK,this.OCC,this.LBT,this.rsrtbl);
     }
 
-    _projected_state_for__check_inv_2(): _ProjectionRead__check_inv_2 {
-        return new _ProjectionRead__check_inv_2(this.frm,this.resrt,this.rsrtbl);
-    }
-
-    _projected_state_for__check_inv_3(): _ProjectionRead__check_inv_3 {
-        return new _ProjectionRead__check_inv_3(this.TRK);
-    }
-
-    _projected_state_for__check_inv_1(): _ProjectionRead__check_inv_1 {
-        return new _ProjectionRead__check_inv_1(this.TRK);
-    }
-
     _projected_state_for__check_inv_6(): _ProjectionRead__check_inv_6 {
-        return new _ProjectionRead__check_inv_6(this.rsrtbl,this.LBT);
+        return new _ProjectionRead__check_inv_6(this.OCC,this.rsrtbl);
     }
 
     _projected_state_for__check_inv_10(): _ProjectionRead__check_inv_10 {
-        return new _ProjectionRead__check_inv_10(this.OCC,this.rsrtbl);
+        return new _ProjectionRead__check_inv_10(this.frm,this.resrt,this.rsrtbl);
     }
 
     _projected_state_for__check_inv_7(): _ProjectionRead__check_inv_7 {
-        return new _ProjectionRead__check_inv_7(this.resrt,this.resbl,this.rsrtbl);
+        return new _ProjectionRead__check_inv_7(this.TRK);
     }
 
     _projected_state_for__check_inv_4(): _ProjectionRead__check_inv_4 {
-        return new _ProjectionRead__check_inv_4(this.frm,this.TRK,this.rsrtbl);
+        return new _ProjectionRead__check_inv_4(this.OCC,this.rsrtbl);
     }
 
     _projected_state_for__check_inv_5(): _ProjectionRead__check_inv_5 {
-        return new _ProjectionRead__check_inv_5(this.OCC,this.LBT);
+        return new _ProjectionRead__check_inv_5(this.rsrtbl);
+    }
+
+    _projected_state_for__check_inv_14(): _ProjectionRead__check_inv_14 {
+        return new _ProjectionRead__check_inv_14(this.LBT,this.rsrtbl);
+    }
+
+    _projected_state_for__check_inv_13(): _ProjectionRead__check_inv_13 {
+        return new _ProjectionRead__check_inv_13(this.OCC,this.LBT);
     }
 
     _projected_state_for__check_inv_8(): _ProjectionRead__check_inv_8 {
-        return new _ProjectionRead__check_inv_8(this.rsrtbl);
+        return new _ProjectionRead__check_inv_8(this.frm,this.resrt);
     }
 
     _projected_state_for__check_inv_12(): _ProjectionRead__check_inv_12 {
-        return new _ProjectionRead__check_inv_12(this.frm,this.OCC,this.rsrtbl);
+        return new _ProjectionRead__check_inv_12(this.frm,this.TRK,this.rsrtbl);
     }
 
     _projected_state_for__check_inv_9(): _ProjectionRead__check_inv_9 {
-        return new _ProjectionRead__check_inv_9(this.resbl,this.OCC);
+        return new _ProjectionRead__check_inv_9(this.frm,this.OCC,this.rsrtbl);
     }
 
     _projected_state_for__check_inv_11(): _ProjectionRead__check_inv_11 {
-        return new _ProjectionRead__check_inv_11(this.frm,this.resrt);
+        return new _ProjectionRead__check_inv_11(this.TRK);
+    }
+
+    _projected_state_for__check_inv_2(): _ProjectionRead__check_inv_2 {
+        return new _ProjectionRead__check_inv_2(this.rsrtbl);
+    }
+
+    _projected_state_for__check_inv_3(): _ProjectionRead__check_inv_3 {
+        return new _ProjectionRead__check_inv_3(this.resbl,this.OCC);
+    }
+
+    _projected_state_for__check_inv_1(): _ProjectionRead__check_inv_1 {
+        return new _ProjectionRead__check_inv_1(this.resrt,this.resbl,this.rsrtbl);
     }
 
     _update_for_point_positionning(): _ProjectionWrite_point_positionning {
@@ -1591,211 +1810,205 @@ export default class Train_1_beebook_deterministic_MC_POR_v2 {
     }
 
     _check_inv_1() {
-        return this.TRK.checkDomain(Train_1_beebook_deterministic_MC_POR_v2._BLOCKS).and(this.TRK.checkRange(Train_1_beebook_deterministic_MC_POR_v2._BLOCKS)).and(this.TRK.isFunction()).and(this.TRK.isPartial(Train_1_beebook_deterministic_MC_POR_v2._BLOCKS)).and(this.TRK.isInjection()).booleanValue();
-    }
-
-    _check_inv_2() {
-        let _ic_boolean_9: BBoolean = new BBoolean(true);
-        for(let _ic_r_1 of this.resrt.difference(this.frm)) {
-            for(let _ic_a_1 of Array.of(new BSet<ROUTES>(_ic_r_1))) {
-                if(!(new BBoolean(!new BBoolean(this.resrt.difference(this.frm).elementOf(_ic_r_1).booleanValue() && _ic_a_1.equal(new BSet<ROUTES>(_ic_r_1)).booleanValue()).booleanValue() || Train_1_beebook_deterministic_MC_POR_v2.rtbl.rangeRestriction(_ic_a_1).equal(this.rsrtbl.rangeRestriction(_ic_a_1)).booleanValue())).booleanValue()) {
-                    _ic_boolean_9 = new BBoolean(false);
-                    break;
-                }
-
-            }
-
-        }
-        return _ic_boolean_9.booleanValue();
-    }
-
-    _check_inv_3() {
-        let _ic_boolean_11: BBoolean = new BBoolean(true);
-        for(let _ic_x_1 of this.TRK.domain()) {
-            for(let _ic_y_1 of this.TRK.relationImage(new BSet<BLOCKS>(_ic_x_1))) {
-                let _ic_boolean_10: BBoolean = new BBoolean(false);
-                for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES) {
-                    if((new BBoolean(Train_1_beebook_deterministic_MC_POR_v2._ROUTES.elementOf(_ic_r_1).booleanValue() && Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).elementOf(new BTuple(_ic_x_1, _ic_y_1)).booleanValue())).booleanValue()) {
-                        _ic_boolean_10 = new BBoolean(true);
-                        break;
-                    }
-
-                }
-                if(!(new BBoolean(!new BBoolean(this.TRK.domain().elementOf(_ic_x_1).booleanValue() && this.TRK.relationImage(new BSet<BLOCKS>(_ic_x_1)).elementOf(_ic_y_1).booleanValue()).booleanValue() || _ic_boolean_10.booleanValue())).booleanValue()) {
-                    _ic_boolean_11 = new BBoolean(false);
-                    break;
-                }
-
-            }
-        }
-        return _ic_boolean_11.booleanValue();
-    }
-
-    _check_inv_4() {
-        let _ic_boolean_12: BBoolean = new BBoolean(true);
-        for(let _ic_r_1 of this.frm) {
-            for(let _ic_a_1 of Array.of(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
-                if(!(new BBoolean(!new BBoolean(this.frm.elementOf(_ic_r_1).booleanValue() && _ic_a_1.equal(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).booleanValue()).booleanValue() || Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1).domainRestriction(_ic_a_1).equal(this.TRK.domainRestriction(_ic_a_1)).booleanValue())).booleanValue()) {
-                    _ic_boolean_12 = new BBoolean(false);
-                    break;
-                }
-
-            }
-
-        }
-        return _ic_boolean_12.booleanValue();
-    }
-
-    _check_inv_5() {
-        let _ic_boolean_13: BBoolean = new BBoolean(true);
-        for(let _ic__opt_3_1 of this.LBT) {
-            if(!(new BBoolean(!this.LBT.elementOf(_ic__opt_3_1).booleanValue() || this.OCC.elementOf(_ic__opt_3_1).booleanValue())).booleanValue()) {
-                _ic_boolean_13 = new BBoolean(false);
-                break;
-            }
-
-        }
-        return _ic_boolean_13.booleanValue();
-    }
-
-    _check_inv_6() {
-        let _ic_boolean_14: BBoolean = new BBoolean(true);
-        for(let _ic_a_1 of this.rsrtbl.domain()) {
-            for(let _ic_b_1 of this.LBT) {
-                for(let _ic_c_1 of Array.of(this.rsrtbl.functionCall(_ic_b_1))) {
-                    for(let _ic_d_1 of Array.of(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_c_1))) {
-                        if(!(new BBoolean(!new BBoolean(new BBoolean(new BBoolean(new BBoolean(this.rsrtbl.domain().elementOf(_ic_a_1).booleanValue() && this.LBT.elementOf(_ic_b_1).booleanValue()).booleanValue() && _ic_c_1.equal(this.rsrtbl.functionCall(_ic_b_1)).booleanValue()).booleanValue() && _ic_d_1.equal(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_c_1)).booleanValue()).booleanValue() && new BBoolean(_ic_d_1.range().elementOf(_ic_b_1).booleanValue() && _ic_a_1.equal(_ic_d_1.inverse().functionCall(_ic_b_1)).booleanValue()).booleanValue()).booleanValue() || this.rsrtbl.functionCall(_ic_a_1).unequal(_ic_c_1).booleanValue())).booleanValue()) {
-                            _ic_boolean_14 = new BBoolean(false);
-                            break;
-                        }
-
-                    }
-
-                }
-
-            }
-        }
-        return _ic_boolean_14.booleanValue();
-    }
-
-    _check_inv_7() {
         return this.rsrtbl.checkDomain(this.resbl).and(this.rsrtbl.checkRange(this.resrt)).and(this.rsrtbl.isFunction()).and(this.rsrtbl.isTotal(this.resbl)).booleanValue();
     }
 
-    _check_inv_8() {
-        let _ic_boolean_15: BBoolean = new BBoolean(true);
-        for(let _ic__opt_4_1 of this.rsrtbl) {
-            if(!(new BBoolean(!this.rsrtbl.elementOf(_ic__opt_4_1).booleanValue() || Train_1_beebook_deterministic_MC_POR_v2.rtbl.elementOf(_ic__opt_4_1).booleanValue())).booleanValue()) {
-                _ic_boolean_15 = new BBoolean(false);
-                break;
-            }
-
-        }
-        return _ic_boolean_15.booleanValue();
-    }
-
-    _check_inv_9() {
-        let _ic_boolean_16: BBoolean = new BBoolean(true);
-        for(let _ic__opt_5_1 of this.OCC) {
-            if(!(new BBoolean(!this.OCC.elementOf(_ic__opt_5_1).booleanValue() || this.resbl.elementOf(_ic__opt_5_1).booleanValue())).booleanValue()) {
-                _ic_boolean_16 = new BBoolean(false);
-                break;
-            }
-
-        }
-        return _ic_boolean_16.booleanValue();
-    }
-
-    _check_inv_10() {
-        let _ic_boolean_17: BBoolean = new BBoolean(true);
-        for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v2._ROUTES) {
-            for(let _ic_a_1 of Array.of(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1))) {
-                for(let _ic_b_1 of Array.of(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
-                    for(let _ic_c_1 of Array.of(_ic_b_1.difference(this.OCC))) {
-                        if(!(new BBoolean(!new BBoolean(new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v2._ROUTES.elementOf(_ic_r_1).booleanValue() && _ic_a_1.equal(Train_1_beebook_deterministic_MC_POR_v2.nxt.functionCall(_ic_r_1)).booleanValue()).booleanValue() && _ic_b_1.equal(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).booleanValue()).booleanValue() && _ic_c_1.equal(_ic_b_1.difference(this.OCC)).booleanValue()).booleanValue() || new BBoolean(new BBoolean(_ic_a_1.relationImage(Train_1_beebook_deterministic_MC_POR_v2.rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(_ic_b_1)).intersect(_ic_c_1).equal(new BSet<BLOCKS>()).booleanValue() && _ic_a_1.relationImage(_ic_b_1).subset(_ic_b_1).booleanValue()).booleanValue() && _ic_a_1.relationImage(_ic_c_1).subset(_ic_c_1).booleanValue()).booleanValue())).booleanValue()) {
-                            _ic_boolean_17 = new BBoolean(false);
-                            break;
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-        return _ic_boolean_17.booleanValue();
-    }
-
-    _check_inv_11() {
+    _check_inv_2() {
         let _ic_boolean_18: BBoolean = new BBoolean(true);
-        for(let _ic__opt_6_1 of this.frm) {
-            if(!(new BBoolean(!this.frm.elementOf(_ic__opt_6_1).booleanValue() || this.resrt.elementOf(_ic__opt_6_1).booleanValue())).booleanValue()) {
+        for(let _ic__opt_4_1 of this.rsrtbl) {
+            if(!(Train_1_beebook_deterministic_MC_POR_v3.rtbl.elementOf(_ic__opt_4_1)).booleanValue()) {
                 _ic_boolean_18 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_18.booleanValue();
     }
 
-    _check_inv_12() {
+    _check_inv_3() {
         let _ic_boolean_19: BBoolean = new BBoolean(true);
-        for(let _ic__opt_7_1 of this.rsrtbl.relationImage(this.OCC)) {
-            if(!(new BBoolean(!this.rsrtbl.relationImage(this.OCC).elementOf(_ic__opt_7_1).booleanValue() || this.frm.elementOf(_ic__opt_7_1).booleanValue())).booleanValue()) {
+        for(let _ic__opt_5_1 of this.OCC) {
+            if(!(this.resbl.elementOf(_ic__opt_5_1)).booleanValue()) {
                 _ic_boolean_19 = new BBoolean(false);
                 break;
             }
 
         }
+
         return _ic_boolean_19.booleanValue();
     }
 
-    equals(o: any): boolean {
-        let o1: Train_1_beebook_deterministic_MC_POR_v2 = this;
-        let o2: Train_1_beebook_deterministic_MC_POR_v2 = o as Train_1_beebook_deterministic_MC_POR_v2;
-        return o1._get_LBT().equals(o2._get_LBT()) && o1._get_TRK().equals(o2._get_TRK()) && o1._get_frm().equals(o2._get_frm()) && o1._get_OCC().equals(o2._get_OCC()) && o1._get_resbl().equals(o2._get_resbl()) && o1._get_resrt().equals(o2._get_resrt()) && o1._get_rsrtbl().equals(o2._get_rsrtbl());
+    _check_inv_4() {
+        let _ic_boolean_20: BBoolean = new BBoolean(true);
+        for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+            if(!(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).relationImage(Train_1_beebook_deterministic_MC_POR_v3.__aux_constant_1.relationImage(new BSet<ROUTES>(_ic_r_1)).difference(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).intersect(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(this.OCC)).equal(new BSet<BLOCKS>())).booleanValue()) {
+                _ic_boolean_20 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_20.booleanValue();
+    }
+
+    _check_inv_5() {
+        let _ic_boolean_22: BBoolean = new BBoolean(true);
+        for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+            let _ic_boolean_21: BBoolean = new BBoolean(true);
+            for(let _ic__opt_6_1 of Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).relationImage(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
+                if(!(this.rsrtbl.inverse().isInRelationalImage(_ic__opt_6_1, new BSet<ROUTES>(_ic_r_1))).booleanValue()) {
+                    _ic_boolean_21 = new BBoolean(false);
+                    break;
+                }
+
+            }
+
+            if(!(_ic_boolean_21).booleanValue()) {
+                _ic_boolean_22 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_22.booleanValue();
+    }
+
+    _check_inv_6() {
+        let _ic_boolean_24: BBoolean = new BBoolean(true);
+        for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+            let _ic_boolean_23: BBoolean = new BBoolean(true);
+            for(let _ic__opt_7_1 of Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).relationImage(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(this.OCC))) {
+                if(!(new BBoolean(this.rsrtbl.inverse().isInRelationalImage(_ic__opt_7_1, new BSet<ROUTES>(_ic_r_1)).booleanValue() && this.OCC.notElementOf(_ic__opt_7_1).booleanValue())).booleanValue()) {
+                    _ic_boolean_23 = new BBoolean(false);
+                    break;
+                }
+
+            }
+
+            if(!(_ic_boolean_23).booleanValue()) {
+                _ic_boolean_24 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_24.booleanValue();
+    }
+
+    _check_inv_7() {
+        return this.TRK.checkDomain(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS).and(this.TRK.checkRange(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(this.TRK.isFunction()).and(this.TRK.isPartial(Train_1_beebook_deterministic_MC_POR_v3._BLOCKS)).and(this.TRK.isInjection()).booleanValue();
+    }
+
+    _check_inv_8() {
+        let _ic_boolean_25: BBoolean = new BBoolean(true);
+        for(let _ic__opt_8_1 of this.frm) {
+            if(!(this.resrt.elementOf(_ic__opt_8_1)).booleanValue()) {
+                _ic_boolean_25 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_25.booleanValue();
+    }
+
+    _check_inv_9() {
+        let _ic_boolean_26: BBoolean = new BBoolean(true);
+        for(let _ic__opt_9_1 of this.rsrtbl.relationImage(this.OCC)) {
+            if(!(this.frm.elementOf(_ic__opt_9_1)).booleanValue()) {
+                _ic_boolean_26 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_26.booleanValue();
+    }
+
+    _check_inv_10() {
+        let _ic_boolean_27: BBoolean = new BBoolean(true);
+        for(let _ic_r_1 of this.resrt.difference(this.frm)) {
+            if(!(Train_1_beebook_deterministic_MC_POR_v3.rtbl.rangeRestriction(new BSet<ROUTES>(_ic_r_1)).equal(this.rsrtbl.rangeRestriction(new BSet<ROUTES>(_ic_r_1)))).booleanValue()) {
+                _ic_boolean_27 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_27.booleanValue();
+    }
+
+    _check_inv_11() {
+        let _ic_boolean_29: BBoolean = new BBoolean(true);
+        for(let _ic_x_1 of Train_1_beebook_deterministic_MC_POR_v3._BLOCKS) {
+            for(let _ic_y_1 of Train_1_beebook_deterministic_MC_POR_v3._BLOCKS) {
+                let _ic_boolean_28: BBoolean = new BBoolean(false);
+                for(let _ic_r_1 of Train_1_beebook_deterministic_MC_POR_v3._ROUTES) {
+                    if((Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).elementOf(new BTuple(_ic_x_1, _ic_y_1))).booleanValue()) {
+                        _ic_boolean_28 = new BBoolean(true);
+                        break;
+                    }
+
+                }
+
+                if(!(new BBoolean(!this.TRK.elementOf(new BTuple(_ic_x_1, _ic_y_1)).booleanValue() || _ic_boolean_28.booleanValue())).booleanValue()) {
+                    _ic_boolean_29 = new BBoolean(false);
+                    break;
+                }
+
+            }
+
+        }
+
+        return _ic_boolean_29.booleanValue();
+    }
+
+    _check_inv_12() {
+        let _ic_boolean_30: BBoolean = new BBoolean(true);
+        for(let _ic_r_1 of this.frm) {
+            if(!(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(_ic_r_1).domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(this.TRK.domainRestriction(this.rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))))).booleanValue()) {
+                _ic_boolean_30 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_30.booleanValue();
+    }
+
+    _check_inv_13() {
+        let _ic_boolean_31: BBoolean = new BBoolean(true);
+        for(let _ic__opt_10_1 of this.LBT) {
+            if(!(this.OCC.elementOf(_ic__opt_10_1)).booleanValue()) {
+                _ic_boolean_31 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_31.booleanValue();
+    }
+
+    _check_inv_14() {
+        let _ic_boolean_32: BBoolean = new BBoolean(true);
+        for(let _ic_a_1 of Train_1_beebook_deterministic_MC_POR_v3._BLOCKS) {
+            for(let _ic_b_1 of this.LBT) {
+                if(!(new BBoolean(!new BBoolean(new BBoolean(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(this.rsrtbl.functionCall(_ic_b_1)).isInRange(_ic_b_1).booleanValue() && _ic_a_1.equal(Train_1_beebook_deterministic_MC_POR_v3.nxt.functionCall(this.rsrtbl.functionCall(_ic_b_1)).inverse().functionCall(_ic_b_1)).booleanValue()).booleanValue() && this.rsrtbl.isInDomain(_ic_a_1).booleanValue()).booleanValue() || this.rsrtbl.functionCall(_ic_a_1).unequal(this.rsrtbl.functionCall(_ic_b_1)).booleanValue())).booleanValue()) {
+                    _ic_boolean_32 = new BBoolean(false);
+                    break;
+                }
+
+            }
+
+        }
+
+        return _ic_boolean_32.booleanValue();
     }
 
 
-
-    hashCode(): number {
-        return this._hashCode_1();
-    }
-
-    _hashCode_1(): number {
-        let result: number = 1;
-        result = (1543 * result) ^ ((this._get_LBT()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_TRK()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_frm()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_OCC()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_resbl()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_resrt()).hashCode() << 1);
-        result = (1543 * result) ^ ((this._get_rsrtbl()).hashCode() << 1);
-        return result;
-    }
-
-    _hashCode_2(): number {
-        let result: number = 1;
-        result = (6151 * result) ^ ((this._get_LBT()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_TRK()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_frm()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_OCC()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_resbl()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_resrt()).hashCode() << 1);
-        result = (6151 * result) ^ ((this._get_rsrtbl()).hashCode() << 1);
-        return result;
-    }
-
-    /* TODO
-    toString(): string {
-        return String.join("\n", "_get_LBT: " + (this._get_LBT()).toString(), "_get_TRK: " + (this._get_TRK()).toString(), "_get_frm: " + (this._get_frm()).toString(), "_get_OCC: " + (this._get_OCC()).toString(), "_get_resbl: " + (this._get_resbl()).toString(), "_get_resrt: " + (this._get_resrt()).toString(), "_get_rsrtbl: " + (this._get_rsrtbl()).toString());
-    }
-    */
-
-
-    public _copy(): Train_1_beebook_deterministic_MC_POR_v2 {
-      return new Train_1_beebook_deterministic_MC_POR_v2(this);
+    public _copy(): Train_1_beebook_deterministic_MC_POR_v3 {
+      return new Train_1_beebook_deterministic_MC_POR_v3(this);
     }
 
 
@@ -1807,13 +2020,13 @@ export class ModelChecker {
     private isCaching: boolean;
     private isDebug: boolean;
 
-    private unvisitedStates: LinkedList<Train_1_beebook_deterministic_MC_POR_v2> = new LinkedList<Train_1_beebook_deterministic_MC_POR_v2>;
-    private states: immutable.Set<Train_1_beebook_deterministic_MC_POR_v2> = new immutable.Set();
+    private unvisitedStates: LinkedList<Train_1_beebook_deterministic_MC_POR_v3> = new LinkedList<Train_1_beebook_deterministic_MC_POR_v3>;
+    private states: immutable.Set<Train_1_beebook_deterministic_MC_POR_v3> = new immutable.Set();
     private transitions: number = 0;
 
     private invariantViolated: boolean = false;
     private deadlockDetected: boolean = false;
-    private counterExampleState: Train_1_beebook_deterministic_MC_POR_v2 = undefined;
+    private counterExampleState: Train_1_beebook_deterministic_MC_POR_v3 = undefined;
 
     _OpCache_route_reservation: immutable.Map<BSet<ROUTES>, immutable.Map<_ProjectionRead_route_reservation, _ProjectionWrite_route_reservation>> = new immutable.Map();
     _OpCache_tr_route_reservation: immutable.Map<_ProjectionRead__tr_route_reservation, BSet<ROUTES>> = new immutable.Map();
@@ -1851,6 +2064,8 @@ export class ModelChecker {
     _InvCache__check_inv_10: immutable.Map<_ProjectionRead__check_inv_10, boolean> = new immutable.Map();
     _InvCache__check_inv_11: immutable.Map<_ProjectionRead__check_inv_11, boolean> = new immutable.Map();
     _InvCache__check_inv_12: immutable.Map<_ProjectionRead__check_inv_12, boolean> = new immutable.Map();
+    _InvCache__check_inv_13: immutable.Map<_ProjectionRead__check_inv_13, boolean> = new immutable.Map();
+    _InvCache__check_inv_14: immutable.Map<_ProjectionRead__check_inv_14, boolean> = new immutable.Map();
 
     constructor(type: Type, isCaching: boolean, isDebug: boolean) {
         this.type = type;
@@ -1866,14 +2081,14 @@ export class ModelChecker {
     }
 
     modelCheckSingleThreaded(): void {
-        let machine: Train_1_beebook_deterministic_MC_POR_v2 = new Train_1_beebook_deterministic_MC_POR_v2();
+        let machine: Train_1_beebook_deterministic_MC_POR_v3 = new Train_1_beebook_deterministic_MC_POR_v3();
         this.states = this.states.add(machine);
         this.unvisitedStates.pushBack(machine);
 
         while(!(this.unvisitedStates.length === 0)) {
-            let state: Train_1_beebook_deterministic_MC_POR_v2 = this.next();
+            let state: Train_1_beebook_deterministic_MC_POR_v3 = this.next();
 
-            let nextStates: Set<Train_1_beebook_deterministic_MC_POR_v2> = this.generateNextStates(state);
+            let nextStates: Set<Train_1_beebook_deterministic_MC_POR_v3> = this.generateNextStates(state);
 
             for(let nextState of nextStates) {
                 if(!this.states.has(nextState)) {
@@ -1903,7 +2118,7 @@ export class ModelChecker {
         this.printResult(this.states.size, this.transitions);
     }
 
-    next(): Train_1_beebook_deterministic_MC_POR_v2 {
+    next(): Train_1_beebook_deterministic_MC_POR_v3 {
         switch(this.type) {
             case Type.BFS:
                 return this.unvisitedStates.popFront();
@@ -1921,8 +2136,8 @@ export class ModelChecker {
         return undefined;
     }
 
-    generateNextStates(state: Train_1_beebook_deterministic_MC_POR_v2): Set<Train_1_beebook_deterministic_MC_POR_v2> {
-        let result: immutable.Set<Train_1_beebook_deterministic_MC_POR_v2> = immutable.Set();
+    generateNextStates(state: Train_1_beebook_deterministic_MC_POR_v3): Set<Train_1_beebook_deterministic_MC_POR_v3> {
+        let result: immutable.Set<Train_1_beebook_deterministic_MC_POR_v3> = immutable.Set();
         if(this.isCaching) {
             let read__tr_route_reservation_state : _ProjectionRead__tr_route_reservation = state._projected_state_for__tr_route_reservation();
             let _trid_1 : BSet<ROUTES>  = this._OpCache_tr_route_reservation.get(read__tr_route_reservation_state);
@@ -1934,7 +2149,7 @@ export class ModelChecker {
             for(let param of _trid_1) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_route_reservation = state._projected_state_for_route_reservation();
                 let _OpCache_with_parameter_route_reservation: immutable.Map = this._OpCache_route_reservation.get(param);
                 if(_OpCache_with_parameter_route_reservation != null) {
@@ -1970,7 +2185,7 @@ export class ModelChecker {
             for(let param of _trid_2) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_route_freeing = state._projected_state_for_route_freeing();
                 let _OpCache_with_parameter_route_freeing: immutable.Map = this._OpCache_route_freeing.get(param);
                 if(_OpCache_with_parameter_route_freeing != null) {
@@ -2006,7 +2221,7 @@ export class ModelChecker {
             for(let param of _trid_3) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_FRONT_MOVE_1 = state._projected_state_for_FRONT_MOVE_1();
                 let _OpCache_with_parameter_FRONT_MOVE_1: immutable.Map = this._OpCache_FRONT_MOVE_1.get(param);
                 if(_OpCache_with_parameter_FRONT_MOVE_1 != null) {
@@ -2042,7 +2257,7 @@ export class ModelChecker {
             for(let param of _trid_4) {
                 let _tmp_1: BLOCKS = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_FRONT_MOVE_2 = state._projected_state_for_FRONT_MOVE_2();
                 let _OpCache_with_parameter_FRONT_MOVE_2: immutable.Map = this._OpCache_FRONT_MOVE_2.get(param);
                 if(_OpCache_with_parameter_FRONT_MOVE_2 != null) {
@@ -2078,7 +2293,7 @@ export class ModelChecker {
             for(let param of _trid_5) {
                 let _tmp_1: BLOCKS = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_BACK_MOVE_1 = state._projected_state_for_BACK_MOVE_1();
                 let _OpCache_with_parameter_BACK_MOVE_1: immutable.Map = this._OpCache_BACK_MOVE_1.get(param);
                 if(_OpCache_with_parameter_BACK_MOVE_1 != null) {
@@ -2114,7 +2329,7 @@ export class ModelChecker {
             for(let param of _trid_6) {
                 let _tmp_1: BLOCKS = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_BACK_MOVE_2 = state._projected_state_for_BACK_MOVE_2();
                 let _OpCache_with_parameter_BACK_MOVE_2: immutable.Map = this._OpCache_BACK_MOVE_2.get(param);
                 if(_OpCache_with_parameter_BACK_MOVE_2 != null) {
@@ -2150,7 +2365,7 @@ export class ModelChecker {
             for(let param of _trid_7) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_point_positionning = state._projected_state_for_point_positionning();
                 let _OpCache_with_parameter_point_positionning: immutable.Map = this._OpCache_point_positionning.get(param);
                 if(_OpCache_with_parameter_point_positionning != null) {
@@ -2186,7 +2401,7 @@ export class ModelChecker {
             for(let param of _trid_8) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 let readState: _ProjectionRead_route_formation = state._projected_state_for_route_formation();
                 let _OpCache_with_parameter_route_formation: immutable.Map = this._OpCache_route_formation.get(param);
                 if(_OpCache_with_parameter_route_formation != null) {
@@ -2218,7 +2433,7 @@ export class ModelChecker {
             for(let param of _trid_1) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.route_reservation(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2227,7 +2442,7 @@ export class ModelChecker {
             for(let param of _trid_2) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.route_freeing(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2236,7 +2451,7 @@ export class ModelChecker {
             for(let param of _trid_3) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.FRONT_MOVE_1(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2245,7 +2460,7 @@ export class ModelChecker {
             for(let param of _trid_4) {
                 let _tmp_1: BLOCKS = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.FRONT_MOVE_2(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2254,7 +2469,7 @@ export class ModelChecker {
             for(let param of _trid_5) {
                 let _tmp_1: BLOCKS = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.BACK_MOVE_1(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2263,7 +2478,7 @@ export class ModelChecker {
             for(let param of _trid_6) {
                 let _tmp_1: BLOCKS = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.BACK_MOVE_2(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2272,7 +2487,7 @@ export class ModelChecker {
             for(let param of _trid_7) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.point_positionning(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2281,7 +2496,7 @@ export class ModelChecker {
             for(let param of _trid_8) {
                 let _tmp_1: ROUTES = param;
 
-                let copiedState: Train_1_beebook_deterministic_MC_POR_v2 = state._copy();
+                let copiedState: Train_1_beebook_deterministic_MC_POR_v3 = state._copy();
                 copiedState.route_formation(_tmp_1);
                 result = result.add(copiedState);
                 this.transitions = this.transitions + 1;
@@ -2291,7 +2506,7 @@ export class ModelChecker {
         return result;
     }
 
-    invViolated(state: Train_1_beebook_deterministic_MC_POR_v2): boolean {
+    invViolated(state: Train_1_beebook_deterministic_MC_POR_v3): boolean {
         let _check_inv_1: boolean;
         if(isCaching) {
             let read__check_inv_1_state: _ProjectionRead__check_inv_1 = state._projected_state_for__check_inv_1();
@@ -2494,6 +2709,40 @@ export class ModelChecker {
         }
         if(!_check_inv_12) {
             console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_12");
+            return true;
+        }
+        let _check_inv_13: boolean;
+        if(isCaching) {
+            let read__check_inv_13_state: _ProjectionRead__check_inv_13 = state._projected_state_for__check_inv_13();
+            let _obj__check_inv_13: boolean = this._InvCache__check_inv_13.get(read__check_inv_13_state);
+            if(_obj__check_inv_13 == null) {
+                _check_inv_13 = state._check_inv_13();
+                this._InvCache__check_inv_13 = this._InvCache__check_inv_13.set(read__check_inv_13_state, _check_inv_13);
+            } else {
+                _check_inv_13 = _obj__check_inv_13;
+            }
+        } else {
+            _check_inv_13 = state._check_inv_13();
+        }
+        if(!_check_inv_13) {
+            console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_13");
+            return true;
+        }
+        let _check_inv_14: boolean;
+        if(isCaching) {
+            let read__check_inv_14_state: _ProjectionRead__check_inv_14 = state._projected_state_for__check_inv_14();
+            let _obj__check_inv_14: boolean = this._InvCache__check_inv_14.get(read__check_inv_14_state);
+            if(_obj__check_inv_14 == null) {
+                _check_inv_14 = state._check_inv_14();
+                this._InvCache__check_inv_14 = this._InvCache__check_inv_14.set(read__check_inv_14_state, _check_inv_14);
+            } else {
+                _check_inv_14 = _obj__check_inv_14;
+            }
+        } else {
+            _check_inv_14 = state._check_inv_14();
+        }
+        if(!_check_inv_14) {
+            console.log("INVARIANT CONJUNCT VIOLATED: _check_inv_14");
             return true;
         }
         return false;

@@ -235,16 +235,25 @@ public class TestMachines extends TestJs {
         testJSMC("Train_1_beebook_deterministic_MC_POR_v2");
     }
 
+    @Test
+    public void Train1BeebookDeterministic_MC_POR_v3() throws Exception {
+        testJSMC("Train_1_beebook_deterministic_MC_POR_v3");
+    }
+
     @Ignore
     @Test
     public void testEarley2() throws Exception {
         testJs("earley_2");
     }
 
-    @Ignore
+    @Test
+    public void testOBSW_M001_1() throws Exception {
+        testJs("obsw_M001_1");
+    }
+
     @Test
     public void testOBSW_M001() throws Exception {
-        testJs("obsw_M001");
+        testJs("obsw_M001_2");
     }
 
     @Ignore
@@ -253,10 +262,9 @@ public class TestMachines extends TestJs {
         testJs("Ref5_Switch");
     }
 
-    @Ignore
     @Test
     public void testrether_mch1() throws Exception {
-        testJs("rether_mch1");
+        testJs("rether");
     }
 
     @Test
@@ -282,6 +290,11 @@ public class TestMachines extends TestJs {
     @Test
     public void testQueensWithEvents_4() throws Exception {
         testJSMC("QueensWithEvents_4");
+    }
+
+    @Test
+    public void testProBOneWay8Seq() throws Exception {
+        testJSMC("prob_oneway8seq");
     }
 
     @Test

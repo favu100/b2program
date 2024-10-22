@@ -248,12 +248,12 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testOBSW_M001_1() throws Exception {
-        testJs("obsw_M001_1");
+        testJSMC("obsw_M001_1");
     }
 
     @Test
     public void testOBSW_M001() throws Exception {
-        testJs("obsw_M001_2");
+        testJSMC("obsw_M001_2");
     }
 
     @Ignore
@@ -264,7 +264,7 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testrether_mch1() throws Exception {
-        testJs("rether");
+        testJSMC("rether");
     }
 
     @Test

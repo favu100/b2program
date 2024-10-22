@@ -245,6 +245,18 @@ export class BRelation {
         }
         return new BBoolean(true);
     }
+    isInRelationalImage(element, set) {
+        for (let key of set) {
+            let image = this.map.get(key);
+            if (image !== null && element in image) {
+                return new BBoolean(true);
+            }
+        }
+        return new BBoolean(false);
+    }
+    isNotInRelationalImage(element, set) {
+        return this.isInRelationalImage(element, set).not();
+    }
     inverse() {
         let thisMap = this.map;
         let keys = immutable.Set(thisMap.keys());

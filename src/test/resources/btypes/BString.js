@@ -12,6 +12,12 @@ export class BString {
         }
         return this.value === o.value;
     }
+    equal(o) {
+        return new BBoolean(this.equals(o));
+    }
+    unequal(o) {
+        return new BBoolean(!this.equals(o));
+    }
     length() {
         return this.value.length;
     }

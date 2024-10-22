@@ -2,6 +2,7 @@ import de.hhu.stups.btypes.BRelation;
 import de.hhu.stups.btypes.BTuple;
 import de.hhu.stups.btypes.BSet;
 import de.hhu.stups.btypes.BObject;
+import de.hhu.stups.btypes.BInteger;
 import de.hhu.stups.btypes.BBoolean;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2124,6 +2125,9 @@ public class obsw_M001_1 {
 
     static {
         VALID_TCS = new BSet<TC_SET>();
+        if(!(new BBoolean(_TC_SET.card().equal(new BInteger(2)).booleanValue() && _TC_SET.difference(VALID_TCS).unequal(new BSet<TC_SET>()).booleanValue())).booleanValue()) {
+            throw new RuntimeException("Contradiction in PROPERTIES detected!");
+        }
     }
 
     public obsw_M001_1() {

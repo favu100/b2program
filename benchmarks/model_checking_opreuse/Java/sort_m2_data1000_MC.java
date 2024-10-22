@@ -606,6 +606,9 @@ public class sort_m2_data1000_MC {
         f = _ic_set_0;
         __aux_constant_2 = f.range();
         __aux_constant_1 = BSet.interval(new BInteger(1), n);
+        if(!(new BBoolean(new BBoolean(n.isInteger().booleanValue() && n.greater(new BInteger(0)).booleanValue()).booleanValue() && f.checkDomain(BSet.interval(new BInteger(1), n)).and(f.checkRangeNatural()).and(f.isFunction()).and(f.isTotal(BSet.interval(new BInteger(1), n))).booleanValue())).booleanValue()) {
+            throw new RuntimeException("Contradiction in PROPERTIES detected!");
+        }
     }
 
     public sort_m2_data1000_MC() {

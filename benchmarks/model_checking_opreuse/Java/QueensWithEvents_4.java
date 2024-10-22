@@ -170,6 +170,9 @@ public class QueensWithEvents_4 {
         __aux_constant_2 = BRelation.cartesianProduct(BSet.interval(new BInteger(1), n), BSet.interval(new BInteger(1), n)).pow();
         __aux_constant_3 = BSet.interval(new BInteger(1), n).difference(new BSet<BInteger>(new BInteger(1)));
         __aux_constant_1 = BSet.interval(new BInteger(1), n);
+        if(!(n.isNatural()).booleanValue()) {
+            throw new RuntimeException("Contradiction in PROPERTIES detected!");
+        }
     }
 
     public QueensWithEvents_4() {

@@ -10,8 +10,8 @@ build:
 OUTPUT ?= runtimes.txt
 DEPENDENCIES ?= :btypes.jar
 STRATEGY=mixed
-THREADS=6
-CACHING=true
+THREADS=1
+CACHING=false
 
 %.class : %.java
 	javac -cp .$(DEPENDENCIES) $<

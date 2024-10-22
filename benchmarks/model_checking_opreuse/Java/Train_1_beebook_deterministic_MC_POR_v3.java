@@ -1209,9 +1209,9 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
     private BRelation<BLOCKS, ROUTES> rsrtbl;
 
     static {
-        nxt = new BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>(new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R1, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.L, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.C))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R2, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.L, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.E), new BTuple<BLOCKS, BLOCKS>(BLOCKS.E, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.G))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R3, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.L, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.N))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R4, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.M, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.G))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R5, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.M, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.N))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R6, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.C, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.L))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R7, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.G, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.E), new BTuple<BLOCKS, BLOCKS>(BLOCKS.E, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.L))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R8, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.N, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.L))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R9, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.G, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.M))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R10, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.N, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.M))));
         fst = new BRelation<ROUTES, BLOCKS>(new BTuple<ROUTES, BLOCKS>(ROUTES.R1, BLOCKS.L), new BTuple<ROUTES, BLOCKS>(ROUTES.R2, BLOCKS.L), new BTuple<ROUTES, BLOCKS>(ROUTES.R3, BLOCKS.L), new BTuple<ROUTES, BLOCKS>(ROUTES.R4, BLOCKS.M), new BTuple<ROUTES, BLOCKS>(ROUTES.R5, BLOCKS.M), new BTuple<ROUTES, BLOCKS>(ROUTES.R6, BLOCKS.C), new BTuple<ROUTES, BLOCKS>(ROUTES.R7, BLOCKS.G), new BTuple<ROUTES, BLOCKS>(ROUTES.R8, BLOCKS.N), new BTuple<ROUTES, BLOCKS>(ROUTES.R9, BLOCKS.G), new BTuple<ROUTES, BLOCKS>(ROUTES.R10, BLOCKS.N));
         lst = new BRelation<ROUTES, BLOCKS>(new BTuple<ROUTES, BLOCKS>(ROUTES.R1, BLOCKS.C), new BTuple<ROUTES, BLOCKS>(ROUTES.R2, BLOCKS.G), new BTuple<ROUTES, BLOCKS>(ROUTES.R3, BLOCKS.N), new BTuple<ROUTES, BLOCKS>(ROUTES.R4, BLOCKS.G), new BTuple<ROUTES, BLOCKS>(ROUTES.R5, BLOCKS.N), new BTuple<ROUTES, BLOCKS>(ROUTES.R6, BLOCKS.L), new BTuple<ROUTES, BLOCKS>(ROUTES.R7, BLOCKS.L), new BTuple<ROUTES, BLOCKS>(ROUTES.R8, BLOCKS.L), new BTuple<ROUTES, BLOCKS>(ROUTES.R9, BLOCKS.M), new BTuple<ROUTES, BLOCKS>(ROUTES.R10, BLOCKS.M));
+        nxt = new BRelation<ROUTES, BRelation<BLOCKS, BLOCKS>>(new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R1, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.L, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.C))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R2, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.L, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.E), new BTuple<BLOCKS, BLOCKS>(BLOCKS.E, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.G))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R3, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.L, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.N))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R4, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.M, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.G))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R5, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.M, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.N))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R6, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.C, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.L))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R7, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.G, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.E), new BTuple<BLOCKS, BLOCKS>(BLOCKS.E, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.L))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R8, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.N, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.D), new BTuple<BLOCKS, BLOCKS>(BLOCKS.D, BLOCKS.B), new BTuple<BLOCKS, BLOCKS>(BLOCKS.B, BLOCKS.A), new BTuple<BLOCKS, BLOCKS>(BLOCKS.A, BLOCKS.L))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R9, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.G, BLOCKS.F), new BTuple<BLOCKS, BLOCKS>(BLOCKS.F, BLOCKS.K), new BTuple<BLOCKS, BLOCKS>(BLOCKS.K, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.M))), new BTuple<ROUTES, BRelation<BLOCKS, BLOCKS>>(ROUTES.R10, new BRelation<BLOCKS, BLOCKS>(new BTuple<BLOCKS, BLOCKS>(BLOCKS.N, BLOCKS.J), new BTuple<BLOCKS, BLOCKS>(BLOCKS.J, BLOCKS.I), new BTuple<BLOCKS, BLOCKS>(BLOCKS.I, BLOCKS.H), new BTuple<BLOCKS, BLOCKS>(BLOCKS.H, BLOCKS.M))));
         BRelation<BLOCKS, ROUTES> _ic_set_0 = new BRelation<BLOCKS, ROUTES>();
         for(BLOCKS _ic_b_1 : _BLOCKS) {
             for(ROUTES _ic_r_1 : _ROUTES) {
@@ -1225,6 +1225,112 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
 
         rtbl = _ic_set_0;
         __aux_constant_1 = rtbl.inverse();
+        BBoolean _ic_boolean_1 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue()) {
+            for(BRelation<BLOCKS, BLOCKS> _ic__opt_1_1 : nxt.range()) {
+                if(!(_ic__opt_1_1.checkDomain(_BLOCKS).and(_ic__opt_1_1.checkRange(_BLOCKS)).and(_ic__opt_1_1.isFunction()).and(_ic__opt_1_1.isPartial(_BLOCKS)).and(_ic__opt_1_1.isInjection())).booleanValue()) {
+                    _ic_boolean_1 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_2 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue()) {
+            for(BTuple<BLOCKS, ROUTES> _ic__opt_2_1 : fst.inverse()) {
+                if(!(rtbl.elementOf(_ic__opt_2_1)).booleanValue()) {
+                    _ic_boolean_2 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_3 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue()) {
+            for(BTuple<BLOCKS, ROUTES> _ic__opt_3_1 : lst.inverse()) {
+                if(!(rtbl.elementOf(_ic__opt_3_1)).booleanValue()) {
+                    _ic_boolean_3 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_4 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue()) {
+            for(ROUTES _ic_r_1 : _ROUTES) {
+                if(!(fst.functionCall(_ic_r_1).unequal(lst.functionCall(_ic_r_1))).booleanValue()) {
+                    _ic_boolean_4 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_6 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue()) {
+            for(ROUTES _ic_r_1 : _ROUTES) {
+                BBoolean _ic_boolean_5 = new BBoolean(true);
+                for(BSet<BLOCKS> _ic_S_1 : nxt.functionCall(_ic_r_1).range().pow()) {
+                    if(!(new BBoolean(!_ic_S_1.subset(nxt.functionCall(_ic_r_1).relationImage(_ic_S_1)).booleanValue() || _ic_S_1.equal(new BSet<BLOCKS>()).booleanValue())).booleanValue()) {
+                        _ic_boolean_5 = new BBoolean(false);
+                        break;
+                    }
+
+                }
+
+                if(!(_ic_boolean_5).booleanValue()) {
+                    _ic_boolean_6 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_7 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue()) {
+            for(ROUTES _ic_r_1 : _ROUTES) {
+                if(!(nxt.functionCall(_ic_r_1).checkDomain(rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(lst.functionCall(_ic_r_1)))).and(nxt.functionCall(_ic_r_1).checkRange(rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(fst.functionCall(_ic_r_1))))).and(nxt.functionCall(_ic_r_1).isFunction()).and(nxt.functionCall(_ic_r_1).isTotal(rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(lst.functionCall(_ic_r_1))))).and(nxt.functionCall(_ic_r_1).isBijection(rtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(new BSet<BLOCKS>(fst.functionCall(_ic_r_1)))))).booleanValue()) {
+                    _ic_boolean_7 = new BBoolean(false);
+                    break;
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_8 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue()).booleanValue()) {
+            for(ROUTES _ic_r_1 : _ROUTES) {
+                for(ROUTES _ic_s_1 : _ROUTES) {
+                    if(!(new BBoolean(!_ic_r_1.unequal(_ic_s_1).booleanValue() || new BBoolean(new BSet<BLOCKS>(fst.functionCall(_ic_s_1), lst.functionCall(_ic_s_1)).elementOf(fst.functionCall(_ic_r_1)).booleanValue() || rtbl.inverse().isNotInRelationalImage(fst.functionCall(_ic_r_1), new BSet<ROUTES>(_ic_s_1)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_boolean_8 = new BBoolean(false);
+                        break;
+                    }
+
+                }
+
+            }
+        }
+
+        BBoolean _ic_boolean_9 = new BBoolean(true);
+        if(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue()).booleanValue() && _ic_boolean_8.booleanValue()).booleanValue()) {
+            for(ROUTES _ic_r_1 : _ROUTES) {
+                for(ROUTES _ic_s_1 : _ROUTES) {
+                    if(!(new BBoolean(!_ic_r_1.unequal(_ic_s_1).booleanValue() || new BBoolean(new BSet<BLOCKS>(fst.functionCall(_ic_s_1), lst.functionCall(_ic_s_1)).elementOf(lst.functionCall(_ic_r_1)).booleanValue() || rtbl.inverse().isNotInRelationalImage(lst.functionCall(_ic_r_1), new BSet<ROUTES>(_ic_s_1)).booleanValue()).booleanValue())).booleanValue()) {
+                        _ic_boolean_9 = new BBoolean(false);
+                        break;
+                    }
+
+                }
+
+            }
+        }
+
+        if(!(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(new BBoolean(rtbl.domain().equal(_BLOCKS).booleanValue() && rtbl.range().equal(_ROUTES).booleanValue()).booleanValue() && nxt.domain().equal(_ROUTES).booleanValue()).booleanValue() && _ic_boolean_1.booleanValue()).booleanValue() && fst.checkDomain(_ROUTES).and(fst.checkRange(_BLOCKS)).and(fst.isFunction()).and(fst.isTotal(_ROUTES)).booleanValue()).booleanValue() && lst.checkDomain(_ROUTES).and(lst.checkRange(_BLOCKS)).and(lst.isFunction()).and(lst.isTotal(_ROUTES)).booleanValue()).booleanValue() && _ic_boolean_2.booleanValue()).booleanValue() && _ic_boolean_3.booleanValue()).booleanValue() && _ic_boolean_4.booleanValue()).booleanValue() && _ic_boolean_6.booleanValue()).booleanValue() && _ic_boolean_7.booleanValue()).booleanValue() && _ic_boolean_8.booleanValue()).booleanValue() && _ic_boolean_9.booleanValue())).booleanValue()) {
+            throw new RuntimeException("Contradiction in PROPERTIES detected!");
+        }
     }
 
     public Train_1_beebook_deterministic_MC_POR_v3() {
@@ -1425,97 +1531,97 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
 
 
     public BSet<ROUTES> _tr_route_reservation() {
-        BSet<ROUTES> _ic_set_1 = new BSet<ROUTES>();
+        BSet<ROUTES> _ic_set_10 = new BSet<ROUTES>();
         for(ROUTES _ic_r_1 : _ROUTES.difference(resrt)) {
             if((new BBoolean(__aux_constant_1.relationImage(new BSet<ROUTES>(_ic_r_1)).intersect(resbl).equal(new BSet<BLOCKS>()).booleanValue() && new BSet<ROUTES>().equal(resrt.difference(rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_1 = _ic_set_1.union(new BSet<ROUTES>(_ic_r_1));
+                _ic_set_10 = _ic_set_10.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
 
-        return _ic_set_1;
+        return _ic_set_10;
     }
 
     public BSet<ROUTES> _tr_route_freeing() {
-        BSet<ROUTES> _ic_set_2 = new BSet<ROUTES>();
+        BSet<ROUTES> _ic_set_11 = new BSet<ROUTES>();
         for(ROUTES _ic_r_1 : resrt.difference(rsrtbl.range())) {
-            _ic_set_2 = _ic_set_2.union(new BSet<ROUTES>(_ic_r_1));
+            _ic_set_11 = _ic_set_11.union(new BSet<ROUTES>(_ic_r_1));
 
         }
 
-        return _ic_set_2;
+        return _ic_set_11;
     }
 
     public BSet<ROUTES> _tr_FRONT_MOVE_1() {
-        BSet<ROUTES> _ic_set_3 = new BSet<ROUTES>();
+        BSet<ROUTES> _ic_set_12 = new BSet<ROUTES>();
         for(ROUTES _ic_r_1 : frm) {
             if((new BBoolean(new BBoolean(resbl.difference(OCC).elementOf(fst.functionCall(_ic_r_1)).booleanValue() && _ic_r_1.equal(rsrtbl.functionCall(fst.functionCall(_ic_r_1))).booleanValue()).booleanValue() && new BSet<ROUTES>().equal(resrt.difference(rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_3 = _ic_set_3.union(new BSet<ROUTES>(_ic_r_1));
+                _ic_set_12 = _ic_set_12.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
 
-        return _ic_set_3;
+        return _ic_set_12;
     }
 
     public BSet<BLOCKS> _tr_FRONT_MOVE_2() {
-        BSet<BLOCKS> _ic_set_4 = new BSet<BLOCKS>();
+        BSet<BLOCKS> _ic_set_13 = new BSet<BLOCKS>();
         for(BLOCKS _ic_b_1 : OCC.intersect(TRK.domain())) {
             if((OCC.notElementOf(TRK.functionCall(_ic_b_1))).booleanValue()) {
-                _ic_set_4 = _ic_set_4.union(new BSet<BLOCKS>(_ic_b_1));
+                _ic_set_13 = _ic_set_13.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
         }
 
-        return _ic_set_4;
+        return _ic_set_13;
     }
 
     public BSet<BLOCKS> _tr_BACK_MOVE_1() {
-        BSet<BLOCKS> _ic_set_5 = new BSet<BLOCKS>();
+        BSet<BLOCKS> _ic_set_14 = new BSet<BLOCKS>();
         for(BLOCKS _ic_b_1 : LBT.difference(TRK.domain())) {
             if((new BSet<ROUTES>().equal(resrt.difference(rsrtbl.range()))).booleanValue()) {
-                _ic_set_5 = _ic_set_5.union(new BSet<BLOCKS>(_ic_b_1));
+                _ic_set_14 = _ic_set_14.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
         }
 
-        return _ic_set_5;
+        return _ic_set_14;
     }
 
     public BSet<BLOCKS> _tr_BACK_MOVE_2() {
-        BSet<BLOCKS> _ic_set_6 = new BSet<BLOCKS>();
+        BSet<BLOCKS> _ic_set_15 = new BSet<BLOCKS>();
         for(BLOCKS _ic_b_1 : LBT.intersect(TRK.domain())) {
             if((new BBoolean(OCC.elementOf(TRK.functionCall(_ic_b_1)).booleanValue() && new BSet<ROUTES>().equal(resrt.difference(rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_6 = _ic_set_6.union(new BSet<BLOCKS>(_ic_b_1));
+                _ic_set_15 = _ic_set_15.union(new BSet<BLOCKS>(_ic_b_1));
             }
 
         }
 
-        return _ic_set_6;
+        return _ic_set_15;
     }
 
     public BSet<ROUTES> _tr_point_positionning() {
-        BSet<ROUTES> _ic_set_7 = new BSet<ROUTES>();
+        BSet<ROUTES> _ic_set_16 = new BSet<ROUTES>();
         for(ROUTES _ic_r_1 : resrt.difference(frm)) {
             if((new BSet<ROUTES>().equal(resrt.difference(rsrtbl.range()))).booleanValue()) {
-                _ic_set_7 = _ic_set_7.union(new BSet<ROUTES>(_ic_r_1));
+                _ic_set_16 = _ic_set_16.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
 
-        return _ic_set_7;
+        return _ic_set_16;
     }
 
     public BSet<ROUTES> _tr_route_formation() {
-        BSet<ROUTES> _ic_set_8 = new BSet<ROUTES>();
+        BSet<ROUTES> _ic_set_17 = new BSet<ROUTES>();
         for(ROUTES _ic_r_1 : resrt.difference(frm)) {
             if((new BBoolean(nxt.functionCall(_ic_r_1).domainRestriction(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(TRK.domainRestriction(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).booleanValue() && new BSet<ROUTES>().equal(resrt.difference(rsrtbl.range())).booleanValue())).booleanValue()) {
-                _ic_set_8 = _ic_set_8.union(new BSet<ROUTES>(_ic_r_1));
+                _ic_set_17 = _ic_set_17.union(new BSet<ROUTES>(_ic_r_1));
             }
 
         }
 
-        return _ic_set_8;
+        return _ic_set_17;
     }
 
     public _ProjectionRead_point_positionning _projected_state_for_point_positionning() {
@@ -1717,122 +1823,9 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
     }
 
     public boolean _check_inv_2() {
-        BBoolean _ic_boolean_9 = new BBoolean(true);
-        for(BTuple<BLOCKS, ROUTES> _ic__opt_3_1 : rsrtbl) {
-            if(!(rtbl.elementOf(_ic__opt_3_1)).booleanValue()) {
-                _ic_boolean_9 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_9.booleanValue();
-    }
-
-    public boolean _check_inv_3() {
-        BBoolean _ic_boolean_10 = new BBoolean(true);
-        for(BLOCKS _ic__opt_4_1 : OCC) {
-            if(!(resbl.elementOf(_ic__opt_4_1)).booleanValue()) {
-                _ic_boolean_10 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_10.booleanValue();
-    }
-
-    public boolean _check_inv_4() {
-        BBoolean _ic_boolean_11 = new BBoolean(true);
-        for(ROUTES _ic_r_1 : _ROUTES) {
-            if(!(nxt.functionCall(_ic_r_1).relationImage(__aux_constant_1.relationImage(new BSet<ROUTES>(_ic_r_1)).difference(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).intersect(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(OCC)).equal(new BSet<BLOCKS>())).booleanValue()) {
-                _ic_boolean_11 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_11.booleanValue();
-    }
-
-    public boolean _check_inv_5() {
-        BBoolean _ic_boolean_13 = new BBoolean(true);
-        for(ROUTES _ic_r_1 : _ROUTES) {
-            BBoolean _ic_boolean_12 = new BBoolean(true);
-            for(BLOCKS _ic__opt_5_1 : nxt.functionCall(_ic_r_1).relationImage(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
-                if(!(rsrtbl.inverse().isInRelationalImage(_ic__opt_5_1, new BSet<ROUTES>(_ic_r_1))).booleanValue()) {
-                    _ic_boolean_12 = new BBoolean(false);
-                    break;
-                }
-
-            }
-
-            if(!(_ic_boolean_12).booleanValue()) {
-                _ic_boolean_13 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_13.booleanValue();
-    }
-
-    public boolean _check_inv_6() {
-        BBoolean _ic_boolean_15 = new BBoolean(true);
-        for(ROUTES _ic_r_1 : _ROUTES) {
-            BBoolean _ic_boolean_14 = new BBoolean(true);
-            for(BLOCKS _ic__opt_6_1 : nxt.functionCall(_ic_r_1).relationImage(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(OCC))) {
-                if(!(new BBoolean(rsrtbl.inverse().isInRelationalImage(_ic__opt_6_1, new BSet<ROUTES>(_ic_r_1)).booleanValue() && OCC.notElementOf(_ic__opt_6_1).booleanValue())).booleanValue()) {
-                    _ic_boolean_14 = new BBoolean(false);
-                    break;
-                }
-
-            }
-
-            if(!(_ic_boolean_14).booleanValue()) {
-                _ic_boolean_15 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_15.booleanValue();
-    }
-
-    public boolean _check_inv_7() {
-        return TRK.checkDomain(_BLOCKS).and(TRK.checkRange(_BLOCKS)).and(TRK.isFunction()).and(TRK.isPartial(_BLOCKS)).and(TRK.isInjection()).booleanValue();
-    }
-
-    public boolean _check_inv_8() {
-        BBoolean _ic_boolean_16 = new BBoolean(true);
-        for(ROUTES _ic__opt_7_1 : frm) {
-            if(!(resrt.elementOf(_ic__opt_7_1)).booleanValue()) {
-                _ic_boolean_16 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_16.booleanValue();
-    }
-
-    public boolean _check_inv_9() {
-        BBoolean _ic_boolean_17 = new BBoolean(true);
-        for(ROUTES _ic__opt_8_1 : rsrtbl.relationImage(OCC)) {
-            if(!(frm.elementOf(_ic__opt_8_1)).booleanValue()) {
-                _ic_boolean_17 = new BBoolean(false);
-                break;
-            }
-
-        }
-
-        return _ic_boolean_17.booleanValue();
-    }
-
-    public boolean _check_inv_10() {
         BBoolean _ic_boolean_18 = new BBoolean(true);
-        for(ROUTES _ic_r_1 : resrt.difference(frm)) {
-            if(!(rtbl.rangeRestriction(new BSet<ROUTES>(_ic_r_1)).equal(rsrtbl.rangeRestriction(new BSet<ROUTES>(_ic_r_1)))).booleanValue()) {
+        for(BTuple<BLOCKS, ROUTES> _ic__opt_4_1 : rsrtbl) {
+            if(!(rtbl.elementOf(_ic__opt_4_1)).booleanValue()) {
                 _ic_boolean_18 = new BBoolean(false);
                 break;
             }
@@ -1842,24 +1835,25 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
         return _ic_boolean_18.booleanValue();
     }
 
-    public boolean _check_inv_11() {
+    public boolean _check_inv_3() {
+        BBoolean _ic_boolean_19 = new BBoolean(true);
+        for(BLOCKS _ic__opt_5_1 : OCC) {
+            if(!(resbl.elementOf(_ic__opt_5_1)).booleanValue()) {
+                _ic_boolean_19 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_19.booleanValue();
+    }
+
+    public boolean _check_inv_4() {
         BBoolean _ic_boolean_20 = new BBoolean(true);
-        for(BLOCKS _ic_x_1 : _BLOCKS) {
-            for(BLOCKS _ic_y_1 : _BLOCKS) {
-                BBoolean _ic_boolean_19 = new BBoolean(false);
-                for(ROUTES _ic_r_1 : _ROUTES) {
-                    if((nxt.functionCall(_ic_r_1).elementOf(new BTuple<BLOCKS, BLOCKS>(_ic_x_1, _ic_y_1))).booleanValue()) {
-                        _ic_boolean_19 = new BBoolean(true);
-                        break;
-                    }
-
-                }
-
-                if(!(new BBoolean(!TRK.elementOf(new BTuple<BLOCKS, BLOCKS>(_ic_x_1, _ic_y_1)).booleanValue() || _ic_boolean_19.booleanValue())).booleanValue()) {
-                    _ic_boolean_20 = new BBoolean(false);
-                    break;
-                }
-
+        for(ROUTES _ic_r_1 : _ROUTES) {
+            if(!(nxt.functionCall(_ic_r_1).relationImage(__aux_constant_1.relationImage(new BSet<ROUTES>(_ic_r_1)).difference(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))).intersect(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(OCC)).equal(new BSet<BLOCKS>())).booleanValue()) {
+                _ic_boolean_20 = new BBoolean(false);
+                break;
             }
 
         }
@@ -1867,23 +1861,19 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
         return _ic_boolean_20.booleanValue();
     }
 
-    public boolean _check_inv_12() {
-        BBoolean _ic_boolean_21 = new BBoolean(true);
-        for(ROUTES _ic_r_1 : frm) {
-            if(!(nxt.functionCall(_ic_r_1).domainRestriction(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(TRK.domainRestriction(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))))).booleanValue()) {
-                _ic_boolean_21 = new BBoolean(false);
-                break;
+    public boolean _check_inv_5() {
+        BBoolean _ic_boolean_22 = new BBoolean(true);
+        for(ROUTES _ic_r_1 : _ROUTES) {
+            BBoolean _ic_boolean_21 = new BBoolean(true);
+            for(BLOCKS _ic__opt_6_1 : nxt.functionCall(_ic_r_1).relationImage(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)))) {
+                if(!(rsrtbl.inverse().isInRelationalImage(_ic__opt_6_1, new BSet<ROUTES>(_ic_r_1))).booleanValue()) {
+                    _ic_boolean_21 = new BBoolean(false);
+                    break;
+                }
+
             }
 
-        }
-
-        return _ic_boolean_21.booleanValue();
-    }
-
-    public boolean _check_inv_13() {
-        BBoolean _ic_boolean_22 = new BBoolean(true);
-        for(BLOCKS _ic__opt_9_1 : LBT) {
-            if(!(OCC.elementOf(_ic__opt_9_1)).booleanValue()) {
+            if(!(_ic_boolean_21).booleanValue()) {
                 _ic_boolean_22 = new BBoolean(false);
                 break;
             }
@@ -1893,12 +1883,86 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
         return _ic_boolean_22.booleanValue();
     }
 
-    public boolean _check_inv_14() {
-        BBoolean _ic_boolean_23 = new BBoolean(true);
-        for(BLOCKS _ic_a_1 : _BLOCKS) {
-            for(BLOCKS _ic_b_1 : LBT) {
-                if(!(new BBoolean(!new BBoolean(new BBoolean(nxt.functionCall(rsrtbl.functionCall(_ic_b_1)).isInRange(_ic_b_1).booleanValue() && _ic_a_1.equal(nxt.functionCall(rsrtbl.functionCall(_ic_b_1)).inverse().functionCall(_ic_b_1)).booleanValue()).booleanValue() && rsrtbl.isInDomain(_ic_a_1).booleanValue()).booleanValue() || rsrtbl.functionCall(_ic_a_1).unequal(rsrtbl.functionCall(_ic_b_1)).booleanValue())).booleanValue()) {
+    public boolean _check_inv_6() {
+        BBoolean _ic_boolean_24 = new BBoolean(true);
+        for(ROUTES _ic_r_1 : _ROUTES) {
+            BBoolean _ic_boolean_23 = new BBoolean(true);
+            for(BLOCKS _ic__opt_7_1 : nxt.functionCall(_ic_r_1).relationImage(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1)).difference(OCC))) {
+                if(!(new BBoolean(rsrtbl.inverse().isInRelationalImage(_ic__opt_7_1, new BSet<ROUTES>(_ic_r_1)).booleanValue() && OCC.notElementOf(_ic__opt_7_1).booleanValue())).booleanValue()) {
                     _ic_boolean_23 = new BBoolean(false);
+                    break;
+                }
+
+            }
+
+            if(!(_ic_boolean_23).booleanValue()) {
+                _ic_boolean_24 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_24.booleanValue();
+    }
+
+    public boolean _check_inv_7() {
+        return TRK.checkDomain(_BLOCKS).and(TRK.checkRange(_BLOCKS)).and(TRK.isFunction()).and(TRK.isPartial(_BLOCKS)).and(TRK.isInjection()).booleanValue();
+    }
+
+    public boolean _check_inv_8() {
+        BBoolean _ic_boolean_25 = new BBoolean(true);
+        for(ROUTES _ic__opt_8_1 : frm) {
+            if(!(resrt.elementOf(_ic__opt_8_1)).booleanValue()) {
+                _ic_boolean_25 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_25.booleanValue();
+    }
+
+    public boolean _check_inv_9() {
+        BBoolean _ic_boolean_26 = new BBoolean(true);
+        for(ROUTES _ic__opt_9_1 : rsrtbl.relationImage(OCC)) {
+            if(!(frm.elementOf(_ic__opt_9_1)).booleanValue()) {
+                _ic_boolean_26 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_26.booleanValue();
+    }
+
+    public boolean _check_inv_10() {
+        BBoolean _ic_boolean_27 = new BBoolean(true);
+        for(ROUTES _ic_r_1 : resrt.difference(frm)) {
+            if(!(rtbl.rangeRestriction(new BSet<ROUTES>(_ic_r_1)).equal(rsrtbl.rangeRestriction(new BSet<ROUTES>(_ic_r_1)))).booleanValue()) {
+                _ic_boolean_27 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_27.booleanValue();
+    }
+
+    public boolean _check_inv_11() {
+        BBoolean _ic_boolean_29 = new BBoolean(true);
+        for(BLOCKS _ic_x_1 : _BLOCKS) {
+            for(BLOCKS _ic_y_1 : _BLOCKS) {
+                BBoolean _ic_boolean_28 = new BBoolean(false);
+                for(ROUTES _ic_r_1 : _ROUTES) {
+                    if((nxt.functionCall(_ic_r_1).elementOf(new BTuple<BLOCKS, BLOCKS>(_ic_x_1, _ic_y_1))).booleanValue()) {
+                        _ic_boolean_28 = new BBoolean(true);
+                        break;
+                    }
+
+                }
+
+                if(!(new BBoolean(!TRK.elementOf(new BTuple<BLOCKS, BLOCKS>(_ic_x_1, _ic_y_1)).booleanValue() || _ic_boolean_28.booleanValue())).booleanValue()) {
+                    _ic_boolean_29 = new BBoolean(false);
                     break;
                 }
 
@@ -1906,7 +1970,49 @@ public class Train_1_beebook_deterministic_MC_POR_v3 {
 
         }
 
-        return _ic_boolean_23.booleanValue();
+        return _ic_boolean_29.booleanValue();
+    }
+
+    public boolean _check_inv_12() {
+        BBoolean _ic_boolean_30 = new BBoolean(true);
+        for(ROUTES _ic_r_1 : frm) {
+            if(!(nxt.functionCall(_ic_r_1).domainRestriction(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))).equal(TRK.domainRestriction(rsrtbl.inverse().relationImage(new BSet<ROUTES>(_ic_r_1))))).booleanValue()) {
+                _ic_boolean_30 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_30.booleanValue();
+    }
+
+    public boolean _check_inv_13() {
+        BBoolean _ic_boolean_31 = new BBoolean(true);
+        for(BLOCKS _ic__opt_10_1 : LBT) {
+            if(!(OCC.elementOf(_ic__opt_10_1)).booleanValue()) {
+                _ic_boolean_31 = new BBoolean(false);
+                break;
+            }
+
+        }
+
+        return _ic_boolean_31.booleanValue();
+    }
+
+    public boolean _check_inv_14() {
+        BBoolean _ic_boolean_32 = new BBoolean(true);
+        for(BLOCKS _ic_a_1 : _BLOCKS) {
+            for(BLOCKS _ic_b_1 : LBT) {
+                if(!(new BBoolean(!new BBoolean(new BBoolean(nxt.functionCall(rsrtbl.functionCall(_ic_b_1)).isInRange(_ic_b_1).booleanValue() && _ic_a_1.equal(nxt.functionCall(rsrtbl.functionCall(_ic_b_1)).inverse().functionCall(_ic_b_1)).booleanValue()).booleanValue() && rsrtbl.isInDomain(_ic_a_1).booleanValue()).booleanValue() || rsrtbl.functionCall(_ic_a_1).unequal(rsrtbl.functionCall(_ic_b_1)).booleanValue())).booleanValue()) {
+                    _ic_boolean_32 = new BBoolean(false);
+                    break;
+                }
+
+            }
+
+        }
+
+        return _ic_boolean_32.booleanValue();
     }
 
 

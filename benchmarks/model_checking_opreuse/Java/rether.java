@@ -856,9 +856,12 @@ public class rether {
     private Nodes token;
 
     static {
-        nextSlots = new BRelation<Slots, Slots>(new BTuple<Slots, Slots>(Slots.slot1, Slots.slot2), new BTuple<Slots, Slots>(Slots.slot2, Slots.slot3), new BTuple<Slots, Slots>(Slots.slot3, Slots.slot1), new BTuple<Slots, Slots>(Slots.slot4, Slots.slot1));
         RT_Slots = new BSet<Slots>(Slots.slot1, Slots.slot2);
         nextNodes = new BRelation<Nodes, Nodes>(new BTuple<Nodes, Nodes>(Nodes.node1, Nodes.node2), new BTuple<Nodes, Nodes>(Nodes.node2, Nodes.node3), new BTuple<Nodes, Nodes>(Nodes.node3, Nodes.node4), new BTuple<Nodes, Nodes>(Nodes.node4, Nodes.node1), new BTuple<Nodes, Nodes>(Nodes.node5, Nodes.node1));
+        nextSlots = new BRelation<Slots, Slots>(new BTuple<Slots, Slots>(Slots.slot1, Slots.slot2), new BTuple<Slots, Slots>(Slots.slot2, Slots.slot3), new BTuple<Slots, Slots>(Slots.slot3, Slots.slot1), new BTuple<Slots, Slots>(Slots.slot4, Slots.slot1));
+        if(!(new BBoolean(new BBoolean(nextSlots.checkDomain(_Slots).and(nextSlots.checkRange(_Slots)).and(nextSlots.isFunction()).and(nextSlots.isTotal(_Slots)).booleanValue() && RT_Slots.strictSubset(_Slots).booleanValue()).booleanValue() && nextNodes.checkDomain(_Nodes).and(nextNodes.checkRange(_Nodes)).and(nextNodes.isFunction()).and(nextNodes.isTotal(_Nodes)).booleanValue())).booleanValue()) {
+            throw new RuntimeException("Contradiction in PROPERTIES detected!");
+        }
     }
 
     public rether() {

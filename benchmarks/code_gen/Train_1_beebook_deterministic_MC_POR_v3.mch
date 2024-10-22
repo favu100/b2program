@@ -1,4 +1,4 @@
-MACHINE Train_1_beebook_deterministic_MC_POR_v2
+MACHINE Train_1_beebook_deterministic_MC_POR_v3 // this version is very close to Train_1_beebook_tlc_POR. For instance, top-level ANY substitutions are not re-written to PRE as done in Train_1_beebook_deterministic_MC_POR_v2. DEFINITIONS are still inlined.
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I,J,K,L,M,N};
   ROUTES={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10}
@@ -27,7 +27,7 @@ ABSTRACT_VARIABLES
 PROPERTIES
     /* @axm2 */ dom(rtbl) = BLOCKS
   & /* @axm3 */ ran(rtbl) = ROUTES
-  & /* @axm4 */ nxt : ROUTES --> (BLOCKS >+> BLOCKS)
+  & /* @axm4 */ dom(nxt) = ROUTES & ran(nxt) <: (BLOCKS >+> BLOCKS)
   & /* @axm5 */ fst : ROUTES --> BLOCKS
   & /* @axm6 */ lst : ROUTES --> BLOCKS
   & /* @axm7 */ fst~ <: rtbl
@@ -42,23 +42,20 @@ PROPERTIES
   & /* @axm41 */ fst = {R1 |-> L,R2 |-> L,R3 |-> L,R4 |-> M,R5 |-> M,R6 |-> C,R7 |-> G,R8 |-> N,R9 |-> G,R10 |-> N}
   & /* @axm42 */ lst = {R1 |-> C,R2 |-> G,R3 |-> N,R4 |-> G,R5 |-> N,R6 |-> L,R7 |-> L,R8 |-> L,R9 |-> M,R10 |-> M}
 INVARIANT
-  /* @inv1 */ TRK : BLOCKS >+> BLOCKS
-
-  & /* @inv4 */ !(r,a).(r : resrt \ frm & a = {r} => rtbl |> a = rsrtbl |> a)
-  & /* @inv5 */ !(x,y).(x : dom(TRK) & y : TRK[{x}] => #(r).(r : ROUTES & x |-> y : nxt(r)))
-  & /* @inv6 */ !(r,a).(r : frm & a = (rsrtbl~)[{r}] => a <| nxt(r) = a <| TRK)
-  & /* @inv7 */ LBT <: OCC
-  & /* @inv8 */ !(a,b,c,d).(a : dom(rsrtbl) & b : LBT & c = rsrtbl(b) & d = nxt(c) &
-                            (b : ran(d) & (a = (d~)(b))) => rsrtbl(a) /= c)
-  & /* @inv9 */ rsrtbl : resbl --> resrt
-  & /* @inv10 */ rsrtbl <: rtbl
-  & /* @inv11 */ OCC <: resbl
-  & /* @inv12 */ !(r,a,b,c).(r : ROUTES & a = nxt(r) & b = (rsrtbl~)[{r}] & c = b \ OCC =>
-                                    a[(rtbl~)[{r}] \ b] /\ c = {} &
-                                    a[b] <: b &
-                                    a[c] <: c)
+    /* @inv3 */ rsrtbl : resbl --> resrt
+  & /* @inv5 */ rsrtbl <: rtbl
+  & /* @inv4 */ OCC <: resbl
+  & /* @inv6 */ !(r).(r : ROUTES => nxt(r)[(rtbl~)[{r}] \ (rsrtbl~)[{r}]] /\ (rsrtbl~)[{r}] \ OCC = {})
+  & /* @inv7 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}]] <: (rsrtbl~)[{r}])
+  & /* @inv8 */ !(r).(r : ROUTES => nxt(r)[(rsrtbl~)[{r}] \ OCC] <: (rsrtbl~)[{r}] \ OCC)
+  & /* @inv1 */ TRK : BLOCKS >+> BLOCKS
   & /* @inv2 */ frm <: resrt
   & /* @inv3 */ rsrtbl[OCC] <: frm
+  & /* @inv4 */ !(r).(r : resrt \ frm => rtbl |> {r} = rsrtbl |> {r})
+  & /* @inv5 */ !(x,y).(x : BLOCKS & y : BLOCKS & x |-> y : TRK => #(r).(r : ROUTES & x |-> y : nxt(r)))
+  & /* @inv6 */ !(r).(r : frm => (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK)
+  & /* @inv7 */ LBT <: OCC
+  & /* @inv8 */ !(a,b).(a : BLOCKS & b : LBT & (b : ran(nxt(rsrtbl(b))) & (a = (nxt(rsrtbl(b))~)(b) & a : dom(rsrtbl))) => rsrtbl(a) /= rsrtbl(b))
 ASSERTIONS
   /* @thm1 */ !(b).(b : OCC & b : dom(TRK) => nxt(rsrtbl(b))(b) = TRK(b));
   /* @thm2 */ ran(lst) /\ dom(TRK) \ ran(fst) = {};
@@ -79,9 +76,10 @@ INITIALISATION
          LBT := {}
 
 OPERATIONS
-  route_reservation(r) =
+  route_reservation =
 
-    PRE
+    ANY r
+    WHERE
       /* @grd1 */ r : ROUTES \ resrt
       & /* @grd2 */ (rtbl~)[{r}] /\ resbl = {}
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
@@ -93,8 +91,9 @@ OPERATIONS
          resbl := resbl \/ (rtbl~)[{r}]
     END;
 
-  route_freeing(r) =
-    PRE
+  route_freeing =
+    ANY r
+    WHERE
         /* @grd1 */ r : resrt \ ran(rsrtbl)
     THEN
          resrt := resrt \ {r}
@@ -102,8 +101,9 @@ OPERATIONS
          frm := frm \ {r}
     END;
 
-  FRONT_MOVE_1(r) =
-    PRE
+  FRONT_MOVE_1 =
+    ANY r
+    WHERE
         /* @grd1 */ r : frm
       & /* @grd3 */ fst(r) : resbl \ OCC
       & /* @grd2 */ r = rsrtbl(fst(r))
@@ -114,16 +114,18 @@ OPERATIONS
          LBT := LBT \/ {fst(r)}
     END;
 
-  FRONT_MOVE_2(b) =
-    PRE
+  FRONT_MOVE_2 =
+    ANY b
+    WHERE
         /* @grd1 */ b : OCC /\ dom(TRK)
       & /* @grd2 */ TRK(b) /: OCC
     THEN
          OCC := OCC \/ {TRK(b)}
     END;
 
-  BACK_MOVE_1(b) =
-    PRE
+  BACK_MOVE_1 =
+    ANY b
+    WHERE
       /* @grd1 */ b : LBT \ dom(TRK)
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
@@ -136,8 +138,9 @@ OPERATIONS
          LBT := LBT \ {b}
     END;
 
-  BACK_MOVE_2(b) =
-    PRE
+  BACK_MOVE_2 =
+    ANY b
+    WHERE
         /* @grd1 */ b : LBT /\ dom(TRK)
       & /* @grd2 */ TRK(b) : OCC
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
@@ -152,16 +155,18 @@ OPERATIONS
 
     END;
 
-  point_positionning(r) =
-    PRE
+  point_positionning =
+    ANY r
+    WHERE
         /* @grd1 */ r : resrt \ frm
         & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */
     THEN
          TRK := ((dom(nxt(r)) <<| TRK) |>> ran(nxt(r))) \/ nxt(r)
     END;
 
-  route_formation(r) =
-    PRE
+  route_formation =
+    ANY r
+    WHERE
         /* @grd1 */ r : resrt \ frm
       & /* @grd2 */ (rsrtbl~)[{r}] <| nxt(r) = (rsrtbl~)[{r}] <| TRK
       & ({} = resrt \ ran(rsrtbl)) /* POR REDUCTION */

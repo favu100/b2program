@@ -21,10 +21,13 @@ PROPERTIES
   & /* @sort_c0:axm2  */ f : 1 .. n >-> NATURAL
   & /* @sort_c0_data100:prob_f  */ f = %i.(i : 1 .. n| 15000 - i)
 INVARIANT
-    /* @sort_m2:inv1_m2  */ j >= k & j <= n
-  & /* @sort_m2:inv2_m2  */ l >= k & j <= j
+    /* @sort_m2:inv1_m2  */ j : k .. n
+  & /* @sort_m2:inv2_m2  */ l : k .. j
   & /* @sort_m2:inv3_m2  */ g(l) = min(g[k .. j])
   & /* @sort_m1:inv1_m1  */ g : 1 .. n >-> NATURAL
+  & /* @sort_m1:inv2_m1  */ ran(g) = ran(f)
+  & /* @sort_m1:inv3_m1  */ k : 1 .. n
+  & /* @sort_m1:inv5_m1  */ l : NATURAL
 
 INITIALISATION
     BEGIN

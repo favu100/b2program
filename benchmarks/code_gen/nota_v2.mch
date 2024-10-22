@@ -131,9 +131,9 @@ OPERATIONS
 
  oid <-- constructor_resourceManager(newrm) =
  PRE
+   resourceManagers = {} &
    newrm : RESOURCEMANAGER - resourceManagers &
-   newrm /: dom(rm_services) &
-   resourceManagers = {}
+   newrm /: dom(rm_services)
  THEN
    resourceManagers := resourceManagers \/ { newrm } ||
    rm_services(newrm) := {}  ||
@@ -235,6 +235,7 @@ in_announceResourceManager(self,rm) =
     err := IN_REGISTRATION_OK ||
     sid := {si}
   END;
+
  sid,err <-- in_register_failed(self,ss) =
  PRE
   self : interconnectNodes &
@@ -250,12 +251,12 @@ soc,err <-- in_requestTargetSocket_Granted(self,ii,srcsoc,srcsid,targsid,newsoc)
 PRE
  self : interconnectNodes &
  ii : interconnectNodes &
+ self /= ii &
  srcsoc : sockets &
+ in_sockets(srcsoc) = ii &
  srcsid : sids &
  targsid : sids &
-   newsoc : SOCKET - sockets  &
- self /= ii &
- in_sockets(srcsoc) = ii
+ newsoc : SOCKET - sockets
   THEN
    sockets := sockets \/ { newsoc } ||
    soc := { newsoc } ||
@@ -268,11 +269,11 @@ soc,err <-- in_requestTargetSocket_NotGranted(self,ii,srcsoc,srcsid,targsid) =
 PRE
  self : interconnectNodes &
  ii : interconnectNodes &
- srcsoc : sockets &
- srcsid : sids &
- targsid : sids &
  self /= ii &
- in_sockets(srcsoc) = ii
+ srcsoc : sockets &
+ in_sockets(srcsoc) = ii &
+ srcsid : sids &
+ targsid : sids
 THEN
   soc := SOCKET-SOCKET ||
   err := IN_TARGET_SOCKET_NOT_GRANTED

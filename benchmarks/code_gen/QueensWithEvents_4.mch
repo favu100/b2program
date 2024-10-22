@@ -1,33 +1,26 @@
 MACHINE QueensWithEvents_4
 // rewritten for B2Program by inlining DEFINITIONS
 // v2: rewrote perm(1..n) for B2Program
-CONSTANTS n, interval, allFields
+CONSTANTS n
 PROPERTIES
  n : NATURAL &
- n = 4 &
- interval = 1..n &
- allFields = POW(interval * interval)
+ n = 4
 VARIABLES queens
 INVARIANT
-  queens : interval +-> interval
+  queens : 1..n +-> 1..n
 INITIALISATION
   queens := {}
 OPERATIONS
-  Solve(solution) = SELECT
-        solution : allFields
-      // & solution : perm(interval)
-      &  dom(solution) = interval
-      &  ran(solution) = interval
-      // & !(x,y,z).(x : interval & y:interval & z:interval & x|->y : solution & x|->z: solution => y=z)
-      // this version works better with ProB:
-      & !(x,y).(x:interval & y:interval & x|->y : solution    => !z.(z:interval & x|->z: solution => y=z))
-        // this actually implies it is a bijection
+  Solve =
+      ANY solution WHERE
+        solution : POW((1..n) * (1..n))
+      & solution : perm(1..n)
       &
         !(q1,q2).(
          (
-          q1 : interval
+          q1 : 1..n
           &
-          q2 : interval \ {1}
+          q2 : (1..n) \ {1}
           &
           q2 > q1
          )

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
@@ -20,6 +22,7 @@
 #include <btypes_primitives/LoopInvariantViolation.hpp>
 #include <btypes_primitives/BSet.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BObject.hpp>
 #include <btypes_primitives/BRelation.hpp>
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BTuple.hpp>
@@ -254,8 +257,9 @@ class QueensWithEvents_4 {
     private:
 
         BInteger n;
-        BSet<BInteger > interval;
-        BSet<BRelation<BInteger, BInteger > > allFields;
+        BSet<BRelation<BInteger, BInteger > > __aux_constant_2;
+        BSet<BInteger > __aux_constant_3;
+        BSet<BInteger > __aux_constant_1;
 
 
 
@@ -268,15 +272,20 @@ class QueensWithEvents_4 {
 
         QueensWithEvents_4() {
             n = (BInteger(4));
-            interval = (BSet<BInteger>::interval((BInteger(1)),n));
-            allFields = (BRelation<BInteger, BInteger >::cartesianProduct(interval, interval)).pow();
+            __aux_constant_2 = (BRelation<BInteger, BInteger >::cartesianProduct((BSet<BInteger>::interval((BInteger(1)),n)), (BSet<BInteger>::interval((BInteger(1)),n)))).pow();
+            __aux_constant_3 = (BSet<BInteger>::interval((BInteger(1)),n)).difference((BSet<BInteger >((BInteger(1)))));
+            __aux_constant_1 = (BSet<BInteger>::interval((BInteger(1)),n));
+            if(!((n.isNatural())).booleanValue()) {
+                throw std::runtime_error("Contradiction in PROPERTIES detected!");
+            }
             queens = (BRelation<BInteger, BInteger >());
         }
 
-        QueensWithEvents_4(const BInteger& n, const BSet<BInteger >& interval, const BSet<BRelation<BInteger, BInteger > >& allFields, const BRelation<BInteger, BInteger >& queens) {
+        QueensWithEvents_4(const BInteger& n, const BSet<BRelation<BInteger, BInteger > >& __aux_constant_2, const BSet<BInteger >& __aux_constant_3, const BSet<BInteger >& __aux_constant_1, const BRelation<BInteger, BInteger >& queens) {
             this->n = n;
-            this->interval = interval;
-            this->allFields = allFields;
+            this->__aux_constant_2 = __aux_constant_2;
+            this->__aux_constant_3 = __aux_constant_3;
+            this->__aux_constant_1 = __aux_constant_1;
             this->queens = queens;
         }
 
@@ -289,12 +298,16 @@ class QueensWithEvents_4 {
             return n;
         }
 
-        BSet<BInteger > _get_interval() const {
-            return interval;
+        BSet<BRelation<BInteger, BInteger > > _get___aux_constant_2() const {
+            return __aux_constant_2;
         }
 
-        BSet<BRelation<BInteger, BInteger > > _get_allFields() const {
-            return allFields;
+        BSet<BInteger > _get___aux_constant_3() const {
+            return __aux_constant_3;
+        }
+
+        BSet<BInteger > _get___aux_constant_1() const {
+            return __aux_constant_1;
         }
 
         BRelation<BInteger, BInteger > _get_queens() const {
@@ -303,54 +316,39 @@ class QueensWithEvents_4 {
 
 
         BSet<BRelation<BInteger, BInteger >> _tr_Solve() const {
-            BSet<BRelation<BInteger, BInteger >> _ic_set_4 = BSet<BRelation<BInteger, BInteger >>();
-            for(const BRelation<BInteger, BInteger >& _ic_solution_1 : allFields) {
-                BBoolean _ic_boolean_5 = BBoolean(true);
-                for(const BInteger& _ic_x_1 : interval) {
-                    for(const BInteger& _ic_y_1 : interval) {
-                        BBoolean _ic_boolean_4 = BBoolean(true);
-                        for(const BInteger& _ic_z_1 : interval) {
-                            if(!((BBoolean(!(BBoolean(interval.elementOf(_ic_z_1).booleanValue() && _ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_z_1))).booleanValue())).booleanValue() || _ic_y_1.equal(_ic_z_1).booleanValue()))).booleanValue()) {
-                                _ic_boolean_4 = BBoolean(false);
+            BSet<BRelation<BInteger, BInteger >> _ic_set_2 = BSet<BRelation<BInteger, BInteger >>();
+            for(const BRelation<BInteger, BInteger >& _ic_solution_1 : __aux_constant_2) {
+                BBoolean _ic_boolean_2 = BBoolean(true);
+                if((((_ic_solution_1.checkDomain((BSet<BInteger>::interval((BInteger(1)),_ic_solution_1.card()))))._and((_ic_solution_1.checkRange(__aux_constant_1)))._and((_ic_solution_1.isFunction()))._and((_ic_solution_1.isTotal((BSet<BInteger>::interval((BInteger(1)),_ic_solution_1.card())))))._and((_ic_solution_1.isBijection(__aux_constant_1))))).booleanValue()) {
+                    for(const BInteger& _ic_q1_1 : __aux_constant_1) {
+                        for(const BInteger& _ic_q2_1 : __aux_constant_3) {
+                            if(!((BBoolean(!_ic_q2_1.greater(_ic_q1_1).booleanValue() || (BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue())).booleanValue()))).booleanValue()) {
+                                _ic_boolean_2 = BBoolean(false);
                                 break;
                             }
 
-                        }
-                        if(((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue()))).booleanValue()) {
-                            if(!((BBoolean(!(BBoolean((BBoolean(interval.elementOf(_ic_x_1).booleanValue() && interval.elementOf(_ic_y_1).booleanValue())).booleanValue() && _ic_solution_1.elementOf((BTuple<BInteger, BInteger >(_ic_x_1, _ic_y_1))).booleanValue())).booleanValue() || _ic_boolean_4.booleanValue()))).booleanValue()) {
-                                _ic_boolean_5 = BBoolean(false);
-                                break;
-                            }
                         }
 
                     }
-                }BBoolean _ic_boolean_6 = BBoolean(true);
-                for(const BInteger& _ic_q1_1 : interval) {
-                    for(const BInteger& _ic_q2_1 : interval.difference((BSet<BInteger >((BInteger(1)))))) {
-                        if(((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue()))).booleanValue()) {
-                            if(!((BBoolean(!(BBoolean((BBoolean(interval.elementOf(_ic_q1_1).booleanValue() && interval.difference((BSet<BInteger >((BInteger(1))))).elementOf(_ic_q2_1).booleanValue())).booleanValue() && _ic_q2_1.greater(_ic_q1_1).booleanValue())).booleanValue() || (BBoolean(_ic_solution_1.functionCall(_ic_q1_1).plus(_ic_q2_1).minus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue() && _ic_solution_1.functionCall(_ic_q1_1).minus(_ic_q2_1).plus(_ic_q1_1).unequal(_ic_solution_1.functionCall(_ic_q2_1)).booleanValue())).booleanValue()))).booleanValue()) {
-                                _ic_boolean_6 = BBoolean(false);
-                                break;
-                            }
-                        }
-
-                    }
-                }BBoolean _ic_boolean_7 = BBoolean(true);
-                for(const BInteger& _ic_x_1 : queens.domain()) {
-                    if(((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue()))).booleanValue()) {
-                        if(!((BBoolean(!queens.domain().elementOf(_ic_x_1).booleanValue() || _ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1)).booleanValue()))).booleanValue()) {
-                            _ic_boolean_7 = BBoolean(false);
+                }
+                BBoolean _ic_boolean_3 = BBoolean(true);
+                if(((BBoolean(((_ic_solution_1.checkDomain((BSet<BInteger>::interval((BInteger(1)),_ic_solution_1.card()))))._and((_ic_solution_1.checkRange(__aux_constant_1)))._and((_ic_solution_1.isFunction()))._and((_ic_solution_1.isTotal((BSet<BInteger>::interval((BInteger(1)),_ic_solution_1.card())))))._and((_ic_solution_1.isBijection(__aux_constant_1)))).booleanValue() && _ic_boolean_2.booleanValue()))).booleanValue()) {
+                    for(const BInteger& _ic_x_1 : queens.domain()) {
+                        if(!(_ic_solution_1.functionCall(_ic_x_1).equal(queens.functionCall(_ic_x_1))).booleanValue()) {
+                            _ic_boolean_3 = BBoolean(false);
                             break;
                         }
-                    }
 
+                    }
                 }
-                if(((BBoolean((BBoolean((BBoolean((BBoolean(_ic_solution_1.domain().equal(interval).booleanValue() && _ic_solution_1.range().equal(interval).booleanValue())).booleanValue() && _ic_boolean_5.booleanValue())).booleanValue() && _ic_boolean_6.booleanValue())).booleanValue() && _ic_boolean_7.booleanValue()))).booleanValue()) {
-                    _ic_set_4 = _ic_set_4._union(BSet<BRelation<BInteger, BInteger >>(_ic_solution_1));
+
+                if(((BBoolean((BBoolean(((_ic_solution_1.checkDomain((BSet<BInteger>::interval((BInteger(1)),_ic_solution_1.card()))))._and((_ic_solution_1.checkRange(__aux_constant_1)))._and((_ic_solution_1.isFunction()))._and((_ic_solution_1.isTotal((BSet<BInteger>::interval((BInteger(1)),_ic_solution_1.card())))))._and((_ic_solution_1.isBijection(__aux_constant_1)))).booleanValue() && _ic_boolean_2.booleanValue())).booleanValue() && _ic_boolean_3.booleanValue()))).booleanValue()) {
+                    _ic_set_2 = _ic_set_2._union(BSet<BRelation<BInteger, BInteger >>(_ic_solution_1));
                 }
 
             }
-            return _ic_set_4;
+
+            return _ic_set_2;
         }
 
         _ProjectionRead_Solve _projected_state_for_Solve() const {
@@ -374,11 +372,11 @@ class QueensWithEvents_4 {
         }
 
         bool _check_inv_1() const {
-            return (((queens.checkDomain(interval))._and((queens.checkRange(interval)))._and((queens.isFunction()))._and((queens.isPartial(interval))))).booleanValue();
+            return (((queens.checkDomain(__aux_constant_1))._and((queens.checkRange(__aux_constant_1)))._and((queens.isFunction()))._and((queens.isPartial(__aux_constant_1))))).booleanValue();
         }
 
         QueensWithEvents_4 _copy() const {
-            return QueensWithEvents_4(n, interval, allFields, queens);
+            return QueensWithEvents_4(n, __aux_constant_2, __aux_constant_3, __aux_constant_1, queens);
         }
 
         friend bool operator ==(const QueensWithEvents_4& o1, const QueensWithEvents_4& o2) {
@@ -484,7 +482,7 @@ class ModelChecker {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(states.size() % 50000 == 0) {
+                        if(isDebug && states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -592,29 +590,27 @@ class ModelChecker {
         QueensWithEvents_4 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
+                QueensWithEvents_4 state;
                 switch(type) {
                     case QueensWithEvents_4::BFS: {
-                        QueensWithEvents_4 state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case QueensWithEvents_4::DFS: {
-                        QueensWithEvents_4 state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case QueensWithEvents_4::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            QueensWithEvents_4 state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            QueensWithEvents_4 state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 
@@ -795,8 +791,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = true;
-    // TODO
+    bool isDebug = false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

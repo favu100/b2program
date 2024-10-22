@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
@@ -85,6 +87,7 @@ class Cruise_finite1_deterministic_MC {
                         case RSneg: return strm << "RSneg";
                         case RSequal: return strm << "RSequal";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -140,6 +143,7 @@ class Cruise_finite1_deterministic_MC {
                         case ODclose: return strm << "ODclose";
                         case ODveryclose: return strm << "ODveryclose";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -728,16 +732,16 @@ class Cruise_finite1_deterministic_MC {
                             }
                     };
 
-                BBoolean ObstacleStatusJustChanged;
                 BBoolean CCInitialisationInProgress;
+                BBoolean ObstacleStatusJustChanged;
                 ODset ObstacleDistance;
                 RSset ObstacleRelativeSpeed;
                 BBoolean ObstaclePresent;
                 BBoolean CruiseSpeedChangeInProgress;
 
-                _ProjectionRead_CCInitialisationFinished(const BBoolean& ObstacleStatusJustChanged, const BBoolean& CCInitialisationInProgress, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
-                    this->ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+                _ProjectionRead_CCInitialisationFinished(const BBoolean& CCInitialisationInProgress, const BBoolean& ObstacleStatusJustChanged, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
                     this->CCInitialisationInProgress = CCInitialisationInProgress;
+                    this->ObstacleStatusJustChanged = ObstacleStatusJustChanged;
                     this->ObstacleDistance = ObstacleDistance;
                     this->ObstacleRelativeSpeed = ObstacleRelativeSpeed;
                     this->ObstaclePresent = ObstaclePresent;
@@ -745,18 +749,18 @@ class Cruise_finite1_deterministic_MC {
                 }
 
                 friend bool operator ==(const _ProjectionRead_CCInitialisationFinished& o1, const _ProjectionRead_CCInitialisationFinished& o2) {
-                    return o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
+                    return o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend bool operator !=(const _ProjectionRead_CCInitialisationFinished& o1, const _ProjectionRead_CCInitialisationFinished& o2) {
-                    return o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
+                    return o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead_CCInitialisationFinished& e) {
                     strm << "{";
-                    strm << "ObstacleStatusJustChanged: " << e.ObstacleStatusJustChanged;
-                    strm << ", ";
                     strm << "CCInitialisationInProgress: " << e.CCInitialisationInProgress;
+                    strm << ", ";
+                    strm << "ObstacleStatusJustChanged: " << e.ObstacleStatusJustChanged;
                     strm << ", ";
                     strm << "ObstacleDistance: " << e.ObstacleDistance;
                     strm << ", ";
@@ -771,8 +775,8 @@ class Cruise_finite1_deterministic_MC {
 
                 int hashCode() const {
                     int result = 1;
-                    result = 31 * result + (ObstacleStatusJustChanged.hashCode() << 1);
                     result = 31 * result + (CCInitialisationInProgress.hashCode() << 1);
+                    result = 31 * result + (ObstacleStatusJustChanged.hashCode() << 1);
                     result = 31 * result + (ObstacleDistance.hashCode() << 1);
                     result = 31 * result + (ObstacleRelativeSpeed.hashCode() << 1);
                     result = 31 * result + (ObstaclePresent.hashCode() << 1);
@@ -802,16 +806,16 @@ class Cruise_finite1_deterministic_MC {
                             }
                     };
 
-                BBoolean ObstacleStatusJustChanged;
                 BBoolean CCInitialisationInProgress;
+                BBoolean ObstacleStatusJustChanged;
                 ODset ObstacleDistance;
                 RSset ObstacleRelativeSpeed;
                 BBoolean ObstaclePresent;
                 BBoolean CruiseSpeedChangeInProgress;
 
-                _ProjectionRead__tr_CCInitialisationFinished(const BBoolean& ObstacleStatusJustChanged, const BBoolean& CCInitialisationInProgress, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
-                    this->ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+                _ProjectionRead__tr_CCInitialisationFinished(const BBoolean& CCInitialisationInProgress, const BBoolean& ObstacleStatusJustChanged, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
                     this->CCInitialisationInProgress = CCInitialisationInProgress;
+                    this->ObstacleStatusJustChanged = ObstacleStatusJustChanged;
                     this->ObstacleDistance = ObstacleDistance;
                     this->ObstacleRelativeSpeed = ObstacleRelativeSpeed;
                     this->ObstaclePresent = ObstaclePresent;
@@ -819,18 +823,18 @@ class Cruise_finite1_deterministic_MC {
                 }
 
                 friend bool operator ==(const _ProjectionRead__tr_CCInitialisationFinished& o1, const _ProjectionRead__tr_CCInitialisationFinished& o2) {
-                    return o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
+                    return o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend bool operator !=(const _ProjectionRead__tr_CCInitialisationFinished& o1, const _ProjectionRead__tr_CCInitialisationFinished& o2) {
-                    return o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
+                    return o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__tr_CCInitialisationFinished& e) {
                     strm << "{";
-                    strm << "ObstacleStatusJustChanged: " << e.ObstacleStatusJustChanged;
-                    strm << ", "; 
                     strm << "CCInitialisationInProgress: " << e.CCInitialisationInProgress;
+                    strm << ", "; 
+                    strm << "ObstacleStatusJustChanged: " << e.ObstacleStatusJustChanged;
                     strm << ", "; 
                     strm << "ObstacleDistance: " << e.ObstacleDistance;
                     strm << ", "; 
@@ -845,8 +849,8 @@ class Cruise_finite1_deterministic_MC {
 
                 int hashCode() const {
                     int result = 1;
-                    result = 31 * result + (ObstacleStatusJustChanged.hashCode() << 1);
                     result = 31 * result + (CCInitialisationInProgress.hashCode() << 1);
+                    result = 31 * result + (ObstacleStatusJustChanged.hashCode() << 1);
                     result = 31 * result + (ObstacleDistance.hashCode() << 1);
                     result = 31 * result + (ObstacleRelativeSpeed.hashCode() << 1);
                     result = 31 * result + (ObstaclePresent.hashCode() << 1);
@@ -4399,16 +4403,16 @@ class Cruise_finite1_deterministic_MC {
                             }
                     };
 
-                BBoolean CCInitialisationInProgress;
                 BBoolean ObstacleStatusJustChanged;
+                BBoolean CCInitialisationInProgress;
                 ODset ObstacleDistance;
                 RSset ObstacleRelativeSpeed;
                 BBoolean ObstaclePresent;
                 BBoolean CruiseSpeedChangeInProgress;
 
-                _ProjectionRead_VehicleManageObstacle(const BBoolean& CCInitialisationInProgress, const BBoolean& ObstacleStatusJustChanged, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
-                    this->CCInitialisationInProgress = CCInitialisationInProgress;
+                _ProjectionRead_VehicleManageObstacle(const BBoolean& ObstacleStatusJustChanged, const BBoolean& CCInitialisationInProgress, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
                     this->ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+                    this->CCInitialisationInProgress = CCInitialisationInProgress;
                     this->ObstacleDistance = ObstacleDistance;
                     this->ObstacleRelativeSpeed = ObstacleRelativeSpeed;
                     this->ObstaclePresent = ObstaclePresent;
@@ -4416,18 +4420,18 @@ class Cruise_finite1_deterministic_MC {
                 }
 
                 friend bool operator ==(const _ProjectionRead_VehicleManageObstacle& o1, const _ProjectionRead_VehicleManageObstacle& o2) {
-                    return o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
+                    return o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend bool operator !=(const _ProjectionRead_VehicleManageObstacle& o1, const _ProjectionRead_VehicleManageObstacle& o2) {
-                    return o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
+                    return o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead_VehicleManageObstacle& e) {
                     strm << "{";
-                    strm << "CCInitialisationInProgress: " << e.CCInitialisationInProgress;
-                    strm << ", ";
                     strm << "ObstacleStatusJustChanged: " << e.ObstacleStatusJustChanged;
+                    strm << ", ";
+                    strm << "CCInitialisationInProgress: " << e.CCInitialisationInProgress;
                     strm << ", ";
                     strm << "ObstacleDistance: " << e.ObstacleDistance;
                     strm << ", ";
@@ -4442,8 +4446,8 @@ class Cruise_finite1_deterministic_MC {
 
                 int hashCode() const {
                     int result = 1;
-                    result = 31 * result + (CCInitialisationInProgress.hashCode() << 1);
                     result = 31 * result + (ObstacleStatusJustChanged.hashCode() << 1);
+                    result = 31 * result + (CCInitialisationInProgress.hashCode() << 1);
                     result = 31 * result + (ObstacleDistance.hashCode() << 1);
                     result = 31 * result + (ObstacleRelativeSpeed.hashCode() << 1);
                     result = 31 * result + (ObstaclePresent.hashCode() << 1);
@@ -4473,16 +4477,16 @@ class Cruise_finite1_deterministic_MC {
                             }
                     };
 
-                BBoolean CCInitialisationInProgress;
                 BBoolean ObstacleStatusJustChanged;
+                BBoolean CCInitialisationInProgress;
                 ODset ObstacleDistance;
                 RSset ObstacleRelativeSpeed;
                 BBoolean ObstaclePresent;
                 BBoolean CruiseSpeedChangeInProgress;
 
-                _ProjectionRead__tr_VehicleManageObstacle(const BBoolean& CCInitialisationInProgress, const BBoolean& ObstacleStatusJustChanged, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
-                    this->CCInitialisationInProgress = CCInitialisationInProgress;
+                _ProjectionRead__tr_VehicleManageObstacle(const BBoolean& ObstacleStatusJustChanged, const BBoolean& CCInitialisationInProgress, const ODset& ObstacleDistance, const RSset& ObstacleRelativeSpeed, const BBoolean& ObstaclePresent, const BBoolean& CruiseSpeedChangeInProgress) {
                     this->ObstacleStatusJustChanged = ObstacleStatusJustChanged;
+                    this->CCInitialisationInProgress = CCInitialisationInProgress;
                     this->ObstacleDistance = ObstacleDistance;
                     this->ObstacleRelativeSpeed = ObstacleRelativeSpeed;
                     this->ObstaclePresent = ObstaclePresent;
@@ -4490,18 +4494,18 @@ class Cruise_finite1_deterministic_MC {
                 }
 
                 friend bool operator ==(const _ProjectionRead__tr_VehicleManageObstacle& o1, const _ProjectionRead__tr_VehicleManageObstacle& o2) {
-                    return o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
+                    return o1.ObstacleStatusJustChanged == (o2.ObstacleStatusJustChanged) && o1.CCInitialisationInProgress == (o2.CCInitialisationInProgress) && o1.ObstacleDistance == (o2.ObstacleDistance) && o1.ObstacleRelativeSpeed == (o2.ObstacleRelativeSpeed) && o1.ObstaclePresent == (o2.ObstaclePresent) && o1.CruiseSpeedChangeInProgress == (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend bool operator !=(const _ProjectionRead__tr_VehicleManageObstacle& o1, const _ProjectionRead__tr_VehicleManageObstacle& o2) {
-                    return o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
+                    return o1.ObstacleStatusJustChanged != (o2.ObstacleStatusJustChanged) || o1.CCInitialisationInProgress != (o2.CCInitialisationInProgress) || o1.ObstacleDistance != (o2.ObstacleDistance) || o1.ObstacleRelativeSpeed != (o2.ObstacleRelativeSpeed) || o1.ObstaclePresent != (o2.ObstaclePresent) || o1.CruiseSpeedChangeInProgress != (o2.CruiseSpeedChangeInProgress);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__tr_VehicleManageObstacle& e) {
                     strm << "{";
-                    strm << "CCInitialisationInProgress: " << e.CCInitialisationInProgress;
-                    strm << ", "; 
                     strm << "ObstacleStatusJustChanged: " << e.ObstacleStatusJustChanged;
+                    strm << ", "; 
+                    strm << "CCInitialisationInProgress: " << e.CCInitialisationInProgress;
                     strm << ", "; 
                     strm << "ObstacleDistance: " << e.ObstacleDistance;
                     strm << ", "; 
@@ -4516,8 +4520,8 @@ class Cruise_finite1_deterministic_MC {
 
                 int hashCode() const {
                     int result = 1;
-                    result = 31 * result + (CCInitialisationInProgress.hashCode() << 1);
                     result = 31 * result + (ObstacleStatusJustChanged.hashCode() << 1);
+                    result = 31 * result + (CCInitialisationInProgress.hashCode() << 1);
                     result = 31 * result + (ObstacleDistance.hashCode() << 1);
                     result = 31 * result + (ObstacleRelativeSpeed.hashCode() << 1);
                     result = 31 * result + (ObstaclePresent.hashCode() << 1);
@@ -7281,26 +7285,32 @@ class Cruise_finite1_deterministic_MC {
 
         BSet<BTuple<BBoolean, BBoolean >> _tr_SetCruiseSpeed() const {
             BSet<BTuple<BBoolean, BBoolean >> _ic_set_2 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(const BBoolean& _ic_vcks_1 : (BOOL)) {
-                for(const BBoolean& _ic_csam_1 : (BOOL)) {
-                    if((CruiseAllowed.equal((BBoolean(true)))).booleanValue()) {
+            if((CruiseAllowed.equal((BBoolean(true)))).booleanValue()) {
+                for(const BBoolean& _ic_vcks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_csam_1 : (BOOL)) {
                         _ic_set_2 = _ic_set_2._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vcks_1, _ic_csam_1))));
+
                     }
 
                 }
+
             }
             return _ic_set_2;
         }
 
         BSet<BTuple<BBoolean, BBoolean >> _tr_CCInitialisationFinished() const {
             BSet<BTuple<BBoolean, BBoolean >> _ic_set_3 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(const BBoolean& _ic_vtks_1 : (BOOL)) {
-                for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
-                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_3 = _ic_set_3._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+            if((CCInitialisationInProgress.equal((BBoolean(true)))).booleanValue()) {
+                for(const BBoolean& _ic_vtks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
+                        if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue()))).booleanValue()) {
+                            _ic_set_3 = _ic_set_3._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+                        }
+
                     }
 
                 }
+
             }
             return _ic_set_3;
         }
@@ -7311,13 +7321,17 @@ class Cruise_finite1_deterministic_MC {
 
         BSet<BTuple<BBoolean, BBoolean >> _tr_CruiseSpeedChangeFinished() const {
             BSet<BTuple<BBoolean, BBoolean >> _ic_set_5 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(const BBoolean& _ic_vtks_1 : (BOOL)) {
-                for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
-                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_5 = _ic_set_5._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+            if((CruiseSpeedChangeInProgress.equal((BBoolean(true)))).booleanValue()) {
+                for(const BBoolean& _ic_vtks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
+                        if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(false))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue()))).booleanValue()) {
+                            _ic_set_5 = _ic_set_5._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+                        }
+
                     }
 
                 }
+
             }
             return _ic_set_5;
         }
@@ -7384,10 +7398,14 @@ class Cruise_finite1_deterministic_MC {
 
         BSet<BTuple<RSset, ODset >> _tr_ObstacleAppearsWhenCruiseActive() const {
             BSet<BTuple<RSset, ODset >> _ic_set_21 = BSet<BTuple<RSset, ODset >>();
-            for(const RSset& _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
-                for(const ODset& _ic_od_1 : _ODset.difference((BSet<ODset >((ODset(ODset::ODnone)))))) {
-                    if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_21 = _ic_set_21._union(BSet<BTuple<RSset, ODset >>((BTuple<RSset, ODset >(_ic_ors_1, _ic_od_1))));
+            if((ObstaclePresent.equal((BBoolean(false)))).booleanValue()) {
+                if((CruiseActive.equal((BBoolean(true)))).booleanValue()) {
+                    for(const RSset& _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
+                        for(const ODset& _ic_od_1 : _ODset.difference((BSet<ODset >((ODset(ODset::ODnone)))))) {
+                            _ic_set_21 = _ic_set_21._union(BSet<BTuple<RSset, ODset >>((BTuple<RSset, ODset >(_ic_ors_1, _ic_od_1))));
+
+                        }
+
                     }
 
                 }
@@ -7397,11 +7415,14 @@ class Cruise_finite1_deterministic_MC {
 
         BSet<RSset> _tr_ObstacleAppearsWhenCruiseInactive() const {
             BSet<RSset> _ic_set_22 = BSet<RSset>();
-            for(const RSset& _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
-                if(((BBoolean(ObstaclePresent.equal((BBoolean(false))).booleanValue() && CruiseActive.equal((BBoolean(false))).booleanValue()))).booleanValue()) {
-                    _ic_set_22 = _ic_set_22._union(BSet<RSset>(_ic_ors_1));
-                }
+            if((ObstaclePresent.equal((BBoolean(false)))).booleanValue()) {
+                if((CruiseActive.equal((BBoolean(false)))).booleanValue()) {
+                    for(const RSset& _ic_ors_1 : _RSset.difference((BSet<RSset >((RSset(RSset::RSnone)))))) {
+                        _ic_set_22 = _ic_set_22._union(BSet<RSset>(_ic_ors_1));
 
+                    }
+
+                }
             }
             return _ic_set_22;
         }
@@ -7412,13 +7433,17 @@ class Cruise_finite1_deterministic_MC {
 
         BSet<BTuple<BBoolean, BBoolean >> _tr_VehicleManageObstacle() const {
             BSet<BTuple<BBoolean, BBoolean >> _ic_set_24 = BSet<BTuple<BBoolean, BBoolean >>();
-            for(const BBoolean& _ic_vtks_1 : (BOOL)) {
-                for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
-                    if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && ObstacleStatusJustChanged.equal((BBoolean(true))).booleanValue()))).booleanValue()) {
-                        _ic_set_24 = _ic_set_24._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+            if((ObstacleStatusJustChanged.equal((BBoolean(true)))).booleanValue()) {
+                for(const BBoolean& _ic_vtks_1 : (BOOL)) {
+                    for(const BBoolean& _ic_vtktg_1 : (BOOL)) {
+                        if(((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean((BBoolean(_ic_vtks_1.equal((BBoolean(true))).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue() || CCInitialisationInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() || CruiseSpeedChangeInProgress.equal((BBoolean(true))).booleanValue())).booleanValue() && (BBoolean(!ObstaclePresent.equal((BBoolean(false))).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODclose))).booleanValue() && ObstacleRelativeSpeed.unequal((RSset(RSset::RSpos))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean(ObstacleDistance.equal((ODset(ODset::ODveryclose))).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean((BBoolean((BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() && CCInitialisationInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() && CruiseSpeedChangeInProgress.equal((BBoolean(false))).booleanValue())).booleanValue() || _ic_vtks_1.equal((BBoolean(true))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSequal))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSneg))).booleanValue() && ObstacleDistance.equal((ODset(ODset::ODnone))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue())).booleanValue() && (BBoolean(!(BBoolean(ObstacleRelativeSpeed.equal((RSset(RSset::RSpos))).booleanValue() && ObstacleDistance.unequal((ODset(ODset::ODveryclose))).booleanValue())).booleanValue() || _ic_vtktg_1.equal((BBoolean(false))).booleanValue())).booleanValue()))).booleanValue()) {
+                            _ic_set_24 = _ic_set_24._union(BSet<BTuple<BBoolean, BBoolean >>((BTuple<BBoolean, BBoolean >(_ic_vtks_1, _ic_vtktg_1))));
+                        }
+
                     }
 
                 }
+
             }
             return _ic_set_24;
         }
@@ -7444,7 +7469,7 @@ class Cruise_finite1_deterministic_MC {
         }
 
         _ProjectionRead_CCInitialisationFinished _projected_state_for_CCInitialisationFinished() const {
-            return _ProjectionRead_CCInitialisationFinished(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+            return _ProjectionRead_CCInitialisationFinished(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
         }
 
         _ProjectionRead_VehicleReachesCruiseSpeed _projected_state_for_VehicleReachesCruiseSpeed() const {
@@ -7500,7 +7525,7 @@ class Cruise_finite1_deterministic_MC {
         }
 
         _ProjectionRead_VehicleManageObstacle _projected_state_for_VehicleManageObstacle() const {
-            return _ProjectionRead_VehicleManageObstacle(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+            return _ProjectionRead_VehicleManageObstacle(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
         }
 
         _ProjectionRead_CruiseBecomesAllowed _projected_state_for_CruiseBecomesAllowed() const {
@@ -7576,7 +7601,7 @@ class Cruise_finite1_deterministic_MC {
         }
 
         _ProjectionRead__tr_VehicleManageObstacle _projected_state_for__tr_VehicleManageObstacle() const {
-            return _ProjectionRead__tr_VehicleManageObstacle(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+            return _ProjectionRead__tr_VehicleManageObstacle(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
         }
 
         _ProjectionRead__tr_CruiseBecomesAllowed _projected_state_for__tr_CruiseBecomesAllowed() const {
@@ -7604,7 +7629,7 @@ class Cruise_finite1_deterministic_MC {
         }
 
         _ProjectionRead__tr_CCInitialisationFinished _projected_state_for__tr_CCInitialisationFinished() const {
-            return _ProjectionRead__tr_CCInitialisationFinished(ObstacleStatusJustChanged,CCInitialisationInProgress,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
+            return _ProjectionRead__tr_CCInitialisationFinished(CCInitialisationInProgress,ObstacleStatusJustChanged,ObstacleDistance,ObstacleRelativeSpeed,ObstaclePresent,CruiseSpeedChangeInProgress);
         }
 
         _ProjectionRead__tr_CCInitialisationDelayFinished _projected_state_for__tr_CCInitialisationDelayFinished() const {
@@ -8052,35 +8077,35 @@ class Cruise_finite1_deterministic_MC {
         }
 
         bool _check_inv_1() const {
-            return ((BOOL).elementOf(CruiseAllowed)).booleanValue();
+            return ((CruiseAllowed.isBoolean())).booleanValue();
         }
 
         bool _check_inv_2() const {
-            return ((BOOL).elementOf(CruiseActive)).booleanValue();
+            return ((CruiseActive.isBoolean())).booleanValue();
         }
 
         bool _check_inv_3() const {
-            return ((BOOL).elementOf(VehicleAtCruiseSpeed)).booleanValue();
+            return ((VehicleAtCruiseSpeed.isBoolean())).booleanValue();
         }
 
         bool _check_inv_4() const {
-            return ((BOOL).elementOf(VehicleCanKeepSpeed)).booleanValue();
+            return ((VehicleCanKeepSpeed.isBoolean())).booleanValue();
         }
 
         bool _check_inv_5() const {
-            return ((BOOL).elementOf(VehicleTryKeepSpeed)).booleanValue();
+            return ((VehicleTryKeepSpeed.isBoolean())).booleanValue();
         }
 
         bool _check_inv_6() const {
-            return ((BOOL).elementOf(SpeedAboveMax)).booleanValue();
+            return ((SpeedAboveMax.isBoolean())).booleanValue();
         }
 
         bool _check_inv_7() const {
-            return ((BOOL).elementOf(VehicleTryKeepTimeGap)).booleanValue();
+            return ((VehicleTryKeepTimeGap.isBoolean())).booleanValue();
         }
 
         bool _check_inv_8() const {
-            return ((BOOL).elementOf(CruiseSpeedAtMax)).booleanValue();
+            return ((CruiseSpeedAtMax.isBoolean())).booleanValue();
         }
 
         bool _check_inv_9() const {
@@ -8092,7 +8117,7 @@ class Cruise_finite1_deterministic_MC {
         }
 
         bool _check_inv_11() const {
-            return ((BOOL).elementOf(ObstaclePresent)).booleanValue();
+            return ((ObstaclePresent.isBoolean())).booleanValue();
         }
 
         bool _check_inv_12() const {
@@ -8104,15 +8129,15 @@ class Cruise_finite1_deterministic_MC {
         }
 
         bool _check_inv_14() const {
-            return ((BOOL).elementOf(ObstacleStatusJustChanged)).booleanValue();
+            return ((ObstacleStatusJustChanged.isBoolean())).booleanValue();
         }
 
         bool _check_inv_15() const {
-            return ((BOOL).elementOf(CCInitialisationInProgress)).booleanValue();
+            return ((CCInitialisationInProgress.isBoolean())).booleanValue();
         }
 
         bool _check_inv_16() const {
-            return ((BOOL).elementOf(CruiseSpeedChangeInProgress)).booleanValue();
+            return ((CruiseSpeedChangeInProgress.isBoolean())).booleanValue();
         }
 
         bool _check_inv_17() const {
@@ -8557,7 +8582,7 @@ class ModelChecker {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(states.size() % 50000 == 0) {
+                        if(isDebug && states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -8665,29 +8690,27 @@ class ModelChecker {
         Cruise_finite1_deterministic_MC next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
+                Cruise_finite1_deterministic_MC state;
                 switch(type) {
                     case Cruise_finite1_deterministic_MC::BFS: {
-                        Cruise_finite1_deterministic_MC state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case Cruise_finite1_deterministic_MC::DFS: {
-                        Cruise_finite1_deterministic_MC state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case Cruise_finite1_deterministic_MC::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            Cruise_finite1_deterministic_MC state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            Cruise_finite1_deterministic_MC state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 
@@ -11168,8 +11191,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = true;
-    // TODO
+    bool isDebug = false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

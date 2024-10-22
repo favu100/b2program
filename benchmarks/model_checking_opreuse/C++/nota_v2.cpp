@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
@@ -83,6 +85,7 @@ class nota_v2 {
                         case node1: return strm << "node1";
                         case node2: return strm << "node2";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -136,6 +139,7 @@ class nota_v2 {
                         case socket1: return strm << "socket1";
                         case socket2: return strm << "socket2";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -189,6 +193,7 @@ class nota_v2 {
                         case service1: return strm << "service1";
                         case service2: return strm << "service2";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -242,6 +247,7 @@ class nota_v2 {
                         case resource1: return strm << "resource1";
                         case resource2: return strm << "resource2";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -295,6 +301,7 @@ class nota_v2 {
                         case SID1: return strm << "SID1";
                         case SID2: return strm << "SID2";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -348,6 +355,7 @@ class nota_v2 {
                         case RM_SERVICE_FOUND: return strm << "RM_SERVICE_FOUND";
                         case RM_SERVICE_NOT_FOUND: return strm << "RM_SERVICE_NOT_FOUND";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -417,10 +425,85 @@ class nota_v2 {
                         case IN_TARGET_SOCKET_GRANTED: return strm << "IN_TARGET_SOCKET_GRANTED";
                         case IN_TARGET_SOCKET_NOT_GRANTED: return strm << "IN_TARGET_SOCKET_NOT_GRANTED";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
                     return (31 * 1) ^ (static_cast<int>(value) << 1);
+                }
+        };
+
+        class _Struct5 : public BStruct {
+            private:
+                BSet<SOCKET > soc;
+                IN_ERROR_CODES err;
+
+            public:
+                typedef _Struct5 current_type;
+                typedef void value_type;
+                typedef void left_type;
+                typedef void right_type;
+
+                _Struct5(const BSet<SOCKET >& soc, const IN_ERROR_CODES& err) {
+                    this->soc = soc;
+                    this->err = err;
+                }
+
+                BSet<SOCKET > get_soc() {
+                    return this->soc;
+                }
+
+                IN_ERROR_CODES get_err() {
+                    return this->err;
+                }
+
+                _Struct5 override_soc(const BSet<SOCKET >& soc) {
+                    return _Struct5(soc, err);
+                }
+
+                _Struct5 override_err(const IN_ERROR_CODES& err) {
+                    return _Struct5(soc, err);
+                }
+
+                _Struct5() {
+                }
+
+                void operator =(const _Struct5& other) {
+                    this->soc = other.soc;
+                    this->err = other.err;
+                }
+
+                BBoolean equal(const _Struct5& o) const {
+                    return this->soc == o.soc && this->err == o.err;
+                }
+
+                BBoolean unequal(const _Struct5& o) const {
+                    return this->soc != o.soc || this->err != o.err;
+                }
+
+                friend bool operator ==(const _Struct5& p1, const _Struct5& p2) {
+                    return (p1.equal(p2)).booleanValue();
+                }
+
+                friend bool operator !=(const _Struct5& p1, const _Struct5& p2) {
+                    return (p1.unequal(p2)).booleanValue();
+                }
+
+                friend std::ostream& operator<<(std::ostream &strm, const _Struct5& e) {
+                    strm << "(";
+                    strm << "soc : ";
+                    strm << e.soc;
+                    strm << "err : ";
+                    strm << e.err;
+                    strm << ")";
+                    return strm;
+                }
+
+                int hashCode() const {
+                    int result = 1;
+                    result = 31 * result + (soc.hashCode() << 1);
+                    result = 31 * result + (err.hashCode() << 1);
+                    return result;
                 }
         };
 
@@ -567,80 +650,6 @@ class nota_v2 {
                 int hashCode() const {
                     int result = 1;
                     result = 31 * result + (sid.hashCode() << 1);
-                    result = 31 * result + (err.hashCode() << 1);
-                    return result;
-                }
-        };
-
-        class _Struct5 : public BStruct {
-            private:
-                BSet<SOCKET > soc;
-                IN_ERROR_CODES err;
-
-            public:
-                typedef _Struct5 current_type;
-                typedef void value_type;
-                typedef void left_type;
-                typedef void right_type;
-
-                _Struct5(const BSet<SOCKET >& soc, const IN_ERROR_CODES& err) {
-                    this->soc = soc;
-                    this->err = err;
-                }
-
-                BSet<SOCKET > get_soc() {
-                    return this->soc;
-                }
-
-                IN_ERROR_CODES get_err() {
-                    return this->err;
-                }
-
-                _Struct5 override_soc(const BSet<SOCKET >& soc) {
-                    return _Struct5(soc, err);
-                }
-
-                _Struct5 override_err(const IN_ERROR_CODES& err) {
-                    return _Struct5(soc, err);
-                }
-
-                _Struct5() {
-                }
-
-                void operator =(const _Struct5& other) {
-                    this->soc = other.soc;
-                    this->err = other.err;
-                }
-
-                BBoolean equal(const _Struct5& o) const {
-                    return this->soc == o.soc && this->err == o.err;
-                }
-
-                BBoolean unequal(const _Struct5& o) const {
-                    return this->soc != o.soc || this->err != o.err;
-                }
-
-                friend bool operator ==(const _Struct5& p1, const _Struct5& p2) {
-                    return (p1.equal(p2)).booleanValue();
-                }
-
-                friend bool operator !=(const _Struct5& p1, const _Struct5& p2) {
-                    return (p1.unequal(p2)).booleanValue();
-                }
-
-                friend std::ostream& operator<<(std::ostream &strm, const _Struct5& e) {
-                    strm << "(";
-                    strm << "soc : ";
-                    strm << e.soc;
-                    strm << "err : ";
-                    strm << e.err;
-                    strm << ")";
-                    return strm;
-                }
-
-                int hashCode() const {
-                    int result = 1;
-                    result = 31 * result + (soc.hashCode() << 1);
                     result = 31 * result + (err.hashCode() << 1);
                     return result;
                 }
@@ -4318,14 +4327,18 @@ class nota_v2 {
                 _ic_set_0 = _ic_set_0._union(BSet<INTERCONNECTNODE>(_ic_newic_1));
 
             }
+
             return _ic_set_0;
         }
 
         BSet<RESOURCEMANAGER> _tr_constructor_resourceManager() const {
             BSet<RESOURCEMANAGER> _ic_set_1 = BSet<RESOURCEMANAGER>();
-            for(const RESOURCEMANAGER& _ic_newrm_1 : _RESOURCEMANAGER.difference(resourceManagers)) {
-                if(((BBoolean(rm_services.domain().notElementOf(_ic_newrm_1).booleanValue() && resourceManagers.equal((BSet<RESOURCEMANAGER >())).booleanValue()))).booleanValue()) {
-                    _ic_set_1 = _ic_set_1._union(BSet<RESOURCEMANAGER>(_ic_newrm_1));
+            if((resourceManagers.equal((BSet<RESOURCEMANAGER >()))).booleanValue()) {
+                for(const RESOURCEMANAGER& _ic_newrm_1 : _RESOURCEMANAGER.difference(resourceManagers)) {
+                    if(((rm_services.isNotInDomain(_ic_newrm_1))).booleanValue()) {
+                        _ic_set_1 = _ic_set_1._union(BSet<RESOURCEMANAGER>(_ic_newrm_1));
+                    }
+
                 }
 
             }
@@ -4339,7 +4352,9 @@ class nota_v2 {
                     _ic_set_2 = _ic_set_2._union(BSet<BTuple<INTERCONNECTNODE, SERVICE >>((BTuple<INTERCONNECTNODE, SERVICE >(_ic_ii_1, _ic_newsvc_1))));
 
                 }
+
             }
+
             return _ic_set_2;
         }
 
@@ -4352,9 +4367,13 @@ class nota_v2 {
                             _ic_set_3 = _ic_set_3._union(BSet<BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<INTERCONNECTNODE, SID >, SID >, SOCKET >((BTuple<BTuple<INTERCONNECTNODE, SID >, SID >((BTuple<INTERCONNECTNODE, SID >(_ic_ii_1, _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
 
                         }
+
                     }
+
                 }
+
             }
+
             return _ic_set_3;
         }
 
@@ -4366,8 +4385,11 @@ class nota_v2 {
                         _ic_set_4 = _ic_set_4._union(BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>((BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_ii_1))));
 
                     }
+
                 }
+
             }
+
             return _ic_set_4;
         }
 
@@ -4379,8 +4401,11 @@ class nota_v2 {
                         _ic_set_5 = _ic_set_5._union(BSet<BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >>((BTuple<BTuple<RESOURCEMANAGER, SERVICE >, INTERCONNECTNODE >((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_ii_1))));
 
                     }
+
                 }
+
             }
+
             return _ic_set_5;
         }
 
@@ -4388,12 +4413,14 @@ class nota_v2 {
             BSet<BTuple<RESOURCEMANAGER, SERVICE >> _ic_set_6 = BSet<BTuple<RESOURCEMANAGER, SERVICE >>();
             for(const RESOURCEMANAGER& _ic_self_1 : resourceManagers) {
                 for(const SERVICE& _ic_ss_1 : services) {
-                    if((rm_sids.domain().elementOf(_ic_ss_1)).booleanValue()) {
+                    if(((rm_sids.isInDomain(_ic_ss_1))).booleanValue()) {
                         _ic_set_6 = _ic_set_6._union(BSet<BTuple<RESOURCEMANAGER, SERVICE >>((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1))));
                     }
 
                 }
+
             }
+
             return _ic_set_6;
         }
 
@@ -4404,7 +4431,9 @@ class nota_v2 {
                     _ic_set_7 = _ic_set_7._union(BSet<BTuple<RESOURCEMANAGER, SERVICE >>((BTuple<RESOURCEMANAGER, SERVICE >(_ic_self_1, _ic_ss_1))));
 
                 }
+
             }
+
             return _ic_set_7;
         }
 
@@ -4417,7 +4446,9 @@ class nota_v2 {
                     }
 
                 }
+
             }
+
             return _ic_set_8;
         }
 
@@ -4426,13 +4457,16 @@ class nota_v2 {
             for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
                 for(const SERVICE& _ic_ss_1 : services) {
                     for(const SID& _ic_si_1 : _SID.difference(sids)) {
-                        if((in_localServices.domain().elementOf(_ic_si_1)._not()).booleanValue()) {
+                        if(((in_localServices.isInDomain(_ic_si_1))._not()).booleanValue()) {
                             _ic_set_9 = _ic_set_9._union(BSet<BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >>((BTuple<BTuple<INTERCONNECTNODE, SERVICE >, SID >((BTuple<INTERCONNECTNODE, SERVICE >(_ic_self_1, _ic_ss_1)), _ic_si_1))));
                         }
 
                     }
+
                 }
+
             }
+
             return _ic_set_9;
         }
 
@@ -4443,7 +4477,9 @@ class nota_v2 {
                     _ic_set_10 = _ic_set_10._union(BSet<BTuple<INTERCONNECTNODE, SERVICE >>((BTuple<INTERCONNECTNODE, SERVICE >(_ic_self_1, _ic_ss_1))));
 
                 }
+
             }
+
             return _ic_set_10;
         }
 
@@ -4451,20 +4487,28 @@ class nota_v2 {
             BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >> _ic_set_11 = BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>();
             for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
                 for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
-                    for(const SOCKET& _ic_srcsoc_1 : sockets) {
-                        for(const SID& _ic_srcsid_1 : sids) {
-                            for(const SID& _ic_targsid_1 : sids) {
-                                for(const SOCKET& _ic_newsoc_1 : _SOCKET.difference(sockets)) {
-                                    if(((BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()))).booleanValue()) {
-                                        _ic_set_11 = _ic_set_11._union(BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
+                    if((_ic_self_1.unequal(_ic_ii_1)).booleanValue()) {
+                        for(const SOCKET& _ic_srcsoc_1 : sockets) {
+                            if((in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1)).booleanValue()) {
+                                for(const SID& _ic_srcsid_1 : sids) {
+                                    for(const SID& _ic_targsid_1 : sids) {
+                                        for(const SOCKET& _ic_newsoc_1 : _SOCKET.difference(sockets)) {
+                                            _ic_set_11 = _ic_set_11._union(BSet<BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >>((BTuple<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >, SOCKET >((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1)), _ic_newsoc_1))));
+
+                                        }
+
                                     }
 
                                 }
+
                             }
                         }
+
                     }
                 }
+
             }
+
             return _ic_set_11;
         }
 
@@ -4472,18 +4516,25 @@ class nota_v2 {
             BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >> _ic_set_12 = BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>();
             for(const INTERCONNECTNODE& _ic_self_1 : interconnectNodes) {
                 for(const INTERCONNECTNODE& _ic_ii_1 : interconnectNodes) {
-                    for(const SOCKET& _ic_srcsoc_1 : sockets) {
-                        for(const SID& _ic_srcsid_1 : sids) {
-                            for(const SID& _ic_targsid_1 : sids) {
-                                if(((BBoolean(_ic_self_1.unequal(_ic_ii_1).booleanValue() && in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1).booleanValue()))).booleanValue()) {
-                                    _ic_set_12 = _ic_set_12._union(BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1))));
+                    if((_ic_self_1.unequal(_ic_ii_1)).booleanValue()) {
+                        for(const SOCKET& _ic_srcsoc_1 : sockets) {
+                            if((in_sockets.functionCall(_ic_srcsoc_1).equal(_ic_ii_1)).booleanValue()) {
+                                for(const SID& _ic_srcsid_1 : sids) {
+                                    for(const SID& _ic_targsid_1 : sids) {
+                                        _ic_set_12 = _ic_set_12._union(BSet<BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >>((BTuple<BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >, SID >((BTuple<BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >, SID >((BTuple<BTuple<INTERCONNECTNODE, INTERCONNECTNODE >, SOCKET >((BTuple<INTERCONNECTNODE, INTERCONNECTNODE >(_ic_self_1, _ic_ii_1)), _ic_srcsoc_1)), _ic_srcsid_1)), _ic_targsid_1))));
+
+                                    }
+
                                 }
 
                             }
                         }
+
                     }
                 }
+
             }
+
             return _ic_set_12;
         }
 
@@ -4495,6 +4546,7 @@ class nota_v2 {
                 }
 
             }
+
             return _ic_set_13;
         }
 
@@ -4804,60 +4856,65 @@ class nota_v2 {
         bool _check_inv_1() const {
             BBoolean _ic_boolean_14 = BBoolean(true);
             for(const INTERCONNECTNODE& _ic__opt_1_1 : interconnectNodes) {
-                if(!((BBoolean(!interconnectNodes.elementOf(_ic__opt_1_1).booleanValue() || _INTERCONNECTNODE.elementOf(_ic__opt_1_1).booleanValue()))).booleanValue()) {
+                if(!(_INTERCONNECTNODE.elementOf(_ic__opt_1_1)).booleanValue()) {
                     _ic_boolean_14 = BBoolean(false);
                     break;
                 }
 
             }
+
             return (_ic_boolean_14).booleanValue();
         }
 
         bool _check_inv_2() const {
             BBoolean _ic_boolean_15 = BBoolean(true);
             for(const SOCKET& _ic__opt_2_1 : sockets) {
-                if(!((BBoolean(!sockets.elementOf(_ic__opt_2_1).booleanValue() || _SOCKET.elementOf(_ic__opt_2_1).booleanValue()))).booleanValue()) {
+                if(!(_SOCKET.elementOf(_ic__opt_2_1)).booleanValue()) {
                     _ic_boolean_15 = BBoolean(false);
                     break;
                 }
 
             }
+
             return (_ic_boolean_15).booleanValue();
         }
 
         bool _check_inv_3() const {
             BBoolean _ic_boolean_16 = BBoolean(true);
             for(const SERVICE& _ic__opt_3_1 : services) {
-                if(!((BBoolean(!services.elementOf(_ic__opt_3_1).booleanValue() || _SERVICE.elementOf(_ic__opt_3_1).booleanValue()))).booleanValue()) {
+                if(!(_SERVICE.elementOf(_ic__opt_3_1)).booleanValue()) {
                     _ic_boolean_16 = BBoolean(false);
                     break;
                 }
 
             }
+
             return (_ic_boolean_16).booleanValue();
         }
 
         bool _check_inv_4() const {
             BBoolean _ic_boolean_17 = BBoolean(true);
             for(const RESOURCEMANAGER& _ic__opt_4_1 : resourceManagers) {
-                if(!((BBoolean(!resourceManagers.elementOf(_ic__opt_4_1).booleanValue() || _RESOURCEMANAGER.elementOf(_ic__opt_4_1).booleanValue()))).booleanValue()) {
+                if(!(_RESOURCEMANAGER.elementOf(_ic__opt_4_1)).booleanValue()) {
                     _ic_boolean_17 = BBoolean(false);
                     break;
                 }
 
             }
+
             return (_ic_boolean_17).booleanValue();
         }
 
         bool _check_inv_5() const {
             BBoolean _ic_boolean_18 = BBoolean(true);
             for(const SID& _ic__opt_5_1 : sids) {
-                if(!((BBoolean(!sids.elementOf(_ic__opt_5_1).booleanValue() || _SID.elementOf(_ic__opt_5_1).booleanValue()))).booleanValue()) {
+                if(!(_SID.elementOf(_ic__opt_5_1)).booleanValue()) {
                     _ic_boolean_18 = BBoolean(false);
                     break;
                 }
 
             }
+
             return (_ic_boolean_18).booleanValue();
         }
 
@@ -4869,13 +4926,15 @@ class nota_v2 {
             BBoolean _ic_boolean_19 = BBoolean(true);
             for(const RESOURCEMANAGER& _ic_a1_1 : rm_services.domain()) {
                 for(const RESOURCEMANAGER& _ic_a2_1 : rm_services.domain()) {
-                    if(!((BBoolean(!(BBoolean((BBoolean(rm_services.domain().elementOf(_ic_a1_1).booleanValue() && rm_services.domain().elementOf(_ic_a2_1).booleanValue())).booleanValue() && _ic_a1_1.unequal(_ic_a2_1).booleanValue())).booleanValue() || rm_services.functionCall(_ic_a1_1).intersect(rm_services.functionCall(_ic_a2_1)).equal((BSet<SERVICE >())).booleanValue()))).booleanValue()) {
+                    if(!((BBoolean(!_ic_a1_1.unequal(_ic_a2_1).booleanValue() || rm_services.functionCall(_ic_a1_1).intersect(rm_services.functionCall(_ic_a2_1)).equal((BSet<SERVICE >())).booleanValue()))).booleanValue()) {
                         _ic_boolean_19 = BBoolean(false);
                         break;
                     }
 
                 }
+
             }
+
             return (_ic_boolean_19).booleanValue();
         }
 
@@ -5174,7 +5233,7 @@ class ModelChecker {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(states.size() % 50000 == 0) {
+                        if(isDebug && states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -5282,29 +5341,27 @@ class ModelChecker {
         nota_v2 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
+                nota_v2 state;
                 switch(type) {
                     case nota_v2::BFS: {
-                        nota_v2 state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case nota_v2::DFS: {
-                        nota_v2 state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case nota_v2::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            nota_v2 state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            nota_v2 state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 
@@ -6753,8 +6810,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = true;
-    // TODO
+    bool isDebug = false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

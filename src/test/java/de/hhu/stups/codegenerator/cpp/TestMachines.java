@@ -218,10 +218,14 @@ public class TestMachines extends TestCpp {
         testCpp("earley_2");
     }
 
-    @Ignore
     @Test
-    public void testOBSW_M001() throws Exception {
-        testCpp("obsw_M001");
+    public void testOBSW_M001_1() throws Exception {
+        testCppMC("obsw_M001_1");
+    }
+
+    @Test
+    public void testOBSW_M001_2() throws Exception {
+        testCppMC("obsw_M001_2");
     }
 
     @Ignore
@@ -230,10 +234,9 @@ public class TestMachines extends TestCpp {
         testCpp("Ref5_Switch");
     }
 
-    @Ignore
     @Test
-    public void testrether_mch1() throws Exception {
-        testCpp("rether_mch1");
+    public void testRether() throws Exception {
+        testCppMC("rether");
     }
 
     @Test

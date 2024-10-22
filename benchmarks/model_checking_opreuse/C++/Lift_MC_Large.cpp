@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
@@ -19,6 +21,7 @@
 #include <btypes_primitives/VariantViolation.hpp>
 #include <btypes_primitives/LoopInvariantViolation.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BObject.hpp>
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BTuple.hpp>
 
@@ -649,7 +652,7 @@ class ModelChecker {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(states.size() % 50000 == 0) {
+                        if(isDebug && states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -757,29 +760,27 @@ class ModelChecker {
         Lift_MC_Large next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
+                Lift_MC_Large state;
                 switch(type) {
                     case Lift_MC_Large::BFS: {
-                        Lift_MC_Large state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case Lift_MC_Large::DFS: {
-                        Lift_MC_Large state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case Lift_MC_Large::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            Lift_MC_Large state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            Lift_MC_Large state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 
@@ -1034,8 +1035,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = true;
-    // TODO
+    bool isDebug = false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

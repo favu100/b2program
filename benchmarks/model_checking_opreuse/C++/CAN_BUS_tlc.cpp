@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
@@ -86,6 +88,7 @@ class CAN_BUS_tlc {
                         case T1_SEND: return strm << "T1_SEND";
                         case T1_WAIT: return strm << "T1_WAIT";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -141,6 +144,7 @@ class CAN_BUS_tlc {
                         case T2MODE_TRANSMIT: return strm << "T2MODE_TRANSMIT";
                         case T2MODE_RELEASE: return strm << "T2MODE_RELEASE";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -204,6 +208,7 @@ class CAN_BUS_tlc {
                         case T2_WAIT: return strm << "T2_WAIT";
                         case T2_RELEASE: return strm << "T2_RELEASE";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -265,6 +270,7 @@ class CAN_BUS_tlc {
                         case T3_PROC: return strm << "T3_PROC";
                         case T3_WAIT: return strm << "T3_WAIT";
                     }
+                    return strm;
                 }
 
                 int hashCode() const {
@@ -4746,6 +4752,7 @@ class CAN_BUS_tlc {
     private:
 
         BSet<BInteger > NATSET;
+        BSet<BInteger > __aux_constant_1;
 
 
         #define _T1state (BSet<T1state >((T1state(T1state::T1_EN)), (T1state(T1state::T1_CALC)), (T1state(T1state::T1_SEND)), (T1state(T1state::T1_WAIT))))
@@ -4779,6 +4786,7 @@ class CAN_BUS_tlc {
 
         CAN_BUS_tlc() {
             NATSET = (BSet<BInteger>::interval((BInteger(0)),(BInteger(5))));
+            __aux_constant_1 = (BSet<BInteger>::interval((BInteger(1)).negative(),(BInteger(3))));
             T2v = (BInteger(0));
             T3_evaluated = (BBoolean(true));
             T3_enabled = (BBoolean(true));
@@ -4799,8 +4807,9 @@ class CAN_BUS_tlc {
             T2_mode = (T2mode(T2mode::T2MODE_SENSE));
         }
 
-        CAN_BUS_tlc(const BSet<BInteger >& NATSET, const BInteger& BUSpriority, const BInteger& BUSvalue, const BRelation<BInteger, BInteger >& BUSwrite, const T1state& T1_state, const BInteger& T1_timer, const BInteger& T1_writevalue, const T2mode& T2_mode, const BInteger& T2_readpriority, const BInteger& T2_readvalue, const T2state& T2_state, const BInteger& T2_timer, const BInteger& T2_writevalue, const BInteger& T2v, const BBoolean& T3_enabled, const BBoolean& T3_evaluated, const BInteger& T3_readpriority, const BInteger& T3_readvalue, const T3state& T3_state) {
+        CAN_BUS_tlc(const BSet<BInteger >& NATSET, const BSet<BInteger >& __aux_constant_1, const BInteger& BUSpriority, const BInteger& BUSvalue, const BRelation<BInteger, BInteger >& BUSwrite, const T1state& T1_state, const BInteger& T1_timer, const BInteger& T1_writevalue, const T2mode& T2_mode, const BInteger& T2_readpriority, const BInteger& T2_readvalue, const T2state& T2_state, const BInteger& T2_timer, const BInteger& T2_writevalue, const BInteger& T2v, const BBoolean& T3_enabled, const BBoolean& T3_evaluated, const BInteger& T3_readpriority, const BInteger& T3_readvalue, const T3state& T3_state) {
             this->NATSET = NATSET;
+            this->__aux_constant_1 = __aux_constant_1;
             this->BUSpriority = BUSpriority;
             this->BUSvalue = BUSvalue;
             this->BUSwrite = BUSwrite;
@@ -4965,6 +4974,10 @@ class CAN_BUS_tlc {
             return NATSET;
         }
 
+        BSet<BInteger > _get___aux_constant_1() const {
+            return __aux_constant_1;
+        }
+
         BInteger _get_BUSpriority() const {
             return BUSpriority;
         }
@@ -5060,12 +5073,13 @@ class CAN_BUS_tlc {
 
         BSet<BInteger> _tr_T1Calculate() const {
             BSet<BInteger> _ic_set_1 = BSet<BInteger>();
-            for(const BInteger& _ic_p_1 : (BSet<BInteger>::interval((BInteger(1)).negative(),(BInteger(3))))) {
+            for(const BInteger& _ic_p_1 : __aux_constant_1) {
                 if((T1_state.equal((T1state(T1state::T1_CALC)))).booleanValue()) {
                     _ic_set_1 = _ic_set_1._union(BSet<BInteger>(_ic_p_1));
                 }
 
             }
+
             return _ic_set_1;
         }
 
@@ -5126,7 +5140,7 @@ class CAN_BUS_tlc {
         BSet<BInteger> _tr_T2ReleaseBus() const {
             BSet<BInteger> _ic_set_8 = BSet<BInteger>();
             for(const BInteger& _ic_ppriority_1 : {T2_readpriority}) {
-                if(((BBoolean(BUSwrite.domain().elementOf(_ic_ppriority_1).booleanValue() && T2_state.equal((T2state(T2state::T2_RELEASE))).booleanValue()))).booleanValue()) {
+                if(((BBoolean((BUSwrite.isInDomain(_ic_ppriority_1)).booleanValue() && T2_state.equal((T2state(T2state::T2_RELEASE))).booleanValue()))).booleanValue()) {
                     _ic_set_8 = _ic_set_8._union(BSet<BInteger>(_ic_ppriority_1));
                 }
 
@@ -5688,11 +5702,11 @@ class CAN_BUS_tlc {
         }
 
         bool _check_inv_2() const {
-            return ((BOOL).elementOf(T3_evaluated)).booleanValue();
+            return ((T3_evaluated.isBoolean())).booleanValue();
         }
 
         bool _check_inv_3() const {
-            return ((BOOL).elementOf(T3_enabled)).booleanValue();
+            return ((T3_enabled.isBoolean())).booleanValue();
         }
 
         bool _check_inv_4() const {
@@ -5760,11 +5774,11 @@ class CAN_BUS_tlc {
         }
 
         bool _check_inv_20() const {
-            return (BUSwrite.domain().elementOf((BInteger(0)))).booleanValue();
+            return ((BUSwrite.isInDomain((BInteger(0))))).booleanValue();
         }
 
         CAN_BUS_tlc _copy() const {
-            return CAN_BUS_tlc(NATSET, BUSpriority, BUSvalue, BUSwrite, T1_state, T1_timer, T1_writevalue, T2_mode, T2_readpriority, T2_readvalue, T2_state, T2_timer, T2_writevalue, T2v, T3_enabled, T3_evaluated, T3_readpriority, T3_readvalue, T3_state);
+            return CAN_BUS_tlc(NATSET, __aux_constant_1, BUSpriority, BUSvalue, BUSwrite, T1_state, T1_timer, T1_writevalue, T2_mode, T2_readpriority, T2_readvalue, T2_state, T2_timer, T2_writevalue, T2v, T3_enabled, T3_evaluated, T3_readpriority, T3_readvalue, T3_state);
         }
 
         friend bool operator ==(const CAN_BUS_tlc& o1, const CAN_BUS_tlc& o2) {
@@ -6059,7 +6073,7 @@ class ModelChecker {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(states.size() % 50000 == 0) {
+                        if(isDebug && states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -6167,29 +6181,27 @@ class ModelChecker {
         CAN_BUS_tlc next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
+                CAN_BUS_tlc state;
                 switch(type) {
                     case CAN_BUS_tlc::BFS: {
-                        CAN_BUS_tlc state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case CAN_BUS_tlc::DFS: {
-                        CAN_BUS_tlc state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case CAN_BUS_tlc::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            CAN_BUS_tlc state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            CAN_BUS_tlc state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 
@@ -8020,8 +8032,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = true;
-    // TODO
+    bool isDebug = false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

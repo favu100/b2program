@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 #include <immer/map.hpp>
 #include <map>
 #include <unordered_set>
@@ -20,6 +22,7 @@
 #include <btypes_primitives/LoopInvariantViolation.hpp>
 #include <btypes_primitives/BSet.hpp>
 #include <btypes_primitives/BBoolean.hpp>
+#include <btypes_primitives/BObject.hpp>
 #include <btypes_primitives/BRelation.hpp>
 #include <btypes_primitives/BInteger.hpp>
 #include <btypes_primitives/BTuple.hpp>
@@ -814,22 +817,30 @@ class sort_m2_data1000_MC {
                     };
 
                 BInteger j;
+                BInteger k;
+                BInteger l;
 
-                _ProjectionRead__check_inv_2(const BInteger& j) {
+                _ProjectionRead__check_inv_2(const BInteger& j, const BInteger& k, const BInteger& l) {
                     this->j = j;
+                    this->k = k;
+                    this->l = l;
                 }
 
                 friend bool operator ==(const _ProjectionRead__check_inv_2& o1, const _ProjectionRead__check_inv_2& o2) {
-                    return o1.j == (o2.j);
+                    return o1.j == (o2.j) && o1.k == (o2.k) && o1.l == (o2.l);
                 }
 
                 friend bool operator !=(const _ProjectionRead__check_inv_2& o1, const _ProjectionRead__check_inv_2& o2) {
-                    return o1.j != (o2.j);
+                    return o1.j != (o2.j) || o1.k != (o2.k) || o1.l != (o2.l);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__check_inv_2& e) {
                     strm << "{";
-                    strm << "j: " << e.j;;
+                    strm << "j: " << e.j;
+                    strm << ", ";
+                    strm << "k: " << e.k;
+                    strm << ", ";
+                    strm << "l: " << e.l;;
                     strm << "}";
                     return strm;
                 }
@@ -837,6 +848,8 @@ class sort_m2_data1000_MC {
                 int hashCode() const {
                     int result = 1;
                     result = 31 * result + (j.hashCode() << 1);
+                    result = 31 * result + (k.hashCode() << 1);
+                    result = 31 * result + (l.hashCode() << 1);
                     return result;
                 }
 
@@ -862,24 +875,32 @@ class sort_m2_data1000_MC {
                             }
                     };
 
+                BRelation<BInteger, BInteger > g;
+                BInteger j;
                 BInteger k;
                 BInteger l;
 
-                _ProjectionRead__check_inv_3(const BInteger& k, const BInteger& l) {
+                _ProjectionRead__check_inv_3(const BRelation<BInteger, BInteger >& g, const BInteger& j, const BInteger& k, const BInteger& l) {
+                    this->g = g;
+                    this->j = j;
                     this->k = k;
                     this->l = l;
                 }
 
                 friend bool operator ==(const _ProjectionRead__check_inv_3& o1, const _ProjectionRead__check_inv_3& o2) {
-                    return o1.k == (o2.k) && o1.l == (o2.l);
+                    return o1.g == (o2.g) && o1.j == (o2.j) && o1.k == (o2.k) && o1.l == (o2.l);
                 }
 
                 friend bool operator !=(const _ProjectionRead__check_inv_3& o1, const _ProjectionRead__check_inv_3& o2) {
-                    return o1.k != (o2.k) || o1.l != (o2.l);
+                    return o1.g != (o2.g) || o1.j != (o2.j) || o1.k != (o2.k) || o1.l != (o2.l);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__check_inv_3& e) {
                     strm << "{";
+                    strm << "g: " << e.g;
+                    strm << ", ";
+                    strm << "j: " << e.j;
+                    strm << ", ";
                     strm << "k: " << e.k;
                     strm << ", ";
                     strm << "l: " << e.l;;
@@ -889,6 +910,8 @@ class sort_m2_data1000_MC {
 
                 int hashCode() const {
                     int result = 1;
+                    result = 31 * result + (g.hashCode() << 1);
+                    result = 31 * result + (j.hashCode() << 1);
                     result = 31 * result + (k.hashCode() << 1);
                     result = 31 * result + (l.hashCode() << 1);
                     return result;
@@ -916,30 +939,30 @@ class sort_m2_data1000_MC {
                             }
                     };
 
-                BInteger j;
+                BRelation<BInteger, BInteger > g;
 
-                _ProjectionRead__check_inv_4(const BInteger& j) {
-                    this->j = j;
+                _ProjectionRead__check_inv_4(const BRelation<BInteger, BInteger >& g) {
+                    this->g = g;
                 }
 
                 friend bool operator ==(const _ProjectionRead__check_inv_4& o1, const _ProjectionRead__check_inv_4& o2) {
-                    return o1.j == (o2.j);
+                    return o1.g == (o2.g);
                 }
 
                 friend bool operator !=(const _ProjectionRead__check_inv_4& o1, const _ProjectionRead__check_inv_4& o2) {
-                    return o1.j != (o2.j);
+                    return o1.g != (o2.g);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__check_inv_4& e) {
                     strm << "{";
-                    strm << "j: " << e.j;;
+                    strm << "g: " << e.g;;
                     strm << "}";
                     return strm;
                 }
 
                 int hashCode() const {
                     int result = 1;
-                    result = 31 * result + (j.hashCode() << 1);
+                    result = 31 * result + (g.hashCode() << 1);
                     return result;
                 }
 
@@ -966,34 +989,22 @@ class sort_m2_data1000_MC {
                     };
 
                 BRelation<BInteger, BInteger > g;
-                BInteger j;
-                BInteger k;
-                BInteger l;
 
-                _ProjectionRead__check_inv_5(const BRelation<BInteger, BInteger >& g, const BInteger& j, const BInteger& k, const BInteger& l) {
+                _ProjectionRead__check_inv_5(const BRelation<BInteger, BInteger >& g) {
                     this->g = g;
-                    this->j = j;
-                    this->k = k;
-                    this->l = l;
                 }
 
                 friend bool operator ==(const _ProjectionRead__check_inv_5& o1, const _ProjectionRead__check_inv_5& o2) {
-                    return o1.g == (o2.g) && o1.j == (o2.j) && o1.k == (o2.k) && o1.l == (o2.l);
+                    return o1.g == (o2.g);
                 }
 
                 friend bool operator !=(const _ProjectionRead__check_inv_5& o1, const _ProjectionRead__check_inv_5& o2) {
-                    return o1.g != (o2.g) || o1.j != (o2.j) || o1.k != (o2.k) || o1.l != (o2.l);
+                    return o1.g != (o2.g);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__check_inv_5& e) {
                     strm << "{";
-                    strm << "g: " << e.g;
-                    strm << ", ";
-                    strm << "j: " << e.j;
-                    strm << ", ";
-                    strm << "k: " << e.k;
-                    strm << ", ";
-                    strm << "l: " << e.l;;
+                    strm << "g: " << e.g;;
                     strm << "}";
                     return strm;
                 }
@@ -1001,9 +1012,6 @@ class sort_m2_data1000_MC {
                 int hashCode() const {
                     int result = 1;
                     result = 31 * result + (g.hashCode() << 1);
-                    result = 31 * result + (j.hashCode() << 1);
-                    result = 31 * result + (k.hashCode() << 1);
-                    result = 31 * result + (l.hashCode() << 1);
                     return result;
                 }
 
@@ -1029,30 +1037,79 @@ class sort_m2_data1000_MC {
                             }
                     };
 
-                BRelation<BInteger, BInteger > g;
+                BInteger k;
 
-                _ProjectionRead__check_inv_6(const BRelation<BInteger, BInteger >& g) {
-                    this->g = g;
+                _ProjectionRead__check_inv_6(const BInteger& k) {
+                    this->k = k;
                 }
 
                 friend bool operator ==(const _ProjectionRead__check_inv_6& o1, const _ProjectionRead__check_inv_6& o2) {
-                    return o1.g == (o2.g);
+                    return o1.k == (o2.k);
                 }
 
                 friend bool operator !=(const _ProjectionRead__check_inv_6& o1, const _ProjectionRead__check_inv_6& o2) {
-                    return o1.g != (o2.g);
+                    return o1.k != (o2.k);
                 }
 
                 friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__check_inv_6& e) {
                     strm << "{";
-                    strm << "g: " << e.g;;
+                    strm << "k: " << e.k;;
                     strm << "}";
                     return strm;
                 }
 
                 int hashCode() const {
                     int result = 1;
-                    result = 31 * result + (g.hashCode() << 1);
+                    result = 31 * result + (k.hashCode() << 1);
+                    return result;
+                }
+
+        };
+
+        class _ProjectionRead__check_inv_7 {
+
+            public:
+                struct Hash {
+                    public:
+                        size_t operator()(const _ProjectionRead__check_inv_7& obj) const {
+                            return obj.hashCode();
+                        }
+                };
+
+                struct HashEqual {
+                    public:
+                        bool operator()(const _ProjectionRead__check_inv_7& obj1, const _ProjectionRead__check_inv_7& obj2) const {
+                            if (obj1 == obj2)
+                                return true;
+                            else
+                                return false;
+                            }
+                    };
+
+                BInteger l;
+
+                _ProjectionRead__check_inv_7(const BInteger& l) {
+                    this->l = l;
+                }
+
+                friend bool operator ==(const _ProjectionRead__check_inv_7& o1, const _ProjectionRead__check_inv_7& o2) {
+                    return o1.l == (o2.l);
+                }
+
+                friend bool operator !=(const _ProjectionRead__check_inv_7& o1, const _ProjectionRead__check_inv_7& o2) {
+                    return o1.l != (o2.l);
+                }
+
+                friend std::ostream& operator<<(std::ostream &strm, const _ProjectionRead__check_inv_7& e) {
+                    strm << "{";
+                    strm << "l: " << e.l;;
+                    strm << "}";
+                    return strm;
+                }
+
+                int hashCode() const {
+                    int result = 1;
+                    result = 31 * result + (l.hashCode() << 1);
                     return result;
                 }
 
@@ -1064,6 +1121,8 @@ class sort_m2_data1000_MC {
 
         BInteger n;
         BRelation<BInteger, BInteger > f;
+        BSet<BInteger > __aux_constant_2;
+        BSet<BInteger > __aux_constant_1;
 
 
 
@@ -1084,16 +1143,24 @@ class sort_m2_data1000_MC {
                 _ic_set_0 = _ic_set_0._union(BRelation<BInteger, BInteger>(BTuple<BInteger, BInteger>(_ic_i_1, (BInteger(15000)).minus(_ic_i_1))));
 
             }
+
             f = _ic_set_0;
+            __aux_constant_2 = f.range();
+            __aux_constant_1 = (BSet<BInteger>::interval((BInteger(1)),n));
+            if(!((BBoolean((BBoolean((n.isInteger()).booleanValue() && n.greater((BInteger(0))).booleanValue())).booleanValue() && ((f.checkDomain((BSet<BInteger>::interval((BInteger(1)),n))))._and((f.checkRangeNatural()))._and((f.isFunction()))._and((f.isTotal((BSet<BInteger>::interval((BInteger(1)),n)))))).booleanValue()))).booleanValue()) {
+                throw std::runtime_error("Contradiction in PROPERTIES detected!");
+            }
             g = f;
             k = (BInteger(1));
             l = (BInteger(1));
             j = (BInteger(1));
         }
 
-        sort_m2_data1000_MC(const BInteger& n, const BRelation<BInteger, BInteger >& f, const BInteger& j, const BInteger& k, const BInteger& l, const BRelation<BInteger, BInteger >& g) {
+        sort_m2_data1000_MC(const BInteger& n, const BRelation<BInteger, BInteger >& f, const BSet<BInteger >& __aux_constant_2, const BSet<BInteger >& __aux_constant_1, const BInteger& j, const BInteger& k, const BInteger& l, const BRelation<BInteger, BInteger >& g) {
             this->n = n;
             this->f = f;
+            this->__aux_constant_2 = __aux_constant_2;
+            this->__aux_constant_1 = __aux_constant_1;
             this->j = j;
             this->k = k;
             this->l = l;
@@ -1135,6 +1202,14 @@ class sort_m2_data1000_MC {
 
         BRelation<BInteger, BInteger > _get_f() const {
             return f;
+        }
+
+        BSet<BInteger > _get___aux_constant_2() const {
+            return __aux_constant_2;
+        }
+
+        BSet<BInteger > _get___aux_constant_1() const {
+            return __aux_constant_1;
         }
 
         BInteger _get_j() const {
@@ -1203,11 +1278,11 @@ class sort_m2_data1000_MC {
         }
 
         _ProjectionRead__check_inv_2 _projected_state_for__check_inv_2() const {
-            return _ProjectionRead__check_inv_2(j);
+            return _ProjectionRead__check_inv_2(j,k,l);
         }
 
         _ProjectionRead__check_inv_3 _projected_state_for__check_inv_3() const {
-            return _ProjectionRead__check_inv_3(k,l);
+            return _ProjectionRead__check_inv_3(g,j,k,l);
         }
 
         _ProjectionRead__check_inv_1 _projected_state_for__check_inv_1() const {
@@ -1215,15 +1290,19 @@ class sort_m2_data1000_MC {
         }
 
         _ProjectionRead__check_inv_6 _projected_state_for__check_inv_6() const {
-            return _ProjectionRead__check_inv_6(g);
+            return _ProjectionRead__check_inv_6(k);
+        }
+
+        _ProjectionRead__check_inv_7 _projected_state_for__check_inv_7() const {
+            return _ProjectionRead__check_inv_7(l);
         }
 
         _ProjectionRead__check_inv_4 _projected_state_for__check_inv_4() const {
-            return _ProjectionRead__check_inv_4(j);
+            return _ProjectionRead__check_inv_4(g);
         }
 
         _ProjectionRead__check_inv_5 _projected_state_for__check_inv_5() const {
-            return _ProjectionRead__check_inv_5(g,j,k,l);
+            return _ProjectionRead__check_inv_5(g);
         }
 
         _ProjectionWrite_prog2 _update_for_prog2() const {
@@ -1263,31 +1342,35 @@ class sort_m2_data1000_MC {
         }
 
         bool _check_inv_1() const {
-            return (j.greaterEqual(k)).booleanValue();
+            return ((BBoolean(j.greaterEqual(k).booleanValue() && j.lessEqual(n).booleanValue()))).booleanValue();
         }
 
         bool _check_inv_2() const {
-            return (j.lessEqual(n)).booleanValue();
+            return ((BBoolean(l.greaterEqual(k).booleanValue() && l.lessEqual(j).booleanValue()))).booleanValue();
         }
 
         bool _check_inv_3() const {
-            return (l.greaterEqual(k)).booleanValue();
-        }
-
-        bool _check_inv_4() const {
-            return (j.lessEqual(j)).booleanValue();
-        }
-
-        bool _check_inv_5() const {
             return (g.functionCall(l).equal(g.relationImage((BSet<BInteger>::interval(k,j))).min())).booleanValue();
         }
 
+        bool _check_inv_4() const {
+            return (((g.checkDomain(__aux_constant_1))._and((g.checkRangeNatural()))._and((g.isFunction()))._and((g.isTotal(__aux_constant_1))))).booleanValue();
+        }
+
+        bool _check_inv_5() const {
+            return (g.range().equal(__aux_constant_2)).booleanValue();
+        }
+
         bool _check_inv_6() const {
-            return (((g.checkDomain((BSet<BInteger>::interval((BInteger(1)),n))))._and((g.checkRangeNatural()))._and((g.isFunction()))._and((g.isTotal((BSet<BInteger>::interval((BInteger(1)),n))))))).booleanValue();
+            return ((BBoolean(k.greaterEqual((BInteger(1))).booleanValue() && k.lessEqual(n).booleanValue()))).booleanValue();
+        }
+
+        bool _check_inv_7() const {
+            return ((l.isNatural())).booleanValue();
         }
 
         sort_m2_data1000_MC _copy() const {
-            return sort_m2_data1000_MC(n, f, j, k, l, g);
+            return sort_m2_data1000_MC(n, f, __aux_constant_2, __aux_constant_1, j, k, l, g);
         }
 
         friend bool operator ==(const sort_m2_data1000_MC& o1, const sort_m2_data1000_MC& o2) {
@@ -1383,6 +1466,8 @@ class ModelChecker {
         std::mutex _ProjectionRead__check_inv_5_mutex;
         std::unordered_map<sort_m2_data1000_MC::_ProjectionRead__check_inv_6, bool, sort_m2_data1000_MC::_ProjectionRead__check_inv_6::Hash, sort_m2_data1000_MC::_ProjectionRead__check_inv_6::HashEqual> _InvCache__check_inv_6;
         std::mutex _ProjectionRead__check_inv_6_mutex;
+        std::unordered_map<sort_m2_data1000_MC::_ProjectionRead__check_inv_7, bool, sort_m2_data1000_MC::_ProjectionRead__check_inv_7::Hash, sort_m2_data1000_MC::_ProjectionRead__check_inv_7::HashEqual> _InvCache__check_inv_7;
+        std::mutex _ProjectionRead__check_inv_7_mutex;
 
         std::unordered_map<sort_m2_data1000_MC, sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> parents;
 
@@ -1427,7 +1512,7 @@ class ModelChecker {
                         states.insert(nextState);
                         parents.insert({nextState, state});
                         unvisitedStates.push_back(nextState);
-                        if(states.size() % 50000 == 0) {
+                        if(isDebug && states.size() % 50000 == 0) {
                             cout << "VISITED STATES: " << states.size() << "\n";
                             cout << "EVALUATED TRANSITIONS: " << transitions << "\n";
                             cout << "-------------------" << "\n";
@@ -1535,29 +1620,27 @@ class ModelChecker {
         sort_m2_data1000_MC next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
+                sort_m2_data1000_MC state;
                 switch(type) {
                     case sort_m2_data1000_MC::BFS: {
-                        sort_m2_data1000_MC state = unvisitedStates.front();
+                        state = unvisitedStates.front();
                         unvisitedStates.pop_front();
-                        return state;
                     }
                     case sort_m2_data1000_MC::DFS: {
-                        sort_m2_data1000_MC state = unvisitedStates.back();
+                        state = unvisitedStates.back();
                         unvisitedStates.pop_back();
-                        return state;
                     }
                     case sort_m2_data1000_MC::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            sort_m2_data1000_MC state = unvisitedStates.front();
+                            state = unvisitedStates.front();
                             unvisitedStates.pop_front();
-                            return state;
                         } else {
-                            sort_m2_data1000_MC state = unvisitedStates.back();
+                            state = unvisitedStates.back();
                             unvisitedStates.pop_back();
-                            return state;
                         }
                     }
                 }
+                return state;
             };
         }
 
@@ -1932,6 +2015,26 @@ class ModelChecker {
               cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_6" << "\n";
               return true;
             }
+            bool _check_inv_7;
+            if(isCaching) {
+                sort_m2_data1000_MC::_ProjectionRead__check_inv_7 read__check_inv_7_state = state._projected_state_for__check_inv_7();
+                auto _obj__check_inv_7_ptr = _InvCache__check_inv_7.find(read__check_inv_7_state);
+                if(_obj__check_inv_7_ptr == _InvCache__check_inv_7.end()) {
+                    _check_inv_7 = state._check_inv_7();
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead__check_inv_7_lock(_ProjectionRead__check_inv_7_mutex);
+                        _InvCache__check_inv_7.insert({read__check_inv_7_state, _check_inv_7});
+                    }
+                } else {
+                    _check_inv_7 = _obj__check_inv_7_ptr->second;
+                }
+            } else {
+                _check_inv_7 = state._check_inv_7();
+            }
+            if(!_check_inv_7) {
+              cout << "INVARIANT CONJUNCT VIOLATED: _check_inv_7" << "\n";
+              return true;
+            }
             return false;
         }
 
@@ -2012,8 +2115,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = true;
-    // TODO
+    bool isDebug = false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

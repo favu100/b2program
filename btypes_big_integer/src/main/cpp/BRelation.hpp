@@ -396,14 +396,7 @@ class BRelation : public BObject {
         }
 
         BBoolean isNotInDomain(const S& arg) const {
-            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
-                                                               typename BSet<S>::Hash,
-                                                               typename BSet<S>::HashEqual> thisMap = this->map;
-            const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = thisMap.find(arg);
-            if(rangePtr == nullptr) {
-                return BBoolean(true);
-            }
-            return BBoolean(false);
+            return isInDomain(arg)._not();
         }
 
     	BSet<T> range() const {
@@ -422,25 +415,15 @@ class BRelation : public BObject {
         BBoolean isInRange(const T& arg) const {
             for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
-                for (const T& obj : thisRangeSet) {
-                    if(thisRangeSet.count(obj) > 0) {
-                        return BBoolean(true);
-                    }
+                if(thisRangeSet.count(arg) > 0) {
+                    return BBoolean(true);
                 }
             }
             return BBoolean(false);
         }
 
         BBoolean isNotInRange(const T& arg) const {
-            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {
-                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> thisRangeSet = pair.second;
-                for (const T& obj : thisRangeSet) {
-                    if(thisRangeSet.count(obj) == 0) {
-                        return BBoolean(false);
-                    }
-                }
-            }
-            return BBoolean(true);
+            return isInRange(arg)._not();
         }
 
         BBoolean isInRelationalImage(const T& element, const BSet<S>& set) const {

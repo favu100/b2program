@@ -189,7 +189,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void Train1BeebookDeterministic_MC_POR_v3() throws Exception {
-        testCppMC("Train_1_beebook_deterministic_MC_POR_v3");
+        testCppMC("Train_1_beebook_deterministic_MC_POR_v3", "Train_1_beebook_deterministic_MC_POR_v3", true, 1, true);
     }
 
     @Test
@@ -236,7 +236,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testRether() throws Exception {
-        testCppMC("rether");
+        testCppMC("rether", "rether", true, 1, true);
     }
 
     @Test

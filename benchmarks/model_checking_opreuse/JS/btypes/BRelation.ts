@@ -92,7 +92,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		for(let domainElement of intersectionDomain) {
 			let thisRangeSet = <immutable.Set<T>> this.map.get(domainElement);
 			let otherRangeSet = <immutable.Set<T>> otherMap.get(domainElement);
-            if(otherRangeSet === null) {
+            if(otherRangeSet == undefined) {
                 continue;
             }
 			let newRangeSet = <immutable.Set<T>> thisRangeSet.subtract(otherRangeSet);
@@ -223,7 +223,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		}
 		return result;
 	}
-	
+
 	pow1(): BSet<BRelation<S,T>> {
 		return this.pow().difference(new BSet<BRelation<S,T>>(new BRelation<S,T>()));
 	}
@@ -235,12 +235,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	fin1(): BSet<BRelation<S,T>> {
 		return this.pow1();
 	}
-	
+
 	domain(): BSet<S> {
 		let resultSet = immutable.Set(this.map.keys());
 		for(let domainElement of this.map.keys()) {
 			let range = <immutable.Set<T>> this.map.get(domainElement)
-			if(range === null || range.size === 0) {
+			if(range == undefined || range.size === 0) {
 				resultSet = resultSet.remove(domainElement);
 			}
 		}
@@ -250,7 +250,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	isInDomain(arg: S): BBoolean {
 	    let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
 	    let image = thisMap.get(arg);
-	    if(image === null || image.size === 0) {
+	    if(image == undefined || image.size === 0) {
 	        return new BBoolean(false);
 	    }
 	    return new BBoolean(true);
@@ -259,7 +259,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     isNotInDomain(arg: S): BBoolean {
         let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
         let image = thisMap.get(arg);
-        if(image === null || image.size === 0) {
+        if(image == undefined || image.size === 0) {
             return new BBoolean(true);
         }
         return new BBoolean(false);

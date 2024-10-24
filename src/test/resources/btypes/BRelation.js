@@ -81,7 +81,7 @@ export class BRelation {
         for (let domainElement of intersectionDomain) {
             let thisRangeSet = this.map.get(domainElement);
             let otherRangeSet = otherMap.get(domainElement);
-            if (otherRangeSet === null) {
+            if (otherRangeSet == undefined) {
                 continue;
             }
             let newRangeSet = thisRangeSet.subtract(otherRangeSet);
@@ -201,7 +201,7 @@ export class BRelation {
         let resultSet = immutable.Set(this.map.keys());
         for (let domainElement of this.map.keys()) {
             let range = this.map.get(domainElement);
-            if (range === null || range.size === 0) {
+            if (range == undefined || range.size === 0) {
                 resultSet = resultSet.remove(domainElement);
             }
         }
@@ -210,7 +210,7 @@ export class BRelation {
     isInDomain(arg) {
         let thisMap = this.map;
         let image = thisMap.get(arg);
-        if (image === null || image.size === 0) {
+        if (image == undefined || image.size === 0) {
             return new BBoolean(false);
         }
         return new BBoolean(true);
@@ -218,7 +218,7 @@ export class BRelation {
     isNotInDomain(arg) {
         let thisMap = this.map;
         let image = thisMap.get(arg);
-        if (image === null || image.size === 0) {
+        if (image == undefined || image.size === 0) {
             return new BBoolean(true);
         }
         return new BBoolean(false);

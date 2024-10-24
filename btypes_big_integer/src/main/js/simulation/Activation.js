@@ -1,12 +1,4 @@
 export class Activation {
-    operation;
-    time;
-    additionalGuards;
-    activationKind;
-    fixedVariables;
-    probabilisticVariables;
-    firingTransitionParameters;
-    firingTransitionParametersPredicate;
     constructor(operation, time, additionalGuards, activationKind, fixedVariables, probabilisticVariables, firingTransitionParameters, firingTransitionParametersPredicate) {
         this.operation = operation;
         this.time = time;

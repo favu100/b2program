@@ -808,16 +808,16 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
         }
     }
 
-	isPartialInteger(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BInteger) {
-				return new BBoolean(true);
-			} else {
-				return new BBoolean(false);
-			}
-		});
-		return new BBoolean(true);
-	}
+    isPartialInteger(): BBoolean {
+        for(let e of this.domain().getSet()) {
+            if(e instanceof BInteger) {
+                return new BBoolean(true);
+            } else {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
 	isPartialNatural(): BBoolean {
 	    for(let e of this.domain().getSet()) {

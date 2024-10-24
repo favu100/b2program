@@ -877,49 +877,49 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     }
 
 	checkDomainInteger(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainNatural(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BInteger && !(<BInteger>e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainNatural1(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
-				return new BBoolean(false);
-			}
-		});
+	    for(let e of this.domain().getSet()) {
+            if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
+                return new BBoolean(false);
+            }
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainString(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BString && !(<BString>e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainStruct(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BStruct && !(<BStruct>e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 

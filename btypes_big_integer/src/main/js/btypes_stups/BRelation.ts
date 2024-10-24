@@ -92,7 +92,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		for(let domainElement of intersectionDomain) {
 			let thisRangeSet = <immutable.Set<T>> this.map.get(domainElement);
 			let otherRangeSet = <immutable.Set<T>> otherMap.get(domainElement);
-            if(otherRangeSet == undefined) {
+            if(otherRangeSet == null) {
                 continue;
             }
 			let newRangeSet = <immutable.Set<T>> thisRangeSet.subtract(otherRangeSet);
@@ -244,7 +244,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let resultSet = immutable.Set(this.map.keys());
 		for(let domainElement of this.map.keys()) {
 			let range = <immutable.Set<T>> this.map.get(domainElement)
-			if(range == undefined || range.size === 0) {
+			if(range == null || range.size === 0) {
 				resultSet = resultSet.remove(domainElement);
 			}
 		}
@@ -254,19 +254,14 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	isInDomain(arg: S): BBoolean {
 	    let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
 	    let image = thisMap.get(arg);
-	    if(image == undefined || image.size === 0) {
+	    if(image == null || image.size === 0) {
 	        return new BBoolean(false);
 	    }
 	    return new BBoolean(true);
 	}
 
     isNotInDomain(arg: S): BBoolean {
-        let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
-        let image = thisMap.get(arg);
-        if(image == undefined || image.size === 0) {
-            return new BBoolean(true);
-        }
-        return new BBoolean(false);
+        return this.isInDomain(arg).not();
     }
 
 	range(): BSet<T> {
@@ -277,7 +272,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     isInRange(element: T): BBoolean {
         for(let domainElement of this.map.keys()) {
             let range = <immutable.Set<T>> this.map.get(domainElement)
-            if(element in range) {
+            if(range != null && range.has(element)) {
                 return new BBoolean(true);
             }
         }
@@ -285,19 +280,13 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     }
 
     isNotInRange(element: T): BBoolean {
-        for(let domainElement of this.map.keys()) {
-            let range = <immutable.Set<T>> this.map.get(domainElement)
-            if(element in range) {
-                return new BBoolean(false);
-            }
-        }
-        return new BBoolean(true);
+        return this.isInRange(element).not();
     }
 
     isInRelationalImage(element: T, set: BSet<S>): BBoolean {
         for (let key of set) {
             let image = <immutable.Set<T>> this.map.get(key)
-            if(image !== null && element in image) {
+            if(image != null && image.has(element)) {
                 return new BBoolean(true);
             }
         }
@@ -314,15 +303,18 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 
 		let resultMap: immutable.Map<T, immutable.Set<S>> = immutable.Map<T, immutable.Set<S>>();
 		for(let domainElement of keys) {
-			let range: immutable.Set<T> = <immutable.Set<T>> this.map.get(domainElement)
-			range.forEach((rangeElement: T) => {
-				let currentRange = resultMap.get(rangeElement);
-				if(currentRange == null) {
-					currentRange = immutable.Set();
-				}
-				currentRange = currentRange.union(immutable.Set([domainElement]));
-				resultMap = resultMap.set(rangeElement, currentRange);
-			});
+			let range: immutable.Set<T> = <immutable.Set<T>> thisMap.get(domainElement)
+			if(range == null) {
+			    break;
+			}
+			for(let rangeElement of range) {
+                let currentRange = resultMap.get(rangeElement);
+                if(currentRange == null) {
+                    currentRange = immutable.Set();
+                }
+                currentRange = currentRange.union(immutable.Set([domainElement]));
+                resultMap = resultMap.set(rangeElement, currentRange);
+			}
 		}
 		return new BRelation<T, S>(resultMap);
 	}

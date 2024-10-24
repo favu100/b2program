@@ -339,12 +339,12 @@ iteration_construct_subsetneq(otherIterationConstructs, type, identifier, set, b
 <otherIterationConstructs>
 <if(hasCondition)>
 if(<conditionalPredicate>.booleanValue()) {
-    for(let <identifier> of <set>.pow().difference(<set>)) {
+    for(let <identifier> of <set>.pow().difference(new BSet\<<type>\>(<set>))) {
         <body>
     }
 }
 <else>
-for(let <identifier> of <set>.pow().difference(<set>)) {
+for(let <identifier> of <set>.pow().difference(new BSet\<<type>\>(<set>))) {
     <body>
 }
 <endif>
@@ -416,7 +416,7 @@ let <identifier><if(!isJavaScript)>: BBoolean<endif> = new BBoolean(<if(forall)>
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, hasCondition, conditionalPredicate, predicate, forall) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-this.<identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+<identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
 break;
 <else>
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {

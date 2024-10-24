@@ -945,60 +945,60 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     }
 
 	checkRangeInteger(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
     checkRangeBoolean(): BBoolean {
-        this.range().getSet().forEach((e: T) => {
+        for(let e of this.range().getSet()) {
             if(e instanceof BBoolean) {
                 return new BBoolean(true);
             } else {
                 return new BBoolean(false);
             }
-        });
+        }
         return new BBoolean(true);
     }
 
 	checkRangeNatural(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkRangeNatural1(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural1().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkRangeString(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BString && !(<BString> e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkRangeStruct(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BStruct && !(<BStruct> e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 

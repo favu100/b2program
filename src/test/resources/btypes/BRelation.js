@@ -81,7 +81,7 @@ export class BRelation {
         for (let domainElement of intersectionDomain) {
             let thisRangeSet = this.map.get(domainElement);
             let otherRangeSet = otherMap.get(domainElement);
-            if (otherRangeSet == undefined) {
+            if (otherRangeSet == null) {
                 continue;
             }
             let newRangeSet = thisRangeSet.subtract(otherRangeSet);
@@ -201,7 +201,7 @@ export class BRelation {
         let resultSet = immutable.Set(this.map.keys());
         for (let domainElement of this.map.keys()) {
             let range = this.map.get(domainElement);
-            if (range == undefined || range.size === 0) {
+            if (range == null || range.size === 0) {
                 resultSet = resultSet.remove(domainElement);
             }
         }
@@ -210,18 +210,13 @@ export class BRelation {
     isInDomain(arg) {
         let thisMap = this.map;
         let image = thisMap.get(arg);
-        if (image == undefined || image.size === 0) {
+        if (image == null || image.size === 0) {
             return new BBoolean(false);
         }
         return new BBoolean(true);
     }
     isNotInDomain(arg) {
-        let thisMap = this.map;
-        let image = thisMap.get(arg);
-        if (image == undefined || image.size === 0) {
-            return new BBoolean(true);
-        }
-        return new BBoolean(false);
+        return this.isInDomain(arg).not();
     }
     range() {
         let set = immutable.Set.union(this.map.values());
@@ -230,25 +225,19 @@ export class BRelation {
     isInRange(element) {
         for (let domainElement of this.map.keys()) {
             let range = this.map.get(domainElement);
-            if (element in range) {
+            if (range != null && range.has(element)) {
                 return new BBoolean(true);
             }
         }
         return new BBoolean(false);
     }
     isNotInRange(element) {
-        for (let domainElement of this.map.keys()) {
-            let range = this.map.get(domainElement);
-            if (element in range) {
-                return new BBoolean(false);
-            }
-        }
-        return new BBoolean(true);
+        return this.isInRange(element).not();
     }
     isInRelationalImage(element, set) {
         for (let key of set) {
             let image = this.map.get(key);
-            if (image !== null && element in image) {
+            if (image != null && image.has(element)) {
                 return new BBoolean(true);
             }
         }
@@ -262,15 +251,18 @@ export class BRelation {
         let keys = immutable.Set(thisMap.keys());
         let resultMap = immutable.Map();
         for (let domainElement of keys) {
-            let range = this.map.get(domainElement);
-            range.forEach((rangeElement) => {
+            let range = thisMap.get(domainElement);
+            if (range == null) {
+                break;
+            }
+            for (let rangeElement of range) {
                 let currentRange = resultMap.get(rangeElement);
                 if (currentRange == null) {
                     currentRange = immutable.Set();
                 }
                 currentRange = currentRange.union(immutable.Set([domainElement]));
                 resultMap = resultMap.set(rangeElement, currentRange);
-            });
+            }
         }
         return new BRelation(resultMap);
     }

@@ -265,6 +265,11 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testProBOneWaySeq8() throws Exception {
+        testCppMC("prob_oneway8seq", "prob_oneway8seq", true, 1, false);
+    }
+
+    @Test
     public void testLift_MC() throws Exception {
         testCppMC("Lift_MC", "Lift_MC", true, 1, false);
     }

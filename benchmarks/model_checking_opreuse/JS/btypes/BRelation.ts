@@ -383,11 +383,11 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
             let thisRangeSet = <immutable.Set<T>> this.map.get(domainElement);
             let otherRangeSet = <immutable.Set<T>> arg.map.get(domainElement);
             if(thisRangeSet != null && !(thisRangeSet.size === 0)) {
-                thisRangeSet.forEach((rangeElement: T) => {
+                for(let rangeElement of thisRangeSet) {
                     if(!otherRangeSet.contains(rangeElement)) {
                         return new BBoolean(false);
                     }
-                });
+                }
             }
         }
         return new BBoolean(true);
@@ -568,13 +568,13 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 			let range: immutable.Set<T> = this.map.get(domainElement)
 
 			let set: immutable.Set<R> = immutable.Set<R>();
-			range.forEach((rangeElement: T) => {
-				let union_element = otherMap.get(rangeElement)
-				if (union_element == null) {
-					return;
-				}
-				set = set.union(<immutable.Set<R>> union_element);
-			});
+			for(let rangeElement of range) {
+                let union_element = otherMap.get(rangeElement)
+                if (union_element == null) {
+                    return;
+                }
+                set = set.union(<immutable.Set<R>> union_element);
+			}
             if(set.size === 0) {
                 continue;
             }
@@ -796,52 +796,52 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
         }
     }
 
-	isPartialInteger(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BInteger) {
-				return new BBoolean(true);
-			} else {
-				return new BBoolean(false);
-			}
-		});
-		return new BBoolean(true);
-	}
+    isPartialInteger(): BBoolean {
+        for(let e of this.domain().getSet()) {
+            if(e instanceof BInteger) {
+                return new BBoolean(true);
+            } else {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
-	isPartialNatural(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BInteger && !(<BInteger>e).isNatural().booleanValue()) {
-				return new BBoolean(false);
-			}
-		});
-		return new BBoolean(true);
-	}
+    isPartialNatural(): BBoolean {
+        for(let e of this.domain().getSet()) {
+            if(e instanceof BInteger && !(<BInteger>e).isNatural().booleanValue()) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
-	isPartialNatural1(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
-				return new BBoolean(false);
-			}
-		});
-		return new BBoolean(true);
-	}
+    isPartialNatural1(): BBoolean {
+        for(let e of this.domain().getSet()) {
+            if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
-	isPartialString(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BString && !(<BString>e).isString().booleanValue()) {
-				return new BBoolean(false);
-			}
-		});
-		return new BBoolean(true);
-	}
+    isPartialString(): BBoolean {
+        for(let e of this.domain().getSet()) {
+            if(e instanceof BString && !(<BString>e).isString().booleanValue()) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
-	isPartialStruct(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BStruct && !(<BStruct>e).isRecord().booleanValue()) {
-				return new BBoolean(false);
-			}
-		});
-		return new BBoolean(true);
-	}
+    isPartialStruct(): BBoolean {
+        for(let e of this.domain().getSet()) {
+            if(e instanceof BStruct && !(<BStruct>e).isRecord().booleanValue()) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
 
     checkDomain(domain: BSet<S>): BBoolean;
     checkDomain <A1 extends BObject, A2 extends BObject>(domain: BRelation<A1, A2>): BBoolean;
@@ -865,49 +865,49 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     }
 
 	checkDomainInteger(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainNatural(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BInteger && !(<BInteger>e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainNatural1(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
-			if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
-				return new BBoolean(false);
-			}
-		});
+	    for(let e of this.domain().getSet()) {
+            if(e instanceof BInteger && !(<BInteger>e).isNatural1().booleanValue()) {
+                return new BBoolean(false);
+            }
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainString(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BString && !(<BString>e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkDomainStruct(): BBoolean {
-		this.domain().getSet().forEach((e: S) => {
+	    for(let e of this.domain().getSet()) {
 			if(e instanceof BStruct && !(<BStruct>e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
@@ -933,60 +933,60 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     }
 
 	checkRangeInteger(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BInteger) {
 				return new BBoolean(true);
 			} else {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
     checkRangeBoolean(): BBoolean {
-        this.range().getSet().forEach((e: T) => {
+        for(let e of this.range().getSet()) {
             if(e instanceof BBoolean) {
                 return new BBoolean(true);
             } else {
                 return new BBoolean(false);
             }
-        });
+        }
         return new BBoolean(true);
     }
 
 	checkRangeNatural(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkRangeNatural1(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BInteger && !(<BInteger> e).isNatural1().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkRangeString(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BString && !(<BString> e).isString().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
 	checkRangeStruct(): BBoolean {
-		this.range().getSet().forEach((e: T) => {
+	    for(let e of this.range().getSet()) {
 			if(e instanceof BStruct && !(<BStruct> e).isRecord().booleanValue()) {
 				return new BBoolean(false);
 			}
-		});
+	    }
 		return new BBoolean(true);
 	}
 
@@ -995,12 +995,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	}
 
 	isFunction(): BBoolean {
-		this.domain().getSet().forEach((element: S) => {
-			let range = <immutable.Set<T>> this.map.get(element);
-			if(range.size > 1) {
-				return new BBoolean(false);
-			}
-		});
+	    for(let element of this.domain().getSet()) {
+            let range = <immutable.Set<T>> this.map.get(element);
+            if(range.size > 1) {
+                return new BBoolean(false);
+            }
+	    }
 		return new BBoolean(true);
 	}
 
@@ -1031,15 +1031,15 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	
 	isInjection(): BBoolean {
 		let visited = immutable.Set();
-		this.domain().getSet().forEach((element: S) => {
+		for(let element of this.domain().getSet()) {
 			let range = <immutable.Set<T>> this.map.get(element);
-			range.forEach((rangeElement: T) => {
+			for(let rangeElement of range) {
 				if(visited.contains(rangeElement)) {
 					return new BBoolean(false);
 				}
 				visited = visited.union(immutable.Set([rangeElement]));
-			});
-		});
+			}
+		}
 		return new BBoolean(true);
 	}
 

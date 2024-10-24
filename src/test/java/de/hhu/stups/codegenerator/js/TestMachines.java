@@ -264,7 +264,7 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testrether_mch1() throws Exception {
-        testJSMC("rether");
+        testJSMC("rether", "rether", true, true);
     }
 
     @Test

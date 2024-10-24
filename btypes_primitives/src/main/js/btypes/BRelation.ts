@@ -1031,15 +1031,15 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	
 	isInjection(): BBoolean {
 		let visited = immutable.Set();
-		this.domain().getSet().forEach((element: S) => {
+		for(let element of this.domain().getSet()) {
 			let range = <immutable.Set<T>> this.map.get(element);
-			range.forEach((rangeElement: T) => {
+			for(let rangeElement of range) {
 				if(visited.contains(rangeElement)) {
 					return new BBoolean(false);
 				}
 				visited = visited.union(immutable.Set([rangeElement]));
-			});
-		});
+			}
+		}
 		return new BBoolean(true);
 	}
 

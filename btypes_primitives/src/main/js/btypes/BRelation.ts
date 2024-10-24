@@ -282,7 +282,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
     isInRelationalImage(element: T, set: BSet<S>): BBoolean {
         for (let key of set) {
             let image = <immutable.Set<T>> this.map.get(key)
-            if(image !== null && element in image) {
+            if(image != null && image.has(element)) {
                 return new BBoolean(true);
             }
         }

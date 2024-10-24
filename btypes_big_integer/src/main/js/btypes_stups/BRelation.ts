@@ -1007,12 +1007,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	}
 
 	isFunction(): BBoolean {
-		this.domain().getSet().forEach((element: S) => {
-			let range = <immutable.Set<T>> this.map.get(element);
-			if(range.size > 1) {
-				return new BBoolean(false);
-			}
-		});
+	    for(let element of this.domain().getSet()) {
+            let range = <immutable.Set<T>> this.map.get(element);
+            if(range.size > 1) {
+                return new BBoolean(false);
+            }
+	    }
 		return new BBoolean(true);
 	}
 

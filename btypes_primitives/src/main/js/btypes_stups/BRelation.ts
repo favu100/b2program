@@ -403,20 +403,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	
 	override(arg: BRelation<S,T>): BRelation<S,T> {
 		let otherMap = arg.map;
-
 		let otherDomain = immutable.Set(otherMap.keys());
-
 		let resultMap = this.map;
-		outer_loop:
+
 		for(let domainElement of otherDomain) {
-			for(let thisDomainElement of resultMap.keys()) {
-				if(thisDomainElement.equals(domainElement)) {
-					let range: immutable.Set<T> = <immutable.Set<T>> otherMap.get(domainElement);
-					resultMap = resultMap.set(thisDomainElement, range);
-					continue outer_loop;
-				}
-			}
-			resultMap = resultMap.set(domainElement, <immutable.Set<T>> otherMap.get(domainElement));
+		    let range: immutable.Set<T> = <immutable.Set<T>> otherMap.get(domainElement);
+		    resultMap = resultMap.set(domainElement, range);
 		}
 
 		return new BRelation<S, T>(resultMap);

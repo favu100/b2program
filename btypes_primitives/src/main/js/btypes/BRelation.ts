@@ -402,10 +402,10 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let otherDomain = immutable.Set(otherMap.keys());
 		let resultMap = this.map;
 
-        for(let domainElement of otherDomain) {
-            let range = otherMap.get(<S>domainElement);
-            resultMap = resultMap.set(domainElement, <immutable.Set<T>> range);
-        }
+		for(let domainElement of otherDomain) {
+		    let range: immutable.Set<T> = <immutable.Set<T>> otherMap.get(domainElement);
+		    resultMap = resultMap.set(domainElement, range);
+		}
 
 		return new BRelation<S, T>(resultMap);
 	}

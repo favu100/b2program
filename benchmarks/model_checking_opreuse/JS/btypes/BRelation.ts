@@ -400,6 +400,14 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
         return this.subset(arg).not();
     }
 
+	strictSubset(other: BRelation<S,T>): BBoolean {
+	    return new BBoolean(other.size() != this.size() && this.subset(other).booleanValue());
+	}
+
+	strictNotSubset(other: BRelation<S,T>): BBoolean {
+	    return this.strictSubset(other).not();
+	}
+
 	override(arg: BRelation<S,T>): BRelation<S,T> {
 		let otherMap = arg.map;
 		let otherDomain = immutable.Set(otherMap.keys());

@@ -343,6 +343,12 @@ export class BRelation {
     notSubset(arg) {
         return this.subset(arg).not();
     }
+    strictSubset(other) {
+        return new BBoolean(other.size() != this.size() && this.subset(other).booleanValue());
+    }
+    strictNotSubset(other) {
+        return this.strictSubset(other).not();
+    }
     override(arg) {
         let otherMap = arg.map;
         let otherDomain = immutable.Set(otherMap.keys());

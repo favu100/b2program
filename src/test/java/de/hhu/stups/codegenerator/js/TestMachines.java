@@ -205,8 +205,8 @@ public class TestMachines extends TestJs {
     }
 
     @Test
-    public void testRelLaws_NatBool() throws Exception {
-        testJSMC("SetRelLaws_NatBool", "SetRelLaws_NatBool", true, false);
+    public void testSetRelLaws_NatBool() throws Exception {
+        testJSMC("SetRelLaws_NatBool", "SetRelLaws_NatBool", false, false);
     }
 
     @Test

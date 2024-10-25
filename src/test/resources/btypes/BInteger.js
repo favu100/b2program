@@ -28,10 +28,10 @@ export class BInteger {
         return new BBoolean(this.value > o.value);
     }
     equal(o) {
-        return new BBoolean(this.value === o.value);
+        return new BBoolean(this.value == o.value);
     }
     unequal(o) {
-        return new BBoolean(this.value !== o.value);
+        return new BBoolean(this.value != o.value);
     }
     intValue() {
         return this.value;

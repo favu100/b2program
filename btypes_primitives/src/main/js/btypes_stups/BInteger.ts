@@ -41,11 +41,11 @@ export class BInteger implements BObject{
     }
 
     equal(o: BInteger): BBoolean {
-        return new BBoolean(this.value === o.value);
+        return new BBoolean(this.value == o.value);
     }
 
     unequal(o: BInteger): BBoolean {
-        return new BBoolean(this.value !== o.value);
+        return new BBoolean(this.value != o.value);
     }
 
     intValue(): number {

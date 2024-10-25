@@ -258,7 +258,7 @@ class BRelation : public BObject {
             return BRelation<S,T>(resultMap);
         }
 
-        BRelation<S,T> _union(const BRelation<S,T>& relation) {
+        BRelation<S,T> _union(const BRelation<S,T>& relation) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;

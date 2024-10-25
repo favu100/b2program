@@ -16,22 +16,22 @@ export class BInteger {
         return this.value - o.value;
     }
     lessEqual(o) {
-        return new BBoolean(this.compareTo(o) <= 0);
+        return new BBoolean(this.value <= o.value);
     }
     greaterEqual(o) {
-        return new BBoolean(this.compareTo(o) >= 0);
+        return new BBoolean(this.value >= o.value);
     }
     less(o) {
-        return new BBoolean(this.compareTo(o) < 0);
+        return new BBoolean(this.value < o.value);
     }
     greater(o) {
-        return new BBoolean(this.compareTo(o) > 0);
+        return new BBoolean(this.value > o.value);
     }
     equal(o) {
-        return new BBoolean(this.compareTo(o) === 0);
+        return new BBoolean(this.value === o.value);
     }
     unequal(o) {
-        return new BBoolean(this.compareTo(o) != 0);
+        return new BBoolean(this.value !== o.value);
     }
     intValue() {
         return this.value;
@@ -49,7 +49,7 @@ export class BInteger {
         return new BInteger(this.value * o.value);
     }
     power(o) {
-        return new BInteger(this.value ^ o.value);
+        return new BInteger(Math.pow(this.value, o.value));
     }
     divide(o) {
         return new BInteger(~~(this.value / o.value));

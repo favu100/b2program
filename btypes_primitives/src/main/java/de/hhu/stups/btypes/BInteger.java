@@ -5,6 +5,7 @@ import java.util.Objects;
 /**
  * Created by fabian on 15.10.18.
  */
+ */
 public class BInteger extends java.lang.Number implements Comparable<BInteger>, BObject {
 
 

@@ -25,30 +25,29 @@ export class BInteger implements BObject{
     }
 
     lessEqual(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) <= 0);
+        return new BBoolean(this.value <= o.value);
     }
 
-
     greaterEqual(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) >= 0);
+        return new BBoolean(this.value >= o.value);
     }
 
     less(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) < 0);
+        return new BBoolean(this.value < o.value);
     }
 
     greater(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) > 0);
+        return new BBoolean(this.value > o.value);
     }
 
     equal(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) === 0);
+        return new BBoolean(this.value === o.value);
     }
 
     unequal(o: BInteger): BBoolean {
-        return new BBoolean(this.compareTo(o) != 0);
+        return new BBoolean(this.value !== o.value);
     }
-    
+
     intValue(): number {
         return this.value;
     }
@@ -70,7 +69,7 @@ export class BInteger implements BObject{
     }
 
     power(o: BInteger): BInteger {
-        return new BInteger(this.value ^ o.value);
+        return new BInteger(Math.pow(this.value, o.value));
     }
 
     divide(o: BInteger): BInteger {

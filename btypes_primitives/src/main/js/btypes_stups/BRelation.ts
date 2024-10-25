@@ -251,6 +251,14 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BSet<S>(resultSet);
 	}
 
+    domainForRelations<R extends BObject,A extends BObject>(): BRelation<R,A> {
+		let result = new BRelation<R,A>();
+		for(let elem of this.domain()) {
+			result = result.union(new BRelation<R,A>(elem));
+		}
+		return result;
+	}
+
 	isInDomain(arg: S): BBoolean {
 	    let thisMap: immutable.Map<S, immutable.Set<T>> = this.map;
 	    let image = thisMap.get(arg);
@@ -267,6 +275,14 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	range(): BSet<T> {
 		let set = immutable.Set.union(this.map.values());
 		return new BSet<T>(set);
+	}
+
+    rangeForRelations<R extends BObject,A extends BObject>(): BRelation<R,A> {
+		let result = new BRelation<R,A>();
+		for(let elem of this.range()) {
+			result = result.union(new BRelation<R,A>(elem));
+		}
+		return result;
 	}
 
     isInRange(element: T): BBoolean {

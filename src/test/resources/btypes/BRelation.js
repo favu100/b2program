@@ -207,6 +207,13 @@ export class BRelation {
         }
         return new BSet(resultSet);
     }
+    domainForRelations() {
+        let result = new BRelation();
+        for (let elem of this.domain()) {
+            result = result.union(new BRelation(elem));
+        }
+        return result;
+    }
     isInDomain(arg) {
         let thisMap = this.map;
         let image = thisMap.get(arg);
@@ -221,6 +228,13 @@ export class BRelation {
     range() {
         let set = immutable.Set.union(this.map.values());
         return new BSet(set);
+    }
+    rangeForRelations() {
+        let result = new BRelation();
+        for (let elem of this.range()) {
+            result = result.union(new BRelation(elem));
+        }
+        return result;
     }
     isInRange(element) {
         for (let domainElement of this.map.keys()) {

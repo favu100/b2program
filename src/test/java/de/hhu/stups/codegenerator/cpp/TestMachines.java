@@ -187,6 +187,31 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testRelLaws() throws Exception {
+        testCppMC("RelLaws", "RelLaws", false, 1, false);
+    }
+
+    @Test
+    public void testRelLaws_Small() throws Exception {
+        testCppMC("RelLaws_Small", "RelLaws_Small", true, 1, false);
+    }
+
+    @Test
+    public void testRelLaws_Small2() throws Exception {
+        testCppMC("RelLaws_Small2", "RelLaws_Small2", true, 1, false);
+    }
+
+    @Test
+    public void testCompositionEmpty() throws Exception {
+        testCppMC("CompositionEmpty", "CompositionEmpty", true, 1, false);
+    }
+
+    @Test
+    public void testFunLaws() throws Exception {
+        testCppMC("FunLaws", "FunLaws", true, 1, false);
+    }
+
+    @Test
     public void testBoolLawsSetCompr() throws Exception {
         testCppMC("BoolLaws_SetCompr", "BoolLaws_SetCompr", true, 1, false);
     }

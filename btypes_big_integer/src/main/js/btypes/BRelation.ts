@@ -618,6 +618,22 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BRelation<S, R>(resultMap);
 	}
 
+	isInComposition<R extends BObject>(tuple: BTuple<S,R>, arg: BRelation<T,R>): BBoolean {
+		let projection1 = tuple.projection1();
+		let projection2 = tuple.projection2();
+
+		let range: immutable.Set<T> = this.map.get(projection1)
+
+		if(range != null) {
+			for (let value of range) {
+			    let range2: immutable.Set<T> = arg.map.get(value)
+				if (range2 != null && range2.has(projection2)) {
+					return new BBoolean(true);
+				}
+			}
+		}
+		return new BBoolean(false);
+	}
 	
 	iterate(n: BInteger): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S,S>><unknown>this;

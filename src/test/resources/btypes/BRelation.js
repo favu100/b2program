@@ -525,6 +525,20 @@ export class BRelation {
         }
         return new BRelation(resultMap);
     }
+    isInComposition(tuple, arg) {
+        let projection1 = tuple.projection1();
+        let projection2 = tuple.projection2();
+        let range = this.map.get(projection1);
+        if (range != null) {
+            for (let value of range) {
+                let range2 = arg.map.get(value);
+                if (range2 != null && range2.has(projection2)) {
+                    return new BBoolean(true);
+                }
+            }
+        }
+        return new BBoolean(false);
+    }
     iterate(n) {
         let thisRelation = this;
         let result = BRelation.identity(this.domain().union(this.range()));

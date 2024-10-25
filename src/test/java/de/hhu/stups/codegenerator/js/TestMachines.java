@@ -192,7 +192,7 @@ public class TestMachines extends TestJs {
     @Ignore
     @Test
     public void testSetLawsNAT() throws Exception {
-        testJs("SetLawsNAT");
+        testJSMC("SetLawsNat", "SetLawsNat", true, false);
     }
 
     @Test(expected = CodeGenerationException.class)

@@ -278,97 +278,97 @@ export class BSet<T extends BObject> implements BObject{
 		return this.pow1();
 	}
 
-	subsetOfInteger(): boolean {
+	subsetOfInteger(): BBoolean {
 		for (let element of this.set) {
 			if (element ! instanceof BInteger) {
-				return false;
+				return new BBoolean(false);
 			}
 		}
-		return true;
+		return new BBoolean(true);
 	}
 
-	strictSubsetOfInteger(): boolean {
+	strictSubsetOfInteger(): BBoolean {
 		return this.subsetOfInteger();
 	}
 
-	notSubsetOfInteger(): boolean {
-		return !this.subsetOfInteger();
+	notSubsetOfInteger(): BBoolean {
+		return this.subsetOfInteger().not();
 	}
 
-	notStrictSubsetOfInteger(): boolean {
-		return !this.strictSubsetOfInteger();
+	notStrictSubsetOfInteger(): BBoolean {
+		return this.strictSubsetOfInteger().not();
 	}
 
-	subsetOfNatural(): boolean {
+	subsetOfNatural(): BBoolean {
 		for (let element of this.set) {
 			if (!(element instanceof BInteger && element.isNatural().booleanValue())) {
-				return false;
+				return new BBoolean(false);
 			}
 		}
-		return true
+		return new BBoolean(true)
 	}
 
-	strictSubsetOfNatural(): boolean {
+	strictSubsetOfNatural(): BBoolean {
 		return this.subsetOfNatural()
 	}
 
-	notSubsetOfNatural(): boolean {
-		return !this.subsetOfNatural()
+	notSubsetOfNatural(): BBoolean {
+		return this.subsetOfNatural().not()
 	}
 
-	notStrictSubsetOfNatural(): boolean {
-		return !this.strictSubsetOfNatural()
+	notStrictSubsetOfNatural(): BBoolean {
+		return this.strictSubsetOfNatural().not()
 	}
 
-	subsetOfNatural1(): boolean {
+	subsetOfNatural1(): BBoolean {
 		for (let element of this.set) {
 			if (!(element instanceof BInteger && element.isNatural1().booleanValue())) {
-				return false;
+				return new BBoolean(false);
 			}
 		}
-		return true
+		return new BBoolean(true)
 	}
 
-	subsetOfString(): boolean {
+	subsetOfString(): BBoolean {
 		for (let element of this.set) {
 			if (!(element instanceof BString)) {
-				return false
+				return new BBoolean(false)
 			}
 		}
-		return true
+		return new BBoolean(true)
 	}
 
-	strictSubsetOfString(): boolean {
+	strictSubsetOfString(): BBoolean {
 		return this.subsetOfString()
 	}
 
-	notSubsetOfString(): boolean {
-		return !this.subsetOfString()
+	notSubsetOfString(): BBoolean {
+		return this.subsetOfString().not()
 	}
 
-	notStrictSubsetOfString(): boolean {
-		return !this.strictSubsetOfString()
+	notStrictSubsetOfString(): BBoolean {
+		return this.strictSubsetOfString().not()
 	}
 
-	subsetOfStruct(): boolean {
+	subsetOfStruct(): BBoolean {
 		for (let element of this.set) {
 			if (!(element instanceof BStruct)) {
-				return false;
+				return new BBoolean(false);
 			}
 		}
-		return true;
+		return new BBoolean(true);
 	}
 
-	strictSubsetOfStruct(): boolean {
+	strictSubsetOfStruct(): BBoolean {
 		return this.subsetOfStruct()
 	}
 
-	notSubsetOfStruct(): boolean {
-		return !this.subsetOfStruct()
+	notSubsetOfStruct(): BBoolean {
+		return this.subsetOfStruct().not()
 	}
 
-	notStrictSubsetOfStruct(): boolean {
-		return !this.strictSubsetOfStruct()
+	notStrictSubsetOfStruct(): BBoolean {
+		return this.strictSubsetOfStruct().not()
 	}
 
 	equalInteger(): BBoolean {

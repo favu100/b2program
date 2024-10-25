@@ -217,78 +217,78 @@ export class BSet {
     subsetOfInteger() {
         for (let element of this.set) {
             if (element instanceof BInteger) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfInteger() {
         return this.subsetOfInteger();
     }
     notSubsetOfInteger() {
-        return !this.subsetOfInteger();
+        return this.subsetOfInteger().not();
     }
     notStrictSubsetOfInteger() {
-        return !this.strictSubsetOfInteger();
+        return this.strictSubsetOfInteger().not();
     }
     subsetOfNatural() {
         for (let element of this.set) {
             if (!(element instanceof BInteger && element.isNatural().booleanValue())) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfNatural() {
         return this.subsetOfNatural();
     }
     notSubsetOfNatural() {
-        return !this.subsetOfNatural();
+        return this.subsetOfNatural().not();
     }
     notStrictSubsetOfNatural() {
-        return !this.strictSubsetOfNatural();
+        return this.strictSubsetOfNatural().not();
     }
     subsetOfNatural1() {
         for (let element of this.set) {
             if (!(element instanceof BInteger && element.isNatural1().booleanValue())) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     subsetOfString() {
         for (let element of this.set) {
             if (!(element instanceof BString)) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfString() {
         return this.subsetOfString();
     }
     notSubsetOfString() {
-        return !this.subsetOfString();
+        return this.subsetOfString().not();
     }
     notStrictSubsetOfString() {
-        return !this.strictSubsetOfString();
+        return this.strictSubsetOfString().not();
     }
     subsetOfStruct() {
         for (let element of this.set) {
             if (!(element instanceof BStruct)) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfStruct() {
         return this.subsetOfStruct();
     }
     notSubsetOfStruct() {
-        return !this.subsetOfStruct();
+        return this.subsetOfStruct().not();
     }
     notStrictSubsetOfStruct() {
-        return !this.strictSubsetOfStruct();
+        return this.strictSubsetOfStruct().not();
     }
     equalInteger() {
         return new BBoolean(false);

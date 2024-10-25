@@ -396,7 +396,7 @@ public class TestMachines extends TestJs {
     }
 
     @Test
-    public void testOBSW_M001() throws Exception {
+    public void testOBSW_M001_2() throws Exception {
         testJSMC("obsw_M001_2", "obsw_M001_2", true, false);
     }
 

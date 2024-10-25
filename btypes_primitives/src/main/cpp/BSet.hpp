@@ -350,183 +350,183 @@ class BSet : public BObject {
             return BBoolean(this->set != other.set);
         }
 
-        BBoolean subsetOfBoolean() {
-            for(const T& e : this->set) {
-                if(typeid(e) == typeid(BBoolean)) {
-                    return BBoolean(true);
-                } else {
-                    return BBoolean(false);
-                }
-            }
-            return BBoolean(true);
-        }
+         BBoolean subsetOfBoolean() const {
+             for(const T& e : this->set) {
+                 if(typeid(e) == typeid(BBoolean)) {
+                     return BBoolean(true);
+                 } else {
+                     return BBoolean(false);
+                 }
+             }
+             return BBoolean(true);
+         }
 
-        BBoolean strictSubsetOfBoolean() {
-            return this->subsetOfBoolean();
-        }
+         BBoolean strictSubsetOfBoolean() const {
+             return this->subsetOfBoolean();
+         }
 
-        BBoolean notSubsetOfInteger() {
-            return this->subsetOfBoolean()._not();
-        }
+         BBoolean notSubsetOfBoolean() const {
+             return this->subsetOfBoolean()._not();
+         }
 
-        BBoolean equalBoolean() {
-            return BBoolean(subsetOfBoolean().booleanValue() && this->size() == 2);
-        }
+         BBoolean equalBoolean() const {
+             return BBoolean(subsetOfBoolean().booleanValue() && this->size() == 2);
+         }
 
-        BBoolean notEqualBoolean() {
-            return BBoolean(subsetOfBoolean().booleanValue() && this->size() < 2);
-        }
+         BBoolean notEqualBoolean() const {
+             return BBoolean(subsetOfBoolean().booleanValue() && this->size() < 2);
+         }
 
-        BBoolean subsetOfInteger() {
-            for(const T& e : this->set) {
-                if(typeid(e) == typeid(BInteger)) {
-                    return BBoolean(true);
-                } else {
-                    return BBoolean(false);
-                }
-            }
-            return BBoolean(true);
-        }
+         BBoolean subsetOfInteger() const {
+             for(const T& e : this->set) {
+                 if(typeid(e) == typeid(BInteger)) {
+                     return BBoolean(true);
+                 } else {
+                     return BBoolean(false);
+                 }
+             }
+             return BBoolean(true);
+         }
 
-        BBoolean strictSubsetOfInteger() {
-            return this->subsetOfInteger();
-        }
+         BBoolean strictSubsetOfInteger() const {
+             return this->subsetOfInteger();
+         }
 
-        BBoolean notSubsetOfBoolean() {
-            return this->subsetOfBoolean()._not();
-        }
+         BBoolean notSubsetOfInteger() const {
+             return this->subsetOfInteger()._not();
+         }
 
-        BBoolean equalInteger() {
-            return BBoolean(false);
-        }
+         BBoolean equalInteger() const {
+             return BBoolean(false);
+         }
 
-        BBoolean unequalInteger() {
-            return BBoolean(true);
-        }
+         BBoolean unequalInteger() const {
+             return BBoolean(true);
+         }
 
-        BBoolean equalNatural() {
-            return BBoolean(false);
-        }
+         BBoolean equalNatural() const {
+             return BBoolean(false);
+         }
 
-        BBoolean unequalNatural() {
-            return BBoolean(true);
-        }
+         BBoolean unequalNatural() const {
+             return BBoolean(true);
+         }
 
-        BBoolean equalNatural1() {
-            return BBoolean(false);
-        }
+         BBoolean equalNatural1() const {
+             return BBoolean(false);
+         }
 
-        BBoolean unequalNatural1() {
-            return BBoolean(true);
-        }
+         BBoolean unequalNatural1() const {
+             return BBoolean(true);
+         }
 
-        BBoolean equalString() {
-            return BBoolean(false);
-        }
+         BBoolean equalString() const {
+             return BBoolean(false);
+         }
 
-        BBoolean unequalString() {
-            return BBoolean(true);
-        }
+         BBoolean unequalString() const {
+             return BBoolean(true);
+         }
 
-        BBoolean equalStruct() {
-            return BBoolean(false);
-        }
+         BBoolean equalStruct() const {
+             return BBoolean(false);
+         }
 
-        BBoolean unequalStruct() {
-            return BBoolean(true);
-        }
+         BBoolean unequalStruct() const {
+             return BBoolean(true);
+         }
 
-        BBoolean notStrictSubsetOfInteger() {
-            return this->strictSubsetOfInteger()._not();
-        }
+         BBoolean notStrictSubsetOfInteger() const {
+             return this->strictSubsetOfInteger()._not();
+         }
 
-        BBoolean subsetOfNatural() {
-            for(const T& e : this->set) {
-                BInteger element = (BInteger) e;
-                if(!element.isNatural().booleanValue()) {
-                    return BBoolean(false);
-                }
-            }
-            return BBoolean(true);
-        }
+         BBoolean subsetOfNatural() const {
+             for(const T& e : this->set) {
+                 BInteger element = (BInteger) e;
+                 if(!element.isNatural().booleanValue()) {
+                     return BBoolean(false);
+                 }
+             }
+             return BBoolean(true);
+         }
 
-        BBoolean strictSubsetOfNatural() {
-            return this->subsetOfNatural();
-        }
+         BBoolean strictSubsetOfNatural() const {
+             return this->subsetOfNatural();
+         }
 
-        BBoolean notSubsetOfNatural() {
-            return this->subsetOfNatural()._not();
-        }
+         BBoolean notSubsetOfNatural() const {
+             return this->subsetOfNatural()._not();
+         }
 
-        BBoolean notStrictSubsetOfNatural() {
-            return strictSubsetOfNatural()._not();
-        }
+         BBoolean notStrictSubsetOfNatural() const {
+             return strictSubsetOfNatural()._not();
+         }
 
-        BBoolean subsetOfNatural1() {
-            for(const T& e : this->set) {
-                BInteger element = (BInteger) e;
-                if(!element.isNatural1().booleanValue()) {
-                    return BBoolean(false);
-                }
-            }
-            return BBoolean(true);
-        }
+         BBoolean subsetOfNatural1() const {
+             for(const T& e : this->set) {
+                 BInteger element = (BInteger) e;
+                 if(!element.isNatural1().booleanValue()) {
+                     return BBoolean(false);
+                 }
+             }
+             return BBoolean(true);
+         }
 
-        BBoolean strictSubsetOfNatural1() {
-            return this->subsetOfNatural1();
-        }
+         BBoolean strictSubsetOfNatural1() const {
+             return this->subsetOfNatural1();
+         }
 
-        BBoolean notSubsetOfNatural1() {
-            return this->subsetOfNatural1()._not();
-        }
+         BBoolean notSubsetOfNatural1() const {
+             return this->subsetOfNatural1()._not();
+         }
 
-        BBoolean notStrictSubsetOfNatural1() {
-            return this->strictSubsetOfNatural1()._not();
-        }
+         BBoolean notStrictSubsetOfNatural1() const {
+             return this->strictSubsetOfNatural1()._not();
+         }
 
-        BBoolean subsetOfString() {
-            for(const T& e : this->set) {
-                BString element = (BString) e;
-                if(!element.isString().booleanValue()) {
-                    return BBoolean(false);
-                }
-            }
-            return BBoolean(true);
-        }
+         BBoolean subsetOfString() const {
+             for(const T& e : this->set) {
+                 BString element = (BString) e;
+                 if(!element.isString().booleanValue()) {
+                     return BBoolean(false);
+                 }
+             }
+             return BBoolean(true);
+         }
 
-        BBoolean strictSubsetOfString() {
-            return this->subsetOfString();
-        }
+         BBoolean strictSubsetOfString() const {
+             return this->subsetOfString();
+         }
 
-        BBoolean notSubsetOfString() {
-            return this->subsetOfString()._not();
-        }
+         BBoolean notSubsetOfString() const {
+             return this->subsetOfString()._not();
+         }
 
-        BBoolean notStrictSubsetOfString() {
-            return this->strictSubsetOfString()._not();
-        }
+         BBoolean notStrictSubsetOfString() const {
+             return this->strictSubsetOfString()._not();
+         }
 
-        BBoolean subsetOfStruct() {
-            for(const T& e : this->set) {
-                BStruct element = (BStruct) e;
-                if(!element.isRecord().booleanValue()) {
-                    return BBoolean(false);
-                }
-            }
-            return BBoolean(true);
-        }
+         BBoolean subsetOfStruct() const {
+             for(const T& e : this->set) {
+                 BStruct element = (BStruct) e;
+                 if(!element.isRecord().booleanValue()) {
+                     return BBoolean(false);
+                 }
+             }
+             return BBoolean(true);
+         }
 
-        BBoolean strictSubsetOfStruct() {
-            return this->subsetOfStruct();
-        }
+         BBoolean strictSubsetOfStruct() const {
+             return this->subsetOfStruct();
+         }
 
-        BBoolean notSubsetOfStruct() {
-            return this->subsetOfStruct()._not();
-        }
+         BBoolean notSubsetOfStruct() const {
+             return this->subsetOfStruct()._not();
+         }
 
-        BBoolean notStrictSubsetOfStruct() {
-            return this->strictSubsetOfStruct()._not();
-        }
+         BBoolean notStrictSubsetOfStruct() const {
+             return this->strictSubsetOfStruct()._not();
+         }
 
         void operator =(const BSet<T>& other) {
             this->set = other.set;

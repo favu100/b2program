@@ -388,7 +388,7 @@ class BRelation : public BObject {
 
         BRelation domainForRelations() const {
             BRelation result = BRelation();
-            for(const S elem : this->domain()) {
+            for(const S& elem : this->domain()) {
                 result = result._union(BRelation(elem));
             }
             return result;
@@ -424,7 +424,7 @@ class BRelation : public BObject {
 
         BRelation rangeForRelations() const {
             BRelation result = BRelation();
-            for(T elem : this->range()) {
+            for(const T& elem : this->range()) {
                 result = result._union(new BRelation((T) elem));
             }
             return result;
@@ -1120,7 +1120,7 @@ class BRelation : public BObject {
 
         template<typename A1 = typename S::left_type, typename A2 = typename S::right_type>
         BBoolean isPartial(const BRelation<A1, A2>& domain) const {
-            for(S element : this->domain()) {
+            for(const S& element : this->domain()) {
                 BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
                 const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual>* rangePtr = domain.map.find(elementAsTuple.projection1());
                 if(rangePtr == nullptr) {
@@ -1187,7 +1187,7 @@ class BRelation : public BObject {
 
         template<typename A1 = typename S::left_type, typename A2 = typename S::right_type>
         BBoolean checkDomain(const BRelation<A1, A2>& domain) const {
-            for(S element : this->domain()) {
+            for(const S& element : this->domain()) {
                 BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
                 const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual>* rangePtr = domain.map.find(elementAsTuple.projection1());
                 if(rangePtr == nullptr) {
@@ -1254,7 +1254,7 @@ class BRelation : public BObject {
 
         template<typename A1 = typename T::left_type, typename A2 = typename T::right_type>
         BBoolean checkRange(const BRelation<A1, A2>& range) const {
-            for(S element : this->range()) {
+            for(const S& element : this->range()) {
                 BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
                 const immer::set<A2, typename BSet<A2>::Hash, typename BSet<A2>::HashEqual>* rangeRangePtr = range.map.find(elementAsTuple.projection1());
                 if(rangeRangePtr == nullptr) {

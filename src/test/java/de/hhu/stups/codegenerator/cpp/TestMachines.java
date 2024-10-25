@@ -187,6 +187,21 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testBoolLawsSetCompr() throws Exception {
+        testCppMC("BoolLaws_SetCompr", "BoolLaws_SetCompr", true, 1, false);
+    }
+
+    @Test
+    public void testSeqLaws() throws Exception {
+        testCppMC("SeqLaws", "SeqLaws", true, 1, false);
+    }
+
+    @Test
+    public void testNatRangeLaws() throws Exception {
+        testCppMC("NatRangeLaws", "NatRangeLaws", true, 1, true);
+    }
+
+    @Test
     public void testLargeFunction() throws Exception {
         testCppMC("LargeFunction", "LargeFunction", true, 1, false);
     }
@@ -244,6 +259,26 @@ public class TestMachines extends TestCpp {
     @Test
     public void testBoolLaws_With_Execute() throws Exception {
         testCppMC("BoolLaws", "BoolLaws", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitChecks() throws Exception {
+        testCppMC("ExplicitChecks", "ExplicitChecks", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitComputations_Small() throws Exception {
+        testCppMC("ExplicitComputations_Small", "ExplicitComputations_Small", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitComputations_Small2() throws Exception {
+        testCppMC("ExplicitComputations_Small2", "ExplicitComputations_Small2", true, 1, false);
+    }
+
+    @Test
+    public void testExplicitComputations2() throws Exception {
+        testCppMC("ExplicitComputations2", "ExplicitComputations2", true, 1, false);
     }
 
     @Test(expected = CodeGenerationException.class)

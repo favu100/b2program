@@ -904,7 +904,7 @@ class BRelation : public BObject {
                                                                typename BSet<T>::Hash,
                                                                typename BSet<T>::HashEqual> otherMap = arg.map;
 
-            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+            immer::map<S,immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual>,
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> resultMap;
             for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : thisMap) {
@@ -933,19 +933,19 @@ class BRelation : public BObject {
                                                                typename BSet<S>::Hash,
                                                                typename BSet<S>::HashEqual> thisMap = this->map;
 
-            immer::map<T,immer::set<T, typename BSet<R>::Hash, typename BSet<R>::HashEqual>,
+            immer::map<T,immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual>,
                                                                typename BSet<T>::Hash,
                                                                typename BSet<T>::HashEqual> otherMap = arg.map;
 
             S projection1 = tuple.projection1();
             R projection2 = tuple.projection2();
 
-            immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = thisMap.find(projection1);
+            const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = thisMap.find(projection1);
 
             if(rangePtr != nullptr) {
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = *rangePtr;
                 for (const T& value : range) {
-                    immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual>* range2Ptr = otherMap.find(projection1);
+                    const immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual>* range2Ptr = otherMap.find(value);
                     if (range2Ptr != nullptr) {
                         immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual> range2 = *range2Ptr;
                         if(range2.count(projection2) > 0) {

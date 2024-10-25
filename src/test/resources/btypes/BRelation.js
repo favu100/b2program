@@ -565,6 +565,25 @@ export class BRelation {
         } while (!result.equal(lastResult).booleanValue());
         return result;
     }
+    isInClosure(tuple) {
+        let projection1 = tuple.projection1();
+        let projection2 = tuple.projection2();
+        let imageOfProjection1 = this.map.get(projection1);
+        if (imageOfProjection1 != null && imageOfProjection1.size > 0) {
+            return new BBoolean(true);
+        }
+        let keys = Array.from(this.map.keys());
+        for (let key of keys) {
+            let image = this.map.get(key);
+            if (image != null && image.has(projection2)) {
+                return new BBoolean(true);
+            }
+        }
+        return new BBoolean(false);
+    }
+    isNotInClosure(tuple) {
+        return this.isInClosure(tuple).not();
+    }
     closure1() {
         let thisRelation = this;
         let result = this;
@@ -576,6 +595,29 @@ export class BRelation {
             nextResult = result.composition(thisRelation);
         } while (!result.equal(lastResult).booleanValue());
         return result;
+    }
+    isInClosure1(tuple) {
+        let inThisRelation = this.elementOf(tuple);
+        if (inThisRelation.booleanValue()) {
+            return inThisRelation;
+        }
+        let thisRelation = this;
+        let result = this;
+        let nextResult = result.composition(thisRelation);
+        let lastResult = null;
+        do {
+            inThisRelation = nextResult.elementOf(tuple);
+            if (inThisRelation.booleanValue()) {
+                return inThisRelation;
+            }
+            lastResult = result;
+            result = result.union(nextResult);
+            nextResult = result.composition(thisRelation);
+        } while (!result.equal(lastResult).booleanValue());
+        return new BBoolean(false);
+    }
+    isNotInClosure1(tuple) {
+        return this.isInClosure1(tuple).not();
     }
     static projection1(arg1, arg2) {
         if (arg1 instanceof BSet && arg2 instanceof BSet) {

@@ -664,7 +664,30 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return result;
 	}
 
-	
+    isInClosure(tuple: BTuple<S, S>): BBoolean {
+        let projection1 = tuple.projection1();
+        let projection2 = tuple.projection2();
+        let imageOfProjection1 = this.map.get(projection1);
+
+        if (imageOfProjection1 != null && imageOfProjection1.size > 0) {
+            return new BBoolean(true);
+        }
+
+        let keys = Array.from(this.map.keys());
+        for(let key of keys) {
+            let image = this.map.get(key);
+            if (image != null && image.has(projection2)) {
+                return new BBoolean(true);
+            }
+        }
+
+        return new BBoolean(false);
+    }
+
+    isNotInClosure(tuple: BTuple<S, S>): BBoolean {
+        return this.isInClosure(tuple).not();
+    }
+
 	closure1(): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S,S>><unknown>this;
 		let result: BRelation<S,S> = <BRelation<S,S>><unknown>this;
@@ -677,6 +700,34 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		} while(!result.equal(lastResult).booleanValue());
 		return result;
 	}
+
+    isInClosure1(tuple: BTuple<S, S>): BBoolean {
+        let inThisRelation = this.elementOf(<BTuple<S, T>><unknown> tuple);
+        if (inThisRelation.booleanValue()) {
+            return inThisRelation;
+        }
+
+        let thisRelation: BRelation<S, S> = <BRelation<S, S>><unknown> this;
+        let result: BRelation<S, S> = <BRelation<S, S>><unknown> this;
+        let nextResult: BRelation<S, S> = result.composition(thisRelation);
+        let lastResult: BRelation<S, S> = null;
+
+        do {
+            inThisRelation = nextResult.elementOf(tuple);
+            if (inThisRelation.booleanValue()) {
+                return inThisRelation;
+            }
+            lastResult = result;
+            result = result.union(nextResult);
+            nextResult = result.composition(thisRelation);
+        } while (!result.equal(lastResult).booleanValue());
+
+        return new BBoolean(false);
+    }
+
+    isNotInClosure1(tuple: BTuple<S, S>): BBoolean {
+        return this.isInClosure1(tuple).not();
+    }
 
     static projection1<S extends BObject,T extends BObject, R extends BObject, A extends BObject>(arg1: BSet<S> | BRelation<S,T>, arg2: BSet<T> | BRelation<T,R> | BSet<T> | BRelation<R,A>): BRelation<BTuple<S,T>, S> | BRelation<BTuple<S,BTuple<T,R>>, S> | BRelation<BTuple<BTuple<S,T>,R>, BTuple<S,T>> | BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<S,T>> {
         if(arg1 instanceof BSet && arg2 instanceof BSet) {

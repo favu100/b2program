@@ -386,6 +386,13 @@ class BRelation : public BObject {
             return BSet<S>(resultSet);
     	}
 
+        BRelation domainForRelations() const {
+            BRelation result = BRelation();
+            for(const S elem : this->domain()) {
+                result = result._union(BRelation(elem));
+            }
+            return result;
+        }
 
         BBoolean isInDomain(const S& arg) const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
@@ -414,6 +421,14 @@ class BRelation : public BObject {
             }
             return BSet<T>(resultSet);
     	}
+
+        BRelation rangeForRelations() const {
+            BRelation result = BRelation();
+            for(T elem : this->range()) {
+                result = result._union(new BRelation((T) elem));
+            }
+            return result;
+        }
 
         BBoolean isInRange(const T& arg) const {
             for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : this->map) {

@@ -187,6 +187,26 @@ public class TestMachines extends TestCpp {
     }
 
     @Test
+    public void testLargeFunction() throws Exception {
+        testCppMC("LargeFunction", "LargeFunction", true, 1, false);
+    }
+
+    @Test
+    public void testFin1Test() throws Exception {
+        testCppMC("Fin1Test", "Fin1Test", true, 1, false);
+    }
+
+    @Test
+    public void testCardinalityLaws() throws Exception {
+        testCppMC("CardinalityLaws", "CardinalityLaws", true, 1, false);
+    }
+
+    @Test
+    public void testEqualityLaws() throws Exception {
+        testCppMC("EqualityLaws", "EqualityLaws", true, 1, false);
+    }
+
+    @Test
     public void testSubsetLaws() throws Exception {
         testCppMC("SubsetLaws", "SubsetLaws", true, 1, false);
     }
@@ -204,6 +224,26 @@ public class TestMachines extends TestCpp {
     @Test
     public void testSubstitutionLaws() throws Exception {
         testCppMC("SubstitutionLaws", "SubstitutionLaws", true, 1, false);
+    }
+
+    @Test
+    public void testBoolWithArithLaws_With_Execute() throws Exception {
+        testCppMC("BoolWithArithLaws", "BoolWithArithLaws", true, 1, false);
+    }
+
+    @Test
+    public void testArithmeticLaws_With_Execute() throws Exception {
+        testCppMC("ArithmeticLaws", "ArithmeticLaws", true, 1, false);
+    }
+
+    @Test
+    public void testArithmeticExpLaws_With_Execute() throws Exception {
+        testCppMC("ArithmeticExpLaws", "ArithmeticExpLaws", false, 1, false);
+    }
+
+    @Test
+    public void testBoolLaws_With_Execute() throws Exception {
+        testCppMC("BoolLaws", "BoolLaws", true, 1, false);
     }
 
     @Test(expected = CodeGenerationException.class)

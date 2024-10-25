@@ -322,9 +322,7 @@ class BRelation : public BObject {
                 }
                 immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = *rangePtr;
                 for (const T& rangeElement : range) {
-                    if(resultSet.count(rangeElement) == 0) {
-                        resultSet = resultSet.insert(rangeElement);
-                    }
+                    resultSet = resultSet.insert(rangeElement);
                 }
             }
             return BSet<T>(resultSet);

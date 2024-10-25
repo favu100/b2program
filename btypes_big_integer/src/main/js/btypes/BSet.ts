@@ -222,11 +222,11 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	equal(other: any): BBoolean {
-	    return new BBoolean(this.equals(other));
+	    return this.subset(other).and(other.subset(this));
 	}
 
 	unequal(other: any): BBoolean {
-		return new BBoolean(!this.equals(other));
+		return this.equal(other).not();
 	}
 
 	nondeterminism(): T {

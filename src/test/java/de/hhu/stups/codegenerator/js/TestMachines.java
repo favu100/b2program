@@ -259,6 +259,51 @@ public class TestMachines extends TestJs {
         testJSMC("SeqLaws", "SeqLaws", true, false);
     }
 
+    @Test
+    public void testNatRangeLaws() throws Exception {
+        testJSMC("NatRangeLaws", "NatRangeLaws", true, true);
+    }
+
+    @Test
+    public void testLargeFunction() throws Exception {
+        testJSMC("LargeFunction", "LargeFunction", true, false);
+    }
+
+    @Test
+    public void testFin1Test() throws Exception {
+        testJSMC("Fin1Test", "Fin1Test", true, false);
+    }
+
+    @Test
+    public void testCardinalityLaws() throws Exception {
+        testJSMC("CardinalityLaws", "CardinalityLaws", true, false);
+    }
+
+    @Test
+    public void testEqualityLaws() throws Exception {
+        testJSMC("EqualityLaws", "EqualityLaws", true, false);
+    }
+
+    @Test
+    public void testBoolWithArithLaws_With_Execute() throws Exception {
+        testJSMC("BoolWithArithLaws", "BoolWithArithLaws", true, false);
+    }
+
+    @Test
+    public void testArithmeticLaws_With_Execute() throws Exception {
+        testJSMC("ArithmeticLaws", "ArithmeticLaws", true, false);
+    }
+
+    @Test
+    public void testArithmeticExpLaws_With_Execute() throws Exception {
+        testJSMC("ArithmeticExpLaws", "ArithmeticExpLaws", false, false);
+    }
+
+    @Test
+    public void testBoolLaws_With_Execute() throws Exception {
+        testJSMC("BoolLaws", "BoolLaws", true, false);
+    }
+
     @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testJs("Simpson_Four_Slot");

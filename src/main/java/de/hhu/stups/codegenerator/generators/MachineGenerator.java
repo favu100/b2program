@@ -444,6 +444,11 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 		TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
 		TemplateHandler.add(template, "assignments", assignments);
+
+		if(assignments.isEmpty()) {
+			return "";
+		}
+
 		return template.render();
 
 	}

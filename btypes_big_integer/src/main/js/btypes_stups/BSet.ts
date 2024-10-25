@@ -164,37 +164,24 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	subset(other: BSet<T>): BBoolean {
-		this_set_loop:
-		for (let elem of this.set) {
-			for (let other_elem of other.set) {
-				if (other_elem.equals(elem)) {
-					continue this_set_loop;
-				}
-			}
-			return new BBoolean(false);
-		}
-		return new BBoolean(true);
+        for(let element of this.set) {
+            if(!other.getSet().has(element)) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
 	}
 
 	notSubset(other: BSet<T>): BBoolean {
-		this_set_loop:
-			for (let elem of this.set) {
-				for (let other_elem of other.set) {
-					if (other_elem.equals(elem)) {
-						continue this_set_loop;
-					}
-				}
-				return new BBoolean(true);
-			}
-		return new BBoolean(false);
+        return this.subset(other).not();
 	}
 
 	strictSubset(other: BSet<T>): BBoolean {
-		return this.size().less(other.size()).and(this.subset(other));
+	    return new BBoolean(other.getSet().size != this.set.size && this.subset(other).booleanValue());
 	}
 
 	strictNotSubset(other: BSet<T>): BBoolean {
-		return this.size().equal(other.size()).and(this.notSubset(other));
+	    return this.strictSubset(other).not();
 	}
 
 	contains(other: T): boolean {
@@ -222,11 +209,11 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	equal(other: any): BBoolean {
-	    return new BBoolean(this.equals(other));
+	    return this.subset(other).and(other.subset(this));
 	}
 
 	unequal(other: any): BBoolean {
-		return new BBoolean(!this.equals(other));
+		return this.equal(other).not();
 	}
 
 	nondeterminism(): T {

@@ -127,32 +127,21 @@ export class BSet {
         return new BBoolean(!this.set.has(obj));
     }
     subset(other) {
-        this_set_loop: for (let elem of this.set) {
-            for (let other_elem of other.set) {
-                if (other_elem.equals(elem)) {
-                    continue this_set_loop;
-                }
+        for (let element of this.set) {
+            if (!other.getSet().has(element)) {
+                return new BBoolean(false);
             }
-            return new BBoolean(false);
         }
         return new BBoolean(true);
     }
     notSubset(other) {
-        this_set_loop: for (let elem of this.set) {
-            for (let other_elem of other.set) {
-                if (other_elem.equals(elem)) {
-                    continue this_set_loop;
-                }
-            }
-            return new BBoolean(true);
-        }
-        return new BBoolean(false);
+        return this.subset(other).not();
     }
     strictSubset(other) {
-        return this.size().less(other.size()).and(this.subset(other));
+        return new BBoolean(other.getSet().size != this.set.size && this.subset(other).booleanValue());
     }
     strictNotSubset(other) {
-        return this.size().equal(other.size()).and(this.notSubset(other));
+        return this.strictSubset(other).not();
     }
     contains(other) {
         return other in this.set;
@@ -175,10 +164,10 @@ export class BSet {
         return this.set.equals(other.set);
     }
     equal(other) {
-        return new BBoolean(this.equals(other));
+        return this.subset(other).and(other.subset(this));
     }
     unequal(other) {
-        return new BBoolean(!this.equals(other));
+        return this.equal(other).not();
     }
     nondeterminism() {
         let values = [];

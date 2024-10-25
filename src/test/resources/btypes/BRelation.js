@@ -578,16 +578,48 @@ export class BRelation {
         return result;
     }
     static projection1(arg1, arg2) {
-        let argSet1 = arg1.getSet();
-        let argSet2 = arg2.getSet();
-        let resultMap = immutable.Map();
-        argSet1.forEach((e1) => {
-            argSet2.forEach((e2) => {
-                let tuple = new BTuple(e1, e2);
-                resultMap = resultMap.set(tuple, immutable.Set([e1]));
+        if (arg1 instanceof BSet && arg2 instanceof BSet) {
+            let argSet1 = arg1.getSet();
+            let argSet2 = arg2.getSet();
+            let resultMap = immutable.Map();
+            argSet1.forEach((e1) => {
+                argSet2.forEach((e2) => {
+                    let tuple = new BTuple(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                });
             });
-        });
-        return new BRelation(resultMap);
+            return new BRelation(resultMap);
+        }
+        else if (arg1 instanceof BSet && arg2 instanceof BRelation) {
+            let resultMap = immutable.Map();
+            for (let e1 of arg1) {
+                for (let e2 of arg2) {
+                    let tuple = new BTuple(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                }
+            }
+            return new BRelation(resultMap);
+        }
+        else if (arg1 instanceof BRelation && arg2 instanceof BSet) {
+            let resultMap = immutable.Map();
+            for (let e1 of arg1) {
+                for (let e2 of arg2) {
+                    let tuple = new BTuple(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                }
+            }
+            return new BRelation(resultMap);
+        }
+        else if (arg1 instanceof BRelation && arg2 instanceof BRelation) {
+            let resultMap = immutable.Map();
+            for (let e1 of arg1) {
+                for (let e2 of arg2) {
+                    let tuple = new BTuple(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                }
+            }
+            return new BRelation(resultMap);
+        }
     }
     static projection2(arg1, arg2) {
         let argSet1 = arg1.getSet();

@@ -679,18 +679,47 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	}
 
 
-    static projection1<S extends BObject,T extends BObject>(arg1: BSet<S>, arg2: BSet<T>): BRelation<BTuple<S,T>, S> {
-		let argSet1 = arg1.getSet();
-		let argSet2 = arg2.getSet();
+    static projection1<S extends BObject,T extends BObject, R extends BObject, A extends BObject>(arg1: BSet<S> | BRelation<S,T>, arg2: BSet<T> | BRelation<T,R> | BSet<T> | BRelation<R,A>): BRelation<BTuple<S,T>, S> | BRelation<BTuple<S,BTuple<T,R>>, S> | BRelation<BTuple<BTuple<S,T>,R>, BTuple<S,T>> | BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<S,T>> {
+        if(arg1 instanceof BSet && arg2 instanceof BSet) {
+            let argSet1 = arg1.getSet();
+            let argSet2 = arg2.getSet();
 
-		let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
-		argSet1.forEach((e1: S) => {
-			argSet2.forEach((e2: T) => {
-				let tuple: BTuple<S,T> = new BTuple<S,T>(e1, e2);
-				resultMap = resultMap.set(tuple, immutable.Set([e1]));
-			});
-		});
-		return new BRelation<BTuple<S, T>, S>(resultMap);
+            let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
+            argSet1.forEach((e1: S) => {
+                argSet2.forEach((e2: T) => {
+                    let tuple: BTuple<S,T> = new BTuple<S,T>(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                });
+            });
+            return new BRelation<BTuple<S, T>, S>(resultMap);
+		} else if(arg1 instanceof BSet && arg2 instanceof BRelation) {
+            let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
+            for(let e1 of arg1) {
+                for(let e2 of arg2) {
+                    let tuple: BTuple<S,BTuple<T,R>> = new BTuple<S,BTuple<T,R>>(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                }
+            }
+            return new BRelation<BTuple<S,BTuple<T,R>>, S>(resultMap);
+		} else if(arg1 instanceof BRelation && arg2 instanceof BSet) {
+		    let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
+            for(let e1 of arg1) {
+                for(let e2 of arg2) {
+                    let tuple: BTuple<S,BTuple<T,R>> = new BTuple<S,BTuple<T,R>>(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                }
+            }
+            return new BRelation<BTuple<BTuple<S,T>,R>, BTuple<S,T>>(resultMap);
+		} else if(arg1 instanceof BRelation && arg2 instanceof BRelation) {
+		    let resultMap: immutable.Map<BTuple<BObject, BObject>, immutable.Set<BObject>> = immutable.Map()
+            for(let e1 of arg1) {
+                for(let e2 of arg2) {
+                    let tuple: BTuple<BTuple<S,T>,R> = new BTuple<BTuple<S,T>,R>(e1, e2);
+                    resultMap = resultMap.set(tuple, immutable.Set([e1]));
+                }
+            }
+            return new BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<S,T>>(resultMap);
+		}
 	}
 
 

@@ -9,6 +9,7 @@ machine(forModelChecking, forVisualisation, imports, includedMachines, projectio
 <includedMachines; separator="\n">
 import {BUtils} from "./btypes/BUtils.js";
 import {SelectError} from "./btypes/BUtils.js";
+import {PreconditionOrAssertionViolation} from "./btypes/BUtils.js";
 import {VariantViolation} from "./btypes/BUtils.js";
 import {LoopInvariantViolation} from "./btypes/BUtils.js";
 <if(forModelChecking)>
@@ -853,7 +854,7 @@ while((<predicate>).booleanValue()) {
         throw new LoopInvariantViolation("WHILE loop invariant is violated.");
     }
     if(_loop_variant_<variantCounter>.greaterEqual(<variant>).booleanValue()) {
-        throw VariantViolation("WHILE loop invariant is violated.");
+        throw new VariantViolation("WHILE loop invariant is violated.");
     }
     _loop_variant_<variantCounter> = <variant>;
     <endif>

@@ -12,6 +12,13 @@ export class SelectError extends Error {
     }
 }
 
+export class PreconditionOrAssertionViolation extends Error {
+    constructor(msg: string) {
+        super(msg);
+        Object.setPrototypeOf(this, PreconditionOrAssertionViolation.prototype);
+    }
+}
+
 export class VariantViolation extends Error {
     constructor(msg: string) {
         super(msg);

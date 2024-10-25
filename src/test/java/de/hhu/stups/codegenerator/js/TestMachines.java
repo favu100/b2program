@@ -244,6 +244,11 @@ public class TestMachines extends TestJs {
         testJSMC("FunLaws", "FunLaws", true, false);
     }
 
+    @Test
+    public void testSeqLaws() throws Exception {
+        testJSMC("SeqLaws", "SeqLaws", true, false);
+    }
+
     @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testJs("Simpson_Four_Slot");

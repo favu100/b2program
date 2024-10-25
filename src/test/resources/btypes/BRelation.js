@@ -117,6 +117,9 @@ export class BRelation {
         }
         return size;
     }
+    _size() {
+        return new BInteger(this.size());
+    }
     card() {
         return new BInteger(this.size());
     }

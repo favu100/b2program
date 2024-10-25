@@ -132,6 +132,10 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return size;
 	}
 
+	_size(): BInteger {
+	    return new BInteger(this.size());
+	}
+
 	card(): BInteger {
 		return new BInteger(this.size());
 	}

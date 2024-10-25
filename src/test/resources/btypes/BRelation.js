@@ -511,12 +511,15 @@ export class BRelation {
         for (let domainElement of this.map.keys()) {
             let range = this.map.get(domainElement);
             let set = immutable.Set();
+            if (range == null) {
+                break;
+            }
             for (let rangeElement of range) {
                 let union_element = otherMap.get(rangeElement);
                 if (union_element == null) {
-                    break;
+                    continue;
                 }
-                set = set.union(union_element);
+                set = set.union(otherMap.get(rangeElement));
             }
             if (set.size === 0) {
                 continue;
@@ -624,20 +627,46 @@ export class BRelation {
         return new BRelation(resultMap);
     }
     static cartesianProduct(arg1, arg2) {
-        if (arg1 instanceof BSet) {
-            let resultMap = immutable.Map();
-            arg1.getSet().forEach((e1) => {
-                if (arg2.size().intValue() > 0) {
-                    resultMap = resultMap.set(e1, arg2.getSet());
-                }
-            });
-            return new BRelation(resultMap);
-        }
-        else {
+        if (arg1 instanceof BSet && arg2 instanceof BSet) {
             let resultMap = immutable.Map();
             for (let e1 of arg1) {
                 if (arg2.size().intValue() > 0) {
                     resultMap = resultMap.set(e1, arg2.getSet());
+                }
+            }
+            return new BRelation(resultMap);
+        }
+        else if (arg1 instanceof BRelation && arg2 instanceof BSet) {
+            let resultMap = immutable.Map();
+            for (let e1 of arg1) {
+                if (arg2.size().intValue() > 0) {
+                    resultMap = resultMap.set(e1, arg2.getSet());
+                }
+            }
+            return new BRelation(resultMap);
+        }
+        else if (arg1 instanceof BSet && arg2 instanceof BRelation) {
+            let resultMap = immutable.Map();
+            for (let e1 of arg1) {
+                let rangeSet = immutable.Set();
+                for (let e2 of arg2) {
+                    rangeSet = rangeSet.add(e2);
+                }
+                if (!rangeSet.isEmpty()) {
+                    resultMap = resultMap.set(e1, rangeSet);
+                }
+            }
+            return new BRelation(resultMap);
+        }
+        else if (arg1 instanceof BRelation && arg2 instanceof BRelation) {
+            let resultMap = immutable.Map();
+            for (let e1 of arg1) {
+                let rangeSet = immutable.Set();
+                for (let e2 of arg2) {
+                    rangeSet = rangeSet.add(e2);
+                }
+                if (!rangeSet.isEmpty()) {
+                    resultMap = resultMap.set(e1, rangeSet);
                 }
             }
             return new BRelation(resultMap);

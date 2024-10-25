@@ -592,19 +592,22 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 
 	composition<R extends BObject>(arg: BRelation<T,R>): BRelation<S,R> {
 		let otherMap: immutable.Map<T, immutable.Set<R>> = arg.map;
-
 		let resultMap: immutable.Map<S, immutable.Set<R>> = immutable.Map()
 
 		for(let domainElement of this.map.keys()) {
 			let range: immutable.Set<T> = this.map.get(domainElement)
-
 			let set: immutable.Set<R> = immutable.Set<R>();
+
+			if(range == null) {
+			    break;
+			}
+
 			for(let rangeElement of range) {
                 let union_element = otherMap.get(rangeElement)
                 if (union_element == null) {
-                    break;
+                    continue;
                 }
-                set = set.union(<immutable.Set<R>> union_element);
+                set = set.union(<immutable.Set<R>> otherMap.get(rangeElement));
 			}
             if(set.size === 0) {
                 continue;
@@ -629,6 +632,10 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 			}
 		}
 		return new BBoolean(false);
+	}
+
+	isNotInComposition<R extends BObject>(tuple: BTuple<S,R>, arg: BRelation<T,R>): BBoolean {
+	    return this.isInComposition(tuple, arg).not();
 	}
 
 	iterate(n: BInteger): BRelation<S,S> {
@@ -707,7 +714,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let resultMap: immutable.Map<S, immutable.Set<BSet<T>>> = immutable.Map()
 		domain.forEach((domainElement: S) => {
 			let range = thisMap.get(domainElement);
-			let rangeSet: BSet<T> = new BSet<T>([range]);
+			let rangeSet: BSet<T> = new BSet<T>(range);
 			resultMap = resultMap.set(domainElement, immutable.Set([rangeSet]));
 		});
 		return new BRelation<S, BSet<T>>(resultMap);
@@ -734,25 +741,51 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	}
 
 
-	static cartesianProduct<S extends BObject,T extends BObject>(arg1: BSet<S>, arg2: BSet<T>): BRelation<S,T>;
-	static cartesianProduct<S extends BObject,T extends BObject, R extends BObject>(arg1: BRelation<S,T>, arg2: BSet<R>): BRelation<BTuple<S,T>,R>;
-	static cartesianProduct<S extends BObject,T extends BObject, R extends BObject>(arg1: BSet<S> | BRelation<S,T>, arg2: BSet<T> | BSet<R>): BRelation<S,T> |  BRelation<BTuple<S,T>,R> {
-		if(arg1 instanceof BSet) {
-            let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map();
-            (<BSet<S>> arg1).getSet().forEach((e1: S) => {
-                if(arg2.size().intValue() > 0) {
-                    resultMap = resultMap.set(e1, arg2.getSet());
-                }
-            });
-            return new BRelation<S, T>(resultMap);
-		} else {
-            let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map();
-            for(let e1 of arg1) {
-                if(arg2.size().intValue() > 0) {
-                    resultMap = resultMap.set(e1, arg2.getSet());
-                }
-            }
-            return new BRelation<BTuple<S,T>, R>(resultMap);
+	static cartesianProduct<S extends BObject, T extends BObject>(arg1: BSet<S>, arg2: BSet<T>): BRelation<S, T>;
+	static cartesianProduct<S extends BObject, T extends BObject, R extends BObject>(arg1: BRelation<S, T>, arg2: BSet<R>): BRelation<BTuple<S, T>, R>;
+	static cartesianProduct<S extends BObject, T extends BObject, R extends BObject>(arg1: BSet<S>, arg2: BRelation<T, R>): BRelation<S, BTuple<T, R>>;
+	static cartesianProduct<S extends BObject, T extends BObject, R extends BObject, A extends BObject>(arg1: BRelation<S, T>, arg2: BRelation<R, A>): BRelation<BTuple<S, T>, BTuple<R, A>>;
+	static cartesianProduct<S extends BObject, T extends BObject, R extends BObject, A extends BObject>(arg1: BSet<S> | BRelation<S, T>, arg2: BSet<T> | BSet<R> | BRelation<T, R> | BRelation<R, A>): any {
+		if (arg1 instanceof BSet && arg2 instanceof BSet) {
+			let resultMap: immutable.Map<S, immutable.Set<T>> = immutable.Map();
+			for(let e1 of arg1) {
+				if (arg2.size().intValue() > 0) {
+					resultMap = resultMap.set(e1, arg2.getSet());
+				}
+			}
+			return new BRelation<S, T>(resultMap);
+		} else if (arg1 instanceof BRelation && arg2 instanceof BSet) {
+			let resultMap: immutable.Map<BTuple<S, T>, immutable.Set<R>> = immutable.Map();
+			for (let e1 of arg1) {
+				if (arg2.size().intValue() > 0) {
+					resultMap = resultMap.set(e1, arg2.getSet());
+				}
+			}
+			return new BRelation<BTuple<S, T>, R>(resultMap);
+		} else if (arg1 instanceof BSet && arg2 instanceof BRelation) {
+			let resultMap: immutable.Map<S, immutable.Set<BTuple<T, R>>> = immutable.Map();
+			for(let e1 of arg1) {
+				let rangeSet: immutable.Set<BTuple<T, R>> = immutable.Set();
+				for (let e2 of arg2) {
+					rangeSet = rangeSet.add(e2);
+				}
+				if (!rangeSet.isEmpty()) {
+					resultMap = resultMap.set(e1, rangeSet);
+				}
+			}
+			return new BRelation<S, BTuple<T, R>>(resultMap);
+		} else if (arg1 instanceof BRelation && arg2 instanceof BRelation) {
+			let resultMap: immutable.Map<BTuple<S, T>, immutable.Set<BTuple<R, A>>> = immutable.Map();
+			for (let e1 of arg1) {
+				let rangeSet: immutable.Set<BTuple<R, A>> = immutable.Set();
+				for (let e2 of arg2) {
+					rangeSet = rangeSet.add(e2);
+				}
+				if (!rangeSet.isEmpty()) {
+					resultMap = resultMap.set(e1, rangeSet);
+				}
+			}
+			return new BRelation<BTuple<S, T>, BTuple<R, A>>(resultMap);
 		}
 	}
 

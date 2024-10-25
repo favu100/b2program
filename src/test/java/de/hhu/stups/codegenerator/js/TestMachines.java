@@ -239,7 +239,6 @@ public class TestMachines extends TestJs {
         testJSMC("SubstitutionLaws", "SubstitutionLaws", true, false);
     }
 
-    @Ignore
     @Test
     public void testFunLaws() throws Exception {
         testJSMC("FunLaws", "FunLaws", true, false);

@@ -240,8 +240,18 @@ public class TestMachines extends TestJs {
     }
 
     @Test
+    public void testRelLaws() throws Exception {
+        testJSMC("RelLaws", "RelLaws", true, false);
+    }
+
+    @Test
     public void testFunLaws() throws Exception {
         testJSMC("FunLaws", "FunLaws", true, false);
+    }
+
+    @Test
+    public void testBoolLawsSetCompr() throws Exception {
+        testJSMC("BoolLaws_SetCompr", "BoolLaws_SetCompr", true, false);
     }
 
     @Test

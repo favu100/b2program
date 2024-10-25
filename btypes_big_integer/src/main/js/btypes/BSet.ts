@@ -278,6 +278,33 @@ export class BSet<T extends BObject> implements BObject{
 		return this.pow1();
 	}
 
+	subsetOfBoolean(): BBoolean {
+		for(let e of this.getSet()) {
+			if(e instanceof BBoolean) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
+	}
+
+	strictSubsetOfBoolean(): BBoolean {
+		return this.subsetOfBoolean();
+	}
+
+	notSubsetOfBoolean(): BBoolean {
+		return this.subsetOfBoolean().not();
+	}
+
+	equalBoolean(): BBoolean {
+		return new BBoolean(this.subsetOfBoolean().booleanValue() && this.size().intValue() == 2);
+	}
+
+	unequalBoolean(): BBoolean {
+		return new BBoolean(this.subsetOfBoolean().booleanValue() && this.size().intValue() < 2);
+	}
+
 	subsetOfInteger(): BBoolean {
 		for (let element of this.set) {
 			if (!(element instanceof BInteger)) {

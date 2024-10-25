@@ -214,6 +214,29 @@ export class BSet {
     fin1() {
         return this.pow1();
     }
+    subsetOfBoolean() {
+        for (let e of this.getSet()) {
+            if (e instanceof BBoolean) {
+                return new BBoolean(true);
+            }
+            else {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
+    }
+    strictSubsetOfBoolean() {
+        return this.subsetOfBoolean();
+    }
+    notSubsetOfBoolean() {
+        return this.subsetOfBoolean().not();
+    }
+    equalBoolean() {
+        return new BBoolean(this.subsetOfBoolean().booleanValue() && this.size().intValue() == 2);
+    }
+    unequalBoolean() {
+        return new BBoolean(this.subsetOfBoolean().booleanValue() && this.size().intValue() < 2);
+    }
     subsetOfInteger() {
         for (let element of this.set) {
             if (!(element instanceof BInteger)) {

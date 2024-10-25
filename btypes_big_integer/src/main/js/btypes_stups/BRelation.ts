@@ -243,6 +243,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 	fin1(): BSet<BRelation<S,T>> {
 		return this.pow1();
 	}
+
 	
 	domain(): BSet<S> {
 		let resultSet = immutable.Set(this.map.keys());

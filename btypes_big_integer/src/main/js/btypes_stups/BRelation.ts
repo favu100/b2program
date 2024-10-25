@@ -136,12 +136,12 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BInteger(this.size());
 	}
 
-	equal(o: BRelation<S, T>): BBoolean {
-		return new BBoolean(this.equals(o));
+	equal(other: any): BBoolean {
+	    return this.subset(other).and(other.subset(this));
 	}
 
-	unequal(o: BRelation<S, T>): BBoolean {
-		return new BBoolean(!this.equals(o));
+	unequal(other: any): BBoolean {
+		return this.equal(other).not();
 	}
 
 	elementOf(object: BTuple<S, T>): BBoolean {

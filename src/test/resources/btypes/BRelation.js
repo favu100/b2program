@@ -120,11 +120,11 @@ export class BRelation {
     card() {
         return new BInteger(this.size());
     }
-    equal(o) {
-        return new BBoolean(this.equals(o));
+    equal(other) {
+        return this.subset(other).and(other.subset(this));
     }
-    unequal(o) {
-        return new BBoolean(!this.equals(o));
+    unequal(other) {
+        return this.equal(other).not();
     }
     elementOf(object) {
         let prj1 = object.projection1();

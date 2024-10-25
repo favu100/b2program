@@ -304,6 +304,26 @@ public class TestMachines extends TestJs {
         testJSMC("BoolLaws", "BoolLaws", true, false);
     }
 
+    @Test
+    public void testExplicitChecks() throws Exception {
+        testJSMC("ExplicitChecks", "ExplicitChecks", true, false);
+    }
+
+    @Test
+    public void testExplicitComputations_Small() throws Exception {
+        testJSMC("ExplicitComputations_Small", "ExplicitComputations_Small", true, false);
+    }
+
+    @Test
+    public void testExplicitComputations_Small2() throws Exception {
+        testJSMC("ExplicitComputations_Small2", "ExplicitComputations_Small2", true, false);
+    }
+
+    @Test
+    public void testExplicitComputations2() throws Exception {
+        testJSMC("ExplicitComputations2", "ExplicitComputations2", true, false);
+    }
+
     @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testJs("Simpson_Four_Slot");

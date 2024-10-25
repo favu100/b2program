@@ -170,7 +170,7 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testCanBusTLC_MC() throws Exception {
-        testJSMC("CAN_BUS_tlc");
+        testJSMC("CAN_BUS_tlc", "CAN_BUS_tlc", true, false);
     }
 
     @Test
@@ -248,12 +248,12 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testOBSW_M001_1() throws Exception {
-        testJSMC("obsw_M001_1");
+        testJSMC("obsw_M001_1", "obsw_M001_1", true, false);
     }
 
     @Test
     public void testOBSW_M001() throws Exception {
-        testJSMC("obsw_M001_2");
+        testJSMC("obsw_M001_2", "obsw_M001_2", true, false);
     }
 
     @Ignore
@@ -274,17 +274,17 @@ public class TestMachines extends TestJs {
 
     @Test
     public void testNota2() throws Exception {
-        testJSMC("nota_v2");
+        testJSMC("nota_v2", "nota_v2", true, false);
     }
 
     @Test
     public void testCruiseControllerDeterministic_MC() throws Exception {
-        testJSMC("Cruise_finite1_deterministic_MC");
+        testJSMC("Cruise_finite1_deterministic_MC", "Cruise_finite1_deterministic_MC", true, false);
     }
 
     @Test
     public void testLift_MC_Large() throws Exception {
-        testJSMC("Lift_MC_Large");
+        testJSMC("Lift_MC_Large", "Lift_MC_Large", true, false);
     }
 
     @Test

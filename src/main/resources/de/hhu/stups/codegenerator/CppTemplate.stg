@@ -935,7 +935,7 @@ while((<predicate>).booleanValue()) {
     if(!(<invariant>.booleanValue())) {
         throw LoopInvariantViolation();
     }
-    if(_loop_variant_<variantCounter>.greaterEqual(<variant>).booleanValue()) {
+    if(<variant>.greaterEqual(_loop_variant_<variantCounter>).booleanValue()) {
         throw VariantViolation();
     }
     _loop_variant_<variantCounter> = <variant>;

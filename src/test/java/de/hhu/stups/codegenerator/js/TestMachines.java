@@ -224,6 +224,11 @@ public class TestMachines extends TestJs {
         testJSMC("SubsetLaws", "SubsetLaws", true, false);
     }
 
+    @Test
+    public void testSubstitutionLaws() throws Exception {
+        testJSMC("SubstitutionLaws", "SubstitutionLaws", true, false);
+    }
+
     @Test(expected = CodeGenerationException.class)
     public void SimpsonFourSlot() throws Exception {
         testJs("Simpson_Four_Slot");

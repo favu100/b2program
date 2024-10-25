@@ -707,7 +707,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		let resultMap: immutable.Map<S, immutable.Set<BSet<T>>> = immutable.Map()
 		domain.forEach((domainElement: S) => {
 			let range = thisMap.get(domainElement);
-			let rangeSet: BSet<T> = new BSet<T>([range]);
+			let rangeSet: BSet<T> = new BSet<T>(range);
 			resultMap = resultMap.set(domainElement, immutable.Set([rangeSet]));
 		});
 		return new BRelation<S, BSet<T>>(resultMap);

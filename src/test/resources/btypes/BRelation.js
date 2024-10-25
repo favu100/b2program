@@ -601,7 +601,7 @@ export class BRelation {
         let resultMap = immutable.Map();
         domain.forEach((domainElement) => {
             let range = thisMap.get(domainElement);
-            let rangeSet = new BSet([range]);
+            let rangeSet = new BSet(range);
             resultMap = resultMap.set(domainElement, immutable.Set([rangeSet]));
         });
         return new BRelation(resultMap);

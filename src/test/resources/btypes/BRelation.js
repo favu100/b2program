@@ -488,7 +488,7 @@ export class BRelation {
             for (let rangeElement of range) {
                 let union_element = otherMap.get(rangeElement);
                 if (union_element == null) {
-                    return;
+                    break;
                 }
                 set = set.union(union_element);
             }

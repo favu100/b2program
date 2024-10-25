@@ -225,11 +225,19 @@ export class BSet<T extends BObject> implements BObject{
 	}
 
 	min(): T {
-		return this.set.reduce((a: T, v: T) => {if(a<v){return a} return v});
+	    if(this.size().intValue() == 0) {
+            throw new Error("Minimum does not exist");
+	    }
+        let result = this.set.reduce((a: BInteger, b: BInteger) => a.lessEqual(b).booleanValue() ? a : b);
+        return result;
 	}
 
 	max(): T {
-		return this.set.reduce((a: T, v: T) => {if(a>v){return a} return v});
+	    if(this.size().intValue() == 0) {
+            throw new Error("Maximum does not exist");
+	    }
+        let result = this.set.reduce((a: BInteger, b: BInteger) => a.greaterEqual(b).booleanValue() ? a : b);
+        return result;
 	}
 
 	pow(): BSet<BSet<T>> {

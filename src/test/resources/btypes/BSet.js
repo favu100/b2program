@@ -177,14 +177,18 @@ export class BSet {
         return values[Math.floor(Math.random() * values.length)];
     }
     min() {
-        return this.set.reduce((a, v) => { if (a < v) {
-            return a;
-        } return v; });
+        if (this.size().intValue() == 0) {
+            throw new Error("Minimum does not exist");
+        }
+        let result = this.set.reduce((a, b) => a.lessEqual(b).booleanValue() ? a : b);
+        return result;
     }
     max() {
-        return this.set.reduce((a, v) => { if (a > v) {
-            return a;
-        } return v; });
+        if (this.size().intValue() == 0) {
+            throw new Error("Minimum does not exist");
+        }
+        let result = this.set.reduce((a, b) => a.greaterEqual(b).booleanValue() ? a : b);
+        return result;
     }
     pow() {
         let result = new BSet();

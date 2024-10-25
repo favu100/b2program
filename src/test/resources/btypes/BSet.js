@@ -216,7 +216,7 @@ export class BSet {
     }
     subsetOfInteger() {
         for (let element of this.set) {
-            if (element instanceof BInteger) {
+            if (!(element instanceof BInteger)) {
                 return new BBoolean(false);
             }
         }
@@ -255,6 +255,15 @@ export class BSet {
             }
         }
         return new BBoolean(true);
+    }
+    strictSubsetOfNatural1() {
+        return this.subsetOfNatural1();
+    }
+    notSubsetOfNatural1() {
+        return this.subsetOfNatural1().not();
+    }
+    notStrictSubsetOfNatural1() {
+        return this.strictSubsetOfNatural1().not();
     }
     subsetOfString() {
         for (let element of this.set) {

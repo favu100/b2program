@@ -267,7 +267,7 @@ export class BSet<T extends BObject> implements BObject{
 
 	subsetOfInteger(): BBoolean {
 		for (let element of this.set) {
-			if (element ! instanceof BInteger) {
+			if (!(element instanceof BInteger)) {
 				return new BBoolean(false);
 			}
 		}
@@ -314,6 +314,18 @@ export class BSet<T extends BObject> implements BObject{
 			}
 		}
 		return new BBoolean(true)
+	}
+
+	strictSubsetOfNatural1(): BBoolean {
+		return this.subsetOfNatural1()
+	}
+
+	notSubsetOfNatural1(): BBoolean {
+		return this.subsetOfNatural1().not()
+	}
+
+	notStrictSubsetOfNatural1(): BBoolean {
+		return this.strictSubsetOfNatural1().not()
 	}
 
 	subsetOfString(): BBoolean {

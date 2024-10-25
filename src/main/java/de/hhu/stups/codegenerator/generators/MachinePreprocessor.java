@@ -50,6 +50,7 @@ import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.BType;
 import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
+import de.prob.parser.ast.types.EnumeratedSetElementType;
 import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.types.UntypedType;
@@ -238,6 +239,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                    ExprNode closure1Node = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(subNode), ExpressionOperatorNode.ExpressionOperator.CLOSURE1);
                    closure1Node.setType(node.getType());
                    ExprNode typeNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(type.toString())));
+                   if(type instanceof EnumeratedSetElementType) {
+                       ((IdentifierExprNode) typeNode).setDeclarationNode(new DeclarationNode(typeNode.getSourceCodePosition(), ((IdentifierExprNode) typeNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                   }
                    typeNode.setType(new SetType(type));
                    ExprNode identityNode = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(typeNode), ExpressionOperatorNode.ExpressionOperator.ID);
                    identityNode.setType(node.getType());
@@ -251,6 +255,9 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                    BType type = ((CoupleType) ((SetType) node.getType()).getSubType()).getLeft();
                    ExprNode typeNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(type.toString())));
+                   if(type instanceof EnumeratedSetElementType) {
+                       ((IdentifierExprNode) typeNode).setDeclarationNode(new DeclarationNode(typeNode.getSourceCodePosition(), ((IdentifierExprNode) typeNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                   }
                    typeNode.setType(new SetType(type));
                    ExprNode identityNode = new ExpressionOperatorNode(sourceCodePosition, Collections.singletonList(typeNode), ExpressionOperatorNode.ExpressionOperator.ID);
                    identityNode.setType(node.getType());
@@ -316,6 +323,7 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
         ExprNode newExpression = new ExpressionOperatorNode(predicateNode.getSourceCodePosition(), newSubexpressions, ExpressionOperatorNode.ExpressionOperator.SET_ENUMERATION);
         newExpression.setType(new SetType(newSubexpressions.get(0).getType()));
         IdentifierExprNode id = new IdentifierExprNode(predicateNode.getSourceCodePosition(), constant.getName(), false);
+        id.setDeclarationNode(new DeclarationNode(predicateNode.getSourceCodePosition(), constant.getName(), DeclarationNode.Kind.CONSTANT, machineNode));
         id.setType(constant.getType());
         PredicateNode newPredicate = new PredicateOperatorWithExprArgsNode(predicateNode.getSourceCodePosition(), PredicateOperatorWithExprArgsNode.PredOperatorExprArgs.EQUAL, Arrays.asList(id, newExpression));
         newPredicate.setType(BoolType.getInstance());
@@ -772,6 +780,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -793,6 +809,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -813,6 +837,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -838,6 +870,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -860,6 +900,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -884,6 +932,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -907,6 +963,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -928,6 +992,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftTypeTopLevel.toString())));
                     ExprNode rightNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightTypeTopLevel.toString())));
 
+                    if(leftTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNodeTopLevel).setDeclarationNode(new DeclarationNode(leftNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) leftNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNodeTopLevel).setDeclarationNode(new DeclarationNode(rightNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) rightNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode innerLhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode innerRhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -937,6 +1009,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode1 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType1.toString())));
                     ExprNode rightNode1 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType1.toString())));
 
+                    if(leftType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode1).setDeclarationNode(new DeclarationNode(leftNode1.getSourceCodePosition(), ((IdentifierExprNode) leftNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode1).setDeclarationNode(new DeclarationNode(rightNode1.getSourceCodePosition(), ((IdentifierExprNode) rightNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection11 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode1, rightNode1), ExpressionOperatorNode.ExpressionOperator.PRJ1), innerLhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection12 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode1, rightNode1), ExpressionOperatorNode.ExpressionOperator.PRJ2), innerLhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -945,6 +1025,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode2 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType2.toString())));
                     ExprNode rightNode2 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType2.toString())));
+
+                    if(rightType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode1).setDeclarationNode(new DeclarationNode(rightNode1.getSourceCodePosition(), ((IdentifierExprNode) rightNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType2 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode2).setDeclarationNode(new DeclarationNode(rightNode2.getSourceCodePosition(), ((IdentifierExprNode) rightNode2).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection21 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode2, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ1), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection22 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode2, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ2), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -970,6 +1058,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftTypeTopLevel.toString())));
                     ExprNode rightNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightTypeTopLevel.toString())));
 
+                    if(leftTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNodeTopLevel).setDeclarationNode(new DeclarationNode(leftNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) leftNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNodeTopLevel).setDeclarationNode(new DeclarationNode(rightNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) rightNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode innerLhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode innerRhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -978,6 +1074,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode rightNode1 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType1.toString())));
                     ExprNode rightNode2 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType2.toString())));
+
+                    if(rightType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode1).setDeclarationNode(new DeclarationNode(rightNode1.getSourceCodePosition(), ((IdentifierExprNode) rightNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType2 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode2).setDeclarationNode(new DeclarationNode(rightNode2.getSourceCodePosition(), ((IdentifierExprNode) rightNode2).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection21 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(rightNode1, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ1), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection22 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(rightNode1, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ2), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -1371,6 +1475,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1391,6 +1503,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -1413,6 +1533,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -1437,6 +1565,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1459,6 +1595,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
+
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -1483,6 +1627,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1506,6 +1658,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType.toString())));
                     ExprNode rightNode = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType.toString())));
 
+                    if(leftType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode).setDeclarationNode(new DeclarationNode(leftNode.getSourceCodePosition(), ((IdentifierExprNode) leftNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode).setDeclarationNode(new DeclarationNode(rightNode.getSourceCodePosition(), ((IdentifierExprNode) rightNode).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection1 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection2 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode, rightNode), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1527,6 +1687,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftTypeTopLevel.toString())));
                     ExprNode rightNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightTypeTopLevel.toString())));
 
+                    if(leftTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNodeTopLevel).setDeclarationNode(new DeclarationNode(leftNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) leftNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNodeTopLevel).setDeclarationNode(new DeclarationNode(rightNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) rightNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode innerLhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode innerRhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1536,6 +1704,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNode1 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType1.toString())));
                     ExprNode rightNode1 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType1.toString())));
 
+                    if(leftType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode1).setDeclarationNode(new DeclarationNode(leftNode1.getSourceCodePosition(), ((IdentifierExprNode) leftNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode1).setDeclarationNode(new DeclarationNode(rightNode1.getSourceCodePosition(), ((IdentifierExprNode) rightNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode projection11 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode1, rightNode1), ExpressionOperatorNode.ExpressionOperator.PRJ1), innerLhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection12 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode1, rightNode1), ExpressionOperatorNode.ExpressionOperator.PRJ2), innerLhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1544,6 +1720,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode leftNode2 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftType2.toString())));
                     ExprNode rightNode2 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType2.toString())));
+
+                    if(leftType2 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNode2).setDeclarationNode(new DeclarationNode(leftNode2.getSourceCodePosition(), ((IdentifierExprNode) leftNode2).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType2 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode2).setDeclarationNode(new DeclarationNode(rightNode2.getSourceCodePosition(), ((IdentifierExprNode) rightNode2).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection21 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode2, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ1), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection22 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNode2, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ2), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
@@ -1569,6 +1753,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
                     ExprNode leftNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(leftTypeTopLevel.toString())));
                     ExprNode rightNodeTopLevel = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightTypeTopLevel.toString())));
 
+                    if(leftTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) leftNodeTopLevel).setDeclarationNode(new DeclarationNode(leftNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) leftNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightTypeTopLevel instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNodeTopLevel).setDeclarationNode(new DeclarationNode(rightNodeTopLevel.getSourceCodePosition(), ((IdentifierExprNode) rightNodeTopLevel).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
                     ExpressionOperatorNode innerLhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ1), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode innerRhs = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(leftNodeTopLevel, rightNodeTopLevel), ExpressionOperatorNode.ExpressionOperator.PRJ2), lhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
 
@@ -1577,6 +1769,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
                     ExprNode rightNode1 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType1.toString())));
                     ExprNode rightNode2 = MachineASTCreator.createExpressionAST(parseExpression(CharStreams.fromString(rightType2.toString())));
+
+                    if(rightType1 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode1).setDeclarationNode(new DeclarationNode(rightNode1.getSourceCodePosition(), ((IdentifierExprNode) rightNode1).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
+
+                    if(rightType2 instanceof EnumeratedSetElementType) {
+                        ((IdentifierExprNode) rightNode2).setDeclarationNode(new DeclarationNode(rightNode2.getSourceCodePosition(), ((IdentifierExprNode) rightNode2).getName(), DeclarationNode.Kind.ENUMERATED_SET, machineNode));
+                    }
 
                     ExpressionOperatorNode projection21 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(rightNode1, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ1), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);
                     ExpressionOperatorNode projection22 = new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(new ExpressionOperatorNode(sourceCodePosition, Arrays.asList(rightNode1, rightNode2), ExpressionOperatorNode.ExpressionOperator.PRJ2), innerRhs), ExpressionOperatorNode.ExpressionOperator.FUNCTION_CALL);

@@ -640,17 +640,16 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 
 	iterate(n: BInteger): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S,S>><unknown>this;
-		let result: BRelation<S,S> = BRelation.identity(this.domain().union(<immutable.Set<S>> this.range()));
-		for(let i: BInteger = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
+		let result: BRelation<S,S> = <BRelation<S,S>><unknown>this;
+		for(let i: BInteger = new BInteger(2); i.lessEqual(n).booleanValue(); i = i.succ()) {
 			result = result.composition(thisRelation);
 		}
 		return result;
 	}
 
-
 	closure(): BRelation<S,S> {
 		let thisRelation: BRelation<S,S> = <BRelation<S, S>><unknown>this;
-		let result: BRelation<S,S> = BRelation.identity(this.domain().union(<immutable.Set<S>> this.range()));
+		let result: BRelation<S,S> = this.iterate(new BInteger(0));
 		let nextResult: BRelation<S,S> = result.composition(thisRelation);
 		let lastResult: BRelation<S,S> = result;
 		do {
@@ -732,14 +731,21 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 		return new BRelation<S, R>(resultMap);
 	}
 
-    static identity<T extends BObject>(arg: BSet<T>):  BRelation<T,T> {
-		let resultMap: immutable.Map<T, immutable.Set<T>> = immutable.Map()
-		arg.getSet().forEach((e: T) => {
-			resultMap = resultMap.set(e, immutable.Set([e]));
-		});
-		return new BRelation<T, T>(resultMap);
+    static identity<T extends BObject, S extends BObject>(arg: BSet<T> | BRelation<S,T>):  BRelation<T,T> | BRelation<BTuple<S,T>,BTuple<S,T>> {
+        if(arg instanceof BSet) {
+            let resultMap: immutable.Map<T, immutable.Set<T>> = immutable.Map()
+            arg.getSet().forEach((e: T) => {
+                resultMap = resultMap.set(e, immutable.Set([e]));
+            });
+            return new BRelation<T, T>(resultMap);
+		} else if (arg instanceof BRelation) {
+            let resultMap: immutable.Map<BTuple<S,T>, immutable.Set<BTuple<S,T>>> = immutable.Map()
+            for(let e of arg) {
+                resultMap = resultMap.set(e, immutable.Set([e]));
+            }
+            return new BRelation<BTuple<S,T>,BTuple<S,T>>(resultMap);
+		}
 	}
-
 
 	static cartesianProduct<S extends BObject, T extends BObject>(arg1: BSet<S>, arg2: BSet<T>): BRelation<S, T>;
 	static cartesianProduct<S extends BObject, T extends BObject, R extends BObject>(arg1: BRelation<S, T>, arg2: BSet<R>): BRelation<BTuple<S, T>, R>;

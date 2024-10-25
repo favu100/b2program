@@ -542,17 +542,20 @@ export class BRelation {
         }
         return new BBoolean(false);
     }
+    isNotInComposition(tuple, arg) {
+        return this.isInComposition(tuple, arg).not();
+    }
     iterate(n) {
         let thisRelation = this;
-        let result = BRelation.identity(this.domain().union(this.range()));
-        for (let i = new BInteger(1); i.lessEqual(n).booleanValue(); i = i.succ()) {
+        let result = this;
+        for (let i = new BInteger(2); i.lessEqual(n).booleanValue(); i = i.succ()) {
             result = result.composition(thisRelation);
         }
         return result;
     }
     closure() {
         let thisRelation = this;
-        let result = BRelation.identity(this.domain().union(this.range()));
+        let result = this.iterate(new BInteger(0));
         let nextResult = result.composition(thisRelation);
         let lastResult = result;
         do {
@@ -620,11 +623,20 @@ export class BRelation {
         return new BRelation(resultMap);
     }
     static identity(arg) {
-        let resultMap = immutable.Map();
-        arg.getSet().forEach((e) => {
-            resultMap = resultMap.set(e, immutable.Set([e]));
-        });
-        return new BRelation(resultMap);
+        if (arg instanceof BSet) {
+            let resultMap = immutable.Map();
+            arg.getSet().forEach((e) => {
+                resultMap = resultMap.set(e, immutable.Set([e]));
+            });
+            return new BRelation(resultMap);
+        }
+        else if (arg instanceof BRelation) {
+            let resultMap = immutable.Map();
+            for (let e of arg) {
+                resultMap = resultMap.set(e, immutable.Set([e]));
+            }
+            return new BRelation(resultMap);
+        }
     }
     static cartesianProduct(arg1, arg2) {
         if (arg1 instanceof BSet && arg2 instanceof BSet) {

@@ -225,6 +225,16 @@ public class TestMachines extends TestJs {
     }
 
     @Test
+    public void testINTEGERSET_Laws() throws Exception {
+        testJSMC("INTEGERSET_Laws", "INTEGERSET_Laws", true, false);
+    }
+
+    @Test
+    public void testFinitenessLaws() throws Exception {
+        testJSMC("FinitenessLaws", "FinitenessLaws", true, false);
+    }
+
+    @Test
     public void testSubstitutionLaws() throws Exception {
         testJSMC("SubstitutionLaws", "SubstitutionLaws", true, false);
     }

@@ -245,6 +245,21 @@ public class TestMachines extends TestJs {
     }
 
     @Test
+    public void testRelLaws_Small() throws Exception {
+        testJSMC("RelLaws_Small", "RelLaws_Small", true, false);
+    }
+
+    @Test
+    public void testRelLaws_Small2() throws Exception {
+        testJSMC("RelLaws_Small2", "RelLaws_Small2", true, false);
+    }
+
+    @Test
+    public void testCompositionEmpty() throws Exception {
+        testJSMC("CompositionEmpty", "CompositionEmpty", true, false);
+    }
+
+    @Test
     public void testFunLaws() throws Exception {
         testJSMC("FunLaws", "FunLaws", true, false);
     }

@@ -189,10 +189,39 @@ public class TestMachines extends TestJs {
         testJs("Core");
     }
 
-    @Ignore
     @Test
     public void testSetLawsNAT() throws Exception {
         testJSMC("SetLawsNat", "SetLawsNat", true, false);
+    }
+
+    @Test
+    public void testSetLawsPow() throws Exception {
+        testJSMC("SetLawsPow", "SetLawsPow", true, false);
+    }
+
+    @Test
+    public void testSetLawsPow2() throws Exception {
+        testJSMC("SetLawsPow2", "SetLawsPow2", true, false);
+    }
+
+    @Test
+    public void testRelLaws_NatBool() throws Exception {
+        testJSMC("SetRelLaws_NatBool", "SetRelLaws_NatBool", true, false);
+    }
+
+    @Test
+    public void testSetLawsPowPow() throws Exception {
+        testJSMC("SetLawsPowPow");
+    }
+
+    @Test
+    public void testSetLawsPowPowCart() throws Exception {
+        testJSMC("SetLawsPowPowCart");
+    }
+
+    @Test
+    public void testSubsetLaws() throws Exception {
+        testJSMC("SubsetLaws", "SubsetLaws", true, false);
     }
 
     @Test(expected = CodeGenerationException.class)

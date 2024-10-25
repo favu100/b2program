@@ -328,6 +328,9 @@ export class BRelation {
             let thisRangeSet = this.map.get(domainElement);
             let otherRangeSet = arg.map.get(domainElement);
             if (thisRangeSet != null && !(thisRangeSet.size === 0)) {
+                if (otherRangeSet == null) {
+                    return new BBoolean(false);
+                }
                 for (let rangeElement of thisRangeSet) {
                     if (!otherRangeSet.contains(rangeElement)) {
                         return new BBoolean(false);

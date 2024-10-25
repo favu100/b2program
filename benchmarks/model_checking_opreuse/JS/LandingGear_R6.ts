@@ -5,6 +5,7 @@ import {BSet} from './btypes/BSet.js';
 import {BObject} from './btypes/BObject.js';
 import {BUtils} from "./btypes/BUtils.js";
 import {SelectError} from "./btypes/BUtils.js";
+import {PreconditionOrAssertionViolation} from "./btypes/BUtils.js";
 import {VariantViolation} from "./btypes/BUtils.js";
 import {LoopInvariantViolation} from "./btypes/BUtils.js";
 import * as immutable from "./immutable/dist/immutable.es.js";

@@ -571,7 +571,7 @@ export class BRelation<S extends BObject,T extends BObject> implements BObject, 
 			for(let rangeElement of range) {
                 let union_element = otherMap.get(rangeElement)
                 if (union_element == null) {
-                    return;
+                    break;
                 }
                 set = set.union(<immutable.Set<R>> union_element);
 			}

@@ -395,7 +395,7 @@ INITIALISATION
 OPERATIONS
   IncX = 
     PRE 
-        x < 50
+        x < 5
     THEN
       x := x + 1
     END;

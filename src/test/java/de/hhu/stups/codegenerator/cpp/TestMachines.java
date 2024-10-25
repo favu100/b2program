@@ -108,7 +108,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testCruiseControllerDeterministic_MC() throws Exception {
-        testCppMC("Cruise_finite1_deterministic_MC");
+        testCppMC("Cruise_finite1_deterministic_MC", "Cruise_finite1_deterministic_MC", true, 1, false);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testCanBusMC() throws Exception {
-        testCppMC("CAN_BUS_tlc");
+        testCppMC("CAN_BUS_tlc", "CAN_BUS_tlc", true, 1, false);
     }
 
     @Test
@@ -189,7 +189,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void Train1BeebookDeterministic_MC_POR_v3() throws Exception {
-        testCppMC("Train_1_beebook_deterministic_MC_POR_v3", "Train_1_beebook_deterministic_MC_POR_v3", false, 1, true);
+        testCppMC("Train_1_beebook_deterministic_MC_POR_v3", "Train_1_beebook_deterministic_MC_POR_v3", true, 1, true);
     }
 
     @Test
@@ -220,12 +220,12 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testOBSW_M001_1() throws Exception {
-        testCppMC("obsw_M001_1");
+        testCppMC("obsw_M001_1", "obsw_M001_1", true, 1, false);
     }
 
     @Test
     public void testOBSW_M001_2() throws Exception {
-        testCppMC("obsw_M001_2");
+        testCppMC("obsw_M001_2", "obsw_M001_2", true, 1, false);
     }
 
     @Ignore
@@ -236,7 +236,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testRether() throws Exception {
-        testCppMC("rether", "rether", true, 1, true);
+        testCppMC("rether", "rether", true, 1, false);
     }
 
     @Test
@@ -251,7 +251,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testNota2() throws Exception {
-        testCppMC("nota_v2");
+        testCppMC("nota_v2", "nota_v2", true, 1, false);
     }
 
     @Test
@@ -261,7 +261,7 @@ public class TestMachines extends TestCpp {
 
     @Test
     public void testLift_MC_Large() throws Exception {
-        testCppMC("Lift_MC_Large");
+        testCppMC("Lift_MC_Large", "Lift_MC_Large", true, 1, false);
     }
 
     @Test

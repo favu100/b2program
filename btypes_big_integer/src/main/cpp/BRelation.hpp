@@ -598,6 +598,14 @@ class BRelation : public BObject {
             return subset(arg)._not();
         }
 
+        BBoolean strictSubset(BRelation<S,T> set) {
+            return BBoolean(set.size() != this->size() && this->subset(set).booleanValue());
+        }
+
+        BBoolean strictNotSubset(BRelation<S, T> set) {
+            return BBoolean(set.size() == this->size() || !this->subset(set).booleanValue());
+        }
+
     	BSet<BRelation<S,T>> pow() const {
             immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                typename BSet<S>::Hash,

@@ -350,6 +350,33 @@ class BSet : public BObject {
             return BBoolean(this->set != other.set);
         }
 
+        BBoolean subsetOfBoolean() {
+            for(const T& e : this->set) {
+                if(typeid(e) == typeid(BBoolean)) {
+                    return BBoolean(true);
+                } else {
+                    return BBoolean(false);
+                }
+            }
+            return BBoolean(true);
+        }
+
+        BBoolean strictSubsetOfBoolean() {
+            return this->subsetOfBoolean();
+        }
+
+        BBoolean notSubsetOfInteger() {
+            return this->subsetOfBoolean()._not();
+        }
+
+        BBoolean equalBoolean() {
+            return BBoolean(subsetOfBoolean().booleanValue() && this->size() == 2);
+        }
+
+        BBoolean notEqualBoolean() {
+            return BBoolean(subsetOfBoolean().booleanValue() && this->size() < 2);
+        }
+
         BBoolean subsetOfInteger() {
             for(const T& e : this->set) {
                 if(typeid(e) == typeid(BInteger)) {
@@ -365,8 +392,8 @@ class BSet : public BObject {
             return this->subsetOfInteger();
         }
 
-        BBoolean notSubsetOfInteger() {
-            return this->subsetOfInteger()._not();
+        BBoolean notSubsetOfBoolean() {
+            return this->subsetOfBoolean()._not();
         }
 
         BBoolean equalInteger() {

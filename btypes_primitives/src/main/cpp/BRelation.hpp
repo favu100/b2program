@@ -926,6 +926,37 @@ class BRelation : public BObject {
             return BRelation<S,R>(resultMap);
     	}
 
+        template<typename R>
+        BBoolean isInComposition(const BTuple<S,R>& tuple, const BRelation<T,R>& arg) const {
+
+            immer::map<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
+                                                               typename BSet<S>::Hash,
+                                                               typename BSet<S>::HashEqual> thisMap = this->map;
+
+            immer::map<T,immer::set<T, typename BSet<R>::Hash, typename BSet<R>::HashEqual>,
+                                                               typename BSet<T>::Hash,
+                                                               typename BSet<T>::HashEqual> otherMap = arg.map;
+
+            S projection1 = tuple.projection1();
+            R projection2 = tuple.projection2();
+
+            immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = thisMap.find(projection1);
+
+            if(rangePtr != nullptr) {
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = *rangePtr;
+                for (const T& value : range) {
+                    immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual>* range2Ptr = otherMap.find(projection1);
+                    if (range2Ptr != nullptr) {
+                        immer::set<R, typename BSet<R>::Hash, typename BSet<R>::HashEqual> range2 = *range2Ptr;
+                        if(range2.count(projection2) > 0) {
+                            return BBoolean(true);
+                        }
+                    }
+                }
+            }
+            return BBoolean(false);
+        }
+
         static BRelation<T,T> identity(const BSet<T>& set) {
             immer::map<T,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>,
                                                                  typename BSet<T>::Hash,

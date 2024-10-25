@@ -201,7 +201,7 @@ public class TestCpp {
 					.exec("g++ -std=c++17 -O1 -flto -fbracket-depth=10000 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		} else {
 			compileProcess = runtime
-					.exec("g++ -std=c++17 -O1 -flto=4 -fbracket-depth=10000 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+					.exec("g++ -std=c++17 -O1 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		}
 		compileProcess.waitFor();
 

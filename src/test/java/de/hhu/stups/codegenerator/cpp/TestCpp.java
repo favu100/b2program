@@ -182,12 +182,6 @@ public class TestCpp {
 				null,
 				null);
 
-		Process process = Runtime.getRuntime()
-				.exec("g++ -std=c++17 -O1 -g -fbracket-depth=10000 -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
-		writeInputToSystem(process.getErrorStream());
-		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
-		process.waitFor();
-
 		Runtime runtime = Runtime.getRuntime();
 
 		Path mainPath = cppFilePaths.get(cppFilePaths.size() - 1);

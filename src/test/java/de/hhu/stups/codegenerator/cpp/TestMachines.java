@@ -156,10 +156,54 @@ public class TestMachines extends TestCpp {
         testCpp("Core");
     }
 
-    @Ignore
     @Test
     public void testSetLawsNAT() throws Exception {
-        testCpp("SetLawsNAT");
+        testCppMC("SetLawsNat", "SetLawsNat", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPow() throws Exception {
+        testCppMC("SetLawsPow", "SetLawsPow", true, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPow2() throws Exception {
+        testCppMC("SetLawsPow2", "SetLawsPow2", true, 1, false);
+    }
+
+    @Test
+    public void testSetRelLaws_NatBool() throws Exception {
+        testCppMC("SetRelLaws_NatBool", "SetRelLaws_NatBool", false, 1, false);
+    }
+
+    @Test
+    public void testSetLawsPowPow() throws Exception {
+        testCppMC("SetLawsPowPow");
+    }
+
+    @Test
+    public void testSetLawsPowPowCart() throws Exception {
+        testCppMC("SetLawsPowPowCart");
+    }
+
+    @Test
+    public void testSubsetLaws() throws Exception {
+        testCppMC("SubsetLaws", "SubsetLaws", true, 1, false);
+    }
+
+    @Test
+    public void testINTEGERSET_Laws() throws Exception {
+        testCppMC("INTEGERSET_Laws", "INTEGERSET_Laws", true, 1, false);
+    }
+
+    @Test
+    public void testFinitenessLaws() throws Exception {
+        testCppMC("FinitenessLaws", "FinitenessLaws", true, 1, false);
+    }
+
+    @Test
+    public void testSubstitutionLaws() throws Exception {
+        testCppMC("SubstitutionLaws", "SubstitutionLaws", true, 1, false);
     }
 
     @Test(expected = CodeGenerationException.class)

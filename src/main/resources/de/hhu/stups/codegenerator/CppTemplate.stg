@@ -1511,10 +1511,7 @@ copiedState.<operation>(<parameters; separator=", ">);
 <endif>
 copiedState.stateAccessedVia = "<operation>";
 result.insert(copiedState);
-{
-    std::unique_lock\<std::mutex> lock(mutex);
-    transitions += 1;
-}
+transitions += 1;
 >>
 
 model_check_transition_param_assignment(type, param, val, isLhs, oneParameter) ::= <<
@@ -1688,15 +1685,15 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
                 }
             }
 
+            possibleQueueChanges -= 1;
+            int running = possibleQueueChanges;
             {
                 std::unique_lock\<std::mutex> lock(mutex);
-                possibleQueueChanges -= 1;
-                int running = possibleQueueChanges;
                 if (!unvisitedStates.empty() || running == 0) {
                     {
                         std::unique_lock\<std::mutex> lock(waitMutex);
                         waitFlag = false;
-                        waitCV.notify_one();
+                        waitCV.notify_all();
                     }
                 }
             }

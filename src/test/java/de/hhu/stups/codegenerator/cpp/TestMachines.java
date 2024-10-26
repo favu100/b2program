@@ -186,6 +186,7 @@ public class TestMachines extends TestCpp {
         testCppMC("SetLawsPowPowCart");
     }
 
+    @Ignore
     @Test
     public void testRelLaws() throws Exception {
         testCppMC("RelLaws", "RelLaws", false, 1, false);

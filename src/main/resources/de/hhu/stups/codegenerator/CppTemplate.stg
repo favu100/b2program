@@ -1685,12 +1685,9 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
             possibleQueueChanges -= 1;
             int running = possibleQueueChanges;
             {
-                std::unique_lock\<std::mutex> lock(mutex);
+                std::unique_lock\<std::mutex> lock(waitMutex);
                 if (!unvisitedStates.empty() || running == 0) {
-                    {
-                        std::unique_lock\<std::mutex> lock(waitMutex);
-                        waitCV.notify_all();
-                    }
+                    waitCV.notify_all();
                 }
             }
 

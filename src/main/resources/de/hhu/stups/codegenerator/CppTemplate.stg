@@ -555,7 +555,7 @@ this-><machine> = copy.<machine>->_copy();
 
 copy(machine, parameters, operations) ::= <<
 <machine> _copy() const {
-    return <machine>(<parameters; separator=", ">);
+    return <machine>(*this);
 }
 >>
 

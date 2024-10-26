@@ -539,18 +539,18 @@ bool <invariantFunction>() const {
 }
 >>
 
-copy_constructor(machine, parameters, assignments) ::= <<
-<machine>(<parameters; separator=", ">) {
+copy_constructor(machine, assignments) ::= <<
+<machine>(const <machine>& copy) {
     <assignments; separator="\n">
 }
 >>
 
 copy_assignment(variable) ::= <<
-this-><variable> = <variable>;
+this-><variable> = copy.<variable>;
 >>
 
 copy_machine(machine) ::= <<
-this-><machine> = <machine>->_copy();
+this-><machine> = copy.<machine>->_copy();
 >>
 
 copy(machine, parameters, operations) ::= <<
